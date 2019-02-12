@@ -349,7 +349,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">46</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">47</span></a>
 
   </li>
 
@@ -385,6 +385,208 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/再探String.html">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/再探String.html" class="post-title-link" itemprop="url">再探String</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2017-08-31 01:26:08" itemprop="dateCreated datePublished" datetime="2017-08-31T01:26:08+08:00">2017-08-31</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-01-25 23:06:21" itemprop="dateModified" datetime="2019-01-25T23:06:21+08:00">2019-01-25</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>估计是最终版了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String s1 = new String(&quot;张三&quot;);</span><br><span class="line">String s2 = new String(&quot;张三&quot;);</span><br><span class="line">String s3 = &quot;张三&quot;;</span><br><span class="line">String s4 = &quot;张三&quot;;</span><br></pre></td></tr></table></figure>
+<p>我们都知道<code>String s3 = &quot;张三&quot;;</code>这句代码的”张三”字符串位 于常量池中，而s3==s4这种明显就是小儿科，true！<br>我们来解析一下<code>String s3 = &quot;张三&quot;;</code>这句代码。</p>
+<ol>
+<li><p>首先s3进入栈中，”张三”进入常量池中，”张三”返回一个地址，s3拿到这个地址，所以我们就可以拿着这个地址做一些事情。这应该都很熟悉了，那么问题来了：“String s1 = new String(“张三”);”这句代码是怎么执行的？</p>
+</li>
+<li><p>首先我们要知道一个定义：成员变量和局部变量。<br>s3是一个局部变量，当然是相对来说，比如说上面的4句代码都位于一个方法中，那么s3是一个局部变量。</p>
+</li>
+<li><p>接下来我们解析<code>String s1 = new String(&quot;张三&quot;);</code>这句代码。<br>s1还是一个局部变量所以进入栈中，new String会在堆中创建一个String实例对象（OK很简单），那么这个<br>“张三”怎么办？注意了！String对象是如何存储字符串的？实际上就是一个char数组（同时也解释了一个中文可以用一个char来存储），所以”张三”在String中实际上是这样的：value[0]=’张’，value[1]=”三”。<br>这个value是一个char数组，而它优势String的成员变量也就是说，value这个变量不会进入栈，而是跟着String在堆内存中（实际上不是，我先打个比喻）。<br>String对象的构造器还没完！它还会初始化一个hash码，这个是String自己初始化的，不用你来控制，所以hash码这个变量也是跟着String进入堆中。</p>
+</li>
+</ol>
+<p>现在我们来缕一缕——-&gt;String在堆中开辟一个空间，这个空间里有value数组，hash变量（其他的我就不说了，我上面也说过了，实际上value并不在String中）。</p>
+<p>知道上面的一切之后，就可以分析了。</p>
+<p>是不是”张三”这种形式的写法，字符串就进入了常量池？比如：<code>String s1 = &quot;张三&quot;;String s1 = new String(&quot;张三&quot;);StringBuilder s3 = new StringBuilder(&quot;张三&quot;);StringBuffer s4 = new StringBuffer(&quot;张三&quot;);</code></p>
+<p>其实我们有办法做到，观察是否进入了。<br>但是之前先考虑，<code>String s1 = new String(&quot;张三&quot;);</code>和<code>String s3 = &quot;张三&quot;;</code>这两个”张三”是同一个字符串吗？<br>其实看我上面的某些描述，可能也推测出来了，这两个”张三”就是同一个（指同一个地址）。下面讲如何做到观察是否为同一个。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">String s1 = new String(&quot;abc&quot;);</span><br><span class="line">String s2 = new String(&quot;abc&quot;);</span><br><span class="line">Class&lt;?&gt; clazz1 = s1.getClass();</span><br><span class="line">Class&lt;?&gt; clazz2 = s2.getClass();</span><br><span class="line">Field declaredField1 = clazz1.getDeclaredField(&quot;value&quot;);</span><br><span class="line">Field declaredField2 = clazz2.getDeclaredField(&quot;value&quot;);</span><br><span class="line">declaredField1.setAccessible(true);</span><br><span class="line">declaredField2.setAccessible(true);</span><br><span class="line">System.out.println(declaredField1.get(s1) == declaredField2.get(s2));</span><br><span class="line">System.out.println(declaredField1.get(s1));</span><br><span class="line">System.out.println(declaredField2.get(s2));</span><br></pre></td></tr></table></figure>
+<p>上面的代码结果如何，显然已经解释的很清楚了。</p>
+<p>解</p>
+<p>首先”张三”实际上是一个char数组，而它是String的成员变量，所以它硬该在堆内存中，但是事实是在常量池。<br>常量池：看名字就知道是存常量的。<br>在网络上的熏陶，我们知道String name = “李四”；”李四”在常量池，所以name是一个常量（无语ing，别被带偏了，我在今天之前也是这么认为的）。<br>被final修饰的才是常量。现在你们大概猜出什么了。去看String的源码吧，看看value这个成员变量的前面是用什么修饰的！！！自己去看才会记忆深刻，我就不贴源码了。</p>
+<p>还没完<br>是不是”张三”这种形式的写法，字符串就进入了常量池？<br>我之前问了这个问题。答：不是。<br>StringBuilder name1 = new StringBuilder(“张三”);<br>String name2 = “张三”;<br>这时候又不一样了。<br>这两个”张三”不是同一个（也就是说地址不一样）。话不多说上代码。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">String s1 = new String(&quot;abc&quot;);</span><br><span class="line">StringBuilder s2 = new StringBuilder(&quot;abc&quot;);</span><br><span class="line">Class&lt;?&gt; clazz1 = s1.getClass();</span><br><span class="line">Class&lt;?&gt; clazz2 = s2.getClass();</span><br><span class="line">clazz2 = clazz2.getSuperclass();</span><br><span class="line">Field declaredField1 = clazz1.getDeclaredField(&quot;value&quot;);</span><br><span class="line">Field declaredField2 = clazz2.getDeclaredField(&quot;value&quot;);</span><br><span class="line">declaredField1.setAccessible(true);</span><br><span class="line">declaredField2.setAccessible(true);</span><br><span class="line">System.out.println(declaredField1.get(s1) == declaredField2.get(s2));</span><br><span class="line">System.out.println(declaredField1.get(s1));</span><br><span class="line">System.out.println(declaredField2.get(s2));</span><br></pre></td></tr></table></figure>
+<p>上面的结果有没有出乎意料？地址打印出来都不一样。你们也猜到了什么吧。<br>去看StringBuilder的源码吧。StringBuffer同理。<br>注：StringBuilder中没有value，但是它的父类AbstractStringBuilder有，去看看value前面是什么修饰的。</p>
+<hr>
+<p>2018.9.6更新<br>java1.7之后貌似有很大变化。上面的理论可能不太适用</p>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/再探String.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -1533,7 +1735,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">46</span>
+                    <span class="site-state-item-count">47</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
