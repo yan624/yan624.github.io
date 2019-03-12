@@ -264,7 +264,7 @@
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">8</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">9</span></a>
 
   </li>
         
@@ -349,7 +349,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">48</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">49</span></a>
 
   </li>
 
@@ -385,6 +385,203 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/二、将mysql的数据导入到solr中.html">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/二、将mysql的数据导入到solr中.html" class="post-title-link" itemprop="url">二、将mysql的数据导入到solr中</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-04-11 21:43:15" itemprop="dateCreated datePublished" datetime="2018-04-11T21:43:15+08:00">2018-04-11</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-01-25 12:16:30" itemprop="dateModified" datetime="2019-01-25T12:16:30+08:00">2019-01-25</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/java/other-framework/" itemprop="url" rel="index"><span itemprop="name">other-framework</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h3 id="一、solr部署于tomcat"><a href="#一、solr部署于tomcat" class="headerlink" title="一、solr部署于tomcat"></a>一、solr部署于tomcat</h3><p><a href="https://yan624.github.io/一、solr部署于tomcat">上一篇</a></p>
+<h3 id="二、将mysql的数据导入到solr中"><a href="#二、将mysql的数据导入到solr中" class="headerlink" title="二、将mysql的数据导入到solr中"></a>二、将mysql的数据导入到solr中</h3><p>tomcat同级目录中的solr被称为solr_home<br>tomcat的webapps文件夹中的solr是solr的web工程<br>将从apache上下下来的solr<font color="red">根</font>文件夹中的/contrib和/dist，复制到solr_home的lib文件夹中，如果没有这个文件夹可以自己建一个。如下图:<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/1375f60bca34409d952810bc12beb13c.PNG" alt="solr lib" title="solr lib"><br>这两个文件夹中全是jar包。现在只是复制过来了，solr还不能用它们，所以需要配置一下。<br>solr_home中应该有一个collection1文件夹，这是solr的一个示例，如果不放心可以拷贝一份，改一个名字。注意如果拷贝了一份，需要进入你拷贝的这份文件夹，找到core.properties，将里面的name属性改为你的文件夹名字。<br>我复制了一份，取名为order，如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/a193f1c3fea84613b0b048c0791dd1b2.PNG" alt="solr官方示例" title="solr官方示例"><br>进入order文件夹，里面有一个conf文件夹，再进入，找到solrconfig.xml文件，打开编辑。前几十行很多注释，往下大概80行的样子，有几个lib标签，这些标签就是代表导入之前的jar包。但是我们的路径发生了改变，所以这里需要配置一下。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;lib dir=&quot;../lib/contrib/dataimporthandler/lib&quot; regex=&quot;.*\.jar&quot; /&gt;</span><br><span class="line">&lt;lib dir=&quot;../lib/dist/&quot; regex=&quot;solr-dataimporthandler-\d.*\.jar&quot; /&gt;</span><br><span class="line">   </span><br><span class="line">&lt;lib dir=&quot;../lib/contrib/extraction/lib&quot; regex=&quot;.*\.jar&quot; /&gt;</span><br><span class="line">&lt;lib dir=&quot;../lib/dist/&quot; regex=&quot;solr-cell-\d.*\.jar&quot; /&gt;</span><br><span class="line"></span><br><span class="line">&lt;lib dir=&quot;../lib/contrib/clustering/lib/&quot; regex=&quot;.*\.jar&quot; /&gt;</span><br><span class="line">&lt;lib dir=&quot;../lib/dist/&quot; regex=&quot;solr-clustering-\d.*\.jar&quot; /&gt;</span><br><span class="line"></span><br><span class="line">&lt;lib dir=&quot;../lib/contrib/langid/lib/&quot; regex=&quot;.*\.jar&quot; /&gt;</span><br><span class="line">&lt;lib dir=&quot;../lib/dist/&quot; regex=&quot;solr-langid-\d.*\.jar&quot; /&gt;</span><br><span class="line"></span><br><span class="line">&lt;lib dir=&quot;../lib/contrib/velocity/lib&quot; regex=&quot;.*\.jar&quot; /&gt;</span><br><span class="line">&lt;lib dir=&quot;../lib/dist/&quot; regex=&quot;solr-velocity-\d.*\.jar&quot; /&gt;</span><br></pre></td></tr></table></figure>
+<p>lib标签dir属性的根目录位于conf文件夹的同级目录。需要注意的是前两个标签，不出意外的话，这两行你们是没有的，这里需要加上这两行。因为它们关系到导入数据。<br>还是在这个文件中，往下拉，大概找到requestHandler标签，其实不找到也行，但是为将相同的标签放在一起便于管理，所以需要找到并在其中一个位置加上下面的代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;requestHandler name=&quot;/dataimport&quot; class=&quot;solr.DataImportHandler&quot;&gt;</span><br><span class="line">    &lt;lst name=&quot;defaults&quot;&gt;</span><br><span class="line">        &lt;str name=&quot;config&quot;&gt;data-config.xml&lt;/str&gt;</span><br><span class="line">    &lt;/lst&gt;</span><br><span class="line">&lt;/requestHandler&gt;</span><br></pre></td></tr></table></figure>
+<p>这个就是代表了一个请求路径，看英文名代表了数据导入。这里需要注意一点，class是solr.DataImportHandler，而不是其它的，我就是因为懒得自己写，顺手改了一个注释掉的标签，然后忘记改class属性，导致数据一直导入失败。里面的config标签就是代表了数据的配置。接下来需要配置这份文件。<br>与solrconfig.xml同级目录中<font color="red">新建</font>一个（如果不存在这个文件的话）data-config.xml。配置如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&lt;dataConfig&gt;</span><br><span class="line">    &lt;dataSource type=&quot;JdbcDataSource&quot;</span><br><span class="line">        driver=&quot;com.mysql.jdbc.Driver&quot; url=&quot;jdbc:mysql://localhost:3306/order&quot;</span><br><span class="line">        user=&quot;root&quot; password=&quot;password&quot; batchSize=&quot;-1&quot; /&gt;</span><br><span class="line">    &lt;document&gt;</span><br><span class="line">        &lt;entity name=&quot;tb_businessman&quot; query=&quot;select * from tb_businessman&quot;&gt;</span><br><span class="line">            &lt;field column=&quot;businessman_id&quot; name=&quot;businessman_id&quot; /&gt;</span><br><span class="line">            &lt;field column=&quot;businessman_name&quot; nam=&quot;businessman_name&quot; /&gt;</span><br><span class="line">            &lt;field column=&quot;introduction&quot; name=&quot;introduction&quot; /&gt;</span><br><span class="line">            &lt;field column=&quot;business_hours&quot; name=&quot;business_hours&quot; /&gt;</span><br><span class="line">            &lt;field column=&quot;start_price&quot; name=&quot;start_price&quot; /&gt;</span><br><span class="line">            &lt;field column=&quot;lunch_box_fee&quot; name=&quot;lunch_box_fee&quot; /&gt;</span><br><span class="line">            &lt;field column=&quot;merchant_store_thumbnail&quot; name=&quot;merchant_store_thumbnail&quot; /&gt;</span><br><span class="line">            &lt;field column=&quot;monthly_sales&quot; name=&quot;monthly_sales&quot; /&gt;</span><br><span class="line">            &lt;field column=&quot;average_score&quot; name=&quot;average_score&quot; /&gt;</span><br><span class="line">            &lt;field column=&quot;is_open&quot; name=&quot;is_open&quot; /&gt;</span><br><span class="line">            &lt;field column=&quot;QR_code&quot; name=&quot;QR_code&quot; /&gt;</span><br><span class="line">        &lt;/entity&gt;</span><br><span class="line">    &lt;/document&gt;</span><br><span class="line">&lt;/dataConfig&gt;</span><br></pre></td></tr></table></figure>
+<p>dataSource不做讲解，document中的entity标签的name属性指的是类似于一个id，代表在solr的web应用的网页里面的一个select的一个option（目前我是这么理解的）。query就是查数据。column就是数据库列名，name是接下来配置的。<br>接下来配置最后一步，schema.xml文件，也是在conf目录下。<br>里面solr已经配置很多了，所以看起来很麻烦。找到fields标签，这个标签下面就是配置各个字段，就是上面说的name。其中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;field name=&quot;_version_&quot; type=&quot;long&quot; indexed=&quot;true&quot; stored=&quot;true&quot;/&gt;</span><br><span class="line"></span><br><span class="line">&lt;field name=&quot;_root_&quot; type=&quot;string&quot; indexed=&quot;true&quot; stored=&quot;false&quot;/&gt;</span><br></pre></td></tr></table></figure>
+<p>这两个不要删，然后把fields下的所有标签全删了，改成如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;field name=&quot;businessman_id&quot; type=&quot;string&quot; indexed=&quot;true&quot; stored=&quot;true&quot; required=&quot;true&quot; multiValued=&quot;false&quot; /&gt;</span><br><span class="line">&lt;field name=&quot;businessman_name&quot; type=&quot;text_cn&quot; indexed=&quot;true&quot; stored=&quot;true&quot; multiValued=&quot;true&quot;/&gt;</span><br><span class="line">&lt;field name=&quot;introduction&quot; type=&quot;text_cn&quot; indexed=&quot;true&quot; stored=&quot;true&quot;/&gt;</span><br><span class="line">&lt;field name=&quot;business_hours&quot; type=&quot;text_cn&quot; indexed=&quot;true&quot; stored=&quot;true&quot;/&gt;</span><br><span class="line">&lt;field name=&quot;start_price&quot; type=&quot;text_cn&quot; indexed=&quot;true&quot; stored=&quot;true&quot;/&gt;</span><br><span class="line">&lt;field name=&quot;lunch_box_fee&quot; type=&quot;text_cn&quot; indexed=&quot;true&quot; stored=&quot;true&quot;/&gt;</span><br><span class="line">&lt;field name=&quot;merchant_store_thumbnail&quot; type=&quot;text_cn&quot; indexed=&quot;true&quot; stored=&quot;true&quot;/&gt;</span><br><span class="line">&lt;field name=&quot;monthly_sales&quot; type=&quot;text_cn&quot; indexed=&quot;true&quot; stored=&quot;true&quot;/&gt;</span><br><span class="line">&lt;field name=&quot;average_score&quot; type=&quot;text_cn&quot; indexed=&quot;true&quot; stored=&quot;true&quot;/&gt;</span><br><span class="line">&lt;field name=&quot;is_open&quot; type=&quot;text_cn&quot; indexed=&quot;true&quot; stored=&quot;true&quot;/&gt;</span><br><span class="line">&lt;field name=&quot;QR_code&quot; type=&quot;string&quot; indexed=&quot;true&quot; stored=&quot;true&quot; multiValued=&quot;true&quot;/&gt;</span><br><span class="line">&lt;field name=&quot;text&quot; type=&quot;text_cn&quot; indexed=&quot;true&quot; stored=&quot;true&quot; multiValued=&quot;true&quot;/&gt;</span><br></pre></td></tr></table></figure>
+<p>篇幅有限，不做太多解释，接下来，在fields标签下一个标签应该是<uniquekey>，把里面的值，改为你的id，我的是businessman_id。注意上面的text_cn这是某个solr的域类型，现在是初步测试，就不写这个了，可以缓存solr已经配置好的text_general，这样虽然我们的数据是中文的，但是完全可以进行简单的处理了。<br>最后还需要一个mysql的jar包，把它放到WEB-INF的lib目录下，就可以启动tomcat访问了。如下图，进行导入数据，点击菜单栏中Query进行查询。（注：4,5两步中间需要等一会，不要马上点，如果成功了，“显示”那会出现绿色字体。）Query中其他参数可自行学习。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/0820f706eae3497599ffd4d1b6783ab2.PNG" alt="步骤" title="步骤"><br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/二、将mysql的数据导入到solr中.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </uniquekey></p></div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -2125,196 +2322,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/vo-dto-do-po的理解.html">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/vo-dto-do-po的理解.html" class="post-title-link" itemprop="url">vo,dto,do,po的理解</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2017-11-18 21:15:14" itemprop="dateCreated datePublished" datetime="2017-11-18T21:15:14+08:00">2017-11-18</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-01-24 19:13:39" itemprop="dateModified" datetime="2019-01-24T19:13:39+08:00">2019-01-24</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/java/javaee/" itemprop="url" rel="index"><span itemprop="name">javaee</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <ul>
-<li>po:持久化对象，没啥好说的，数据库里一张表对应一个po。</li>
-<li>vo:视图对象，是指某个指定页面的所有数据，注意是<font color="red">所有数据</font>。</li>
-<li>dto:跟vo差不多，甚至可以代替vo，但是二者理论上是不一样的。vo用于数据显示，dto用于数据传输(展示层与业务层之间)。如性别在数据库里用01表示，在传输时dto直接定义Integer，但是在展示时总不能展示0和1，并且男女也有不同称谓(帅哥美女，先生女士等等)，所以需要另建一个vo用于处理这些逻辑。但是如果没有特殊需求，其实vo就是dto，dto是将业务层数据传输出去，在视图层展示时将以数字表示的性别转换为文字。如果客户端没有要求，那么不传输出数字，直接写上男女也没问题，如果确是有要求，在业务层就不能传出文字，而只能传出数字了。</li>
-<li>do:无法里给<br>以上出自:<a href="https://www.cnblogs.com/qixuejia/p/4390086.html" target="_blank" rel="noopener">博客园博主</a><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/e3592ba9de284f128b9183a2434ae018.jpg" alt="领域模型" title="领域模型">
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/vo-dto-do-po的理解.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </li></ul></div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2364,7 +2371,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">48</span>
+                    <span class="site-state-item-count">49</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2434,7 +2441,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">8</span>
+                      
+                    
+                    <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
