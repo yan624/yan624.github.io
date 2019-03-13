@@ -104,7 +104,7 @@
 <meta property="og:site_name" content="博客">
 <meta property="og:description" content="正则表达式的使用正则表达式的匹配规则网上都有，这里不放出来了，毕竟只是记录学习的博文。以下讲几个一直没搞明白的点。 贪婪与非贪婪实现介绍通用匹配，以.表示。.代表匹配任意字符，代表匹配0个或多个表达式所以两个连用就代表匹配任意字符。比如字符串&amp;#39;Hello Python and Anaconda&amp;#39;，表达式为&amp;#39;^Hello.*Anaconda$&amp;#39;。代码如下：12345i">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-03-13T08:57:27.049Z">
+<meta property="og:updated_time" content="2019-03-13T09:03:00.267Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Python爬虫学习记录（一）：正则表达式">
 <meta name="twitter:description" content="正则表达式的使用正则表达式的匹配规则网上都有，这里不放出来了，毕竟只是记录学习的博文。以下讲几个一直没搞明白的点。 贪婪与非贪婪实现介绍通用匹配，以.表示。.代表匹配任意字符，代表匹配0个或多个表达式所以两个连用就代表匹配任意字符。比如字符串&amp;#39;Hello Python and Anaconda&amp;#39;，表达式为&amp;#39;^Hello.*Anaconda$&amp;#39;。代码如下：12345i">
@@ -461,7 +461,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-03-13 16:57:27" itemprop="dateModified" datetime="2019-03-13T16:57:27+08:00">2019-03-13</time>
+                <time title="修改时间：2019-03-13 17:03:00" itemprop="dateModified" datetime="2019-03-13T17:03:00+08:00">2019-03-13</time>
               
             
           </span>
@@ -518,9 +518,15 @@
 <p>可以得出我们想要的结果，因为.<em>代表匹配任意个字符，所以该正则表达式会在**</em>Hello<strong><em>之后一直匹配成功，知道遇到</em></strong>Anaconda<em>**停止。其中.</em>其实就是贪婪匹配。但是有时候贪婪匹配会出很大的问题。比如字符串<code>&#39;My tel number is 15012345678&#39;</code>，正则表达式为<code>&#39;^My.*(\d+)$&#39;</code>。具体代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line"></span><br><span class="line">txt = &apos;My tel number is 15012345678&apos;</span><br><span class="line">result = re.match(&quot;^My.*(\d+)$&quot;, txt)</span><br><span class="line">print(result.group())</span><br><span class="line">print(result.group(1))</span><br></pre></td></tr></table></figure></p>
 <p>首先这段代码意思是获取字符串中的手机号码，<code>(\d+)</code>代表一个组，这个组里面匹配的东西就是我们需要的结果，而我们的代码也看起来很正常\d+就意味着匹配多个数字。可以看到这段代码<code>print(result.group(1))</code>就是输出手机号。但是结果却只匹配到了8，因为.<em>代表了贪婪匹配，它会尽可能的匹配到多的字符。因为.</em>代表匹配任意多的字符串，所以它看到1501234567会一直往下匹配，知道看到8，发现8已经是最后一个数字了，如果这个8不与\d+匹配岂不是出现系统漏洞了，因为\d+就是让你匹配数字，你不匹配不是违反了规则？所以匹配成功。最后将8加入组中，通过result.group(1)获取到这一组。所以贪婪匹配在这种情况是有问题，这就引出了非贪婪匹配：<code>.*?</code>。代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line"></span><br><span class="line">txt = &apos;My tel number is 15012345678&apos;</span><br><span class="line">result = re.match(&quot;^My.*?(\d+)$&quot;, txt)</span><br><span class="line">print(result.group())</span><br><span class="line">print(result.group(1))</span><br></pre></td></tr></table></figure></p>
 <p>如果运行这段代码，就会发现匹配成功了。所以以后尽量使用非贪婪模式.<em>?，而不是贪婪模式.</em>。</p>
-<h3 id="修饰符"><a href="#修饰符" class="headerlink" title="修饰符"></a>修饰符</h3><p>代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line"></span><br><span class="line">txt = &apos;My tel number is 15012345678&apos;</span><br><span class="line">result = re.match(&quot;^My.*?(\d+)$&quot;, txt, re.S)</span><br><span class="line">print(result.group())</span><br><span class="line">print(result.group(1))</span><br></pre></td></tr></table></figure></p>
-<p>这里引用了上面的代码，注意多了个re.S，它代表使.匹配包括换行在内的所有字符。也就是说不加re.S，.其实是匹配不到换行符的。应用场景：网页代码中嵌套标签会经常出现这些换行符，要加入re.S。其他的方法re.search(),re.findall()用法类似。</p>
-<a id="more"></a>
+<h4 id="修饰符"><a href="#修饰符" class="headerlink" title="修饰符"></a>修饰符</h4><p>代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line"></span><br><span class="line">txt = &apos;My tel number is 15012345678&apos;</span><br><span class="line">result = re.match(&quot;^My.*?(\d+)$&quot;, txt, re.S)</span><br><span class="line">print(result.group())</span><br><span class="line">print(result.group(1))</span><br></pre></td></tr></table></figure></p>
+<p>这里引用了上面的代码，注意多了个re.S，它代表使.匹配包括换行在内的所有字符。也就是说不加re.S，.其实是匹配不到换行符的。应用场景：网页代码中嵌套标签会经常出现这些换行符，要加入re.S。其他的方法re.search(),re.findall()用法类似。<br>待补充。。。</p>
+<h4 id="re模块中的方法"><a href="#re模块中的方法" class="headerlink" title="re模块中的方法"></a>re模块中的方法</h4><ol>
+<li>match()<br>这方法从头开始匹配，如果一开始即第一个字符就不匹配，直接就算匹配失败。可以用于校验用户输入的信息是否合乎规范。</li>
+<li>search()<br>从头开始匹配，扫描整个字符串，如果碰到一段字符串匹配成功了就立即返回，它只会返回一个结果。</li>
+<li>findall()<br>跟它名字一样，扫描整个字符串，获得所有匹配成功的结果。</li>
+<li>待补充。。。</li>
+</ol>
+<h3 id="举一个栗子"><a href="#举一个栗子" class="headerlink" title="举一个栗子"></a>举一个栗子</h3><a id="more"></a>
       
     </div>
 
@@ -774,7 +780,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#正则表达式的使用"><span class="nav-number">1.</span> <span class="nav-text">正则表达式的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#贪婪与非贪婪"><span class="nav-number">1.1.</span> <span class="nav-text">贪婪与非贪婪</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修饰符"><span class="nav-number">2.</span> <span class="nav-text">修饰符</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#正则表达式的使用"><span class="nav-number">1.</span> <span class="nav-text">正则表达式的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#贪婪与非贪婪"><span class="nav-number">1.1.</span> <span class="nav-text">贪婪与非贪婪</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#修饰符"><span class="nav-number">1.2.</span> <span class="nav-text">修饰符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#re模块中的方法"><span class="nav-number">1.3.</span> <span class="nav-text">re模块中的方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#举一个栗子"><span class="nav-number">2.</span> <span class="nav-text">举一个栗子</span></a></li></ol></div>
             
 
           </div>
