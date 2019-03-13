@@ -349,7 +349,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">52</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">53</span></a>
 
   </li>
 
@@ -385,6 +385,192 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/shiro的filter配置问题，自定义的filter交给spring容器管理会有问题.html">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/shiro的filter配置问题，自定义的filter交给spring容器管理会有问题.html" class="post-title-link" itemprop="url">shiro的filter配置问题，自定义的filter交给spring容器管理会有问题</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-08-07 00:03:36" itemprop="dateCreated datePublished" datetime="2018-08-07T00:03:36+08:00">2018-08-07</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-01-24 22:23:03" itemprop="dateModified" datetime="2019-01-24T22:23:03+08:00">2019-01-24</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/java/shiro/" itemprop="url" rel="index"><span itemprop="name">shiro</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>此项目基于springboot，放在springmvc中，filter由spring管理不知道为什么就没问题。<br>我配置了/api/v1/<strong>—-&gt;roles[]，/</strong>——&gt;authc<br>/api/v1/<strong>一直无法访问，一直调转到authc这个过滤器去验证，我就怀疑是不是/</strong>也匹配到了/api/v1/**，但是以前做的时候一直没问题，所以绕了一大圈。<br>最后发现！！！！！<br>重要的事说三遍，不要将自定义的filter交给spring容器管理！不要将自定义的filter交给spring容器管理！不要将自定义的filter交给spring容器管理！<br>因为在一个链接的所有配置好的filter执行完毕后，它会接着执行另外一个过滤链，该过滤链由servlet容器提供。也就是说shiro一共会执行两个过滤链，一个是你自己配置好的，第二个是servlet提供的（由于本人没有阅读过spring源码，故不清楚spring注册的bean是怎么进入servlet容器的）。<br>所以当你把自定义的过滤器交给spring管理时，这个过滤器无论如何都会至少执行一次。<br>具体的代码在org.apache.shiro.web.servlet.doFilter(ServletRequest request, ServletResponse response)，第一行就是判断自定义的过滤链是否执行完毕，如果执行完毕就执行servlet提供的过滤链。（注shiro版本为1.4.0）<br>如果出现这个问题只需要将filter的创建由自己完成即可。<br>tips:由于可能在filter中需要注入某些对象。这时只能用springContext获取bean了。</p>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/shiro的filter配置问题，自定义的filter交给spring容器管理会有问题.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -2108,200 +2294,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/bootstrap-switch常用操作-属性.html">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/bootstrap-switch常用操作-属性.html" class="post-title-link" itemprop="url">bootstrap-switch常用操作/属性</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-04-22 21:15:53" itemprop="dateCreated datePublished" datetime="2018-04-22T21:15:53+08:00">2018-04-22</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-01-24 21:24:25" itemprop="dateModified" datetime="2019-01-24T21:24:25+08:00">2019-01-24</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/front-end/" itemprop="url" rel="index"><span itemprop="name">front-end</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h3 id="引入css、js"><a href="#引入css、js" class="headerlink" title="引入css、js"></a>引入css、js</h3><p><a href="http://www.bootcss.com/p/bootstrap-switch/" target="_blank" rel="noopener">bootstrap-switch中文官网</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;link rel=&quot;stylesheet&quot; href=&quot;$&#123;CONTEXT &#125;/css/bootstrap-switch.min.css&quot;&gt;</span><br><span class="line">&lt;script src=&quot;$&#123;CONTEXT &#125;/js/bootstrap/bootstrap-switch.min.js&quot;&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-<p><strong>注：</strong>貌似还有一个叫做bootstrapSwitch.js的插件，不要引入错了。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;div class=&quot;input-group&quot;&gt;</span><br><span class="line">&lt;label for=&quot;open&quot;&gt;操作&amp;nbsp;&lt;/label&gt;</span><br><span class="line">&lt;input id=&quot;open&quot; checked type=&quot;checkbox&quot; data-on-text=&quot;开&quot; data-off-text=&quot;关&quot; data-on-color=&quot;success&quot; /&gt;</span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="常用属性"><a href="#常用属性" class="headerlink" title="常用属性"></a>常用属性</h3><ul>
-<li>data-on-text=”开” data-off-text=”关”，代表开启/关闭时按钮上的文字。</li>
-<li>checked代表默认选中，不填代表不选中。</li>
-<li>data-on-color=”success”，代表选中时的颜色。</li>
-</ul>
-<h3 id="常用操作"><a href="#常用操作" class="headerlink" title="常用操作"></a>常用操作</h3><ul>
-<li>$(‘#open’).bootstrapSwitch();，开始自动生成一个按钮。注：#open是input的id。</li>
-<li>$(‘#open’).on(‘switchChange.bootstrapSwitch’, function (event,state) { }，switch触发的事件，所以不用自己再写click事件了。注：state代表按钮当前选中状态。</li>
-<li>$(‘#toggle-state-switch’).bootstrapSwitch(‘toggleState’);，来回切换。</li>
-<li>$(‘#toggle-state-switch’).bootstrapSwitch(‘setState’, false);，设置按钮状态，false代表未选中。</li>
-</ul>
-<p>另外不要写官网上的那个格式，官网上的格式是误导人的，它那个写法：把input放在div里，然后div加一个switch的class，这样其实是代表按钮自动生成后的dom节点。所以按照我这个写就行了。</p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/bootstrap-switch常用操作-属性.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2351,7 +2343,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">52</span>
+                    <span class="site-state-item-count">53</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
