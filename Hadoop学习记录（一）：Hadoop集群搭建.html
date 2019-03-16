@@ -104,7 +104,7 @@
 <meta property="og:site_name" content="博客">
 <meta property="og:description" content="使用jps，发现没有namenode使用命令/opt/hadoop/sbin/start-all.sh启动hadoop，之后使用jsp，一般来讲会出现如下6个线程12345655598 Jps54490 NameNode54684 DataNode54931 SecondaryNameNode55332 NodeManager38251 ResourceManager 但是我发现我运行后没有出现n">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-03-16T05:21:11.397Z">
+<meta property="og:updated_time" content="2019-03-16T05:24:07.513Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hadoop学习记录（一）：Hadoop集群搭建">
 <meta name="twitter:description" content="使用jps，发现没有namenode使用命令/opt/hadoop/sbin/start-all.sh启动hadoop，之后使用jsp，一般来讲会出现如下6个线程12345655598 Jps54490 NameNode54684 DataNode54931 SecondaryNameNode55332 NodeManager38251 ResourceManager 但是我发现我运行后没有出现n">
@@ -448,7 +448,7 @@
                 
               
 
-              <time title="创建时间：2019-03-16 12:54:37 / 修改时间：13:21:11" itemprop="dateCreated datePublished" datetime="2019-03-16T12:54:37+08:00">2019-03-16</time>
+              <time title="创建时间：2019-03-16 12:54:37 / 修改时间：13:24:07" itemprop="dateCreated datePublished" datetime="2019-03-16T12:54:37+08:00">2019-03-16</time>
             
 
             
@@ -508,7 +508,7 @@
         <h3 id="使用jps，发现没有namenode"><a href="#使用jps，发现没有namenode" class="headerlink" title="使用jps，发现没有namenode"></a>使用jps，发现没有namenode</h3><p>使用命令<code>/opt/hadoop/sbin/start-all.sh</code>启动hadoop，之后使用jsp，一般来讲会出现如下6个线程<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">55598 Jps</span><br><span class="line">54490 NameNode</span><br><span class="line">54684 DataNode</span><br><span class="line">54931 SecondaryNameNode</span><br><span class="line">55332 NodeManager</span><br><span class="line">38251 ResourceManager</span><br></pre></td></tr></table></figure></p>
 <p>但是我发现我运行后没有出现namenode。仔细观察中断启动时的日志发现，namenode的日志记录在<strong>/opt/hadoop/logs/hadoop-zhangyu-namenode-a2d8c523dd0b.log</strong>中，打开它，发现在最后居然报了异常。由于Hadoop是java写的，异常很好认（我就是学java出身的）。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java.io.IOException: There appears to be a gap in the edit log.  We expected txid 1, but got txid 16.</span><br></pre></td></tr></table></figure></p>
 <p>百度之后发现namenode的元数据破坏，需要恢复，具体参考<a href="https://blog.csdn.net/u011478909/article/details/51864071" target="_blank" rel="noopener">某csdn博客</a>。<br>使用<code>hadoop namenode -recover</code>即可恢复。</p>
-<h3 id="使用jps，发现没有datanode"><a href="#使用jps，发现没有datanode" class="headerlink" title="使用jps，发现没有datanode"></a>使用jps，发现没有datanode</h3><p>总结写在前：<br>由于意外hadoop没有创建data文件夹，执行<code>cp /data/tmp/hadoop/tmp/dfs/data /data/tmp/hadoop/hdfs</code>，并修改clusterId，clusterId在<strong>/data/tmp/hadoop/hdfs/data/current/VERSION</strong>中。</p>
+<h3 id="使用jps，发现没有datanode"><a href="#使用jps，发现没有datanode" class="headerlink" title="使用jps，发现没有datanode"></a>使用jps，发现没有datanode</h3><p>总结写在前：<br>由于意外hadoop没有创建data文件夹，执行<code>cp -r /data/tmp/hadoop/tmp/dfs/data /data/tmp/hadoop/hdfs</code>，并修改clusterId，clusterId在<strong>/data/tmp/hadoop/hdfs/data/current/VERSION</strong>中。</p>
 <p>在执行上面的操作修复namenode之后，发现原来在的datanode居然不见了。还是使用老办法发现日志文件（日志文件名字太长就不写了），异常：<code>All specified directories are failed to load。</code>。经过百度之后发现是datanode和namenode的VERSION文件中的clusterId不一致。所以只需要将clusterId更改成一直即可。<br>但是我的出现的问题重点不是这个，我在修改clusterId时发现：我的namenode配置在/data/tmp/hadoop/hdfs/name中。但是检查我的datanode配置是否在/data/tmp/hadoop/hdfs/data中时，发现hadoop根本没有创建这个文件夹。于是又进行排查，发现在/data/tmp/hadoop/tmp/dfs中存在data文件夹。于是使用命令<code>cp /data/tmp/hadoop/tmp/dfs/data /data/tmp/hadoop/hdfs</code>，将这份data文件夹拷贝到/data/tmp/hadoop/hdfs，并更改clusterId。<strong>VERSION文件在/data/tmp/hadoop/hdfs/data/current</strong></p>
 <a id="more"></a>
       
