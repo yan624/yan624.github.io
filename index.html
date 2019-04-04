@@ -264,7 +264,7 @@
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">10</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">11</span></a>
 
   </li>
         
@@ -345,7 +345,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">60</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">62</span></a>
 
   </li>
 
@@ -743,6 +743,372 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/机器学习学习记录（四）：K均值（K-means）.html">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/机器学习学习记录（四）：K均值（K-means）.html" class="post-title-link" itemprop="url">机器学习学习记录（四）：K均值（K-means）</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-03 13:54:13" itemprop="dateCreated datePublished" datetime="2019-04-03T13:54:13+08:00">2019-04-03</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-04-04 11:38:56" itemprop="dateModified" datetime="2019-04-04T11:38:56+08:00">2019-04-04</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/machine-learning/" itemprop="url" rel="index"><span itemprop="name">machine-learning</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>###<br>K-均值(K-means)算法是无监督算法，也是聚类(clustering)算法。</p>
+<h3 id="算法步骤"><a href="#算法步骤" class="headerlink" title="算法步骤"></a>算法步骤</h3><ol>
+<li>随机初始化几个点作为簇的质心，初始化方式有多种，可以自行选择。已知两种：</li>
+</ol>
+<ul>
+<li>随机选择K个样本作为簇的质心。来源于吴恩达机器学习视频</li>
+<li>min + (max - min) * (0到1之间的小数)，其中最大值最小值均代表。来源于《机器学习实战》</li>
+</ul>
+<ol start="2">
+<li>计算某个样本到每个簇的质心之间的代价（距离），代价函数有多种可自行选择。比如：</li>
+</ol>
+<ul>
+<li>均方误差(mse)<br>选出其中最小的代价，并求出簇的索引，然后将该样本划分给该质心所属的簇。每个样本都执行这步直到样本遍历完毕。</li>
+</ul>
+<ol start="3">
+<li>经过步骤2，每个样本都归属于一个簇。然后遍历每一个簇，将簇中的数据求均值，将该均值作为簇的新质心。</li>
+<li>重复以上步骤，直到发现每个样本都归属于某个簇，并且样本归属不会再发生变化。<br>简化如下：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">随机初始化质心</span><br><span class="line">	while true</span><br><span class="line">		for 每个样本</span><br><span class="line">			for 每个质心</span><br><span class="line">				计算每个样本到质心的代价</span><br><span class="line">			选出最小的代价</span><br><span class="line">			将样本分配给这个簇</span><br><span class="line">		</span><br><span class="line">		for 每个质心</span><br><span class="line">			求出该簇所属的样本的均值</span><br><span class="line">			将该均值设置为簇的新质点</span><br><span class="line">			</span><br><span class="line">		if 样本归属不再发生变化</span><br><span class="line">			break</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="举一个简单的例子"><a href="#举一个简单的例子" class="headerlink" title="举一个简单的例子"></a>举一个简单的例子</h3><p><a href="https://github.com/yan624/machine_learning_algorithms/tree/master/kmeans/simple_demo" target="_blank" rel="noopener">这里有一个简单例子</a><br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/机器学习学习记录（四）：K均值（K-means）.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </p></div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/selenium下打开Chrome闪退.html">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/selenium下打开Chrome闪退.html" class="post-title-link" itemprop="url">selenium下打开Chrome闪退</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-01 18:25:17 / 修改时间：18:26:33" itemprop="dateCreated datePublished" datetime="2019-04-01T18:25:17+08:00">2019-04-01</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>网上的其他解决办法都不对，后来发现了是因为一个很逗的错。<br>以下代码闪退<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">from selenium import webdriver</span><br><span class="line">webdriver.Chrome()</span><br></pre></td></tr></table></figure></p>
+<p>以下代码正常运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">from selenium import webdriver</span><br><span class="line">chrome = webdriver.Chrome()</span><br></pre></td></tr></table></figure></p>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/selenium下打开Chrome闪退.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yan624.github.io/使用WikiExtractor处理维基百科上的数据步骤-2019年3月.html">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -788,12 +1154,24 @@
                 
               
 
-              <time title="创建时间：2019-03-30 12:21:28 / 修改时间：12:55:32" itemprop="dateCreated datePublished" datetime="2019-03-30T12:21:28+08:00">2019-03-30</time>
+              <time title="创建时间：2019-03-30 12:21:28" itemprop="dateCreated datePublished" datetime="2019-03-30T12:21:28+08:00">2019-03-30</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-04-03 14:03:02" itemprop="dateModified" datetime="2019-04-03T14:03:02+08:00">2019-04-03</time>
               
             
           </span>
@@ -852,7 +1230,7 @@
 <li>首先进入<a href="https://github.com/attardi/wikiextractor" target="_blank" rel="noopener">wiki extractor的官网</a>。发现里面有很多py文件，与其他人写的博客上的教程完全不一样。别人的教程只有一个<em>WikiExtractor.py</em>文件。</li>
 <li>将该项目clone下来，放在你的项目中。如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/wiki%20extractor%E6%96%87%E4%BB%B6%E5%AD%98%E6%94%BE%E8%B7%AF%E5%BE%84.png" alt="wiki extractor文件存放路径"><br>我下的是压缩包，解压开后就存放在wikiextractor-master文件夹。至于test.py只是用来测试gensim的word2vec算法好不好用的，无视就好。</li>
 <li>进入wikiextractor-master文件夹执行<code>python setup.py install</code>，该步骤用于安装wiki extractor。其实<a href="https://github.com/attardi/wikiextractor" target="_blank" rel="noopener">wiki extractor的官网</a>也写了这一步。但是不知道为什么其他人的博客没人介绍。</li>
-<li>退出该文件夹到nlp_learning文件夹，执行<code>python wikiextractor-master/WikiExtractor.py -b 1200M -o extracted zhwiki-20190320-pages-articles-multistream1.xml-p1p162886.bz2</code>，这个命令应该很好理解，说一下里面的extracted，它是目标文件夹，就是提取出来的文本存放的那个文件夹。可以看到上面的图片里有这个文件夹。</li>
+<li>退出该文件夹到nlp_learning文件夹，执行<code>python wikiextractor-master/WikiExtractor.py -b 1200M -o extracted zhwiki-20190320-pages-articles-multistream1.xml-p1p162886.bz2</code>，这个命令应该很好理解，说一下里面的extracted，它是目标文件夹，就是提取出来的文本存放的那个文件夹。可以看到上面的图片里有这个文件夹。-b代表每多大字节输出一份文件，参数的具体使用方法可以到<a href="https://github.com/attardi/wikiextractor#usage" target="_blank" rel="noopener">这里</a>查询。</li>
 <li>接下慢慢等就行了，我的文件157MB，大概洗脸刷牙后就提取完了。</li>
 </ol>
 <p>参考了<a href="https://blog.csdn.net/grafx/article/details/78575850" target="_blank" rel="noopener">博客</a>，但是他这篇博客提供命令我也执行不了。如果你也成功不了，可以试试我的步骤。<br>
@@ -1351,7 +1729,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-04-01 14:25:18" itemprop="dateModified" datetime="2019-04-01T14:25:18+08:00">2019-04-01</time>
+                <time title="修改时间：2019-04-03 13:55:36" itemprop="dateModified" datetime="2019-04-03T13:55:36+08:00">2019-04-03</time>
               
             
           </span>
@@ -1539,8 +1917,42 @@
             
 
             
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-04-03 13:55:29" itemprop="dateModified" datetime="2019-04-03T13:55:29+08:00">2019-04-03</time>
+              
+            
           </span>
 
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/machine-learning/" itemprop="url" rel="index"><span itemprop="name">machine-learning</span></a></span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -1677,8 +2089,42 @@
             
 
             
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-04-03 13:55:19" itemprop="dateModified" datetime="2019-04-03T13:55:19+08:00">2019-04-03</time>
+              
+            
           </span>
 
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/machine-learning/" itemprop="url" rel="index"><span itemprop="name">machine-learning</span></a></span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -1751,362 +2197,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/Hadoop学习记录（一）：Hadoop集群搭建.html">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/Hadoop学习记录（一）：Hadoop集群搭建.html" class="post-title-link" itemprop="url">Hadoop学习记录（一）：Hadoop集群搭建</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-03-16 12:54:37" itemprop="dateCreated datePublished" datetime="2019-03-16T12:54:37+08:00">2019-03-16</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-03-26 15:10:24" itemprop="dateModified" datetime="2019-03-26T15:10:24+08:00">2019-03-26</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/hadoop/" itemprop="url" rel="index"><span itemprop="name">hadoop</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h3 id="使用jps，发现没有namenode"><a href="#使用jps，发现没有namenode" class="headerlink" title="使用jps，发现没有namenode"></a>使用jps，发现没有namenode</h3><p>使用命令<code>/opt/hadoop/sbin/start-all.sh</code>启动hadoop，之后使用jsp，一般来讲会出现如下6个线程<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">55598 Jps</span><br><span class="line">54490 NameNode</span><br><span class="line">54684 DataNode</span><br><span class="line">54931 SecondaryNameNode</span><br><span class="line">55332 NodeManager</span><br><span class="line">38251 ResourceManager</span><br></pre></td></tr></table></figure></p>
-<p>但是我发现我运行后没有出现namenode。仔细观察中断启动时的日志发现，namenode的日志记录在<strong>/opt/hadoop/logs/hadoop-zhangyu-namenode-a2d8c523dd0b.log</strong>中，打开它，发现在最后居然报了异常。由于Hadoop是java写的，异常很好认（我就是学java出身的）。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java.io.IOException: There appears to be a gap in the edit log.  We expected txid 1, but got txid 16.</span><br></pre></td></tr></table></figure></p>
-<p>百度之后发现namenode的元数据破坏，需要恢复，具体参考<a href="https://blog.csdn.net/u011478909/article/details/51864071" target="_blank" rel="noopener">某csdn博客</a>。<br>使用<code>hadoop namenode -recover</code>即可恢复。</p>
-<h3 id="使用jps，发现没有datanode"><a href="#使用jps，发现没有datanode" class="headerlink" title="使用jps，发现没有datanode"></a>使用jps，发现没有datanode</h3><p>总结写在前：<br>由于意外hadoop没有创建data文件夹，执行<code>cp -r /data/tmp/hadoop/tmp/dfs/data /data/tmp/hadoop/hdfs</code>，并修改clusterId，clusterId在<strong>/data/tmp/hadoop/hdfs/data/current/VERSION</strong>中。</p>
-<p>在执行上面的操作修复namenode之后，发现原来在的datanode居然不见了。还是使用老办法发现日志文件（日志文件名字太长就不写了），异常：<code>All specified directories are failed to load。</code>。经过百度之后发现是datanode和namenode配置文件的VERSION文件中的clusterId不一致。所以只需要将clusterId更改成一致即可。<br>但是我的出现的问题重点不是这个，我在修改clusterId时发现：我的namenode配置在/data/tmp/hadoop/hdfs/name中。但是检查我的datanode配置是否在/data/tmp/hadoop/hdfs/data中时，发现hadoop根本没有创建这个文件夹。于是又进行排查，发现在/data/tmp/hadoop/tmp/dfs中存在data文件夹。于是使用命令<code>cp /data/tmp/hadoop/tmp/dfs/data /data/tmp/hadoop/hdfs</code>，将这份data文件夹拷贝到/data/tmp/hadoop/hdfs，并更改clusterId。<strong>VERSION文件在/data/tmp/hadoop/hdfs/data/current</strong></p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/Hadoop学习记录（一）：Hadoop集群搭建.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/anaconda的锅：使用pyquery出现urlopen-error-unknown-url-type-https.html">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/anaconda的锅：使用pyquery出现urlopen-error-unknown-url-type-https.html" class="post-title-link" itemprop="url">anaconda的锅：使用pyquery出现urlopen-error-unknown-url-type-https</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-03-13 22:41:18 / 修改时间：22:56:56" itemprop="dateCreated datePublished" datetime="2019-03-13T22:41:18+08:00">2019-03-13</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>使用pyquery出现urlopen-error-unknown-url-type-https的异常，上网查发现是openssl的问题。话不多说直接说结果。<br>参考文章如下：<br><a href="https://blog.csdn.net/gw85047034/article/details/88039705" target="_blank" rel="noopener">anaconda新建环境在PyCharm执行import ssl失败</a></p>
-<p>由于anaconda的python版本是3.7.0，而我在创建虚拟环境时，使用命令<code>conda create -n spider python=3</code>，最后的python=3会选择python最新的版本安装，所以anaconda选择了python3.7.3。于是anaconda的python版本和虚拟环境的python版本冲突了，而我把虚拟环境给PyCharm用了，所以就是anaconda和PyCharm冲突了。只要把虚拟环境的python版本换成和anaconda的python版本一致就可以了。<br>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/anaconda的锅：使用pyquery出现urlopen-error-unknown-url-type-https.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </p></div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -2151,7 +2246,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">60</span>
+                    <span class="site-state-item-count">62</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2231,7 +2326,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">10</span>
+                      
+                    
+                    <span class="site-state-item-count">11</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
