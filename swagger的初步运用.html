@@ -271,7 +271,7 @@
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">11</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">13</span></a>
 
   </li>
         
@@ -300,7 +300,7 @@
       
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">17</span></a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">15</span></a>
 
   </li>
 
@@ -352,7 +352,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">62</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">67</span></a>
 
   </li>
 
@@ -528,7 +528,7 @@
 <h3 id="query（配合-RequestParam）"><a href="#query（配合-RequestParam）" class="headerlink" title="query（配合@RequestParam）"></a>query（配合@RequestParam）</h3><p>这个我认为是有bug的，如果在swagger2的配置中这样写：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">new Docket(DocumentationType.SWAGGER_2)</span><br><span class="line">    .apiInfo(new ApiInfoBuilder()</span><br><span class="line">        .title(&quot;订餐系统_接口文档&quot;)</span><br><span class="line">        .description(&quot;描述：用于订餐管理系统其他模块的数据调用&quot;)</span><br><span class="line">        .version(&quot;版本号:1.0&quot;)</span><br><span class="line">        .build()</span><br><span class="line">    )</span><br><span class="line">    .select()</span><br><span class="line">    .apis(RequestHandlerSelectors.any())</span><br><span class="line">    .paths(PathSelectors.any())</span><br><span class="line">    .build()</span><br><span class="line">    .pathMapping(&quot;/&quot;)</span><br><span class="line">    .directModelSubstitute(LocalDate.class, String.class)</span><br><span class="line">    .genericModelSubstitutes(ResponseEntity.class)</span><br><span class="line">    .useDefaultResponseMessages(false)</span><br><span class="line">    .enableUrlTemplating(true)</span><br></pre></td></tr></table></figure>
 <p>看最后一个方法，这就代表你的文档最后生成是这样的：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/ee28b7c4e8f84f33938d2d2c1deced0a.PNG" alt="swagger post的接口样例截图" title="swagger post的接口样例截图"><br>我为什么要说有bug？这看起来很美好，但是当你在网站上测试时，如下<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/737c0b56dad0405cb8a5b0e330ee8380.PNG" alt="url模板bug" title="url模板bug"><br>swagger提供了，在网站上直接测试的功能，但是请看黄色部分，/modify-password后面跟了什么，看起来那只是说明用的{?newPassword…}，直接加在了链接上，导致报了404，找不到该url。<br>就这玩意搞了我好几个小时，后来还是无意中发现的。但是如果把那个方法删了那么就会变成下面的样子。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/e98acd4958754ee5b5876623b758a493.PNG" alt="正常的post请求url模板" title="正常的post请求url模板"><br>这样就是正常的，就是普通的get请求，但是这里注意一点，post请求就不要用query了，因为它是直接在url后跟参数的。说是post其实被它改成了get（ps：仅在网页上测试时很坑爹，如果只是给其他开发者使用，那是无所谓的，顶多不要在线测试这项功能）。</p>
-<h3 id="form"><a href="#form" class="headerlink" title="form"></a>form</h3><p>这个也很坑爹，我也是后来发现的。常见的表单提交，可以f12看到是Query String Parameters，但是这个使用了坑爹的Request Plyload（并没有说它不好）。哪坑爹呢？后台的controller方法里我试了无数个注解，无数个方法接受不到值，要么是null，要么http错误。<br>我最会想到了，也是因为前段时间正好用过—》我看到swagger在网页上提示是formData，玩过前端的人应该知道js有一个对象叫做：FormData（感兴趣的自己百度）。坑爹的就在这，FormData是用来提交二进制数据的（我是这么理解的），比如一张图片，一份文件。所以我抱着尝试的心态，在Controller的方法中加入了一个参数MultipartFile对象，尼玛，居然正常接收到了参数。<br>综上，如果用了form，想使用在线测试功能，就加个MultipartFile参数。</p>
+<h3 id="form"><a href="#form" class="headerlink" title="form"></a>form</h3><p>这个也很坑爹，我也是后来发现的。常见的表单提交，可以f12看到是Query String Parameters，但是这个使用了坑爹的Request Plyload（并没有说它不好）。哪坑爹呢？后台的controller方法里我试了无数个注解，无数个方法接受不到值，要么是null，要么http错误。<br>我最会想到了，也是因为前段时间正好用过—-》我看到swagger在网页上提示是formData，玩过前端的人应该知道js有一个对象叫做：FormData（感兴趣的自己百度）。坑爹的就在这，FormData是用来提交二进制数据的（我是这么理解的），比如一张图片，一份文件。所以我抱着尝试的心态，在Controller的方法中加入了一个参数MultipartFile对象，尼玛，居然正常接收到了参数。<br>综上，如果用了form，想使用在线测试功能，就加个MultipartFile参数。</p>
 <h3 id="body"><a href="#body" class="headerlink" title="body"></a>body</h3><p>这个还行，因为如果使用了这个swagger会提交json数据（但是不知道是字符串还是对象，初步估计应该是对象），所以如果使用body，那么@ApiImplicitParam就不用写很多了，比如说，你想接受用户的账号（account），密码（password），那么不需要这样写：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@ApiImplicitParams(</span><br><span class="line">    &#123;@ApiImplicitParam(name=&quot;account&quot;,value=&quot;账号&quot;,dataType=&quot;String&quot;, paramType = &quot;body&quot;), </span><br><span class="line">    @ApiImplicitParam(name=&quot;password&quot;,value=&quot;密码&quot;,dataType=&quot;String&quot;, paramType = &quot;body&quot;)&#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
 <p>只需要这样：<code>@ApiImplicitParam(name=&quot;user&quot;,value=&quot;用户信息&quot;,dataType=&quot;User&quot;, paramType = &quot;body&quot;)</code><br>就可以了，User就是实体类，在网页上显示就是这样：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/327d110778174272982d99f219254f7e.PNG" alt="swagger中将参数类型设置body后的结果" title="swagger中将参数类型设置body后的结果"><br>它会让你提交json数据，只有body会让你提交json数据，很好区分。<br>但是我为什么要说它坑爹。因为swagger吧User的所有字段都放进去了，虽然可以一个个删掉，但是每次浏览网页都要做一遍，麻烦死了。所以需要使用如下方法：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/b9b79737da504931b2a940c1a201330f.PNG" alt="用户实体类" title="用户实体类"><br>设置为只读，这样就不会在网页上显示了，我们可以把除了account（图中的tel）和password的字段全部设置为只读。这里放心我测试过了，只读只是在网页看不见，其他的功能暂时没有受到影响。<br><strong>注：</strong>@RequestBody和@ModelAttribute不能一起用<br><strong>更新：</strong>今天测试的时候发现，如果其他客户端使用代码的方式调用会出现不小的问题。这里把我解决的部分写出：content-type必须设置为“application/json”，传递参数时，不需要写键，只需要传一个json字符串即可，并且json字符串必须使用双引号，而不能是单引号（测试于fastxml jackson）。<br>我列出我的代码（使用RestTemplate）<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/ebcbfdb2368e43be85252b69a65dce96.PNG" alt="使用body的问题" title="使用body的问题"></p>
@@ -653,7 +653,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">62</span>
+                    <span class="site-state-item-count">67</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -696,11 +696,7 @@
                     
                       
                     
-                      
-                    
-                      
-                    
-                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-count">15</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -735,7 +731,11 @@
                     
                       
                     
-                    <span class="site-state-item-count">11</span>
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -967,6 +967,13 @@
   
 
   
+  
+
+  
+  
+
+  
+
 
   
 
@@ -1061,5 +1068,27 @@
 
   
 
+  <script type="text/x-mathjax-config">
+	  MathJax.Hub.Config({
+	    menuSettings: {
+	      zoom: "None"
+	    },
+	    showMathMenu: false,
+	    jax: ["input/TeX","output/CommonHTML"],
+	    extensions: ["tex2jax.js"],
+	    TeX: {
+	      extensions: ["AMSmath.js","AMSsymbols.js"],
+	      equationNumbers: {
+	        autoNumber: "AMS"
+	      }
+	    },
+	    tex2jax: {
+	      inlineMath: [["\\(", "\\)"]],
+	      displayMath: [["\\[", "\\]"]]
+	    }
+	  });
+	</script>
+	
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.6.1/MathJax.js"></script>
 </body>
 </html>

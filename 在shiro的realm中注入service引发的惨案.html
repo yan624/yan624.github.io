@@ -264,7 +264,7 @@
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">11</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">13</span></a>
 
   </li>
         
@@ -293,7 +293,7 @@
       
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">17</span></a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">15</span></a>
 
   </li>
 
@@ -345,7 +345,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">62</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">67</span></a>
 
   </li>
 
@@ -527,7 +527,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;import resource=&quot;classpath:springContextConfig.xml&quot; /&gt;</span><br><span class="line">&lt;import resource=&quot;classpath:spring/upms-dao.xml&quot; /&gt;</span><br><span class="line">&lt;import resource=&quot;classpath:spring/upms-service.xml&quot; /&gt;</span><br><span class="line">&lt;import resource=&quot;classpath:spring/upms-tx.xml&quot; /&gt;</span><br><span class="line">&lt;import resource=&quot;classpath:shiro/shiro.xml&quot; /&gt;</span><br></pre></td></tr></table></figure>
 <p>然后看了web.xml文件</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;context-param&gt;</span><br><span class="line">	&lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;</span><br><span class="line">	&lt;param-value&gt;classpath:applicationContext.xml&lt;/param-value&gt;</span><br><span class="line">&lt;/context-param&gt;</span><br></pre></td></tr></table></figure>
-<p>好像稍微有点头绪了<br>我在初始化spring上下文的时候，直接初始化了shiro.xml，这没问题。但是在applicationContext.xml中第一行的<code>&lt;import resource=&quot;classpath:springContextConfig.xml&quot; /&gt;</code>里面注册了SPringContextUtil这个工具类。（这个工具类不会一下子注册进去成为bean，它会在spring上下文初始化完毕之后才行）。<br>所以我需要在realm中注册AdminService—–&gt;AdminService继承了BaseServiceImpl—–&gt;BaseServiceImpl在构造器中使用了applicationContext.getBean()。这个步骤在spring上下文初始化还没完成的时候执行，但是你要想使用applicationContext，spring上下文必须初始化完毕，所以冲突了。<br>那我就想直接把shiro.xml托到DispatcherServlet里面初始化就完事了。因为在DispatcherServlet加载的配置文件中，我扫描了Controller层，而在Controller层使用是没问题的（我之前还不懂的时候就这么做的，没报异常）。然后我这么做了，但是又报异常了—–&gt;No Bean Named “shiroFilter”。这不坑爹吗？<br>我先缕一缕，<code>&lt;context-param&gt;</code>最先执行，其次是<code>&lt;filter&gt;</code>，最后是<code>&lt;servlet&gt;</code>（不一定完全正确，但是可以这么理解）。所以说shiro.xml放在DispatcherServlet中不行！因为filter比servlet先执行，它必须要shiro.xml中的bean。所以怎么办？我必须把shiro.xml放在context-param和filter的中间。这根本不可能（起码我做不到）。<br>后来我想到了懒加载（我印象中有听说过这个概念），我一百度还真有。那我应该把懒加载放在哪个bean上呢？我决定放在AdminService上。但是没用，因为Realm这个类不能懒加载，因为它马上就被初始化了。而realm中注入了AdminService，所以即使是懒加载也没屌用。<br>最后终于解决了。<br>既然你要初始化bean，要用构造器，我就把调用applicationContext的代码不放在构造器里。我写了一个initMapper方法。</p>
+<p>好像稍微有点头绪了<br>我在初始化spring上下文的时候，直接初始化了shiro.xml，这没问题。但是在applicationContext.xml中第一行的<code>&lt;import resource=&quot;classpath:springContextConfig.xml&quot; /&gt;</code>里面注册了SPringContextUtil这个工具类。（这个工具类不会一下子注册进去成为bean，它会在spring上下文初始化完毕之后才行）。<br>所以我需要在realm中注册AdminService——-&gt;AdminService继承了BaseServiceImpl——-&gt;BaseServiceImpl在构造器中使用了applicationContext.getBean()。这个步骤在spring上下文初始化还没完成的时候执行，但是你要想使用applicationContext，spring上下文必须初始化完毕，所以冲突了。<br>那我就想直接把shiro.xml托到DispatcherServlet里面初始化就完事了。因为在DispatcherServlet加载的配置文件中，我扫描了Controller层，而在Controller层使用是没问题的（我之前还不懂的时候就这么做的，没报异常）。然后我这么做了，但是又报异常了——-&gt;No Bean Named “shiroFilter”。这不坑爹吗？<br>我先缕一缕，<code>&lt;context-param&gt;</code>最先执行，其次是<code>&lt;filter&gt;</code>，最后是<code>&lt;servlet&gt;</code>（不一定完全正确，但是可以这么理解）。所以说shiro.xml放在DispatcherServlet中不行！因为filter比servlet先执行，它必须要shiro.xml中的bean。所以怎么办？我必须把shiro.xml放在context-param和filter的中间。这根本不可能（起码我做不到）。<br>后来我想到了懒加载（我印象中有听说过这个概念），我一百度还真有。那我应该把懒加载放在哪个bean上呢？我决定放在AdminService上。但是没用，因为Realm这个类不能懒加载，因为它马上就被初始化了。而realm中注入了AdminService，所以即使是懒加载也没屌用。<br>最后终于解决了。<br>既然你要初始化bean，要用构造器，我就把调用applicationContext的代码不放在构造器里。我写了一个initMapper方法。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public void initMapper() &#123;</span><br><span class="line">    Class&lt;Mapper&gt; mapperType = getMapperType();</span><br><span class="line">    this.mapper = (Mapper) SpringContextUtil.getBean(mapperType);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>注意@Override注解。<br>那么现在问题就是，怎么调用这个方法。<br>经过度娘之后，终于解决了。贴上类，我就不解释了。附上链接<a href="https://www.cnblogs.com/rollenholt/p/3612440.html" target="_blank" rel="noopener">https://www.cnblogs.com/rollenholt/p/3612440.html</a></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">public class MapperInit implements ApplicationListener&lt;ContextRefreshedEvent&gt; &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void onApplicationEvent(ContextRefreshedEvent event) &#123;</span><br><span class="line">        //下面的方法执行就行了，这个方法会执行两次，我们不需要这么做</span><br><span class="line">    &#125;</span><br><span class="line">       </span><br><span class="line">    /**</span><br><span class="line">     * 需要执行的逻辑代码，当spring容器初始化完成后就会执行该方法。</span><br><span class="line">     * 由于加了@PostConstruct注解所以这个方法跟上面的onApplicationEvent一样。</span><br><span class="line">     * 但是这个方法只会在root application context环境中执行，不会在 projectName-servlet context中执行</span><br><span class="line">     */</span><br><span class="line">    @SuppressWarnings(&quot;rawtypes&quot;)</span><br><span class="line">    @PostConstruct</span><br><span class="line">    private void initMapper() &#123;</span><br><span class="line">        Map&lt;String, BaseService&gt; beansOfType = SpringContextUtil.getApplicationContext().getBeansOfType(BaseService.class);</span><br><span class="line">        for(Map.Entry&lt;String, BaseService&gt; entrySet : beansOfType.entrySet()) &#123;</span><br><span class="line">            BaseService service = entrySet.getValue();</span><br><span class="line">            service.initMapper();</span><br><span class="line">            System.out.println(service);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -642,7 +642,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">62</span>
+                    <span class="site-state-item-count">67</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -685,11 +685,7 @@
                     
                       
                     
-                      
-                    
-                      
-                    
-                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-count">15</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -724,7 +720,11 @@
                     
                       
                     
-                    <span class="site-state-item-count">11</span>
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -939,6 +939,13 @@
   
 
   
+  
+
+  
+  
+
+  
+
 
   
 
@@ -1033,5 +1040,27 @@
 
   
 
+  <script type="text/x-mathjax-config">
+	  MathJax.Hub.Config({
+	    menuSettings: {
+	      zoom: "None"
+	    },
+	    showMathMenu: false,
+	    jax: ["input/TeX","output/CommonHTML"],
+	    extensions: ["tex2jax.js"],
+	    TeX: {
+	      extensions: ["AMSmath.js","AMSsymbols.js"],
+	      equationNumbers: {
+	        autoNumber: "AMS"
+	      }
+	    },
+	    tex2jax: {
+	      inlineMath: [["\\(", "\\)"]],
+	      displayMath: [["\\[", "\\]"]]
+	    }
+	  });
+	</script>
+	
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.6.1/MathJax.js"></script>
 </body>
 </html>
