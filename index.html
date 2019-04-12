@@ -264,7 +264,7 @@
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">13</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">14</span></a>
 
   </li>
         
@@ -345,7 +345,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">67</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">69</span></a>
 
   </li>
 
@@ -736,6 +736,381 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/李宏毅深度学习2017学习记录（二）：Deep-Learning-for-Language-Modeling.html">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/学习笔记/李宏毅深度学习2017学习记录（二）：Deep-Learning-for-Language-Modeling.html" class="post-title-link" itemprop="url">李宏毅深度学习2017学习记录（二）：Deep Learning for Language Modeling</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-09 10:58:16" itemprop="dateCreated datePublished" datetime="2019-04-09T10:58:16+08:00">2019-04-09</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-04-12 16:28:22" itemprop="dateModified" datetime="2019-04-12T16:28:22+08:00">2019-04-12</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/machine-learning/" itemprop="url" rel="index"><span itemprop="name">machine-learning</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h3 id="Language-Modeling"><a href="#Language-Modeling" class="headerlink" title="Language Modeling"></a>Language Modeling</h3><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A02017%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%88%E4%BA%8C%EF%BC%89%EF%BC%9ADeep-Learning-for-Language-Modeling/Language%20Modeling.jpg" alt="Language Modeling"></p>
+<h4 id="N-gram"><a href="#N-gram" class="headerlink" title="N-gram"></a>N-gram</h4><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A02017%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%88%E4%BA%8C%EF%BC%89%EF%BC%9ADeep-Learning-for-Language-Modeling/N-gram.jpg" alt="N-gram"><br>N-gram是自然语言处理中的算法。2-gram读作bi-gram。</p>
+<h4 id="NN-based-LM"><a href="#NN-based-LM" class="headerlink" title="NN-based LM"></a>NN-based LM</h4><p>怎么做：</p>
+<ol>
+<li>搜集training数据</li>
+<li>learn一个Neural Network，通过两个词predict下一个词，如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A02017%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%88%E4%BA%8C%EF%BC%89%EF%BC%9ADeep-Learning-for-Language-Modeling/NN-based%20LM.jpg" alt="NN-based LM"></li>
+<li>使用cross entropy minimize</li>
+<li>有了Neural Network后算一个句子的几率，如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A02017%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%88%E4%BA%8C%EF%BC%89%EF%BC%9ADeep-Learning-for-Language-Modeling/%E8%AE%A1%E7%AE%97%E5%8F%A5%E5%AD%90%E7%9A%84%E5%87%A0%E7%8E%87.jpg" alt="计算句子的几率"><br>其中STRAT是一个token，代表句子的起始。</li>
+</ol>
+<h4 id="RNN-based-LM"><a href="#RNN-based-LM" class="headerlink" title="RNN-based LM"></a>RNN-based LM</h4><p>李宏毅深度学习p4 08:49开始，由于没学过RNN，所以先跳过。</p>
+<h4 id="Challenge-of-N-gram"><a href="#Challenge-of-N-gram" class="headerlink" title="Challenge of N-gram"></a>Challenge of N-gram</h4><p>为什么要使用NN-based model。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A02017%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%88%E4%BA%8C%EF%BC%89%EF%BC%9ADeep-Learning-for-Language-Modeling/Challenge%20of%20N-gram.jpg" alt="Challenge of N-gram"><br>就是概率估不准。</p>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/学习笔记/李宏毅深度学习2017学习记录（二）：Deep-Learning-for-Language-Modeling.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/李宏毅深度学习2017学习记录（一）：Computational-Graph-Backpropagation.html">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/学习笔记/李宏毅深度学习2017学习记录（一）：Computational-Graph-Backpropagation.html" class="post-title-link" itemprop="url">李宏毅深度学习2017学习记录（一）：Computational Graph & Backpropagation</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-08 22:22:57" itemprop="dateCreated datePublished" datetime="2019-04-08T22:22:57+08:00">2019-04-08</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-04-12 16:28:25" itemprop="dateModified" datetime="2019-04-12T16:28:25+08:00">2019-04-12</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/machine-learning/" itemprop="url" rel="index"><span itemprop="name">machine-learning</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>此系列视频还有两个Review视频，分别为第一个视频：Basic Structures for Deep Learning Models(Part 1)， 第二个视频：Basic Structures for Deep Learning Models(Part 2)。此次学习记录为第三个视频。<br>个人认为Review视频不需要看，而且这两个视频时间贼长，加起来得有两个多小时。没必要浪费时间，即使你根本没学过Review中的知识点也不用去看。他的Review里不会讲很深，基本上就过过场，就算有很深的东西也完全不影响继续往下学。1P时长80分钟，说实话如果自己属于小白阶段，去看那么长的视频是挺打击人的兴趣的，如果是大佬或者已经入门的人当然看得津津有味了。</p>
+<h3 id="Computational-Graph"><a href="#Computational-Graph" class="headerlink" title="Computational Graph"></a>Computational Graph</h3><h4 id="什么是Computational-Graph"><a href="#什么是Computational-Graph" class="headerlink" title="什么是Computational Graph"></a>什么是Computational Graph</h4><p>这实际上跟要学的深度学习没什么关系，只是名字好听点，无视就好，如下图就是一个Computational Graph。主要用来在计算神经网络一些输出时，便于理解。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A02017%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9AComputational-Graph-Backpropagation/Computational%20Graph%E4%BE%8B%E5%AD%90.jpg" alt="Computational Graph例子"><br>在看一个比较贴近实际的例子，顺便复习一下链式求导法则。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A02017%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9AComputational-Graph-Backpropagation/Computational%20Graph%E9%93%BE%E5%BC%8F%E6%B1%82%E5%AF%BC%E6%B3%95%E5%88%99%E7%A4%BA%E4%BE%8B.jpg" alt="Computational Graph链式求导法则示例"></p>
+<h4 id="通过链式求导的例子理解反向传播（Backpropagation）算法"><a href="#通过链式求导的例子理解反向传播（Backpropagation）算法" class="headerlink" title="通过链式求导的例子理解反向传播（Backpropagation）算法"></a>通过链式求导的例子理解反向传播（Backpropagation）算法</h4><p>首先进行正向链式求导，如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A02017%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9AComputational-Graph-Backpropagation/%E6%AD%A3%E5%90%91%E9%93%BE%E5%BC%8F%E6%B1%82%E5%AF%BC.jpg" alt="正向链式求导"><br>图中要求计算e对a求偏导，首先给出a=3, b=2。其中c=a+b, d=b+1。<br>按照李宏毅老师使用链式求导法则，先要计算c对a求导得到1。e再对c求导得到b+1，带入b=2，得到3。所以3对a求偏导等于1*3=3。<br>上面这种链式求导法则有点乱，如果没仔细学过<em>微积分</em>可能难以理解。其实对于方程e = (a+b) * (b+1)，e对a求偏导，直接看出来都可以。利用考研时的口诀“左导右不导，左不导右导”（也就是<a href="https://baike.baidu.com/item/%E8%8E%B1%E5%B8%83%E5%B0%BC%E8%8C%A8%E5%85%AC%E5%BC%8F/8779293?fr=aladdin" target="_blank" rel="noopener">莱布尼茨公式</a>），直接得到结果<script type="math/tex">\frac{\partial e}{\partial a} = b+1</script>。<br>然后将b=2带入b+1得到结果还是3。</p>
+<p>接着进行反向模式，如下图:<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A02017%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9AComputational-Graph-Backpropagation/%E5%8F%8D%E5%90%91%E9%93%BE%E5%BC%8F%E6%B1%82%E5%AF%BC.jpg" alt="反向链式求导"><br>现在图中要求计算<script type="math/tex">\frac{\partial e}{\partial a}</script>以及<script type="math/tex">\frac{\partial e}{\partial b}</script>，当然你可以分别进行两次链式求导，得到结果。但是如果从e出发，也就是反向，那么就可以同时得到<script type="math/tex">\frac{\partial e}{\partial a}</script>以及<script type="math/tex">\frac{\partial e}{\partial b}</script>的结果。<br>不要在意e为什么等于1，只不过一个输入而已。<br>此外，如果阅读过《deep learning and neural network》一书，看过吴恩达机器学习视频或者其它资料的应该已经能反应出来。连接线上的求偏导实际上就跟神经网络上的权重一个意思，然后也是一层一层地反向传播。<br>这个输入e实际上就是神经网络中的反向传播算法中的输入。就是最后一层神经元的误差<script type="math/tex">\delta^l = h-y</script>。这里吴恩达老师和《deep learning and neural network》作者的最后一层误差公式不一样，<strong>目前不明</strong>，暂时不做解释，这里的公式是吴恩达老师的。<br>然后就是误差*权重+偏差得到前一层的误差，具体不展开。</p>
+<h4 id="反向传播的好处"><a href="#反向传播的好处" class="headerlink" title="反向传播的好处"></a>反向传播的好处</h4><p>如果你的root只有一个，那么这个Computational Graph中的所有偏微分就都可以一次性算出。对应于神经网络，我们就是要这样的效果。</p>
+<h4 id="参数共享（Parameter-sharing）"><a href="#参数共享（Parameter-sharing）" class="headerlink" title="参数共享（Parameter sharing）"></a>参数共享（Parameter sharing）</h4><p>略，看了一眼貌似挺简单。</p>
+<h3 id="Computational-Graph-for-Feedforword-Net"><a href="#Computational-Graph-for-Feedforword-Net" class="headerlink" title="Computational Graph for Feedforword Net"></a>Computational Graph for Feedforword Net</h3><p>李宏毅深度学习p3从21:16到52:48讲解梯度下降算法、前馈神经网络以及反向传播算法的具体数学原理<br>一直没看懂原理，以后再看。</p>
+<h3 id="Computational-Graph-for-Recurrent-Network"><a href="#Computational-Graph-for-Recurrent-Network" class="headerlink" title="Computational Graph for Recurrent Network"></a>Computational Graph for Recurrent Network</h3>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/学习笔记/李宏毅深度学习2017学习记录（一）：Computational-Graph-Backpropagation.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yan624.github.io/next主题中使用Mathjax.html">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -919,7 +1294,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/《神经网络与深度学习》学习笔记（二）：反向传播算法如何工作的？.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题.html">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="朱冲䶮">
@@ -939,7 +1314,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/《神经网络与深度学习》学习笔记（二）：反向传播算法如何工作的？.html" class="post-title-link" itemprop="url">《神经网络与深度学习》学习笔记（二）：反向传播算法如何工作的？</a>
+                <a href="/学习笔记/《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题.html" class="post-title-link" itemprop="url">《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题</a>
               
             
           </h1>
@@ -964,12 +1339,24 @@
                 
               
 
-              <time title="创建时间：2019-04-08 12:32:53 / 修改时间：22:16:13" itemprop="dateCreated datePublished" datetime="2019-04-08T12:32:53+08:00">2019-04-08</time>
+              <time title="创建时间：2019-04-08 12:32:53" itemprop="dateCreated datePublished" datetime="2019-04-08T12:32:53+08:00">2019-04-08</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-04-12 16:16:07" itemprop="dateModified" datetime="2019-04-12T16:16:07+08:00">2019-04-12</time>
               
             
           </span>
@@ -1023,7 +1410,7 @@
       
         
           <p><a href="https://tigerneil.gitbooks.io/neural-networks-and-deep-learning-zh/content/chapter2.html" target="_blank" rel="noopener">本文中文章节地址</a><br><a href="http://neuralnetworksanddeeplearning.com/chap2.html" target="_blank" rel="noopener">本文英文章节地址</a></p>
-<h3 id="热身：神经网络中使用矩阵快速计算输出的观点"><a href="#热身：神经网络中使用矩阵快速计算输出的观点" class="headerlink" title="热身：神经网络中使用矩阵快速计算输出的观点"></a>热身：神经网络中使用矩阵快速计算输出的观点</h3><h4 id="神经网络中一些符号的定义"><a href="#神经网络中一些符号的定义" class="headerlink" title="神经网络中一些符号的定义"></a>神经网络中一些符号的定义</h4><p>引用自<a href="https://tigerneil.gitbooks.io/neural-networks-and-deep-learning-zh/content/chapter2.html#%E7%83%AD%E8%BA%AB%EF%BC%9A%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B8%AD%E4%BD%BF%E7%94%A8%E7%9F%A9%E9%98%B5%E5%BF%AB%E9%80%9F%E8%AE%A1%E7%AE%97%E8%BE%93%E5%87%BA%E7%9A%84%E8%A7%82%E7%82%B9" target="_blank" rel="noopener">原文中文翻译</a></p>
+<h3 id="神经网络中一些符号的定义"><a href="#神经网络中一些符号的定义" class="headerlink" title="神经网络中一些符号的定义"></a>神经网络中一些符号的定义</h3><p>引用自<a href="https://tigerneil.gitbooks.io/neural-networks-and-deep-learning-zh/content/chapter2.html#%E7%83%AD%E8%BA%AB%EF%BC%9A%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B8%AD%E4%BD%BF%E7%94%A8%E7%9F%A9%E9%98%B5%E5%BF%AB%E9%80%9F%E8%AE%A1%E7%AE%97%E8%BE%93%E5%87%BA%E7%9A%84%E8%A7%82%E7%82%B9" target="_blank" rel="noopener">原文中文翻译</a></p>
 <blockquote>
 <p>我们首先给出网络中权重的清晰定义。我们使用<script type="math/tex">w^l_{jk}</script>表示从 <script type="math/tex">(l−1)^{th}</script> 层的 <script type="math/tex">k^{th}</script> 个神经元到 <script type="math/tex">(l)^{th}</script> 层的 <script type="math/tex">j^{th}</script> （<font style="color:red">注意：这个地方中文文章中写错了</font>，他写成了<script type="math/tex">l^{th}</script>）个神经元的链接上的权重。例如，下图给出了第二隐藏层的第四个神经元到第三隐藏层的第二个神经元的链接上的权重：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B8%AD%E7%9A%84%E7%A5%9E%E7%BB%8F%E5%85%83%E9%93%BE%E6%8E%A5%E4%B8%8A%E7%9A%84%E6%9D%83%E9%87%8D%E8%A1%A8%E7%A4%BA%E5%9B%BE%E8%A7%A3.png" alt="神经网络中的神经元链接上的权重表示图解"><br>我们对网络偏差和激活值也会使用类似的表示。显式地，我们使用 <script type="math/tex">b^l_J</script> 表示在 <script type="math/tex">l^{th}</script> 层 <script type="math/tex">j^{th}</script> 个神经元的偏差，使用 <script type="math/tex">a^l_j</script> 表示 <script type="math/tex">l^{th}</script> 层 <script type="math/tex">j^{th}</script> 个神经元的激活值。下面的图清楚地解释了这样表示的含义：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B8%AD%E7%9A%84%E5%81%8F%E5%B7%AE%E5%92%8C%E6%BF%80%E6%B4%BB%E5%80%BC%E5%9B%BE%E8%A7%A3.png" alt="神经网络中的偏差和激活值图解"></p>
 </blockquote>
@@ -1096,14 +1483,11 @@ w^3_{32}\\
 w^3_{42}\\
 \end{pmatrix}</script><p>我仅仅是交换了jk的位置对吧，虽然说数值没有任何变化，但是从数学角度讲，从行向量转为了列向量。</p>
 <p>然而我觉得这样徒增了学习成本。我佛他们。</p>
-<h4 id="计算输出的公式"><a href="#计算输出的公式" class="headerlink" title="计算输出的公式"></a>计算输出的公式</h4><p>公式比较简单，就是<script type="math/tex">a^l = \sigma(z^l)</script>，<script type="math/tex">z^l</script> = <script type="math/tex">w^T</script> * <script type="math/tex">a^{l-1}</script> + <script type="math/tex">b^l</script></p>
-<h3 id="关于代价函数的两个假设"><a href="#关于代价函数的两个假设" class="headerlink" title="关于代价函数的两个假设"></a>关于代价函数的两个假设</h3><p>略</p>
-<h3 id="Hadamard-乘积"><a href="#Hadamard-乘积" class="headerlink" title="Hadamard 乘积"></a>Hadamard 乘积</h3><p>略</p>
-<h3 id="反向传播的四个基本方程"><a href="#反向传播的四个基本方程" class="headerlink" title="反向传播的四个基本方程"></a>反向传播的四个基本方程</h3>
+<h3 id="计算输出的公式"><a href="#计算输出的公式" class="headerlink" title="计算输出的公式"></a>计算输出的公式</h3><p>公式比较简单，就是<script type="math/tex">a^l = \sigma(z^l)</script>，<script type="math/tex">z^l</script> = <script type="math/tex">w^T</script> * <script type="math/tex">a^{l-1}</script> + <script type="math/tex">b^l</script></p>
           <!--noindex-->
           
             <div class="post-button text-center">
-              <a class="btn" href="/《神经网络与深度学习》学习笔记（二）：反向传播算法如何工作的？.html#more" rel="contents">
+              <a class="btn" href="/学习笔记/《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题.html#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1208,16 +1592,46 @@ w^3_{42}\\
                 
               
 
-              <time title="创建时间：2019-04-07 18:19:34 / 修改时间：18:21:46" itemprop="dateCreated datePublished" datetime="2019-04-07T18:19:34+08:00">2019-04-07</time>
+              <time title="创建时间：2019-04-07 18:19:34" itemprop="dateCreated datePublished" datetime="2019-04-07T18:19:34+08:00">2019-04-07</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-04-12 16:18:56" itemprop="dateModified" datetime="2019-04-12T16:18:56+08:00">2019-04-12</time>
               
             
           </span>
 
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a></span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -1312,7 +1726,7 @@ w^3_{42}\\
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/机器学习学习记录（六）：SVM.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/机器学习学习记录（六）：SVM.html">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="朱冲䶮">
@@ -1332,7 +1746,7 @@ w^3_{42}\\
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/机器学习学习记录（六）：SVM.html" class="post-title-link" itemprop="url">机器学习学习记录（六）：SVM</a>
+                <a href="/学习笔记/机器学习学习记录（六）：SVM.html" class="post-title-link" itemprop="url">机器学习学习记录（六）：SVM</a>
               
             
           </h1>
@@ -1466,7 +1880,7 @@ w^3_{42}\\
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/机器学习学习记录（五）：PCA.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/机器学习学习记录（五）：PCA.html">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="朱冲䶮">
@@ -1486,7 +1900,7 @@ w^3_{42}\\
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/机器学习学习记录（五）：PCA.html" class="post-title-link" itemprop="url">机器学习学习记录（五）：PCA</a>
+                <a href="/学习笔记/机器学习学习记录（五）：PCA.html" class="post-title-link" itemprop="url">机器学习学习记录（五）：PCA</a>
               
             
           </h1>
@@ -1620,7 +2034,7 @@ w^3_{42}\\
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/机器学习学习记录（四）：K均值（K-means）.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/机器学习学习记录（四）：K均值（K-means）.html">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="朱冲䶮">
@@ -1640,7 +2054,7 @@ w^3_{42}\\
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/机器学习学习记录（四）：K均值（K-means）.html" class="post-title-link" itemprop="url">机器学习学习记录（四）：K均值（K-means）</a>
+                <a href="/学习笔记/机器学习学习记录（四）：K均值（K-means）.html" class="post-title-link" itemprop="url">机器学习学习记录（四）：K均值（K-means）</a>
               
             
           </h1>
@@ -1754,363 +2168,7 @@ w^3_{42}\\
           <!--noindex-->
           
             <div class="post-button text-center">
-              <a class="btn" href="/机器学习学习记录（四）：K均值（K-means）.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </p></div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/selenium下打开Chrome闪退.html">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/selenium下打开Chrome闪退.html" class="post-title-link" itemprop="url">selenium下打开Chrome闪退</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-04-01 18:25:17 / 修改时间：18:26:33" itemprop="dateCreated datePublished" datetime="2019-04-01T18:25:17+08:00">2019-04-01</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>网上的其他解决办法都不对，后来发现了是因为一个很逗的错。<br>以下代码闪退<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">from selenium import webdriver</span><br><span class="line">webdriver.Chrome()</span><br></pre></td></tr></table></figure></p>
-<p>以下代码正常运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">from selenium import webdriver</span><br><span class="line">chrome = webdriver.Chrome()</span><br></pre></td></tr></table></figure></p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/selenium下打开Chrome闪退.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/使用WikiExtractor处理维基百科上的数据步骤-2019年3月.html">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/使用WikiExtractor处理维基百科上的数据步骤-2019年3月.html" class="post-title-link" itemprop="url">使用WikiExtractor处理维基百科上的数据步骤-2019年3月</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-03-30 12:21:28" itemprop="dateCreated datePublished" datetime="2019-03-30T12:21:28+08:00">2019-03-30</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-04-03 14:03:02" itemprop="dateModified" datetime="2019-04-03T14:03:02+08:00">2019-04-03</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/machine-learning/" itemprop="url" rel="index"><span itemprop="name">machine-learning</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>网上有很多博客介绍如何使用开源工具wiki extractor解压提取维基百科上的数据，但是我试了一下他们的命令发现没一个能用的，而且他们对于该命令基本都是一笔带过，没有做深入的解释，对于我这种小白在第一步就卡死了。另外他们大部分人都是用linux系统，还有些使用Mac系统，用Windows的只有少数，而且他们提供的命令还不好用。所以我在此提供<strong>Windows系统</strong>的使用办法。</p>
-<ol>
-<li>数据来源：<a href="https://dumps.wikimedia.org/zhwiki/20190320/" target="_blank" rel="noopener">维基百科数据</a></li>
-<li>首先进入<a href="https://github.com/attardi/wikiextractor" target="_blank" rel="noopener">wiki extractor的官网</a>。发现里面有很多py文件，与其他人写的博客上的教程完全不一样。别人的教程只有一个<em>WikiExtractor.py</em>文件。</li>
-<li>将该项目clone下来，放在你的项目中。如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/wiki%20extractor%E6%96%87%E4%BB%B6%E5%AD%98%E6%94%BE%E8%B7%AF%E5%BE%84.png" alt="wiki extractor文件存放路径"><br>我下的是压缩包，解压开后就存放在wikiextractor-master文件夹。至于test.py只是用来测试gensim的word2vec算法好不好用的，无视就好。</li>
-<li>进入wikiextractor-master文件夹执行<code>python setup.py install</code>，该步骤用于安装wiki extractor。其实<a href="https://github.com/attardi/wikiextractor" target="_blank" rel="noopener">wiki extractor的官网</a>也写了这一步。但是不知道为什么其他人的博客没人介绍。</li>
-<li>退出该文件夹到nlp_learning文件夹，执行<code>python wikiextractor-master/WikiExtractor.py -b 1200M -o extracted zhwiki-20190320-pages-articles-multistream1.xml-p1p162886.bz2</code>，这个命令应该很好理解，说一下里面的extracted，它是目标文件夹，就是提取出来的文本存放的那个文件夹。可以看到上面的图片里有这个文件夹。-b代表每多大字节输出一份文件，参数的具体使用方法可以到<a href="https://github.com/attardi/wikiextractor#usage" target="_blank" rel="noopener">这里</a>查询。</li>
-<li>接下慢慢等就行了，我的文件157MB，大概洗脸刷牙后就提取完了。</li>
-</ol>
-<p>参考了<a href="https://blog.csdn.net/grafx/article/details/78575850" target="_blank" rel="noopener">博客</a>，但是他这篇博客提供命令我也执行不了。如果你也成功不了，可以试试我的步骤。<br>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/使用WikiExtractor处理维基百科上的数据步骤-2019年3月.html#more" rel="contents">
+              <a class="btn" href="/学习笔记/机器学习学习记录（四）：K均值（K-means）.html#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -2204,7 +2262,7 @@ w^3_{42}\\
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">67</span>
+                    <span class="site-state-item-count">69</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2286,7 +2344,9 @@ w^3_{42}\\
                     
                       
                     
-                    <span class="site-state-item-count">13</span>
+                      
+                    
+                    <span class="site-state-item-count">14</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
