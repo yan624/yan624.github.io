@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-simple.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=6.7.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.7.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.7.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.7.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="大纲 神经网络和深度学习的发展 神经网络和深度学习的关系 为什么要深度学习 从二元分类开始 神经网络的表示：解释神经网络中一些参数符号具体表示什么意思 神经网络中的输出是怎么计算的：解释神经网络是输入、输出以及计算过程，实际上就是用线性表达式得到一个值，然后将这个值放入激活函数中   神经网络和深度学习的发展TODO 神经网络和深度学习的关系TODO 为什么要深度学习TODO 从二元分类开始暂时省">
+<meta name="keywords" content="学习笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="对神经网络整体的理解">
+<meta property="og:url" content="http://yan624.github.io/学习笔记/对神经网络整体的理解.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="大纲 神经网络和深度学习的发展 神经网络和深度学习的关系 为什么要深度学习 从二元分类开始 神经网络的表示：解释神经网络中一些参数符号具体表示什么意思 神经网络中的输出是怎么计算的：解释神经网络是输入、输出以及计算过程，实际上就是用线性表达式得到一个值，然后将这个值放入激活函数中   神经网络和深度学习的发展TODO 神经网络和深度学习的关系TODO 为什么要深度学习TODO 从二元分类开始暂时省">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84%E5%8E%9F%E5%9B%BE.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84%E5%9B%BE.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E4%BD%BF%E7%94%A8%E5%AF%BC%E6%95%B0%E8%A7%A3%E9%87%8A%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E7%AE%80%E5%8C%96%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95.jpg">
+<meta property="og:updated_time" content="2019-04-14T06:07:35.880Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="对神经网络整体的理解">
+<meta name="twitter:description" content="大纲 神经网络和深度学习的发展 神经网络和深度学习的关系 为什么要深度学习 从二元分类开始 神经网络的表示：解释神经网络中一些参数符号具体表示什么意思 神经网络中的输出是怎么计算的：解释神经网络是输入、输出以及计算过程，实际上就是用线性表达式得到一个值，然后将这个值放入激活函数中   神经网络和深度学习的发展TODO 神经网络和深度学习的关系TODO 为什么要深度学习TODO 从二元分类开始暂时省">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84%E5%8E%9F%E5%9B%BE.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yan624.github.io/学习笔记/对神经网络整体的理解.html">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>对神经网络整体的理解 | 博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">记录</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">14</span></a>
+
+  </li>
+        
+        
+        
+          
+            
+            
+            
+              
+              
+
+  
+  
+    
+  
+  <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">15</span></a>
+
+  </li>
+
+
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+        
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">70</span></a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/对神经网络整体的理解.html">
+    <!--判断该文章是否为学习笔记-->
+    
+  		
+	  		<link rel="stylesheet" type="text/css" href="/css/spop/spop.min.css">
+			<script type="text/javascript" src="/js/spop/spop.min.js"></script>
+			<script>
+				spop({
+					template: '<h4 class="spop-title">注意</h4>此文章仅为博主的学习笔记，其中可能含有极大的理论错误。',
+					group: 'tips',
+					position  : 'bottom-center',
+					style: 'success',
+					autoclose: 5500,
+					onOpen: function () {
+						//这里设置灰色背景色
+					},
+					onClose: function() {
+						//这里可以取消背景色
+						spop({
+							template: 'ε = = (づ′▽`)づ',
+							group: 'tips',
+							position  : 'bottom-center',
+							style: 'success',
+							autoclose: 1500
+						});
+					}
+				});
+			</script>
+  		
+    
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">对神经网络整体的理解
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-12 20:12:28" itemprop="dateCreated datePublished" datetime="2019-04-12T20:12:28+08:00">2019-04-12</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-04-14 14:07:35" itemprop="dateModified" datetime="2019-04-14T14:07:35+08:00">2019-04-14</time>
+              
+            
+          </span>
+          
+          
+          	
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/machine-learning/" itemprop="url" rel="index"><span itemprop="name">machine-learning</span></a></span>
+
+                
+                
+              
+            </span>
+          
+          
+          <!--不蒜子计数-->
+          <span id="busuanzi_container_site_uv">
+          	<span class="post-meta-divider">|</span>
+			浏览量：<span id="busuanzi_value_site_uv"></span>人次
+		  </span>
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="大纲"><a href="#大纲" class="headerlink" title="大纲"></a>大纲</h1><ol>
+<li>神经网络和深度学习的发展</li>
+<li>神经网络和深度学习的关系</li>
+<li>为什么要深度学习</li>
+<li>从二元分类开始</li>
+<li>神经网络的表示：解释神经网络中一些参数符号具体表示什么意思</li>
+<li>神经网络中的输出是怎么计算的：解释神经网络是输入、输出以及计算过程，实际上就是用线性表达式得到一个值，然后将这个值放入激活函数中</li>
+<li></li>
+</ol>
+<h1 id="神经网络和深度学习的发展"><a href="#神经网络和深度学习的发展" class="headerlink" title="神经网络和深度学习的发展"></a>神经网络和深度学习的发展</h1><p>TODO</p>
+<h1 id="神经网络和深度学习的关系"><a href="#神经网络和深度学习的关系" class="headerlink" title="神经网络和深度学习的关系"></a>神经网络和深度学习的关系</h1><p>TODO</p>
+<h1 id="为什么要深度学习"><a href="#为什么要深度学习" class="headerlink" title="为什么要深度学习"></a>为什么要深度学习</h1><p>TODO</p>
+<h1 id="从二元分类开始"><a href="#从二元分类开始" class="headerlink" title="从二元分类开始"></a>从二元分类开始</h1><p>暂时省略，因为这里已经会了。</p>
+<h1 id="神经网络的表示"><a href="#神经网络的表示" class="headerlink" title="神经网络的表示"></a>神经网络的表示</h1><p>规定如下，l：第几层，w：权重值，b：偏差，z：输出值，a：激活值，i，j：都代表第几个神经元。如<script type="math/tex">w^l_i</script>代表第l层的第i个权重值。如果输出值z和激活值a无法理解或者区分，没关系，继续往下看就知道了。<br>如下图所示，一般规定input layer为第0层，不算入神经网络的层数中，所以下图是一个三层神经网络架构。</p>
+<ol>
+<li>input layer的输入值被称为x，下图一共有三个输入所以分别被称为<script type="math/tex">x_1\ x_2\ x_3</script>。为了方便起见，可以将input layer的值x以<script type="math/tex">a^0</script>来代替，下面解释a代表什么。</li>
+<li>hidden layer中的激活值被称为a——<strong>激活值</strong>（activations），图中有四个神经元，所以分别被称为<script type="math/tex">a^1_1\ a^1_2\ a^1_3</script>，上标代表着所在神经网络中的第几层，如果表示成向量形式就是<script type="math/tex; mode=display">
+\begin{pmatrix}
+ x_1\\
+ x_2\\
+ x_3\\
+\end{pmatrix} = 
+\begin{pmatrix}
+ a^0_1\\
+ a^0_2\\
+ a^0_3\\
+\end{pmatrix} 和
+\begin{pmatrix}
+ a^1_1\\
+ a^1_2\\
+ a^1_3\\
+\end{pmatrix} 和
+\begin{pmatrix}
+ a^2_1\\
+ a^3_2\\
+ a^4_3\\
+\end{pmatrix} 和
+\begin{pmatrix}
+ a^3_1\\
+\end{pmatrix}</script></li>
+</ol>
+<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84%E5%8E%9F%E5%9B%BE.jpg" alt="神经网络架构原图"></p>
+<h2 id="神经网络中神经元的一些参数的含义，特别解释w的含义"><a href="#神经网络中神经元的一些参数的含义，特别解释w的含义" class="headerlink" title="神经网络中神经元的一些参数的含义，特别解释w的含义"></a>神经网络中神经元的一些参数的含义，特别解释w的含义</h2><p>hidden layer和output layer的每个神经元都有几个参数。分别为<script type="math/tex">w^l\ b^l</script>，这里的<script type="math/tex">w^l</script>是一个(4,3)的矩阵，<script type="math/tex">b^l</script>是一个(4,1)的向量。解释如下：</p>
+<script type="math/tex; mode=display">
+\begin{cases}
+    z^1_1 = a^0_1 * w^1_{11} + a^0_2 * w^1_{12} + a^0_3 * w^1_{13} + b^1_1\\
+    z^1_2 = a^0_1 * w^1_{21} + a^0_2 * w^1_{22} + a^0_3 * w^1_{23} + b^1_2\\
+    z^1_3 = a^0_1 * w^1_{31} + a^0_2 * w^1_{32} + a^0_3 * w^1_{33} + b^1_3\\
+    z^1_4 = a^0_1 * w^1_{41} + a^0_2 * w^1_{42} + a^0_3 * w^1_{43} + b^1_4\\
+\end{cases}</script><p>可以看到一个公式中有三个w和一个b，一共有四个公式。<script type="math/tex">w^l_{ij}</script>代表第l-1层的第j个神经元到第l层的第i个神经元上的w。如<script type="math/tex">w^1_{12}</script>代表第0层的第2个神经元到第1层的第1个神经元上的w。如果对w的表示还有疑惑的，可以看<a href="https://yan624.github.io/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E3%80%8A%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B8%8E%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E3%80%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9A%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95%E4%B8%ADweight%E7%9A%84%E8%A1%A8%E7%A4%BA%E9%97%AE%E9%A2%98.html">这篇</a>。<br>注意下这里的z是<strong>输出值</strong>，之前一直在说hidden layer中的值是a——激活值，其实a就是将z放到一个<strong>激活函数</strong>（activation function）中得到的一个值，这个激活函数是随用户挑选的，如果不能理解激活函数是什么，就暂时理解为激活函数自己想设成什么就设成什么。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84%E5%9B%BE.jpg" alt="神经网络架构图"></p>
+<h1 id="神经网络中的输出是怎么计算的"><a href="#神经网络中的输出是怎么计算的" class="headerlink" title="神经网络中的输出是怎么计算的"></a>神经网络中的输出是怎么计算的</h1><h2 id="以一个样本为例"><a href="#以一个样本为例" class="headerlink" title="以一个样本为例"></a>以一个样本为例</h2><p>第0层是输入层，所以是不需要计算的，x我本来就有，我还计算什么？对吧。从hidden layer1开始到output layer每一层都需要计算一连串的值，下面给出第一层的计算公式：</p>
+<script type="math/tex; mode=display">
+\begin{cases}
+    z^1_1 = a^0_1 * w^1_{11} + a^0_2 * w^1_{12} + a^0_3 * w^1_{13} + b^1_1，a^1_1 = \sigma(z^1_1)\\
+    z^1_2 = a^0_1 * w^1_{21} + a^0_2 * w^1_{22} + a^0_3 * w^1_{23} + b^1_2，a^1_2 = \sigma(z^1_2)\\
+    z^1_3 = a^0_1 * w^1_{31} + a^0_2 * w^1_{32} + a^0_3 * w^1_{33} + b^1_3，a^1_3 = \sigma(z^1_3)\\
+    z^1_4 = a^0_1 * w^1_{41} + a^0_2 * w^1_{42} + a^0_3 * w^1_{43} + b^1_4，a^1_3 = \sigma(z^1_4)\\
+\end{cases}</script><p>这里的<script type="math/tex">\sigma(z)</script>函数其实就是上面说的<strong>激活函数</strong>，一般来讲<script type="math/tex">\sigma</script>这个符号特指sigmoid function: <script type="math/tex">\frac{1}{1+e^{-z}}</script>。<br>这4行公式其实在上面已经给出部分，每一行包含两个公式，也就是说一个神经元中实际上先得到了z，然后再通过激活函数将z转为a。这里可能会有疑惑，已经得到z了为什么还要用一个函数将z转为a呢？这样不是毫无意义？下面有一部分会具体解释，也可以看下面几篇的解释：<br><a href="https://www.zhihu.com/question/22334626" target="_blank" rel="noopener">神经网络激励函数的作用是什么？有没有形象的解释？</a><br><a href="https://blog.csdn.net/program_developer/article/details/78704224" target="_blank" rel="noopener">神经网络激活函数的作用是什么？</a><br>现在回到本文，正如我上面所说，我一共写了四个公式（激活函数现在暂时不看），所以我要分别计算四个公式，也就是说要计算四次。那么有没有办法只计算一次就得到所有结果呢？答案是<strong>向量化</strong>（vectorization），现在开始用向量化来解决这个问题。</p>
+<script type="math/tex; mode=display">
+\begin{pmatrix}
+    z^1_1\\
+    z^1_2\\
+    z^1_3\\
+    z^1_4\\
+\end{pmatrix} = 
+\begin{pmatrix}
+    w^1_{11}&w^1_{12}&w^1_{13}\\
+    w^1_{21}&w^1_{22}&w^1_{23}\\
+    w^1_{31}&w^1_{32}&w^1_{33}\\
+    w^1_{41}&w^1_{42}&w^1_{43}\\
+\end{pmatrix} *
+\begin{pmatrix}
+    a^0_1\\
+    a^0_2\\
+    a^0_3\\
+\end{pmatrix} + 
+\begin{pmatrix}
+    b^1_1\\
+    b^1_2\\
+    b^1_3\\
+    b^1_4\\
+\end{pmatrix}</script><script type="math/tex; mode=display">===>\ z^1 = w^1 * a^0 + b^1</script><p>以下是整个神经网络的计算过程，也就是说只需要下面6行就可以代替上文占据几个屏幕的内容。</p>
+<script type="math/tex; mode=display">
+\begin{array}{c|}
+    z^1 = w^1 * a^0 + b^1\\
+    a^1 = \sigma(z^1)\\
+    z^2 = w^2 * a^1 + b^2\\ 
+    a^2 = \sigma(z^2)\\
+    z^3 = w^3 * a^2 + b^3\\
+    a^3 = \sigma(z^3)\\ 
+\end{array} =>记为P</script><p>最后一个a就是整个神经网络的输出值，也就是预测值（prediction），也可以用<script type="math/tex">\hat{y}</script>表示，自然<script type="math/tex">\hat{y} = a^3</script>。</p>
+<h2 id="向量化计算多个样本"><a href="#向量化计算多个样本" class="headerlink" title="向量化计算多个样本"></a>向量化计算多个样本</h2><p>上面我没有特意地说明其实我们只使用了一个样本，我们一直在使用<script type="math/tex">a^0_1\ a^0_2\ a^0_3</script>，但是<script type="math/tex">a^0_1\ a^0_2\ a^0_3</script>实际上只是<strong>一个</strong>样本。<script type="math/tex">a^0</script>代表的是一个样本，<script type="math/tex">a^0_1</script>代表的是样本中的第一个特征，如果不明白我可以举个例子：<script type="math/tex">a^0_1</script>代表天气样本中的第一个特征——温度，<script type="math/tex">a^0_2</script>代表湿度，<script type="math/tex">a^0_3</script>代表PM2.5，<script type="math/tex">a^0</script>代表整一个天气样本。<br>那么如果有成千上万个样本，总不能使用P计算成千上万次吧。这里再次使用向量化进行计算。</p>
+<script type="math/tex; mode=display">
+\begin{pmatrix}
+    z^{11}_1&z^{12}_1&\cdots\\
+    z^{11}_2&z^{12}_2&\cdots\\
+    z^{11}_3&z^{12}_3&\cdots\\
+    z^{11}_4&z^{12}_4&\cdots\\
+\end{pmatrix} = 
+\begin{pmatrix}
+    w^1_{11}&w^1_{12}&w^1_{13}\\
+    w^1_{21}&w^1_{22}&w^1_{23}\\
+    w^1_{31}&w^1_{32}&w^1_{33}\\
+    w^1_{41}&w^1_{42}&w^1_{43}\\
+\end{pmatrix} *
+\begin{pmatrix}
+    a^{01}_1&a^{01}_1&\cdots\\
+    a^{01}_2&a^{02}_1&\cdots\\
+    a^{01}_3&a^{03}_1&\cdots\\
+\end{pmatrix} + 
+\begin{pmatrix}
+    b^1_1\\
+    b^1_2\\
+    b^1_3\\
+    b^1_4\\
+\end{pmatrix}</script><script type="math/tex; mode=display">===>\ z^1 = w^1 * a^0 + b^1</script><script type="math/tex; mode=display">
+\begin{pmatrix}
+    z^{21}_1&z^{22}_1&\cdots\\
+    z^{21}_2&z^{22}_2&\cdots\\
+    z^{21}_3&z^{22}_3&\cdots\\
+    z^{21}_4&z^{22}_4&\cdots\\
+\end{pmatrix} = 
+\begin{pmatrix}
+    w^2_{11}&w^2_{12}&w^2_{13}&w^2_{14}\\
+    w^2_{21}&w^2_{22}&w^2_{23}&w^2_{24}\\
+    w^2_{31}&w^2_{32}&w^2_{33}&w^2_{34}\\
+    w^2_{41}&w^2_{42}&w^2_{43}&w^2_{44}\\
+\end{pmatrix} *
+\begin{pmatrix}
+    a^{11}_1&a^{11}_1&\cdots\\
+    a^{11}_2&a^{12}_1&\cdots\\
+    a^{11}_3&a^{13}_1&\cdots\\
+    a^{11}_3&a^{14}_1&\cdots\\
+\end{pmatrix} + 
+\begin{pmatrix}
+    b^2_1\\
+    b^2_2\\
+    b^2_3\\
+    b^2_4\\
+\end{pmatrix}</script><script type="math/tex; mode=display">===>\ z^2 = w^2 * a^1 + b^2</script><p>省略号代表后面有无数个样本，同理矩阵相乘也可以只用一个字母表示。上标的第二个数字代表是第几个样本，第一个数字依旧是代表所属第几层。</p>
+<h1 id="激活函数"><a href="#激活函数" class="headerlink" title="激活函数"></a>激活函数</h1><p>上文中我们一直假设使用sigmoid function作为激活函数。但是事实上还有很多其他选择，甚至其他的激活函数比sigmoid funtion效果要更好。<br>上面讲过<script type="math/tex">\sigma(z)</script>特指sigmoid function，现在我们将表达式改为：<script type="math/tex">a = g(z)</script>，用g来表示激活函数，它可以是线性的，也可以是非线性的。<br>引用吴恩达在深度学习视频中的话：</p>
+<blockquote>
+<p>有一个函数总是比sigmoid function表现得更好，就是tanh函数或者叫双曲正切函数，公式为：<script type="math/tex">\frac{e^z-e^{-z}}{e^z+e^{-z}}</script>，在数学上实际是<script type="math/tex">\sigma</script>函数平移后的版本。<br>事实证明，如果将<script type="math/tex">g(z)</script>选为tanh函数，效果几乎总比<script type="math/tex">\sigma(z)</script>函数要好。</p>
+</blockquote>
+<p>有一个例外是output layer，它还是使用sigmoid funtion，因为output layer跟普通的分类问题没什么区别，它要得到0~1之间的一个概率。<br>sigmoid function的值总是位于0~1之间，tanh function的值总是位于-1~1之间。<br>但是不管是<script type="math/tex">\sigma</script>或者tanh函数都一个缺点，那就是当z非常大或者非常小时，函数的斜率（导数的梯度）很小。这样会拖慢梯度下降。在机器学习中还有一个函数，即ReLU函数——Rectified Linear Unit，表达式为<script type="math/tex">max(0, z)</script>。<br>所以在选择激活函数时有一些经验法则：</p>
+<ol>
+<li>如果你的输出值是0或1，那么<script type="math/tex">\sigma</script>函数很适合做output layer的激活函数，非二元分类的情况下使用tanh函数几乎都比<script type="math/tex">\sigma</script>优越。藏层单元全用ReLU函数，现在ReLU函数已经是隐藏层的默认激活函数了，大多数人都这么做。</li>
+<li>还有个叫Leaky ReLU的函数比ReLU稍微好点，但是目前暂时不是很多人用。</li>
+</ol>
+<h1 id="为什么需要非线性激活函数"><a href="#为什么需要非线性激活函数" class="headerlink" title="为什么需要非线性激活函数"></a>为什么需要非线性激活函数</h1><p>直接也提到过，为什么<script type="math/tex">w*x+b=z</script>之后，需要使用一个激活函数<script type="math/tex">a = \sigma(z)</script>？不能不加这个激活函数吗？也会感到很奇怪，权重乘输入加上偏差之后直接输出就行乐，何必再带入激活函数中？<br>如果不加激活函数，实际上就是把激活函数变为y=x这个函数。所以就回到了标题上，<em>为什么需要非线性激活函数</em>，因为y=2x也是线性函数，只不过将输入值乘了一个常量而已，而使用非y=bx+c型的激活函数就算是使用了非线性函数。<br>解释如下：<br>现在从头再做一次神经网络计算，与上面的区别是这次不加激活函数。</p>
+<script type="math/tex; mode=display">
+\left \{ 
+    \begin{array}{ll}
+        a^1 = w^1 * a^0 + b^1 \qquad这是计算第一层的激活值，现在没有使用激活函数。\\
+        a^2 = w^2 * a^1 + b^2 \qquad这是计算第二次的激活值，也没有使用激活函数。\\
+        a^2 = w^2 * (w^1 * a^0 + b^1) + b^2 \qquad两式合并之后\\
+        a^2 = w^2 * w^1 * a^0 + w^2 * b^1 + b^2 \qquad合并同类项后\\
+        a^2 = w' * a^0 + b' \qquad由于w和b只是一堆常数，所以将w'代替w^2 * w^1，b'同理
+    \end{array}
+\right.</script><p>通过上面几个式子发现，我们计算了第一层和第二层之后，结果居然还是一个线性的式子，和最初的输入没有什么差别，也就是说你无论叠了几层hidden layer最后输出还是类似<script type="math/tex">a^2 = w' * a^0 + b'</script>的式子，那么深度学习的意义在哪呢？还不如直接把hidden layer去掉。所以重点就是线性的hidden layer没有任何用处，因为两个线性方程的组合结果还是线性方程。<br>只有在一个地方可以使用线性方程，那就是回归问题——线性回归。</p>
+<h1 id="梯度下降，反向传播算法——backpropagation解析"><a href="#梯度下降，反向传播算法——backpropagation解析" class="headerlink" title="梯度下降，反向传播算法——backpropagation解析"></a>梯度下降，反向传播算法——backpropagation解析</h1><p><strong>首先虽然全部的过程已经理清，但是还有几个问题：为什么要对w求导？梯度下降的意义是什？为什么使用梯度下降就可以解决误差问题？</strong></p>
+<hr>
+<p>本节的示例均建立在一个样本的情况下，如果是多个样本经过神经网络，可能略微不同。我看了吴恩达老师的深度学习课程，发现多个样本与一个样本的区别，可能只能在偏差b那里会有点不同。<br>下图以一个三层神经网络为例，说明正向与反向传播过程。由于神经元之间的链接太多会导致混乱，所以下图只链接了第一个神经元。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E4%BD%BF%E7%94%A8%E5%AF%BC%E6%95%B0%E8%A7%A3%E9%87%8A%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95.jpg" alt="使用导数解释反向传播算法"><br>下图略微简化一下反向传播算法中的导数项，并且完成了最后的权重值优化。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E7%AE%80%E5%8C%96%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95.jpg" alt="简化反向传播算法"></p>
+<h1 id="随机初始化"><a href="#随机初始化" class="headerlink" title="随机初始化"></a>随机初始化</h1><p>对于逻辑回归可以将<strong>权重</strong>（weight）全部初始化为0，但是对于神经网络来说，将个权重初始化为0，再使用梯度下降会完全无效。实际上将偏差b初始化为0是可以的，但是权重不行。<br>解释起来太麻烦，详情看吴恩达深度学习——01神经网络和深度学习第三周浅层神经网络，3.11随机初始化。吴恩达老师解释地还是很清楚的。<br>可以像以下这样设置weight：</p>
+<p><script type="math/tex">w^l</script> = np.random.randn((2, 2)) * 0.01 //这可以产生参数为(2, 2)的高斯分布随机变量，后面再成一个很小的数，比如0.01。而对于b，之前说了初始化为0也可以。<br>对于上式的0.01可能会感到很疑惑，为什么要乘这么一个值。因为我们一般将weight初始化为很小的值，如果weight值很大，最终导致z也很大，那么会落在sigmoid function或者tanh function的平缓部分，会使梯度的写了很小，意味着梯度下降算法会非常慢，所以学习得很慢</p>
+<a id="more"></a>
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/学习笔记/" rel="tag"># 学习笔记</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/学习笔记/李宏毅深度学习2017学习记录（二）：Deep-Learning-for-Language-Modeling.html" rel="next" title="李宏毅深度学习2017学习记录（二）：Deep Learning for Language Modeling">
+                <i class="fa fa-chevron-left"></i> 李宏毅深度学习2017学习记录（二）：Deep Learning for Language Modeling
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="朱冲䶮">
+            
+              <p class="site-author-name" itemprop="name">朱冲䶮</p>
+              <p class="site-description motion-element" itemprop="description">朱冲䶮的博客，记录javaWeb开发等遇到的问题</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">70</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">15</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">14</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+            <br>
+			<br>
+			<!--同个ip访问本站页面次数-->
+			<div class="site-state-item site-state-posts" style="border-left:none;">
+		    	<span class="site-state-item-count" id="busuanzi_value_site_pv"></span>
+		    	<span class="site-state-item-name">浏览量</span>
+			</div>
+			<!--不同ip访问本站次数-->
+			<div class="site-state-item site-state-posts">
+		    	<span class="site-state-item-count" id="busuanzi_value_site_uv"></span>
+		    	<span class="site-state-item-name">访客量</span>
+			</div>
+			<div class="site-state-item site-state-posts">
+		    	<span class="site-state-item-count">34.7k</span>
+		    	<span class="site-state-item-name">总字数</span>
+			</div>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/yan624" title="GitHub &rarr; https://github.com/yan624" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2607724281" title="Weibo &rarr; https://weibo.com/u/2607724281" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#大纲"><span class="nav-number">1.</span> <span class="nav-text">大纲</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经网络和深度学习的发展"><span class="nav-number">2.</span> <span class="nav-text">神经网络和深度学习的发展</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经网络和深度学习的关系"><span class="nav-number">3.</span> <span class="nav-text">神经网络和深度学习的关系</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么要深度学习"><span class="nav-number">4.</span> <span class="nav-text">为什么要深度学习</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#从二元分类开始"><span class="nav-number">5.</span> <span class="nav-text">从二元分类开始</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经网络的表示"><span class="nav-number">6.</span> <span class="nav-text">神经网络的表示</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#神经网络中神经元的一些参数的含义，特别解释w的含义"><span class="nav-number">6.1.</span> <span class="nav-text">神经网络中神经元的一些参数的含义，特别解释w的含义</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经网络中的输出是怎么计算的"><span class="nav-number">7.</span> <span class="nav-text">神经网络中的输出是怎么计算的</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#以一个样本为例"><span class="nav-number">7.1.</span> <span class="nav-text">以一个样本为例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#向量化计算多个样本"><span class="nav-number">7.2.</span> <span class="nav-text">向量化计算多个样本</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#激活函数"><span class="nav-number">8.</span> <span class="nav-text">激活函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么需要非线性激活函数"><span class="nav-number">9.</span> <span class="nav-text">为什么需要非线性激活函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#梯度下降，反向传播算法——backpropagation解析"><span class="nav-number">10.</span> <span class="nav-text">梯度下降，反向传播算法——backpropagation解析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#随机初始化"><span class="nav-number">11.</span> <span class="nav-text">随机初始化</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v6.7.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=6.7.0"></script>
+
+  <script src="/js/src/motion.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=6.7.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=6.7.0"></script>
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
+<script src="/js/src/post-details.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+  
+
+  <script type="text/x-mathjax-config">
+	MathJax.Hub.Config({
+		//下面的HTML-CSS和SVG用于在小屏幕上，数学公式可以自动换行，我测试过后发现无效，但是貌似有人可以。
+		"HTML-CSS": { 
+			linebreaks: { 
+				automatic: true 
+			} 
+		},SVG: {
+			linebreaks: { 
+				automatic: true 
+			}
+		},menuSettings: {
+			zoom: "None"
+		},
+		showMathMenu: false,
+		jax: ["input/TeX","output/CommonHTML"],
+		extensions: ["tex2jax.js"],
+		TeX: {
+			extensions: ["AMSmath.js","AMSsymbols.js"],
+			equationNumbers: {
+				autoNumber: "AMS"
+			}
+		},tex2jax: {
+			inlineMath: [["\\(", "\\)"]],
+			displayMath: [["\\[", "\\]"]]
+		}
+	});
+  </script>
+  <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  <!--不蒜子统计-->
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</body>
+</html>

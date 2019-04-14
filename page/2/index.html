@@ -352,7 +352,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">69</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">70</span></a>
 
   </li>
 
@@ -388,6 +388,213 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/机器学习学习记录（四）：K均值（K-means）.html">
+    <!--判断该文章是否为学习笔记-->
+    
+  		
+    
+  		
+    
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/学习笔记/机器学习学习记录（四）：K均值（K-means）.html" class="post-title-link" itemprop="url">机器学习学习记录（四）：K均值（K-means）</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-03 13:54:13" itemprop="dateCreated datePublished" datetime="2019-04-03T13:54:13+08:00">2019-04-03</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-04-08 22:17:34" itemprop="dateModified" datetime="2019-04-08T22:17:34+08:00">2019-04-08</time>
+              
+            
+          </span>
+          
+          
+          	
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/machine-learning/" itemprop="url" rel="index"><span itemprop="name">machine-learning</span></a></span>
+
+                
+                
+              
+            </span>
+          
+          
+          <!--不蒜子计数-->
+          <span id="busuanzi_container_site_uv">
+          	<span class="post-meta-divider">|</span>
+			浏览量：<span id="busuanzi_value_site_uv"></span>人次
+		  </span>
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h3 id="TODO"><a href="#TODO" class="headerlink" title="TODO"></a>TODO</h3><p>K-均值(K-means)算法是无监督算法，也是聚类(clustering)算法。</p>
+<h3 id="算法步骤"><a href="#算法步骤" class="headerlink" title="算法步骤"></a>算法步骤</h3><ol>
+<li>随机初始化几个点作为簇的质心，初始化方式有多种，可以自行选择。已知两种：<ul>
+<li>随机选择K个样本作为簇的质心。来源于吴恩达机器学习视频</li>
+<li>min + (max - min) * (0到1之间的小数)，其中最大值最小值均代表。来源于《机器学习实战》</li>
+</ul>
+</li>
+<li>计算某个样本到每个簇的质心之间的代价（距离），代价函数有多种可自行选择。比如：<ul>
+<li>均方误差(mse)<br>选出其中最小的代价，并求出簇的索引，然后将该样本划分给该质心所属的簇。每个样本都执行这步直到样本遍历完毕。</li>
+</ul>
+</li>
+<li>经过步骤2，每个样本都归属于一个簇。然后遍历每一个簇，将簇中的数据求均值，将该均值作为簇的新质心。</li>
+<li>重复以上步骤，直到发现每个样本都归属于某个簇，并且样本归属不会再发生变化。<br>简化如下：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">随机初始化质心</span><br><span class="line">	while true</span><br><span class="line">		for 每个样本</span><br><span class="line">			for 每个质心</span><br><span class="line">				计算每个样本到质心的代价</span><br><span class="line">			选出最小的代价</span><br><span class="line">			将样本分配给这个簇</span><br><span class="line">		</span><br><span class="line">		for 每个质心</span><br><span class="line">			求出该簇所属的样本的均值</span><br><span class="line">			将该均值设置为簇的新质点</span><br><span class="line">			</span><br><span class="line">		if 样本归属不再发生变化</span><br><span class="line">			break</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="举一个简单的例子"><a href="#举一个简单的例子" class="headerlink" title="举一个简单的例子"></a>举一个简单的例子</h3><p><a href="https://github.com/yan624/machine_learning_algorithms/tree/master/kmeans/simple_demo" target="_blank" rel="noopener">这里有一个简单例子</a><br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/学习笔记/机器学习学习记录（四）：K均值（K-means）.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </p></div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -1198,30 +1405,6 @@
   		
     
   		
-	  		<link rel="stylesheet" type="text/css" href="/css/spop/spop.min.css">
-			<script type="text/javascript" src="/js/spop/spop.min.js"></script>
-			<script>
-				spop({
-					template: '<h4 class="spop-title">注意</h4>此文章仅为博主的学习记录，其中可能含有极大的理论错误。',
-					group: 'tips',
-					position  : 'bottom-center',
-					style: 'success',
-					autoclose: 5500,
-					onOpen: function () {
-						//这里设置灰色背景色
-					},
-					onClose: function() {
-						//这里可以取消背景色
-						spop({
-							template: 'ε = = (づ′▽`)づ',
-							position  : 'bottom-center',
-							style: 'success',
-							autoclose: 1500
-						});
-					}
-				});
-			</script>
-  		
     
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1436,30 +1619,6 @@
   		
     
   		
-	  		<link rel="stylesheet" type="text/css" href="/css/spop/spop.min.css">
-			<script type="text/javascript" src="/js/spop/spop.min.js"></script>
-			<script>
-				spop({
-					template: '<h4 class="spop-title">注意</h4>此文章仅为博主的学习记录，其中可能含有极大的理论错误。',
-					group: 'tips',
-					position  : 'bottom-center',
-					style: 'success',
-					autoclose: 5500,
-					onOpen: function () {
-						//这里设置灰色背景色
-					},
-					onClose: function() {
-						//这里可以取消背景色
-						spop({
-							template: 'ε = = (づ′▽`)づ',
-							position  : 'bottom-center',
-							style: 'success',
-							autoclose: 1500
-						});
-					}
-				});
-			</script>
-  		
     
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1645,30 +1804,6 @@
   		
     
   		
-	  		<link rel="stylesheet" type="text/css" href="/css/spop/spop.min.css">
-			<script type="text/javascript" src="/js/spop/spop.min.js"></script>
-			<script>
-				spop({
-					template: '<h4 class="spop-title">注意</h4>此文章仅为博主的学习记录，其中可能含有极大的理论错误。',
-					group: 'tips',
-					position  : 'bottom-center',
-					style: 'success',
-					autoclose: 5500,
-					onOpen: function () {
-						//这里设置灰色背景色
-					},
-					onClose: function() {
-						//这里可以取消背景色
-						spop({
-							template: 'ε = = (づ′▽`)づ',
-							position  : 'bottom-center',
-							style: 'success',
-							autoclose: 1500
-						});
-					}
-				});
-			</script>
-  		
     
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1853,30 +1988,6 @@
     
   		
     
-  		
-	  		<link rel="stylesheet" type="text/css" href="/css/spop/spop.min.css">
-			<script type="text/javascript" src="/js/spop/spop.min.js"></script>
-			<script>
-				spop({
-					template: '<h4 class="spop-title">注意</h4>此文章仅为博主的学习记录，其中可能含有极大的理论错误。',
-					group: 'tips',
-					position  : 'bottom-center',
-					style: 'success',
-					autoclose: 5500,
-					onOpen: function () {
-						//这里设置灰色背景色
-					},
-					onClose: function() {
-						//这里可以取消背景色
-						spop({
-							template: 'ε = = (づ′▽`)づ',
-							position  : 'bottom-center',
-							style: 'success',
-							autoclose: 1500
-						});
-					}
-				});
-			</script>
   		
     
 
@@ -2246,235 +2357,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/Python爬虫学习记录（一）：正则表达式.html">
-    <!--判断该文章是否为学习笔记-->
-    
-  		
-    
-  		
-	  		<link rel="stylesheet" type="text/css" href="/css/spop/spop.min.css">
-			<script type="text/javascript" src="/js/spop/spop.min.js"></script>
-			<script>
-				spop({
-					template: '<h4 class="spop-title">注意</h4>此文章仅为博主的学习记录，其中可能含有极大的理论错误。',
-					group: 'tips',
-					position  : 'bottom-center',
-					style: 'success',
-					autoclose: 5500,
-					onOpen: function () {
-						//这里设置灰色背景色
-					},
-					onClose: function() {
-						//这里可以取消背景色
-						spop({
-							template: 'ε = = (づ′▽`)づ',
-							position  : 'bottom-center',
-							style: 'success',
-							autoclose: 1500
-						});
-					}
-				});
-			</script>
-  		
-    
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/学习笔记/Python爬虫学习记录（一）：正则表达式.html" class="post-title-link" itemprop="url">Python爬虫学习记录（一）：正则表达式</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-03-12 22:29:23" itemprop="dateCreated datePublished" datetime="2019-03-12T22:29:23+08:00">2019-03-12</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-04-08 22:15:27" itemprop="dateModified" datetime="2019-04-08T22:15:27+08:00">2019-04-08</time>
-              
-            
-          </span>
-          
-          
-          	
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a></span>
-
-                
-                
-              
-            </span>
-          
-          
-          <!--不蒜子计数-->
-          <span id="busuanzi_container_site_uv">
-          	<span class="post-meta-divider">|</span>
-			浏览量：<span id="busuanzi_value_site_uv"></span>人次
-		  </span>
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h3 id="正则表达式的使用"><a href="#正则表达式的使用" class="headerlink" title="正则表达式的使用"></a>正则表达式的使用</h3><p>正则表达式的匹配规则网上都有，这里不放出来了，毕竟只是记录学习的博文。<br>以下讲几个一直没搞明白的点。</p>
-<h4 id="贪婪与非贪婪"><a href="#贪婪与非贪婪" class="headerlink" title="贪婪与非贪婪"></a>贪婪与非贪婪</h4><p>实现介绍通用匹配，以<code>.*</code>表示。<code>.</code>代表匹配任意字符，<code>*</code>代表匹配0个或多个表达式所以两个连用就代表匹配任意字符。比如字符串<code>&#39;Hello Python and Anaconda&#39;</code>，表达式为<code>&#39;^Hello.*Anaconda$&#39;</code>。代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line"></span><br><span class="line">txt = &apos;Hello Python and Anaconda&apos;</span><br><span class="line">result = re.match(&quot;^Hello.*Anaconda$&quot;, txt)</span><br><span class="line">print(result.group())</span><br></pre></td></tr></table></figure></p>
-<p>可以得出我们想要的结果，因为<code>.*</code>代表匹配任意个字符，所以该正则表达式会在<strong><em>Hello</em></strong>之后一直匹配成功，直到遇到<strong><em>Anaconda</em></strong>停止。其中<code>.*</code>其实就是贪婪匹配。但是有时候贪婪匹配会出很大的问题。比如字符串<code>&#39;My tel number is 15012345678&#39;</code>，正则表达式为<code>&#39;^My.*(\d+)$&#39;</code>。具体代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line"></span><br><span class="line">txt = &apos;My tel number is 15012345678&apos;</span><br><span class="line">result = re.match(&quot;^My.*(\d+)$&quot;, txt)</span><br><span class="line">print(result.group())</span><br><span class="line">print(result.group(1))</span><br></pre></td></tr></table></figure></p>
-<p>首先这段代码意思是获取字符串中的手机号码，<code>(\d+)</code>代表一个组，这个组里面匹配的东西就是我们需要的结果，而我们的代码也看起来很正常<code>\d+</code>就意味着匹配多个数字。可以看到这段代码<code>print(result.group(1))</code>就是输出手机号。但是结果却只匹配到了8，因为<code>.*</code>代表了贪婪匹配，它会尽可能的匹配到多的字符。因为<code>.*</code>代表匹配任意多的字符串，所以它看到1501234567会一直往下匹配，知道看到8，发现8已经是最后一个数字了，如果这个8不与<code>\d+</code>匹配岂不是出现系统漏洞了，因为<code>\d+</code>就是让你匹配数字，你不匹配不是违反了规则？所以匹配成功。最后将8加入组中，通过result.group(1)获取到这一组。所以贪婪匹配在这种情况是有问题，这就引出了非贪婪匹配：<code>.*?</code>。代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line"></span><br><span class="line">txt = &apos;My tel number is 15012345678&apos;</span><br><span class="line">result = re.match(&quot;^My.*?(\d+)$&quot;, txt)</span><br><span class="line">print(result.group())</span><br><span class="line">print(result.group(1))</span><br></pre></td></tr></table></figure></p>
-<p>如果运行这段代码，就会发现匹配成功了。所以以后尽量使用非贪婪模式<code>.*?</code>，而不是贪婪模式<code>.*</code>。</p>
-<h4 id="修饰符"><a href="#修饰符" class="headerlink" title="修饰符"></a>修饰符</h4><p>代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">import re</span><br><span class="line"></span><br><span class="line">txt = &apos;My tel number is 15012345678&apos;</span><br><span class="line">result = re.match(&quot;^My.*?(\d+)$&quot;, txt, re.S)</span><br><span class="line">print(result.group())</span><br><span class="line">print(result.group(1))</span><br></pre></td></tr></table></figure></p>
-<p>这里引用了上面的代码，注意多了个re.S，它代表使.匹配包括换行在内的所有字符。也就是说不加re.S，.其实是匹配不到换行符的。应用场景：网页代码中嵌套标签会经常出现这些换行符，要加入re.S。其他的方法re.search(),re.findall()用法类似。<br>待补充。。。</p>
-<h4 id="re模块中的方法"><a href="#re模块中的方法" class="headerlink" title="re模块中的方法"></a>re模块中的方法</h4><ol>
-<li>match()<br>这方法从头开始匹配，如果一开始即第一个字符就不匹配，直接就算匹配失败。可以用于校验用户输入的信息是否合乎规范。</li>
-<li>search()<br>从头开始匹配，扫描整个字符串，如果碰到一段字符串匹配成功了就立即返回，它只会返回一个结果。</li>
-<li>findall()<br>跟它名字一样，扫描整个字符串，获得所有匹配成功的结果。</li>
-<li>待补充。。。</li>
-</ol>
-<h3 id="举一个栗子"><a href="#举一个栗子" class="headerlink" title="举一个栗子"></a>举一个栗子</h3><p>爬取牛客网的技术栈。</p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/学习笔记/Python爬虫学习记录（一）：正则表达式.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2524,7 +2406,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">69</span>
+                    <span class="site-state-item-count">70</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2627,7 +2509,7 @@
 		    	<span class="site-state-item-name">访客量</span>
 			</div>
 			<div class="site-state-item site-state-posts">
-		    	<span class="site-state-item-count">31.2k</span>
+		    	<span class="site-state-item-count">34.7k</span>
 		    	<span class="site-state-item-name">总字数</span>
 			</div>
           
@@ -2957,28 +2839,35 @@
   
 
   <script type="text/x-mathjax-config">
-	  MathJax.Hub.Config({
-	    menuSettings: {
-	      zoom: "None"
-	    },
-	    showMathMenu: false,
-	    jax: ["input/TeX","output/CommonHTML"],
-	    extensions: ["tex2jax.js"],
-	    TeX: {
-	      extensions: ["AMSmath.js","AMSsymbols.js"],
-	      equationNumbers: {
-	        autoNumber: "AMS"
-	      }
-	    },
-	    tex2jax: {
-	      inlineMath: [["\\(", "\\)"]],
-	      displayMath: [["\\[", "\\]"]]
-	    }
-	  });
-	</script>
-	
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.6.1/MathJax.js"></script>
-	<!--不蒜子统计-->
-	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+	MathJax.Hub.Config({
+		//下面的HTML-CSS和SVG用于在小屏幕上，数学公式可以自动换行，我测试过后发现无效，但是貌似有人可以。
+		"HTML-CSS": { 
+			linebreaks: { 
+				automatic: true 
+			} 
+		},SVG: {
+			linebreaks: { 
+				automatic: true 
+			}
+		},menuSettings: {
+			zoom: "None"
+		},
+		showMathMenu: false,
+		jax: ["input/TeX","output/CommonHTML"],
+		extensions: ["tex2jax.js"],
+		TeX: {
+			extensions: ["AMSmath.js","AMSsymbols.js"],
+			equationNumbers: {
+				autoNumber: "AMS"
+			}
+		},tex2jax: {
+			inlineMath: [["\\(", "\\)"]],
+			displayMath: [["\\[", "\\]"]]
+		}
+	});
+  </script>
+  <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  <!--不蒜子统计-->
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 </body>
 </html>

@@ -113,7 +113,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B8%AD%E7%9A%84%E7%A5%9E%E7%BB%8F%E5%85%83%E9%93%BE%E6%8E%A5%E4%B8%8A%E7%9A%84%E6%9D%83%E9%87%8D%E8%A1%A8%E7%A4%BA%E5%9B%BE%E8%A7%A3.png">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B8%AD%E7%9A%84%E5%81%8F%E5%B7%AE%E5%92%8C%E6%BF%80%E6%B4%BB%E5%80%BC%E5%9B%BE%E8%A7%A3.png">
-<meta property="og:updated_time" content="2019-04-12T08:16:07.767Z">
+<meta property="og:updated_time" content="2019-04-13T06:06:38.861Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题">
 <meta name="twitter:description" content="本文中文章节地址本文英文章节地址 神经网络中一些符号的定义引用自原文中文翻译  我们首先给出网络中权重的清晰定义。我们使用w^l_{jk}表示从 (l−1)^{th} 层的 k^{th} 个神经元到 (l)^{th} 层的 j^{th} （注意：这个地方中文文章中写错了，他写成了l^{th}）个神经元的链接上的权重。例如，下图给出了第二隐藏层的第四个神经元到第三隐藏层的第二个神经元的链接上的权重：">
@@ -355,7 +355,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">69</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">70</span></a>
 
   </li>
 
@@ -417,7 +417,7 @@
 			<script type="text/javascript" src="/js/spop/spop.min.js"></script>
 			<script>
 				spop({
-					template: '<h4 class="spop-title">注意</h4>此文章仅为博主的学习记录，其中可能含有极大的理论错误。',
+					template: '<h4 class="spop-title">注意</h4>此文章仅为博主的学习笔记，其中可能含有极大的理论错误。',
 					group: 'tips',
 					position  : 'bottom-center',
 					style: 'success',
@@ -429,6 +429,7 @@
 						//这里可以取消背景色
 						spop({
 							template: 'ε = = (づ′▽`)づ',
+							group: 'tips',
 							position  : 'bottom-center',
 							style: 'success',
 							autoclose: 1500
@@ -497,7 +498,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-04-12 16:16:07" itemprop="dateModified" datetime="2019-04-12T16:16:07+08:00">2019-04-12</time>
+                <time title="修改时间：2019-04-13 14:06:38" itemprop="dateModified" datetime="2019-04-13T14:06:38+08:00">2019-04-13</time>
               
             
           </span>
@@ -577,10 +578,10 @@ w^3_{11}&w^3_{12}&w^3_{13}&w^3_{14}\\
 w^3_{21}&w^3_{22}&w^3_{23}&w^3_{24}\\
 \end{pmatrix} * 
 \begin{pmatrix}
-a^2_1&a^2_1\\
-a^2_2&a^2_2\\
-a^2_3&a^2_3\\
-a^2_4&a^2_4\\
+a^2_1\\
+a^2_2\\
+a^2_3\\
+a^2_4\\
 \end{pmatrix}</script><p>上式可以简化为<script type="math/tex">a^l = \sigma(z^l)</script>，其中<script type="math/tex">z^l</script> = <script type="math/tex">w * a^{l-1}</script>。合并之后写为<script type="math/tex">a^l = \sigma(w * a^{l-1})</script>，<script type="math/tex">\sigma</script>只是代表某个函数而已。</p>
 <h4 id="如果不交换jk的位置"><a href="#如果不交换jk的位置" class="headerlink" title="如果不交换jk的位置"></a>如果不交换jk的位置</h4><p>绕了这么一大圈，终于说完了为什么jk交换位置要好，因为w被向量化后被表示成行向量了。行乘列直接就可以乘，不需要再对w转置。如果我们不交换jk的位置，那么w表示成如下形式：</p>
 <script type="math/tex; mode=display">
@@ -598,10 +599,10 @@ w^3_{31}&w^3_{32}\\
 w^3_{41}&w^3_{42}\\
 \end{pmatrix} * 
 \begin{pmatrix}
-a^2_1&a^2_1\\
-a^2_2&a^2_2\\
-a^2_3&a^2_3\\
-a^2_4&a^2_4\\
+a^2_1\\
+a^2_2\\
+a^2_3\\
+a^2_4\\
 \end{pmatrix} = 
 个屁</script><p>如果下面这样就可以。T代表将矩阵转置。</p>
 <script type="math/tex; mode=display">
@@ -612,10 +613,10 @@ w^3_{31}&w^3_{32}\\
 w^3_{41}&w^3_{42}\\
 \end{pmatrix}^T * 
 \begin{pmatrix}
-a^2_1&a^2_1\\
-a^2_2&a^2_2\\
-a^2_3&a^2_3\\
-a^2_4&a^2_4\\
+a^2_1\\
+a^2_2\\
+a^2_3\\
+a^2_4\\
 \end{pmatrix} = 
 \begin{pmatrix}
 z^3_1\\
@@ -753,7 +754,7 @@ w^3_{42}\\
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">69</span>
+                    <span class="site-state-item-count">70</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -856,7 +857,7 @@ w^3_{42}\\
 		    	<span class="site-state-item-name">访客量</span>
 			</div>
 			<div class="site-state-item site-state-posts">
-		    	<span class="site-state-item-count">31.2k</span>
+		    	<span class="site-state-item-count">34.7k</span>
 		    	<span class="site-state-item-name">总字数</span>
 			</div>
           
@@ -1187,28 +1188,35 @@ w^3_{42}\\
   
 
   <script type="text/x-mathjax-config">
-	  MathJax.Hub.Config({
-	    menuSettings: {
-	      zoom: "None"
-	    },
-	    showMathMenu: false,
-	    jax: ["input/TeX","output/CommonHTML"],
-	    extensions: ["tex2jax.js"],
-	    TeX: {
-	      extensions: ["AMSmath.js","AMSsymbols.js"],
-	      equationNumbers: {
-	        autoNumber: "AMS"
-	      }
-	    },
-	    tex2jax: {
-	      inlineMath: [["\\(", "\\)"]],
-	      displayMath: [["\\[", "\\]"]]
-	    }
-	  });
-	</script>
-	
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.6.1/MathJax.js"></script>
-	<!--不蒜子统计-->
-	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+	MathJax.Hub.Config({
+		//下面的HTML-CSS和SVG用于在小屏幕上，数学公式可以自动换行，我测试过后发现无效，但是貌似有人可以。
+		"HTML-CSS": { 
+			linebreaks: { 
+				automatic: true 
+			} 
+		},SVG: {
+			linebreaks: { 
+				automatic: true 
+			}
+		},menuSettings: {
+			zoom: "None"
+		},
+		showMathMenu: false,
+		jax: ["input/TeX","output/CommonHTML"],
+		extensions: ["tex2jax.js"],
+		TeX: {
+			extensions: ["AMSmath.js","AMSsymbols.js"],
+			equationNumbers: {
+				autoNumber: "AMS"
+			}
+		},tex2jax: {
+			inlineMath: [["\\(", "\\)"]],
+			displayMath: [["\\[", "\\]"]]
+		}
+	});
+  </script>
+  <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  <!--不蒜子统计-->
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 </body>
 </html>
