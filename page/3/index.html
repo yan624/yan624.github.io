@@ -53,7 +53,9 @@
 
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+  
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css">
 
 <link rel="stylesheet" href="/css/main.css?v=6.7.0">
 
@@ -172,7 +174,17 @@
 </head>
 
 <body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
-
+  <!--加载flower canvas-->
+  <script>
+	var pathname = window.location.pathname;
+	if(pathname == '/flower.html'){
+		var body =  document.getElementsByTagName('body')[0];
+		var canvas = document.createElement("canvas")
+		canvas.setAttribute('id', 'sakura')
+		// '<canvas id="sakura"></canvas>'
+		body.appendChild(canvas)
+	}
+  </script>
   
   
     
@@ -352,7 +364,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">74</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">77</span></a>
 
   </li>
 
@@ -404,12 +416,621 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/机器学习学习记录（二）：逻辑回归.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/运用文本相似度实现（证券）智能客服的记录.html">
     
-    	<!--判断该文章是否为学习笔记-->
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/运用文本相似度实现（证券）智能客服的记录.html" class="post-title-link" itemprop="url">运用文本相似度实现（证券）智能客服的记录</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-03-30 12:20:02" itemprop="dateCreated datePublished" datetime="2019-03-30T12:20:02+08:00">2019-03-30</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-04-05 11:04:49" itemprop="dateModified" datetime="2019-04-05T11:04:49+08:00">2019-04-05</time>
+              
+            
+          </span>
+          
+          
+          	
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/machine-learning/" itemprop="url" rel="index"><span itemprop="name">machine-learning</span></a></span>
+
+                
+                
+              
+            </span>
+          
+          
+          <!--不蒜子计数-->
+          <span id="busuanzi_container_site_uv">
+          	<span class="post-meta-divider">|</span>
+			浏览量：<span id="busuanzi_value_site_uv"></span>人次
+		  </span>
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>数据来源于维基百科。<br>数据来源：<a href="https://dumps.wikimedia.org/zhwiki/20190320/" target="_blank" rel="noopener">维基百科数据</a></p>
+<h3 id="从维基百科提取数据"><a href="#从维基百科提取数据" class="headerlink" title="从维基百科提取数据"></a>从维基百科提取数据</h3><p>不会操作的，具体参考我这篇<a href="https://yan624.github.io/%E4%BD%BF%E7%94%A8WikiExtractor%E5%A4%84%E7%90%86%E7%BB%B4%E5%9F%BA%E7%99%BE%E7%A7%91%E4%B8%8A%E7%9A%84%E6%95%B0%E6%8D%AE%E6%AD%A5%E9%AA%A4-2019%E5%B9%B43%E6%9C%88.html">博客:使用WikiExtractor处理维基百科上的数据步骤-2019年3月</a></p>
+<h3 id="将数据从繁体字转为简体字"><a href="#将数据从繁体字转为简体字" class="headerlink" title="将数据从繁体字转为简体字"></a>将数据从繁体字转为简体字</h3><p>具体参考该博客：<a href="https://blog.csdn.net/sinat_29957455/article/details/81290356" target="_blank" rel="noopener">windows使用opencc中文简体和繁体互转</a>，我试过里面的教程，没有任何问题。直接将博客往下拉，看<em>3、OpenCC的使用</em>即可。执行命令后，命令行会没有任何反应，这时只是在跑代码而已，我的文件157兆，大概只用了15秒。我把我的命令贴下来：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">E:\python_workspace\nlp_learning\opencc-1.0.4\bin\opencc -i E:\python_workspace\nlp_learning\zhwiki-20190320-pages-articles\AA\wiki_00 -o E:\python_workspace\nlp_learning\zhwiki-20190320-pages-articles\opencc\wiki_00 -c E:\python_workspace\nlp_learning\opencc-1.0.4\share\opencc\t2s.json</span><br></pre></td></tr></table></figure></p>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/运用文本相似度实现（证券）智能客服的记录.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/linux-Ubuntu安装NVIDIA驱动.html">
+    
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/linux-Ubuntu安装NVIDIA驱动.html" class="post-title-link" itemprop="url">linux Ubuntu安装NVIDIA驱动</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-03-28 17:23:11" itemprop="dateCreated datePublished" datetime="2019-03-28T17:23:11+08:00">2019-03-28</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-04-12 16:24:01" itemprop="dateModified" datetime="2019-04-12T16:24:01+08:00">2019-04-12</time>
+              
+            
+          </span>
+          
+          
+          	
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a></span>
+
+                
+                
+              
+            </span>
+          
+          
+          <!--不蒜子计数-->
+          <span id="busuanzi_container_site_uv">
+          	<span class="post-meta-divider">|</span>
+			浏览量：<span id="busuanzi_value_site_uv"></span>人次
+		  </span>
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p><a href="https://blog.csdn.net/ghw15221836342/article/details/79571559" target="_blank" rel="noopener">参考文章</a><br>以下步骤基于ubuntu16，下载的文件在Downloads文件夹。</p>
+<ol>
+<li>使用命令<code>lspci |grep -i nvidia</code>，查看显卡型号</li>
+<li>然后去<a href="http://www.nvidia.com/Download/index.aspx?lang=en-us" target="_blank" rel="noopener">官网</a>查找对应显卡版本。</li>
+<li>下载NVIDIA驱动文件，名称类似为NVIDIA-Linux-x86_64-375.20.run。</li>
+<li>卸载已有的驱动。由于我的是新机器，所以卸载步骤未执行。</li>
+<li>然后使用命令禁用nouveau，使用以下命令编辑配置文件。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/modprobe.d/blacklist.conf</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>在最后一行添加： <code>blacklist nouveau</code></p>
+<ol>
+<li>之后执行<code>sudo update-initramfs -u</code>，完成之后需要重启电脑，重启电脑命令：<code>reboot</code>。电脑重启之后执行<code>lsmod |grep nouveau  #没有输出，即说明安装成功</code>.</li>
+<li>接下来开始安装驱动。。。</li>
+<li>使用<code>ctrl+alt+f3</code>命令进入命令行界面。</li>
+<li><p>给驱动run文件赋予执行权限（若出现[sudo] 计算机名 ◆ ◆ ◆ ◆，这是因为安装了中文的ubuntu，输入登录密码即可）。使用如下命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd Downloads</span><br><span class="line">sudo chmod a+x NVIDIA-Linux-x86_64-375.20.run</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装：<code>sudo ./NVIDIA-Linux-x86_64-375.20.run –no-opengl-files</code></p>
+</li>
+<li>一直选择OK、yes、continue按回车键</li>
+<li>可能会出现没有gcc的错误，如果出现此问题，安装gcc即可。使用<code>sudo apt-get install gcc</code>安装。</li>
+<li>可能出现没有make工具的错误。使用<code>sudo apt-get install make</code>安装</li>
+<li><code>nvidia-smi</code>查看是否安装成功。
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/linux-Ubuntu安装NVIDIA驱动.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </li></ol></div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/机器学习学习记录（三）：决策树.html">
+    
   		
     
-    	<!--判断该文章是否为学习笔记-->
+  		
+    
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/学习笔记/机器学习学习记录（三）：决策树.html" class="post-title-link" itemprop="url">机器学习学习记录（三）：决策树</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-03-27 23:22:58" itemprop="dateCreated datePublished" datetime="2019-03-27T23:22:58+08:00">2019-03-27</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-04-08 22:17:30" itemprop="dateModified" datetime="2019-04-08T22:17:30+08:00">2019-04-08</time>
+              
+            
+          </span>
+          
+          
+          	
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/machine-learning/" itemprop="url" rel="index"><span itemprop="name">machine-learning</span></a></span>
+
+                
+                
+              
+            </span>
+          
+          
+          <!--不蒜子计数-->
+          <span id="busuanzi_container_site_uv">
+          	<span class="post-meta-divider">|</span>
+			浏览量：<span id="busuanzi_value_site_uv"></span>人次
+		  </span>
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h3 id="TODO"><a href="#TODO" class="headerlink" title="TODO"></a>TODO</h3><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>由于新手不太懂术语，规定行为一条数据，列为一组特征。<br><strong>特征</strong>代表一列数据。如性别、年龄、身高等。<br><strong>分类</strong>代表一个特征中不同的分类。如性别中分类为男女，天气中分类为晴、阴、雨、雪等，收入中分类为贫困、低收入、小康、中高收入者、富人等。</p>
+<h3 id="信息增益"><a href="#信息增益" class="headerlink" title="信息增益"></a>信息增益</h3><p>引用自《机器学习实战》</p>
+<blockquote>
+<p>划分数据集的大原则：将无需的数据变得更加有序。我们可以使用多种方法划分数据集，但是每种方法都有各自的优缺点。组织杂乱无章数据的一种办法就是使用信息论度量信息，信息论是量化处理信息的分支学科。我们可以在划分数据之前或之后使用信息论量化度量信息的内容。<br>在划分数据集之前之后信息发生的变化称为信息增益，知道如何计算信息增益，我们就可以计算每个特征值划分数据集获得的信息增益，获得信息增益最高的特征就是最好的选择。</p>
+</blockquote>
+<p>节选</p>
+<blockquote>
+<p>集合信息的度量方式称为香农熵或者简称为熵，这个名字来源于信息论之父克劳德·香农。</p>
+</blockquote>
+<p><strong>下面这一段待修改，在进一步学习后发现有问题</strong></p>
+<p>如果不懂什么是信息增益（information）和熵（entropy）也无所谓，只需要知道熵越大则不确定性越大即可。因为我们需要的是不确定性小的<strong>特征</strong>，所以熵越小越好。试想决策树就是将信息一分为二，是不是最好某一个特征只有两种<strong>分类</strong>，如男、女。这样不确定性是极小的，因为它只能分为男和女。如果某一个特征有多个分类，如鸟类下有多种详细的分类，那么该特征的熵值就会很大，不确定性也很大。想想决策树就是将信息一分为二，我该选哪条线将鸟类一分为二？这是很难想的事情，所以这个特征并不好。以上只是举例，在具体项目中不一定对，并且决策树也不一定是二叉树（此处存疑？）。<br>熵的计算公式如下，其中pi是选择该分类的概率，即有20条数据，其中13条是男性，7条是女性。则男性的pi=13/20，女性的pi=7/20。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E4%BF%A1%E6%81%AF%E7%86%B5%E7%9A%84%E5%85%AC%E5%BC%8F.jpg" alt="信息熵的公式"></p>
+<h3 id="决策树构建步骤"><a href="#决策树构建步骤" class="headerlink" title="决策树构建步骤"></a>决策树构建步骤</h3><p>决策树构建首先需要一个根节点，这是毋庸置疑的，但是根节点也不是一拍脑门就突然有了的。需要使用一些算法，现在一些常用的算法如：ID3(信息增益)、C4.5(信息增益率，解决ID3的问题，考虑自身熵)、CART(使用GINI系数来当做衡量标准，GINI系数和熵的衡量标准类似，但是计算方式不同)等。<br>以下使用<a href="https://baike.baidu.com/item/ID3%E7%AE%97%E6%B3%95/5522381" target="_blank" rel="noopener">ID3算法</a>，给出如下数据，来源于唐宇迪机器学习视频中的截图。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%86%B3%E7%AD%96%E6%A0%91%E6%9E%84%E5%BB%BA%E6%AD%A5%E9%AA%A4%E2%80%94%E2%80%94%E4%B8%BE%E7%9A%84%E4%BE%8B%E5%AD%90%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE.jpg" alt="例子中的数据"></p>
+<ol>
+<li>首先计算原始数据的熵值，其实就是计算一下给出的数据中的最后一列（最后一列可以当做y）的熵值。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%86%B3%E7%AD%96%E6%A0%91%E6%9E%84%E5%BB%BA%E6%AD%A5%E9%AA%A4%E2%80%94%E2%80%94%E8%AE%A1%E7%AE%97%E5%8E%9F%E5%A7%8B%E6%95%B0%E6%8D%AE%E7%9A%84%E7%86%B5%E5%80%BC.jpg" alt="计算原始数据的熵值"></li>
+<li>计算其他特征的熵值。<br>如下图当天气为sunny时去打球的概率为2/5，不去打球的概率为3/5，利用上面的熵值公式计算结果为0.971。再分别计算outlook其他<strong>分类</strong>：overcast和rainy的熵值，此时得到了三个不同分类的熵值，然后将这三个熵值按照其在该特征下的占比进行求和，如sunny为5/14， overcast为4/14。最终outlook的熵值即为5/14 * 0.971 + 4/14 * 0 + 5/14 * 0.971 = 0.693。最后其他特征值也需要分别计算它们的分类的熵值。<br><strong>这里可能会出现困惑</strong>，如果每个特征值都有多个分类，那计算量不是特别大？而且这里的分类是文字，计算量较小，如果分类是数字那么分类几乎不会重复，计算量不是突破天际？我在学决策树时出现了这种疑惑，后来发现算法确实是这样的，并没有错。<br>分类为文字称为<strong>离散值</strong>，分类为数值称为<strong>连续值</strong>。上面说到决策树碰到连续值计算量会非常大，解决办法：<a href="https://www.baidu.com/s?wd=%E5%86%B3%E7%AD%96%E6%A0%91%E8%BF%9E%E7%BB%AD%E5%80%BC%E5%A4%84%E7%90%86" target="_blank" rel="noopener">决策树连续值处理</a><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%86%B3%E7%AD%96%E6%A0%91%E6%9E%84%E5%BB%BA%E6%AD%A5%E9%AA%A4%E2%80%94%E2%80%94%E8%AE%A1%E7%AE%97%E5%85%B6%E4%BB%96%E7%89%B9%E5%BE%81%E7%9A%84%E7%86%B5%E5%80%BC.jpg" alt="计算其他特征的熵值"><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%86%B3%E7%AD%96%E6%A0%91%E6%9E%84%E5%BB%BA%E6%AD%A5%E9%AA%A4%E2%80%94%E2%80%94%E5%85%B6%E4%BB%96%E7%89%B9%E5%BE%81%E4%BB%A5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB.jpg" alt="其他特征以及其分类"></li>
+<li>通过1和2对比，选择出熵值最低的特征，并且熵值需要小于原始数据的基本熵值。<br>上述123步，均可以直接在choose_best_feature_index(dataset)函数中计算获得，顶多加几个封装过的函数，比如calculate_entropy(dataset)，split_dataset(dataset, axis, value)等。</li>
+<li>构造决策树，决策树可以使用递归算法构建。<br>新手入门系列，完全可以仅使用python的dict来存储决策树。如：{‘tearRate’: {‘reduced’: ‘no lenses’, ‘normal’: {‘astigmatic’: {‘no’: {‘age’: {‘young’: ‘soft’, ‘pre’: ‘soft’, ‘presbyopic’: {‘prescript’: {‘hyper’: ‘soft’, ‘myope’: ‘no lenses’}}}}, ‘yes’: {‘prescript’: {‘hyper’: {‘age’: {‘young’: ‘hard’, ‘pre’: ‘no lenses’, ‘presbyopic’: ‘no lenses’}}, ‘myope’: ‘hard’}}}}}}</li>
+</ol>
+<h3 id="举一个简单的例子"><a href="#举一个简单的例子" class="headerlink" title="举一个简单的例子"></a>举一个简单的例子</h3><p><a href="https://github.com/yan624/machine_learning_algorithms/tree/master/decision_tree/simple_demo" target="_blank" rel="noopener">这里有一个简单例子</a><br>运行结果：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%86%B3%E7%AD%96%E6%A0%91%E7%AE%80%E5%8D%95%E4%B8%BE%E4%BE%8B%E6%9C%80%E7%BB%88%E7%BB%93%E6%9E%9C%E5%9B%BE.png" alt="决策树简单举例最终结果图"></p>
+<h3 id="其他还未解决的问题"><a href="#其他还未解决的问题" class="headerlink" title="其他还未解决的问题"></a>其他还未解决的问题</h3><ul>
+<li>决策树处理缺失值</li>
+<li>决策树处理连续值</li>
+<li>剪枝的问题
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/学习笔记/机器学习学习记录（三）：决策树.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </li></ul></div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/机器学习学习记录（二）：逻辑回归.html">
+    
+  		
+    
   		
     
 
@@ -592,10 +1213,8 @@
   <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/机器学习学习记录（一）：线性回归.html">
     
-    	<!--判断该文章是否为学习笔记-->
   		
     
-    	<!--判断该文章是否为学习笔记-->
   		
     
 
@@ -778,10 +1397,8 @@
   <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/Hadoop学习记录（一）：Hadoop集群搭建.html">
     
-    	<!--判断该文章是否为学习笔记-->
   		
     
-    	<!--判断该文章是否为学习笔记-->
   		
     
 
@@ -975,10 +1592,8 @@
   <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yan624.github.io/anaconda的锅：使用pyquery出现urlopen-error-unknown-url-type-https.html">
     
-    	<!--判断该文章是否为学习笔记-->
   		
     
-    	<!--判断该文章是否为学习笔记-->
   		
     
 
@@ -1169,10 +1784,8 @@
   <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/Python爬虫学习记录（一）：正则表达式.html">
     
-    	<!--判断该文章是否为学习笔记-->
   		
     
-    	<!--判断该文章是否为学习笔记-->
   		
     
 
@@ -1375,7 +1988,6 @@
   <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yan624.github.io/一些框架、工具等若干类库的学习网站.html">
     
-    	<!--判断该文章是否为学习笔记-->
   		
     
 
@@ -1672,7 +2284,6 @@
   <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yan624.github.io/anaconda安装问题以及之前安装的Python环境取舍问题.html">
     
-    	<!--判断该文章是否为学习笔记-->
   		
     
 
@@ -1850,597 +2461,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/spring-boot中使用-ConfigurationProperties注解.html">
-    
-    	<!--判断该文章是否为学习笔记-->
-  		
-    
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/spring-boot中使用-ConfigurationProperties注解.html" class="post-title-link" itemprop="url">spring boot中使用@ConfigurationProperties注解</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-02-27 14:27:57 / 修改时间：14:32:03" itemprop="dateCreated datePublished" datetime="2019-02-27T14:27:57+08:00">2019-02-27</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-          
-          
-          	
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/spring/" itemprop="url" rel="index"><span itemprop="name">spring</span></a></span>
-
-                
-                
-              
-            </span>
-          
-          
-          <!--不蒜子计数-->
-          <span id="busuanzi_container_site_uv">
-          	<span class="post-meta-divider">|</span>
-			浏览量：<span id="busuanzi_value_site_uv"></span>人次
-		  </span>
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>在使用@ConfigurationProperties注解前必须引入这个依赖<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 为了使用@ConfigurationProperties注解，必须加入这个--&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-configuration-processor&lt;/artifactId&gt;</span><br><span class="line">    &lt;optional&gt;true&lt;/optional&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure></p>
-<p>使用方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@Component</span><br><span class="line">@ConfigurationProperties(prefix = &quot;io.github.yan624.file&quot;)</span><br><span class="line">@Data</span><br><span class="line">public class PropertiesConfig &#123;</span><br><span class="line">    private String root;</span><br><span class="line">    private String qrPath;</span><br><span class="line">    private String imgPath;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>yml文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">io:</span><br><span class="line">  github:</span><br><span class="line">    yan624:</span><br><span class="line">      file:</span><br><span class="line">        root: E:/itchat4j/</span><br><span class="line">        qr-path: $&#123;io.github.yan624.file.root&#125;/login</span><br><span class="line">        img-path: $&#123;io.github.yan624.file.root&#125;/img</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
-<p>其中@Data是lombok插件的注解，用于生成get/set方法<br>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/spring-boot中使用-ConfigurationProperties注解.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </p></div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/机器学习代价函数.html">
-    
-    	<!--判断该文章是否为学习笔记-->
-  		
-    
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/学习笔记/机器学习代价函数.html" class="post-title-link" itemprop="url">机器学习代价函数</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-02-12 15:36:18" itemprop="dateCreated datePublished" datetime="2019-02-12T15:36:18+08:00">2019-02-12</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-04-12 16:26:58" itemprop="dateModified" datetime="2019-04-12T16:26:58+08:00">2019-04-12</time>
-              
-            
-          </span>
-          
-          
-          	
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/machine-learning/" itemprop="url" rel="index"><span itemprop="name">machine-learning</span></a></span>
-
-                
-                
-              
-            </span>
-          
-          
-          <!--不蒜子计数-->
-          <span id="busuanzi_container_site_uv">
-          	<span class="post-meta-divider">|</span>
-			浏览量：<span id="busuanzi_value_site_uv"></span>人次
-		  </span>
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>交叉熵(cross entropy)<br>均方差(mean square error)，有人简称mse<br>待补充。。。<br>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/学习笔记/机器学习代价函数.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </p></div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/李宏毅机器学习2017春作业：octave实现.html">
-    
-    	<!--判断该文章是否为学习笔记-->
-  		
-    
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/学习笔记/李宏毅机器学习2017春作业：octave实现.html" class="post-title-link" itemprop="url">李宏毅机器学习2017春学习记录及作业：octave实现</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-02-02 22:25:16" itemprop="dateCreated datePublished" datetime="2019-02-02T22:25:16+08:00">2019-02-02</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-04-12 16:28:18" itemprop="dateModified" datetime="2019-04-12T16:28:18+08:00">2019-04-12</time>
-              
-            
-          </span>
-          
-          
-          	
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/machine-learning/" itemprop="url" rel="index"><span itemprop="name">machine-learning</span></a></span>
-
-                
-                
-              
-            </span>
-          
-          
-          <!--不蒜子计数-->
-          <span id="busuanzi_container_site_uv">
-          	<span class="post-meta-divider">|</span>
-			浏览量：<span id="busuanzi_value_site_uv"></span>人次
-		  </span>
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>所有代码在<a href="https://github.com/yan624/lihongyi-machine-learning-2017-homework" target="_blank" rel="noopener">lihongyi-machine-learning-2017-homework</a>上</p>
-<h3 id="学习情况和做题背景"><a href="#学习情况和做题背景" class="headerlink" title="学习情况和做题背景"></a>学习情况和做题背景</h3><h4 id="学习情况"><a href="#学习情况" class="headerlink" title="学习情况"></a>学习情况</h4><p>先看了<strong>《深度学习》（花书）</strong>这本书，由于我是零基础学习该方向，感觉这本书除了前几章数学方面略看得懂，其他的一脸懵逼。由于本人在学习某一知识之前会预先搜集资料。于是我打开了在知乎收藏的文章，点进了<strong>吴恩达机器学习</strong>网易云课堂。我看了几个算法：线性回归，逻辑回归，神经网络。并且做了线性回归和逻辑回归的练习题。个人感觉吴恩达的视频很适合入门，但是想要仔细理解太难了。我根据吴恩达老师提供的题目，照葫芦画瓢做了一下，做还是做出来了，但是这都是很简单的例子。大都是只有三四个参数，所以感觉只是入门了。<br>这时候我再去看<strong>《深度学习》</strong>这本书，发现有些内容我看得懂了。但是有只是有些而已，往后看还是无法理解。至此，在寒假中我彻底放弃继续看<strong>《深度学习》</strong>。这个时候我又继续搜集资料，我发现了另一个教学视频就是<strong>李宏毅机器学习</strong>，经过自己的查询，最终决定看这个。李宏毅老师讲的略微会难一点，因为他面向的是研究生，这个从他的课程介绍上可以看得出。可以对比一下，</p>
-<ul>
-<li><strong>吴恩达机器学习</strong>不会涉及任何数学部分，高数、线代、概率论在吴恩达老师的课堂上只会出现名词和推导过程，他不会解释为什么，他假设看这视频的人都不懂数学。因为他的课程面向的是所有人。而且他的课程当中很多知识都是讲解基础知识，深入的东西他会只介绍名词，甚至不会介绍。所以<strong><em>很</em></strong>适合做入门视频，<strong>最重要的是</strong>他的视频都很短，最长的也只有十几分钟。</li>
-<li><strong>李宏毅机器学习</strong>讲的比吴恩达的深入许多，他会讲解原理，而且讲的也很清楚，并且数学部分他也不会跳过，而且他都是假设你会这部分的数学知识。另外他讲课是讲例子的，主要的例子是预测神奇宝贝进化后的cp值（大概就是战斗力的意思），还会出现一些游戏如帝国时代、我的世界等。这些都会使得课堂很有意思。在b站有他的视频，不过都很长，一个视频打都有60来分钟，有少数极短。最后他的作业数据量大做起来很有意思。<br>所以我建议先看吴恩达老师的机器学习视频看到神经网络，先入个门要不然看其他人的教学视频可能跟不上节奏，然后看李宏毅老师视频，注意完成他的作业，会很好的帮助自己理解。</li>
-</ul>
-<h4 id="做题背景"><a href="#做题背景" class="headerlink" title="做题背景"></a>做题背景</h4><p>做完吴恩达老师布置的作业还以为已经懂了什么是线性回归，没想到做李宏毅老师的作业时发现连开个头都困难。在自己瞎做之后，经过五六天完成了作业，但是期间出现了大量问题，所以写这个博文用来纪录。</p>
-<h3 id="hw1-PM2-5预测"><a href="#hw1-PM2-5预测" class="headerlink" title="hw1:PM2.5预测"></a>hw1:PM2.5预测</h3><h4 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h4><ol>
-<li>李宏毅老师给的数据，没看懂是什么意思。可能是吴恩达老师和李宏毅老师的概念有一些处理，看了很久没理解这个作业的意思。这个没办法，我自己琢磨了一会才搞懂。</li>
-<li>开头第一步，完全不知道干什么。<strong>解决</strong>：选函数。吴恩达称之为hypothesis函数，李宏毅称之为模型(Model)，都一个意思，以下称为hypothesis。</li>
-<li>hypothesis函数需要一些特征值，即X。当然还有一个theta。但是特征那么多总不能全选吧，而且是几次方的式子也确定不了。<strong>解决</strong>：将每一个特征和需要预测的y，使用画图函数画出来，特征x作为横坐标，待预测y作为纵坐标。然后观察哪些图像关系比较正常，就用哪个特征（比如呈线性关系的就比较正常）。这也是看到其他人的博客才发现特征是这么选的，之前做了几天都是凭感觉选的。。。</li>
-<li>做了半天才发现代码写错了。<strong>解决</strong>：做的时候不要太急，把代码好好检查一下。倒不是程序错误，也不是数据分割错误，我是数据划分的时候少划分一大半导致样本量一直很小。</li>
-<li>学习速率(alpha)选择多少正常，第一次做心理没底，选了稍微大一点的如0.1，误差大得直接超出浮点型最大值。<strong>解决</strong>：使用adagrad，可以根据迭代次数的增加，自动减少alpha。</li>
-<li>梯度下降的迭代次数选择多少正常，第一次做心理没底。<strong>解决</strong>：经过我反复尝试，虽然我还是没有得到肯定的答案，但是我一般将迭代次数设置为4000.</li>
-<li>theta初始值设置为多少正常，第一次做心理没底。<strong>解决</strong>：全部为0，包括bais也设置为0。另外吴恩达老师讲过在神经网络中不能这么设置。</li>
-<li>怎么选择hypothesis函数的表达式，到底是二次项，三次项，四次项还是五次项等等。<strong>解决</strong>：暂时没百度过，我看吴恩达老师的视频，个人理解应该是最后在1-10次中选择。</li>
-<li>除了一个特征的几次方项，那么多个特征的乘积怎么选择，如有特征值x1,x2,x3，x1*x2*x3还是选x1*x3还是选x2*x3，甚至这些乘积里面的特征也可以加上次方。那项的可能就多了去了，到底该怎么选。<strong>解决</strong>：我刚开始是不加这些项的，也就是表达式的一个项中只会有一个特征。后面加也会自己慢慢尝试，基本上就是碰运气。</li>
-<li>标准化的lambda怎么设置。<strong>解决</strong>：吴恩达老师有讲怎么调整lambda值以及lambda值调整会出现问题的情况也讲了，所以我都是感觉误差稳定了或者误差太大了才去调的。一般都设为0。</li>
-<li>其他必要的变量怎么设置。<strong>解决</strong>：我真的是完全自己调，然后碰运气。。。</li>
-<li>怎么看我训练出来的结果如何。<strong>解决</strong>：梯度下降本质是最后得到一组theta。你需要预测数据，首先肯定有X，然后X * theta，就会得到预测结果。接下来是使用代价函数看误差就行了。吴恩达称之为代价函数(Cost function)，李宏毅称之为损失函数(Loss function)，而且算法也有略微不同，不过问题不大。值得注意的是，之前训练的样本被称为train_data，现在预测的被称为cross_validation_data，是完全不同的数据，不要再用train_data去做预测，具体为什么，吴恩达老师讲的很明白了。</li>
-<li>误差到多少才算可以。<strong>解决</strong>：吴恩达老师给出了几幅图，但是个人认为这几幅图有几个瑕疵的地方，那就是他没标刻度，可能是故意没标的，因为根本没刻度。所以压根不知道误差到什么程度才算可以。后来经过不断测试和百度，发现网上一个人认为40多的误差他说可以接受。我个人认为，训练误差0-20差不多，交叉验证误差0-40差不多，预测误差感觉40以下差不多。预测误差就是最终做出的预测产生的误差，所以我感觉要再低点，但是我的作业中训练的一直降不下去，最低都是20多。</li>
-</ol>
-<h3 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h3><ol>
-<li>通过分别画出特征值和待输出值的二维图，观察图像来选择特征。</li>
-<li>尽可能地把数据处理部分的代码写的完全正确。</li>
-<li>选择hypothesis函数，可以从1次方开始尝试。</li>
-<li>初始化值。alpha=0.001,iters_num=4000,lambda=0.</li>
-<li>开始梯度下降。</li>
-<li>出现误差，通过吴恩达老师给出的建议以及李宏毅老师给的补充，可以自行调整。对于我的话，误差太巨大，我一般先调整学习速率alpha(learning rate)和迭代次数iters_num.误差大概到100以内左右才会动特征数量，hypothesis表达式等等这些变量。误差到很小了（这个很小还真不确定，大概0-40左右吧）才会调整lambda。</li>
-<li>待补充。</li>
-</ol>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/学习笔记/李宏毅机器学习2017春作业：octave实现.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2490,7 +2510,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">74</span>
+                    <span class="site-state-item-count">77</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2593,7 +2613,7 @@
 		    	<span class="site-state-item-name">访客量</span>
 			</div>
 			<div class="site-state-item site-state-posts">
-		    	<span class="site-state-item-count">40k</span>
+		    	<span class="site-state-item-count">44.5k</span>
 		    	<span class="site-state-item-name">总字数</span>
 			</div>
           
@@ -2611,7 +2631,7 @@
                   
                     
                   
-                  <a href="https://github.com/yan624" title="GitHub &rarr; https://github.com/yan624" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  <a href="https://github.com/yan624" title="GitHub &rarr; https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-fw fa-github"></i>GitHub</a>
                 </span>
               
                 <span class="links-of-author-item">
@@ -2622,7 +2642,18 @@
                   
                     
                   
-                  <a href="https://weibo.com/u/2607724281" title="Weibo &rarr; https://weibo.com/u/2607724281" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  <a href="mailto:897538633@qq.com" title="E-Mail &rarr; mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2607724281" title="Weibo &rarr; https://weibo.com/u/2607724281" rel="noopener" target="_blank"><i class="fab fa-fw fa-weibo"></i>Weibo</a>
                 </span>
               
             </div>

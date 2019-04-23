@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-simple.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css">
+
+<link rel="stylesheet" href="/css/main.css?v=6.7.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.7.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.7.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.7.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="uniform mat4 uProjection;  uniform mat4 uModelview;  uniform vec3 uResolution;  uniform vec3 uOffset;  uniform vec3 uDOF;  //x:focus distance, y:focus radius, z:max radius  uniform vec3 uFade;">
+<meta name="keywords" content="博客，java，javaWeb">
+<meta property="og:type" content="website">
+<meta property="og:title" content="博客">
+<meta property="og:url" content="http://yan624.github.io/flower.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="uniform mat4 uProjection;  uniform mat4 uModelview;  uniform vec3 uResolution;  uniform vec3 uOffset;  uniform vec3 uDOF;  //x:focus distance, y:focus radius, z:max radius  uniform vec3 uFade;">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-04-23T04:14:58.257Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="博客">
+<meta name="twitter:description" content="uniform mat4 uProjection;  uniform mat4 uModelview;  uniform vec3 uResolution;  uniform vec3 uOffset;  uniform vec3 uDOF;  //x:focus distance, y:focus radius, z:max radius  uniform vec3 uFade;">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yan624.github.io/flower.html">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title> | 博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <!--加载flower canvas-->
+  <script>
+	var pathname = window.location.pathname;
+	if(pathname == '/flower.html'){
+		var body =  document.getElementsByTagName('body')[0];
+		var canvas = document.createElement("canvas")
+		canvas.setAttribute('id', 'sakura')
+		// '<canvas id="sakura"></canvas>'
+		body.appendChild(canvas)
+	}
+  </script>
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">记录</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">13</span></a>
+
+  </li>
+        
+        
+        
+          
+            
+            
+            
+              
+              
+
+  
+  
+    
+  
+  <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">16</span></a>
+
+  </li>
+
+
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+        
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">77</span></a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+    
+    
+      
+      
+    
+      
+      
+    
+      
+      
+    
+      
+      
+
+        
+        
+        
+        
+
+      
+    
+      
+      
+    
+    
+
+  
+
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+    
+    
+    <div class="post-block page">
+      <header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+
+</h1>
+
+<div class="post-meta">
+  
+  
+
+
+
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+        
+        
+          <!--在/layout/_layout.swig中有canvas-->
+<p><link rel="stylesheet" href="/lib/flower_background/flower.css"></p>
+<p><div class="btnbg"></div></p>
+<script id="sakura_point_vsh" type="x-shader/x_vertex">
+    uniform mat4 uProjection;
+
+uniform mat4 uModelview;
+
+uniform vec3 uResolution;
+
+uniform vec3 uOffset;
+
+uniform vec3 uDOF;  //x:focus distance, y:focus radius, z:max radius
+
+uniform vec3 uFade; //x:start distance, y:half distance, z:near fade start
+
+
+
+attribute vec3 aPosition;
+
+attribute vec3 aEuler;
+
+attribute vec2 aMisc; //x:size, y:fade
+
+
+
+varying vec3 pposition;
+
+varying float psize;
+
+varying float palpha;
+
+varying float pdist;
+
+
+
+//varying mat3 rotMat;
+
+varying vec3 normX;
+
+varying vec3 normY;
+
+varying vec3 normZ;
+
+varying vec3 normal;
+
+
+
+varying float diffuse;
+
+varying float specular;
+
+varying float rstop;
+
+varying float distancefade;
+
+
+
+void main(void) {
+
+    // Projection is based on vertical angle
+
+    vec4 pos = uModelview * vec4(aPosition + uOffset, 1.0);
+
+    gl_Position = uProjection * pos;
+
+    gl_PointSize = aMisc.x * uProjection[1][1] / -pos.z * uResolution.y * 0.5;
+
+
+
+    pposition = pos.xyz;
+
+    psize = aMisc.x;
+
+    pdist = length(pos.xyz);
+
+    palpha = smoothstep(0.0, 1.0, (pdist - 0.1) / uFade.z);
+
+
+
+    vec3 elrsn = sin(aEuler);
+
+    vec3 elrcs = cos(aEuler);
+
+    mat3 rotx = mat3(
+
+        1.0, 0.0, 0.0,
+
+        0.0, elrcs.x, elrsn.x,
+
+        0.0, -elrsn.x, elrcs.x
+
+    );
+
+    mat3 roty = mat3(
+
+        elrcs.y, 0.0, -elrsn.y,
+
+        0.0, 1.0, 0.0,
+
+        elrsn.y, 0.0, elrcs.y
+
+    );
+
+    mat3 rotz = mat3(
+
+        elrcs.z, elrsn.z, 0.0, 
+
+        -elrsn.z, elrcs.z, 0.0,
+
+        0.0, 0.0, 1.0
+
+    );
+
+    mat3 rotmat = rotx * roty * rotz;
+
+    normal = rotmat[2];
+
+
+
+    mat3 trrotm = mat3(
+
+        rotmat[0][0], rotmat[1][0], rotmat[2][0],
+
+        rotmat[0][1], rotmat[1][1], rotmat[2][1],
+
+        rotmat[0][2], rotmat[1][2], rotmat[2][2]
+
+    );
+
+    normX = trrotm[0];
+
+    normY = trrotm[1];
+
+    normZ = trrotm[2];
+
+
+
+    const vec3 lit = vec3(0.6917144638660746, 0.6917144638660746, -0.20751433915982237);
+
+
+
+    float tmpdfs = dot(lit, normal);
+
+    if(tmpdfs < 0.0) {
+
+        normal = -normal;
+
+        tmpdfs = dot(lit, normal);
+
+    }
+
+    diffuse = 0.4 + tmpdfs;
+
+
+
+    vec3 eyev = normalize(-pos.xyz);
+
+    if(dot(eyev, normal) > 0.0) {
+
+        vec3 hv = normalize(eyev + lit);
+
+        specular = pow(max(dot(hv, normal), 0.0), 20.0);
+
+    }
+
+    else {
+
+        specular = 0.0;
+
+    }
+
+
+
+    rstop = clamp((abs(pdist - uDOF.x) - uDOF.y) / uDOF.z, 0.0, 1.0);
+
+    rstop = pow(rstop, 0.5);
+
+    //-0.69315 = ln(0.5)
+
+    distancefade = min(1.0, exp((uFade.x - pdist) * 0.69315 / uFade.y));
+
+}
+</script>
+<script id="sakura_point_fsh" type="x-shader/x_fragment">
+    #ifdef GL_ES
+
+//precision mediump float;
+
+precision highp float;
+
+#endif
+
+
+
+uniform vec3 uDOF;  //x:focus distance, y:focus radius, z:max radius
+
+uniform vec3 uFade; //x:start distance, y:half distance, z:near fade start
+
+
+
+const vec3 fadeCol = vec3(0.08, 0.03, 0.06);
+
+
+
+varying vec3 pposition;
+
+varying float psize;
+
+varying float palpha;
+
+varying float pdist;
+
+
+
+//varying mat3 rotMat;
+
+varying vec3 normX;
+
+varying vec3 normY;
+
+varying vec3 normZ;
+
+varying vec3 normal;
+
+
+
+varying float diffuse;
+
+varying float specular;
+
+varying float rstop;
+
+varying float distancefade;
+
+float ellipse(vec2 p, vec2 o, vec2 r) {
+
+    vec2 lp = (p - o) / r;
+
+    return length(lp) - 1.0;
+
+}
+
+void main(void) {
+
+    vec3 p = vec3(gl_PointCoord - vec2(0.5, 0.5), 0.0) * 2.0;
+
+    vec3 d = vec3(0.0, 0.0, -1.0);
+
+    float nd = normZ.z; //dot(-normZ, d);
+
+    if(abs(nd) < 0.0001) discard;
+
+
+
+    float np = dot(normZ, p);
+
+    vec3 tp = p + d * np / nd;
+
+    vec2 coord = vec2(dot(normX, tp), dot(normY, tp));
+
+
+
+    //angle = 15 degree
+
+    const float flwrsn = 0.258819045102521;
+
+    const float flwrcs = 0.965925826289068;
+
+    mat2 flwrm = mat2(flwrcs, -flwrsn, flwrsn, flwrcs);
+
+    vec2 flwrp = vec2(abs(coord.x), coord.y) * flwrm;
+
+
+
+    float r;
+
+    if(flwrp.x < 0.0) {
+
+        r = ellipse(flwrp, vec2(0.065, 0.024) * 0.5, vec2(0.36, 0.96) * 0.5);
+
+    }
+
+    else {
+
+        r = ellipse(flwrp, vec2(0.065, 0.024) * 0.5, vec2(0.58, 0.96) * 0.5);
+
+    }
+
+
+
+    if(r > rstop) discard;
+
+
+
+    vec3 col = mix(vec3(1.0, 0.8, 0.75), vec3(1.0, 0.9, 0.87), r);
+
+    float grady = mix(0.0, 1.0, pow(coord.y * 0.5 + 0.5, 0.35));
+
+    col *= vec3(1.0, grady, grady);
+
+    col *= mix(0.8, 1.0, pow(abs(coord.x), 0.3));
+
+    col = col * diffuse + specular;
+
+
+
+    col = mix(fadeCol, col, distancefade);
+
+
+
+    float alpha = (rstop > 0.001)? (0.5 - r / (rstop * 2.0)) : 1.0;
+
+    alpha = smoothstep(0.0, 1.0, alpha) * palpha;
+
+
+
+    gl_FragColor = vec4(col * 0.5, alpha);
+
+}
+</script>
+
+<!-- effects -->
+<script id="fx_common_vsh" type="x-shader/x_vertex">
+    uniform vec3 uResolution;
+
+attribute vec2 aPosition;
+
+varying vec2 texCoord;
+
+varying vec2 screenCoord;
+
+void main(void) {
+
+    gl_Position = vec4(aPosition, 0.0, 1.0);
+
+    texCoord = aPosition.xy * 0.5 + vec2(0.5, 0.5);
+
+    screenCoord = aPosition.xy * vec2(uResolution.z, 1.0);
+
+}
+</script>
+
+<script id="bg_fsh" type="x-shader/x_fragment">
+    #ifdef GL_ES
+
+//precision mediump float;
+
+precision highp float;
+
+#endif
+
+uniform vec2 uTimes;
+
+varying vec2 texCoord;
+
+varying vec2 screenCoord;
+
+void main(void) {
+
+    vec3 col;
+
+    float c;
+
+    vec2 tmpv = texCoord * vec2(0.8, 1.0) - vec2(0.95, 1.0);
+
+    c = exp(-pow(length(tmpv) * 1.8, 2.0));
+
+    col = mix(vec3(0.02, 0.0, 0.03), vec3(0.96, 0.98, 1.0) * 1.5, c);
+
+    gl_FragColor = vec4(col * 0.5, 1.0);
+
+}
+</script>
+<script id="fx_brightbuf_fsh" type="x-shader/x_fragment">
+    #ifdef GL_ES
+
+//precision mediump float;
+
+precision highp float;
+
+#endif
+
+uniform sampler2D uSrc;
+
+uniform vec2 uDelta;
+
+varying vec2 texCoord;
+
+varying vec2 screenCoord;
+
+void main(void) {
+
+    vec4 col = texture2D(uSrc, texCoord);
+
+    gl_FragColor = vec4(col.rgb * 2.0 - vec3(0.5), 1.0);
+
+}
+</script>
+
+<script id="fx_dirblur_r4_fsh" type="x-shader/x_fragment">
+    #ifdef GL_ES
+
+//precision mediump float;
+
+precision highp float;
+
+#endif
+
+uniform sampler2D uSrc;
+
+uniform vec2 uDelta;
+
+uniform vec4 uBlurDir; //dir(x, y), stride(z, w)
+
+varying vec2 texCoord;
+
+varying vec2 screenCoord;
+
+void main(void) {
+
+    vec4 col = texture2D(uSrc, texCoord);
+
+    col = col + texture2D(uSrc, texCoord + uBlurDir.xy * uDelta);
+
+    col = col + texture2D(uSrc, texCoord - uBlurDir.xy * uDelta);
+
+    col = col + texture2D(uSrc, texCoord + (uBlurDir.xy + uBlurDir.zw) * uDelta);
+
+    col = col + texture2D(uSrc, texCoord - (uBlurDir.xy + uBlurDir.zw) * uDelta);
+
+    gl_FragColor = col / 5.0;
+
+}
+</script>
+
+<!-- effect fragment shader template -->
+<script id="fx_common_fsh" type="x-shader/x_fragment">
+    #ifdef GL_ES
+
+//precision mediump float;
+
+precision highp float;
+
+#endif
+
+uniform sampler2D uSrc;
+
+uniform vec2 uDelta;
+
+varying vec2 texCoord;
+
+varying vec2 screenCoord;
+
+void main(void) {
+
+    gl_FragColor = texture2D(uSrc, texCoord);
+
+}
+
+</script>
+
+<!-- post processing -->
+<script id="pp_final_vsh" type="x-shader/x_vertex">
+    uniform vec3 uResolution;
+
+attribute vec2 aPosition;
+
+varying vec2 texCoord;
+
+varying vec2 screenCoord;
+
+void main(void) {
+
+    gl_Position = vec4(aPosition, 0.0, 1.0);
+
+    texCoord = aPosition.xy * 0.5 + vec2(0.5, 0.5);
+
+    screenCoord = aPosition.xy * vec2(uResolution.z, 1.0);
+
+}
+
+</script>
+<script id="pp_final_fsh" type="x-shader/x_fragment">
+    #ifdef GL_ES
+
+//precision mediump float;
+
+precision highp float;
+
+#endif
+
+uniform sampler2D uSrc;
+
+uniform sampler2D uBloom;
+
+uniform vec2 uDelta;
+
+varying vec2 texCoord;
+
+varying vec2 screenCoord;
+
+void main(void) {
+
+    vec4 srccol = texture2D(uSrc, texCoord) * 2.0;
+
+    vec4 bloomcol = texture2D(uBloom, texCoord);
+
+    vec4 col;
+
+    col = srccol + bloomcol * (vec4(1.0) + srccol);
+
+    col *= smoothstep(1.0, 0.0, pow(length((texCoord - vec2(0.5)) * 2.0), 1.2) * 0.5);
+
+    col = pow(col, vec4(0.45454545454545)); //(1.0 / 2.2)
+
+
+
+    gl_FragColor = vec4(col.rgb, 1.0);
+
+    gl_FragColor.a = 1.0;
+
+}
+</script>
+<script src="/lib/flower_background/utilities.js"></script>
+
+        
+      </div>
+      
+      
+      
+    </div>
+    
+
+
+
+    
+    
+    
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="朱冲䶮">
+            
+              <p class="site-author-name" itemprop="name">朱冲䶮</p>
+              <p class="site-description motion-element" itemprop="description">朱冲䶮的博客，记录javaWeb开发等遇到的问题</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+            <br>
+			<br>
+			<!--同个ip访问本站页面次数-->
+			<div class="site-state-item site-state-posts" style="border-left:none;">
+		    	<span class="site-state-item-count" id="busuanzi_value_site_pv"></span>
+		    	<span class="site-state-item-name">浏览量</span>
+			</div>
+			<!--不同ip访问本站次数-->
+			<div class="site-state-item site-state-posts">
+		    	<span class="site-state-item-count" id="busuanzi_value_site_uv"></span>
+		    	<span class="site-state-item-name">访客量</span>
+			</div>
+			<div class="site-state-item site-state-posts">
+		    	<span class="site-state-item-count">44.5k</span>
+		    	<span class="site-state-item-name">总字数</span>
+			</div>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/yan624" title="GitHub &rarr; https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:897538633@qq.com" title="E-Mail &rarr; mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2607724281" title="Weibo &rarr; https://weibo.com/u/2607724281" rel="noopener" target="_blank"><i class="fab fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v6.7.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=6.7.0"></script>
+
+  <script src="/js/src/motion.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=6.7.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=6.7.0"></script>
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
+<script src="/js/src/post-details.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+  
+
+  <script type="text/x-mathjax-config">
+	MathJax.Hub.Config({
+		//下面的HTML-CSS和SVG用于在小屏幕上，数学公式可以自动换行，我测试过后发现无效，但是貌似有人可以。
+		"HTML-CSS": { 
+			linebreaks: { 
+				automatic: true 
+			} 
+		},SVG: {
+			linebreaks: { 
+				automatic: true 
+			}
+		},menuSettings: {
+			zoom: "None"
+		},
+		showMathMenu: false,
+		jax: ["input/TeX","output/CommonHTML"],
+		extensions: ["tex2jax.js"],
+		TeX: {
+			extensions: ["AMSmath.js","AMSsymbols.js"],
+			equationNumbers: {
+				autoNumber: "AMS"
+			}
+		},tex2jax: {
+			inlineMath: [["\\(", "\\)"]],
+			displayMath: [["\\[", "\\]"]]
+		}
+	});
+  </script>
+  <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  <!--不蒜子统计-->
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</body>
+</html>
