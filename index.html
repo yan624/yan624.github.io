@@ -83,7 +83,7 @@
     root: '/',
     scheme: 'Pisces',
     version: '6.7.0',
-    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":true},
     fancybox: false,
     fastclick: false,
     lazyload: false,
@@ -105,17 +105,17 @@
 
 
 
-  <meta name="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
+  <meta name="description" content="朱冲䶮的博客，记录在学习ml、dl时遇到的问题">
 <meta name="keywords" content="博客，java，javaWeb">
 <meta property="og:type" content="website">
 <meta property="og:title" content="博客">
 <meta property="og:url" content="http://yan624.github.io/index.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
+<meta property="og:description" content="朱冲䶮的博客，记录在学习ml、dl时遇到的问题">
 <meta property="og:locale" content="zh-CN">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="博客">
-<meta name="twitter:description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
+<meta name="twitter:description" content="朱冲䶮的博客，记录在学习ml、dl时遇到的问题">
 
 
 
@@ -208,7 +208,7 @@
     </div>
     
       
-        <p class="site-subtitle">记录</p>
+        <p class="site-subtitle">浅度学习中~~</p>
       
     
     
@@ -364,7 +364,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">77</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">78</span></a>
 
   </li>
 
@@ -421,7 +421,7 @@
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
+      <meta itemprop="description" content="朱冲䶮的博客，记录在学习ml、dl时遇到的问题">
       <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
@@ -581,7 +581,7 @@
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
+      <meta itemprop="description" content="朱冲䶮的博客，记录在学习ml、dl时遇到的问题">
       <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
@@ -772,14 +772,12 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/吴恩达深度学习学习笔记：序列模型.html">
-    
-  		
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/第五课第二周作业：Emojify.html">
     
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
+      <meta itemprop="description" content="朱冲䶮的博客，记录在学习ml、dl时遇到的问题">
       <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
@@ -795,7 +793,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/学习笔记/吴恩达深度学习学习笔记：序列模型.html" class="post-title-link" itemprop="url">吴恩达深度学习学习笔记：序列模型</a>
+                <a href="/学习笔记/第五课第二周作业：Emojify.html" class="post-title-link" itemprop="url">第五课第二周作业：Emojify</a>
               
             
           </h1>
@@ -820,7 +818,7 @@
                 
               
 
-              <time title="创建时间：2019-04-23 16:46:12 / 修改时间：16:56:32" itemprop="dateCreated datePublished" datetime="2019-04-23T16:46:12+08:00">2019-04-23</time>
+              <time title="创建时间：2019-04-27 15:28:20 / 修改时间：23:43:18" itemprop="dateCreated datePublished" datetime="2019-04-27T15:28:20+08:00">2019-04-27</time>
             
 
             
@@ -885,9 +883,811 @@
 
       
         
+          <p>本文实现吴恩达深度学习第五课第二周的Emojify作业。目的是了解一个小型nlp系统的构建流程。<br>首先需要导入以下模块。由于在Jupyter中打开的ipynb文件全是英文，所以本文的大部分标题也用英文，方便ctrl F。<br><strong>自然而然地，本文需要结合第五课第二周作业的Emojify+-+learners.ipynb文件观看。直接看本文，你是看不懂的。</strong></p>
+<h1 id="系统整体流程"><a href="#系统整体流程" class="headerlink" title="系统整体流程"></a>系统整体流程</h1><p>Simple NN</p>
+<ol>
+<li>设计好参数。如多少个词后截断，词嵌入维度，前多少个最常见的词。</li>
+<li>将label转为one hot表示</li>
+<li>加载预训练的词嵌入GloVe，当然Word2Vec也可以</li>
+<li>将句子中的每个单词通过GloVe词嵌入转为词向量，然后求平均值</li>
+<li>构建模型，使用前馈传播，反向传播之类的算法，这与NN的流程差不多</li>
+</ol>
+<p>RNN</p>
+<ol>
+<li>设计好参数。如多少个词后截断，词嵌入维度，前多少个最常见的词。</li>
+<li>将label转为one hot表示</li>
+<li>处理词向量，将句子所表示的词向量弄为等长，《Python深度学习》中使用了pad_sequences类</li>
+<li>设计Embedding层</li>
+</ol>
+<h1 id="初始"><a href="#初始" class="headerlink" title="初始"></a>初始</h1><div class="note info">
+            <p>需要先安装emoji模块，已经试过了使用conda install emoji无法找到这个模块。必须使用pip install emoji</p>
+          </div>
+<figure class="highlight elm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="title">from</span> emo_utils <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> emoji</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line">%matplotlib inline</span><br></pre></td></tr></table></figure>
+<h1 id="Baseline-model-Emojifier-V1"><a href="#Baseline-model-Emojifier-V1" class="headerlink" title="Baseline model: Emojifier-V1"></a>Baseline model: Emojifier-V1</h1><p>Emojifier-V1使用的是Simple Neural Network。</p>
+<h2 id="Dataset-EMOJISET"><a href="#Dataset-EMOJISET" class="headerlink" title="Dataset EMOJISET"></a>Dataset EMOJISET</h2><p>先构建一个简单的分类器。<br>你有一个小型数据集：</p>
+<ul>
+<li>X 包含127个句子（字符串形式）</li>
+<li>Y 包含0-4之间的整数标签，每个句子都对应一个emoji。</li>
+</ul>
+<p>先试用以下的代码加载数据集。<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">X_train</span>, <span class="type">Y_train</span> = read_csv('<span class="class"><span class="keyword">data</span>/train_emoji.csv')</span></span><br><span class="line"><span class="type">X_test</span>, <span class="type">Y_test</span> = read_csv('<span class="class"><span class="keyword">data</span>/tesss.csv')</span></span><br></pre></td></tr></table></figure></p>
+<p>使用以下代码，获取所有句子中最长的句子。<br><figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">maxLen = len(<span class="name">max</span>(<span class="name">X_train</span>, key=len).split())</span><br></pre></td></tr></table></figure></p>
+<h2 id="Overview-of-the-Emojifier-V1"><a href="#Overview-of-the-Emojifier-V1" class="headerlink" title="Overview of the Emojifier-V1"></a>Overview of the Emojifier-V1</h2><p>模型的输入是一个字符串，就相当于一句话（比如“I love you”）。代码实现上，输出将会是一个(1,5) 形状的向量，然后通过argmax层提取最有可能的emoji输出的索引。argmax函数表示如果5个数中，第0个位置的数最大，则返回0,。<br>为了将我们的标签转换为适合训练softmax分类器的格式，把Y从原有的(m,1)形状转换为“one hot表示”的(m,5)形状。每一行都是由样本中所给出的标签的one-hot向量表示。解释一下，比如标签1转换成one-hot表示就是<script type="math/tex">\begin{pmatrix}0&1&0&0&0\end{pmatrix}</script>，标签3转换成one-hot表示就是<script type="math/tex">\begin{pmatrix}0&0&0&1&0\end{pmatrix}</script>。<br>使用以下的代码转换，其中Y_oh代表Y_one_hot<br><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">Y_oh_train</span> = convert_to_one_hot(Y_train, C = <span class="number">5</span>)</span><br><span class="line"><span class="attr">Y_oh_test</span> = convert_to_one_hot(Y_test, C = <span class="number">5</span>)</span><br></pre></td></tr></table></figure></p>
+<h2 id="Implementing-Emojifier-V1"><a href="#Implementing-Emojifier-V1" class="headerlink" title="Implementing Emojifier-V1"></a>Implementing Emojifier-V1</h2><p>如图2所示。第一步将句子转为词向量，然后求平均值。接着我们使用50维的GloVe embeddings与训练模型，使用以下代码加载word_to_vec_map，word_to_vec_map包含所有的词向量表示。<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">word_to_index</span>, index_to_word, word_to_vec_map = read_glove_vecs('<span class="class"><span class="keyword">data</span>/glove.6B.50d.txt')</span></span><br></pre></td></tr></table></figure></p>
+<p>实现<code>sentence_to_avg()</code>方法，此方法将句子转为一个平均后的词向量。<br><div class="note info">
+            <p>这里可能会有疑惑，为什么需要将句子中的每一个单词的词向量加起来再取平均值。只是因为这里使用的Simple Neural Network的模型，所以它只能接受一个输入，无法向RNN一样，将句子中每一个词向量当做timestep输入。</p>
+          </div><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GRADED FUNCTION: sentence_to_avg</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sentence_to_avg</span><span class="params">(sentence, word_to_vec_map)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Converts a sentence (string) into a list of words (strings). Extracts the GloVe representation of each word</span></span><br><span class="line"><span class="string">    and averages its value into a single vector encoding the meaning of the sentence.</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Arguments:</span></span><br><span class="line"><span class="string">    sentence -- string, one training example from X</span></span><br><span class="line"><span class="string">    word_to_vec_map -- dictionary mapping every word in a vocabulary into its 50-dimensional vector representation</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">    avg -- average vector encoding information about the sentence, numpy-array of shape (50,)</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">### START CODE HERE ###</span></span><br><span class="line">    <span class="comment"># Step 1: Split sentence into list of lower case words (≈ 1 line)</span></span><br><span class="line">    words = sentence.lower().split()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Initialize the average word vector, should have the same shape as your word vectors.</span></span><br><span class="line">    avg = <span class="number">0</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Step 2: average the word vectors. You can loop over the words in the list "words".</span></span><br><span class="line">    <span class="keyword">for</span> w <span class="keyword">in</span> words:</span><br><span class="line">        avg += word_to_vec_map[w]</span><br><span class="line">    avg = avg / len(words)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">### END CODE HERE ###</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> avg</span><br></pre></td></tr></table></figure></p>
+<p>现在实现<code>model()</code>方法，不过在方法内部已经实现了梯度下降。<br><div class="note primary">
+            <p>这里使用了Xavier初始化方法</p>
+          </div><br><figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GRADED FUNCTION: model</span></span><br><span class="line"></span><br><span class="line">def model(X, Y, word_to_vec_map, <span class="attr">learning_rate</span> = <span class="number">0.01</span>, <span class="attr">num_iterations</span> = <span class="number">400</span>):</span><br><span class="line">    <span class="string">""</span><span class="string">"</span></span><br><span class="line"><span class="string">    Model to train word vector representations in numpy.</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Arguments:</span></span><br><span class="line"><span class="string">    X -- input data, numpy array of sentences as strings, of shape (m, 1)</span></span><br><span class="line"><span class="string">    Y -- labels, numpy array of integers between 0 and 7, numpy-array of shape (m, 1)</span></span><br><span class="line"><span class="string">    word_to_vec_map -- dictionary mapping every word in a vocabulary into its 50-dimensional vector representation</span></span><br><span class="line"><span class="string">    learning_rate -- learning_rate for the stochastic gradient descent algorithm</span></span><br><span class="line"><span class="string">    num_iterations -- number of iterations</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">    pred -- vector of predictions, numpy-array of shape (m, 1)</span></span><br><span class="line"><span class="string">    W -- weight matrix of the softmax layer, of shape (n_y, n_h)</span></span><br><span class="line"><span class="string">    b -- bias of the softmax layer, of shape (n_y,)</span></span><br><span class="line"><span class="string">    "</span><span class="string">""</span></span><br><span class="line">    </span><br><span class="line">    np.random.seed(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Define number of training examples</span></span><br><span class="line">    <span class="attr">m</span> = Y.shape[<span class="number">0</span>]                          <span class="comment"># number of training examples</span></span><br><span class="line">    <span class="attr">n_y</span> = <span class="number">5</span>                                 <span class="comment"># number of classes  </span></span><br><span class="line">    <span class="attr">n_h</span> = <span class="number">50</span>                                <span class="comment"># dimensions of the GloVe vectors </span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Initialize parameters using Xavier initialization</span></span><br><span class="line">    <span class="attr">W</span> = np.random.randn(n_y, n_h) / np.sqrt(n_h)</span><br><span class="line">    <span class="attr">b</span> = np.zeros((n_y,))</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Convert Y to Y_onehot with n_y classes</span></span><br><span class="line">    <span class="attr">Y_oh</span> = convert_to_one_hot(Y, <span class="attr">C</span> = n_y) </span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Optimization loop</span></span><br><span class="line">    for t <span class="keyword">in</span> range(num_iterations):                       <span class="comment"># Loop over the number of iterations</span></span><br><span class="line">        for i <span class="keyword">in</span> range(m):                                <span class="comment"># Loop over the training examples</span></span><br><span class="line">            </span><br><span class="line">            <span class="comment">### START CODE HERE ### (≈ 4 lines of code)</span></span><br><span class="line">            <span class="comment"># Average the word vectors of the words from the j'th training example</span></span><br><span class="line">            <span class="attr">avg</span> = sentence_to_avg(X[i], word_to_vec_map)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># Forward propagate the avg through the softmax layer</span></span><br><span class="line">            <span class="attr">z</span> = np.dot(W, avg) + b</span><br><span class="line">            <span class="attr">a</span> = softmax(z)</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># Compute cost using the j'th training label's one hot representation and "A" (the output of the softmax)</span></span><br><span class="line">            <span class="attr">cost</span> = -np.sum(Y_oh[i] * np.log(a))</span><br><span class="line">            <span class="comment">### END CODE HERE ###</span></span><br><span class="line">            </span><br><span class="line">            <span class="comment"># Compute gradients </span></span><br><span class="line">            <span class="attr">dz</span> = a - Y_oh[i]</span><br><span class="line">            <span class="attr">dW</span> = np.dot(dz.reshape(n_y,<span class="number">1</span>), avg.reshape(<span class="number">1</span>, n_h))</span><br><span class="line">            <span class="attr">db</span> = dz</span><br><span class="line"></span><br><span class="line">            <span class="comment"># Update parameters with Stochastic Gradient Descent</span></span><br><span class="line">            <span class="attr">W</span> = W - learning_rate * dW</span><br><span class="line">            <span class="attr">b</span> = b - learning_rate * db</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> t % <span class="number">100</span> == <span class="number">0</span>:</span><br><span class="line">            print(<span class="string">"Epoch: "</span> + str(t) + <span class="string">" --- cost = "</span> + str(cost))</span><br><span class="line">            <span class="attr">pred</span> = predict(X, Y, W, b, word_to_vec_map)</span><br><span class="line"></span><br><span class="line">    return pred, W, b</span><br></pre></td></tr></table></figure></p>
+<h1 id="Emojifier-V2-Using-LSTMs-in-Keras"><a href="#Emojifier-V2-Using-LSTMs-in-Keras" class="headerlink" title="Emojifier-V2: Using LSTMs in Keras"></a>Emojifier-V2: Using LSTMs in Keras</h1><h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line">np<span class="selector-class">.random</span><span class="selector-class">.seed</span>(<span class="number">0</span>)</span><br><span class="line">from keras<span class="selector-class">.models</span> import Model</span><br><span class="line">from keras<span class="selector-class">.layers</span> import Dense, Input, Dropout, LSTM, Activation</span><br><span class="line">from keras<span class="selector-class">.layers</span><span class="selector-class">.embeddings</span> import Embedding</span><br><span class="line">from keras<span class="selector-class">.preprocessing</span> import sequence</span><br><span class="line">np<span class="selector-class">.random</span><span class="selector-class">.seed</span>(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight capnproto"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.initializers <span class="keyword">import</span> glorot_uniform</span><br></pre></td></tr></table></figure>
+<h2 id="Overview-of-the-model"><a href="#Overview-of-the-model" class="headerlink" title="Overview of the model"></a>Overview of the model</h2><h2 id="Keras-and-mini-batching"><a href="#Keras-and-mini-batching" class="headerlink" title="Keras and mini-batching"></a>Keras and mini-batching</h2><p>本练习中，我们使用mini-batch算法训练Kears。大部分深度学习框架要求在相同的mini-batch中所有序列都要等长。这使得可以执行向量化，如果你有一个3个单词的句子和一个4个单词的句子，它们之间的计算会不同（一个需要3个timestep，一个需要4个timestep，也就是说需要的LSTM个数不同），所有同时计算它们是不可能的，即无法向量化。<br>通用的解决办法是使用padding。具体来说，设置一个序列的最大长度，然后使其他的序列都与该长度等长。比如序列的最大长度是20，那么将其他的序列在后面补充0，知道长度等于20。所以句子“I love you”会在“you”后面被补充17个0。即<script type="math/tex">\begin{pmatrix}e_i & e_{love} & e_{you} & \overrightarrow{0} & \overrightarrow{0} & \cdots & \overrightarrow{0}\end{pmatrix}</script>，e代表词向量。如果长度大于20的话会被裁剪。<br>以下代码实现将句子转换为句子中的每个单词转为索引，这个索引是GloVe词嵌入的，每一个单词对应一个id。id就是索引。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GRADED FUNCTION: sentences_to_indices</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将句子转为索引形式，短于max_len的句子后面补充0，长于max_len的句子直接截断</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sentences_to_indices</span><span class="params">(X, word_to_index, max_len)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Converts an array of sentences (strings) into an array of indices corresponding to words in the sentences.</span></span><br><span class="line"><span class="string">    The output shape should be such that it can be given to `Embedding()` (described in Figure 4). </span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Arguments:</span></span><br><span class="line"><span class="string">    X -- array of sentences (strings), of shape (m, 1)</span></span><br><span class="line"><span class="string">    word_to_index -- a dictionary containing the each word mapped to its index</span></span><br><span class="line"><span class="string">    max_len -- maximum number of words in a sentence. You can assume every sentence in X is no longer than this. </span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">    X_indices -- array of indices corresponding to words in the sentences from X, of shape (m, max_len)</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    </span><br><span class="line">    m = X.shape[<span class="number">0</span>]                                   <span class="comment"># number of training examples</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">### START CODE HERE ###</span></span><br><span class="line">    <span class="comment"># Initialize X_indices as a numpy matrix of zeros and the correct shape</span></span><br><span class="line">    X_indices = np.zeros((m, max_len))</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(m):                               <span class="comment"># loop over training examples</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># Convert the ith training sentence in lower case and split is into words. You should get a list of words.</span></span><br><span class="line">        sentence_words = X[i].lower().split()</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># Initialize j to 0</span></span><br><span class="line">        j = <span class="number">0</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># Loop over the words of sentence_words</span></span><br><span class="line">        <span class="keyword">for</span> w <span class="keyword">in</span> sentence_words:</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># Set the (i,j)th entry of X_indices to the index of the correct word.</span></span><br><span class="line">            X_indices[i, j] =word_to_index[w]</span><br><span class="line">            <span class="comment"># Increment j to j + 1</span></span><br><span class="line">            j = j + <span class="number">1</span></span><br><span class="line">            </span><br><span class="line">    <span class="comment">### END CODE HERE ###</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> X_indices</span><br></pre></td></tr></table></figure></p>
+<p>以下设计Embedding层，使用keras的Embedding类。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GRADED FUNCTION: pretrained_embedding_layer</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 此方法创建了一个Embedding层</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pretrained_embedding_layer</span><span class="params">(word_to_vec_map, word_to_index)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Creates a Keras Embedding() layer and loads in pre-trained GloVe 50-dimensional vectors.</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Arguments:</span></span><br><span class="line"><span class="string">    word_to_vec_map -- dictionary mapping words to their GloVe vector representation.</span></span><br><span class="line"><span class="string">    word_to_index -- dictionary mapping from words to their indices in the vocabulary (400,001 words)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">    embedding_layer -- pretrained layer Keras instance</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># GloVe的总单词数量</span></span><br><span class="line">    vocab_len = len(word_to_index) + <span class="number">1</span>                  <span class="comment"># adding 1 to fit Keras embedding (requirement)</span></span><br><span class="line">    emb_dim = word_to_vec_map[<span class="string">"cucumber"</span>].shape[<span class="number">0</span>]      <span class="comment"># define dimensionality of your GloVe word vectors (= 50)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">### START CODE HERE ###</span></span><br><span class="line">    <span class="comment"># Initialize the embedding matrix as a numpy array of zeros of shape (vocab_len, dimensions of word vectors = emb_dim)</span></span><br><span class="line">    <span class="comment"># 词嵌入矩阵，之前V1压根没用词嵌入矩阵，将这个矩阵放入Embedding层中供keras使用</span></span><br><span class="line">    emb_matrix = np.zeros((vocab_len, emb_dim))</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Set each row "index" of the embedding matrix to be the word vector representation of the "index"th word of the vocabulary</span></span><br><span class="line">    <span class="keyword">for</span> word, index <span class="keyword">in</span> word_to_index.items():</span><br><span class="line">        emb_matrix[index, :] = word_to_vec_map[word]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Define Keras embedding layer with the correct output/input sizes, make it trainable.</span></span><br><span class="line">    <span class="comment"># Use Embedding(...). Make sure to set trainable=False.</span></span><br><span class="line">    embedding_layer = Embedding(vocab_len, emb_dim, trainable=<span class="keyword">False</span>)</span><br><span class="line">    <span class="comment">### END CODE HERE ###</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Build the embedding layer, it is required before setting the weights of the embedding layer. Do not modify the "None".</span></span><br><span class="line">    embedding_layer.build((<span class="keyword">None</span>,))</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Set the weights of the embedding layer to the embedding matrix. Your layer is now pretrained.</span></span><br><span class="line">    embedding_layer.set_weights([emb_matrix])</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> embedding_layer</span><br></pre></td></tr></table></figure></p>
+<h2 id="Building-the-Emojifier-V2"><a href="#Building-the-Emojifier-V2" class="headerlink" title="Building the Emojifier-V2"></a>Building the Emojifier-V2</h2><p>以下代码完成Emojify。主要是keras代码。<br><figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GRADED FUNCTION: Emojify_V2</span></span><br><span class="line"></span><br><span class="line">def Emojify_V2(input_shape, word_to_vec_map, word_to_index):</span><br><span class="line">    <span class="string">""</span><span class="string">"</span></span><br><span class="line"><span class="string">    Function creating the Emojify-v2 model's graph.</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Arguments:</span></span><br><span class="line"><span class="string">    input_shape -- shape of the input, usually (max_len,)</span></span><br><span class="line"><span class="string">    word_to_vec_map -- dictionary mapping every word in a vocabulary into its 50-dimensional vector representation</span></span><br><span class="line"><span class="string">    word_to_index -- dictionary mapping from words to their indices in the vocabulary (400,001 words)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">    model -- a model instance in Keras</span></span><br><span class="line"><span class="string">    "</span><span class="string">""</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">### START CODE HERE ###</span></span><br><span class="line">    <span class="comment"># Define sentence_indices as the input of the graph, it should be of shape input_shape and dtype 'int32' (as it contains indices).</span></span><br><span class="line">    <span class="attr">sentence_indices</span> = Input(input_shape, <span class="attr">dtype='int32')</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Create the embedding layer pretrained with GloVe Vectors (≈1 line)</span></span><br><span class="line">    <span class="attr">embedding_layer</span> = pretrained_embedding_layer(word_to_vec_map, word_to_index)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Propagate sentence_indices through your embedding layer, you get back the embeddings</span></span><br><span class="line">    <span class="attr">embeddings</span> = embedding_layer(sentence_indices)   </span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Propagate the embeddings through an LSTM layer with 128-dimensional hidden state</span></span><br><span class="line">    <span class="comment"># Be careful, the returned output should be a batch of sequences.</span></span><br><span class="line">    <span class="comment"># 这个128是神经元的个数</span></span><br><span class="line">    <span class="attr">X</span> = LSTM(<span class="number">128</span>, <span class="attr">return_sequences=True)(embeddings)</span></span><br><span class="line">    <span class="comment"># Add dropout with a probability of 0.5</span></span><br><span class="line">    <span class="attr">X</span> = Dropout(<span class="number">0.5</span>)(X)</span><br><span class="line">    <span class="comment"># Propagate X trough another LSTM layer with 128-dimensional hidden state</span></span><br><span class="line">    <span class="comment"># Be careful, the returned output should be a single hidden state, not a batch of sequences.</span></span><br><span class="line">    <span class="attr">X</span> = LSTM(<span class="number">128</span>, <span class="attr">return_sequences=False)(X)</span></span><br><span class="line">    <span class="comment"># Add dropout with a probability of 0.5</span></span><br><span class="line">    <span class="attr">X</span> = Dropout(<span class="number">0.5</span>)(X)</span><br><span class="line">    <span class="comment"># Propagate X through a Dense layer with softmax activation to get back a batch of 5-dimensional vectors.</span></span><br><span class="line">    <span class="attr">X</span> = Dense(<span class="number">5</span>)(X)</span><br><span class="line">    <span class="comment"># Add a softmax activation</span></span><br><span class="line">    <span class="attr">X</span> = Activation('softmax')(X)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Create Model instance which converts sentence_indices into X.</span></span><br><span class="line">    <span class="attr">model</span> = Model(<span class="attr">inputs=sentence_indices,</span> <span class="attr">outputs=X)</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">### END CODE HERE ###</span></span><br><span class="line">    </span><br><span class="line">    return model</span><br></pre></td></tr></table></figure></p>
+          <!--noindex-->
           
-            <a id="more"></a>
+            <div class="post-button text-center">
+              <a class="btn" href="/学习笔记/第五课第二周作业：Emojify.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
           
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/Jupyter出现gbk-codec-cant-decode-byte-0x93-in-position-3136：illegal-multibyte-sequence.html">
+    
+  		
+    
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="朱冲䶮的博客，记录在学习ml、dl时遇到的问题">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/Jupyter出现gbk-codec-cant-decode-byte-0x93-in-position-3136：illegal-multibyte-sequence.html" class="post-title-link" itemprop="url">Jupyter出现gbk codec cant decode byte 0x93 in position 3136：illegal multibyte sequence</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-27 14:45:05 / 修改时间：14:45:49" itemprop="dateCreated datePublished" datetime="2019-04-27T14:45:05+08:00">2019-04-27</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+          
+          
+          	
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/machine-learning/" itemprop="url" rel="index"><span itemprop="name">machine-learning</span></a></span>
+
+                
+                
+              
+            </span>
+          
+          
+          <!--不蒜子计数-->
+          <span id="busuanzi_container_site_uv">
+          	<span class="post-meta-divider">|</span>
+			浏览量：<span id="busuanzi_value_site_uv"></span>人次
+		  </span>
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>一般来说是open()方法没有加encoding=’utf-8’，但是没用，试了其他办法没一个能用。<br>解决办法：重启Jupyter。<br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/Jupyter出现gbk-codec-cant-decode-byte-0x93-in-position-3136：illegal-multibyte-sequence.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </p></div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/吴恩达深度学习学习笔记：自然语言处理与词嵌入.html">
+    
+  		
+    
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="朱冲䶮的博客，记录在学习ml、dl时遇到的问题">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/学习笔记/吴恩达深度学习学习笔记：自然语言处理与词嵌入.html" class="post-title-link" itemprop="url">吴恩达深度学习学习笔记：自然语言处理与词嵌入</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-25 23:58:24" itemprop="dateCreated datePublished" datetime="2019-04-25T23:58:24+08:00">2019-04-25</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-04-26 12:47:41" itemprop="dateModified" datetime="2019-04-26T12:47:41+08:00">2019-04-26</time>
+              
+            
+          </span>
+          
+          
+          	
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/machine-learning/" itemprop="url" rel="index"><span itemprop="name">machine-learning</span></a></span>
+
+                
+                
+              
+            </span>
+          
+          
+          <!--不蒜子计数-->
+          <span id="busuanzi_container_site_uv">
+          	<span class="post-meta-divider">|</span>
+			浏览量：<span id="busuanzi_value_site_uv"></span>人次
+		  </span>
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="字母表示"><a href="#字母表示" class="headerlink" title="字母表示"></a>字母表示</h1><p>我们一直使用<a href="https://yan624.github.io/学习笔记/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型.html#one hot编码">one hot编码</a>，这在之前已经记过笔记。这种表示方法的最大缺点是将每个词孤立起来，并且泛化能力不强。由于每个向量的内积都是0，所以它们之间的距离都是一样的。比如</p>
+<ol>
+<li>I want a glass of orange juice.</li>
+<li>I want a glass of apple <em>_</em>.<br>这两个句子是很常见的句子，所以自然而然的想到划线处应该是juice。但是由于one hot编码，程序并不知道orange和apple之间的关系，也就猜不出来。</li>
+</ol>
+<h2 id="Featurized-representation：-word-embedding"><a href="#Featurized-representation：-word-embedding" class="headerlink" title="Featurized representation： word embedding"></a>Featurized representation： word embedding</h2><p>既然one hot有问题，那么自然就有人发明了新的算法。<br>使用特征来表示每个词。如果适应特征化来表示，那么最后发现orange和apple的特征差不多，就可以推测出划线处应该填写什么。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习学习笔记：自然语言处理与词嵌入/Featurized representation： word embedding.jpg" alt="Featurized representation： word embedding"></p>
+<h2 id="Visualizing-word-embedding"><a href="#Visualizing-word-embedding" class="headerlink" title="Visualizing word embedding"></a>Visualizing word embedding</h2><p>可以使用t-SNE算法将数据可视化为二维的图。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习学习笔记：自然语言处理与词嵌入/Visualizing word embedding.jpg" alt="Visualizing word embedding"></p>
+<h1 id="词嵌入的特性"><a href="#词嵌入的特性" class="headerlink" title="词嵌入的特性"></a>词嵌入的特性</h1><h2 id="类比"><a href="#类比" class="headerlink" title="类比"></a>类比</h2><p>看下图中的表格，现在已知对应关系man-&gt;woman，能否推出king对应于queen？也就是说king-&gt;<em>_</em>，填空题。<br>解法是：<br>求出man和woman之间的差</p>
+<script type="math/tex; mode=display">
+\begin{pmatrix}
+-1\\
+0.01\\
+0.03\\
+0.09\\
+\end{pmatrix} - 
+\begin{pmatrix}
+1\\
+0.02\\
+0.02\\
+0.01\\
+\end{pmatrix} \approx
+\begin{pmatrix}
+-2\\
+0\\
+0\\
+0\\
+\end{pmatrix}</script><p>假设计算king和queen的差</p>
+<script type="math/tex; mode=display">
+\begin{pmatrix}
+-0.95\\
+0.93\\
+0.70\\
+0.02\\
+\end{pmatrix} - 
+\begin{pmatrix}
+0.97\\
+0.95\\
+0.69\\
+0.01\\
+\end{pmatrix} \approx
+\begin{pmatrix}
+-2\\
+0\\
+0\\
+0\\
+\end{pmatrix}</script><p>算法的原理就是找到一个词使得man和woman的差与king和新词的差接近。翻译为代码就是<script type="math/tex">find\ word\ w: argmax\ sim(e_w, e_{king} - e_{man} + e _{woman})</script>。但是算法的准确度只有30%-75%。</p>
+<h3 id="余弦相似度"><a href="#余弦相似度" class="headerlink" title="余弦相似度"></a>余弦相似度</h3><p>余弦相似度也可以计算相似度。公式为<script type="math/tex">sim(u,v) = \frac{u^Tv}{\parallel u\parallel_2\parallel v\parallel_2}</script></p>
+<h1 id="嵌入矩阵"><a href="#嵌入矩阵" class="headerlink" title="嵌入矩阵"></a>嵌入矩阵</h1><p>略。大致意思是一个嵌入矩阵E乘上one hot编码可以得到一个单词的特征向量。E就是全部单词的特征矩阵。</p>
+<h1 id="学习词嵌入"><a href="#学习词嵌入" class="headerlink" title="学习词嵌入"></a>学习词嵌入</h1><p>在早期深度学习的研究人员都是使用比较复杂的算法，但是随着时间的推移，这些复杂的算法被慢慢的简化。以至于现在的新手看到这些简化版的算法时，会疑惑这样简单的算法时怎么工作的。所以现在先介绍一个比较复杂的算法，再慢慢介绍简化版的。<br><div class="note info">
+            <p>这节好像是用来讲如何建立神经语言模型的，以后再看。之前讲了嵌入矩阵E，但是E中全部的特征向量是已经假定存在的，那么这些特征从何而来呢？就是这节讲的，去训练得来的。但是其实有已经训练好的，我们可以直接拿来用，网上有很多。</p>
+          </div></p>
+<h1 id="Word2Vec"><a href="#Word2Vec" class="headerlink" title="Word2Vec"></a>Word2Vec</h1><h1 id="负采样"><a href="#负采样" class="headerlink" title="负采样"></a>负采样</h1>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/学习笔记/吴恩达深度学习学习笔记：自然语言处理与词嵌入.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型.html">
+    
+  		
+    
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="朱冲䶮的博客，记录在学习ml、dl时遇到的问题">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/学习笔记/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型.html" class="post-title-link" itemprop="url">吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-23 16:46:12" itemprop="dateCreated datePublished" datetime="2019-04-23T16:46:12+08:00">2019-04-23</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-04-27 21:52:41" itemprop="dateModified" datetime="2019-04-27T21:52:41+08:00">2019-04-27</time>
+              
+            
+          </span>
+          
+          
+          	
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/machine-learning/" itemprop="url" rel="index"><span itemprop="name">machine-learning</span></a></span>
+
+                
+                
+              
+            </span>
+          
+          
+          <!--不蒜子计数-->
+          <span id="busuanzi_container_site_uv">
+          	<span class="post-meta-divider">|</span>
+			浏览量：<span id="busuanzi_value_site_uv"></span>人次
+		  </span>
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="大纲"><a href="#大纲" class="headerlink" title="大纲"></a>大纲</h1><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>序号</th>
+<th>课程</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2~5</td>
+<td>吴恩达深度学习</td>
+<td>one hot编码、RNN包括双向和深层、GRU、LSTM</td>
+</tr>
+<tr>
+<td>5~11</td>
+<td>李宏毅机器学习</td>
+<td>RNN包括双向和深层、LSTM、RNN反向传播、seq2seq</td>
+</tr>
+<tr>
+<td>12~end</td>
+<td>李宏毅深度学习</td>
+<td>计算图、深度学习语言模型N-gram</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 id="字母表示"><a href="#字母表示" class="headerlink" title="字母表示"></a>字母表示</h1><p>假设：<br>x: Harry Potter and Hermione Granger invented a new spell.<br>y: 1 1 0 1 1 0 0 0 0<br>其中1代表人名地名之类的单词。这句话一共有九个单词，则x可以表示为：<script type="math/tex">x^{<1>} x^{<2>} \cdots x^{<t>} \cdots x^{<9>}</script>。<br>则y可以表示为：<script type="math/tex">y^{<1>} y^{<2>} \cdots y^{<t>} \cdots y^{<9>}</script><br>输入的长度表示为<script type="math/tex">T_x</script>，则<script type="math/tex">T_x = 9</script>。<br>输出的长度表示为<script type="math/tex">T_y</script>，则<script type="math/tex">T_y = 9</script>。<br>之前在神经网络中<script type="math/tex">X^i</script>或<script type="math/tex">X^(i)</script>代表第i个训练样本。现在在序列模型中，<script type="math/tex">X^{(i)<t>}</script>代表代表第i个训练样本的第t个元素。对应地，<script type="math/tex">T^i_x</script>就代表第i个样本的输入长度。</p>
+<h1 id="one-hot编码"><a href="#one-hot编码" class="headerlink" title="one hot编码"></a>one hot编码</h1><p>在我们做自然语言处理时，一件需要事先决定的是，怎么表示一个序列里的单词。<br>第一件事就是做一张词表（Vocabulary）有时也叫字典（Dictionary），然后将表示方法中要使用的单词列出一列。最后将一个单词用一个稀疏向量表示，如Harry表示为<script type="math/tex">\begin{pmatrix}0&0&0&\cdots&1&0&\cdots&0\end{pmatrix}</script>。1所在位置就是Harry这个单词在词表中的所在位置。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/ont%20hot%E4%BE%8B%E5%AD%90.jpg" alt="ont hot例子"></p>
+<h1 id="循环神经网络——RNN"><a href="#循环神经网络——RNN" class="headerlink" title="循环神经网络——RNN"></a>循环神经网络——RNN</h1><div class="note primary">
+            <p>RNN解决了什么问题。</p>
+          </div>
+<p>与Simple Neural Network不同的是，循环神经网络的每一层都要有输入x和输出y。<br>第一步与Simple Neural Network类似，<script type="math/tex">a_1 = w_{aa} * x^{<1>} + b_a</script>，这样就获得了激活值a，但是这时需要使用sigmoid函数或者其他函数直接算出y，另外与Simple Neural Network不同的是，它在计算激活值时需要附带加上前一层的激活值乘上一个权重，此权重与其他的权重类似，也是NN自己训练的。所以第二个序列的计算公式是<script type="math/tex">a_2 = w_{aa} * a_1 + w_{ax} * x^{<2>} + b_a</script>。后面的序列就跟第二个序列一样。<strong>注意一点，RNN中平行方向是时间序列，并不是隐藏层，并且此例中为了方便起见，垂直方向只有一个隐藏层。那几个圆圈是神经元</strong>。看下图。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84RNN%E7%A4%BA%E6%84%8F%E5%9B%BE.jpg" alt="吴恩达深度学习中的RNN示意图"></p>
+<ol>
+<li><p>由于为了一般化，第一层需要修改成跟后面的计算类似，所以引入一个零向量<script type="math/tex">a_0</script>来计算<script type="math/tex">a_1</script>。<br>所以RNN的计算公式为：</p>
+<script type="math/tex; mode=display">
+\left\{ 
+ \begin{array}{c}
+     a^{<1>} = g_1(w_{aa} * a^{<0>} + w_{ax} * x^{<1>} + b_a)\\
+     \hat{y}^{<1>} = g_2(w_{ya} * a^{<1>} + b_y)\\
+     a^{<2>} = g_1(w_{aa} * a^{<1>} + w_{ax} * x^{<2>} + b_a)\\
+     \hat{y}^{<2>} = g_2(w_{ya} * a^{<2>} + b_y)\\
+     \vdots\\
+     a^{<t>} = g_1(w_{aa} * a^{<t-1>} + w_{ax} * x^{<t>} + b_a)\\
+     \hat{y}^{<t>} = g_2(w_{ya} * a^{<t>} + b_y)\\
+ \end{array}
+\right.</script><p>注意上式中的<script type="math/tex">w_{aa}</script>、<script type="math/tex">w_{ax}</script>、<script type="math/tex">w_{ya}</script>、<script type="math/tex">b_{a}</script>和<script type="math/tex">b_{y}</script>并没有上标或者下标，所以意味着每一层同一个符号的权重值和偏差值都是一样的。另外对于激活函数也是用户自行选择，在<a href="https://yan624.github.io/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3.html">对神经网络整体的理解</a>一文中已经解释的很清楚了，为了区分输入与输出的激活函数不同，我特意使用了不同的下标，这个下标仅代表这个意思。</p>
+</li>
+<li><p>为了进一步地一般化，我们将<script type="math/tex">w_{aa}</script>、<script type="math/tex">w_{ax}</script>合并成为<script type="math/tex">w_{a}</script>，如果表示为矩阵形式就是<script type="math/tex">w_{a} = \begin{pmatrix}w_{aa} | w_{ax}\end{pmatrix}</script>，然后将1中的最后两行表达式一般化为：</p>
+<script type="math/tex; mode=display">
+a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
+\hat{y}^{<t>} = g_2(w_{y} * a^{<t>} + b_y)\\</script><p>表达式<script type="math/tex">[a^{<t-1>}, x^{<t>}]</script>的意思是将两个向量堆起来，如果表示为矩阵形式就是<script type="math/tex">\begin{pmatrix} a^{<t-1>}\\ x^{<t>}\\ \end{pmatrix}</script>，上式为了排版问题就不写成矩阵形式了。</p>
+</li>
+</ol>
+<h2 id="RNN的反向传播"><a href="#RNN的反向传播" class="headerlink" title="RNN的反向传播"></a>RNN的反向传播</h2><p>跟Simple Neural Network类似，也要先定义一个cost function，可以选择crossentropy。由于RNN每一层都有输出值y，所以需要对每一层都求出代价，最后将这些代价值加起来</p>
+<div class="note primary">
+    <p>吴恩达老师在讲反向传播的实现时并没有讲计算过程，所以有点糊里糊涂的。从代价函数到激活值反向传播还可以理解，但是从后一层到前一层的反向传播理解不了。另外由于权重值一样，那么权重值到底该怎么更新？</p>
+</div>
+
+<h2 id="不同类型的RNN"><a href="#不同类型的RNN" class="headerlink" title="不同类型的RNN"></a>不同类型的RNN</h2><p>上面讲到的都是<script type="math/tex">T_x = T_y</script>，但是有时候输入和输出的长度并不相同。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/%E4%B8%8D%E5%90%8C%E7%B1%BB%E5%9E%8B%E7%9A%84RNN%E5%AE%9E%E4%BE%8B.jpg" alt="不同类型的RNN实例"><br>多对多（many to many）、多对一（many to one）、一对一（one to one）、一对多（one to many）架构<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/%E4%B8%8D%E5%90%8C%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84.jpg" alt="不同类型的RNN结构"></p>
+<h2 id="语言模型和序列生成"><a href="#语言模型和序列生成" class="headerlink" title="语言模型和序列生成"></a>语言模型和序列生成</h2><h2 id="对新序列采样"><a href="#对新序列采样" class="headerlink" title="对新序列采样"></a>对新序列采样</h2><h2 id="长期依赖，梯度消失"><a href="#长期依赖，梯度消失" class="headerlink" title="长期依赖，梯度消失"></a>长期依赖，梯度消失</h2><p>观察两个句子：</p>
+<ul>
+<li>The cat, which already ate…, was full.</li>
+<li>The cats, which already ate…, were full.</li>
+</ul>
+<p>这两个句子只有复数形式上的不同，但是开头的名词影响到了最后面的be动词。但是我们目前见到的最基本的RNN不擅长捕获这种长期依赖效应。<br>用梯度消失解释一下为什么，其实原理相同的，这里引用之前的文章<br><a href="https://yan624.github.io//%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3.html#%E6%A2%AF%E5%BA%A6%E6%B6%88%E5%A4%B1%E5%92%8C%E6%A2%AF%E5%BA%A6%E7%88%86%E7%82%B8">梯度消失和梯度爆炸</a></p>
+<h1 id="GRU单元——Gate-Recurrent-Unit"><a href="#GRU单元——Gate-Recurrent-Unit" class="headerlink" title="GRU单元——Gate Recurrent Unit"></a>GRU单元——Gate Recurrent Unit</h1><p>中文名为门控循环单元。它解决了梯度消失的问题。</p>
+<h2 id="符号表示"><a href="#符号表示" class="headerlink" title="符号表示"></a>符号表示</h2><p>c = memonry cell，使用<script type="math/tex">c^{<t>}</script>符号表示输出，其中<script type="math/tex">c^{<t>} = a^{<t>}</script>，由于后面的LSTM的c和a代表意思不同，所以这里直接使用c来表示输出值。所以本小章下的c你都看作是a即可。</p>
+<h2 id="GRU工作流程"><a href="#GRU工作流程" class="headerlink" title="GRU工作流程"></a>GRU工作流程</h2><p>由于通过<script type="math/tex">c^{<t-1>}</script>来更新<script type="math/tex">c^{<t>}</script>的值，但是现在我们使用GRU，GRU就是来控制是否更新<script type="math/tex">c^{<t>}</script>的值的，这里使用“更新”的名词可能有点怪，因为<script type="math/tex">c^{<t>}</script>实际上是通过<script type="math/tex">c^{<t-1>}</script><strong>计算</strong>出来的。那么公式<script type="math/tex">a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)</script>变为<script type="math/tex">\tilde{c}^{<t>} = tanh(w_{c} * [c^{<t-1>}, x^{<t>}] + b_c)</script>，这里的<script type="math/tex">\tilde{c}^{<t>}</script>是一个候选值——candidate value，类似于中间变量。<br>GRU的核心是有一个Gate，就是上面说的是否更新值的功能，它的公式为<script type="math/tex">\Gamma_u = \sigma(w_{u} * [c^{<t-1>}, x^{<t>}] + b_u)</script>，<script type="math/tex">\Gamma_u</script>的u的意思是update，sigmoid函数的输出范围在0-1之间，所以就完成了类似更新的功能。如果是0就代表不让你更新，如果是1就代表让你更新，这里听起来还有点绕，没关系看下面的表达式。<br>这时开始执行更新步骤：<script type="math/tex">c^{<t>} = \Gamma_u * \tilde{c}^{<t>} + (1 - \Gamma_u) * c^{<t-1>}</script>，这一步可以看出如果<script type="math/tex">\Gamma_u</script>等于1就将<script type="math/tex">c^{<t>}</script>更新为<script type="math/tex">\tilde{c}^{<t>}</script>，如果等于0就相当于不让你更新，结果还是上一个的c，即<script type="math/tex">c^{<t-1>}</script>。<br>将公式写在一起，GRU的工作流程就是：</p>
+<script type="math/tex; mode=display">
+\begin{cases}
+    \tilde{c}^{<t>} = tanh(w_{c} * [c^{<t-1>}, x^{<t>}] + b_c)\\
+    \Gamma_u = \sigma(w_{u} * [c^{<t-1>}, x^{<t>}] + b_u)\\
+    c^{<t>} = \Gamma_u * \tilde{c}^{<t>} + (1 - \Gamma_u) * c^{<t-1>}\\
+\end{cases}</script><h2 id="GRU完整版"><a href="#GRU完整版" class="headerlink" title="GRU完整版"></a>GRU完整版</h2><p>可以看到下式中就多了一个<script type="math/tex">\Gamma_r</script>，但是为什么不用上面的简化版呢？那是因为经研究者多年的尝试，发现下面的版本是很实用的，也算是一个标准版，你可以自己开发不同的版本。</p>
+<script type="math/tex; mode=display">
+\begin{cases}
+    \tilde{c}^{<t>} = tanh(w_{c} * [\Gamma_r * c^{<t-1>}, x^{<t>}] + b_c)\\
+    \Gamma_u = \sigma(w_{u} * [c^{<t-1>}, x^{<t>}] + b_u)\\
+    \Gamma_r = \sigma(w_{r} * [c^{<t-1>}, x^{<t>}] + b_r)\\
+    c^{<t>} = \Gamma_u * \tilde{c}^{<t>} + (1 - \Gamma_u) * c^{<t-1>}\\
+\end{cases}</script><h2 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h2><p>吴恩达老师讲得感觉理解起来有点费劲，因为他觉得图片比文字更难理解，所以写了一大堆公式，只是再后面补充了图片。所以我建议看李宏毅老师的深度学习视频来理解LSTM。李宏毅老师的视频用了一张图片很好的解释了LSTM，并且他还举了一个例子，更加生动形象。<br>可能是东西方的差异，我感觉是图片好理解点，所以我选择看李宏毅老师的视频。这里就不写了，因为我在<strong>下面写了</strong>李宏毅老师课程的<strong>笔记</strong>。</p>
+<h2 id="双向神经网络"><a href="#双向神经网络" class="headerlink" title="双向神经网络"></a>双向神经网络</h2><h2 id="深层神经网络"><a href="#深层神经网络" class="headerlink" title="深层神经网络"></a>深层神经网络</h2><hr>
+<p>李宏毅机器学习</p>
+<hr>
+<h1 id="字母表示-1"><a href="#字母表示-1" class="headerlink" title="字母表示"></a>字母表示</h1><p>跟吴恩达老师讲的类似，李宏毅老师也讲了文字如何表示，与吴恩达老师不同的是，李宏毅老师多讲了几个。<br>最简单的方法利用向量来表示文字，就是上面说过的one-hot：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/1%20of%20N%20encoding.jpg" alt="1 of N encoding"><br>因为会出现某些单词没见到过，所以需要使用other这一维来表示。并且在右边的图中还可以使用字母来表示。然后理想上只要将词向量放入神经网络就会出现结果。但是Feedforward Network其实没办法解决这问题。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/beyond%201-of-N%20encoding.jpg" alt="beyond 1-of-N encoding"><br>可以看到下图，由于Feedforward Network没有记忆，所以两个句子对它来说是一个意思，但是对人来说可以很明显判断出第一句话台北是目的地，第二句话台北是出发地。Feedforward Network它只能训练当前的词，前一个词是什么它并不知道。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/Feedforward%20Network%E6%97%A0%E6%B3%95%E8%A7%A3%E5%86%B3%E7%9A%84%E9%97%AE%E9%A2%98.jpg" alt="Feedforward Network无法解决的问题"></p>
+<h1 id="RNN"><a href="#RNN" class="headerlink" title="RNN"></a>RNN</h1><p>上面讲到Feedforward Network由于没有记忆，无法记住前一个或者前几个词，所以就诞生了RNN。RNN其实也没那么神秘，就是每次输入并交给激活函数计算完毕后，将计算结果存入缓存中，并且在下一次计算时，将缓存取出来一起计算。就是下图的蓝色方框，由于是第一次计算，其中初始化为0。下图第一遍已经在计算了，实际上已经准备更新蓝色方框中的值了。RNN在上面的章节中其实已经写过了，都是类似的。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/%E4%B8%80%E4%B8%AARNN%E7%9A%84%E5%B0%8F%E5%9E%8B%E4%BE%8B%E5%AD%90.jpg" alt="一个RNN的小型例子"><br>经过上面的例子发现，当前的输入已经在依赖前一个的缓存了，所以当顺序有所变化，或者前一个数据有所变化时，RNN可以察觉到，输出的结果也自然不同。</p>
+<h2 id="deep-RNN"><a href="#deep-RNN" class="headerlink" title="deep RNN"></a>deep RNN</h2><p>我一共写了两个RNN的笔记，无论是吴恩达老师的还是李宏毅老师的到目前为止，RNN其实都不是deep的，之前也在疑惑，RNN横轴有很多层，但是实际上那些层只是不同时间的输入，根本不算deep。今天继续看下去，发现这个问题终于有解了，RNN也可以是deep的。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/deep%20RNN.jpg" alt="deep RNN"></p>
+<h2 id="Elman-Network-amp-Jordan-Network"><a href="#Elman-Network-amp-Jordan-Network" class="headerlink" title="Elman Network &amp; Jordan Network"></a>Elman Network &amp; Jordan Network</h2><p>上面讲的RNN都被称为Elman Network。还有另一种辩题叫做Jordan Network，它将输出值缓存起来。传说之中Jordan Network可以有更好的性能。<br><div class="note primary">
+            <p>为什么有更好的性能</p>
+          </div><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/Elman%20Network%E5%92%8Cordan%20Network.jpg" alt="Elman Network和ordan Network"></p>
+<h2 id="双向RNN——Bidirectional-RNN"><a href="#双向RNN——Bidirectional-RNN" class="headerlink" title="双向RNN——Bidirectional RNN"></a>双向RNN——Bidirectional RNN</h2><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/Bidirectional%20RNN.jpg" alt="RNN——Bidirectional RNN"></p>
+<h1 id="长短期记忆——Long-Short-term-Memory-LSTM"><a href="#长短期记忆——Long-Short-term-Memory-LSTM" class="headerlink" title="长短期记忆——Long Short-term Memory(LSTM)"></a>长短期记忆——Long Short-term Memory(LSTM)</h1><div class="note primary">
+            <p>LSTM的神经元个数不同有什么区别？其他的NN架构也有同样的疑问</p>
+          </div>
+<p>上面讲的memory实际上是最简单的，LSTM才是现在最常用的Memory。Menory在RNN中实际只是一个神经元而已，它负责输入和输出。它们之间的关联是：RNN依旧是RNN，只不过把RNN中的神经元换成了LSTM。我们知道神经元的逻辑其实很简单，只有输入——计算——输入到激活函数——输出激活值，而LSTM只不过麻烦一点罢了。<br>下图就是一个LSTM。Input Gate中如果f(z)是1就代表Gate打开，也就是f(z)*g(z) = 1 * g(z) = g(z)，就相当于可以让外界输入。如果f(z)=0，Gate被关闭，那么 f(z)*g(z)=0，是不是就像不允许外界输入一样？因为你输入多少都被置为0。而Forget Gate也类似，当f(z)=1时，即Forget Gate被打开，这里与直觉有点相反，因为Gate打开，有点感觉像遗忘。但是其实c*f(z) = 1，所以Forget Gate为1其实是记住原本的c的意思。<br>另外图中也写到了，Gate的激活函数一般选sigmoid，里面的值就代表Gate的打开程度。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/LSTM%E7%A4%BA%E4%BE%8B.jpg" alt="LSTM示例"></p>
+<h2 id="LSTM的例子"><a href="#LSTM的例子" class="headerlink" title="LSTM的例子"></a>LSTM的例子</h2><p>例子介绍：只有一个LSTM，输入有3维，输出有1维。<script type="math/tex">x_2 = 1</script>则<script type="math/tex">x_1</script>的值就会被存到Memory中，<script type="math/tex">x_2 = -1</script>则重置Memory，<script type="math/tex">x_3 = 1</script>则输出。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/LSTM%E4%BE%8B%E5%AD%90%E4%BB%8B%E7%BB%8D.jpg" alt="LSTM例子介绍"><br>注：下图中的蓝色数字和灰色数字是权重值。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/LSTM%E4%BE%8B%E5%AD%90%E8%AE%A1%E7%AE%97.jpg" alt="LSTM例子计算"></p>
+<ol>
+<li>Input Gate：<br>将偏差设为-10是因为我们通过x2来对Input Gate控制。平常x2=0，计算x*w+b=-10，那么通过sigmoid function就会得到一个接近于0的值，所以就实现了将Input Gate关闭的功能。而如果x2=1，那么x2*100=100，通过sigmoid function就会得到一个接近于1的值，Input Gate就实现了打开的功能。</li>
+<li>Forget Gate: 这里的功能跟Input Gate类似。</li>
+<li>Output Gate: 如果Output Gate被关闭，那么输出0.</li>
+</ol>
+<h2 id="多个LSTM工作场景"><a href="#多个LSTM工作场景" class="headerlink" title="多个LSTM工作场景"></a>多个LSTM工作场景</h2><p>里面的<script type="math/tex">x^t</script>就是对应于NN中的一个向量，它分别乘上4个参数矩阵得到4个不同的向量，以此操控LSTM，而LSTM实际上就等于神经元，说白了就是一个类似激活函数的功能。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/LSTM%E5%AE%9E%E9%99%85%E5%B7%A5%E4%BD%9C%E5%9C%BA%E6%99%AF.jpg" alt="LSTM实际工作场景"><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/LSTM%E5%AE%9E%E9%99%85%E5%B7%A5%E4%BD%9C%E5%9C%BA%E6%99%AF2.jpg" alt="LSTM实际工作场景2"><br>多个LSTM连起来工作就是像下面一样，红线和红线旁边的那个黑色曲线链接的值之前没有讲过，但是下图的这样才是LSTM实际的长相，所以之前讲的那么复杂实际上还是LSTM的简化版。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/LSTM%E5%AE%9E%E9%99%85%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.jpg" alt="LSTM实际工作流程"></p>
+<h1 id="RNN反向传播"><a href="#RNN反向传播" class="headerlink" title="RNN反向传播"></a>RNN反向传播</h1><p>BPTT——backpropagation through time，与NN的backpropagation类似，李宏毅老师也没讲原理直接跳过了。<br>然而不幸的是，RNN的training是很困难的。下面蓝色的线是希望的结果，但是实际上是绿色的线，会出现剧烈地抖动，最后在某个点出现NAN。这就是类似梯度消失问题。可以使用一些办法解决，但是现在用得最多的方法是LSTM。<br><div class="note primary">
+            <p>为什么LSTM能解决RNN的难题</p>
+          </div><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/RNN%20training%E7%A2%B0%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98.jpg" alt="RNN training碰到的问题"></p>
+<h1 id="其他解决梯度消失的办法"><a href="#其他解决梯度消失的办法" class="headerlink" title="其他解决梯度消失的办法"></a>其他解决梯度消失的办法</h1><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/%E5%85%B6%E4%BB%96%E8%A7%A3%E5%86%B3%E6%A2%AF%E5%BA%A6%E6%B6%88%E5%A4%B1%E7%9A%84%E5%8A%9E%E6%B3%95.jpg" alt="其他解决梯度消失的办法"></p>
+<h1 id="seq2seq，后面实在太多了不看了"><a href="#seq2seq，后面实在太多了不看了" class="headerlink" title="seq2seq，后面实在太多了不看了"></a>seq2seq，后面实在太多了不看了</h1><p>以后再看，正好吴恩达老师没教seq2seq。</p>
+<hr>
+<p>李宏毅深度学习</p>
+<hr>
+<h1 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h1><p>此系列视频还有两个Review视频，分别为第一个视频：Basic Structures for Deep Learning Models(Part 1)， 第二个视频：Basic Structures for Deep Learning Models(Part 2)。<br>个人认为Review视频不需要看，而且这两个视频时间贼长，加起来得有两个多小时。没必要浪费时间，即使你根本没学过Review中的知识点也不用去看。他的Review里不会讲很深，基本上就过过场，就算有很深的东西也完全不影响继续往下学。1P时长80分钟，说实话如果自己属于小白阶段，去看那么长的视频是挺打击人的兴趣的，如果是大佬或者已经入门的人当然看得津津有味了。</p>
+<h1 id="Computational-Graph-amp-Backpropagation"><a href="#Computational-Graph-amp-Backpropagation" class="headerlink" title="Computational Graph &amp; Backpropagation"></a>Computational Graph &amp; Backpropagation</h1><h2 id="什么是Computational-Graph"><a href="#什么是Computational-Graph" class="headerlink" title="什么是Computational Graph"></a>什么是Computational Graph</h2><p>这实际上跟要学的深度学习没什么关系，只是名字好听点，无视就好，如下图就是一个Computational Graph。主要用来在计算神经网络一些输出时，便于理解。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/Computational%20Graph%E4%BE%8B%E5%AD%90.jpg" alt="Computational Graph例子"><br>在看一个比较贴近实际的例子，顺便复习一下链式求导法则。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/Computational%20Graph%E9%93%BE%E5%BC%8F%E6%B1%82%E5%AF%BC%E6%B3%95%E5%88%99%E7%A4%BA%E4%BE%8B.jpg" alt="Computational Graph链式求导法则示例"></p>
+<h2 id="通过链式求导的例子理解反向传播（Backpropagation）算法"><a href="#通过链式求导的例子理解反向传播（Backpropagation）算法" class="headerlink" title="通过链式求导的例子理解反向传播（Backpropagation）算法"></a>通过链式求导的例子理解反向传播（Backpropagation）算法</h2><p>首先进行正向链式求导，如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/%E6%AD%A3%E5%90%91%E9%93%BE%E5%BC%8F%E6%B1%82%E5%AF%BC.jpg" alt="正向链式求导"><br>图中要求计算e对a求偏导，首先给出a=3, b=2。其中c=a+b, d=b+1。<br>按照李宏毅老师使用链式求导法则，先要计算c对a求导得到1。e再对c求导得到b+1，带入b=2，得到3。所以3对a求偏导等于1*3=3。<br>上面这种链式求导法则有点乱，如果没仔细学过<em>微积分</em>可能难以理解。其实对于方程e = (a+b) * (b+1)，e对a求偏导，直接看出来都可以。利用考研时的口诀“左导右不导，左不导右导”（也就是<a href="https://baike.baidu.com/item/%E8%8E%B1%E5%B8%83%E5%B0%BC%E8%8C%A8%E5%85%AC%E5%BC%8F/8779293?fr=aladdin" target="_blank" rel="noopener">莱布尼茨公式</a>），直接得到结果<script type="math/tex">\frac{\partial e}{\partial a} = b+1</script>。<br>然后将b=2带入b+1得到结果还是3。</p>
+<p>接着进行反向模式，如下图:<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/%E5%8F%8D%E5%90%91%E9%93%BE%E5%BC%8F%E6%B1%82%E5%AF%BC.jpg" alt="反向链式求导"><br>现在图中要求计算<script type="math/tex">\frac{\partial e}{\partial a}</script>以及<script type="math/tex">\frac{\partial e}{\partial b}</script>，当然你可以分别进行两次链式求导，得到结果。但是如果从e出发，也就是反向，那么就可以同时得到<script type="math/tex">\frac{\partial e}{\partial a}</script>以及<script type="math/tex">\frac{\partial e}{\partial b}</script>的结果。<br>不要在意e为什么等于1，只不过一个输入而已。<br>此外，如果阅读过《deep learning and neural network》一书，看过吴恩达机器学习视频或者其它资料的应该已经能反应出来。连接线上的求偏导实际上就跟神经网络上的权重一个意思，然后也是一层一层地反向传播。<br>这个输入e实际上就是神经网络中的反向传播算法中的输入。就是最后一层神经元的误差<script type="math/tex">\delta^l = h-y</script>。这里吴恩达老师和《deep learning and neural network》作者的最后一层误差公式不一样，<strong>目前不明</strong>，暂时不做解释，这里的公式是吴恩达老师的。<br>然后就是误差*权重+偏差得到前一层的误差，具体不展开。</p>
+<h2 id="反向传播的好处"><a href="#反向传播的好处" class="headerlink" title="反向传播的好处"></a>反向传播的好处</h2><p>如果你的root只有一个，那么这个Computational Graph中的所有偏微分就都可以一次性算出。对应于神经网络，我们就是要这样的效果。</p>
+<h2 id="参数共享（Parameter-sharing）"><a href="#参数共享（Parameter-sharing）" class="headerlink" title="参数共享（Parameter sharing）"></a>参数共享（Parameter sharing）</h2><p>略，看了一眼貌似挺简单。</p>
+<h2 id="Computational-Graph-for-Feedforword-Net"><a href="#Computational-Graph-for-Feedforword-Net" class="headerlink" title="Computational Graph for Feedforword Net"></a>Computational Graph for Feedforword Net</h2><p>李宏毅深度学习p3从21:16到52:48讲解梯度下降算法、前馈神经网络以及反向传播算法的具体数学原理<br>一直没看懂原理，以后再看。</p>
+<h2 id="Computational-Graph-for-Recurrent-Network"><a href="#Computational-Graph-for-Recurrent-Network" class="headerlink" title="Computational Graph for Recurrent Network"></a>Computational Graph for Recurrent Network</h2><h1 id="Deep-Learning-for-Language-Modeling"><a href="#Deep-Learning-for-Language-Modeling" class="headerlink" title="Deep Learning for Language Modeling"></a>Deep Learning for Language Modeling</h1><p>语言模型就是预测一个word sequence出现的几率有多大。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/Language%20Modeling.jpg" alt="Language Modeling"></p>
+<h2 id="N-gram"><a href="#N-gram" class="headerlink" title="N-gram"></a>N-gram</h2><p>N-gram是自然语言处理中的算法。2-gram读作bi-gram。</p>
+<h3 id="传统做法"><a href="#传统做法" class="headerlink" title="传统做法"></a>传统做法</h3><ul>
+<li>怎么预测一句话出现的几率</li>
+<li>收集大量文本作为训练数据<ul>
+<li>然后计算<script type="math/tex">w_1\cdots w_n</script>这句话在训练数据中出现的概率</li>
+</ul>
+</li>
+<li>N-gram语言模型：<ul>
+<li>如何计算一小部分的概率？例如下图的p(beach|nice)出现的概率。就是将nice beach出现的次数除以nice出现的次数。</li>
+</ul>
+</li>
+</ul>
+<p>前两条是理想的处理办法，但是麻烦的是要预测的句子在语料库——corpus中八成一次都没出现过。于是就需要使用N-gram模型。它的处理办法就是将句子拆成比较小的部分——component，再把每个小部分的概率乘起来就是句子出现的几率。像下图这种只考虑前一个单词的模型叫做2-gram model。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/N-gram.jpg" alt="N-gram"></p>
+<h3 id="NN-based-LM"><a href="#NN-based-LM" class="headerlink" title="NN-based LM"></a>NN-based LM</h3><p>怎么做基于NN的N-gram？<br>做法：</p>
+<ol>
+<li>搜集training数据</li>
+<li>learn一个Neural Network，通过两个词predict下一个词，如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/NN-based%20LM.jpg" alt="NN-based LM"></li>
+<li>使用cross entropy minimize</li>
+<li>有了Neural Network后算一个句子的几率，如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/%E8%AE%A1%E7%AE%97%E5%8F%A5%E5%AD%90%E7%9A%84%E5%87%A0%E7%8E%87.jpg" alt="计算句子的几率"><br>其中STRAT是一个token，代表句子的起始。</li>
+</ol>
+<h3 id="RNN-based-LM"><a href="#RNN-based-LM" class="headerlink" title="RNN-based LM"></a>RNN-based LM</h3><p>往上翻<strong>循环神经网络——RNN</strong>，原理就是这个。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/RNN-based%20LM.jpg" alt="RNN-based LM"></p>
+<h3 id="Challenge-of-N-gram"><a href="#Challenge-of-N-gram" class="headerlink" title="Challenge of N-gram"></a>Challenge of N-gram</h3><h4 id="NN-based-model"><a href="#NN-based-model" class="headerlink" title="NN-based model"></a>NN-based model</h4><p>为什么要使用NN-based model。相较于传统方法有什么好处。<br>就是概率估不准，因为永远没有足够的数据。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/Challenge%20of%20N-gram.jpg" alt="Challenge of N-gram"><br><div class="note info">
+            <p>视频13:20~27:01仔细讲解了为什么要使用NN，而且把我困惑了快一个月的问题解决了，就是将文字转为数字之后进行训练的意义。</p>
+          </div></p>
+<h4 id="RNN-based-model"><a href="#RNN-based-model" class="headerlink" title="RNN-based model"></a>RNN-based model</h4><p>为什么要使用RNN-based model。相较于传统方法有什么好处。</p>
+<h1 id="Spatial-Transformer-Layer"><a href="#Spatial-Transformer-Layer" class="headerlink" title="Spatial Transformer Layer"></a>Spatial Transformer Layer</h1><h1 id="Highway-Network-amp-Grid-LSTM"><a href="#Highway-Network-amp-Grid-LSTM" class="headerlink" title="Highway Network &amp; Grid LSTM"></a>Highway Network &amp; Grid LSTM</h1><p>前馈神经网络（就是Simple NN）和RNN的对比。</p>
+<ol>
+<li>Feedforward NN不是每一步都有输入。</li>
+<li>Feedforward NN每一层都有不同的参数。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/Feedforward%20NN%E5%92%8CRNN%E7%9A%84%E5%AF%B9%E6%AF%94.jpg" alt="Feedforward NN和RNN的对比"></li>
+</ol>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/学习笔记/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
         
       
     </div>
@@ -949,7 +1749,7 @@
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
+      <meta itemprop="description" content="朱冲䶮的博客，记录在学习ml、dl时遇到的问题">
       <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
@@ -1007,7 +1807,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-04-23 16:57:30" itemprop="dateModified" datetime="2019-04-23T16:57:30+08:00">2019-04-23</time>
+                <time title="修改时间：2019-04-24 23:34:20" itemprop="dateModified" datetime="2019-04-24T23:34:20+08:00">2019-04-24</time>
               
             
           </span>
@@ -1069,14 +1869,35 @@
         
           <p>本文是在学习<a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000" target="_blank" rel="noopener">该教程</a>时/后做的笔记。<br>我现在用git基本都是用<a href="https://desktop.github.com/" target="_blank" rel="noopener">Github Desktop</a>，前面的是下载地址。用起来方便又快捷。事实上我也不会用git的命令o(<em>￣︶￣</em>)o所以今天稍微学一下。</p>
 <h1 id="git-init"><a href="#git-init" class="headerlink" title="git init"></a>git init</h1><p>切换到想要创建仓库的文件夹，执行命令<code>git init</code>就会在该文件夹下创建一个.git的文件夹，这个文件夹是隐藏的。</p>
-<h1 id="git-add-git-commit"><a href="#git-add-git-commit" class="headerlink" title="git add/git commit"></a>git add/git commit</h1><p>使用命令<code>git add whatever.txt</code>将文件添加到仓库。使用命令<code>git commit -m &quot;wrote a file&quot;</code>将文件提交到仓库，-m后面的是描述这份文件你改了什么。其实就是相当于desktop的一个按钮，按一下就把全部有改动文件都提交了。<br>这样就完成了提交一份文件。这里就会有疑问了，为什么设计成先add再commit？直接commit不就行了？因为commit可以提交多份文件，你可以使用add命令一份一份地添加文件，再使用commit一次性提交到仓库。</p>
+<h1 id="git-add-git-commit"><a href="#git-add-git-commit" class="headerlink" title="git add/git commit"></a>git add/git commit</h1><p>使用命令<code>git add whatever.txt</code>将文件添加到仓库。使用命令<code>git commit -m &quot;wrote a file&quot;</code>将文件提交到仓库，-m后面的是描述这份文件你改了什么。其实就是相当于desktop的一个按钮，按一下就把全部有改动文件都提交了。<br>这样就完成了提交一份文件。这里就会有疑问了，为什么设计成先add再commit？直接commit不就行了？因为commit可以提交多份文件，你可以使用add命令一份一份地添加文件，再使用commit一次性提交到仓库。<br>该命令指示推送到本地仓库，并非远程仓库。</p>
 <h1 id="git-status"><a href="#git-status" class="headerlink" title="git status"></a>git status</h1><p>查看仓库当前的修改状态</p>
 <h1 id="git-diff"><a href="#git-diff" class="headerlink" title="git diff"></a>git diff</h1><p>发现某份文件被修改了，但是忘记改了什么怎么办？使用命令<code>git diff modified_file.txt</code>查看，它会显示文件哪里被修改了。diff就是difference的意思。</p>
 <h1 id="git-log"><a href="#git-log" class="headerlink" title="git log"></a>git log</h1><p>git可以记住你的历史提交版本，如果有一天电脑损坏，自己干了什么完全忘记，可以使用<code>git log</code>命令。它会显示以前所有的历史记录。这条命令会显示很详细的信息，但是就是因为信息太详细了，人可能看不过来，可以加上<code>--pretty=oneline</code>来限制。类似<code>c3fca95239a4bbe21ee2991e0a914fb522060e74</code>这种是版本号（commit id）。</p>
 <h1 id="git-rest"><a href="#git-rest" class="headerlink" title="git rest"></a>git rest</h1><p>该命令可以回退版本。<code>git reset --hard HEAD^</code>，命令里的HEAD代表当前版本，^代表上一个版本，如果想要回退至前100个版本，可以使用HEAD~100。<br>也可以直接指定commit id，如<code>git reset --hard c3fca95239a4bbe21ee2991e0a914fb522060e74</code>，commit id可以不写全，写个开头就行了<code>git reset --hard c3fca</code><br>注意回退版本后，如果关闭git bash那么就无法查询到该版本之后的所有版本。</p>
 <h1 id="git-reflog"><a href="#git-reflog" class="headerlink" title="git reflog"></a>git reflog</h1><p>该命令记住了你每一步操作，如果回退版本后后悔了，可以使用该命令查询以前的commit id。</p>
-<h1 id="git-checkout"><a href="#git-checkout" class="headerlink" title="git checkout"></a>git checkout</h1><p>把文件夹在工作区的修改全部撤销。总之，就是让这个文件回到最近一次git commit或git add时的状态。<br>参考<a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/001374831943254ee90db11b13d4ba9a73b9047f4fb968d000" target="_blank" rel="noopener">文章</a></p>
+<h1 id="git-checkout-—filename"><a href="#git-checkout-—filename" class="headerlink" title="git checkout —filename"></a>git checkout —filename</h1><p>把文件夹在工作区的修改全部撤销。总之，就是让这个文件回到最近一次git commit或git add时的状态。<br>参考<a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/001374831943254ee90db11b13d4ba9a73b9047f4fb968d000" target="_blank" rel="noopener">文章</a></p>
 <h1 id="git-rm"><a href="#git-rm" class="headerlink" title="git rm"></a>git rm</h1><p>删除文件，与linux命令类似。</p>
+<h1 id="git-remote"><a href="#git-remote" class="headerlink" title="git remote"></a>git remote</h1><p>将本地的仓库和远程的仓库关联，使用命令<code>git remote add origin git@github.com:github_account_name/repository_name.git</code><br>注意将github_account_name和repository_name分别替换成github账号名和仓库名。添加关联后，远程库的名字就是origin，这是Git默认的叫法，也可以改成别的。下一步，就可以把本地库的所有内容推送到远程库上。</p>
+<h1 id="git-push"><a href="#git-push" class="headerlink" title="git push"></a>git push</h1><p><code>git push -u origin master</code></p>
+<blockquote>
+<p>把本地库的内容推送到远程，用git push命令，实际上是把当前分支master推送到远程。<br>由于远程库是空的，我们第一次推送master分支时，加上了-u参数，Git不但会把本地的master分支内容推送的远程新的master分支，还会把本地的master分支和远程的master分支关联起来，在以后的推送或者拉取时就可以简化命令。<br>从现在起，只要本地作了提交，就可以通过命令：<br><code>git push origin master</code><br>把本地master分支的最新修改推送至GitHub，现在，你就拥有了真正的分布式版本库！</p>
+</blockquote>
+<h1 id="git-clone"><a href="#git-clone" class="headerlink" title="git clone"></a>git clone</h1><p>上面说了将本地仓库和远程仓库关联，并将本地仓库的文件推送到远程仓库，那么自然也可以从远程仓库clone文件到本地仓库。<br>使用命令：<code>git clone git@github.com:github_account_name/repository_name.git</code><br>还可以从<a href="https://github.com/yan624/yan624.github.io.git这样的地址克隆" target="_blank" rel="noopener">https://github.com/yan624/yan624.github.io.git这样的地址克隆</a></p>
+<h1 id="对分支的管理"><a href="#对分支的管理" class="headerlink" title="对分支的管理"></a>对分支的管理</h1><p>字太多，不想打了。看下面教程。<br><a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/001375840038939c291467cc7c747b1810aab2fb8863508000" target="_blank" rel="noopener">教程</a></p>
+<h2 id="git-checkout-b-branch-name"><a href="#git-checkout-b-branch-name" class="headerlink" title="git checkout -b branch_name"></a>git checkout -b branch_name</h2><p>创建名为branch_name的分支并切换到该分支，-b参数代表切换。</p>
+<h2 id="git-branch"><a href="#git-branch" class="headerlink" title="git branch"></a>git branch</h2><p>查看当前分支，如果分支之前有*就代表这个分支是主分支。</p>
+<h2 id="git-merge-branch-name"><a href="#git-merge-branch-name" class="headerlink" title="git merge branch_name"></a>git merge branch_name</h2><p>合并分支</p>
+<h2 id="git-branch-d-branch-name"><a href="#git-branch-d-branch-name" class="headerlink" title="git branch -d branch_name"></a>git branch -d branch_name</h2><p>删除名为branch_name分支</p>
+<h2 id="合并分支发生冲突"><a href="#合并分支发生冲突" class="headerlink" title="合并分支发生冲突"></a>合并分支发生冲突</h2><p><a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/001375840202368c74be33fbd884e71b570f2cc3c0d1dcf000" target="_blank" rel="noopener">解决办法</a></p>
+<h2 id="强大的分支功能"><a href="#强大的分支功能" class="headerlink" title="强大的分支功能"></a>强大的分支功能</h2><p><a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/0013758410364457b9e3d821f4244beb0fd69c61a185ae0000" target="_blank" rel="noopener">创建分支的策略</a></p>
+<h2 id="bug分支。将当前工作暂存，先修改出现的bug"><a href="#bug分支。将当前工作暂存，先修改出现的bug" class="headerlink" title="bug分支。将当前工作暂存，先修改出现的bug"></a>bug分支。将当前工作暂存，先修改出现的bug</h2><p><a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/00137602359178794d966923e5c4134bc8bf98dfb03aea3000" target="_blank" rel="noopener">暂存命令</a></p>
+<h2 id="feature分支"><a href="#feature分支" class="headerlink" title="feature分支"></a>feature分支</h2><p>与上面类似，无非概念不同</p>
+<h2 id="多人协作"><a href="#多人协作" class="headerlink" title="多人协作"></a>多人协作</h2><p><a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/0013760174128707b935b0be6fc4fc6ace66c4f15618f8d000" target="_blank" rel="noopener">教程</a></p>
+<h2 id="git-rebase"><a href="#git-rebase" class="headerlink" title="git rebase"></a>git rebase</h2><p><a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/0015266568413773c73cdc8b4ab4f9aa9be10ef3078be3f000" target="_blank" rel="noopener">教程</a></p>
+<h1 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h1><p><a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/0015266568413773c73cdc8b4ab4f9aa9be10ef3078be3f000" target="_blank" rel="noopener">教程</a></p>
+<h1 id="使用github"><a href="#使用github" class="headerlink" title="使用github"></a>使用github</h1><p><a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/0015266568413773c73cdc8b4ab4f9aa9be10ef3078be3f000" target="_blank" rel="noopener">教程</a></p>
+<h1 id="使用码云"><a href="#使用码云" class="headerlink" title="使用码云"></a>使用码云</h1><p><a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/00150154460073692d151e784de4d718c67ce836f72c7c4000" target="_blank" rel="noopener">教程</a></p>
+<h1 id="配置文件的更多配置"><a href="#配置文件的更多配置" class="headerlink" title="配置文件的更多配置"></a>配置文件的更多配置</h1><p><a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/00150154460073692d151e784de4d718c67ce836f72c7c4000" target="_blank" rel="noopener">教程</a></p>
           <!--noindex-->
           
             <div class="post-button text-center">
@@ -1145,7 +1966,7 @@
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
+      <meta itemprop="description" content="朱冲䶮的博客，记录在学习ml、dl时遇到的问题">
       <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
@@ -1331,7 +2152,7 @@
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
+      <meta itemprop="description" content="朱冲䶮的博客，记录在学习ml、dl时遇到的问题">
       <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
@@ -1445,10 +2266,10 @@
       
         
           <p>实现ViewPager刷新数据功能，在网上找了很多资料都已经过时了。<br>由于本人并不是android开发出身，完全是做app玩的。所以很多术语都不知道，如果看不懂就算了。。。</p>
-<p>实现PagerAdapter类，我命名为HomePagerAdapter<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">public class HomePagerAdapter extends PagerAdapter &#123;</span><br><span class="line"></span><br><span class="line">    private ArrayList&lt;View&gt; pageView;</span><br><span class="line"></span><br><span class="line">    public HomePagerAdapter(ArrayList&lt;View&gt; pageView) &#123;</span><br><span class="line">        this.pageView = pageView;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private int mChildCount = 0;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void notifyDataSetChanged() &#123;</span><br><span class="line">        mChildCount = getCount();</span><br><span class="line">        super.notifyDataSetChanged();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public int getItemPosition(Object object)   &#123;</span><br><span class="line">        if ( mChildCount &gt; 0) &#123;</span><br><span class="line">            mChildCount --;</span><br><span class="line">            return POSITION_NONE;</span><br><span class="line">        &#125;</span><br><span class="line">        return super.getItemPosition(object);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    //获取当前窗体界面数</span><br><span class="line">    public int getCount() &#123;</span><br><span class="line">        // TODO Auto-generated method stub</span><br><span class="line">        return pageView.size();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    //判断是否由对象生成界面</span><br><span class="line">    public boolean isViewFromObject(View arg0, Object arg1) &#123;</span><br><span class="line">        // TODO Auto-generated method stub</span><br><span class="line">        return arg0==arg1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void destroyItem(ViewGroup container, int position, Object object) &#123;</span><br><span class="line">        container.removeView(pageView.get(position));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public Object instantiateItem(ViewGroup container, int position) &#123;</span><br><span class="line">        View view = pageView.get(position);</span><br><span class="line">        container.addView(view);</span><br><span class="line">        return view;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void finishUpdate(ViewGroup container) &#123;</span><br><span class="line">        if(container.getChildCount() == 0)&#123;</span><br><span class="line">            pageView.clear();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>实现PagerAdapter类，我命名为HomePagerAdapter<br><figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HomePagerAdapter</span> <span class="keyword">extends</span> <span class="title">PagerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ArrayList&lt;View&gt; pageView;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HomePagerAdapter</span><span class="params">(ArrayList&lt;View&gt; pageView)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.pageView = pageView;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mChildCount = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">notifyDataSetChanged</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        mChildCount = getCount();</span><br><span class="line">        <span class="keyword">super</span>.notifyDataSetChanged();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">int</span> <span class="title">getItemPosition</span><span class="params">(Object object)</span>   </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> ( mChildCount &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            mChildCount --;</span><br><span class="line">            <span class="keyword">return</span> POSITION_NONE;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">return</span> <span class="keyword">super</span>.<span class="title">getItemPosition</span><span class="params">(object)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="comment">//获取当前窗体界面数</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">int</span> <span class="title">getCount</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">        <span class="function"><span class="keyword">return</span> pageView.<span class="title">size</span><span class="params">()</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="comment">//判断是否由对象生成界面</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">isViewFromObject</span><span class="params">(View arg0, Object arg1)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">        <span class="keyword">return</span> arg0==arg1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">destroyItem</span><span class="params">(ViewGroup container, <span class="keyword">int</span> position, Object object)</span> </span>&#123;</span><br><span class="line">        container.removeView(pageView.get(position));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function">Object <span class="title">instantiateItem</span><span class="params">(ViewGroup container, <span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">        View view = pageView.get(position);</span><br><span class="line">        container.addView(view);</span><br><span class="line">        <span class="keyword">return</span> view;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">finishUpdate</span><span class="params">(ViewGroup container)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(container.getChildCount() == <span class="number">0</span>)&#123;</span><br><span class="line">            pageView.clear();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>注意destroyItem、instantiateItem方法，PagerAdapter中还有两个同名的方法，但是已被废弃，注意参数不同。<br>实现刷新数据主要在destroyItem、instantiateItem、finishUpdate三个方法。其他的方法其实别人的教程也写了，但是我这三个方法是我自己研究的，我没见别人写过。</p>
 <p>解释流程。<br>第一步，改变数据，我是将数据保存在了<code>private ArrayList&lt;View&gt; pageView;</code>中。<br>第二步，调用<code>adapter.notifyDataSetChanged();</code>方法，它首先会销毁item，即调用<code>destroyItem(ViewGroup container, int position, Object object)</code>方法。随即调用<code>instantiateItem(ViewGroup container, int position)</code>方法。<br>一般来说大家都是这么干的，因为将数据改变后，调用<code>adapter.notifyDataSetChanged();</code>方法。直觉认为这么做合乎常理。<br>但是这里注意一点，假设<code>private ArrayList&lt;View&gt; pageView;</code>中原先保存两个View，改变数据将这个View删除，从新添加三个新的View，那么在<code>destroyItem(ViewGroup container, int position, Object object)</code>方法中，它无法删除，仔细看里面的代码<code>container.removeView(pageView.get(position));</code>，发现它是通过position这个索引获取对象，再在container容器中通过对象查找删除。那么问题来了，你之前已经将两份View删除了，它还怎么通过position获取到呢？所以在这一步出了问题。<br>当然这一步出了问题后，后面的创建页面步骤更是稀巴烂。</p>
-<p>正确步骤如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 将页面刷新，渲染新的数据集</span><br><span class="line">homePagerAdapter.notifyDataSetChanged();</span><br><span class="line">changeData(inflater, data);</span><br><span class="line">homePagerAdapter.notifyDataSetChanged();</span><br></pre></td></tr></table></figure></p>
+<p>正确步骤如下：<br><figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将页面刷新，渲染新的数据集</span></span><br><span class="line"><span class="selector-tag">homePagerAdapter</span><span class="selector-class">.notifyDataSetChanged</span>();</span><br><span class="line"><span class="selector-tag">changeData</span>(inflater, data);</span><br><span class="line"><span class="selector-tag">homePagerAdapter</span><span class="selector-class">.notifyDataSetChanged</span>();</span><br></pre></td></tr></table></figure></p>
 <p>第一步，不要更改数据，直接调用<code>homePagerAdapter.notifyDataSetChanged();</code>，目的是让其删除原先的view。<br>第二步，更改数据。<br>第三步，再次调用<code>homePagerAdapter.notifyDataSetChanged();</code>，完成页面的创建。由于container中已经没有view了，所以删除那个步骤做了也等于没做，但是由于数据已经更新页面还是会被创建出来。</p>
 <p>最后强调用一点。在HomePagerAdapter类中一个<code>finishUpdate(ViewGroup container)</code>方法，注意看里面的代码。<strong>以上的所有步骤，全部依赖于这几句代码。</strong><br>上面第一步说到直接调用notifyDataSetChanged()方法目的是删除原先的view，但是view删除后，你必须将<code>private ArrayList&lt;View&gt; pageView;</code>中的数据也删除。<strong>这里补充一点，pageView内是我创建的View，而container中是android自己维护的界面</strong>，我也不知道怎么称呼，就将其称为界面吧。<br>在finishUpdate()方法中判断，如果container中已经没有界面了，那就直接移除pageView中所有的数据，也就是算更新数据了。值得注意的是，这里面逻辑及其复杂，这行清空数据的代码，只有放在<code>finishUpdate(ViewGroup container)</code>中执行，并且必须加上那个if条件判断，app才能正常运行。<br>
           <!--noindex-->
@@ -1519,7 +2340,7 @@
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
+      <meta itemprop="description" content="朱冲䶮的博客，记录在学习ml、dl时遇到的问题">
       <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
@@ -1687,994 +2508,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/运用其他的插件，在hexo中添加提示弹窗.html">
-    
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/运用其他的插件，在hexo中添加提示弹窗.html" class="post-title-link" itemprop="url">运用其他的插件，在hexo中添加提示弹窗</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-04-18 14:30:17 / 修改时间：14:49:00" itemprop="dateCreated datePublished" datetime="2019-04-18T14:30:17+08:00">2019-04-18</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-          
-          
-          	
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/" itemprop="url" rel="index"><span itemprop="name">assorted</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/hexo/" itemprop="url" rel="index"><span itemprop="name">hexo</span></a></span>
-
-                
-                
-              
-            </span>
-          
-          
-          <!--不蒜子计数-->
-          <span id="busuanzi_container_site_uv">
-          	<span class="post-meta-divider">|</span>
-			浏览量：<span id="busuanzi_value_site_uv"></span>人次
-		  </span>
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>由于我写了很多学习记录，但是这些都是自己看书或者看视频学来的。万一有错误的地方正好被人看见，他又是新手，误以为我的是对的，这样就不好了。所以准备做一个提示弹窗，在所有的带有“学习笔记”的标签的文章中自动弹出提示。</p>
-<ol>
-<li>下载一个自己喜欢的弹窗插件，可以去<a href="http://www.jq22.com/" target="_blank" rel="noopener">jQuery插件库</a>找。</li>
-<li>将css和js放在next主题下的source文件夹中，如下图<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/hexo/next%E4%B8%BB%E9%A2%98%E7%9B%AE%E5%BD%95.jpg" alt="next主题目录"><br>css文件放入css文件，js文件放入js文件夹。我自己创了一个spop的文件夹，用于单独放置我的弹窗插件。</li>
-<li>打开layout文件夹，进入_macro文件夹，找到post.swig文件。搜索class=”post-block”，这个标签的位置在下图箭头所指的地方：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/hexo/%E5%BC%B9%E7%AA%97%E6%8F%92%E4%BB%B6%E4%BB%A3%E7%A0%81%E5%86%99%E5%85%A5%E7%9A%84%E4%BD%8D%E7%BD%AE.png" alt="弹窗插件代码写入的位置"><br>如果打开了这个文件，找了post-block标签，可以看到标签内部第一行代码为<code>&lt;link itemprop=&quot;mainEntityOfPage&quot; href=&quot;{ config.url }{ url_for(post.path) }&quot;/&gt;</code>。由于hexo渲染问题我将href属性里的值去掉了一对{}。<br>将下面的代码放在上述代码上面或者下面即可。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">&#123;% for tag in post.tags %&#125;</span><br><span class="line">	&lt;!--判断该文章是否为学习笔记--&gt;</span><br><span class="line">	&#123;% if tag.name == &apos;学习笔记&apos; and !is_home() %&#125;</span><br><span class="line">  		&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;/css/spop/spop.min.css&quot;&gt;</span><br><span class="line">		&lt;script type=&quot;text/javascript&quot; src=&quot;/js/spop/spop.min.js&quot;&gt;&lt;/script&gt;</span><br><span class="line">		&lt;script&gt;</span><br><span class="line">			spop(&#123;</span><br><span class="line">				template: &apos;&lt;h4 class=&quot;spop-title&quot;&gt;注意&lt;/h4&gt;此文章仅为博主的学习笔记，其中可能含有极大的理论错误。&apos;,</span><br><span class="line">				group: &apos;tips&apos;,</span><br><span class="line">				position  : &apos;bottom-center&apos;,</span><br><span class="line">				style: &apos;success&apos;,</span><br><span class="line">				autoclose: 5500,</span><br><span class="line">				onOpen: function () &#123;</span><br><span class="line">					//这里设置灰色背景色</span><br><span class="line">				&#125;,</span><br><span class="line">				onClose: function() &#123;</span><br><span class="line">					//这里可以取消背景色</span><br><span class="line">					spop(&#123;</span><br><span class="line">						template: &apos;ε = = (づ′▽`)づ&apos;,</span><br><span class="line">						group: &apos;tips&apos;,</span><br><span class="line">						position  : &apos;bottom-center&apos;,</span><br><span class="line">						style: &apos;success&apos;,</span><br><span class="line">						autoclose: 1500</span><br><span class="line">					&#125;);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;);</span><br><span class="line">		&lt;/script&gt;</span><br><span class="line">	&#123;% endif %&#125;</span><br><span class="line">&#123;% endfor %&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>is_home()是next主题的方法，用于判断当前页面是否在主页。因为主页一次性加载了所有的文章，如果不加这个方法，会在主页弹出无数个弹窗。效果如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/hexo/%E6%8F%90%E7%A4%BA%E5%BC%B9%E7%AA%97%E6%95%88%E6%9E%9C%E5%9B%BE.jpg" alt="提示弹窗效果图"><br>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/运用其他的插件，在hexo中添加提示弹窗.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </p></div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/Android开发，使用腾讯云的API请求对象存储中的资源始终失败.html">
-    
-  		
-    
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/Android开发，使用腾讯云的API请求对象存储中的资源始终失败.html" class="post-title-link" itemprop="url">Android开发，使用腾讯云的API请求对象存储中的资源始终失败</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-04-17 10:55:07 / 修改时间：12:05:37" itemprop="dateCreated datePublished" datetime="2019-04-17T10:55:07+08:00">2019-04-17</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-          
-          
-          	
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/" itemprop="url" rel="index"><span itemprop="name">assorted</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/android/" itemprop="url" rel="index"><span itemprop="name">android</span></a></span>
-
-                
-                
-              
-            </span>
-          
-          
-          <!--不蒜子计数-->
-          <span id="busuanzi_container_site_uv">
-          	<span class="post-meta-divider">|</span>
-			浏览量：<span id="busuanzi_value_site_uv"></span>人次
-		  </span>
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <ol>
-<li>腾讯云api内部在调用时，把url转义了。我的链接是<a href="http://###.cos.ap-shanghai.myqcloud.com/11111/app_list.txt?abcdefg，它内部给我转义成http://###.cos.ap-shanghai.myqcloud.com/11111/app_list.txt%3Fabcdefg，就是把&quot;?&quot;转义成了&quot;%3F&quot;。总而言之，我使用api一直获取不到资源，然后我在浏览器上试验了一下。发现把%3F改回?就可以访问了，实际上应该不是这样，反正就给我产生了误导。我想尽办法都不能将其转义回来，最后只好放弃。腾讯云api内部肯定自己转义了一下，真的坑爹。" target="_blank" rel="noopener">http://###.cos.ap-shanghai.myqcloud.com/11111/app_list.txt?abcdefg，它内部给我转义成http://###.cos.ap-shanghai.myqcloud.com/11111/app_list.txt%3Fabcdefg，就是把&quot;?&quot;转义成了&quot;%3F&quot;。总而言之，我使用api一直获取不到资源，然后我在浏览器上试验了一下。发现把%3F改回?就可以访问了，实际上应该不是这样，反正就给我产生了误导。我想尽办法都不能将其转义回来，最后只好放弃。腾讯云api内部肯定自己转义了一下，真的坑爹。</a></li>
-<li>尝试自己写代码请求资源，结果发现如果url的协议是https就可以访问到资源了。这可能是android的问题，于是我又使用腾讯的api，配置更改如下：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CosXmlServiceConfig serviceConfig = new Builder()</span><br><span class="line">				.isHttps(true)</span><br><span class="line">                .setRegion(region)</span><br><span class="line">                .setDebuggable(true)</span><br><span class="line">                .builder();</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>将isHttps设为ture，协议就改为了https。可是又报了另一个错：The specified key does not exist.它说我密钥不存在。</p>
-<ol>
-<li>如果使用http协议访问就会说无法解析域名，总之用腾讯云的api无法访问到资源就对了。</li>
-<li>放弃腾讯云的api，自己手写代码去请求资源！</li>
-</ol>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/Android开发，使用腾讯云的API请求对象存储中的资源始终失败.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/对神经网络整体的理解.html">
-    
-  		
-    
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/学习笔记/对神经网络整体的理解.html" class="post-title-link" itemprop="url">对神经网络整体的理解</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-04-12 20:12:28" itemprop="dateCreated datePublished" datetime="2019-04-12T20:12:28+08:00">2019-04-12</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-04-23 16:47:22" itemprop="dateModified" datetime="2019-04-23T16:47:22+08:00">2019-04-23</time>
-              
-            
-          </span>
-          
-          
-          	
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/machine-learning/" itemprop="url" rel="index"><span itemprop="name">machine-learning</span></a></span>
-
-                
-                
-              
-            </span>
-          
-          
-          <!--不蒜子计数-->
-          <span id="busuanzi_container_site_uv">
-          	<span class="post-meta-divider">|</span>
-			浏览量：<span id="busuanzi_value_site_uv"></span>人次
-		  </span>
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="大纲"><a href="#大纲" class="headerlink" title="大纲"></a>大纲</h1><div class="table-container">
-<table>
-<thead>
-<tr>
-<th style="text-align:center">序号</th>
-<th>描述的内容</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">2~4</td>
-<td>神经网络和深度学习的发展史。</td>
-</tr>
-<tr>
-<td style="text-align:center">5</td>
-<td>从二元分类开始。</td>
-</tr>
-<tr>
-<td style="text-align:center">6~11</td>
-<td>浅层神经网络的介绍。如神经网络中一些参数代表的意思、激活函数、梯度下降、随机初始化。</td>
-</tr>
-<tr>
-<td style="text-align:center">12~16</td>
-<td>深层神经网络的介绍。正向传播和反向传播中向量化后的计算、参数和超参数、神经网络和大脑的关系。</td>
-</tr>
-<tr>
-<td style="text-align:center">17</td>
-<td>一个Simple NN的例子。</td>
-</tr>
-<tr>
-<td style="text-align:center">18~27</td>
-<td>深度学习的实用性层面。数据切分、偏差与方差、正则化、dropout、其他正则化方法、均值归一化、梯度消失和梯度爆炸、梯度检验。</td>
-</tr>
-<tr>
-<td style="text-align:center">28~35</td>
-<td>一些优化算法。Mini-batch、指数加权平均、Momentum、RMSprop、Adam、Adagrad。</td>
-</tr>
-<tr>
-<td style="text-align:center">36~39</td>
-<td>超参数调试、Batch正则化、softmax回归以及一些深度学习框架。</td>
-</tr>
-<tr>
-<td style="text-align:center">40~end</td>
-<td>本文略长，后序的文章请看对应章节的链接。</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h1 id="神经网络和深度学习的发展"><a href="#神经网络和深度学习的发展" class="headerlink" title="神经网络和深度学习的发展"></a>神经网络和深度学习的发展</h1><p>TODO</p>
-<h1 id="神经网络和深度学习的关系"><a href="#神经网络和深度学习的关系" class="headerlink" title="神经网络和深度学习的关系"></a>神经网络和深度学习的关系</h1><p>TODO</p>
-<h1 id="为什么要深度学习"><a href="#为什么要深度学习" class="headerlink" title="为什么要深度学习"></a>为什么要深度学习</h1><p>TODO</p>
-<h1 id="从二元分类开始"><a href="#从二元分类开始" class="headerlink" title="从二元分类开始"></a>从二元分类开始</h1><p>暂时省略，因为这里已经会了。</p>
-<h1 id="神经网络的表示"><a href="#神经网络的表示" class="headerlink" title="神经网络的表示"></a>神经网络的表示</h1><p>规定如下，l：第几层；w：权重值；b：偏差；z：输出值；a：激活值；i，j：都代表第几个神经元，如<script type="math/tex">w^l_i</script>代表第l层的第i个权重值；W：向量化后的权重值；Z：向量化后的输出值；A：向量化后的激活值；<script type="math/tex">\alpha</script>：学习速率；<script type="math/tex">\lambda</script>：正则化项；</p>
-<p>如果输出值z和激活值a无法理解或者区分，没关系，继续往下看就知道了。<br>如下图所示，一般规定input layer为第0层，不算入神经网络的层数中，所以下图是一个三层神经网络架构。</p>
-<ol>
-<li>input layer的输入值被称为x，下图一共有三个输入所以分别被称为<script type="math/tex">x_1\ x_2\ x_3</script>。为了方便起见，可以将input layer的值x以<script type="math/tex">a^0</script>来代替，下面解释a代表什么。</li>
-<li>hidden layer中的值被称为a——<strong>激活值</strong>（activations），图中有四个神经元，所以分别被称为<script type="math/tex">a^1_1\ a^1_2\ a^1_3</script>，上标代表着所在神经网络中的第几层，下标代表着所在层中的第几个神经元。如果表示成向量形式就是<script type="math/tex; mode=display">
-\begin{pmatrix}
- x_1\\
- x_2\\
- x_3\\
-\end{pmatrix} = 
-\begin{pmatrix}
- a^0_1\\
- a^0_2\\
- a^0_3\\
-\end{pmatrix} 和
-\begin{pmatrix}
- a^1_1\\
- a^1_2\\
- a^1_3\\
- a^1_4\\
-\end{pmatrix} 和
-\begin{pmatrix}
- a^2_1\\
- a^2_2\\
- a^2_3\\
- a^2_4\\
-\end{pmatrix} 和
-\begin{pmatrix}
- a^3_1\\
-\end{pmatrix}</script></li>
-</ol>
-<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84%E5%8E%9F%E5%9B%BE.jpg" alt="神经网络架构原图"></p>
-<h2 id="神经网络中神经元的一些参数的含义，特别解释w的含义"><a href="#神经网络中神经元的一些参数的含义，特别解释w的含义" class="headerlink" title="神经网络中神经元的一些参数的含义，特别解释w的含义"></a>神经网络中神经元的一些参数的含义，特别解释w的含义</h2><p>hidden layer和output layer的每个神经元都有几个参数。分别为<script type="math/tex">w^l\ b^l</script>，对照上图，这里的<script type="math/tex">w^l</script>是一个(4,3)的矩阵，<script type="math/tex">b^l</script>是一个(4,1)的向量。解释如下：</p>
-<script type="math/tex; mode=display">
-\begin{cases}
-    z^1_1 = a^0_1 * w^1_{11} + a^0_2 * w^1_{12} + a^0_3 * w^1_{13} + b^1_1\\
-    z^1_2 = a^0_1 * w^1_{21} + a^0_2 * w^1_{22} + a^0_3 * w^1_{23} + b^1_2\\
-    z^1_3 = a^0_1 * w^1_{31} + a^0_2 * w^1_{32} + a^0_3 * w^1_{33} + b^1_3\\
-    z^1_4 = a^0_1 * w^1_{41} + a^0_2 * w^1_{42} + a^0_3 * w^1_{43} + b^1_4\\
-\end{cases}</script><p>可以看到一个公式中有三个w和一个b，一共有四个公式。<script type="math/tex">w^l_{ij}</script>代表第l-1层的第j个神经元到第l层的第i个神经元上的w。如<script type="math/tex">w^1_{12}</script>代表第0层的第2个神经元到第1层的第1个神经元上的w。注意这里的i和j实际上是与直觉相反的，也就是说按直觉来看应该是<script type="math/tex">w^l_{ji}</script>才正常。如果对w的表示有疑惑的，可以看<a href="https://yan624.github.io/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E3%80%8A%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B8%8E%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E3%80%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9A%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95%E4%B8%ADweight%E7%9A%84%E8%A1%A8%E7%A4%BA%E9%97%AE%E9%A2%98.html">这篇</a>。<br>注意下这里的z是<strong>输出值</strong>，之前一直在说hidden layer中的值是a——激活值，其实a就是将z放到一个<strong>激活函数</strong>（activation function）中得到的一个值，这个激活函数是随用户挑选的，如果不能理解激活函数是什么，就暂时理解为激活函数自己想设成什么就设成什么。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84%E5%9B%BE.jpg" alt="神经网络架构图"></p>
-<h1 id="神经网络中的输出是怎么计算的"><a href="#神经网络中的输出是怎么计算的" class="headerlink" title="神经网络中的输出是怎么计算的"></a>神经网络中的输出是怎么计算的</h1><h2 id="以一个样本为例"><a href="#以一个样本为例" class="headerlink" title="以一个样本为例"></a>以一个样本为例</h2><p>第0层是输入层，所以是不需要计算的，x我本来就有，我还计算什么？对吧。从hidden layer1开始到output layer每一层都需要计算一连串的值，下面给出第一层的计算公式：</p>
-<script type="math/tex; mode=display">
-\begin{cases}
-    z^1_1 = a^0_1 * w^1_{11} + a^0_2 * w^1_{12} + a^0_3 * w^1_{13} + b^1_1，a^1_1 = \sigma(z^1_1)\\
-    z^1_2 = a^0_1 * w^1_{21} + a^0_2 * w^1_{22} + a^0_3 * w^1_{23} + b^1_2，a^1_2 = \sigma(z^1_2)\\
-    z^1_3 = a^0_1 * w^1_{31} + a^0_2 * w^1_{32} + a^0_3 * w^1_{33} + b^1_3，a^1_3 = \sigma(z^1_3)\\
-    z^1_4 = a^0_1 * w^1_{41} + a^0_2 * w^1_{42} + a^0_3 * w^1_{43} + b^1_4，a^1_3 = \sigma(z^1_4)\\
-\end{cases}</script><p>这里的<script type="math/tex">\sigma(z)</script>函数其实就是上面说的<strong>激活函数</strong>，一般来讲<script type="math/tex">\sigma</script>这个符号特指sigmoid function: <script type="math/tex">\frac{1}{1+e^{-z}}</script>。<br>这4行公式其实在上面已经给出部分，每一行包含两个公式，也就是说一个神经元中实际上先得到了z，然后再通过激活函数将z转为a。这里可能会有疑惑，已经得到z了为什么还要用一个函数将z转为a呢？这样不是毫无意义？下面有一部分会具体解释，也可以看下面几篇的解释：<br><a href="https://www.zhihu.com/question/22334626" target="_blank" rel="noopener">神经网络激励函数的作用是什么？有没有形象的解释？</a><br><a href="https://blog.csdn.net/program_developer/article/details/78704224" target="_blank" rel="noopener">神经网络激活函数的作用是什么？</a><br>现在回到本文，正如我上面所说，我一共写了四个公式（激活函数现在暂时不看），所以我要分别计算四个公式，也就是说要计算四次。那么有没有办法只计算一次就得到所有结果呢？答案是<strong>向量化</strong>（vectorization），现在开始用向量化来解决这个问题。</p>
-<script type="math/tex; mode=display">
-\begin{pmatrix}
-    z^1_1\\
-    z^1_2\\
-    z^1_3\\
-    z^1_4\\
-\end{pmatrix} = 
-\begin{pmatrix}
-    w^1_{11}&w^1_{12}&w^1_{13}\\
-    w^1_{21}&w^1_{22}&w^1_{23}\\
-    w^1_{31}&w^1_{32}&w^1_{33}\\
-    w^1_{41}&w^1_{42}&w^1_{43}\\
-\end{pmatrix} *
-\begin{pmatrix}
-    a^0_1\\
-    a^0_2\\
-    a^0_3\\
-\end{pmatrix} + 
-\begin{pmatrix}
-    b^1_1\\
-    b^1_2\\
-    b^1_3\\
-    b^1_4\\
-\end{pmatrix}</script><script type="math/tex; mode=display">===>\ z^1 = w^1 * a^0 + b^1</script><p>以下是整个神经网络的计算过程，也就是说只需要下面6行就可以代替上文占据几个屏幕的内容。</p>
-<script type="math/tex; mode=display">
-\begin{array}{c|}
-    z^1 = w^1 * a^0 + b^1\\
-    a^1 = \sigma(z^1)\\
-    z^2 = w^2 * a^1 + b^2\\ 
-    a^2 = \sigma(z^2)\\
-    z^3 = w^3 * a^2 + b^3\\
-    a^3 = \sigma(z^3)\\ 
-\end{array} =>记为P</script><p>最后一个a就是整个神经网络的输出值，也就是预测值（prediction），也可以用<script type="math/tex">\hat{y}</script>表示，自然<script type="math/tex">\hat{y} = a^3</script>。</p>
-<h2 id="向量化计算多个样本"><a href="#向量化计算多个样本" class="headerlink" title="向量化计算多个样本"></a>向量化计算多个样本</h2><p>上面我没有特意地说明其实我们只使用了一个样本，我们一直在使用<script type="math/tex">a^0_1\ a^0_2\ a^0_3</script>，但是<script type="math/tex">a^0_1\ a^0_2\ a^0_3</script>实际上只是<strong>一个</strong>样本。<script type="math/tex">a^0</script>代表的是一个样本，<script type="math/tex">a^0_1</script>代表的是样本中的第一个特征，如果不明白我可以举个例子：<script type="math/tex">a^0_1</script>代表天气样本中的第一个特征——温度，<script type="math/tex">a^0_2</script>代表湿度，<script type="math/tex">a^0_3</script>代表PM2.5，<script type="math/tex">a^0</script>代表整一个天气样本。<br>那么如果有成千上万个样本，总不能使用P计算成千上万次吧。这里再次使用向量化进行计算。</p>
-<script type="math/tex; mode=display">
-\begin{pmatrix}
-    z^{11}_1&z^{12}_1&\cdots\\
-    z^{11}_2&z^{12}_2&\cdots\\
-    z^{11}_3&z^{12}_3&\cdots\\
-    z^{11}_4&z^{12}_4&\cdots\\
-\end{pmatrix} = 
-\begin{pmatrix}
-    w^1_{11}&w^1_{12}&w^1_{13}\\
-    w^1_{21}&w^1_{22}&w^1_{23}\\
-    w^1_{31}&w^1_{32}&w^1_{33}\\
-    w^1_{41}&w^1_{42}&w^1_{43}\\
-\end{pmatrix} *
-\begin{pmatrix}
-    a^{01}_1&a^{01}_1&\cdots\\
-    a^{01}_2&a^{02}_1&\cdots\\
-    a^{01}_3&a^{03}_1&\cdots\\
-\end{pmatrix} + 
-\begin{pmatrix}
-    b^1_1\\
-    b^1_2\\
-    b^1_3\\
-    b^1_4\\
-\end{pmatrix}</script><script type="math/tex; mode=display">===>\ z^1 = w^1 * a^0 + b^1</script><script type="math/tex; mode=display">
-\begin{pmatrix}
-    z^{21}_1&z^{22}_1&\cdots\\
-    z^{21}_2&z^{22}_2&\cdots\\
-    z^{21}_3&z^{22}_3&\cdots\\
-    z^{21}_4&z^{22}_4&\cdots\\
-\end{pmatrix} = 
-\begin{pmatrix}
-    w^2_{11}&w^2_{12}&w^2_{13}&w^2_{14}\\
-    w^2_{21}&w^2_{22}&w^2_{23}&w^2_{24}\\
-    w^2_{31}&w^2_{32}&w^2_{33}&w^2_{34}\\
-    w^2_{41}&w^2_{42}&w^2_{43}&w^2_{44}\\
-\end{pmatrix} *
-\begin{pmatrix}
-    a^{11}_1&a^{11}_1&\cdots\\
-    a^{11}_2&a^{12}_1&\cdots\\
-    a^{11}_3&a^{13}_1&\cdots\\
-    a^{11}_3&a^{14}_1&\cdots\\
-\end{pmatrix} + 
-\begin{pmatrix}
-    b^2_1\\
-    b^2_2\\
-    b^2_3\\
-    b^2_4\\
-\end{pmatrix}</script><script type="math/tex; mode=display">===>\ z^2 = w^2 * a^1 + b^2</script><p>省略号代表后面有无数个样本，同理矩阵相乘也可以只用一个字母表示。上标的第二个数字代表是第几个样本，第一个数字依旧是代表所属第几层。</p>
-<h1 id="激活函数"><a href="#激活函数" class="headerlink" title="激活函数"></a>激活函数</h1><p>上文中我们一直假设使用sigmoid function作为激活函数。但是事实上还有很多其他选择，甚至其他的激活函数比sigmoid funtion效果要更好。<br>上面讲过<script type="math/tex">\sigma(z)</script>特指sigmoid function，现在我们将表达式改为：<script type="math/tex">a = g(z)</script>，用g来表示激活函数，它可以是线性的，也可以是非线性的。<br>引用吴恩达在深度学习视频中的话：</p>
-<blockquote>
-<p>有一个函数总是比sigmoid function表现得更好，就是tanh函数或者叫双曲正切函数，公式为：<script type="math/tex">\frac{e^z-e^{-z}}{e^z+e^{-z}}</script>，在数学上实际是<script type="math/tex">\sigma</script>函数平移后的版本。<br>事实证明，如果将<script type="math/tex">g(z)</script>选为tanh函数，效果几乎总比<script type="math/tex">\sigma(z)</script>函数要好。</p>
-</blockquote>
-<p>有一个例外是output layer，它还是使用sigmoid funtion，因为output layer跟普通的分类问题没什么区别，它要得到0~1之间的一个概率。<br>sigmoid function的值总是位于0~1之间，tanh function的值总是位于-1~1之间。<br>但是不管是<script type="math/tex">\sigma</script>或者tanh函数都一个缺点，那就是当z非常大或者非常小时，函数的斜率（导数的梯度）很小。这样会拖慢梯度下降。在机器学习中还有一个函数，即ReLU函数——Rectified Linear Unit，表达式为<script type="math/tex">max(0, z)</script>。<br>所以在选择激活函数时有一些经验法则：</p>
-<ol>
-<li>如果你的输出值是0或1，那么<script type="math/tex">\sigma</script>函数很适合做output layer的激活函数，非二元分类的情况下使用tanh函数几乎都比<script type="math/tex">\sigma</script>优越。藏层单元全用ReLU函数，现在ReLU函数已经是隐藏层的默认激活函数了，大多数人都这么做。</li>
-<li>还有个叫Leaky ReLU的函数比ReLU稍微好点，但是目前暂时不是很多人用。</li>
-</ol>
-<h1 id="为什么需要非线性激活函数"><a href="#为什么需要非线性激活函数" class="headerlink" title="为什么需要非线性激活函数"></a>为什么需要非线性激活函数</h1><p>直接也提到过，为什么<script type="math/tex">w*x+b=z</script>之后，需要使用一个激活函数<script type="math/tex">a = \sigma(z)</script>？不能不加这个激活函数吗？也会感到很奇怪，权重值乘上输入值加上偏差之后直接输出就行了，何必再带入激活函数中？<br>如果不加激活函数，实际上就是把激活函数变为y=x这个函数。所以就回到了标题上，<em>为什么需要非线性激活函数</em>，因为y=2x也是线性函数，只不过将输入值乘了一个常量而已，而使用非y=bx+c型的激活函数就算是使用了非线性函数。<br>解释如下：<br>现在从头再做一次神经网络计算，与上面的区别是这次不加激活函数。</p>
-<script type="math/tex; mode=display">
-\left \{ 
-    \begin{array}{ll}
-        a^1 = w^1 * a^0 + b^1 \qquad这是计算第一层的激活值，现在没有使用激活函数。\\
-        a^2 = w^2 * a^1 + b^2 \qquad这是计算第二次的激活值，也没有使用激活函数。\\
-        a^2 = w^2 * (w^1 * a^0 + b^1) + b^2 \qquad两式合并之后\\
-        a^2 = w^2 * w^1 * a^0 + w^2 * b^1 + b^2 \qquad合并同类项后\\
-        a^2 = w' * a^0 + b' \qquad由于w和b只是一堆常数，所以将w'代替w^2 * w^1，b'同理
-    \end{array}
-\right.</script><p>通过上面几个式子发现，我们计算了第一层和第二层之后，结果居然还是一个线性的式子，和最初的输入没有什么差别，也就是说你无论叠了几层hidden layer最后输出还是类似<script type="math/tex">a^2 = w' * a^0 + b'</script>的式子，那么深度学习的意义在哪呢？还不如直接把hidden layer去掉。所以重点就是线性的hidden layer没有任何用处，因为两个线性方程的组合结果还是线性方程。<br>只有在一个地方可以使用线性方程，那就是回归问题——线性回归。</p>
-<h1 id="梯度下降，反向传播算法——backpropagation解析"><a href="#梯度下降，反向传播算法——backpropagation解析" class="headerlink" title="梯度下降，反向传播算法——backpropagation解析"></a>梯度下降，反向传播算法——backpropagation解析</h1><p><strong>首先虽然全部的过程已经理清，但是还有几个问题：为什么要对w求导？梯度下降的意义是什？为什么使用梯度下降就可以解决误差问题？</strong></p>
-<hr>
-<p>本节的示例均建立在一个样本的情况下，如果是多个样本经过神经网络，可能略微不同。我看了吴恩达老师的深度学习课程，发现多个样本与一个样本的区别，可能只在偏差b那里会有点不同。<br>下图以一个三层神经网络为例，说明正向与反向传播过程。由于神经元之间的链接太多会导致混乱，所以下图只链接了第一个神经元。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E4%BD%BF%E7%94%A8%E5%AF%BC%E6%95%B0%E8%A7%A3%E9%87%8A%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95.jpg" alt="使用导数解释反向传播算法"><br>下图略微简化一下反向传播算法中的导数项，并且完成了最后的权重值优化。值得注意的是：如果cost function不同，下面求导结果会略微不同，本文统一使用<script type="math/tex">cost = \frac{1}{m} * \sum{(\hat{y} - y)^2}</script>，但是神经网络一般是使用<strong>交叉熵</strong>——crossentropy，其公式为：<script type="math/tex">cost = -\frac{1}{m} * (y * log(\hat{y}) + (1 - y) * log(1 - \hat{y}))</script>。使用前者，<script type="math/tex">\frac{\partial{J}}{\partial{z^{(3)}}} = (a^{(3)} - y) * g'(z^{(3)})</script>；如果使用后者，<script type="math/tex">\frac{\partial{J}}{\partial{z^{(3)}}} = a^{(3)} - y</script>。可以看到使用两个不同的代价函数，会有不同的结果，这是因为两个函数求导的结果不一样。而两者对表达式<script type="math/tex">\frac{\partial{J}}{\partial{z^{(3)}}}</script>的结果只差了一个<script type="math/tex">g'(z^{(3)})</script>，这完全是巧合罢了。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E7%AE%80%E5%8C%96%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95.jpg" alt="简化反向传播算法"><br><em>另外再提醒一下自己，这里全是以一个样本为例。但是仅仅这样权重已经是一个二维矩阵了，要是如果传入多个样本，权重岂不是是一个三维矩阵？然而不管传入几个样本权重实际上对于不同的样本是没有变化的，所以还是二维矩阵。</em></p>
-<h1 id="随机初始化"><a href="#随机初始化" class="headerlink" title="随机初始化"></a>随机初始化</h1><p>对于逻辑回归可以将<strong>权重</strong>（weight）全部初始化为0，但是对于神经网络来说，将个权重初始化为0，再使用梯度下降会完全无效。实际上将偏差b初始化为0是可以的，但是权重不行。<br>解释起来太麻烦，详情看吴恩达深度学习——01神经网络和深度学习第三周浅层神经网络，3.11随机初始化。吴恩达老师解释地还是很清楚的。<br>可以像以下这样设置weight：<script type="math/tex">w^l = np.random.randn((2, 2)) * 0.01</script>//这可以产生参数为(2, 2)的高斯分布随机变量，后面再成一个很小的数，比如0.01。而对于b，之前说了初始化为0也可以。<br>对于上式的0.01可能会感到很疑惑，为什么要乘这么一个值。因为我们一般将weight初始化为很小的值，如果weight值很大，最终导致z也很大，那么会落在sigmoid function或者tanh function的平缓部分，会使梯度的写了很小，意味着梯度下降算法会非常慢，所以学习得很慢。</p>
-<h2 id="初始化补充"><a href="#初始化补充" class="headerlink" title="初始化补充"></a>初始化补充</h2><p>经在作业中做的测试得出如下结论：</p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th><strong>Model</strong></th>
-<th><strong>Train accuracy</strong></th>
-<th><strong>Problem/Comment</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>3-layer NN with <strong>zeros initialization</strong></td>
-<td>50%</td>
-<td>fails to break symmetry</td>
-</tr>
-<tr>
-<td>3-layer NN with large <strong>random initialization</strong></td>
-<td>83%</td>
-<td>too large weights</td>
-</tr>
-<tr>
-<td>3-layer NN with <strong>He initialization</strong></td>
-<td>99%</td>
-<td><strong>recommended method</strong></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>其中”He initialization”最近（论文是2015年的）新搞出来得初始化算法，现在推荐使用此算法进行初始化。</p>
-<h1 id="核对矩阵维数"><a href="#核对矩阵维数" class="headerlink" title="核对矩阵维数"></a>核对矩阵维数</h1><p>w的维数应该与dw的维数相同。b和db的维数相同</p>
-<h1 id="为什么使用深度表示——Why-deep-representations"><a href="#为什么使用深度表示——Why-deep-representations" class="headerlink" title="为什么使用深度表示——Why deep representations"></a>为什么使用深度表示——Why deep representations</h1><p>引用在2017course深度学习课程上吴恩达老师的话</p>
-<blockquote>
-<p>深度神经网络能解决很多问题，其实并不需要很大的神经网络，但是得有深度。得有比较多的隐藏层。</p>
-</blockquote>
-<p>为什么深度神经网络会很好用？</p>
-<ol>
-<li>深度神经网络到底在计算什么？假设现在在做一个人脸识别系统。那么神经网络的第一层会去找照片里的边缘部分；第二层会去识别人类的特征，比如耳朵，鼻子，嘴巴；第三层会去识别不同的人脸。如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E6%B7%B1%E5%BA%A6%E8%A1%A8%E7%A4%BA%E7%9A%84%E7%9B%B4%E8%A7%82%E6%98%A0%E5%83%8F.jpg" alt="深度表示的直观映像"><br>这种识别模式可能难以理解，但是会在卷积神经网络——Convolutional Neural Network中详细解释。<br>这视频的这一章节有点难以总结，可以看看<a href="https://mooc.study.163.com/learn/2001281002?tid=2001392029&amp;_trace_c_p_k2_=03442699ea78498a873a1dbe2fcfee40#/learn/content?type=detail&amp;id=2001701022" target="_blank" rel="noopener">该视频</a>，总共也就10分钟。</li>
-</ol>
-<h1 id="深层神经网络块"><a href="#深层神经网络块" class="headerlink" title="深层神经网络块"></a>深层神经网络块</h1><p>此视频中画出了深度神经网络的<a href="https://mooc.study.163.com/learn/2001281002?tid=2001392029&amp;_trace_c_p_k2_=03442699ea78498a873a1dbe2fcfee40#/learn/content?type=detail&amp;id=2001701023" target="_blank" rel="noopener">代码流程</a>。</p>
-<h1 id="参数VS超参数"><a href="#参数VS超参数" class="headerlink" title="参数VS超参数"></a>参数VS超参数</h1><p>有如下超参数（hyperparameters）：W, b, lerning rate <script type="math/tex">\alpha</script>, iterations, hidden layer L, hidden units, choice of activatation function.这些超参数都需要自己设置。<br>上面这些都是基础的，实际上还有其他的超参数，稍后会涉及到。 </p>
-<h1 id="神经网络和大脑有什么关系？"><a href="#神经网络和大脑有什么关系？" class="headerlink" title="神经网络和大脑有什么关系？"></a>神经网络和大脑有什么关系？</h1><p>计算机视觉、其他深度学习领域或者其他学科在早期可能都受过人类大脑的启发，但是近年来人类将神经网络类比为大脑的次数越来越少，也就是说近年来大家都不怎么认为这二者有关联。</p>
-<h1 id="一个Simple-NN的例子"><a href="#一个Simple-NN的例子" class="headerlink" title="一个Simple NN的例子"></a>一个Simple NN的例子</h1><p><a href="https://github.com/yan624/machine_learning_algorithms/tree/master/simple_neural_network" target="_blank" rel="noopener">Simple Neural Network</a>例子</p>
-<hr>
-<p>本节以下开始利用算法改善深层神经网络</p>
-<hr>
-<h1 id="训练-开发-测试集"><a href="#训练-开发-测试集" class="headerlink" title="训练/开发/测试集"></a>训练/开发/测试集</h1><p>训练集——training set<br>开发集/交叉验证集/验证集——dev set/cross validation set/validation set<br>测试集——test set</p>
-<p>以前数据量小的时候，比如100个样本、10000个样本。一般将数据按三七分，七份训练集，三份测试集。验证集（以下均称验证集）在训练集中再细分，比如二八分，八份训练集。<br>但是现在进入大数据时代，验证集和测试集已经没有必要占大量比例了。比如现在有100万的样本，那么验证集和测试集只需要各抽取大约10000的样本即可。也就是98/1/1的比例，甚至验证集和测试集可以再降低占比。</p>
-<h2 id="训练集和验证集-测试集分布不匹配"><a href="#训练集和验证集-测试集分布不匹配" class="headerlink" title="训练集和验证集/测试集分布不匹配"></a>训练集和验证集/测试集分布不匹配</h2><p>如下图，吴恩达老师建议最好让<strong>验证集</strong>和<strong>测试集</strong>匹配，即来自同一源，要都来自网络高清图，要么都来自手机低像素拍摄。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E8%AE%AD%E7%BB%83%E9%9B%86%E5%92%8C%E5%BC%80%E5%8F%91%E9%9B%86%E6%B5%8B%E8%AF%95%E9%9B%86%E5%88%86%E5%B8%83%E4%B8%8D%E5%8C%B9%E9%85%8D.jpg" alt="训练集和验证集测试集分布不匹配"><br>如果直接不设置测试集也是可以的。</p>
-<h1 id="偏差-方差"><a href="#偏差-方差" class="headerlink" title="偏差/方差"></a>偏差/方差</h1><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E6%AC%A0%E6%8B%9F%E5%90%88%E5%92%8C%E8%BF%87%E6%8B%9F%E5%90%88%E7%9A%84%E5%86%B3%E7%AD%96%E7%95%8C%E9%99%90.jpg" alt="欠拟合和过拟合的决策界限"></p>
-<p>下图讲述了什么是<strong>过拟合</strong>，什么是<strong>欠拟合</strong>，如图所示，该神经网络用于判断一张图片是猫还是狗。<br>左边。训练样本中的误差为1%，这个值已经很小了，但是在验证集上的误差有11%。这就代表了过拟合，试想一下，在训练集上误差很小是因为你的决策界限划分的很好，在上图中的最后一个例子，整条决策界限画的十分完美，但是我们要知道在验证集中，这样一条完美的线肯定不能再拟合的很好。因为训练集和验证集即使来源于同一份数据，他们之间的分布也是不一样的，你训练出一条完美的曲线，在另一份数据集上肯定是过于完美了。所以导致了下图中验证集上的误差有11%。我们称这种情况为<strong>高方差</strong>——high variance。<br>中间。训练样本中的误差为15%，这已经不需要再看验证集上的误差了。因为训练集上的误差那么大，肯定是没有拟合好，所以这就是欠拟合，我们称为<strong>高偏差</strong>——high bais。<br>右边。如果训练集中的误差很高，验证集上的误差更高，那么可以判断为同时具有高方差和高偏差。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E6%AC%A0%E6%8B%9F%E5%90%88%E5%92%8C%E8%BF%87%E6%8B%9F%E5%90%88.jpg" alt="欠拟合和过拟合"><br>如果训练集上的误差为0.5%，验证集上的误差为1%。那这就是低方差和低偏差，这是很好结果。<br>最后一点，以上均建立在人眼判断的误差为0%上以及训练集和验证集来自相同分布。如果人眼判断的误差也高达15%，那么中间的例子也算是可以的结果一般来说<strong>最优误差</strong>也被称为<strong>贝叶斯误差</strong>。<br>关于上图同时高方差和高方差，就如同下图紫色线条的决策界限一般。过渡拟合了数据，但是拟合的数据其实狗屁不通。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E5%90%8C%E6%97%B6%E9%AB%98%E6%96%B9%E5%B7%AE%E5%92%8C%E9%AB%98%E5%81%8F%E5%B7%AE%E6%98%AF%E6%80%8E%E4%B9%88%E6%A0%B7%E7%9A%84.jpg" alt="同时高方差和高偏差是怎么样的"></p>
-<h1 id="机器学习遇到偏差或方差的解决办法"><a href="#机器学习遇到偏差或方差的解决办法" class="headerlink" title="机器学习遇到偏差或方差的解决办法"></a>机器学习遇到偏差或方差的解决办法</h1><p>笔记中都记了，懒得再写一遍了。补充一点，遇到偏差或方差都可以更换神经网络架构，比如换成CNN或者RNN，如果是高偏差还可以使用更大的神经网络。<br>可以看这个6分半中的小视频，<a href="https://mooc.study.163.com/learn/2001281003?tid=2001391036&amp;_trace_c_p_k2_=9c4c25c37dd148a5b85b2edc8dca540e&amp;from=study#/learn/content?type=detail&amp;id=2001702115" target="_blank" rel="noopener">机器学习基础</a>。</p>
-<h1 id="正则化"><a href="#正则化" class="headerlink" title="正则化"></a>正则化</h1><p>如果出现了过拟合，即高方差的情况，第一件想到的事是<strong>正则化</strong>——regularization。当然也可以增加数据，不过有时候数据不是那么容易获取的。可以对W使用<a href="https://www.baidu.com/s?wd=L2%E8%8C%83%E6%95%B0" target="_blank" rel="noopener">L2范数</a>进行正则化，当然对b也可以进行L2范数正则化，不过一般不加。L2范数的公式为<script type="math/tex">||w||^2_2 = \sum_{j=1}^n w^2_j = W^T * W</script><br>因此代价函数修改为<script type="math/tex">cost = \frac{1}{m} \sum^m_{i=1} g(\hat{y}^i, y^i) + \frac{\lambda}{2m}||w||^2_2</script>，<script type="math/tex">\lambda</script>是正则化的超参数。这里的w实际上是一个二维矩阵，所以L2范数需要把里面的每一个值的平方都加起来。<br>如果加入了正则化项，那么在计算dW时有点变化。将会变为：<script type="math/tex">dW = dZ * A\_prev + \frac{\lambda}{m} w ^ l</script></p>
-<h2 id="为什么正则化可以防止过拟合"><a href="#为什么正则化可以防止过拟合" class="headerlink" title="为什么正则化可以防止过拟合"></a>为什么正则化可以防止过拟合</h2><p>略。<a href="https://mooc.study.163.com/learn/2001281003?tid=2001391036&amp;_trace_c_p_k2_=9c4c25c37dd148a5b85b2edc8dca540e&amp;from=study#/learn/content?type=detail&amp;id=2001702116" target="_blank" rel="noopener">1.5 为什么正则化可以减少过拟合？</a></p>
-<h1 id="另一个正则化方法——dropout"><a href="#另一个正则化方法——dropout" class="headerlink" title="另一个正则化方法——dropout"></a>另一个正则化方法——dropout</h1><p><strong>那么问题又来了，dropout背后的原理是什么？</strong><br>dropout，中文翻译为<strong>随机失活</strong>。<br>先将神经网络复制一遍，然后dropout会遍历神经网络的每一层，并设置消除神经网络中结点的概率，比如设置0.5。下图的带X的结点就是准备消除的。另外每一层的概率都可以是不同的，如果在某一层不担心会过拟合可以将概率设为1.0，比如输出层。如果觉得某些层比其他层更容易过拟合，可以把那些层的keep-prob设置的更低。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/dropout%E5%BE%85%E5%88%A0%E9%99%A4%E7%BB%93%E7%82%B9.jpg" alt="dropout待删除结点"><br>下图则是消除后的神经网络。将结点的进出的链接全部删除。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E4%BD%BF%E7%94%A8dropout%E5%90%8E%E7%9A%84%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C.jpg" alt="使用dropout后的神经网络"><br>dropout使用之后，就让一个样本进入神经网络进行训练。而对于其他样本也如法炮制，需要再进行复制一遍神经网络，并进行dropout。<br>以上均是逻辑上的做法，接下来讲实际编码该怎么做。</p>
-<ol>
-<li>设置一个结点保留的概率——keep-prob，假设为0.8。<script type="math/tex">d^3 = np.random.randn(a^3.shape[0], a^3.shape[1]) < keep-prob</script>，这样会得到一个True和False的数组，但是python中Ture等于1，False等于0。</li>
-<li>让<script type="math/tex">a^3</script>乘上这个向量。<script type="math/tex">a^3 = np.multiply(a^3, d^3)</script>。由于False等于0，所以变相地将<script type="math/tex">a^3</script>中的值失活了。</li>
-<li>最后一步看起来有点奇怪，<script type="math/tex">a^3 /= keep-prob</script>。<br>完整代码如下：<script type="math/tex; mode=display">
-\begin{cases}
- d^3 = np.random.randn(a^3.shape[0], a^3.shape[1]) < keep-prob\\
- a^3 = np.multiply(a^3, d^3)\\
- a^3 /= keep-prob\\
-\end{cases}</script></li>
-</ol>
-<p>对于最后一步，由于<script type="math/tex">Z^4 = W^4 * A^3 + b^4</script>，由于<script type="math/tex">A^3</script>被dropout减少0.2，为了使得<script type="math/tex">Z^4</script>不受影响，所以对<script type="math/tex">A^3</script>除0.8，来保证<script type="math/tex">A^3</script>的值不变。由于早期的版本没有除于keep-prob，使得测试阶段，平均值越来越复杂。<br>最后，从技术上来讲，输入值也可以使用dropout，但是基本不这么做，直接把keep-prob设为1.0即可，当然0.9也可以。不过太低的值一般不会去设置。<br>以上的步骤被称为<strong>Inverted dropout</strong>——<strong>反向随机失活</strong>。<br>dropout在计算机视觉中用的非常多，甚至成了标配。但要记住一点，dropout是一种正则化方法，为了预防过拟合。所以除非算法过拟合，不然不会使用dropout。由于计算机视觉的特殊性，他们才经常用dropout。<br>dropout的缺点是使我们失去了代价函数这一调试功能。我们经常使用代价函数得到误差，从而画出曲线图。但是使用dropout之后，这样的曲线图就不再准确了。</p>
-<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>在测试阶段不再使用dropout，因为我们不希望输出结果是随机的，如果使用dropout预测会受到干扰。</p>
-<h1 id="理解dropout"><a href="#理解dropout" class="headerlink" title="理解dropout"></a>理解dropout</h1><p>略。有点晦涩，看<a href="https://mooc.study.163.com/learn/2001281003?tid=2001391036&amp;_trace_c_p_k2_=1f1aedd0dd9f431da0ce64963f010916#/learn/content?type=detail&amp;id=2001701044" target="_blank" rel="noopener">视频</a>。</p>
-<h1 id="其他正则化方法"><a href="#其他正则化方法" class="headerlink" title="其他正则化方法"></a>其他正则化方法</h1><ol>
-<li>Data augment——数据增强。如果拟合猫咪图片分类器，可以对原图片做一些处理，来增加数据，比如翻转、旋转、随机裁剪等。</li>
-<li>Early stopping。在训练时画出代价的曲线图，x轴为迭代次数，再绘制验证时的误差。然后选择验证误差曲线图中最低点的迭代次数，下次训练时就改用这个迭代次数，或者也可以在程序中写一个条件判断。如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/early%20stopping.jpg" alt="early stopping"></li>
-</ol>
-<h1 id="均值归一化输入"><a href="#均值归一化输入" class="headerlink" title="均值归一化输入"></a>均值归一化输入</h1><p>略。其实很简单。</p>
-<h1 id="梯度消失和梯度爆炸"><a href="#梯度消失和梯度爆炸" class="headerlink" title="梯度消失和梯度爆炸"></a>梯度消失和梯度爆炸</h1><p><a href="https://mooc.study.163.com/learn/2001281003?tid=2001391036&amp;_trace_c_p_k2_=1f1aedd0dd9f431da0ce64963f010916#/learn/content?type=detail&amp;id=2001702118&amp;cid=2001699114" target="_blank" rel="noopener">视频</a><br><a href="https://www.bilibili.com/video/av10590361/?p=18" target="_blank" rel="noopener">另外一个参考视频</a>，08:37开始。</p>
-<h2 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h2><p><a href="https://mooc.study.163.com/learn/2001281003?tid=2001391036&amp;_trace_c_p_k2_=1f1aedd0dd9f431da0ce64963f010916#/learn/content?type=detail&amp;id=2001701047" target="_blank" rel="noopener">视频</a></p>
-<h1 id="梯度检验"><a href="#梯度检验" class="headerlink" title="梯度检验"></a>梯度检验</h1><p>Gradient checking(Grad check).<br><a href="https://mooc.study.163.com/learn/2001281003?tid=2001391036&amp;_trace_c_p_k2_=1f1aedd0dd9f431da0ce64963f010916#/learn/content?type=detail&amp;id=2001701048" target="_blank" rel="noopener">原理视频</a><br><a href="https://mooc.study.163.com/learn/2001281003?tid=2001391036&amp;_trace_c_p_k2_=1f1aedd0dd9f431da0ce64963f010916#/learn/content?type=detail&amp;id=2001702119" target="_blank" rel="noopener">实战视频</a><br>梯度检验可以帮助我们发现神经网络中的一些bug。具体原理是，通过数学上导数的定义来确认反向传播算法是否正确。如果学过高数就会知道，使用导数的定义求解和直接使用公式求解，两者结果十分接近或者一模一样。如果二者不一样说明肯定是求错了。<br>对应于神经网络，那就肯定是代码写错了。具体操作可在视频中看见，每个视频都不超过10分钟。</p>
-<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><ol>
-<li>不要在训练中使用梯度检验，它只用于调试。</li>
-<li>如果梯度检验确实发现问题，要检查每一项，看看是哪个i的w和b有问题。</li>
-<li>记得正则化项，它也被包含在w的梯度中。</li>
-<li>梯度检验不能和dropout一起用。</li>
-<li><del>在随机初始化时就运行一遍梯度检验；或许在训练一会后可以再运行一遍梯度检验。当W和b接近于0时，梯度下降正确执行在现实中几乎不太可能。</del>吴恩达老师说这条他在现实中几乎不会这么做，并且第五条的翻译，个人感觉翻得有问题，然后看了英文原文后，感觉原文表达得也不是很好，我看不太懂，所以这条就不算进注意事项了。</li>
-</ol>
-<h1 id="Mini-batch梯度下降"><a href="#Mini-batch梯度下降" class="headerlink" title="Mini-batch梯度下降"></a>Mini-batch梯度下降</h1><p>（<script type="math/tex">\color{green}{为什么Mini-batch比普通的梯度下降快？}</script>）<br>普通的梯度下降——vanilla gradient descent，是将整个数据集同时做运算，而Mini-batch梯度下降算法是以一组为单位，分别进行梯度下降，所有组执行完毕后再进行下一次迭代。<br>假设现在有m个样本。</p>
-<script type="math/tex; mode=display">
-X = \begin{pmatrix}x^1&x^2&x^3&\cdots&x^m\end{pmatrix}\\
-Y = \begin{pmatrix}y^1&y^2&x^3&\cdots&y^m\end{pmatrix}\\</script><p>使用Mini-batch，假设每1000个样本为一组：</p>
-<script type="math/tex; mode=display">
-X = \begin{pmatrix}\underbrace{x^1\cdots x^{1000}}_{X^{\{1\}}} & \underbrace{x^{1001}\cdots x^{2000}}_{X^{\{2\}}} & \cdots&\underbrace{\cdots x^m}_{X^{\{t\}}}\end{pmatrix}\\
-Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} & \underbrace{y^{1001}\cdots y^{2000}}_{Y^{\{2\}}} & \cdots&\underbrace{\cdots y^m}_{Y^{\{t\}}}\end{pmatrix}\\</script><p>如果使用代码实现就是类似下面这样的伪代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">for t = 1, ..., t</span><br><span class="line">	forwardprop on X^&#123;t&#125;</span><br><span class="line">	compute cost</span><br><span class="line">	backprop to compute grads</span><br><span class="line">	update weights and bais</span><br></pre></td></tr></table></figure></p>
-<p>for循环完成之后就完成了神经网络的第一次迭代。</p>
-<h2 id="理解mini-batch"><a href="#理解mini-batch" class="headerlink" title="理解mini-batch"></a>理解mini-batch</h2><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/Mini-batch%E5%92%8C%E6%99%AE%E9%80%9A%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E7%9A%84%E5%8C%BA%E5%88%AB.jpg" alt="Mini-batch和普通梯度下降的区别"></p>
-<ol>
-<li>如果将batch设为m，那它就是普通的梯度下降算法。</li>
-<li>如果将batch设为1，就叫做随机梯度下降——SGD</li>
-<li>batch在1到m之间就是mini-batch</li>
-</ol>
-<p>SGD和普通梯度下降的区别，“+”代表代价最小点。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/SGD%E5%92%8Cvanilla%20gradient%20descent%E7%9A%84%E5%8C%BA%E5%88%AB.jpg" alt="SGD和vanilla gradient descent的区别"><br>SGD和mini-batch的区别。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/SGD%E5%92%8Cmini-batch%E7%9A%84%E5%8C%BA%E5%88%AB.jpg" alt="SGD和mini-batch的区别"></p>
-<p><strong>应该记住的有：</strong></p>
-<ol>
-<li>普通梯度下降、mini-batch和SGD之间的区别就是执行一次参数更新所需的样本数量不同。</li>
-<li>你需要自己调整学习速率<script type="math/tex">\alpha</script>。</li>
-<li>当mini-batch的量调整良好时，它通常优于普通梯度下降和SGD（尤其是在训练集特别大时）。</li>
-</ol>
-<h2 id="mini-bacth实现步骤"><a href="#mini-bacth实现步骤" class="headerlink" title="mini-bacth实现步骤"></a>mini-bacth实现步骤</h2><ol>
-<li>打乱数据。创建一个打乱数据之后的副本，其中X和Y的每一列都代表一个训练样本。注意X和Y是同步地随机打乱样本，即X中第<script type="math/tex">i^{th}</script>个样本和Y中第<script type="math/tex">i^{th}</script>标签在打乱之后还是是对应的。此步骤确保样本被随机地分割到不同的mini-batches中。下图是步骤示意图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/mini-batch%E7%AC%AC%E4%B8%80%E6%AD%A5%E6%89%93%E4%B9%B1%E6%95%B0%E6%8D%AE.jpg" alt="mini-batch第一步打乱数据"></li>
-<li>切分。将打乱数据后的XY切分进<code>mini_batch_size</code>大小（下图是64）的mini-batches中。不过注意训练样本的数量并不总能被<code>mini_batch_size</code>整除。最后的mini-batch可能要小点，但是不需要担心这点。使用<code>math.floor()</code>向上取整即可。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/mini-batch%E7%AC%AC%E4%BA%8C%E6%AD%A5%E5%88%87%E5%88%86.png" alt="mini-batch第二步切分"></li>
-</ol>
-<h2 id="一些经验"><a href="#一些经验" class="headerlink" title="一些经验"></a>一些经验</h2><p>如果小数据量（大约小于2000）的话，选择1；如果样本数目较大，选择2，一般将batch设置在64~512之间，考虑到电脑的内存设置和使用方式，batch的大小设置为2的次方，代码的运行速度会比较快；</p>
-<h1 id="指数加权平均"><a href="#指数加权平均" class="headerlink" title="指数加权平均"></a>指数加权平均</h1><p>为了更好地理解其他优化算法，需要使用到指数加权平均。这章介绍一下它。<br>Exponentially weighted averages，在统计学中被称为指数加权移动平均——Exponentially weighted moving averages。<br>指数加权平均有一个公式：<script type="math/tex">V_t = \beta * V_{t-1} + (1- \beta) * \theta_t</script>，<script type="math/tex">V_0 = 0</script>，其目的是使用<script type="math/tex">V_t</script>代替<script type="math/tex">\theta_t</script>。<script type="math/tex">V_t</script>可视为<strong>约等于</strong><script type="math/tex">\frac{1}{1 - \beta}</script>个样本的平均值。这里可能会有疑问，为什么<script type="math/tex">V_t</script>可视为约等于<script type="math/tex">\frac{1}{1 - \beta}</script>个样本的平均值？其实我也不知道，也不想知道，我又不是学统计学或者数学的。<br>下图中的数据为伦敦一年之间的温度，来源于吴恩达的深度学习视频，可以看到其中的数据十分杂乱，也就是常在网络上看到别人所说的“噪点”多。我们可以使用<strong>指数加权平均</strong>来画出一条线，就是下图的红线，来代表温度变化的趋势，这样会使得更容易让人类理解和观察。<br>下图中的<script type="math/tex">\beta</script>为0.9。而<script type="math/tex">\frac{1}{1 - 0.9} = 10</script>，所以<script type="math/tex">V_t</script>代表过去<em>十天</em>内的平均温度。如果<script type="math/tex">\beta</script>为0.98，那么<script type="math/tex">V_t</script>代表过去<em>五十</em>天内的平均温度<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E6%8C%87%E6%95%B0%E5%8A%A0%E6%9D%83%E5%B9%B3%E5%9D%87%E4%BE%8B%E5%AD%90.jpg" alt="指数加权平均例子"><br>下图是不同<script type="math/tex">\beta</script>值的对比。注意到一点，绿色（<script type="math/tex">\beta</script>=0.98）的线比红色的线要平坦一点，这是因为你多平均了几天的温度，所以这根线波动更新、更平坦。但是缺点是曲线进一步向右移，拟合的不是很好。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E4%B8%8D%E5%90%8Cbeta%E5%80%BC%E7%9A%84%E5%AF%B9%E6%AF%94.jpg" alt="不同beta值的对比"><br>现在看到了平均了10天和50天温度的曲线，现在试试<script type="math/tex">\beta=0.5</script>，也就是只平均两天的温度。由于只平均了两天的温度，数据太少，所以曲线有更多的噪声，更有可能出现异常值。但是这个曲线能更快适应温度变化。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/beta%E5%80%BC%E7%AD%89%E4%BA%8E0.5%E7%9A%84%E6%8C%87%E6%95%B0%E5%8A%A0%E6%9D%83%E5%B9%B3%E5%9D%87.jpg" alt="beta值等于0.5的指数加权平均"></p>
-<h2 id="理解其作用"><a href="#理解其作用" class="headerlink" title="理解其作用"></a>理解其作用</h2><p>略。至今看不懂。</p>
-<h2 id="偏差修正"><a href="#偏差修正" class="headerlink" title="偏差修正"></a>偏差修正</h2><p>之前的曲线其实都是理想状态下的，回想绿色的曲线是50天内的温度平均值。但是其实绿色曲线会是紫色曲线那样的轨迹。初始化<script type="math/tex">V_0=0</script>，原数据中<script type="math/tex">\theta_0 = 40</script>，所以其实<script type="math/tex">V_1 = 0.02 * 40 = 8</script>，从而绿色曲线的起点实际上很低。因为起点并没有计算50天内的温度平均，我们默认将<script type="math/tex">V_0</script>初始化为0。<br>我们可以用下图右边的公式将其修正。算出<script type="math/tex">V_t</script>后再做如下计算：<script type="math/tex">\frac{V_t}{1 - \beta^t}</script>，其中<script type="math/tex">\beta</script>的上标t是指<strong>t次方</strong>。<br>另外由于t越大，<script type="math/tex">\beta^t</script>的值越接近0，所以对后面的值几乎没影响。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E6%8C%87%E6%95%B0%E5%8A%A0%E6%9D%83%E5%B9%B3%E5%9D%87%E5%81%8F%E5%B7%AE%E4%BF%AE%E6%AD%A3.jpg" alt="指数加权平均偏差修正"></p>
-<h1 id="动量梯度下降——Momentum"><a href="#动量梯度下降——Momentum" class="headerlink" title="动量梯度下降——Momentum"></a>动量梯度下降——Momentum</h1><p>算法的意图是明白了，可是<script type="math/tex">\color{green}{算法的原理还是没搞明白。}</script><br>普通的梯度下降，不管是mini-batch、SGD还是其他的什么，都是通过<script type="math/tex">W -= \alpha * dW</script>来更新权重。<br>但是在动量梯度下降中，使用到了<strong>指数加权平均</strong>。尤其是针对mini-batch算法，因为mini-batch算法抖动过大，上面的章节介绍了mini-batch的梯度下降误差曲线，指数加权平均正好可以解决。<br>可以观察下图发现，梯度下降的波动比较大，也就是噪点较多，我们可以使用指数加权平均来减少噪点。下面的公式就是用其减少了梯度dW和db。当然下式中需要加上<strong>偏差修正</strong>：<script type="math/tex">V^{corrected}_{dW} = \frac{V_{dW}}{1 - \beta},\quad V^{corrected}_{db} = \frac{V_{db}}{1 - \beta}</script>。</p>
-<script type="math/tex; mode=display">
-    \begin{cases}
-        compute\ dW, db\\
-        V_{dW} = \beta * V_{dW} + (1 - \beta) * dW,\quad V_{db} = \beta * V_{db} + (1 - \beta) * db\\
-        W -= \alpha * V_{dW}\\
-        b -= \alpha * V_{db}\\
-    \end{cases}</script><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E7%A4%BA%E6%84%8F%E5%9B%BE.jpg" alt="梯度下降示意图"><br>在梯度下降时的这种波动减慢了下降的速度（<script type="math/tex">\color{green}{为什么？暂时将结果记住。}</script>），无法使用更大的学习速率。因为梯度已经很大了，如果使用更大的学习速率，可能梯度直接爆炸了，直接无法收敛。为了避免摆动过大需要使用较小的学习速率。<br>还可以从另一种角度看待。我们希望在纵轴上学习的慢点，我们希望摆动小点，不就是希望纵轴小点吗。而在横轴上我们又希望学习的快点，因为我们希望越快接近中心越好。<br>这个<a href="https://www.bilibili.com/video/av10590361/?p=18" target="_blank" rel="noopener">视频</a>讲的直观一点，可以参考一下，从36::00开始看，虽然讲的是RMSprop但是讲的原理跟Momentum的原理一样。</p>
-<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><p>在课后练习中有更详细的说明，在此补充一下。</p>
-<blockquote>
-<p>Because mini-batch gradient descent makes a parameter update after seeing just a subset of examples, the direction of the update has some variance, and so the path taken by mini-batch gradient descent will “oscillate” toward convergence. Using momentum can reduce these oscillations.</p>
-</blockquote>
-<p>大致意思就是使用Momentum可以使得mini-batch的振荡更小，观察下图。。。说实话我并没有观察出什么，不知道Coursera是怎么想的。我把此图的提示贴出来：</p>
-<blockquote>
-<p>Figure 3: The red arrows shows the direction taken by one step of mini-batch gradient descent with momentum. The blue points show the direction of the gradient (with respect to the current mini-batch) on each step. Rather than just following the gradient, we let the gradient influence  v  and then take a step in the direction of  v .</p>
-</blockquote>
-<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/mini-batch%E4%BD%BF%E7%94%A8Momentum%E5%90%8E.png" alt="mini-batch使用Momentum后"></p>
-<blockquote>
-<p>Momentum takes into account the past gradients to smooth out the update. We will store the ‘direction’ of the previous gradients in the variable  v . Formally, this will be the exponentially weighted average of the gradient on previous steps. You can also think of  v  as the “velocity” of a ball rolling downhill, building up speed (and momentum) according to the direction of the gradient/slope of the hill.</p>
-</blockquote>
-<p>Momentum考虑到了之前的梯度，从而用其来缓和参数更新。我们将前一次梯度的“方向”存进变量v。后续不翻译了。</p>
-<h1 id="均方根传播——RMSprop"><a href="#均方根传播——RMSprop" class="headerlink" title="均方根传播——RMSprop"></a>均方根传播——RMSprop</h1><p>Root mean square prop.<br>一个类似Momentum的算法，没必要死记公式，略。<a href="https://mooc.study.163.com/learn/2001281003?tid=2001391036&amp;_trace_c_p_k2_=48e14d97b8284ad0b4e8d32be2605c3d#/learn/content?type=detail&amp;id=2001702124" target="_blank" rel="noopener">视频地址</a>。<br>或者<a href="https://mooc.study.163.com/learn/2001281003?tid=2001391036&amp;_trace_c_p_k2_=48e14d97b8284ad0b4e8d32be2605c3d#/learn/content?type=detail&amp;id=2001702124" target="_blank" rel="noopener">另一个参考视频</a>，36:00开始。</p>
-<script type="math/tex; mode=display">
-    \begin{cases}
-        compute\ dW, db\\
-        S_{dW} = \beta_2 * S_{dW} + (1 - \beta_2) * (dW)^2,\quad S_{db} = \beta_2 * S_{db} + (1 - \beta_2) * (db)^2\\
-        W -= \alpha * \frac{dW}{\sqrt{S_{dW}} + \epsilon}\\
-        b -= \alpha * \frac{db}{\sqrt{S_{db}} + \epsilon}\\
-    \end{cases}</script><h1 id="优化算法历史介绍"><a href="#优化算法历史介绍" class="headerlink" title="优化算法历史介绍"></a>优化算法历史介绍</h1><blockquote>
-<p>在深度学习的历史中，有不少学者，包括许多知名学者，提出了优化算法并解决了一些问题。但之后这些算法被指出并不能一般化，并不能适用于多种神经网络。<br>时间久了，深度学习圈子里的人开始多少有点质疑全新的优化算法。<br>但是RMSprop和Adam是少有的经受住人们考验的两种算法。已被证明适用于不同的深度学习结构。</p>
-</blockquote>
-<h1 id="Adam"><a href="#Adam" class="headerlink" title="Adam"></a>Adam</h1><p>全称：Adaptive Moment Estimation<br>Adam算法是momentum和RMSprop结合起来的算法。Momentum算法解决算法在纵轴上波动过大的问题，它可以使用类似于物理中的动量来累积梯度。而RMSprop可以在横轴上收敛速度更快同时使得波动的幅度更小。所以将两种算法结合起来表现可能会更好。</p>
-<script type="math/tex; mode=display">
-    \begin{cases}
-        compute\ dW, db\\
-        V_{dW} = \beta_1 * V_{dW} + (1 - \beta_1) * dW,\quad V_{db} = \beta_1 * V_{db} + (1 - \beta_1) * db\\
-        S_{dW} = \beta_2 * S_{dW} + (1 - \beta_2) * (dW)^2,\quad S_{db} = \beta_2 * S_{db} + (1 - \beta_2) * (db)^2\\
-        V^{corrected}_{dW} = \frac{V_{dW}}{1 - \beta_1},\quad V^{corrected}_{db} = \frac{V_{db}}{1 - \beta_1}\\
-        S^{corrected}_{dW} = \frac{S_{dW}}{1 - \beta_2},\quad S^{corrected}_{db} = \frac{S_{db}}{1 - \beta_2}\\
-        W -= \alpha * \frac{V^{corrected}_{dW}}{\sqrt{S^{corrected}_{dW}} + \epsilon}\\
-        b -= \alpha * \frac{V^{corrected}_{db}}{\sqrt{S^{corrected}_{db}} + \epsilon}\\
-    \end{cases}</script><p><a href="https://arxiv.org/pdf/1412.6980.pdf" target="_blank" rel="noopener">adam paper</a>在这。</p>
-<h2 id="超参数的选择"><a href="#超参数的选择" class="headerlink" title="超参数的选择"></a>超参数的选择</h2><ol>
-<li><script type="math/tex">\alpha</script>需要自行调整。</li>
-<li><script type="math/tex">\beta_1</script>一般设置为0.9，计算<script type="math/tex">dW</script>。</li>
-<li><script type="math/tex">\beta_2</script>Adam的作者推荐0.999，计算<script type="math/tex">(dW)^2</script>。</li>
-<li><script type="math/tex">\epsilon</script>其实不是很重要，但是Adam作者推荐设置为<script type="math/tex">10^{-8}</script>。其实不设置也可以，并不会影响算法的性能。</li>
-</ol>
-<p>所以在该算法中其实只要调整<script type="math/tex">\alpha</script>就够了，其他的参数也可以调整，但是一般不调整。</p>
-<h1 id="学习速率衰减——Learning-rate-decay"><a href="#学习速率衰减——Learning-rate-decay" class="headerlink" title="学习速率衰减——Learning rate decay"></a>学习速率衰减——Learning rate decay</h1><p>吴恩达老师没细讲，就花了6分钟描述了一下。减小学习速率的方法有多种，可以百度得到。但是我以前在学机器学习的时候，李宏毅老师讲了一个算法，叫<strong>adagrad</strong>。它没有超参数，完全自动减少学习速率。<br><a href="https://www.bilibili.com/video/av10590361/?p=6" target="_blank" rel="noopener">参考视频</a>，从06:30开始</p>
-<h1 id="优化算法总结"><a href="#优化算法总结" class="headerlink" title="优化算法总结"></a>优化算法总结</h1><div class="table-container">
-<table>
-<thead>
-<tr>
-<th><strong>optimization method</strong></th>
-<th><strong>accuracy</strong></th>
-<th><strong>cost shape</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Gradient descent</td>
-<td>79.7%</td>
-<td>oscillations</td>
-</tr>
-<tr>
-<td>Momentum</td>
-<td>79.7%</td>
-<td>oscillations</td>
-</tr>
-<tr>
-<td>Adam</td>
-<td>94%</td>
-<td>smoother</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h1 id="如何为超参数选择范围"><a href="#如何为超参数选择范围" class="headerlink" title="如何为超参数选择范围"></a>如何为超参数选择范围</h1><p>上面说了那么多算法，其中包括了许多超参数，那么应该怎么为超参数选择值呢？</p>
-<h2 id="超参数的重要程度"><a href="#超参数的重要程度" class="headerlink" title="超参数的重要程度"></a>超参数的重要程度</h2><p>按照吴恩达老师的排序，超参数的重要程度如下：</p>
-<ol>
-<li>learning rate<script type="math/tex">\alpha</script></li>
-<li>Momentum的<script type="math/tex">\beta</script>, hidden layer units, mini-batch size</li>
-<li>layer的数量，learning rate decay</li>
-<li>Adam中的<script type="math/tex">\beta_1\quad \beta_2\quad \epsilon</script>不是很重要，一般按<script type="math/tex">0.9\quad 0.99\quad 10^{-8}</script>设置</li>
-</ol>
-<h2 id="超参数的取值"><a href="#超参数的取值" class="headerlink" title="超参数的取值"></a>超参数的取值</h2><ol>
-<li>随机取值</li>
-<li>从粗糙到精细的策略。首先进行随机取值，发现某个点的效果很好，并且附近的点也很好，然后放大这块区域，进行更密集地取值。下图被圈出来的蓝点就是效果不错的，然后被方框画出一大块区域进行密集地取值或者也可以在这块区域随机取值。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E4%BB%8E%E7%B2%97%E7%B3%99%E5%88%B0%E7%B2%BE%E7%BB%86%E7%9A%84%E5%8F%96%E5%80%BC%E7%AD%96%E7%95%A5.jpg" alt="从粗糙到精细的取值策略"></li>
-</ol>
-<h2 id="选择合适的范围"><a href="#选择合适的范围" class="headerlink" title="选择合适的范围"></a>选择合适的范围</h2><p><a href="https://mooc.study.163.com/learn/2001281003?tid=2001391036&amp;_trace_c_p_k2_=48e14d97b8284ad0b4e8d32be2605c3d&amp;from=study#/learn/content?type=detail&amp;id=2001701053" target="_blank" rel="noopener">视频1</a><br><a href="https://mooc.study.163.com/learn/2001281003?tid=2001391036&amp;_trace_c_p_k2_=48e14d97b8284ad0b4e8d32be2605c3d&amp;from=study#/learn/content?type=detail&amp;id=2001701054" target="_blank" rel="noopener">视频2</a></p>
-<h1 id="batch-normalization——对激活值均值归一化"><a href="#batch-normalization——对激活值均值归一化" class="headerlink" title="batch normalization——对激活值均值归一化"></a>batch normalization——对激活值均值归一化</h1><p>第25章写了均值归一化，它对输入值进行了均值归一，更易于算法优化。而batch normalization对激活值进行了均值归一化，说白了是一个东西。<br>但是。。。我看不懂。<a href="https://mooc.study.163.com/learn/2001281003?tid=2001391036#/learn/content?type=detail&amp;id=2001701055&amp;cid=2001693088" target="_blank" rel="noopener">视频地址</a><br>这几个视频都看不太懂，可能是没有实战的原因。因为上面的大部分算法在以前学机器学习的时候，我都有实战过。</p>
-<h1 id="Softmax回归"><a href="#Softmax回归" class="headerlink" title="Softmax回归"></a>Softmax回归</h1><p>Sogmoid函数<script type="math/tex">\sigma = \frac{1}{1 + e^{-z}}</script>适用于二元分类，那么碰到多元分类怎么么办呢？Softmax函数就可以解决这个问题。<br>Softmax函数计算步骤如下，假设是n元分类：</p>
-<script type="math/tex; mode=display">
-Z^L = W^L * A^{L-1} + b^L\\
-t = e^{Z^L}\\
-A^L = \frac{e^{Z^L}}{\sum^n_{i=1}t_i},\quad A^L_i = \frac{t_i}{\sum^n_{i=1}t_i}\\</script><p>多元分类中每一个神经元代表对应标签的概率是多少，并且将概率相加等于1。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/softmax%E4%BE%8B%E5%AD%90.jpg" alt="softmax例子"></p>
-<h2 id="代价函数"><a href="#代价函数" class="headerlink" title="代价函数"></a>代价函数</h2><p>代价函数为<script type="math/tex">cost(\hat{y}, y) = - \sum^n_{j=1} y_j * log(\hat{y_j})</script>，但是这里可能会有点奇怪。因为二元分类的代价函数是<script type="math/tex">cost(\hat{y}, y) = - \sum^n_{j=1} (y_j * log(\hat{y_j}) + (1 - y_j) * log(\hat{1-y_j}))</script>。怎么多元分类的表达式那么短？</p>
-<h1 id="选择深度学习框架"><a href="#选择深度学习框架" class="headerlink" title="选择深度学习框架"></a>选择深度学习框架</h1><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6%E9%80%89%E6%8B%A9.jpg" alt="深度学习框架选择"></p>
-<h1 id="序列模型"><a href="#序列模型" class="headerlink" title="序列模型"></a>序列模型</h1><p><a href="https://yan624.github.io/学习笔记/吴恩达深度学习学习笔记：序列模型.html">传送门</a></p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/学习笔记/对神经网络整体的理解.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2701,6 +2534,8 @@ A^L = \frac{e^{Z^L}}{\sum^n_{i=1}t_i},\quad A^L_i = \frac{t_i}{\sum^n_{i=1}t_i}\
 
   <aside id="sidebar" class="sidebar">
     
+      <div id="sidebar-dimmer"></div>
+    
     <div class="sidebar-inner">
 
       
@@ -2714,7 +2549,7 @@ A^L = \frac{e^{Z^L}}{\sum^n_{i=1}t_i},\quad A^L_i = \frac{t_i}{\sum^n_{i=1}t_i}\
               <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="朱冲䶮">
             
               <p class="site-author-name" itemprop="name">朱冲䶮</p>
-              <p class="site-description motion-element" itemprop="description">朱冲䶮的博客，记录javaWeb开发等遇到的问题</p>
+              <p class="site-description motion-element" itemprop="description">朱冲䶮的博客，记录在学习ml、dl时遇到的问题</p>
           </div>
 
           
@@ -2724,7 +2559,7 @@ A^L = \frac{e^{Z^L}}{\sum^n_{i=1}t_i},\quad A^L_i = \frac{t_i}{\sum^n_{i=1}t_i}\
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-count">78</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2827,7 +2662,7 @@ A^L = \frac{e^{Z^L}}{\sum^n_{i=1}t_i},\quad A^L_i = \frac{t_i}{\sum^n_{i=1}t_i}\
 		    	<span class="site-state-item-name">访客量</span>
 			</div>
 			<div class="site-state-item site-state-posts">
-		    	<span class="site-state-item-count">44.5k</span>
+		    	<span class="site-state-item-count">51.6k</span>
 		    	<span class="site-state-item-name">总字数</span>
 			</div>
           
@@ -2877,6 +2712,20 @@ A^L = \frac{e^{Z^L}}{\sum^n_{i=1}t_i},\quad A^L_i = \frac{t_i}{\sum^n_{i=1}t_i}\
 
           
           
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com" title="http://example.com" rel="noopener" target="_blank">某某某</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
 
           
             
@@ -2909,7 +2758,7 @@ A^L = \frac{e^{Z^L}}{\sum^n_{i=1}t_i},\quad A^L_i = \frac{t_i}{\sum^n_{i=1}t_i}\
       <div class="footer-inner">
         <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love" id="animate">
-    <i class="fa fa-user"></i>
+    <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 
@@ -3198,5 +3047,9 @@ A^L = \frac{e^{Z^L}}{\sum^n_{i=1}t_i},\quad A^L_i = \frac{t_i}{\sum^n_{i=1}t_i}\
   <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
   <!--不蒜子统计-->
   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+  <script>
+		$("body").backstretch("/images/background/xxx.jpg");
+  </script>
 </body>
 </html>

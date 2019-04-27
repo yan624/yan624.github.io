@@ -83,7 +83,7 @@
     root: '/',
     scheme: 'Pisces',
     version: '6.7.0',
-    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":true},
     fancybox: false,
     fastclick: false,
     lazyload: false,
@@ -208,7 +208,7 @@
     </div>
     
       
-        <p class="site-subtitle">记录</p>
+        <p class="site-subtitle">浅度学习中~~</p>
       
     
     
@@ -364,7 +364,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">77</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">78</span></a>
 
   </li>
 
@@ -421,7 +421,7 @@
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="朱冲䶮的博客，记录javaWeb开发等遇到的问题">
+      <meta itemprop="description" content="朱冲䶮的博客，记录在学习ml、dl时遇到的问题">
       <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
@@ -532,10 +532,10 @@
 
       
         <p>实现ViewPager刷新数据功能，在网上找了很多资料都已经过时了。<br>由于本人并不是android开发出身，完全是做app玩的。所以很多术语都不知道，如果看不懂就算了。。。</p>
-<p>实现PagerAdapter类，我命名为HomePagerAdapter<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">public class HomePagerAdapter extends PagerAdapter &#123;</span><br><span class="line"></span><br><span class="line">    private ArrayList&lt;View&gt; pageView;</span><br><span class="line"></span><br><span class="line">    public HomePagerAdapter(ArrayList&lt;View&gt; pageView) &#123;</span><br><span class="line">        this.pageView = pageView;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private int mChildCount = 0;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void notifyDataSetChanged() &#123;</span><br><span class="line">        mChildCount = getCount();</span><br><span class="line">        super.notifyDataSetChanged();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public int getItemPosition(Object object)   &#123;</span><br><span class="line">        if ( mChildCount &gt; 0) &#123;</span><br><span class="line">            mChildCount --;</span><br><span class="line">            return POSITION_NONE;</span><br><span class="line">        &#125;</span><br><span class="line">        return super.getItemPosition(object);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    //获取当前窗体界面数</span><br><span class="line">    public int getCount() &#123;</span><br><span class="line">        // TODO Auto-generated method stub</span><br><span class="line">        return pageView.size();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    //判断是否由对象生成界面</span><br><span class="line">    public boolean isViewFromObject(View arg0, Object arg1) &#123;</span><br><span class="line">        // TODO Auto-generated method stub</span><br><span class="line">        return arg0==arg1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void destroyItem(ViewGroup container, int position, Object object) &#123;</span><br><span class="line">        container.removeView(pageView.get(position));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public Object instantiateItem(ViewGroup container, int position) &#123;</span><br><span class="line">        View view = pageView.get(position);</span><br><span class="line">        container.addView(view);</span><br><span class="line">        return view;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void finishUpdate(ViewGroup container) &#123;</span><br><span class="line">        if(container.getChildCount() == 0)&#123;</span><br><span class="line">            pageView.clear();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>实现PagerAdapter类，我命名为HomePagerAdapter<br><figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HomePagerAdapter</span> <span class="keyword">extends</span> <span class="title">PagerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ArrayList&lt;View&gt; pageView;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HomePagerAdapter</span><span class="params">(ArrayList&lt;View&gt; pageView)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.pageView = pageView;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mChildCount = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">notifyDataSetChanged</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        mChildCount = getCount();</span><br><span class="line">        <span class="keyword">super</span>.notifyDataSetChanged();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">int</span> <span class="title">getItemPosition</span><span class="params">(Object object)</span>   </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> ( mChildCount &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            mChildCount --;</span><br><span class="line">            <span class="keyword">return</span> POSITION_NONE;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">return</span> <span class="keyword">super</span>.<span class="title">getItemPosition</span><span class="params">(object)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="comment">//获取当前窗体界面数</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">int</span> <span class="title">getCount</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">        <span class="function"><span class="keyword">return</span> pageView.<span class="title">size</span><span class="params">()</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="comment">//判断是否由对象生成界面</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">isViewFromObject</span><span class="params">(View arg0, Object arg1)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">        <span class="keyword">return</span> arg0==arg1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">destroyItem</span><span class="params">(ViewGroup container, <span class="keyword">int</span> position, Object object)</span> </span>&#123;</span><br><span class="line">        container.removeView(pageView.get(position));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function">Object <span class="title">instantiateItem</span><span class="params">(ViewGroup container, <span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">        View view = pageView.get(position);</span><br><span class="line">        container.addView(view);</span><br><span class="line">        <span class="keyword">return</span> view;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">finishUpdate</span><span class="params">(ViewGroup container)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(container.getChildCount() == <span class="number">0</span>)&#123;</span><br><span class="line">            pageView.clear();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>注意destroyItem、instantiateItem方法，PagerAdapter中还有两个同名的方法，但是已被废弃，注意参数不同。<br>实现刷新数据主要在destroyItem、instantiateItem、finishUpdate三个方法。其他的方法其实别人的教程也写了，但是我这三个方法是我自己研究的，我没见别人写过。</p>
 <p>解释流程。<br>第一步，改变数据，我是将数据保存在了<code>private ArrayList&lt;View&gt; pageView;</code>中。<br>第二步，调用<code>adapter.notifyDataSetChanged();</code>方法，它首先会销毁item，即调用<code>destroyItem(ViewGroup container, int position, Object object)</code>方法。随即调用<code>instantiateItem(ViewGroup container, int position)</code>方法。<br>一般来说大家都是这么干的，因为将数据改变后，调用<code>adapter.notifyDataSetChanged();</code>方法。直觉认为这么做合乎常理。<br>但是这里注意一点，假设<code>private ArrayList&lt;View&gt; pageView;</code>中原先保存两个View，改变数据将这个View删除，从新添加三个新的View，那么在<code>destroyItem(ViewGroup container, int position, Object object)</code>方法中，它无法删除，仔细看里面的代码<code>container.removeView(pageView.get(position));</code>，发现它是通过position这个索引获取对象，再在container容器中通过对象查找删除。那么问题来了，你之前已经将两份View删除了，它还怎么通过position获取到呢？所以在这一步出了问题。<br>当然这一步出了问题后，后面的创建页面步骤更是稀巴烂。</p>
-<p>正确步骤如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 将页面刷新，渲染新的数据集</span><br><span class="line">homePagerAdapter.notifyDataSetChanged();</span><br><span class="line">changeData(inflater, data);</span><br><span class="line">homePagerAdapter.notifyDataSetChanged();</span><br></pre></td></tr></table></figure></p>
+<p>正确步骤如下：<br><figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将页面刷新，渲染新的数据集</span></span><br><span class="line"><span class="selector-tag">homePagerAdapter</span><span class="selector-class">.notifyDataSetChanged</span>();</span><br><span class="line"><span class="selector-tag">changeData</span>(inflater, data);</span><br><span class="line"><span class="selector-tag">homePagerAdapter</span><span class="selector-class">.notifyDataSetChanged</span>();</span><br></pre></td></tr></table></figure></p>
 <p>第一步，不要更改数据，直接调用<code>homePagerAdapter.notifyDataSetChanged();</code>，目的是让其删除原先的view。<br>第二步，更改数据。<br>第三步，再次调用<code>homePagerAdapter.notifyDataSetChanged();</code>，完成页面的创建。由于container中已经没有view了，所以删除那个步骤做了也等于没做，但是由于数据已经更新页面还是会被创建出来。</p>
 <p>最后强调用一点。在HomePagerAdapter类中一个<code>finishUpdate(ViewGroup container)</code>方法，注意看里面的代码。<strong>以上的所有步骤，全部依赖于这几句代码。</strong><br>上面第一步说到直接调用notifyDataSetChanged()方法目的是删除原先的view，但是view删除后，你必须将<code>private ArrayList&lt;View&gt; pageView;</code>中的数据也删除。<strong>这里补充一点，pageView内是我创建的View，而container中是android自己维护的界面</strong>，我也不知道怎么称呼，就将其称为界面吧。<br>在finishUpdate()方法中判断，如果container中已经没有界面了，那就直接移除pageView中所有的数据，也就是算更新数据了。值得注意的是，这里面逻辑及其复杂，这行清空数据的代码，只有放在<code>finishUpdate(ViewGroup container)</code>中执行，并且必须加上那个if条件判断，app才能正常运行。<br><a id="more"></a></p>
 
@@ -620,6 +620,8 @@
 
   <aside id="sidebar" class="sidebar">
     
+      <div id="sidebar-dimmer"></div>
+    
     <div class="sidebar-inner">
 
       
@@ -633,7 +635,7 @@
               <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="朱冲䶮">
             
               <p class="site-author-name" itemprop="name">朱冲䶮</p>
-              <p class="site-description motion-element" itemprop="description">朱冲䶮的博客，记录javaWeb开发等遇到的问题</p>
+              <p class="site-description motion-element" itemprop="description">朱冲䶮的博客，记录在学习ml、dl时遇到的问题</p>
           </div>
 
           
@@ -643,7 +645,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">77</span>
+                    <span class="site-state-item-count">78</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -746,7 +748,7 @@
 		    	<span class="site-state-item-name">访客量</span>
 			</div>
 			<div class="site-state-item site-state-posts">
-		    	<span class="site-state-item-count">44.5k</span>
+		    	<span class="site-state-item-count">51.6k</span>
 		    	<span class="site-state-item-name">总字数</span>
 			</div>
           
@@ -796,6 +798,20 @@
 
           
           
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com" title="http://example.com" rel="noopener" target="_blank">某某某</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
 
           
             
@@ -828,7 +844,7 @@
       <div class="footer-inner">
         <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love" id="animate">
-    <i class="fa fa-user"></i>
+    <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 
@@ -1101,5 +1117,9 @@
   <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
   <!--不蒜子统计-->
   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+  <script>
+		$("body").backstretch("/images/background/xxx.jpg");
+  </script>
 </body>
 </html>
