@@ -171,6 +171,8 @@
   </style>
 </noscript>
 
+	<!--图片缩放插件样式-->
+	<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css">
 </head>
 
 <body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
@@ -312,7 +314,7 @@
       
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">17</span></a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">18</span></a>
 
   </li>
 
@@ -364,7 +366,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">79</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">80</span></a>
 
   </li>
 
@@ -400,6 +402,216 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/在shiro的realm中注入service引发的惨案.html">
+    
+  		
+    
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="朱冲䶮的博客，记录在学习ml、dl时遇到的问题">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/在shiro的realm中注入service引发的惨案.html" class="post-title-link" itemprop="url">在shiro的realm中注入service引发的惨案</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2017-12-02 15:42:58" itemprop="dateCreated datePublished" datetime="2017-12-02T15:42:58+08:00">2017-12-02</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-01-24 19:03:10" itemprop="dateModified" datetime="2019-01-24T19:03:10+08:00">2019-01-24</time>
+              
+            
+          </span>
+          
+          
+          	
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/java/shiro/" itemprop="url" rel="index"><span itemprop="name">shiro</span></a></span>
+
+                
+                
+              
+            </span>
+          
+          
+          <!--不蒜子计数-->
+          <span id="busuanzi_container_site_uv">
+          	<span class="post-meta-divider">|</span>
+			浏览量：<span id="busuanzi_value_site_uv"></span>人次
+		  </span>
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p><strong><em>2019.01.24更新，由于发现了mybatis-plus插件已经实现了我要实现的功能，我自己写的肯定没别人研发的框架写得好，所以此方法已经废弃。</em></strong></p>
+<hr>
+<p>环境介绍一下：由于service层的代码重复太多，于是我想直接把一些重复的代码抽出来。<br>比如说这个方法，它可以实现根据条件查询，框架是mybatis。而注入的mapper是有spring提供的方法获取到的，问题就出在这里了。<br><figure class="highlight monkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">@SuppressWarnings(<span class="string">"unchecked"</span>)</span><br><span class="line">@Override</span><br><span class="line"><span class="keyword">public</span> List&lt;Record&gt; selectByExample(Example example) &#123;</span><br><span class="line">    <span class="class"><span class="keyword">Class</span>&lt;? <span class="keyword">extends</span> <span class="title">Object</span>&gt; <span class="title">mapperClazz</span> = <span class="title">mapper</span>.<span class="title">getClass</span>();</span></span><br><span class="line">    List&lt;Record&gt; res = <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="function"><span class="keyword">Method</span> <span class="title">method</span> =</span> mapperClazz.getDeclaredMethod(<span class="string">"selectByExample"</span>, example.getClass());</span><br><span class="line">        res = (List&lt;Record&gt;) <span class="function"><span class="keyword">method</span>.<span class="title">invoke</span>(</span>mapper, example);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalAccessException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalArgumentException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InvocationTargetException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (NoSuchMethodException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (SecurityException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这个方法获取到了mapper的类型，即CLass对象。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SuppressWarnings(<span class="meta-string">"unchecked"</span>)</span></span><br><span class="line"><span class="keyword">public</span> Class&lt;Mapper&gt; getMapperType() &#123;</span><br><span class="line">    ParameterizedType genericSuperclass = (ParameterizedType) <span class="keyword">this</span>.getClass().getGenericSuperclass();</span><br><span class="line">    <span class="keyword">return</span> (Class&lt;Mapper&gt;) genericSuperclass.getActualTypeArguments()[<span class="number">2</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在这里使用了我自定义的SpringContextUtil类获取了mapper这个bean。注意我这里使用了构造器初始化，问题就出在这里。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">BaseServiceImpl</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Class&lt;Mapper&gt; mapperType = getMapperType();</span><br><span class="line">    <span class="keyword">this</span>.mapper = (Mapper) SpringContextUtil.getBean(mapperType);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>getBean()方法就不提供了，可以自行百度。主要是这个类SpringContextUtil。<br>要想使用spring提供的以java代码方法获取bean有5种方式（大致差不多，我是用了第四种）：实现ApplicationContextAware接口。只需要在实现类中定义private static ApplicationContext applicationContext;变量，再设置set方法，即可使用这个对象获取到bean。<br>到这里一切都没问题，可以当启动tomcat时，问题出来了。<br>它报了一个异常，必须初始化applicationContext。我纳闷了，我之前在Controller层注入service对象用的好好的，为什么在shiro的realm中注入就出事了？<br>我看了我的applicationContext.xml文件，我是这么写的：</p>
+<figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;<span class="keyword">import</span> resource=<span class="string">"classpath:springContextConfig.xml"</span> /&gt;</span><br><span class="line">&lt;<span class="keyword">import</span> resource=<span class="string">"classpath:spring/upms-dao.xml"</span> /&gt;</span><br><span class="line">&lt;<span class="keyword">import</span> resource=<span class="string">"classpath:spring/upms-service.xml"</span> /&gt;</span><br><span class="line">&lt;<span class="keyword">import</span> resource=<span class="string">"classpath:spring/upms-tx.xml"</span> /&gt;</span><br><span class="line">&lt;<span class="keyword">import</span> resource=<span class="string">"classpath:shiro/shiro.xml"</span> /&gt;</span><br></pre></td></tr></table></figure>
+<p>然后看了web.xml文件</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;context-<span class="built_in">param</span>&gt;</span><br><span class="line">	&lt;<span class="built_in">param</span>-name&gt;contextConfigLocation&lt;/<span class="built_in">param</span>-name&gt;</span><br><span class="line">	&lt;<span class="built_in">param</span>-<span class="built_in">value</span>&gt;classpath:applicationContext.xml&lt;/<span class="built_in">param</span>-<span class="built_in">value</span>&gt;</span><br><span class="line">&lt;/context-<span class="built_in">param</span>&gt;</span><br></pre></td></tr></table></figure>
+<p>好像稍微有点头绪了<br>我在初始化spring上下文的时候，直接初始化了shiro.xml，这没问题。但是在applicationContext.xml中第一行的<code>&lt;import resource=&quot;classpath:springContextConfig.xml&quot; /&gt;</code>里面注册了SPringContextUtil这个工具类。（这个工具类不会一下子注册进去成为bean，它会在spring上下文初始化完毕之后才行）。<br>所以我需要在realm中注册AdminService——-&gt;AdminService继承了BaseServiceImpl——-&gt;BaseServiceImpl在构造器中使用了applicationContext.getBean()。这个步骤在spring上下文初始化还没完成的时候执行，但是你要想使用applicationContext，spring上下文必须初始化完毕，所以冲突了。<br>那我就想直接把shiro.xml托到DispatcherServlet里面初始化就完事了。因为在DispatcherServlet加载的配置文件中，我扫描了Controller层，而在Controller层使用是没问题的（我之前还不懂的时候就这么做的，没报异常）。然后我这么做了，但是又报异常了——-&gt;No Bean Named “shiroFilter”。这不坑爹吗？<br>我先缕一缕，<code>&lt;context-param&gt;</code>最先执行，其次是<code>&lt;filter&gt;</code>，最后是<code>&lt;servlet&gt;</code>（不一定完全正确，但是可以这么理解）。所以说shiro.xml放在DispatcherServlet中不行！因为filter比servlet先执行，它必须要shiro.xml中的bean。所以怎么办？我必须把shiro.xml放在context-param和filter的中间。这根本不可能（起码我做不到）。<br>后来我想到了懒加载（我印象中有听说过这个概念），我一百度还真有。那我应该把懒加载放在哪个bean上呢？我决定放在AdminService上。但是没用，因为Realm这个类不能懒加载，因为它马上就被初始化了。而realm中注入了AdminService，所以即使是懒加载也没屌用。<br>最后终于解决了。<br>既然你要初始化bean，要用构造器，我就把调用applicationContext的代码不放在构造器里。我写了一个initMapper方法。</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">initMapper</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Class&lt;Mapper&gt; mapperType = getMapperType();</span><br><span class="line">    <span class="keyword">this</span>.mapper = (Mapper) SpringContextUtil.getBean(mapperType);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意@Override注解。<br>那么现在问题就是，怎么调用这个方法。<br>经过度娘之后，终于解决了。贴上类，我就不解释了。附上链接<a href="https://www.cnblogs.com/rollenholt/p/3612440.html" target="_blank" rel="noopener">https://www.cnblogs.com/rollenholt/p/3612440.html</a></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MapperInit</span> <span class="keyword">implements</span> <span class="title">ApplicationListener</span>&lt;<span class="title">ContextRefreshedEvent</span>&gt; &#123;</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> onApplicationEvent(ContextRefreshedEvent event) &#123;</span><br><span class="line">        <span class="comment">//下面的方法执行就行了，这个方法会执行两次，我们不需要这么做</span></span><br><span class="line">    &#125;</span><br><span class="line">       </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 需要执行的逻辑代码，当spring容器初始化完成后就会执行该方法。</span></span><br><span class="line"><span class="comment">     * 由于加了<span class="doctag">@PostConstruct</span>注解所以这个方法跟上面的onApplicationEvent一样。</span></span><br><span class="line"><span class="comment">     * 但是这个方法只会在root application context环境中执行，不会在 projectName-servlet context中执行</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@SuppressWarnings</span>(<span class="string">"rawtypes"</span>)</span><br><span class="line">    <span class="meta">@PostConstruct</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> initMapper() &#123;</span><br><span class="line">        Map&lt;String, BaseService&gt; beansOfType = SpringContextUtil.getApplicationContext().getBeansOfType(BaseService.<span class="keyword">class</span>);</span><br><span class="line">        <span class="keyword">for</span>(Map.Entry&lt;String, BaseService&gt; <span class="string">entrySet :</span> beansOfType.entrySet()) &#123;</span><br><span class="line">            BaseService service = entrySet.getValue();</span><br><span class="line">            service.initMapper();</span><br><span class="line">            System.out.println(service);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/在shiro的realm中注入service引发的惨案.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -2253,7 +2465,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">79</span>
+                    <span class="site-state-item-count">80</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2300,7 +2512,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">17</span>
+                      
+                    
+                    <span class="site-state-item-count">18</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -2358,7 +2572,7 @@
 		    	<span class="site-state-item-name">访客量</span>
 			</div>
 			<div class="site-state-item site-state-posts">
-		    	<span class="site-state-item-count">51k</span>
+		    	<span class="site-state-item-count">51.9k</span>
 		    	<span class="site-state-item-name">总字数</span>
 			</div>
           
@@ -2612,6 +2826,8 @@
     
       
     
+      
+    
   
 
   
@@ -2710,40 +2926,34 @@
 
   
 
-  <script type="text/x-mathjax-config">
-	MathJax.Hub.Config({
-		//下面的HTML-CSS和SVG用于在小屏幕上，数学公式可以自动换行，我测试过后发现无效，但是貌似有人可以。
-		"HTML-CSS": { 
-			linebreaks: { 
-				automatic: true 
-			} 
-		},SVG: {
-			linebreaks: { 
-				automatic: true 
-			}
-		},menuSettings: {
-			zoom: "None"
-		},
-		showMathMenu: false,
-		jax: ["input/TeX","output/CommonHTML"],
-		extensions: ["tex2jax.js"],
-		TeX: {
-			extensions: ["AMSmath.js","AMSsymbols.js"],
-			equationNumbers: {
-				autoNumber: "AMS"
-			}
-		},tex2jax: {
-			inlineMath: [["\\(", "\\)"]],
-			displayMath: [["\\[", "\\]"]]
-		}
-	});
-  </script>
+	<script src="/lib/my-utils.js"></script>
+	<!--图片缩放插件-->
+	<script src="/lib/zoomify/zoomify.min.js"></script>
   <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
   <!--不蒜子统计-->
   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
   <script>
-		$("body").backstretch("/images/background/default.jpg");
+		function generateBG(count){
+			var bg_prefix = '/images/background/';
+			var bg =new Array();
+			for(var i = 0; i < count; i++){
+				bg[i] = bg_prefix + i + '.jpg';
+			}
+			bg.shuffle();
+			return bg;
+		}
+		$("body").backstretch(generateBG(5), { 
+			duration:30000,//30s一换
+			fade: 1500 
+		});
+		$('#content img').zoomify({duration: 500, });
+		$('#content img').on('zoom-in.zoomify', function () {
+			$('#sidebar').css('display', 'none');
+		});
+		$('#content img').on('zoom-out-complete.zoomify', function () {
+			$('#sidebar').css('display', '');
+		});
   </script>
 </body>
 </html>
