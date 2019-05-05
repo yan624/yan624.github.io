@@ -143,7 +143,7 @@
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/RNN-based%20LM.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/Challenge%20of%20N-gram.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/Feedforward%20NN%E5%92%8CRNN%E7%9A%84%E5%AF%B9%E6%AF%94.jpg">
-<meta property="og:updated_time" content="2019-05-03T08:41:10.272Z">
+<meta property="og:updated_time" content="2019-05-03T13:10:50.942Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型">
 <meta name="twitter:description" content="大纲    序号 课程 内容     2~8 吴恩达深度学习 one hot编码、RNN包括双向和深层、GRU、LSTM   9~14 李宏毅机器学习 RNN包括双向和深层、LSTM、RNN反向传播、seq2seq   15~end 李宏毅深度学习 计算图、深度学习语言模型N-gram     字母表示假设：x: Harry Potter and Hermione Granger invented">
@@ -397,7 +397,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">80</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">81</span></a>
 
   </li>
 
@@ -538,7 +538,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-05-03 16:41:10" itemprop="dateModified" datetime="2019-05-03T16:41:10+08:00">2019-05-03</time>
+                <time title="修改时间：2019-05-03 21:10:50" itemprop="dateModified" datetime="2019-05-03T21:10:50+08:00">2019-05-03</time>
               
             
           </span>
@@ -673,7 +673,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
 <p>这两个句子只有复数形式上的不同，但是开头的名词影响到了最后面的be动词。但是我们目前见到的最基本的RNN不擅长捕获这种长期依赖效应。<br>用梯度消失解释一下为什么，其实原理相同的，这里引用之前的文章<br><a href="https://yan624.github.io//%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3.html#%E6%A2%AF%E5%BA%A6%E6%B6%88%E5%A4%B1%E5%92%8C%E6%A2%AF%E5%BA%A6%E7%88%86%E7%82%B8">梯度消失和梯度爆炸</a></p>
 <h1 id="GRU单元——Gate-Recurrent-Unit"><a href="#GRU单元——Gate-Recurrent-Unit" class="headerlink" title="GRU单元——Gate Recurrent Unit"></a>GRU单元——Gate Recurrent Unit</h1><p>中文名为门控循环单元。它解决了梯度消失的问题。</p>
 <h2 id="符号表示"><a href="#符号表示" class="headerlink" title="符号表示"></a>符号表示</h2><p>c = memonry cell，使用<script type="math/tex">c^{<t>}</script>符号表示输出，其中<script type="math/tex">c^{<t>} = a^{<t>}</script>，由于后面的LSTM的c和a代表意思不同，所以这里直接使用c来表示输出值。所以本小章下的c你都看作是a即可。</p>
-<h2 id="GRU工作流程"><a href="#GRU工作流程" class="headerlink" title="GRU工作流程"></a>GRU工作流程</h2><p>由于通过<script type="math/tex">c^{<t-1>}</script>来更新<script type="math/tex">c^{<t>}</script>的值，但是现在我们使用GRU，GRU就是来控制是否更新<script type="math/tex">c^{<t>}</script>的值的，这里使用“更新”的名词可能有点怪，因为<script type="math/tex">c^{<t>}</script>实际上是通过<script type="math/tex">c^{<t-1>}</script><strong>计算</strong>出来的。那么公式<script type="math/tex">a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)</script>变为<script type="math/tex">\tilde{c}^{<t>} = tanh(w_{c} * [c^{<t-1>}, x^{<t>}] + b_c)</script>，这里的<script type="math/tex">\tilde{c}^{<t>}</script>是一个候选值——candidate value，类似于中间变量。<br>GRU的核心是有一个Gate，就是上面说的是否更新值的功能，它的公式为<script type="math/tex">\Gamma_u = \sigma(w_{u} * [c^{<t-1>}, x^{<t>}] + b_u)</script>，<script type="math/tex">\Gamma_u</script>的u的意思是update，sigmoid函数的输出范围在0-1之间，所以就完成了类似更新的功能。如果是0就代表不让你更新，如果是1就代表让你更新，这里听起来还有点绕，没关系看下面的表达式。<br>这时开始执行更新步骤：<script type="math/tex">c^{<t>} = \Gamma_u * \tilde{c}^{<t>} + (1 - \Gamma_u) * c^{<t-1>}</script>，这一步可以看出如果<script type="math/tex">\Gamma_u</script>等于1就将<script type="math/tex">c^{<t>}</script>更新为<script type="math/tex">\tilde{c}^{<t>}</script>，如果等于0就相当于不让你更新，结果还是上一个的c，即<script type="math/tex">c^{<t-1>}</script>。<br>将公式写在一起，GRU的工作流程就是：</p>
+<h2 id="GRU工作流程"><a href="#GRU工作流程" class="headerlink" title="GRU工作流程"></a>GRU工作流程</h2><p>由于通过<script type="math/tex">c^{<t-1>}</script>来更新<script type="math/tex">c^{<t>}</script>的值，但是现在我们使用GRU，GRU就是来控制是否更新<script type="math/tex">c^{<t>}</script>的值的，这里使用“更新”的名词可能有点怪，因为<script type="math/tex">c^{<t>}</script>实际上是通过<script type="math/tex">c^{<t-1>}</script><strong>计算</strong>出来的。那么公式<script type="math/tex">a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)</script>变为<script type="math/tex">\tilde{c}^{<t>} = tanh(w_{c} * [c^{<t-1>}, x^{<t>}] + b_c)</script>，这里的<script type="math/tex">\tilde{c}^{<t>}</script>是一个候选值——candidate value，类似于中间变量，而激活函数我们选择tanh。<br>GRU的核心是有一个Gate，就是上面说的是否更新值的功能，它的公式为<script type="math/tex">\Gamma_u = \sigma(w_{u} * [c^{<t-1>}, x^{<t>}] + b_u)</script>，<script type="math/tex">\Gamma_u</script>的u的意思是update，sigmoid函数的输出范围在0-1之间，所以就完成了类似更新的功能。如果是0就代表不让你更新，如果是1就代表让你更新，这里听起来还有点绕，没关系看下面的表达式。<br>这时开始执行更新步骤：<script type="math/tex">c^{<t>} = \Gamma_u * \tilde{c}^{<t>} + (1 - \Gamma_u) * c^{<t-1>}</script>，这一步可以看出如果<script type="math/tex">\Gamma_u</script>等于1就将<script type="math/tex">c^{<t>}</script>更新为<script type="math/tex">\tilde{c}^{<t>}</script>，如果等于0就相当于不让你更新，结果还是上一个的c，即<script type="math/tex">c^{<t-1>}</script>。<br>将公式写在一起，GRU的工作流程就是：</p>
 <script type="math/tex; mode=display">
 \begin{cases}
     \tilde{c}^{<t>} = tanh(w_{c} * [c^{<t-1>}, x^{<t>}] + b_c)\\
@@ -878,7 +878,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">80</span>
+                    <span class="site-state-item-count">81</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -973,21 +973,20 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
               
             </nav>
             <br>
-			<br>
-			<!--同个ip访问本站页面次数-->
-			<div class="site-state-item site-state-posts" style="border-left:none;">
-		    	<span class="site-state-item-count" id="busuanzi_value_site_pv"></span>
-		    	<span class="site-state-item-name">浏览量</span>
-			</div>
-			<!--不同ip访问本站次数-->
-			<div class="site-state-item site-state-posts">
-		    	<span class="site-state-item-count" id="busuanzi_value_site_uv"></span>
-		    	<span class="site-state-item-name">访客量</span>
-			</div>
-			<div class="site-state-item site-state-posts">
-		    	<span class="site-state-item-count">51.9k</span>
-		    	<span class="site-state-item-name">总字数</span>
-			</div>
+						<!--同个ip访问本站页面次数-->
+						<div class="site-state-item site-state-posts" style="border-left:none;">
+								<span class="site-state-item-count" id="busuanzi_value_site_pv"></span>
+								<span class="site-state-item-name">浏览量</span>
+						</div>
+						<!--不同ip访问本站次数-->
+						<div class="site-state-item site-state-posts">
+								<span class="site-state-item-count" id="busuanzi_value_site_uv"></span>
+								<span class="site-state-item-name">访客量</span>
+						</div>
+						<div class="site-state-item site-state-posts">
+								<span class="site-state-item-count">53.8k</span>
+								<span class="site-state-item-name">总字数</span>
+						</div>
           
 
           
@@ -1043,7 +1042,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
               <ul class="links-of-blogroll-list">
                 
                   <li class="links-of-blogroll-item">
-                    <a href="http://example.com" title="http://example.com" rel="noopener" target="_blank">某某某</a>
+                    <a href="http://huaguoguo.gitee.io/blog/" title="http://huaguoguo.gitee.io/blog/" rel="noopener" target="_blank">葬爱丶华少的天下</a>
                   </li>
                 
               </ul>
