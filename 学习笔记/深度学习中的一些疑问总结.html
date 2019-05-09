@@ -105,22 +105,22 @@
 
 
 
-  <meta name="description" content="为什么要deep             学了有一段时间的深度学习，但是有个问题一直没想明白。那就是将hidden layer叠多层的意义是什么？            可以观察下图发现，确实越deep代价越小。左边的两列显示了，层数越多代价越小。右边两列显示即使整个神经网络参数类似，但是明显越deep代价越小。同一行代表hidden layer的参数接近。那个size指的是神经网络中的参数。再看">
+  <meta name="description" content="为什么需要非线性激活函数             为什么w*x+b=z之后，需要使用一个激活函数a = \sigma(z)？不能不加这个激活函数吗？权重值乘上输入值加上偏差之后直接输出就行了，何必再带入激活函数中？            由于y=bx+c是线性函数，只不过将输入值乘了一个常量并进行位移而已，所以使用非y=bx+c型的激活函数就算是使用了非线性函数。而在神经元中不加激活函数，实际上就">
 <meta name="keywords" content="学习笔记">
 <meta property="og:type" content="article">
 <meta property="og:title" content="深度学习中的一些疑问总结">
 <meta property="og:url" content="http://yan624.github.io/学习笔记/深度学习中的一些疑问总结.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="为什么要deep             学了有一段时间的深度学习，但是有个问题一直没想明白。那就是将hidden layer叠多层的意义是什么？            可以观察下图发现，确实越deep代价越小。左边的两列显示了，层数越多代价越小。右边两列显示即使整个神经网络参数类似，但是明显越deep代价越小。同一行代表hidden layer的参数接近。那个size指的是神经网络中的参数。再看">
+<meta property="og:description" content="为什么需要非线性激活函数             为什么w*x+b=z之后，需要使用一个激活函数a = \sigma(z)？不能不加这个激活函数吗？权重值乘上输入值加上偏差之后直接输出就行了，何必再带入激活函数中？            由于y=bx+c是线性函数，只不过将输入值乘了一个常量并进行位移而已，所以使用非y=bx+c型的激活函数就算是使用了非线性函数。而在神经元中不加激活函数，实际上就">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/隐藏层层数对cost的影响.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/解释why deep的例子.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/模块化后.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/其他领域对为什么要deep的解读.jpg">
-<meta property="og:updated_time" content="2019-05-03T08:35:30.154Z">
+<meta property="og:updated_time" content="2019-05-07T10:36:14.821Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="深度学习中的一些疑问总结">
-<meta name="twitter:description" content="为什么要deep             学了有一段时间的深度学习，但是有个问题一直没想明白。那就是将hidden layer叠多层的意义是什么？            可以观察下图发现，确实越deep代价越小。左边的两列显示了，层数越多代价越小。右边两列显示即使整个神经网络参数类似，但是明显越deep代价越小。同一行代表hidden layer的参数接近。那个size指的是神经网络中的参数。再看">
+<meta name="twitter:description" content="为什么需要非线性激活函数             为什么w*x+b=z之后，需要使用一个激活函数a = \sigma(z)？不能不加这个激活函数吗？权重值乘上输入值加上偏差之后直接输出就行了，何必再带入激活函数中？            由于y=bx+c是线性函数，只不过将输入值乘了一个常量并进行位移而已，所以使用非y=bx+c型的激活函数就算是使用了非线性函数。而在神经元中不加激活函数，实际上就">
 <meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/隐藏层层数对cost的影响.jpg">
 
 
@@ -278,6 +278,25 @@
         
         
           
+          <li class="menu-item menu-item-常用链接">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/常用链接" rel="section"><i class="menu-item-icon fas fa-fw fa-bookmark"></i> <br>常用链接</a>
+
+  </li>
+        
+        
+        
+          
           <li class="menu-item menu-item-tags">
 
     
@@ -290,7 +309,7 @@
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">13</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">12</span></a>
 
   </li>
         
@@ -371,7 +390,7 @@
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">81</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">79</span></a>
 
   </li>
 
@@ -495,12 +514,24 @@
                 
               
 
-              <time title="创建时间：2019-05-03 13:54:56 / 修改时间：16:35:30" itemprop="dateCreated datePublished" datetime="2019-05-03T13:54:56+08:00">2019-05-03</time>
+              <time title="创建时间：2019-05-03 13:54:56" itemprop="dateCreated datePublished" datetime="2019-05-03T13:54:56+08:00">2019-05-03</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-05-07 18:36:14" itemprop="dateModified" datetime="2019-05-07T18:36:14+08:00">2019-05-07</time>
               
             
           </span>
@@ -566,12 +597,68 @@
       
 
       
-        <h1 id="为什么要deep"><a href="#为什么要deep" class="headerlink" title="为什么要deep"></a>为什么要deep</h1><div class="note primary">
+        <h1 id="为什么需要非线性激活函数"><a href="#为什么需要非线性激活函数" class="headerlink" title="为什么需要非线性激活函数"></a>为什么需要非线性激活函数</h1><div class="note primary">
+            <p>为什么<script type="math/tex">w*x+b=z</script>之后，需要使用一个激活函数<script type="math/tex">a = \sigma(z)</script>？不能不加这个激活函数吗？权重值乘上输入值加上偏差之后直接输出就行了，何必再带入激活函数中？</p>
+          </div>
+<p>由于y=bx+c是线性函数，只不过将输入值乘了一个常量并进行位移而已，所以使用非y=bx+c型的激活函数就算是使用了非线性函数。而在神经元中不加激活函数，实际上就是把激活函数设置成y=x这个函数。<br>那么现在从头再做一次神经网络计算，与上面的区别是这次不加激活函数。</p>
+<script type="math/tex; mode=display">
+\left \{ 
+    \begin{array}{ll}
+        a^1 = w^1 * a^0 + b^1 \qquad这是计算第一层的激活值，现在没有使用激活函数。\\
+        a^2 = w^2 * a^1 + b^2 \qquad这是计算第二次的激活值，也没有使用激活函数。\\
+        a^2 = w^2 * (w^1 * a^0 + b^1) + b^2 \qquad消掉a^1，两式合并之后\\
+        a^2 = w^2 * w^1 * a^0 + w^2 * b^1 + b^2 \qquad合并同类项后\\
+        a^2 = w' * a^0 + b' \qquad由于w和b只是一堆常数，所以将w'代替w^2 * w^1，b'同理
+    \end{array}
+\right.</script><p>通过上面几个式子发现，我们计算了第一层和第二层之后，结果居然还是一个线性的式子，和最初的输入没有什么差别，也就是说你无论叠了几层hidden layer最后输出还是类似<script type="math/tex">a^2 = w' * a^0 + b'</script>的式子，那么深度学习的意义在哪呢？还不如直接把hidden layer去掉。所以重点就是线性的hidden layer没有任何用处，因为两个线性方程的组合结果还是线性方程。<br>只有在一个地方可以使用线性方程，那就是回归问题——线性回归。</p>
+<h1 id="梯度下降的意义"><a href="#梯度下降的意义" class="headerlink" title="梯度下降的意义"></a>梯度下降的意义</h1><div class="note primary">
+            <p>首先虽然全部的过程已经理清，但是还有几个问题：为什么要对w求导？梯度下降的意义是什么？为什么使用梯度下降就可以解决误差问题？</p>
+          </div>
+<h1 id="dropout背后的原理"><a href="#dropout背后的原理" class="headerlink" title="dropout背后的原理"></a>dropout背后的原理</h1><div class="note primary">
+            <p>dropout背后的原理是什么？</p>
+          </div>
+<p><a href="https://mooc.study.163.com/learn/2001281003?tid=2001391036&amp;_trace_c_p_k2_=1f1aedd0dd9f431da0ce64963f010916#/learn/content?type=detail&amp;id=2001701044" target="_blank" rel="noopener">视频</a></p>
+<h1 id="为什么Mini-batch比普通的梯度下降快？"><a href="#为什么Mini-batch比普通的梯度下降快？" class="headerlink" title="为什么Mini-batch比普通的梯度下降快？"></a>为什么Mini-batch比普通的梯度下降快？</h1><div class="note primary">
+            <p>为什么Mini-batch比普通的梯度下降快？</p>
+          </div>
+<h1 id="指数加权平均的作用"><a href="#指数加权平均的作用" class="headerlink" title="指数加权平均的作用"></a>指数加权平均的作用</h1><div class="note primary">
+            <p>指数加权平均的作用</p>
+          </div>
+<h1 id="为什么要deep"><a href="#为什么要deep" class="headerlink" title="为什么要deep"></a>为什么要deep</h1><div class="note primary">
             <p>学了有一段时间的深度学习，但是有个问题一直没想明白。那就是将hidden layer叠多层的意义是什么？</p>
           </div>
 <p>可以观察下图发现，确实越deep代价越小。左边的两列显示了，层数越多代价越小。右边两列显示即使整个神经网络参数类似，但是明显越deep代价越小。同一行代表hidden layer的参数接近。那个size指的是神经网络中的参数。再看最后一行，它显示即使参数暴增到16k，代价也不是很低。图中红框还显示了2层2k的model比1层16k的model好多了。<br>下图是由底下的论文的作者做的实验得出的结论。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/隐藏层层数对cost的影响.jpg" alt="隐藏层层数对cost的影响"><br><strong>那么为什么神经网络越深效果越好呢？</strong><br>这其实归功于modularization——模块化。如下图所示，如果直接写一个model用于将4种人分类，那么可能会出现某类人的数据并不多的情况，比如长发的男生的数据可能并不多。那么分类的准确率可能会不是很高。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/解释why deep的例子.jpg" alt="解释why deep的例子"><br>下图中先将其分类为男女以及长短发，然后再进一步分类。虽然说长发男生的数据比较少，但是男女和长短发的数据有很多，我们可以得到一个很好的模型。之后我们再叠一层用于进一步分类，此时，由于我们已经做了上一步的分类，所以新的一层可以使用上一层的特征。<br>上一层的分类已经把难的事情——辨别男女，辨别长短发等解决了，所以后一层只要使用少量的数据就能进行分类。<br><strong>没有使用模块化</strong>的那个模型，它是用少量的数据硬生生地去识别长发男生。<strong>使用模组化</strong>的模型是先识别男女以及长短发，再通过调用前一步的特征判断。下图4个分类器区别可能只是辨别的方式不同而已，比如权重不同。输入一张图片之后第一层已经可以辨别是男还是女，长发还是短发，然后后一层经过简单的运算就可以确定了。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/模块化后.jpg" alt="模块化后"><br>经过上面的解释，可能已经大致理解是什么意思了。但是真要讲清还有点问题，尤其是模块化怎么做。<br>但是李宏毅老师说模块化其实是神经网络从数据中<strong>自动</strong>学到的。</p>
 <h2 id="更多的例子"><a href="#更多的例子" class="headerlink" title="更多的例子"></a>更多的例子</h2><p>用数电的逻辑门来举例，但是我没怎么学过数电，所以没有理解。<br>另一个比较贴近生活的例子，就是剪窗花。没有人会一瓣花一瓣花的去剪窗花，都是将纸先折好，然后一步剪完。这就是模块化了。</p>
 <p>还有其他领域的人也有过解读，个人理解why deep这个问题可能到现在没有一个官方的回应，可能前辈也是误打误撞才发现deep learning很牛。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/其他领域对为什么要deep的解读.jpg" alt="其他领域对为什么要deep的解读"></p>
+<h2 id="吴恩达老师的解释"><a href="#吴恩达老师的解释" class="headerlink" title="吴恩达老师的解释"></a>吴恩达老师的解释</h2><p><a href="https://mooc.study.163.com/learn/2001281002?tid=2001392029&amp;_trace_c_p_k2_=03442699ea78498a873a1dbe2fcfee40#/learn/content?type=detail&amp;id=2001701022" target="_blank" rel="noopener">该视频</a>也做了解释。</p>
+<h1 id="词向量乘上权重以及做梯度下降有什么意义"><a href="#词向量乘上权重以及做梯度下降有什么意义" class="headerlink" title="词向量乘上权重以及做梯度下降有什么意义"></a>词向量乘上权重以及做梯度下降有什么意义</h1><p><a href="https://mooc.study.163.com/learn/2001280005?tid=2001391038&amp;_trace_c_p_k2_=023fecd41c524f0d9485b18d2d773f53#/learn/content?type=detail&amp;id=2001770038" target="_blank" rel="noopener">本文灵感</a><br>本文疑问：</p>
+<ol>
+<li>词向量在神经网络隐藏层中乘一个权重，这个权重有什么用？</li>
+<li>神经网络训练完成后送入softmax中，这个输出层的权重又有什么用？</li>
+<li>梯度下降到底在算什么东西，在算谁的最小值？</li>
+<li>为什么它可以预测出应该填入juice？</li>
+<li>它怎么预测其他句子？</li>
+</ol>
+<h2 id="准备词向量"><a href="#准备词向量" class="headerlink" title="准备词向量"></a>准备词向量</h2><p>假设有这么一句话：I want a glass of orange ___.<br>要做的是估计划线处应该填入什么词。答案是juice。<br>首先我们需要一个词典——vocabulary，每个单词对应一个索引，这是通用步骤。词表大小为10000。<br>然后将上述的句子，从单词转成索引形式。即：<br>I want a glass of orange —-&gt; 4343 9665 1 3852 6163 6257<br>此外每一个单词都会对应一个词向量，而词表中所有单词的词向量就组合一个词嵌入矩阵。词表以及词向量都是可以找一些预训练的，比如<strong>GloVe</strong>。<br>梳理一遍就是：<br>单词:索引<br>索引:词向量<br>所以可以通过单词间接地获取到词向量。关于索引对应词向量，实际上是里面没有索引的因为一个矩阵它本身就有一个属性表示索引，如第0行就是代表第0个单词，第1行就是代表第一个单词。<br>总而言之，我们通过单词获取索引后，就能通过该索引直接获取词向量。伪代码可以表示为：<br><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">index = vocabulary.get_index('want') <span class="comment"># 索引为9665</span></span><br><span class="line">word_vector = embedding_matrix[index, :] <span class="comment"># 获得词向量</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>对于词嵌入矩阵的行代表词向量，还是列代表词向量不必纠结。</strong>你要乐意可以改成<br><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">word_vector = embedding_matrix[:, index] <span class="comment"># 获得词向量</span></span><br></pre></td></tr></table></figure></p>
+<p>如果使用one hot编码来执行上述代码就是将9665转为one hot编码，即除了9665位置为1，其余位置全为0。然后<script type="math/tex">word\_vector = embedding\_matrix^T * word\_one\_hot</script>。这样也能得到词向量，但是由于one hot编码全是0，算起来速度太慢了。<br>现在有了句子“I want a glass of orange”的所有词向量，接下来要做的是将这些词向量从头到尾拼在一起，接成一个更长的向量，也就是6倍长的向量。原词向量是300维，拼接完成后是1800维。然后将这个向量输入一个神经网络中，最后经过softmax函数进行预测，预测范围是在10000个单词中，看谁的概率大。</p>
+<h2 id="意义"><a href="#意义" class="headerlink" title="意义"></a>意义</h2><p>将词向量送入神经网络中当然还需要梯度下降进行迭代。这里会有很多疑问，</p>
+<ol>
+<li>词向量在神经网络隐藏层中乘一个权重，这个权重有什么用？</li>
+<li>神经网络训练完成后送入softmax中，这个输出层的权重又有什么用？</li>
+<li>梯度下降到底在算什么东西，在算谁的最小值？</li>
+<li>为什么它可以预测出应该填入juice？</li>
+<li>它怎么预测其他句子？</li>
+</ol>
+<p>我进行逐一思考，本文仅为自己的理解。<br>首先其实有一件事很多视频没讲，可能他们认为这是一件很平常的事，所以没讲。<br>上述的这个步骤并不是预测步骤，而是在进行迭代，所以是一个训练步骤。人家之所以说<em>我们可以通过这个神经网络预测出单词为juice</em>，是因为逻辑上是这样的。<br>由于是训练步骤，所以我们有一个很重要的数据，最终结果。最终结果我们是知道的，然而我们初学者在考虑整个流程时，没把最终结果算进去，因为老师说<em>我们可以通过这个神经网络预测出单词为juice</em>，由于是<em>预测</em>，那么结果肯定没有啊。这很合乎逻辑。所以就陷入了一个思维的怪圈，<strong>正确的逻辑是：</strong></p>
+<ol>
+<li>首先我们知道最终结果，所以当第一次迭代时，所有的权重都是随机初始化的，1、2两个问题也就没有意义了。第一次迭代完毕后，结果肯定稀巴烂，所以进行梯度下降。</li>
+<li>这里面我们又会碰到一个问题，就是梯度下降到底在算什么？其实这里的疑问来自我们的潜意识始终将句子当做文字在看，自然而然就意识不到梯度下降在干什么。而其实我们在几步之前就已经将文字转为词向量了。<br>词向量说白了就是一堆浮点型数字，而最终结果juice也是一个词向量，所以实际上就是将一个权重矩阵乘上一个1800维的向量，得到一个输出值（may be 激活值），然后将这个输出值和juice的向量放入代价函数中进行计算，接下来的梯度下降其实就是跟正常的步骤一样。</li>
+<li><strong>梯度下降就是在寻找一个合适的权重矩阵使得权重矩阵乘1800维向量得到的值接近juice的向量。</strong><br>这里在解释第3个问题时，顺便也解释了第1、2个问题。<strong>权重值实际上就是用来使得预测值和实际结果越接近越好</strong></li>
+<li>由于开头就说了我们实际上是知道划线处应该填juice，所以第4个问题压根不需要解答，因为我们本来就知道应该填juice，也没必要预测。之前之所以有这个问题，是因为我们潜意识觉得老师说<em>我们可以通过这个神经网络预测出单词为juice</em>。</li>
+<li>至于第5个问题如何预测其他句子。打个比方，现在预测一个新的句子：I want a glass of apple ___.<br>由于我们知道词嵌入矩阵是由很多单词的词向量组成的。而一个单词词向量其实就是一堆特征组成的，对比两个句子，apple和orange的词向量肯定很接近，因为它们都是水果，它们的特征（水多不多，好不好吃，是不是水果，有没有性别特征，是不是动词等）都类似。<br>而我们之前已经训练了一个神经网络，我们得到了所需要的权重值，我们直接把这个权重值乘上新句子的词向量，那么结果肯定和权重值乘上之前句子的词向量的结果很接近。因为它们之间的区别仅仅是apple和orange的词向量不同，并且apple和orange的词向量其实也并不是完全不同，只是略有不同。所以二者的结果自然也差不多。<br>最后经过softmax函数在10000个单词之中预测，输出的结果必然都是juice。</li>
+</ol>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>这里还会有一个问题，那么如果需要预测的句子单词数不一致怎么办？<br>之前两个例子的句子都是6个单词，预测第7个单词。那要是前面有10个单词，我要预测第11个单词怎么办？<br>其实可以只考虑划线处前几个单词，比如只考虑划线处前4个单词，这样输入的维度就相同了。<br>在本文开头的参考视频里，吴恩达老师讲得很清楚了。由古圣先贤总结，一般来说取前4个单词即可，当然你自己也可以用其他办法。</p>
 <a id="more"></a>
       
     </div>
@@ -617,10 +704,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/学习笔记/词向量乘上权重以及做梯度下降有什么意义.html" rel="prev" title="词向量乘上权重以及做梯度下降有什么意义">
-                词向量乘上权重以及做梯度下降有什么意义 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -694,7 +777,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">81</span>
+                    <span class="site-state-item-count">79</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -780,9 +863,7 @@
                     
                       
                     
-                      
-                    
-                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-count">12</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -800,7 +881,7 @@
 								<span class="site-state-item-name">访客量</span>
 						</div>
 						<div class="site-state-item site-state-posts">
-								<span class="site-state-item-count">53.8k</span>
+								<span class="site-state-item-count">54.3k</span>
 								<span class="site-state-item-name">总字数</span>
 						</div>
           
@@ -858,7 +939,7 @@
               <ul class="links-of-blogroll-list">
                 
                   <li class="links-of-blogroll-item">
-                    <a href="http://huaguoguo.gitee.io/blog/" title="http://huaguoguo.gitee.io/blog/" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+                    <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
                   </li>
                 
               </ul>
@@ -884,7 +965,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么要deep"><span class="nav-number">1.</span> <span class="nav-text">为什么要deep</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#更多的例子"><span class="nav-number">1.1.</span> <span class="nav-text">更多的例子</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么需要非线性激活函数"><span class="nav-number">1.</span> <span class="nav-text">为什么需要非线性激活函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#梯度下降的意义"><span class="nav-number">2.</span> <span class="nav-text">梯度下降的意义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#dropout背后的原理"><span class="nav-number">3.</span> <span class="nav-text">dropout背后的原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么Mini-batch比普通的梯度下降快？"><span class="nav-number">4.</span> <span class="nav-text">为什么Mini-batch比普通的梯度下降快？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#指数加权平均的作用"><span class="nav-number">5.</span> <span class="nav-text">指数加权平均的作用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么要deep"><span class="nav-number">6.</span> <span class="nav-text">为什么要deep</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#更多的例子"><span class="nav-number">6.1.</span> <span class="nav-text">更多的例子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#吴恩达老师的解释"><span class="nav-number">6.2.</span> <span class="nav-text">吴恩达老师的解释</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#词向量乘上权重以及做梯度下降有什么意义"><span class="nav-number">7.</span> <span class="nav-text">词向量乘上权重以及做梯度下降有什么意义</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#准备词向量"><span class="nav-number">7.1.</span> <span class="nav-text">准备词向量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#意义"><span class="nav-number">7.2.</span> <span class="nav-text">意义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他"><span class="nav-number">7.3.</span> <span class="nav-text">其他</span></a></li></ol></li></ol></div>
             
 
           </div>
