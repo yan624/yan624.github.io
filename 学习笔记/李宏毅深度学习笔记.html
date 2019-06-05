@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-simple.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css">
+
+<link rel="stylesheet" href="/css/main.css?v=6.7.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.7.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.7.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.7.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="注意事项此系列视频还有两个Review视频，分别为第一个视频：Basic Structures for Deep Learning Models(Part 1)， 第二个视频：Basic Structures for Deep Learning Models(Part 2)。个人认为Review视频不需要看，而且这两个视频时间贼长，加起来得有两个多小时。没必要浪费时间，即使你根本没学过Review">
+<meta name="keywords" content="学习笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="李宏毅深度学习笔记">
+<meta property="og:url" content="http://yan624.github.io/学习笔记/李宏毅深度学习笔记.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="注意事项此系列视频还有两个Review视频，分别为第一个视频：Basic Structures for Deep Learning Models(Part 1)， 第二个视频：Basic Structures for Deep Learning Models(Part 2)。个人认为Review视频不需要看，而且这两个视频时间贼长，加起来得有两个多小时。没必要浪费时间，即使你根本没学过Review">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/Computational%20Graph%E4%BE%8B%E5%AD%90.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/Computational%20Graph%E9%93%BE%E5%BC%8F%E6%B1%82%E5%AF%BC%E6%B3%95%E5%88%99%E7%A4%BA%E4%BE%8B.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/%E6%AD%A3%E5%90%91%E9%93%BE%E5%BC%8F%E6%B1%82%E5%AF%BC.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/%E5%8F%8D%E5%90%91%E9%93%BE%E5%BC%8F%E6%B1%82%E5%AF%BC.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/Language%20Modeling.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/N-gram.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/NN-based%20LM.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/%E8%AE%A1%E7%AE%97%E5%8F%A5%E5%AD%90%E7%9A%84%E5%87%A0%E7%8E%87.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/RNN-based%20LM.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/Challenge%20of%20N-gram.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/Feedforward%20NN%E5%92%8CRNN%E7%9A%84%E5%AF%B9%E6%AF%94.jpg">
+<meta property="og:updated_time" content="2019-06-04T05:46:28.931Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="李宏毅深度学习笔记">
+<meta name="twitter:description" content="注意事项此系列视频还有两个Review视频，分别为第一个视频：Basic Structures for Deep Learning Models(Part 1)， 第二个视频：Basic Structures for Deep Learning Models(Part 2)。个人认为Review视频不需要看，而且这两个视频时间贼长，加起来得有两个多小时。没必要浪费时间，即使你根本没学过Review">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/Computational%20Graph%E4%BE%8B%E5%AD%90.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yan624.github.io/学习笔记/李宏毅深度学习笔记.html">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>李宏毅深度学习笔记 | 博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+	<!--图片缩放插件样式-->
+	<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css">
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <!--加载flower canvas-->
+  <script>
+	var pathname = window.location.pathname;
+	if(pathname == '/flower.html'){
+		var body =  document.getElementsByTagName('body')[0];
+		var canvas = document.createElement("canvas")
+		canvas.setAttribute('id', 'sakura')
+		// '<canvas id="sakura"></canvas>'
+		body.appendChild(canvas)
+	}
+  </script>
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">低阶炼金术士</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-常用链接">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/常用链接" rel="section"><i class="menu-item-icon fas fa-fw fa-bookmark"></i> <br>常用链接</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">13</span></a>
+
+  </li>
+        
+        
+        
+          
+            
+            
+            
+              
+              
+
+  
+  
+    
+  
+  <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">19</span></a>
+
+  </li>
+
+
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+        
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">88</span></a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/李宏毅深度学习笔记.html">
+    
+  		
+	  		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
+				<script type="text/javascript" src="/lib/spop/spop.min.js"></script>
+				<!--判断该文章是否为学习笔记-->
+				<script>
+					spop({
+						template: '<h4 class="spop-title">注意</h4><p style="font-size:1.15em">如文章中未弹出此窗，则没什么大问题。</p>此文章仅为博主的学习笔记，并非教学，其中可能含有理论错误。',
+						group: 'tips',
+						position  : 'bottom-center',
+						style: 'success',
+						autoclose: 5500,
+						onOpen: function () {
+							//这里设置灰色背景色
+						},
+						onClose: function() {
+							//这里可以取消背景色
+							spop({
+								template: 'ε = = (づ′▽`)づ',
+								group: 'tips',
+								position  : 'bottom-center',
+								style: 'success',
+								autoclose: 1500
+							});
+						}
+					});
+				</script>
+  		
+    
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="朱冲䶮的博客，记录学习时遇到的问题">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">李宏毅深度学习笔记
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-19 15:38:51" itemprop="dateCreated datePublished" datetime="2019-05-19T15:38:51+08:00">2019-05-19</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-06-04 13:46:28" itemprop="dateModified" datetime="2019-06-04T13:46:28+08:00">2019-06-04</time>
+              
+            
+          </span>
+          
+          
+          	
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/dl/" itemprop="url" rel="index"><span itemprop="name">dl</span></a></span>
+
+                
+                
+              
+            </span>
+          
+          
+          <!--不蒜子计数-->
+          <span id="busuanzi_container_site_uv">
+          	<span class="post-meta-divider">|</span>
+			浏览量：<span id="busuanzi_value_site_uv"></span>人次
+		  </span>
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h1><p>此系列视频还有两个Review视频，分别为第一个视频：Basic Structures for Deep Learning Models(Part 1)， 第二个视频：Basic Structures for Deep Learning Models(Part 2)。<br>个人认为Review视频不需要看，而且这两个视频时间贼长，加起来得有两个多小时。没必要浪费时间，即使你根本没学过Review中的知识点也不用去看。他的Review里不会讲很深，基本上就过过场，就算有很深的东西也完全不影响继续往下学。1P时长80分钟，说实话如果自己属于小白阶段，去看那么长的视频是挺打击人的兴趣的，如果是大佬或者已经入门的人当然看得津津有味了。<br><a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#字母表示-1">此文</a>记录了李宏毅机器学习视频中讲解的RNN的笔记。</p>
+<h1 id="Computational-Graph-amp-Backpropagation"><a href="#Computational-Graph-amp-Backpropagation" class="headerlink" title="Computational Graph &amp; Backpropagation"></a>Computational Graph &amp; Backpropagation</h1><h2 id="什么是Computational-Graph"><a href="#什么是Computational-Graph" class="headerlink" title="什么是Computational Graph"></a>什么是Computational Graph</h2><p>这实际上跟要学的深度学习没什么关系，只是名字好听点，无视就好，如下图就是一个Computational Graph。主要用来在计算神经网络一些输出时，便于理解。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/Computational%20Graph%E4%BE%8B%E5%AD%90.jpg" alt="Computational Graph例子"><br>在看一个比较贴近实际的例子，顺便复习一下链式求导法则。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/Computational%20Graph%E9%93%BE%E5%BC%8F%E6%B1%82%E5%AF%BC%E6%B3%95%E5%88%99%E7%A4%BA%E4%BE%8B.jpg" alt="Computational Graph链式求导法则示例"></p>
+<h2 id="通过链式求导的例子理解反向传播（Backpropagation）算法"><a href="#通过链式求导的例子理解反向传播（Backpropagation）算法" class="headerlink" title="通过链式求导的例子理解反向传播（Backpropagation）算法"></a>通过链式求导的例子理解反向传播（Backpropagation）算法</h2><p>首先进行正向链式求导，如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/%E6%AD%A3%E5%90%91%E9%93%BE%E5%BC%8F%E6%B1%82%E5%AF%BC.jpg" alt="正向链式求导"><br>图中要求计算e对a求偏导，首先给出a=3, b=2。其中c=a+b, d=b+1。<br>按照李宏毅老师使用链式求导法则，先要计算c对a求导得到1。e再对c求导得到b+1，带入b=2，得到3。所以3对a求偏导等于1*3=3。<br>上面这种链式求导法则有点乱，如果没仔细学过<em>微积分</em>可能难以理解。其实对于方程e = (a+b) * (b+1)，e对a求偏导，直接看出来都可以。利用考研时的口诀“左导右不导，左不导右导”（也就是<a href="https://baike.baidu.com/item/%E8%8E%B1%E5%B8%83%E5%B0%BC%E8%8C%A8%E5%85%AC%E5%BC%8F/8779293?fr=aladdin" target="_blank" rel="noopener">莱布尼茨公式</a>），直接得到结果<script type="math/tex">\frac{\partial e}{\partial a} = b+1</script>。<br>然后将b=2带入b+1得到结果还是3。</p>
+<p>接着进行反向模式，如下图:<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/%E5%8F%8D%E5%90%91%E9%93%BE%E5%BC%8F%E6%B1%82%E5%AF%BC.jpg" alt="反向链式求导"><br>现在图中要求计算<script type="math/tex">\frac{\partial e}{\partial a}</script>以及<script type="math/tex">\frac{\partial e}{\partial b}</script>，当然你可以分别进行两次链式求导，得到结果。但是如果从e出发，也就是反向，那么就可以同时得到<script type="math/tex">\frac{\partial e}{\partial a}</script>以及<script type="math/tex">\frac{\partial e}{\partial b}</script>的结果。<br>不要在意e为什么等于1，只不过一个输入而已。<br>此外，如果阅读过《deep learning and neural network》一书，看过吴恩达机器学习视频或者其它资料的应该已经能反应出来。连接线上的求偏导实际上就跟神经网络上的权重一个意思，然后也是一层一层地反向传播。<br>这个输入e实际上就是神经网络中的反向传播算法中的输入。就是最后一层神经元的误差<script type="math/tex">\delta^l = h-y</script>。这里吴恩达老师和《deep learning and neural network》作者的最后一层误差公式不一样，<strong>目前不明</strong>，暂时不做解释，这里的公式是吴恩达老师的。<br>然后就是误差*权重+偏差得到前一层的误差，具体不展开。</p>
+<h2 id="反向传播的好处"><a href="#反向传播的好处" class="headerlink" title="反向传播的好处"></a>反向传播的好处</h2><p>如果你的root只有一个，那么这个Computational Graph中的所有偏微分就都可以一次性算出。对应于神经网络，我们就是要这样的效果。</p>
+<h2 id="参数共享（Parameter-sharing）"><a href="#参数共享（Parameter-sharing）" class="headerlink" title="参数共享（Parameter sharing）"></a>参数共享（Parameter sharing）</h2><p>略，看了一眼貌似挺简单。16:20</p>
+<h2 id="Computational-Graph-for-Feedforword-Net"><a href="#Computational-Graph-for-Feedforword-Net" class="headerlink" title="Computational Graph for Feedforword Net"></a>Computational Graph for Feedforword Net</h2><p>李宏毅深度学习p3从21:16到52:48讲解梯度下降算法、前馈神经网络以及反向传播算法的具体数学原理<br>一直没看懂原理，以后再看。</p>
+<h2 id="Computational-Graph-for-Recurrent-Network"><a href="#Computational-Graph-for-Recurrent-Network" class="headerlink" title="Computational Graph for Recurrent Network"></a>Computational Graph for Recurrent Network</h2><h1 id="Deep-Learning-for-Language-Modeling"><a href="#Deep-Learning-for-Language-Modeling" class="headerlink" title="Deep Learning for Language Modeling"></a>Deep Learning for Language Modeling</h1><p>语言模型就是预测一个word sequence出现的几率有多大。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/Language%20Modeling.jpg" alt="Language Modeling"></p>
+<h2 id="N-gram"><a href="#N-gram" class="headerlink" title="N-gram"></a>N-gram</h2><p>N-gram是自然语言处理中的算法。2-gram读作bi-gram。</p>
+<h3 id="传统做法"><a href="#传统做法" class="headerlink" title="传统做法"></a>传统做法</h3><ul>
+<li>怎么预测一句话出现的几率</li>
+<li>收集大量文本作为训练数据<ul>
+<li>然后计算<script type="math/tex">w_1\cdots w_n</script>这句话在训练数据中出现的概率</li>
+</ul>
+</li>
+<li>N-gram语言模型：<ul>
+<li>如何计算一小部分的概率？例如下图的p(beach|nice)出现的概率。就是将nice beach出现的次数除以nice出现的次数。</li>
+</ul>
+</li>
+</ul>
+<p>前两条是理想的处理办法，但是麻烦的是要预测的句子在语料库——corpus中八成一次都没出现过。于是就需要使用N-gram模型。它的处理办法就是将句子拆成比较小的部分——component，再把每个小部分的概率乘起来就是句子出现的几率。像下图这种只考虑前一个单词的模型叫做2-gram model。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/N-gram.jpg" alt="N-gram"></p>
+<h3 id="NN-based-LM"><a href="#NN-based-LM" class="headerlink" title="NN-based LM"></a>NN-based LM</h3><p>怎么做基于NN的N-gram？<br>做法：</p>
+<ol>
+<li>搜集training数据</li>
+<li>learn一个Neural Network，通过两个词predict下一个词，如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/NN-based%20LM.jpg" alt="NN-based LM"></li>
+<li>使用cross entropy minimize</li>
+<li>有了Neural Network后算一个句子的几率，如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/%E8%AE%A1%E7%AE%97%E5%8F%A5%E5%AD%90%E7%9A%84%E5%87%A0%E7%8E%87.jpg" alt="计算句子的几率"><br>其中STRAT是一个token，代表句子的起始。</li>
+</ol>
+<h3 id="RNN-based-LM"><a href="#RNN-based-LM" class="headerlink" title="RNN-based LM"></a>RNN-based LM</h3><p>往上翻<strong>循环神经网络——RNN</strong>，原理就是这个。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/RNN-based%20LM.jpg" alt="RNN-based LM"></p>
+<h3 id="Challenge-of-N-gram"><a href="#Challenge-of-N-gram" class="headerlink" title="Challenge of N-gram"></a>Challenge of N-gram</h3><h4 id="NN-based-model"><a href="#NN-based-model" class="headerlink" title="NN-based model"></a>NN-based model</h4><p>为什么要使用NN-based model。相较于传统方法有什么好处。<br>就是概率估不准，因为永远没有足够的数据。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/Challenge%20of%20N-gram.jpg" alt="Challenge of N-gram"><br><div class="note info">
+            <p>视频13:20~27:01仔细讲解了为什么要使用NN，而且把我困惑了快一个月的问题解决了，就是将文字转为数字之后进行训练的意义。</p>
+          </div></p>
+<h4 id="RNN-based-model"><a href="#RNN-based-model" class="headerlink" title="RNN-based model"></a>RNN-based model</h4><p>为什么要使用RNN-based model。相较于传统方法有什么好处。</p>
+<h1 id="Spatial-Transformer-Layer"><a href="#Spatial-Transformer-Layer" class="headerlink" title="Spatial Transformer Layer"></a>Spatial Transformer Layer</h1><h1 id="Highway-Network-amp-Grid-LSTM"><a href="#Highway-Network-amp-Grid-LSTM" class="headerlink" title="Highway Network &amp; Grid LSTM"></a>Highway Network &amp; Grid LSTM</h1><p>前馈神经网络（就是Simple NN）和RNN的对比。</p>
+<ol>
+<li>Feedforward NN不是每一步都有输入。</li>
+<li>Feedforward NN每一层都有不同的参数。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/Feedforward%20NN%E5%92%8CRNN%E7%9A%84%E5%AF%B9%E6%AF%94.jpg" alt="Feedforward NN和RNN的对比"></li>
+</ol>
+<h1 id="Recusive-Network"><a href="#Recusive-Network" class="headerlink" title="Recusive Network"></a>Recusive Network</h1><p>Recursive Network是Recurrent Network的General版本。Recurrent Network是Recursive Network的一个特殊的例子，如果翻译成中文的话，实际上名字都一样。所以可以称之为递归式网络。</p>
+<a id="more"></a>
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/学习笔记/" rel="tag"># 学习笔记</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/前馈神经网络的正反向推导.html" rel="next" title="前馈神经网络的正反向推导">
+                <i class="fa fa-chevron-left"></i> 前馈神经网络的正反向推导
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/学习笔记/2017CS224n学习笔记.html" rel="prev" title="2017CS224n学习笔记">
+                2017CS224n学习笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="朱冲䶮">
+            
+              <p class="site-author-name" itemprop="name">朱冲䶮</p>
+              <p class="site-description motion-element" itemprop="description">朱冲䶮的博客，记录学习时遇到的问题</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">88</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+            <br>
+						<!--同个ip访问本站页面次数-->
+						<div class="site-state-item site-state-posts" style="border-left:none;">
+								<span class="site-state-item-count" id="busuanzi_value_site_pv"></span>
+								<span class="site-state-item-name">浏览量</span>
+						</div>
+						<!--不同ip访问本站次数-->
+						<div class="site-state-item site-state-posts">
+								<span class="site-state-item-count" id="busuanzi_value_site_uv"></span>
+								<span class="site-state-item-name">访客量</span>
+						</div>
+						<div class="site-state-item site-state-posts">
+								<span class="site-state-item-count">64.7k</span>
+								<span class="site-state-item-name">总字数</span>
+						</div>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:897538633@qq.com" title="E-Mail &rarr; mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/yan624" title="GitHub &rarr; https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2607724281" title="Weibo &rarr; https://weibo.com/u/2607724281" rel="noopener" target="_blank"><i class="fab fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#注意事项"><span class="nav-number">1.</span> <span class="nav-text">注意事项</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Computational-Graph-amp-Backpropagation"><span class="nav-number">2.</span> <span class="nav-text">Computational Graph &amp; Backpropagation</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是Computational-Graph"><span class="nav-number">2.1.</span> <span class="nav-text">什么是Computational Graph</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通过链式求导的例子理解反向传播（Backpropagation）算法"><span class="nav-number">2.2.</span> <span class="nav-text">通过链式求导的例子理解反向传播（Backpropagation）算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#反向传播的好处"><span class="nav-number">2.3.</span> <span class="nav-text">反向传播的好处</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参数共享（Parameter-sharing）"><span class="nav-number">2.4.</span> <span class="nav-text">参数共享（Parameter sharing）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Computational-Graph-for-Feedforword-Net"><span class="nav-number">2.5.</span> <span class="nav-text">Computational Graph for Feedforword Net</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Computational-Graph-for-Recurrent-Network"><span class="nav-number">2.6.</span> <span class="nav-text">Computational Graph for Recurrent Network</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Deep-Learning-for-Language-Modeling"><span class="nav-number">3.</span> <span class="nav-text">Deep Learning for Language Modeling</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#N-gram"><span class="nav-number">3.1.</span> <span class="nav-text">N-gram</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#传统做法"><span class="nav-number">3.1.1.</span> <span class="nav-text">传统做法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NN-based-LM"><span class="nav-number">3.1.2.</span> <span class="nav-text">NN-based LM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RNN-based-LM"><span class="nav-number">3.1.3.</span> <span class="nav-text">RNN-based LM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Challenge-of-N-gram"><span class="nav-number">3.1.4.</span> <span class="nav-text">Challenge of N-gram</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#NN-based-model"><span class="nav-number">3.1.4.1.</span> <span class="nav-text">NN-based model</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RNN-based-model"><span class="nav-number">3.1.4.2.</span> <span class="nav-text">RNN-based model</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Spatial-Transformer-Layer"><span class="nav-number">4.</span> <span class="nav-text">Spatial Transformer Layer</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Highway-Network-amp-Grid-LSTM"><span class="nav-number">5.</span> <span class="nav-text">Highway Network &amp; Grid LSTM</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Recusive-Network"><span class="nav-number">6.</span> <span class="nav-text">Recusive Network</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v6.7.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=6.7.0"></script>
+
+  <script src="/js/src/motion.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=6.7.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=6.7.0"></script>
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
+<script src="/js/src/post-details.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+  
+
+	<script src="/lib/my-utils.js"></script>
+	<!--图片缩放插件-->
+	<script src="/lib/zoomify/zoomify.min.js"></script>
+  <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  <!--不蒜子统计-->
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+  <!-- 背景图片 -->
+	<script>
+		function generateBG(count){
+			var bg_prefix = '/images/background/';
+			var bg =new Array();
+			for(var i = 0; i < count; i++){
+				bg[i] = bg_prefix + i + '.jpg';
+			}
+			bg.shuffle();
+			return bg;
+		}
+		$("body").backstretch(generateBG(5), { 
+			duration:60000,//1min一换
+			fade: 1500 
+		});
+		$('#content img').zoomify({duration: 500, });
+		$('#content img').on('zoom-in.zoomify', function () {
+			$('#sidebar').css('display', 'none');
+		});
+		$('#content img').on('zoom-out-complete.zoomify', function () {
+			$('#sidebar').css('display', '');
+		});
+  </script>
+</body>
+</html>

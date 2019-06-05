@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-simple.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css">
+
+<link rel="stylesheet" href="/css/main.css?v=6.7.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.7.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.7.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.7.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="代码github地址 simple RNN和simple NN的对比本来觉得simple RNN挺简单的，只不过是simple NN的扩展，区别无非是将simple NN的神经元换成一个RNN cell。但是实际上没那么简单，特别是加上将数据向量化后计算。感觉简直和simple NN是两种架构。 input下图是一个simple NN的架构，其中的一层也叫做全连接层。所以也叫做前馈神经网络。网络中">
+<meta name="keywords" content="系列,学习笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度学习算法（二）：simple RNN">
+<meta property="og:url" content="http://yan624.github.io/学习笔记/深度学习算法（二）：simple-RNN.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="代码github地址 simple RNN和simple NN的对比本来觉得simple RNN挺简单的，只不过是simple NN的扩展，区别无非是将simple NN的神经元换成一个RNN cell。但是实际上没那么简单，特别是加上将数据向量化后计算。感觉简直和simple NN是两种架构。 input下图是一个simple NN的架构，其中的一层也叫做全连接层。所以也叫做前馈神经网络。网络中">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/吴恩达深度学习中的RNN示意图.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/simple%20rnn%20cell.png">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/RNN.png">
+<meta property="og:updated_time" content="2019-06-04T05:46:16.202Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深度学习算法（二）：simple RNN">
+<meta name="twitter:description" content="代码github地址 simple RNN和simple NN的对比本来觉得simple RNN挺简单的，只不过是simple NN的扩展，区别无非是将simple NN的神经元换成一个RNN cell。但是实际上没那么简单，特别是加上将数据向量化后计算。感觉简直和simple NN是两种架构。 input下图是一个simple NN的架构，其中的一层也叫做全连接层。所以也叫做前馈神经网络。网络中">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yan624.github.io/学习笔记/深度学习算法（二）：simple-RNN.html">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>深度学习算法（二）：simple RNN | 博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+	<!--图片缩放插件样式-->
+	<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css">
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <!--加载flower canvas-->
+  <script>
+	var pathname = window.location.pathname;
+	if(pathname == '/flower.html'){
+		var body =  document.getElementsByTagName('body')[0];
+		var canvas = document.createElement("canvas")
+		canvas.setAttribute('id', 'sakura')
+		// '<canvas id="sakura"></canvas>'
+		body.appendChild(canvas)
+	}
+  </script>
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">低阶炼金术士</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-常用链接">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/常用链接" rel="section"><i class="menu-item-icon fas fa-fw fa-bookmark"></i> <br>常用链接</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">13</span></a>
+
+  </li>
+        
+        
+        
+          
+            
+            
+            
+              
+              
+
+  
+  
+    
+  
+  <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">19</span></a>
+
+  </li>
+
+
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+        
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">88</span></a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/深度学习算法（二）：simple-RNN.html">
+    
+  		
+    
+  		
+	  		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
+				<script type="text/javascript" src="/lib/spop/spop.min.js"></script>
+				<!--判断该文章是否为学习笔记-->
+				<script>
+					spop({
+						template: '<h4 class="spop-title">注意</h4><p style="font-size:1.15em">如文章中未弹出此窗，则没什么大问题。</p>此文章仅为博主的学习笔记，并非教学，其中可能含有理论错误。',
+						group: 'tips',
+						position  : 'bottom-center',
+						style: 'success',
+						autoclose: 5500,
+						onOpen: function () {
+							//这里设置灰色背景色
+						},
+						onClose: function() {
+							//这里可以取消背景色
+							spop({
+								template: 'ε = = (づ′▽`)づ',
+								group: 'tips',
+								position  : 'bottom-center',
+								style: 'success',
+								autoclose: 1500
+							});
+						}
+					});
+				</script>
+  		
+    
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="朱冲䶮的博客，记录学习时遇到的问题">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">深度学习算法（二）：simple RNN
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-23 15:48:00" itemprop="dateCreated datePublished" datetime="2019-05-23T15:48:00+08:00">2019-05-23</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-06-04 13:46:16" itemprop="dateModified" datetime="2019-06-04T13:46:16+08:00">2019-06-04</time>
+              
+            
+          </span>
+          
+          
+          	
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/dl/" itemprop="url" rel="index"><span itemprop="name">dl</span></a></span>
+
+                
+                
+              
+            </span>
+          
+          
+          <!--不蒜子计数-->
+          <span id="busuanzi_container_site_uv">
+          	<span class="post-meta-divider">|</span>
+			浏览量：<span id="busuanzi_value_site_uv"></span>人次
+		  </span>
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p><a href="https://github.com/yan624/machine_learning_algorithms/tree/master/simple_recurrent_neural_network" target="_blank" rel="noopener">github地址</a></p>
+<h1 id="simple-RNN和simple-NN的对比"><a href="#simple-RNN和simple-NN的对比" class="headerlink" title="simple RNN和simple NN的对比"></a>simple RNN和simple NN的对比</h1><p>本来觉得simple RNN挺简单的，只不过是simple NN的扩展，区别无非是将simple NN的神经元换成一个RNN cell。但是实际上没那么简单，特别是加上将数据向量化后计算。感觉简直和simple NN是两种架构。</p>
+<h2 id="input"><a href="#input" class="headerlink" title="input"></a>input</h2><p>下图是一个simple NN的架构，其中的一层也叫做全连接层。所以也叫做前馈神经网络。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版"><br>网络中输入的x是一个纯数字，而不是向量。如果输入的是向量，就代表一次输入了多条样本。总的来说，一条样本向量化为：</p>
+<script type="math/tex; mode=display">
+\begin{pmatrix}
+    x_1\\
+    x_2\\
+    x_3\\
+\end{pmatrix}</script><p>多条样本向量化为：</p>
+<script type="math/tex; mode=display">
+\begin{pmatrix}
+    x_1 & x_4\\
+    x_2 & x_5\\
+    x_3 & x_6\\
+\end{pmatrix}</script><p>但是在simple <strong>R</strong>NN中，因为RNN可以用做自然语言处理，在NLP领域一个数据就是一个单词或者一个词组，我们需要先将词组用数字表示，但是一个字只用一个数表示显然是不现实的。我们通常使用词向量（word vector）表示，所以问题就来了。如果我用simple NN来做自然语言处理，我该怎么处理这些数据。<br>我需要输入这句话——我 是 一名 学生。将其用变量一一对应：</p>
+<script type="math/tex; mode=display">
+\begin{pmatrix}
+    x_1 = \text{我}\\
+    x_2 = \text{是}\\
+    x_3 = \text{一名}\\
+    x_4 = \text{学生}\\
+\end{pmatrix}</script><p>如果再输入一句话——今天 天气 好像 不错。将其用变量一一对应：</p>
+<script type="math/tex; mode=display">
+\begin{pmatrix}
+    x_1 = \text{我} & x_5 = \text{今天}\\
+    x_2 = \text{是} & x_6 = \text{天气}\\
+    x_3 = \text{一名} & x_7 = \text{好像}\\
+    x_4 = \text{学生} & x_8 = \text{不错}\\
+\end{pmatrix}</script><p>这样会出现<strong>极大的问题</strong>，即文字无法进行数学运算。所以需要将文字转为词向量。但是问题是我如何在一个神经元输入一个向量？我如果输入多条样本，那么我整个输入值x就会变成<strong>3维的矩阵</strong>。simple NN显然是处理不了的。所以有个折中的方法，即将每个词的词向量加起来除以词的个数。即：</p>
+<script type="math/tex; mode=display">
+\frac{(v_{\text{我}} + v_{\text{是}} + v_{\text{一名}} + v_{\text{学生}})}{4} =  v_{\text{我是一名学生}}</script><p>其中v代表某个词对应的词向量。这样就将4个向量合并成一个向量了。然后simple NN就可以处理了。<br>但是这样处理肯定太勉强了，所以就出现了simple RNN，它可以处理上述这种问题。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/吴恩达深度学习中的RNN示意图.jpg" alt="吴恩达深度学习中的RNN示意图"><br>上图就是一个simple <strong>R</strong>NN架构，看起来跟simple NN不一样。但是其实你只要将图片往右旋转90度，就一样了。还有一点不太一样，就是simple <strong>R</strong>NN中的一个神经元跟simple NN中的一层神经元一样。<br><div class="note info">
+            <p>simple <strong>R</strong>NN其实就是simple NN的神经元被替换成了simple <strong>R</strong>NN的神经元。而simple <strong>R</strong>NN的一个神经元本身里面还有多个单元，图上就是一个神经元里有4个单元。<br>所以simple <strong>R</strong>NN的神经元可以被叫做记忆细胞。<br>如果重新描述一遍就是simple <strong>R</strong>NN其实就是simple NN的神经元被替换成了simple <strong>R</strong>NN的记忆细胞。<br>而simple <strong>R</strong>NN的记忆细胞里面有多个神经元用来处理进行向量计算。</p>
+          </div></p>
+<h2 id="simple-RNN的另一个输入值a"><a href="#simple-RNN的另一个输入值a" class="headerlink" title="simple RNN的另一个输入值a"></a>simple RNN的另一个输入值a</h2><p>下图是simple RNN的一个记忆细胞。由于其概念大都需要数值来演示，但是大量的数值难以书写，并且用语言实在难以描述。所以以下均使用一个矩阵的字母表示来演示。<br>此处会有几个问题：</p>
+<ol>
+<li>乍一看很简单，但是在实现代码的时候，脑子会转不过来。<strong>因为你碰到的是向量化后的运算</strong>。所以你对各个W，b，A以及X的形状难以确定。不信就自己写一下代码，如果你以前没写过simple RNN的代码，肯定要在确定形状这卡至少一个小时。</li>
+<li>A的形状尤其难确定，会一时之间绕不过来。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/simple%20rnn%20cell.png" alt="simple rnn cell"></li>
+</ol>
+<h3 id="以一个记忆细胞为例"><a href="#以一个记忆细胞为例" class="headerlink" title="以一个记忆细胞为例"></a>以一个记忆细胞为例</h3><p>设词向量的维度为300，一个记忆细胞的units为32——keras代码表示：simpleRNN(32)，并且进行的是18元分类问题。</p>
+<h4 id="以一个样本为例"><a href="#以一个样本为例" class="headerlink" title="以一个样本为例"></a>以一个样本为例</h4><p>，输入样本数为1。<br>则运算过程为：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+    A\_next & = tanh(Wx_{32, 300} * X_{300, 1} + Wa_{32, 32} * A\_prev_{32, 1} + ba_{32, 1})\\
+    y & = softmax(Wy_{18, 32} * A\_next + by_{18, 1})
+\end{align}</script><p>(数字, 数字) 的表示形式是在线性代数里表示形式，这样看起来方便点。第一个数字表示行，第二个数字表示列。tanh和softmax就不解释了。<br>我依次解释：</p>
+<ol>
+<li>权重值Wx比较好理解，由于输入值X是一个 (300, 1) 的矩阵（也可以叫向量）。Wx为 (32, 300) 是因为记忆细胞的一个单元为32，并且词的特征为300。如果将一个记忆细胞看作是一个隐藏层，那么神经元个数就是32，300就代表前一层的输入。</li>
+<li>权重值Wa为什么是 (32, 32) ?由于a实际上就是激活值，激活值我们可以通过w * x计算得到。显然结果是 (32, 1) ，那么权重值Wa的第二个参数就可以确定大小了（矩阵相乘，第一个矩阵的第二维和第二个矩阵的第一维必须一样），权重值Wa的第一个参数实际上跟权重值Wx一样，都是units。</li>
+<li>Wy为什么是 (18, 32) ?18是因为这是一个18元分类问题，32是因为A的第一维是32。</li>
+</ol>
+<p>其中最难确定的就是Wa的形状。经过上面推导就可以知道了，第一维代表units，第二维代表需要与A的第一维，即为A的第一维的大小。</p>
+<h4 id="以128个样本为例"><a href="#以128个样本为例" class="headerlink" title="以128个样本为例"></a>以128个样本为例</h4><p>如果上面没懂可以再看一遍多个样本</p>
+<script type="math/tex; mode=display">
+\begin{align}
+    A\_next & = tanh(Wx_{32, 300} * X_{300, 128} + Wa_{32, 32} * A\_prev_{32, 128} + ba_{32, 1})\\
+    y & = softmax(Wy_{18, 32} * A\_next + by_{18, 1})
+\end{align}</script><p>说白了A其实激活值，看起来比较晕是因为多了一个初始的A0，实际上A0就是激活值，只不过需要初始化一下，它的形状就是激活值的形状。</p>
+<h3 id="以多个记忆细胞为例"><a href="#以多个记忆细胞为例" class="headerlink" title="以多个记忆细胞为例"></a>以多个记忆细胞为例</h3><p>过程就是上面的过程，唯一有区别的是输入值X。因为有了多个记忆细胞，所以X变成了3维，第3维就是timestep——时间步。<br>但是其实计算，跟上面一模一样，假设现在有6个时间步。伪代码如下：<br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">rnn_cell</span><span class="params">(A_prev, Xt, parameters)</span></span>:</span><br><span class="line">	<span class="keyword">do</span>上面的操作</span><br><span class="line"></span><br><span class="line">timesteps = <span class="number">6</span></span><br><span class="line">X = rand((<span class="number">300</span>, <span class="number">128</span>, timesteps))</span><br><span class="line">A0 = rand((<span class="number">32</span>, <span class="number">128</span>))</span><br><span class="line">parameters = 初始化所有参数</span><br><span class="line"><span class="keyword">for</span> ts <span class="keyword">in</span> range(timesteps):</span><br><span class="line">	rnn_cell(A0, X[:, :, ts], parameters)</span><br></pre></td></tr></table></figure></p>
+<p>其实就是遍历每一个时间步而已。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/RNN.png" alt="RNN"></p>
+<h1 id="代码问题"><a href="#代码问题" class="headerlink" title="代码问题"></a>代码问题</h1><p>simple RNN只实现了正向传播，反向传播没有实现。是因为simple RNN有梯度消失的问题，索性直接不写了。下一节直接写LSTM。</p>
+<a id="more"></a>
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/系列/" rel="tag"># 系列</a>
+          
+            <a href="/tags/学习笔记/" rel="tag"># 学习笔记</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/学习笔记/深度学习算法（一）：simple-NN.html" rel="next" title="深度学习算法（一）：simple NN">
+                <i class="fa fa-chevron-left"></i> 深度学习算法（一）：simple NN
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/学习笔记/深度学习算法（三）：LSTM.html" rel="prev" title="深度学习算法（三）：LSTM">
+                深度学习算法（三）：LSTM <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="朱冲䶮">
+            
+              <p class="site-author-name" itemprop="name">朱冲䶮</p>
+              <p class="site-description motion-element" itemprop="description">朱冲䶮的博客，记录学习时遇到的问题</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">88</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+            <br>
+						<!--同个ip访问本站页面次数-->
+						<div class="site-state-item site-state-posts" style="border-left:none;">
+								<span class="site-state-item-count" id="busuanzi_value_site_pv"></span>
+								<span class="site-state-item-name">浏览量</span>
+						</div>
+						<!--不同ip访问本站次数-->
+						<div class="site-state-item site-state-posts">
+								<span class="site-state-item-count" id="busuanzi_value_site_uv"></span>
+								<span class="site-state-item-name">访客量</span>
+						</div>
+						<div class="site-state-item site-state-posts">
+								<span class="site-state-item-count">64.7k</span>
+								<span class="site-state-item-name">总字数</span>
+						</div>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:897538633@qq.com" title="E-Mail &rarr; mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/yan624" title="GitHub &rarr; https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://weibo.com/u/2607724281" title="Weibo &rarr; https://weibo.com/u/2607724281" rel="noopener" target="_blank"><i class="fab fa-fw fa-weibo"></i>Weibo</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#代码"><span class="nav-number">1.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#simple-RNN和simple-NN的对比"><span class="nav-number">2.</span> <span class="nav-text">simple RNN和simple NN的对比</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#input"><span class="nav-number">2.1.</span> <span class="nav-text">input</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#simple-RNN的另一个输入值a"><span class="nav-number">2.2.</span> <span class="nav-text">simple RNN的另一个输入值a</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#以一个记忆细胞为例"><span class="nav-number">2.2.1.</span> <span class="nav-text">以一个记忆细胞为例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#以一个样本为例"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">以一个样本为例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#以128个样本为例"><span class="nav-number">2.2.1.2.</span> <span class="nav-text">以128个样本为例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#以多个记忆细胞为例"><span class="nav-number">2.2.2.</span> <span class="nav-text">以多个记忆细胞为例</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码问题"><span class="nav-number">3.</span> <span class="nav-text">代码问题</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v6.7.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=6.7.0"></script>
+
+  <script src="/js/src/motion.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=6.7.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=6.7.0"></script>
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
+<script src="/js/src/post-details.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+  
+
+	<script src="/lib/my-utils.js"></script>
+	<!--图片缩放插件-->
+	<script src="/lib/zoomify/zoomify.min.js"></script>
+  <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  <!--不蒜子统计-->
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+  <!-- 背景图片 -->
+	<script>
+		function generateBG(count){
+			var bg_prefix = '/images/background/';
+			var bg =new Array();
+			for(var i = 0; i < count; i++){
+				bg[i] = bg_prefix + i + '.jpg';
+			}
+			bg.shuffle();
+			return bg;
+		}
+		$("body").backstretch(generateBG(5), { 
+			duration:60000,//1min一换
+			fade: 1500 
+		});
+		$('#content img').zoomify({duration: 500, });
+		$('#content img').on('zoom-in.zoomify', function () {
+			$('#sidebar').css('display', 'none');
+		});
+		$('#content img').on('zoom-out-complete.zoomify', function () {
+			$('#sidebar').css('display', '');
+		});
+  </script>
+</body>
+</html>
