@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-simple.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css">
+
+<link rel="stylesheet" href="/css/main.css?v=6.7.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.7.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.7.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.7.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+<!--图片缩放插件样式-->
+<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css">
+
+  <meta name="description" content="问答系统知识图谱问答系统概述现在的搜索引擎工作流程是输入要搜索的内容，搜索引擎返回一大堆内容，供你自己选择。问答系统是下一代的搜索引擎的基本形态。  以直接而准确的方式回答用户自然语言提问的自动问答系统将构成下一代搜索引擎的基本形态。  下图展示问答系统在近几十年的发展历史。  1960 年的问答系统属于专家系统（模版系统） 1990 - 2000 年的问答系统属于基于信息检索的 QA 系统 20">
+<meta name="keywords" content="博客，java，javaWeb，NLP，python，机器学习，深度学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2019 CCF会议总结">
+<meta property="og:url" content="http://yan624.github.io/2019-CCF会议总结.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="问答系统知识图谱问答系统概述现在的搜索引擎工作流程是输入要搜索的内容，搜索引擎返回一大堆内容，供你自己选择。问答系统是下一代的搜索引擎的基本形态。  以直接而准确的方式回答用户自然语言提问的自动问答系统将构成下一代搜索引擎的基本形态。  下图展示问答系统在近几十年的发展历史。  1960 年的问答系统属于专家系统（模版系统） 1990 - 2000 年的问答系统属于基于信息检索的 QA 系统 20">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/问答系统的历史.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/知识图谱示例.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/知识图谱基本架构.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/运用知识图谱问答.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/公开的评测数据集.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/Lambda演算vs.DCSTree.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/基于语义检索的知识图谱问答.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/符号语义解析vs.深度学习.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/深度问答的性能.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/各种聊天机器人.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/检索式单轮回复.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/检索式单轮回复架构图.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/检索式多轮回复架构图.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/检索式单轮回复的 Framework I.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/检索式单轮回复的 Framework I 的 Representation funtion.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/检索式单轮回复的 Framework I 的 Matching funtion.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/检索式单轮回复的 Framework II.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/检索式单轮回复的 Framework II 中 Interaction 的两种类型.jpg">
+<meta property="og:updated_time" content="2019-06-29T05:00:38.078Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2019 CCF会议总结">
+<meta name="twitter:description" content="问答系统知识图谱问答系统概述现在的搜索引擎工作流程是输入要搜索的内容，搜索引擎返回一大堆内容，供你自己选择。问答系统是下一代的搜索引擎的基本形态。  以直接而准确的方式回答用户自然语言提问的自动问答系统将构成下一代搜索引擎的基本形态。  下图展示问答系统在近几十年的发展历史。  1960 年的问答系统属于专家系统（模版系统） 1990 - 2000 年的问答系统属于基于信息检索的 QA 系统 20">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/问答系统的历史.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yan624.github.io/2019-CCF会议总结.html">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>2019 CCF会议总结 | 博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+	<!--加载flower canvas-->
+<script>
+var pathname = window.location.pathname;
+if(pathname == '/flower.html'){
+	var body =  document.getElementsByTagName('body')[0];
+	var canvas = document.createElement("canvas")
+	canvas.setAttribute('id', 'sakura')
+	// '<canvas id="sakura"></canvas>'
+	body.appendChild(canvas)
+}
+</script>
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">低阶炼金术士</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-常用链接">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/常用链接" rel="section"><i class="menu-item-icon fas fa-fw fa-bookmark"></i> <br>常用链接</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">14</span></a>
+
+  </li>
+        
+        
+        
+          
+            
+            
+            
+              
+              
+
+  
+  
+    
+  
+  <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">22</span></a>
+
+  </li>
+
+
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+        
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">108</span></a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/2019-CCF会议总结.html">
+    
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="朱冲䶮的博客，记录学习时遇到的问题">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+				
+				
+        
+        
+          <h1 class="post-title" itemprop="name headline">2019 CCF会议总结
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-06-27 21:33:09" itemprop="dateCreated datePublished" datetime="2019-06-27T21:33:09+08:00">2019-06-27</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-06-29 13:00:38" itemprop="dateModified" datetime="2019-06-29T13:00:38+08:00">2019-06-29</time>
+              
+            
+          </span>
+          
+          
+          	
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/" itemprop="url" rel="index"><span itemprop="name">assorted</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/conference/" itemprop="url" rel="index"><span itemprop="name">conference</span></a></span>
+
+                
+                
+              
+            </span>
+          
+          
+          <!--不蒜子计数-->
+          <span id="busuanzi_container_site_uv">
+<span class="post-meta-divider">|</span>
+	浏览量：<span id="busuanzi_value_site_uv"></span>人次
+</span>
+				
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="问答系统"><a href="#问答系统" class="headerlink" title="问答系统"></a>问答系统</h1><h2 id="知识图谱问答系统概述"><a href="#知识图谱问答系统概述" class="headerlink" title="知识图谱问答系统概述"></a>知识图谱问答系统概述</h2><p>现在的<strong>搜索引擎</strong>工作流程是输入要搜索的内容，搜索引擎返回一大堆内容，供你自己选择。<br><strong>问答系统</strong>是下一代的搜索引擎的基本形态。</p>
+<blockquote>
+<p>以直接而准确的方式回答用户自然语言提问的自动问答系统将构成下一代搜索引擎的基本形态。</p>
+</blockquote>
+<p>下图展示问答系统在近几十年的发展历史。</p>
+<ol>
+<li>1960 年的问答系统属于专家系统（模版系统）</li>
+<li>1990 - 2000 年的问答系统属于基于信息检索的 QA 系统</li>
+<li>2000 - 2010 年的问答系统属于社区 QA 系统</li>
+<li>2011 年之后的问答系统属于基于知识图谱的 QA 系统</li>
+</ol>
+<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/问答系统的历史.jpg" alt="问答系统的历史"></p>
+<h2 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h2><p>问答系统的分类（或者说三个阶段）：</p>
+<ol>
+<li>IR-based QA：基于<strong>关键词匹配 + 信息抽取</strong>，任然是基于<strong>浅层语义分析</strong></li>
+<li>Community QA：依赖于网民贡献，问答过程任然依赖于<strong>关键词检索技术</strong></li>
+<li>KB-based QA：Knowledge Base，例如：WolfframAlpha</li>
+</ol>
+<p>根据问答形式分类：</p>
+<ol>
+<li>一问一答：字面意思，也是演讲的主题</li>
+<li>交互式问答：就是进行连续的复杂的问答</li>
+<li>阅读理解</li>
+</ol>
+<div class="note warning">
+            <p>KB-QA 现在只能解决事实性的问题，无法解决：</p><ol><li>怎么去天安门</li><li>西红柿炒鸡蛋怎么做等提问</li></ol><p>某公司（在会议上没听清，可能是一个公司）只有 5% 的问题能用 KB-QA 解决。</p>
+          </div>
+<h2 id="什么是知识图谱"><a href="#什么是知识图谱" class="headerlink" title="什么是知识图谱"></a>什么是知识图谱</h2><h3 id="一个简单的例子"><a href="#一个简单的例子" class="headerlink" title="一个简单的例子"></a>一个简单的例子</h3><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/知识图谱示例.jpg" alt="知识图谱示例"></p>
+<h3 id="知识图谱基本架构"><a href="#知识图谱基本架构" class="headerlink" title="知识图谱基本架构"></a>知识图谱基本架构</h3><p>图中三元组中的 Ent1、Ent2 等指的是 entity。entity 可以在架构中选取，比如将 concept 作为 entity 或者将 instance 作为 entity。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/知识图谱基本架构.jpg" alt="知识图谱基本架构"></p>
+<h3 id="运用知识图谱问答"><a href="#运用知识图谱问答" class="headerlink" title="运用知识图谱问答"></a>运用知识图谱问答</h3><p>语义如何表示是其中的一个问题：</p>
+<ol>
+<li>使用符号表示的形式（传统方法）</li>
+<li>使用分布式表示方法</li>
+</ol>
+<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/运用知识图谱问答.jpg" alt="运用知识图谱问答"></p>
+<h3 id="知识图谱问答的两类方法（根据技术路线分）"><a href="#知识图谱问答的两类方法（根据技术路线分）" class="headerlink" title="知识图谱问答的两类方法（根据技术路线分）"></a>知识图谱问答的两类方法（根据技术路线分）</h3><ol>
+<li>语义解析(Semantic Parsing)：问句转换成形式化的查询语句，进行结构化查询得到答案</li>
+<li>语义检索（Answer Retrieval &amp; Ranking）：简单的搜索得到候选答案，利用问句和候选答案的匹配程度(特征)抽取答案</li>
+</ol>
+<h2 id="公开的评测数据集"><a href="#公开的评测数据集" class="headerlink" title="公开的评测数据集"></a>公开的评测数据集</h2><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/公开的评测数据集.jpg" alt="公开的评测数据集"><br>例如：</p>
+<script type="math/tex; mode=display">
+    \text{图数据结构}
+    \begin{cases}
+        QALD \\
+        WebQuestions \\
+        Simple Question\\
+    \end{cases}\\
+    \text{表数据结构}
+    \begin{cases}
+        WikiSQL & \text{一个表} \\
+        Spider & \text{多个表} \\
+    \end{cases}</script><h2 id="知识图谱问答基于的几种方法"><a href="#知识图谱问答基于的几种方法" class="headerlink" title="知识图谱问答基于的几种方法"></a>知识图谱问答基于的几种方法</h2><ol>
+<li>基于符号语义解析的知识图谱问答<ul>
+<li>语义表示（lambda 验算，DCS Tree）</li>
+<li>语义解析方法（CCG）<ul>
+<li>还有许多语义解析方法，略</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>基于语义检索的知识图谱问答<ul>
+<li>基于显示特征的知识检索</li>
+<li>基于端到端的知识图谱问答</li>
+</ul>
+</li>
+<li>基于神经符号计算的知识图谱问答<ul>
+<li>基于序列学习的解析方法</li>
+<li>基于动作序列的解析方法</li>
+<li>基于对战神经网络的端到端问答方法</li>
+</ul>
+</li>
+</ol>
+<h3 id="基于符号语义解析的知识图谱问答"><a href="#基于符号语义解析的知识图谱问答" class="headerlink" title="基于符号语义解析的知识图谱问答"></a>基于符号语义解析的知识图谱问答</h3><p>两种技术的具体实现过程略过，对比如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/Lambda演算vs.DCSTree.jpg" alt="Lambda演算vs.DCSTree"></p>
+<h3 id="基于语义检索的知识图谱问答"><a href="#基于语义检索的知识图谱问答" class="headerlink" title="基于语义检索的知识图谱问答"></a>基于语义检索的知识图谱问答</h3><ul>
+<li>基于显示特征的知识检索<ul>
+<li>关键词检索</li>
+<li>文本蕴含推理</li>
+<li>逻辑表达式</li>
+<li><div class="note primary">
+            <p>给出了许多研究进展。</p>
+          </div></li>
+</ul>
+</li>
+<li>基于端到端的知识图谱问答<ul>
+<li>LSTM</li>
+<li>Attention Model</li>
+<li>Memory Network</li>
+<li><div class="note primary">
+            <p>其中有部分问题：</p><ol><li>如何学习？<ul><li>RNN</li><li>CNN</li><li>Transformer</li></ul></li><li>问句如何表示？<ul><li>取所有词向量的平均值</li><li>关注答案不同的部分，问句的表示应该问句的不同部分</li><li>等</li></ul></li><li><strong>考虑多维度的相似度</strong><ul><li>从多个角度计算问句和知识的语义匹配（语义相似度）</li><li>问句如何表示？</li><li>依据问答特点，考虑答案不同维度的信息</li></ul></li></ol><p>PPT 中给出了许多研究进展，包括最基本的做法。</p>
+          </div>
+<img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/基于语义检索的知识图谱问答.jpg" alt="基于语义检索的知识图谱问答"></li>
+</ul>
+</li>
+</ul>
+<h3 id="基于神经符号计算的知识图谱问答"><a href="#基于神经符号计算的知识图谱问答" class="headerlink" title="基于神经符号计算的知识图谱问答"></a>基于神经符号计算的知识图谱问答</h3><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/符号语义解析vs.深度学习.jpg" alt="符号语义解析vs.深度学习"></p>
+<ul>
+<li><p>基于序列学习的解析方法</p>
+<ul>
+<li>seq2seq<ul>
+<li>RNN-based</li>
+<li>with Attention</li>
+</ul>
+</li>
+<li><p>基于序列学习的神经符号计算</p>
+<div class="note primary">
+            <p>就是运用<strong>基于符号语义解析的知识图谱问答</strong>的原理，让神经网络生成这些符号，而不是生成文字。</p>
+          </div>
+<blockquote>
+<p>基于序列学习的方法将问句和答案的逻辑表达式看作为两个序列</p>
+<ul>
+<li>使用序列转换的神经网络模型（如 Seq2Seq）来建模</li>
+<li>神经网络生成的逻辑表达式可能不合语法规范</li>
+</ul>
+</blockquote>
+<ul>
+<li>Seq2Tree</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>基于动作序列的解析方法<ul>
+<li>Seq2Action</li>
+</ul>
+</li>
+<li>基于对战神经网络的端到端问答方法</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>限定域的深度问答的准确度比较高，开放域的深度问答的准确度还是处于较低的水平。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/深度问答的性能.jpg" alt="深度问答的性能"></p>
+<h1 id="对话系统"><a href="#对话系统" class="headerlink" title="对话系统"></a>对话系统</h1><p>对话系统也可以直白的称为聊天机器人。<br>目前 54% 的用户会使用闲聊（开放域对话）功能。26% 的用户会选择使用某些功能性功能，比如查出行路线、查天气等。其余小部分用户使用其他的功能。<br>目前大部分的聊天机器人都基于<strong>微软小冰</strong>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/各种聊天机器人.jpg" alt="各种聊天机器人"></p>
+<p>聊天机器人一共分为两种：</p>
+<ol>
+<li>检索式</li>
+<li>生成式</li>
+</ol>
+<h2 id="Response-Selection-for-Retrieval-based-Chatbots"><a href="#Response-Selection-for-Retrieval-based-Chatbots" class="headerlink" title="Response Selection for Retrieval-based Chatbots"></a>Response Selection for Retrieval-based Chatbots</h2><p>检索式又分为单轮和多轮。<br>单轮不考虑回复历史。下图展示了一个单轮回复的场景，用户提出一个问题，机器人需要在一堆回复中检索出一个最有可能的结果来对用户进行回复。多轮回复与单轮类似，只不过多轮需要考虑上下文的对话。最后也是选择一个最优可能的结果进行回复。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/检索式单轮回复.jpg" alt="检索式单轮回复"></p>
+<div class="note info">
+            <p>&emsp;&emsp;对于单轮：<br>&emsp;&emsp;回复不只回复 Top1 的候选回复，而是要训练一个 classifier，从而随机地返回一个回复。因为如果回复总是为同一个，用户可能会感觉很无聊。<br>&emsp;&emsp;对于多轮：<br>&emsp;&emsp;有一些挑战：</p><ul><li>A hierarchical data structure<ul><li>Words -&gt; utterances -&gt; session</li></ul></li><li>Information redundancy<ul><li>Not all words and utterances are useful for response selection</li></ul></li><li>Logics<ul><li>Order of utterances matters in response selection</li><li>Long-term dependencies among words and utterances</li><li>Constraints to proper responses</li></ul></li></ul>
+          </div>
+<p>下面是检索式单轮回复系统架构图和多轮回复系统架构图的对比。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/检索式单轮回复架构图.jpg" alt="检索式单轮回复架构图"></p>
+<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/检索式多轮回复架构图.jpg" alt="检索式多轮回复架构图"></p>
+<h3 id="单轮回复中使用的模型"><a href="#单轮回复中使用的模型" class="headerlink" title="单轮回复中使用的模型"></a>单轮回复中使用的模型</h3><p>一共有两种框架，分别为：Framework I 和 Framework II。<br><strong>Framework I 和 Framework II 的区别是</strong>：</p>
+<ol>
+<li>Framework I 是将句子表示为向量，Framework II 将字表示为向量。</li>
+</ol>
+<p><strong>Framework I 和 Framework II 的比较：</strong></p>
+<ul>
+<li>Efficacy（功效）：<ol>
+<li>一般来讲，在外界公布出的数据集上，Framework II 模型比 Framework I 模型更好。因为在 Framework II 中的 interaction 充分保留了一个 message-response pair 中的匹配信息。</li>
+</ol>
+</li>
+<li>Efficiency（效率）：<ol>
+<li>由于过多的 interaction，Framework II 的模型普遍比 Framework I 的模型在计算上代价更大。</li>
+<li>由于可以预先计算 messages and responses 的表示并将它们以索引形式存储。所以当对线上响应时间有严格要求时， Framework I 的模型更可取。</li>
+</ol>
+</li>
+</ul>
+<p>下图是 Framework I 的架构，其中最下层的 sentence embedding layer 大概就是词向量，然后需要经过一个 Representation function（这个 function 下面会给出架构）。最后将已经经过 Representation function 转换后的 q 和 r 送入 Matching layer，该层有一个 Matching function（这个 function 下面也会给出架构）。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/检索式单轮回复的 Framework I.jpg" alt="检索式单轮回复的 Framework I"></p>
+<p>下图是 Representation funtion 的结构：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/检索式单轮回复的 Framework I 的 Representation funtion.jpg" alt="检索式单轮回复的 Framework I 的 Representation funtion"></p>
+<p>下图是 Matching funtion 的结构：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/检索式单轮回复的 Framework I 的 Matching funtion.jpg" alt="检索式单轮回复的 Framework I 的 Matching funtion"></p>
+<p><strong><em>有一些特殊的模型：Arc-I，Attentive LSTM 等</em></strong></p>
+<p>Framework II 的架构与 Framework I 类似，只是多了一个 Interaction Function。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/检索式单轮回复的 Framework II.jpg" alt="检索式单轮回复的 Framework II"></p>
+<p>Interaction 由两种形式：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/检索式单轮回复的 Framework II 中 Interaction 的两种类型.jpg" alt="检索式单轮回复的 Framework II 中 Interaction 的两种类型"></p>
+<p><strong><em>有一些特殊的模型：Match Pyramid，Match LSTM 等</em></strong></p>
+<p>PPT 中有数据集。以及很多 reference。</p>
+<h3 id="多轮回复中使用的模型"><a href="#多轮回复中使用的模型" class="headerlink" title="多轮回复中使用的模型"></a>多轮回复中使用的模型</h3><p>&emsp;&emsp;对于多轮回复也有两种框架，分别为：Framework I 和 Framework II。<br>&emsp;&emsp;具体的架构略。PPT 里都有。</p>
+<h1 id="技术总结"><a href="#技术总结" class="headerlink" title="技术总结"></a>技术总结</h1><h2 id="技术"><a href="#技术" class="headerlink" title="技术"></a>技术</h2><h2 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h2><a id="more"></a>
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/机器学习中优化算法以及各种函数的选择.html" rel="next" title="机器学习中优化算法以及各种函数的选择">
+                <i class="fa fa-chevron-left"></i> 机器学习中优化算法以及各种函数的选择
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/学习笔记/机器学习算法（七）：K-NN.html" rel="prev" title="机器学习算法（七）：K-NN">
+                机器学习算法（七）：K-NN <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="朱冲䶮">
+            
+              <p class="site-author-name" itemprop="name">朱冲䶮</p>
+              <p class="site-description motion-element" itemprop="description">朱冲䶮的博客，记录学习时遇到的问题</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">108</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">22</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">14</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+            <br>
+						<!--同个ip访问本站页面次数-->
+						<div class="site-state-item site-state-posts" style="border-left:none;">
+								<span class="site-state-item-count" id="busuanzi_value_site_pv"></span>
+								<span class="site-state-item-name">浏览量</span>
+						</div>
+						<!--不同ip访问本站次数-->
+						<div class="site-state-item site-state-posts">
+								<span class="site-state-item-count" id="busuanzi_value_site_uv"></span>
+								<span class="site-state-item-name">访客量</span>
+						</div>
+						<div class="site-state-item site-state-posts">
+								<span class="site-state-item-count">78.5k</span>
+								<span class="site-state-item-name">总字数</span>
+						</div>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:897538633@qq.com" title="E-Mail &rarr; mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/yan624" title="GitHub &rarr; https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问答系统"><span class="nav-number">1.</span> <span class="nav-text">问答系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#知识图谱问答系统概述"><span class="nav-number">1.1.</span> <span class="nav-text">知识图谱问答系统概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分类"><span class="nav-number">1.2.</span> <span class="nav-text">分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是知识图谱"><span class="nav-number">1.3.</span> <span class="nav-text">什么是知识图谱</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一个简单的例子"><span class="nav-number">1.3.1.</span> <span class="nav-text">一个简单的例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#知识图谱基本架构"><span class="nav-number">1.3.2.</span> <span class="nav-text">知识图谱基本架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运用知识图谱问答"><span class="nav-number">1.3.3.</span> <span class="nav-text">运用知识图谱问答</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#知识图谱问答的两类方法（根据技术路线分）"><span class="nav-number">1.3.4.</span> <span class="nav-text">知识图谱问答的两类方法（根据技术路线分）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#公开的评测数据集"><span class="nav-number">1.4.</span> <span class="nav-text">公开的评测数据集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#知识图谱问答基于的几种方法"><span class="nav-number">1.5.</span> <span class="nav-text">知识图谱问答基于的几种方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基于符号语义解析的知识图谱问答"><span class="nav-number">1.5.1.</span> <span class="nav-text">基于符号语义解析的知识图谱问答</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于语义检索的知识图谱问答"><span class="nav-number">1.5.2.</span> <span class="nav-text">基于语义检索的知识图谱问答</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于神经符号计算的知识图谱问答"><span class="nav-number">1.5.3.</span> <span class="nav-text">基于神经符号计算的知识图谱问答</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">1.6.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#对话系统"><span class="nav-number">2.</span> <span class="nav-text">对话系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Response-Selection-for-Retrieval-based-Chatbots"><span class="nav-number">2.1.</span> <span class="nav-text">Response Selection for Retrieval-based Chatbots</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#单轮回复中使用的模型"><span class="nav-number">2.1.1.</span> <span class="nav-text">单轮回复中使用的模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多轮回复中使用的模型"><span class="nav-number">2.1.2.</span> <span class="nav-text">多轮回复中使用的模型</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#技术总结"><span class="nav-number">3.</span> <span class="nav-text">技术总结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#技术"><span class="nav-number">3.1.</span> <span class="nav-text">技术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据集"><span class="nav-number">3.2.</span> <span class="nav-text">数据集</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v6.7.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=6.7.0"></script>
+
+  <script src="/js/src/motion.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=6.7.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=6.7.0"></script>
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
+<script src="/js/src/post-details.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+  
+
+	<script src="/lib/my-utils.js"></script>
+<!--图片缩放插件-->
+<script src="/lib/zoomify/zoomify.min.js"></script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!--不蒜子统计-->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<!-- 背景图片 -->
+<script>
+	function generateBG(count){
+		var bg_prefix = '/images/background/';
+		var bg =new Array();
+		for(var i = 0; i < count; i++){
+			bg[i] = bg_prefix + i + '.jpg';
+		}
+		bg.shuffle();
+		return bg;
+	}
+	$("body").backstretch(generateBG(5), { 
+		duration:60000,//1min一换
+		fade: 1500 
+	});
+	$('#content img').zoomify({duration: 500, });
+	$('#content img').on('zoom-in.zoomify', function () {
+		$('#sidebar').css('display', 'none');
+	});
+	$('#content img').on('zoom-out-complete.zoomify', function () {
+		$('#sidebar').css('display', '');
+	});
+</script>
+	
+
+</body>
+</html>
