@@ -106,37 +106,30 @@
 <!--图片缩放插件样式-->
 <link rel="stylesheet" href="/lib/zoomify/zoomify.min.css">
 
-  <meta name="description" content="注意事项此系列视频还有两个Review视频，分别为第一个视频：Basic Structures for Deep Learning Models(Part 1)， 第二个视频：Basic Structures for Deep Learning Models(Part 2)。个人认为Review视频不需要看，而且这两个视频时间贼长，加起来得有两个多小时。没必要浪费时间，即使你根本没学过Review">
-<meta name="keywords" content="学习笔记">
+  <meta name="description" content="代码github地址simple RNN只实现了正向传播，反向传播没有实现。是因为simple RNN有梯度消失的问题，索性直接不写了。下一节直接写LSTM。 simple RNN和simple NN的对比本来觉得simple RNN挺简单的，只不过是simple NN的扩展，区别无非是将simple NN的神经元换成一个RNN cell。但是实际上没那么简单，特别是加上将数据向量化后计算。感觉简">
+<meta name="keywords" content="系列,学习笔记">
 <meta property="og:type" content="article">
-<meta property="og:title" content="李宏毅深度学习笔记">
-<meta property="og:url" content="http://yan624.github.io/学习笔记/李宏毅深度学习笔记.html">
+<meta property="og:title" content="深度学习算法（二）：simple RNN 推导与理解">
+<meta property="og:url" content="http://yan624.github.io/zcy/深度学习算法（二）：simple RNN 推导与理解.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="注意事项此系列视频还有两个Review视频，分别为第一个视频：Basic Structures for Deep Learning Models(Part 1)， 第二个视频：Basic Structures for Deep Learning Models(Part 2)。个人认为Review视频不需要看，而且这两个视频时间贼长，加起来得有两个多小时。没必要浪费时间，即使你根本没学过Review">
+<meta property="og:description" content="代码github地址simple RNN只实现了正向传播，反向传播没有实现。是因为simple RNN有梯度消失的问题，索性直接不写了。下一节直接写LSTM。 simple RNN和simple NN的对比本来觉得simple RNN挺简单的，只不过是simple NN的扩展，区别无非是将simple NN的神经元换成一个RNN cell。但是实际上没那么简单，特别是加上将数据向量化后计算。感觉简">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/Computational%20Graph%E4%BE%8B%E5%AD%90.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/Computational%20Graph%E9%93%BE%E5%BC%8F%E6%B1%82%E5%AF%BC%E6%B3%95%E5%88%99%E7%A4%BA%E4%BE%8B.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/%E6%AD%A3%E5%90%91%E9%93%BE%E5%BC%8F%E6%B1%82%E5%AF%BC.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/%E5%8F%8D%E5%90%91%E9%93%BE%E5%BC%8F%E6%B1%82%E5%AF%BC.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/Language%20Modeling.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/N-gram.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/NN-based%20LM.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/%E8%AE%A1%E7%AE%97%E5%8F%A5%E5%AD%90%E7%9A%84%E5%87%A0%E7%8E%87.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/RNN-based%20LM.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/Challenge%20of%20N-gram.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/Feedforward%20NN%E5%92%8CRNN%E7%9A%84%E5%AF%B9%E6%AF%94.jpg">
-<meta property="og:updated_time" content="2019-06-07T11:22:01.759Z">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/吴恩达深度学习中的RNN示意图.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/simple%20rnn%20cell.png">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/RNN.png">
+<meta property="og:updated_time" content="2019-07-24T02:58:55.452Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="李宏毅深度学习笔记">
-<meta name="twitter:description" content="注意事项此系列视频还有两个Review视频，分别为第一个视频：Basic Structures for Deep Learning Models(Part 1)， 第二个视频：Basic Structures for Deep Learning Models(Part 2)。个人认为Review视频不需要看，而且这两个视频时间贼长，加起来得有两个多小时。没必要浪费时间，即使你根本没学过Review">
-<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/Computational%20Graph%E4%BE%8B%E5%AD%90.jpg">
+<meta name="twitter:title" content="深度学习算法（二）：simple RNN 推导与理解">
+<meta name="twitter:description" content="代码github地址simple RNN只实现了正向传播，反向传播没有实现。是因为simple RNN有梯度消失的问题，索性直接不写了。下一节直接写LSTM。 simple RNN和simple NN的对比本来觉得simple RNN挺简单的，只不过是simple NN的扩展，区别无非是将simple NN的神经元换成一个RNN cell。但是实际上没那么简单，特别是加上将数据向量化后计算。感觉简">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg">
 
 
 
 
 
 
-  <link rel="canonical" href="http://yan624.github.io/学习笔记/李宏毅深度学习笔记.html">
+  <link rel="canonical" href="http://yan624.github.io/zcy/深度学习算法（二）：simple RNN 推导与理解.html">
 
 
 
@@ -146,7 +139,7 @@
   };
 </script>
 
-  <title>李宏毅深度学习笔记 | 博客</title>
+  <title>深度学习算法（二）：simple RNN 推导与理解 | 博客</title>
   
 
 
@@ -396,7 +389,7 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">110</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">109</span></a>
 
   </li>
 
@@ -448,7 +441,7 @@ if(pathname == '/flower.html'){
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/李宏毅深度学习笔记.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/zcy/深度学习算法（二）：simple RNN 推导与理解.html">
     
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -465,6 +458,8 @@ if(pathname == '/flower.html'){
       <header class="post-header">
 				
 				
+	
+
 	
 		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
 			<script type="text/javascript" src="/lib/spop/spop.min.js"></script>
@@ -495,7 +490,7 @@ if(pathname == '/flower.html'){
 
         
         
-          <h1 class="post-title" itemprop="name headline">李宏毅深度学习笔记
+          <h1 class="post-title" itemprop="name headline">深度学习算法（二）：simple RNN 推导与理解
 
               
             
@@ -521,7 +516,7 @@ if(pathname == '/flower.html'){
                 
               
 
-              <time title="创建时间：2019-05-19 15:38:51" itemprop="dateCreated datePublished" datetime="2019-05-19T15:38:51+08:00">2019-05-19</time>
+              <time title="创建时间：2019-05-23 15:48:00" itemprop="dateCreated datePublished" datetime="2019-05-23T15:48:00+08:00">2019-05-23</time>
             
 
             
@@ -538,7 +533,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-06-07 19:22:01" itemprop="dateModified" datetime="2019-06-07T19:22:01+08:00">2019-06-07</time>
+                <time title="修改时间：2019-07-24 10:58:55" itemprop="dateModified" datetime="2019-07-24T10:58:55+08:00">2019-07-24</time>
               
             
           </span>
@@ -604,48 +599,66 @@ if(pathname == '/flower.html'){
       
 
       
-        <h1 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h1><p>此系列视频还有两个Review视频，分别为第一个视频：Basic Structures for Deep Learning Models(Part 1)， 第二个视频：Basic Structures for Deep Learning Models(Part 2)。<br>个人认为Review视频不需要看，而且这两个视频时间贼长，加起来得有两个多小时。没必要浪费时间，即使你根本没学过Review中的知识点也不用去看。他的Review里不会讲很深，基本上就过过场，就算有很深的东西也完全不影响继续往下学。1P时长80分钟，说实话如果自己属于小白阶段，去看那么长的视频是挺打击人的兴趣的，如果是大佬或者已经入门的人当然看得津津有味了。<br><a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#字母表示-1">此文</a>记录了李宏毅机器学习视频中讲解的RNN的笔记。</p>
-<h1 id="Computational-Graph-amp-Backpropagation"><a href="#Computational-Graph-amp-Backpropagation" class="headerlink" title="Computational Graph &amp; Backpropagation"></a>Computational Graph &amp; Backpropagation</h1><div class="note danger">
-            <p>2019年6月7号更新：关于计算图这章，现在才发现原来很重要，因为这是完成<strong>自动求导</strong>的关键。学了 pytorch 之后才发现的。</p>
-          </div>
-<h2 id="什么是Computational-Graph"><a href="#什么是Computational-Graph" class="headerlink" title="什么是Computational Graph"></a>什么是Computational Graph</h2><p>这实际上跟要学的深度学习没什么关系，只是名字好听点，无视就好，如下图就是一个Computational Graph。主要用来在计算神经网络一些输出时，便于理解。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/Computational%20Graph%E4%BE%8B%E5%AD%90.jpg" alt="Computational Graph例子"><br>在看一个比较贴近实际的例子，顺便复习一下链式求导法则。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/Computational%20Graph%E9%93%BE%E5%BC%8F%E6%B1%82%E5%AF%BC%E6%B3%95%E5%88%99%E7%A4%BA%E4%BE%8B.jpg" alt="Computational Graph链式求导法则示例"></p>
-<h2 id="通过链式求导的例子理解反向传播（Backpropagation）算法"><a href="#通过链式求导的例子理解反向传播（Backpropagation）算法" class="headerlink" title="通过链式求导的例子理解反向传播（Backpropagation）算法"></a>通过链式求导的例子理解反向传播（Backpropagation）算法</h2><p>首先进行正向链式求导，如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/%E6%AD%A3%E5%90%91%E9%93%BE%E5%BC%8F%E6%B1%82%E5%AF%BC.jpg" alt="正向链式求导"><br>图中要求计算e对a求偏导，首先给出a=3, b=2。其中c=a+b, d=b+1。<br>按照李宏毅老师使用链式求导法则，先要计算c对a求导得到1。e再对c求导得到b+1，带入b=2，得到3。所以3对a求偏导等于1*3=3。<br>上面这种链式求导法则有点乱，如果没仔细学过<em>微积分</em>可能难以理解。其实对于方程e = (a+b) * (b+1)，e对a求偏导，直接看出来都可以。利用考研时的口诀“左导右不导，左不导右导”（也就是<a href="https://baike.baidu.com/item/%E8%8E%B1%E5%B8%83%E5%B0%BC%E8%8C%A8%E5%85%AC%E5%BC%8F/8779293?fr=aladdin" target="_blank" rel="noopener">莱布尼茨公式</a>），直接得到结果<script type="math/tex">\frac{\partial e}{\partial a} = b+1</script>。<br>然后将b=2带入b+1得到结果还是3。</p>
-<p>接着进行反向模式，如下图:<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/%E5%8F%8D%E5%90%91%E9%93%BE%E5%BC%8F%E6%B1%82%E5%AF%BC.jpg" alt="反向链式求导"><br>现在图中要求计算<script type="math/tex">\frac{\partial e}{\partial a}</script>以及<script type="math/tex">\frac{\partial e}{\partial b}</script>，当然你可以分别进行两次链式求导，得到结果。但是如果从e出发，也就是反向，那么就可以同时得到<script type="math/tex">\frac{\partial e}{\partial a}</script>以及<script type="math/tex">\frac{\partial e}{\partial b}</script>的结果。<br>不要在意e为什么等于1，只不过一个输入而已。<br>此外，如果阅读过《deep learning and neural network》一书，看过吴恩达机器学习视频或者其它资料的应该已经能反应出来。连接线上的求偏导实际上就跟神经网络上的权重一个意思，然后也是一层一层地反向传播。<br>这个输入e实际上就是神经网络中的反向传播算法中的输入。就是最后一层神经元的误差<script type="math/tex">\delta^l = h-y</script>。这里吴恩达老师和《deep learning and neural network》作者的最后一层误差公式不一样，<strong>目前不明</strong>，暂时不做解释，这里的公式是吴恩达老师的。<br>然后就是误差*权重+偏差得到前一层的误差，具体不展开。</p>
-<h2 id="反向传播的好处"><a href="#反向传播的好处" class="headerlink" title="反向传播的好处"></a>反向传播的好处</h2><p>如果你的root只有一个，那么这个Computational Graph中的所有偏微分就都可以一次性算出。对应于神经网络，我们就是要这样的效果。</p>
-<h2 id="参数共享（Parameter-sharing）"><a href="#参数共享（Parameter-sharing）" class="headerlink" title="参数共享（Parameter sharing）"></a>参数共享（Parameter sharing）</h2><p>略，看了一眼貌似挺简单。16:20</p>
-<h2 id="Computational-Graph-for-Feedforword-Net"><a href="#Computational-Graph-for-Feedforword-Net" class="headerlink" title="Computational Graph for Feedforword Net"></a>Computational Graph for Feedforword Net</h2><p>李宏毅深度学习p3从21:16到52:48讲解梯度下降算法、前馈神经网络以及反向传播算法的具体数学原理<br>一直没看懂原理，以后再看。</p>
-<h2 id="Computational-Graph-for-Recurrent-Network"><a href="#Computational-Graph-for-Recurrent-Network" class="headerlink" title="Computational Graph for Recurrent Network"></a>Computational Graph for Recurrent Network</h2><h1 id="Deep-Learning-for-Language-Modeling"><a href="#Deep-Learning-for-Language-Modeling" class="headerlink" title="Deep Learning for Language Modeling"></a>Deep Learning for Language Modeling</h1><p>语言模型就是预测一个word sequence出现的几率有多大。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/Language%20Modeling.jpg" alt="Language Modeling"></p>
-<h2 id="N-gram"><a href="#N-gram" class="headerlink" title="N-gram"></a>N-gram</h2><p>N-gram是自然语言处理中的算法。2-gram读作bi-gram。</p>
-<h3 id="传统做法"><a href="#传统做法" class="headerlink" title="传统做法"></a>传统做法</h3><ul>
-<li>怎么预测一句话出现的几率</li>
-<li>收集大量文本作为训练数据<ul>
-<li>然后计算<script type="math/tex">w_1\cdots w_n</script>这句话在训练数据中出现的概率</li>
-</ul>
-</li>
-<li>N-gram语言模型：<ul>
-<li>如何计算一小部分的概率？例如下图的p(beach|nice)出现的概率。就是将nice beach出现的次数除以nice出现的次数。</li>
-</ul>
-</li>
-</ul>
-<p>前两条是理想的处理办法，但是麻烦的是要预测的句子在语料库——corpus中八成一次都没出现过。于是就需要使用N-gram模型。它的处理办法就是将句子拆成比较小的部分——component，再把每个小部分的概率乘起来就是句子出现的几率。像下图这种只考虑前一个单词的模型叫做2-gram model。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/N-gram.jpg" alt="N-gram"></p>
-<h3 id="NN-based-LM"><a href="#NN-based-LM" class="headerlink" title="NN-based LM"></a>NN-based LM</h3><p>怎么做基于NN的N-gram？<br>做法：</p>
-<ol>
-<li>搜集training数据</li>
-<li>learn一个Neural Network，通过两个词predict下一个词，如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/NN-based%20LM.jpg" alt="NN-based LM"></li>
-<li>使用cross entropy minimize</li>
-<li>有了Neural Network后算一个句子的几率，如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/%E8%AE%A1%E7%AE%97%E5%8F%A5%E5%AD%90%E7%9A%84%E5%87%A0%E7%8E%87.jpg" alt="计算句子的几率"><br>其中STRAT是一个token，代表句子的起始。</li>
-</ol>
-<h3 id="RNN-based-LM"><a href="#RNN-based-LM" class="headerlink" title="RNN-based LM"></a>RNN-based LM</h3><p>往上翻<strong>循环神经网络——RNN</strong>，原理就是这个。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/RNN-based%20LM.jpg" alt="RNN-based LM"></p>
-<h3 id="Challenge-of-N-gram"><a href="#Challenge-of-N-gram" class="headerlink" title="Challenge of N-gram"></a>Challenge of N-gram</h3><h4 id="NN-based-model"><a href="#NN-based-model" class="headerlink" title="NN-based model"></a>NN-based model</h4><p>为什么要使用NN-based model。相较于传统方法有什么好处。<br>就是概率估不准，因为永远没有足够的数据。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/Challenge%20of%20N-gram.jpg" alt="Challenge of N-gram"><br><div class="note info">
-            <p>视频13:20~27:01仔细讲解了为什么要使用NN，而且把我困惑了快一个月的问题解决了，就是将文字转为数字之后进行训练的意义。</p>
+        <h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p><a href="https://github.com/yan624/machine_learning_algorithms/tree/master/simple_recurrent_neural_network" target="_blank" rel="noopener">github地址</a><br>simple RNN只实现了正向传播，反向传播没有实现。是因为simple RNN有梯度消失的问题，索性直接不写了。下一节直接写LSTM。</p>
+<h1 id="simple-RNN和simple-NN的对比"><a href="#simple-RNN和simple-NN的对比" class="headerlink" title="simple RNN和simple NN的对比"></a>simple RNN和simple NN的对比</h1><p>本来觉得simple RNN挺简单的，只不过是simple NN的扩展，区别无非是将simple NN的神经元换成一个RNN cell。但是实际上没那么简单，特别是加上将数据向量化后计算。感觉简直和simple NN是两种架构。</p>
+<h2 id="input"><a href="#input" class="headerlink" title="input"></a>input</h2><p>下图是一个simple NN的架构，其中的一层也叫做全连接层。所以也叫做前馈神经网络。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版"><br>网络中输入的x是一个纯数字，而不是向量。如果输入的是向量，就代表一次输入了多条样本。总的来说，一条样本向量化为：</p>
+<script type="math/tex; mode=display">
+\begin{pmatrix}
+    x_1\\
+    x_2\\
+    x_3\\
+\end{pmatrix}</script><p>多条样本向量化为：</p>
+<script type="math/tex; mode=display">
+\begin{pmatrix}
+    x_1 & x_4\\
+    x_2 & x_5\\
+    x_3 & x_6\\
+\end{pmatrix}</script><p>但是在simple <strong>R</strong>NN中，因为RNN可以用做自然语言处理，在NLP领域一个数据就是一个单词或者一个词组，我们需要先将词组用数字表示，但是一个字只用一个数表示显然是不现实的。我们通常使用词向量（word vector）表示，所以问题就来了。如果我用simple NN来做自然语言处理，我该怎么处理这些数据。<br>我需要输入这句话——我 是 一名 学生。将其用变量一一对应：</p>
+<script type="math/tex; mode=display">
+\begin{pmatrix}
+    x_1 = \text{我}\\
+    x_2 = \text{是}\\
+    x_3 = \text{一名}\\
+    x_4 = \text{学生}\\
+\end{pmatrix}</script><p>如果再输入一句话——今天 天气 好像 不错。将其用变量一一对应：</p>
+<script type="math/tex; mode=display">
+\begin{pmatrix}
+    x_1 = \text{我} & x_5 = \text{今天}\\
+    x_2 = \text{是} & x_6 = \text{天气}\\
+    x_3 = \text{一名} & x_7 = \text{好像}\\
+    x_4 = \text{学生} & x_8 = \text{不错}\\
+\end{pmatrix}</script><p>这样会出现<strong>极大的问题</strong>，即文字无法进行数学运算。所以需要将文字转为词向量。但是问题是我如何在一个神经元输入一个向量？我如果输入多条样本，那么我整个输入值x就会变成<strong>3维的矩阵</strong>。simple NN显然是处理不了的。所以有个折中的方法，即将每个词的词向量加起来除以词的个数。即：</p>
+<script type="math/tex; mode=display">
+\frac{(v_{\text{我}} + v_{\text{是}} + v_{\text{一名}} + v_{\text{学生}})}{4} =  v_{\text{我是一名学生}}</script><p>其中v代表某个词对应的词向量。这样就将4个向量合并成一个向量了。然后simple NN就可以处理了。<br>但是这样处理肯定太勉强了，所以就出现了simple RNN，它可以处理上述这种问题。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/吴恩达深度学习中的RNN示意图.jpg" alt="吴恩达深度学习中的RNN示意图"><br>上图就是一个simple <strong>R</strong>NN架构，看起来跟simple NN不一样。但是其实你只要将图片往右旋转90度，就一样了。还有一点不太一样，就是simple <strong>R</strong>NN中的一个神经元跟simple NN中的一层神经元一样。<br><div class="note info">
+            <p>simple <strong>R</strong>NN其实就是simple NN的神经元被替换成了simple <strong>R</strong>NN的神经元。而simple <strong>R</strong>NN的一个神经元本身里面还有多个单元，图上就是一个神经元里有4个单元。<br>所以simple <strong>R</strong>NN的神经元可以被叫做记忆细胞。<br>如果重新描述一遍就是simple <strong>R</strong>NN其实就是simple NN的神经元被替换成了simple <strong>R</strong>NN的记忆细胞。<br>而simple <strong>R</strong>NN的记忆细胞里面有多个神经元用来处理进行向量计算。</p>
           </div></p>
-<h4 id="RNN-based-model"><a href="#RNN-based-model" class="headerlink" title="RNN-based model"></a>RNN-based model</h4><p>为什么要使用RNN-based model。相较于传统方法有什么好处。</p>
-<h1 id="Spatial-Transformer-Layer"><a href="#Spatial-Transformer-Layer" class="headerlink" title="Spatial Transformer Layer"></a>Spatial Transformer Layer</h1><h1 id="Highway-Network-amp-Grid-LSTM"><a href="#Highway-Network-amp-Grid-LSTM" class="headerlink" title="Highway Network &amp; Grid LSTM"></a>Highway Network &amp; Grid LSTM</h1><p>前馈神经网络（就是Simple NN）和RNN的对比。</p>
+<h2 id="simple-RNN的另一个输入值a"><a href="#simple-RNN的另一个输入值a" class="headerlink" title="simple RNN的另一个输入值a"></a>simple RNN的另一个输入值a</h2><p>下图是simple RNN的一个记忆细胞。由于其概念大都需要数值来演示，但是大量的数值难以书写，并且用语言实在难以描述。所以以下均使用一个矩阵的字母表示来演示。<br>此处会有几个问题：</p>
 <ol>
-<li>Feedforward NN不是每一步都有输入。</li>
-<li>Feedforward NN每一层都有不同的参数。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%BA%8F%E5%88%97%E6%A8%A1%E5%9E%8B/Feedforward%20NN%E5%92%8CRNN%E7%9A%84%E5%AF%B9%E6%AF%94.jpg" alt="Feedforward NN和RNN的对比"></li>
+<li>乍一看很简单，但是在实现代码的时候，脑子会转不过来。<strong>因为你碰到的是向量化后的运算</strong>。所以你对各个W，b，A以及X的形状难以确定。不信就自己写一下代码，如果你以前没写过simple RNN的代码，肯定要在确定形状这卡至少一个小时。</li>
+<li>A的形状尤其难确定，会一时之间绕不过来。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/simple%20rnn%20cell.png" alt="simple rnn cell"></li>
 </ol>
-<h1 id="Recusive-Network"><a href="#Recusive-Network" class="headerlink" title="Recusive Network"></a>Recusive Network</h1><p>Recursive Network是Recurrent Network的General版本。Recurrent Network是Recursive Network的一个特殊的例子，如果翻译成中文的话，实际上名字都一样。所以可以称之为递归式网络。</p>
+<h3 id="以一个记忆细胞为例"><a href="#以一个记忆细胞为例" class="headerlink" title="以一个记忆细胞为例"></a>以一个记忆细胞为例</h3><p>设词向量的维度为300，一个记忆细胞的units为32——keras代码表示：simpleRNN(32)，并且进行的是18元分类问题。</p>
+<h4 id="以一个样本为例"><a href="#以一个样本为例" class="headerlink" title="以一个样本为例"></a>以一个样本为例</h4><p>，输入样本数为1。<br>则运算过程为：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+    A\_next & = tanh(Wx_{32, 300} * X_{300, 1} + Wa_{32, 32} * A\_prev_{32, 1} + ba_{32, 1})\\
+    y & = softmax(Wy_{18, 32} * A\_next + by_{18, 1})
+\end{align}</script><p>(数字, 数字) 的表示形式是在线性代数里表示形式，这样看起来方便点。第一个数字表示行，第二个数字表示列。tanh和softmax就不解释了。<br>我依次解释：</p>
+<ol>
+<li>权重值Wx比较好理解，由于输入值X是一个 (300, 1) 的矩阵（也可以叫向量）。Wx为 (32, 300) 是因为记忆细胞的一个单元为32，并且词的特征为300。如果将一个记忆细胞看作是一个隐藏层，那么神经元个数就是32，300就代表前一层的输入。</li>
+<li>权重值Wa为什么是 (32, 32) ?由于a实际上就是激活值，激活值我们可以通过w * x计算得到。显然结果是 (32, 1) ，那么权重值Wa的第二个参数就可以确定大小了（矩阵相乘，第一个矩阵的第二维和第二个矩阵的第一维必须一样），权重值Wa的第一个参数实际上跟权重值Wx一样，都是units。</li>
+<li>Wy为什么是 (18, 32) ?18是因为这是一个18元分类问题，32是因为A的第一维是32。</li>
+</ol>
+<p>其中最难确定的就是Wa的形状。经过上面推导就可以知道了，第一维代表units，第二维代表需要与A的第一维，即为A的第一维的大小。</p>
+<h4 id="以128个样本为例"><a href="#以128个样本为例" class="headerlink" title="以128个样本为例"></a>以128个样本为例</h4><p>如果上面没懂可以再看一遍多个样本</p>
+<script type="math/tex; mode=display">
+\begin{align}
+    A\_next & = tanh(Wx_{32, 300} * X_{300, 128} + Wa_{32, 32} * A\_prev_{32, 128} + ba_{32, 1})\\
+    y & = softmax(Wy_{18, 32} * A\_next + by_{18, 1})
+\end{align}</script><p>说白了A其实激活值，看起来比较晕是因为多了一个初始的A0，实际上A0就是激活值，只不过需要初始化一下，它的形状就是激活值的形状。</p>
+<h3 id="以多个记忆细胞为例"><a href="#以多个记忆细胞为例" class="headerlink" title="以多个记忆细胞为例"></a>以多个记忆细胞为例</h3><p>过程就是上面的过程，唯一有区别的是输入值X。因为有了多个记忆细胞，所以X变成了3维，第3维就是timestep——时间步。<br>但是其实计算，跟上面一模一样，假设现在有6个时间步。伪代码如下：<br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">rnn_cell</span><span class="params">(A_prev, Xt, parameters)</span></span>:</span><br><span class="line">	<span class="keyword">do</span>上面的操作</span><br><span class="line"></span><br><span class="line">timesteps = <span class="number">6</span></span><br><span class="line">X = rand((<span class="number">300</span>, <span class="number">128</span>, timesteps))</span><br><span class="line">A0 = rand((<span class="number">32</span>, <span class="number">128</span>))</span><br><span class="line">parameters = 初始化所有参数</span><br><span class="line"><span class="keyword">for</span> ts <span class="keyword">in</span> range(timesteps):</span><br><span class="line">	rnn_cell(A0, X[:, :, ts], parameters)</span><br></pre></td></tr></table></figure></p>
+<p>其实就是遍历每一个时间步而已。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/RNN.png" alt="RNN"></p>
+<h1 id="simple-RNN-的缺陷"><a href="#simple-RNN-的缺陷" class="headerlink" title="simple-RNN 的缺陷"></a>simple-RNN 的缺陷</h1><p>RNN一个最大的缺陷就是梯度消失与梯度爆炸问题，由于这一缺陷，使得RNN在长文本中难以训练，这才诞生了LSTM及各种变体，来源于<a href="https://zhuanlan.zhihu.com/p/44163528" target="_blank" rel="noopener">专栏</a>。梯度消失的原因：参考<a href="https://zhuanlan.zhihu.com/p/28687529" target="_blank" rel="noopener">专栏</a></p>
 <a id="more"></a>
       
     </div>
@@ -669,6 +682,8 @@ if(pathname == '/flower.html'){
       
         <div class="post-tags">
           
+            <a href="/tags/系列/" rel="tag"># 系列</a>
+          
             <a href="/tags/学习笔记/" rel="tag"># 学习笔记</a>
           
         </div>
@@ -682,8 +697,8 @@ if(pathname == '/flower.html'){
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/zcy/深度学习算法（一）：simple NN（前馈神经网络的正反向推导）.html" rel="next" title="深度学习算法（一）：simple NN（前馈神经网络的正反向推导）">
-                <i class="fa fa-chevron-left"></i> 深度学习算法（一）：simple NN（前馈神经网络的正反向推导）
+              <a href="/学习笔记/2017CS224n学习笔记.html" rel="next" title="2017CS224n学习笔记">
+                <i class="fa fa-chevron-left"></i> 2017CS224n学习笔记
               </a>
             
           </div>
@@ -692,8 +707,8 @@ if(pathname == '/flower.html'){
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/学习笔记/2017CS224n学习笔记.html" rel="prev" title="2017CS224n学习笔记">
-                2017CS224n学习笔记 <i class="fa fa-chevron-right"></i>
+              <a href="/zcy/深度学习算法（三）：RNN 各种机制.html" rel="prev" title="深度学习算法（三）：RNN 各种机制">
+                深度学习算法（三）：RNN 各种机制 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -768,7 +783,7 @@ if(pathname == '/flower.html'){
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">110</span>
+                    <span class="site-state-item-count">109</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -890,7 +905,7 @@ if(pathname == '/flower.html'){
 								<span class="site-state-item-name">访客量</span>
 						</div>
 						<div class="site-state-item site-state-posts">
-								<span class="site-state-item-count">84.8k</span>
+								<span class="site-state-item-count">85.4k</span>
 								<span class="site-state-item-name">总字数</span>
 						</div>
           
@@ -967,7 +982,7 @@ if(pathname == '/flower.html'){
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#注意事项"><span class="nav-number">1.</span> <span class="nav-text">注意事项</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Computational-Graph-amp-Backpropagation"><span class="nav-number">2.</span> <span class="nav-text">Computational Graph &amp; Backpropagation</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是Computational-Graph"><span class="nav-number">2.1.</span> <span class="nav-text">什么是Computational Graph</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通过链式求导的例子理解反向传播（Backpropagation）算法"><span class="nav-number">2.2.</span> <span class="nav-text">通过链式求导的例子理解反向传播（Backpropagation）算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#反向传播的好处"><span class="nav-number">2.3.</span> <span class="nav-text">反向传播的好处</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参数共享（Parameter-sharing）"><span class="nav-number">2.4.</span> <span class="nav-text">参数共享（Parameter sharing）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Computational-Graph-for-Feedforword-Net"><span class="nav-number">2.5.</span> <span class="nav-text">Computational Graph for Feedforword Net</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Computational-Graph-for-Recurrent-Network"><span class="nav-number">2.6.</span> <span class="nav-text">Computational Graph for Recurrent Network</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Deep-Learning-for-Language-Modeling"><span class="nav-number">3.</span> <span class="nav-text">Deep Learning for Language Modeling</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#N-gram"><span class="nav-number">3.1.</span> <span class="nav-text">N-gram</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#传统做法"><span class="nav-number">3.1.1.</span> <span class="nav-text">传统做法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NN-based-LM"><span class="nav-number">3.1.2.</span> <span class="nav-text">NN-based LM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RNN-based-LM"><span class="nav-number">3.1.3.</span> <span class="nav-text">RNN-based LM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Challenge-of-N-gram"><span class="nav-number">3.1.4.</span> <span class="nav-text">Challenge of N-gram</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#NN-based-model"><span class="nav-number">3.1.4.1.</span> <span class="nav-text">NN-based model</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RNN-based-model"><span class="nav-number">3.1.4.2.</span> <span class="nav-text">RNN-based model</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Spatial-Transformer-Layer"><span class="nav-number">4.</span> <span class="nav-text">Spatial Transformer Layer</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Highway-Network-amp-Grid-LSTM"><span class="nav-number">5.</span> <span class="nav-text">Highway Network &amp; Grid LSTM</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Recusive-Network"><span class="nav-number">6.</span> <span class="nav-text">Recusive Network</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#代码"><span class="nav-number">1.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#simple-RNN和simple-NN的对比"><span class="nav-number">2.</span> <span class="nav-text">simple RNN和simple NN的对比</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#input"><span class="nav-number">2.1.</span> <span class="nav-text">input</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#simple-RNN的另一个输入值a"><span class="nav-number">2.2.</span> <span class="nav-text">simple RNN的另一个输入值a</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#以一个记忆细胞为例"><span class="nav-number">2.2.1.</span> <span class="nav-text">以一个记忆细胞为例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#以一个样本为例"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">以一个样本为例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#以128个样本为例"><span class="nav-number">2.2.1.2.</span> <span class="nav-text">以128个样本为例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#以多个记忆细胞为例"><span class="nav-number">2.2.2.</span> <span class="nav-text">以多个记忆细胞为例</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#simple-RNN-的缺陷"><span class="nav-number">3.</span> <span class="nav-text">simple-RNN 的缺陷</span></a></li></ol></div>
             
 
           </div>
