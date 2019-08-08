@@ -384,7 +384,7 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">111</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">113</span></a>
 
   </li>
 
@@ -420,6 +420,454 @@ if(pathname == '/flower.html'){
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/论文/24、An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge.html">
+    
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+				
+				
+	
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/论文/24、An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge.html" class="post-title-link" itemprop="url">论文笔记：An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-06 16:52:07" itemprop="dateCreated datePublished" datetime="2019-07-06T16:52:07+08:00">2019-07-06</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-08-06 12:04:15" itemprop="dateModified" datetime="2019-08-06T12:04:15+08:00">2019-08-06</time>
+              
+            
+          </span>
+          
+          
+          	
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/" itemprop="url" rel="index"><span itemprop="name">assorted</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a></span>
+
+                
+                
+              
+            </span>
+          
+          
+          <!--不蒜子计数-->
+          <span id="busuanzi_container_site_uv">
+<span class="post-meta-divider">|</span>
+	浏览量：<span id="busuanzi_value_site_uv"></span>人次
+</span>
+				
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><div class="note info">
+            <p>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/P17-1021" target="_blank" rel="noopener">论文地址</a>，发表于 2017 年。</p>
+          </div>
+<p>&emsp;&emsp;随着知识库数量的增加，人们越来越希望寻找到一些有效的方法来获取这些资源。现在有几种专门为<strong>查询 KBs</strong> 设计的<strong>语言</strong>：SPARQL（<a href="https://www.w3.org/TR/2008/REC-rdf-sparql-query-20080115/" target="_blank" rel="noopener">rudhommeaux and Seaborne, 2008</a>）。但要使用这些语言，用户不仅需要熟悉它们，还要了解 KBs 的体系结构。相比之下，<strong>以自然语言为查询语言</strong>的 KB-QA 是一种更友好的方案，近年来已成为研究热点。这项任务<strong>以前</strong>有两个主流的研究方向：</p>
+<ol>
+<li>基于语义解析（semantic parsing-base, SP-based）</li>
+<li>基于信息检索（information  retrieval-based, IR-based）</li>
+</ol>
+<p>&emsp;&emsp;<strong>现在</strong>随着神经网络方法的发展，基于神经网络的 KB-QA 已经取得了令人瞩目的成果。其中至关重要的步骤就是计算<strong>问题和候选答案</strong>之间的相似性分数，这一步骤的<strong>关键一点</strong>就是学习它们的表示。然而以往的研究更注重<strong>答案的学习表示</strong>。例如，<a href="https://arxiv.org/pdf/1406.3676.pdf" target="_blank" rel="noopener">Bordes et al. 2014a</a> 考虑候选答案子图的重要性，<a href="https://www.aclweb.org/anthology/P15-1026" target="_blank" rel="noopener">Dong et al. 2015</a>利用上下文和答案的类型。无论如何，<strong>问题的表示</strong>终究还是表达不全。现有的方法 <a href="https://arxiv.org/pdf/1406.3676.pdf" target="_blank" rel="noopener">Bordes et al., 2014a,</a> <a href="https://arxiv.org/pdf/1404.4326.pdf" target="_blank" rel="noopener">b</a> 使用 bag-of-word 模型将问题表示为一个向量，但是这样<strong>问题与答案的关联性</strong>还是被忽视了。我们认为一个问题应该根据回答时不同的侧重面来表示（注：<em>其实就是想用注意力机制</em>，回答的侧重面可以是答案实体本身、答案类型、答案上下文等）。<br>&emsp;&emsp;因此本文提出了一个端到端的神经网络模型，通过 <strong>cross-attention</strong> 机制，根据不同的候选答案动态地表示问题及对应的分数。此外还利用了 KB 中的全部知识，旨在将 KB 中丰富的知识集成到答案中，以此缓解 out-of-vocabulary(<strong>OOV</strong>) 的问题，从而帮助 cross-attention 更精确地表示问题。最后实验结果表明了该方法确实有效。<br>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/P15-1026" title="Question Answering over Freebase wit hMulti-Column Convolutional Neural Networks" target="_blank" rel="noopener">论文</a>（<a href="https://yan624.github.io/论文/23、Question Answering over Freebase with Multi-Column Convolutional Neural Networks.html">论文笔记地址</a>）中的方法很有启发性，但是由于简单地选择三个独立的 CNN ，因此过于机械化。所以我们使用了基于 cross-attention 的神经网络模型。<br>&emsp;&emsp;模型架构如下，步骤与之前的论文的步骤类似。<strong>1)</strong>先找到问题的主题（main entity/topic entity）；<strong>2)</strong>然后在知识库中找到主题相连的节点作为候选答案，<strong>3)</strong>最后送入 score layer 进行评分，排序分数选出分数最高的候选答案作为正确答案。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge/MCCNN总览.jpg" alt="MCCNN总览"></p>
+<p>&emsp;&emsp;为了方便描述，我们将任何一种基本元素称为资源（resource），无论是实体还是关系。比如 (/m/0f8l9c,location.country.capital,/m/05qtj) 的描述是法国的首都是巴黎，其中的 <em>/m/0f8l9c</em> 和 <em>/m/05qtj</em> 分别代表法国和巴黎，<em>location.country.capital</em> 是一种关系。</p>
+<h1 id="我们的方法"><a href="#我们的方法" class="headerlink" title="我们的方法"></a>我们的方法</h1><h2 id="候选者生成"><a href="#候选者生成" class="headerlink" title="候选者生成"></a>候选者生成</h2><p>&emsp;&emsp;略，我已经写过无数遍了。使用 Freebase API 构建的。</p>
+<h2 id="The-Neural-Cross-Attention-Model"><a href="#The-Neural-Cross-Attention-Model" class="headerlink" title="The Neural Cross-Attention Model"></a>The Neural Cross-Attention Model</h2><p>&emsp;&emsp;下图是模型的架构：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge/MCCNN架构.jpg" alt="MCCNN架构"></p>
+<ul>
+<li>问题表示（图 2 中左侧部分显示了处理步骤）<ol>
+<li>使用向量表示问题中的每个单词，这跟其他 NLP 任务差不多，不过它是随机初始化的词嵌入矩阵 <script type="math/tex">E_w \in \mathbb{R}^{d \text{x} v_w}</script>，然后取出对应单词的词向量。d 代表词向量的维度，<script type="math/tex">v_w</script> 代表词表的大小。</li>
+<li>将词向量送入 LSTM，值得注意的是我们没有使用单向 LSTM，因为这样一个单词表示只会捕获到之前的单词的信息而不会包含之后的单词。为此我们使用了双向 LSTM 外加 Bahdanau（<a href="https://arxiv.org/pdf/1409.0473.pdf" title="Neural machine translation by jointly learning to align and translate" target="_blank" rel="noopener">Bahdanau, 2014</a>） attention 的处理；</li>
+<li>这样就会获得两个表示 <script type="math/tex">(\overrightarrow{h_1}, \overrightarrow{h_2}, \dots, \overrightarrow{h_n})</script> 以及 <script type="math/tex">(\overleftarrow{h_1}, \overleftarrow{h_2}, \dots, \overleftarrow{h_n})</script>，然后将两个表示拼接起来组成 [<script type="math/tex">\overrightarrow{h_i};\overleftarrow{h_i}</script>]，正反向 LSTM 单元的大小都是 <script type="math/tex">\frac{d}{2}</script>。</li>
+</ol>
+</li>
+<li>回答的不同侧面表示（图 2 中右侧下方部分）<ol>
+<li>直接使用 KB 的嵌入矩阵 <script type="math/tex">E_k \in \mathbb{R}^{d \text{x} v_k}</script>，其中 <script type="math/tex">v_k</script> 代表知识库中资源的大小，该嵌入矩阵随机初始化并在训练时学习表示，使用全局信息对表示的进一步提高将在 3.3 节 Combining Global Knowledge（原论文）描述。具体来说我们使用回答的四个方面：问答实体 <script type="math/tex">a_e</script>，回答关系 <script type="math/tex">a_r</script>，回答类型 <script type="math/tex">a_t</script>，回答上下文 <script type="math/tex">a_c</script>。它们的嵌入被分别表示为 <script type="math/tex">e_e</script>, <script type="math/tex">e_r</script>, <script type="math/tex">e_t</script>, <script type="math/tex">e_c</script>；</li>
+<li>值得注意的是问答上下文由多个 KB 资源组成，我们将它们定义为 (<script type="math/tex">c_1, c_2, \dots, c_m</script>)，首先获得它们的嵌入 (<script type="math/tex">e_{c_1}, e_{c_2}, \dots, e_{c_m}</script>)，然后计算它们的平均值 <script type="math/tex">e_c = \frac{1}{m} \sum^m_{i=1} e_{c_i}</script></li>
+</ol>
+</li>
+<li>Cross-Attention model（图 2 中右侧上方部分以及最上方部分），详见 3.2.3 Cross-Attention model</li>
+</ul>
+<h2 id="Combining-Global-Knowledge"><a href="#Combining-Global-Knowledge" class="headerlink" title="Combining Global Knowledge"></a>Combining Global Knowledge</h2><p>&emsp;&emsp;Combining Global Knowledg，利用TransE得到knowledge embedding。</p>
+<h1 id="模型描述"><a href="#模型描述" class="headerlink" title="模型描述"></a>模型描述</h1><ol>
+<li>使用了 Bahdanau Attention 处理；</li>
+<li>使用了双向 LSTM，会得到两个向量，最后将这两个向量拼接在一起，就是 BiLSTM 这层的最终向量。另外正反的 LSTM 的长度都是 <script type="math/tex">\frac{d}{2}</script>；</li>
+<li>回答通过问答实体 <script type="math/tex">a_e</script>，回答关系 <script type="math/tex">a_r</script>，回答类型 <script type="math/tex">a_t</script>，回答上下文 <script type="math/tex">a_c</script> 四个方面来表示，其中 ac 是所有词向量的平均值。</li>
+</ol>
+<h1 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h1><ol>
+<li><a href="https://arxiv.org/pdf/1404.4326" title="Open question answering with weakly supervised embedding models" target="_blank" rel="noopener">Antoine Bordes 等 2014b</a>；</li>
+<li><a href="https://arxiv.org/pdf/1406.3676" title="Question Answering with Subgraph Embeddings" target="_blank" rel="noopener">Antoine Bordes 等 2014a</a>；</li>
+<li><a href="https://www.aclweb.org/anthology/P14-2105" title="Semantic Parsing for Single-Relation Question Answering" target="_blank" rel="noopener">Yih W 等 2014</a>，实际上是基于语义解析的，但是用了词向量；</li>
+<li><a href="https://www.aclweb.org/anthology/D14-1071" title="Joint relational embeddings for knowledge-based question answering" target="_blank" rel="noopener">Min-Chul Yang 等 2014</a>，实际上是基于语义解析的但是用了词向量；</li>
+<li><a href="https://www.aclweb.org/anthology/P15-1026" title="Question Answering over Freebase with Multi-Column Convolutional Neural Networks" target="_blank" rel="noopener">Dong 等 2015</a>；</li>
+<li><a href="https://www.aclweb.org/anthology/C16-1226" title="Hybrid Question Answering over Knowledge Base and Free Text" target="_blank" rel="noopener">Kun Xu 等 2016b</a>；<a href="https://arxiv.org/pdf/1603.00957.pdf" title="Question Answering on Freebase via Relation Extraction and Textual Evidence" target="_blank" rel="noopener">Xu K 等 2016a</a>。</li>
+</ol>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/论文/24、An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/论文/23、Question Answering over Freebase with Multi-Column Convolutional Neural Networks.html">
+    
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+				
+				
+	
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/论文/23、Question Answering over Freebase with Multi-Column Convolutional Neural Networks.html" class="post-title-link" itemprop="url">论文笔记：Question Answering over Freebase with Multi-Column Convolutional Neural Networks</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-06 14:48:24" itemprop="dateCreated datePublished" datetime="2019-07-06T14:48:24+08:00">2019-07-06</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-08-06 10:24:20" itemprop="dateModified" datetime="2019-08-06T10:24:20+08:00">2019-08-06</time>
+              
+            
+          </span>
+          
+          
+          	
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/" itemprop="url" rel="index"><span itemprop="name">assorted</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a></span>
+
+                
+                
+              
+            </span>
+          
+          
+          <!--不蒜子计数-->
+          <span id="busuanzi_container_site_uv">
+<span class="post-meta-divider">|</span>
+	浏览量：<span id="busuanzi_value_site_uv"></span>人次
+</span>
+				
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/P15-1026" target="_blank" rel="noopener">论文地址</a>，发表于 2015 年。<br>&emsp;&emsp;大多数现有的系统通常依靠人工制作的特性和规则来进行<em>问题理解</em>以及<em>答案排序</em>。此外，一些方法（<a href="https://arxiv.org/pdf/1406.3676.pdf" title="Question Answering with Subgraph Embeddings" target="_blank" rel="noopener">Bordes et al., 2014a</a>; <a href="https://arxiv.org/pdf/1404.4326.pdf" title="Open Question Answering with Weakly Supervised Embedding Models" target="_blank" rel="noopener">Bordeset al., 2014b</a>）使用问题的词嵌入的总和来表示问题，但是这忽略了<strong>词序信息</strong>，无法处理复杂问题，例如 who killed A 和 who A killed 两个问题的表示是一样的。本文介绍了 multi-column convolutional neural networks (MCCNNs)，从三个方面（<strong>回答路径（Answer Type），回答上下文（Answer Context），回答类型（Answer Path）</strong>）理解问题。使用 Freebase 作为知识库，在 WebQuestions 数据集上进行了广泛的实验。最终表明，此方法拥有更好的性能。<br>&emsp;&emsp;神经网络训练步骤：</p>
+<ol>
+<li>MCCNNs 从输入的问题中使用不同 column networks 去提取<strong>回答路径，回答上下文，回答类型</strong>。跟 Bordes 的论文一样，该论文知识库（本文就是 FreeBase）中的实体和关系也由向量表示。</li>
+<li>然后评分层（score layer）根据问题和候选答案的表示进行排序（点积）。</li>
+</ol>
+<h1 id="处理步骤"><a href="#处理步骤" class="headerlink" title="处理步骤"></a>处理步骤</h1><p>&emsp;&emsp;给定一个自然语言问题 <script type="math/tex">q = w_1 \dots w_n</script>，从 FreeBase 中检索相应的实体和属性，然后将它们作为候选答案 <script type="math/tex">C_q</script>。比如，问题 <em>when did Avatar release in UK</em> （阿凡达在英国的发行时间）的答案是 <em>2009-12-17</em>。需要注意的是对于该问题也许有一系列的正确答案。以下数据将被使用到：<strong>WebQuestions</strong>，<strong>FreeBase</strong>，<strong>WikiAnswers</strong>。<br>&emsp;&emsp;MCCNN 概览如图 1 所示：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Question Answering over Freebase with Multi-Column Convolutional Neural Networks/MCCNN概览.jpg" alt="MCCNN概览"></p>
+<p>&emsp;&emsp;比如说，对于问题 whendid Avatar release in UK，从 FreeBase 中查询 <strong>Avatar</strong>（可以称为 <strong>main entity</strong> 或者 <strong>topic entity</strong>） 的<strong>相连节点</strong>（related nodes），这些相连节点被认为是候选答案（<script type="math/tex">C_q</script>）。然后对于每个候选答案 a，模型将会预测一个分数 S(q,a) 以判断 a 是否为正确答案。<br>&emsp;&emsp;对于问题的三个侧面的向量表示分别以 <script type="math/tex">f_1(q)</script> <script type="math/tex">f_2(q)</script> <script type="math/tex">f_3(q)</script> 表示，同理答案的三个侧面分别以 <script type="math/tex">g_1(a)</script> <script type="math/tex">g_2(a)</script> <script type="math/tex">g_3(a)</script> 表示。<script type="math/tex">f_i(q)</script> 和 <script type="math/tex">g_i(a)</script>拥有相同的维度。使用这些问答的表示，我们可以计算问答对 (q,a) 的分数。具体来说，评分函数 S(q,a) 定义为（如图 1 所示，评分层计算分数并将其加起来）：</p>
+<script type="math/tex; mode=display">
+S(q,a) = \underbrace{f_1(q)^Tg_1(a)}_{\text{answer path}} + \underbrace{f_2(q)^Tg_2(a)}_{\text{answer context}} + \underbrace{f_3(q)^Tg_3(a)}_{\text{answer type}}</script><h2 id="候选者生成"><a href="#候选者生成" class="headerlink" title="候选者生成"></a>候选者生成</h2><p>&emsp;&emsp;训练神经网络的<strong>第一步是</strong>从 FreeBase 中为问题检索候选答案。用户提出的问题应该包含一个<strong>可识别</strong>的实体，该实体与知识库相连。我们使用 <strong>Freebase Search API</strong>（<a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.538.7139&amp;rep=rep1&amp;type=pdf" title="Freebase: a collaboratively created graph database for structuringhuman knowledge" target="_blank" rel="noopener">Bollacker et al., 2008)</a>） 查询问题中的命名体。如果没有任何命名体，则查询名词短语，我们使用调用 API 返回的列表中的第一个实体。这个实体解决办法也被 <a href="https://www.aclweb.org/anthology/P14-1090" title="Information Extraction over Structured Data: Question Answering with Freebase" target="_blank" rel="noopener">Yao and Van Durme, 2014)</a> 使用，还可以研发更好的办法，但不是本论文的关注点。<strong>最后关联实体的所有 2-hops（应该是周围的意思，我没有查到是什么意思，但是在<a href="https://yan624.github.io/论文/20、Open Question Answering with Weakly supervised Embedding Models.html#论文总结">博客笔记</a>中有所总结） 节点被认为是候选答案</strong>。并把问题 q 的候选答案集合称为 <script type="math/tex">C_q</script>。</p>
+<h2 id="MCCNNs-for-Question-Understanding"><a href="#MCCNNs-for-Question-Understanding" class="headerlink" title="MCCNNs for Question Understanding"></a>MCCNNs for Question Understanding</h2><p>&emsp;&emsp;MCCNNs 使用多列（<strong>列</strong>指的是图 1 中左侧那三片）卷积网络从字嵌入中学习不同方面。使用 <a href="http://www.jmlr.org/papers/volume12/collobert11a/collobert11a.pdf" title="Natural Language Processing (Almost) from Scratch" target="_blank" rel="noopener">Collobert R 等 2011</a> 的方法解决语言长度不一的问题。具体的做法可参考原论文 <strong>4.2 MCCNNs for Question Understanding</strong>。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>&emsp;&emsp;未来的探索方向：</p>
+<ol>
+<li>整合更多的外部知识源，如clueweb；</li>
+<li>以多任务学习方式训练MCCNN；</li>
+<li>由于我们的模型能够检测到问题中最重要的单词，因此使用结果挖掘有效的问题模式将是非常有趣的。</li>
+</ol>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/论文/23、Question Answering over Freebase with Multi-Column Convolutional Neural Networks.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -704,7 +1152,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-07-17 15:08:42" itemprop="dateModified" datetime="2019-07-17T15:08:42+08:00">2019-07-17</time>
+                <time title="修改时间：2019-08-06 10:41:31" itemprop="dateModified" datetime="2019-08-06T10:41:31+08:00">2019-08-06</time>
               
             
           </span>
@@ -771,8 +1219,16 @@ if(pathname == '/flower.html'){
 
       
         
-          <h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://arxiv.org/pdf/1406.3676" target="_blank" rel="noopener">论文地址</a>，发表于 2014 年。<br>&emsp;&emsp;本文的作者在同年发表了另一篇论文，将上一篇论文称为 A，此论文称为 B，我也做了<a href="https://yan624.github.io/论文/20、Open Question Answering with Weakly supervised Embedding Models.html">论文笔记</a>，本论文是上一篇论文的改进版。A 中只是对简单问题进行研究，B 研究如何回答更复杂的问题来改进模型。<br>&emsp;&emsp;在开放域问答中，一流技术分为两大类：1)基于信息检索；2)基于语义分析。<strong>信息检索</strong>系统首先通过 KBs 的搜索 API 将问题转换为有效的查询以此检索大量的候选答案，然后仔细地识别准确的答案（8，12,14）。<strong>语义分析</strong>旨在通过语义分析系统正确<strong>解释</strong>问题的含义，<strong>解释步骤</strong>的做法是把问题转换为数据库查询语句（这里的查询语句应该是逻辑形式，比如<strong>组合范畴法</strong>），以此查询到正确的答案。<br>&emsp;&emsp;然而这两种方法仍需要大量的人工操作，且<strong>没有通用性</strong>，<strong>无法方便地扩展到</strong>具有其他模式、更广泛词汇或英语以外语言的<strong>新数据库</strong>。相反，<a href="https://www.aclweb.org/anthology/P13-1158" target="_blank" rel="noopener">Paraphrase-Driven Learning for Open Question Answering</a> 提出了一个几乎不需要人工注释的开放域 QA 框架，虽然这是一种有趣的方法，但是它被其他方法超越了。即第二段提到的论文 A。</p>
-<h1 id="考虑多维度的信息"><a href="#考虑多维度的信息" class="headerlink" title="考虑多维度的信息"></a>考虑多维度的信息</h1>
+          <h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://arxiv.org/pdf/1406.3676" target="_blank" rel="noopener">论文地址</a>，发表于 2014 年。<br>&emsp;&emsp;本文的作者在同年发表了另一篇论文，将上一篇论文称为 A，此论文称为 B，对于 A 论文我也做了<a href="https://yan624.github.io/论文/20、Open Question Answering with Weakly supervised Embedding Models.html">论文笔记</a>，本论文是上一篇论文的改进版。A 只是对简单问题进行研究，B 研究如何改进模型并回答更复杂的问题。<br>&emsp;&emsp;开放域问答中的一流技术大致可以分为两大类：1)基于信息检索；2)基于语义解析。<strong>信息检索</strong>系统首先通过 KBs 的搜索 API（转换方式估计是手写模版，论文中未细说） <strong>将问题转换为有效的查询语句</strong>（比如 neo4j 数据库的 CQL）以此检索到大量的候选答案，然后再仔细地识别准确的答案（<a href="https://www.sciencedirect.com/science/article/pii/S0020025511003860" title="A survey on question answering technology from an information retrieval perspective" target="_blank" rel="noopener">Kolomiyets O 等 2011</a>，<a href="https://www2012.universite-lyon.fr/proceedings/proceedings/p639.pdf" title="Template-based Question Answering over RDF Data" target="_blank" rel="noopener">Unger C 等 2012</a>，<a href="https://www.aclweb.org/anthology/P14-1090" title="Information Extraction over Structured Data: Question Answering with Freebase" target="_blank" rel="noopener">Yao X 等 2014</a>）。<strong>语义解析</strong>旨在通过语义分析系统正确<strong>解释</strong>问题的含义，<strong>解释步骤</strong>的做法是把问题转换为数据库查询语句（这里的查询语句应该是逻辑形式，比如<strong>组合范畴法</strong>），以此查询到正确的答案。尽管这两种方法有能力去处理大规模知识库，但是需要专家手动的创建词汇、语法以及 KB 协议才能有所成效。且<strong>没有通用性</strong>，<strong>无法方便地扩展到</strong>具有其他模式、更广泛词汇或英语以外语言的<strong>新数据库</strong>。<br>&emsp;&emsp;相反，<a href="https://www.aclweb.org/anthology/P13-1158" target="_blank" rel="noopener">Paraphrase-Driven Learning for Open Question Answering</a> 提出了一个几乎不需要人工注释的开放域 QA 框架，虽然这是一种有趣的方法，但是它被其他方法超越了。即第二段提到的论文 A。<br>&emsp;&emsp;相比于论文 A，作者作出了以下几点<strong>改进</strong>：1）对于候选答案，考虑更多更长的路径（之前只考虑了 main entity 周围的节点）；2）对候选答案进行更有意义的表示：答案的表示包含问答路径以及周围的子图。</p>
+<h1 id="任务定义"><a href="#任务定义" class="headerlink" title="任务定义"></a>任务定义</h1><p>&emsp;&emsp;假设所有潜在的答案都是 KB 中的实体，当 KB 中不存在该实体时，可以使用一些方法解决（论文中具体没说，只是说了一种极简单的方式：<em>When this entity is not given, plain string matching is used to perform entity resolution</em>）。<br>&emsp;&emsp;此外 N 代表词典的大小，其中 <script type="math/tex">N = N_W + N_S</script>，<script type="math/tex">N_W</script> 代表词嵌入的大小，<script type="math/tex">N_S</script> 代表实体和关系的数量。</p>
+<h1 id="改进：考虑多维度的信息"><a href="#改进：考虑多维度的信息" class="headerlink" title="改进：考虑多维度的信息"></a>改进：考虑多维度的信息</h1><p>&emsp;&emsp;以下描述一个候选答案的特征表示，论文将以三个角度进行表示：</p>
+<ol>
+<li>Single Entity：此表示方式与上一篇论文一样，没什么讲究。就是 Freebase 中的一个实体，<script type="math/tex">\psi(a)</script> 代表答案的 1-of-<script type="math/tex">N_S</script>（one hot）表示；</li>
+<li>Path Representation：答案被认为是一条 path，该 path 从<strong>问题中被提及的实体</strong>到<strong>答案实体</strong>。此实验中，考虑 1-hop 或者 2-hops 级别的 path。比如，(barack obama, people.person.place of birth, honolulu) 是 1-hop path，(barack obama, people.person.place of birth, location. location.containedby, hawaii) 是 2-hop path。这导致了 <script type="math/tex">\psi(a)</script> 代表 3-of-<script type="math/tex">N_S</script> 或者 4-of-<script type="math/tex">N_S</script> 的向量，至于为什么是 *-of-<script type="math/tex">N_S</script>，显而易见。</li>
+<li>Subgraph Representation：我们将 2 中的 <strong>Path</strong> 和连接候选答案的整个<strong>子图</strong>进行编码。<em>具体看论文，写的有点看不懂</em>。</li>
+</ol>
+<p>&emsp;&emsp;我们的假想是将所有的信息都编码进表示以提高结果，但是这不大可能。所以还是采用将子图编码进表示的方法。下图即为实验的模型，右下角显示了编码方式。<br><img src="https://img-blog.csdn.net/20171101002818501?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvTEFXXzEzMDYyNQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="架构图" title="架构图"></p>
+<h1 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h1><p>&emsp;&emsp;与论文 A 差不多，多了一个多任务训练，其他的细枝末节没仔细看。<br>
           <!--noindex-->
           
             <div class="post-button text-center">
@@ -784,7 +1240,7 @@ if(pathname == '/flower.html'){
           <!--/noindex-->
         
       
-    </div>
+    </p></div>
 
     
 
@@ -902,7 +1358,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-07-25 09:34:30" itemprop="dateModified" datetime="2019-07-25T09:34:30+08:00">2019-07-25</time>
+                <time title="修改时间：2019-08-05 21:38:57" itemprop="dateModified" datetime="2019-08-05T21:38:57+08:00">2019-08-05</time>
               
             
           </span>
@@ -969,7 +1425,7 @@ if(pathname == '/flower.html'){
 
       
         
-          <h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://arxiv.org/pdf/1404.4326" target="_blank" rel="noopener">论文地址</a>，论文发表于 2014 年。<br>&emsp;&emsp;建立一个能够回答任何问题的计算机是人工智能的一个长期目标。这一领域一个重要的发展时大规模知识库的建立，如 <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.538.7139&amp;rep=rep1&amp;type=pdf" target="_blank" rel="noopener">Freebase</a> 和 <a href="https://content.iospress.com/download/semantic-web/sw134?id=semantic-web%2Fsw134" target="_blank" rel="noopener">DBPedia</a>，它们存储了大量的通用信息。它们由三元组的形式构成一个数据库，通过各种关系和格式连接成实体对。那么回答问题被定义为<strong>给定一个用自然语言表达的查询语句</strong>（一个查询语句的例子：中国的首都在哪？）<strong>从知识库中检索正确的实体或实体集的任务</strong>。<br>&emsp;&emsp;最近，通过将问题映射为<strong>逻辑形式</strong>或者类似<strong>数据库查询</strong>的方法取得了可喜的进展。虽然这种方法可能有效，但是缺点是要采用大量的人为标记的数据或者需要工作人员定义词汇表和语法。<br>&emsp;&emsp;本文采用一种激进的学习方式，将问题映射为向量（无法人为解释）的特征表示。并且将重点放在回答一些基于比较宽泛的主题的简单事实性问题。这项任务的难点来自词汇的多样性，而不是句法的复杂性。<br>&emsp;&emsp;该方法采用随机梯度下降，然后使用 fine-tuning 进行训练。经验表明该模型能够捕获一些有意义的信号，且这是唯一一种能够在弱标记数据上训练的方法。</p>
+          <h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://arxiv.org/pdf/1404.4326" target="_blank" rel="noopener">论文地址</a>，论文发表于 2014 年。<br>&emsp;&emsp;建立一个能够回答任何问题的计算机是人工智能的一个长期目标。这一领域一个重要的发展时大规模知识库的建立，如 <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.538.7139&amp;rep=rep1&amp;type=pdf" target="_blank" rel="noopener">Freebase</a> 和 <a href="https://content.iospress.com/download/semantic-web/sw134?id=semantic-web%2Fsw134" target="_blank" rel="noopener">DBPedia</a>，它们存储了大量的通用信息。它们由三元组的形式构成一个数据库，通过各种关系和格式连接成实体对。那么回答问题被定义为<strong>给定一个用自然语言表达的查询语句</strong>（一个查询语句的例子：中国的首都在哪？）<strong>从知识库中检索正确的实体或实体集的任务</strong>。<br>&emsp;&emsp;最近，通过将问题映射为<strong>逻辑形式</strong>或者类似<strong>数据库查询</strong>的方法取得了富有希望的进展。虽然这种方法可能有效，但是缺点是要采用大量的人为标记的数据或者需要工作人员定义词汇表和语法。<br>&emsp;&emsp;本文采用一种激进的学习方式，将问题映射为向量（无法人为解释）的特征表示。并且将重点放在回答一些基于比较宽泛的主题的简单事实性问题。这项任务的难点来自词汇的多样性，而不是句法的复杂性。<br>&emsp;&emsp;该方法采用随机梯度下降，然后使用 fine-tuning 进行训练。经验表明该模型能够捕获一些有意义的信号，且这是唯一一种能够在弱标记数据上训练的方法。</p>
 <h1 id="论文内容介绍"><a href="#论文内容介绍" class="headerlink" title="论文内容介绍"></a>论文内容介绍</h1><ol>
 <li>Section 2：讨论了之前的工作；</li>
 <li>Section 3：介绍了开放域问答的问题；</li>
@@ -978,8 +1434,8 @@ if(pathname == '/flower.html'){
 </ol>
 <h1 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h1><ol>
 <li>大规模的问答历史悠久，主要由 TREC tracks（<a href="https://arxiv.org/pdf/cs/0110053.pdf" target="_blank" rel="noopener">Voorhees 2000</a>） 发起，这是第一个成功地<strong>将问题转换为查询</strong>的问答系统。将问题转换为查询之后，又<strong>将查询提供给 web 搜索引擎</strong>，然后<strong>从返回的页面或片段中取出答案</strong>（<a href="http://aiweb.cs.washington.edu/research/projects/ai3/mulder/mulder-www10.pdf" target="_blank" rel="noopener">Kwok 2001</a>, <a href="https://www.aaai.org/Papers/Symposia/Spring/2002/SS-02-06/SS02-06-002.pdf" target="_blank" rel="noopener">Banko 2002</a>）。这种方法需要大量的人工操作来处理查询，然后解析和搜索结果。</li>
-<li>大型 KBs 的出现，如 FreeBase 和 DBPedia，改变了上述状况，但是也带来巨大的挑战。语言的多样性以及 KBs 规模的庞大，使得需要通过监督学习来处理大量的<strong>带标签</strong>的数据。最早的方法是基于手写模板的 KBs 开放问答，然而对于日新月异 KBs（增加/删除三元组和实体） 还不够健壮。于是在 KBs 出现之后开始尝试使用较少的监督情况下<strong>学习 KBs 和自然语言之间的联系</strong>，但是这项工作实际上在解决<strong>信息提取</strong>的问题（16，11,14,19）。</li>
-<li>近年来，有一种基于语义解析器（6,3,12）的新的问答系统被提出，它只具有少量标记数据。但仍需要耗费大量精力去仔细设计词汇，语法和知识库。</li>
+<li>大型 KBs 的出现，如 FreeBase 和 DBPedia，改变了上述状况，但是也带来巨大的挑战。语言的多样性以及 KBs 规模的庞大，使得需要通过监督学习来处理大量的<strong>带标签</strong>的数据。最早的方法是基于手写模板的 KBs 开放问答，然而对于日新月异 KBs（增加/删除三元组和实体） 还不够健壮。于是在 KBs 出现之后开始尝试使用较少的监督情况下<strong>学习 KBs 和自然语言之间的联系</strong>，但是这项工作实际上在解决<strong>信息提取</strong>的问题（<a href="https://www.aclweb.org/anthology/P09-1113" title="Distant supervision for relation extraction without labeled data" target="_blank" rel="noopener">Mintz M 等 2009</a>，<a href="https://www.aclweb.org/anthology/P11-1055" title="Knowledge-Based Weak Supervision for Information Extractionof Overlapping Relation" target="_blank" rel="noopener">Hoffmann R 等 2011</a>，<a href="https://www.aclweb.org/anthology/D12-1093" title="Reading The Web with Learned Syntactic-Semantic Inference Rules" target="_blank" rel="noopener">Lao N 等 2012</a>，<a href="https://www.aclweb.org/anthology/N13-1008" title="Relation Extraction with Matrix Factorization and Universal Schemas" target="_blank" rel="noopener">Riedel S 等 2013</a>）。</li>
+<li>近年来，有一种基于语义解析器（<a href="https://www.aclweb.org/anthology/P13-1042" title="Large-scale Semantic Parsing via Schema Matching and Lexicon Extension" target="_blank" rel="noopener">Cai Q 等 2013</a>，<a href="https://www.aclweb.org/anthology/D13-1160" title="Semantic Parsing on Freebase from Question-Answer Pairs" target="_blank" rel="noopener">Berant J 等 2013</a>，<a href="https://www.aclweb.org/anthology/D13-1161" title="Scaling Semantic Parsers with On-the-fly Ontology Matching" target="_blank" rel="noopener">Kwiatkowski T 等 2013</a>）的新的问答系统被提出，它只具有少量标记数据。但仍需要耗费大量精力去仔细设计词汇，语法和知识库。</li>
 <li>所以本文（2014 年）提出了基于嵌入式的问答模型。据我们所知，这是以前从未尝试过的。</li>
 </ol>
 <h1 id="开放域问答"><a href="#开放域问答" class="headerlink" title="开放域问答"></a>开放域问答</h1><p>&emsp;&emsp;本文使用 <a href="https://www.aclweb.org/anthology/P13-1158" target="_blank" rel="noopener">Fader 2013</a> 的问答框架，并使用了相同的数据。</p>
@@ -990,7 +1446,10 @@ if(pathname == '/flower.html'){
 <p>&emsp;&emsp;这里每个问题我们只给出一个 t，但是实际上它可以有很多，所以上文说是一组三元组。本文其余部分，<strong>使用 <script type="math/tex">\kappa</script>（读作 kappa） 代表 KB ，使用 <script type="math/tex">\epsilon</script> 代表 KB 中的实体或者关系。问题的词表用 V 表示，<script type="math/tex">n_V</script> <script type="math/tex">n_{\epsilon}</script>分别表示 V 和 <script type="math/tex">\epsilon</script> 的大小</strong>。<br>&emsp;&emsp;我们的模型在于<strong>函数 S(·)</strong>，它可以为 question-answer triple pairs (q,t) 打分。因此，找到问题 q 的 top-ranked 的答案 <script type="math/tex">\hat{t}</script>(q) 直接由以下公式得出：</p>
 <script type="math/tex; mode=display">
 \hat{t}(q) = arg \max_{t' \in \kappa}S(q, t')</script><p>&emsp;&emsp;为了处理多个答案，我们将结果呈现为排完序的列表并对其评分，而不是直接采用最前面的预测结果。<br>&emsp;&emsp;使用评分函数可以直接查询 KB，而不需要在<strong>语义分析系统</strong>中一样为问题定义一个中间的结构化逻辑表示。我们的目标是学习 S(·)，余下将讲述用于训练的数据的创建步骤。</p>
-<h2 id="用于训练的数据"><a href="#用于训练的数据" class="headerlink" title="用于训练的数据"></a>用于训练的数据</h2><h1 id="Embedding-based-model"><a href="#Embedding-based-model" class="headerlink" title="Embedding-based model"></a>Embedding-based model</h1><p>&emsp;&emsp;使用了符号的嵌入表示（2019 年了，应该谁都知道了，不做解释）。</p>
+<h2 id="用于训练的数据"><a href="#用于训练的数据" class="headerlink" title="用于训练的数据"></a>用于训练的数据</h2><div class="note info">
+            <p>待续</p>
+          </div>
+<h1 id="Embedding-based-model"><a href="#Embedding-based-model" class="headerlink" title="Embedding-based model"></a>Embedding-based model</h1><p>&emsp;&emsp;模型使用了词嵌入（2019 年了，应该谁都知道了，不做解释）。</p>
 <h2 id="Question-KB-Triple-Scoring"><a href="#Question-KB-Triple-Scoring" class="headerlink" title="Question-KB Triple Scoring"></a>Question-KB Triple Scoring</h2><p>&emsp;&emsp;我们的框架关注的是函数 S(q,t) 的学习，该函数的目的是对一个<strong>问题 q</strong> 和 一个<strong>来自 <script type="math/tex">\kappa</script> 的三元组 t</strong> 进行打分。该评分方法受到了先前工作 labeling images withwords 的启发（<a href="https://link.springer.com/content/pdf/10.1007/s10994-010-5198-3.pdf" target="_blank" rel="noopener">Weston 2013</a>），我们采用该方法将图片和标签替换成了问题和三元组。直观来讲就是：<br>有点难翻译，故给出原文：</p>
 <blockquote>
 <p>&emsp;&emsp;Intuitively, it consists of projecting questions, treated as a bag of words(and possibly n-grams as well), on the one hand, and triples on the other hand,into a shared embedding space and then computing a similarity measure (the dot  product  in  this  paper)  between  both  projections.<br>&emsp;&emsp;大致意思，将问题和三元组使用词袋模型（也可以是 n-gram 模型）投射到共享的嵌入空间，然后计算二者的相似度（本文使用点积的方式）。</p>
@@ -1007,7 +1466,7 @@ S(q,t) = f(q)^Tg(t)</script><p>&emsp;&emsp;<strong>其中 f(·) 将问题中的�
 <h1 id="论文总结"><a href="#论文总结" class="headerlink" title="论文总结"></a>论文总结</h1><p>&emsp;&emsp;通读论文之后还是有点搞不清论文是怎么训练的，后来看了一下 CCF ADL100 刘康老师的 PPT ，感觉有点理解了，以下是训练步骤：</p>
 <ol>
 <li>输入自然语言表达的问题，比如：姚明的老婆的是哪里人？</li>
-<li>使用 entity linking（论文中貌似没有这步，我在看 PPT 时也是一知半解，好在前几天我刚好在一篇论文中看到了这个 entity linking！<a href="http:s//yan624.github.io/论文/19、Semantic Parsing via Staged Query Graph Generation：Question Answering with Knowledge Base.html#链接主题实体" target="_blank" rel="noopener">博客地址</a>，entity linking 源于<a href="https://arxiv.org/pdf/1609.08075.pdf" target="_blank" rel="noopener">Yang and Chang, 2015</a>）找到 main entity，main entity 周围的 entity 均是候选 entity。如下图，姚明是 main entity，姚明周围的实体都算作候选 entity，比如叶莉、火箭队、上海等。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Open Question Answering with Weakly supervised Embedding Models/姚明的老婆是谁的知识图谱的子图.jpg" alt="姚明的老婆是谁的知识图谱的子图"></li>
+<li>使用 entity linking（论文中貌似没有这步，我在看 PPT 时也是一知半解，好在前几天我刚好在一篇论文中看到了这个 entity linking！<a href="https://yan624.github.io/论文/19、Semantic Parsing via Staged Query Graph Generation：Question Answering with Knowledge Base.html#链接主题实体">博客地址</a>，entity linking 源于<a href="https://arxiv.org/pdf/1609.08075.pdf" target="_blank" rel="noopener">Yang and Chang, 2015</a>）找到 main entity，main entity 周围的 entity 均是候选 entity。如下图，姚明是 main entity，姚明周围的实体都算作候选 entity，比如叶莉、火箭队、上海等。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Open Question Answering with Weakly supervised Embedding Models/姚明的老婆是谁的知识图谱的子图.jpg" alt="姚明的老婆是谁的知识图谱的子图"></li>
 <li>计算问题和候选 entity 的相似度，其中问题由词向量表示，候选 entity 是一个三元组的形式，难以直接用词向量表示，方法是将三元组中的三个对象分别用词向量表示，然后将三个词向量相加。这样就得到了问题的词向量和 entity 的词向量，点乘获得相似度。</li>
 <li>由于候选 entity 不一定只有一个，所以可以获得多个相似度。进行排序即可获得最相似的候选 entity。</li>
 </ol>
@@ -1523,7 +1982,7 @@ S(q,t) = f(q)^Tg(t)</script><p>&emsp;&emsp;<strong>其中 f(·) 将问题中的�
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/机器学习算法（七）：K-NN.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/zcy/机器学习算法（七）：K-NN.html">
     
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1549,7 +2008,7 @@ S(q,t) = f(q)^Tg(t)</script><p>&emsp;&emsp;<strong>其中 f(·) 将问题中的�
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/学习笔记/机器学习算法（七）：K-NN.html" class="post-title-link" itemprop="url">机器学习算法（七）：K-NN</a>
+                <a href="/zcy/机器学习算法（七）：K-NN.html" class="post-title-link" itemprop="url">机器学习算法（七）：K-NN</a>
               
             
           </h1>
@@ -1680,7 +2139,7 @@ S(q,t) = f(q)^Tg(t)</script><p>&emsp;&emsp;<strong>其中 f(·) 将问题中的�
           <!--noindex-->
           
             <div class="post-button text-center">
-              <a class="btn" href="/学习笔记/机器学习算法（七）：K-NN.html#more" rel="contents">
+              <a class="btn" href="/zcy/机器学习算法（七）：K-NN.html#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -2299,436 +2758,6 @@ S(q,t) = f(q)^Tg(t)</script><p>&emsp;&emsp;<strong>其中 f(·) 将问题中的�
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/Dissecting-BERT-Part-1：-The-Encoder（BERT解析）.html">
-    
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-				
-				
-	
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/Dissecting-BERT-Part-1：-The-Encoder（BERT解析）.html" class="post-title-link" itemprop="url">Dissecting BERT Part 1： The Encoder（BERT解析）</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-05-25 11:47:18" itemprop="dateCreated datePublished" datetime="2019-05-25T11:47:18+08:00">2019-05-25</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-06-04 13:22:19" itemprop="dateModified" datetime="2019-06-04T13:22:19+08:00">2019-06-04</time>
-              
-            
-          </span>
-          
-          
-          	
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/dl/" itemprop="url" rel="index"><span itemprop="name">dl</span></a></span>
-
-                
-                
-              
-            </span>
-          
-          
-          <!--不蒜子计数-->
-          <span id="busuanzi_container_site_uv">
-<span class="post-meta-divider">|</span>
-	浏览量：<span id="busuanzi_value_site_uv"></span>人次
-</span>
-				
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-        <div class="post-gallery" itemscope="" itemtype="http://schema.org/ImageGallery">
-          
-          
-            <div class="post-gallery-row">
-              <a class="post-gallery-img fancybox" href="https://cdn-images-1.medium.com/max/800/1*SdiFbDnvGZWRUhev7ynU9Q.jpeg" rel="gallery_cjyxybxm400031w807o2r30xn" itemscope="" itemtype="http://schema.org/ImageObject" itemprop="url">
-                <img src="https://cdn-images-1.medium.com/max/800/1*SdiFbDnvGZWRUhev7ynU9Q.jpeg" itemprop="contentUrl">
-              </a>
-            
-          
-
-          
-          </div>
-        </div>
-      
-
-      
-        
-          <p><a href="">原文</a></p>
-<h1 id="Notation"><a href="#Notation" class="headerlink" title="Notation"></a>Notation</h1><p>在开始之前，我们先定义一些将会贯穿全文的符号：</p>
-<blockquote>
-<p>emb_dim: Dimension of the token embeddings.<br>input_length: Length of the input sequence (the same in all sequences in a specific batch due to padding).<br>hidden_dim: Size of the Feed-Forward network’s hidden layer.<br>vocab_size: Amount of words in the vocabulary (derived from the corpus).</p>
-</blockquote>
-<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p><strong>BERT</strong> 中使用的 <strong>Encoder</strong> 是基于注意力机制的架构，被用于 NLP 领域之中，一年之前 Encoder 在论文 <strong>Attention Is All You Need</strong> 中被提出。该论文介绍了一种被称为 <strong>Transformer</strong> 的架构，共由两部分组成，分别为 <strong>Encoder</strong> 和 <strong>Decoder</strong> 。因为 <strong>BERT</strong> 只使用了 <strong>Encoder</strong> ，所以我们在这篇博客中只解释 Encoder（如果你想要了解 <strong>Decoder</strong> 以及它是如何与 <strong>Encoder</strong> 集成的，<a href="https://medium.com/dissecting-bert/transformer-architecture-where-the-encoder-comes-from-3b86f66b0e5f" target="_blank" rel="noopener">这里</a>我们写了一篇单独的博客）。<br>自从年初</p>
-<h1 id="Information-Flow"><a href="#Information-Flow" class="headerlink" title="Information Flow"></a>Information Flow</h1><p>通过架构的数据流如下所示：</p>
-<ol>
-<li>该模型将每个标记表示为<em>emb_dim</em>大小的向量。</li>
-</ol>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/Dissecting-BERT-Part-1：-The-Encoder（BERT解析）.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/zcy/深度学习算法（三）：RNN 各种机制.html">
-    
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-				
-				
-	
-
-	
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/zcy/深度学习算法（三）：RNN 各种机制.html" class="post-title-link" itemprop="url">深度学习算法（三）：RNN 各种机制</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-05-23 17:07:17" itemprop="dateCreated datePublished" datetime="2019-05-23T17:07:17+08:00">2019-05-23</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-08-05 13:15:40" itemprop="dateModified" datetime="2019-08-05T13:15:40+08:00">2019-08-05</time>
-              
-            
-          </span>
-          
-          
-          	
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/dl/" itemprop="url" rel="index"><span itemprop="name">dl</span></a></span>
-
-                
-                
-              
-            </span>
-          
-          
-          <!--不蒜子计数-->
-          <span id="busuanzi_container_site_uv">
-<span class="post-meta-divider">|</span>
-	浏览量：<span id="busuanzi_value_site_uv"></span>人次
-</span>
-				
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="GRU"><a href="#GRU" class="headerlink" title="GRU"></a>GRU</h1><h1 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h1><p>&emsp;&emsp;该<a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">博客</a>中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。<br>&emsp;&emsp;下图是吴恩达深度学习第五周作业中的图片，是一个 LSTM 单元。与李宏毅老师做的图有略微不同，并且在下图中将 input gate 称为了 update gate。</p>
-<ol>
-<li>首先是<strong>输入的问题</strong>。一般来说一个 LSTM 的输入是前一<strong>个</strong> LSTM 的输出值 <script type="math/tex">a</script> 以及输入值 <script type="math/tex">x</script>（对于第 2 层的 LSTM 的 输入值就是前一<strong>层</strong>的输出值）。但是众所周知，<strong>LSTM 每个门的输入肯定只有一个向量，<script type="math/tex">a</script> 和 <script type="math/tex">x</script> 是两个向量，那么如何处理呢？</strong> <strong>1)</strong>在下图中使用了 <script type="math/tex">[a^{<t-1>},x^{<t>}]</script> 进行向量拼接。<strong>2)</strong>在我看的代码中直接使用了加法进行相加，代码<a href="https://github.com/Alex-Fabbri/lang2logic-PyTorch/blob/master/seq2seq/atis/lstm/main.py" target="_blank" rel="noopener">在这</a>，但是代码量太大了，随便看看就行了。二者的差别无非是向量的维度。</li>
-<li>第一个 LSTM 的输入值怎么处理？因为它不存在前一个 LSTM。答：<strong>暂且使用随机初始化，具体还要补充</strong>（感觉 0 也可以，婴儿出生的时候不就是一张白纸吗。。。）。</li>
-<li>记忆单元中的数据也可以随机初始化或者直接为 0。</li>
-<li>每一层的 LSTM 都权重共享。意思是每一层都有多个 LSTM，里面的权重值其实是同一份。</li>
-</ol>
-<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（三）：RNN 各种机制/LSTM cell.jpg" alt="LSTM cell"></p>
-<p>&emsp;&emsp;下图是多个 LSTM 运行的示意图。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（三）：RNN 各种机制/多个 LSTM.jpg" alt="多个 LSTM"></p>
-<p>&emsp;&emsp;下图是 LSTM 的反向传播，被称为 BPTT（backpropagation through time）。由于还没遇到过，并且 pytorch 都已经是自动求导，所以目前处于待补充状态。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（三）：RNN 各种机制/LSTM反向传播.jpg" alt="LSTM反向传播"></p>
-<h1 id="Seq2Seq"><a href="#Seq2Seq" class="headerlink" title="Seq2Seq"></a>Seq2Seq</h1><p>&emsp;&emsp;该<a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#seq2seq">博文</a>也可供参考。以前想过 encoder-decoder 如何实现，以为很复杂。现在自己实现了一下，实际上就是很简单的代码，<a href="https://github.com/yan624/machine_learning_algorithms/blob/master/dl/seq2seq.py" target="_blank" rel="noopener">代码地址</a>。<br>&emsp;&emsp;由于 seq2seq 有两个输入。对于 encoder 输入包含隐藏状态 a 以及 输入值 x。对于 decoder 输入包含隐藏状态 a 和 encoder 的输出。这实际上跟 LSTM 差不多，如果 seq2seq 的神经元使用 LSTM 的话，实际上就一模一样了。我只使用了简单的加法，将两个输入合并。当然也可以使用其他方法，比如拼接。其他的方法可以自行发挥。</p>
-<h1 id="Attention"><a href="#Attention" class="headerlink" title="Attention"></a>Attention</h1><p><a href="https://www.zhihu.com/question/68482809/answer/264632289" target="_blank" rel="noopener">参考文章</a></p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/zcy/深度学习算法（三）：RNN 各种机制.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2780,7 +2809,7 @@ S(q,t) = f(q)^Tg(t)</script><p>&emsp;&emsp;<strong>其中 f(·) 将问题中的�
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">111</span>
+                    <span class="site-state-item-count">113</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2904,7 +2933,7 @@ S(q,t) = f(q)^Tg(t)</script><p>&emsp;&emsp;<strong>其中 f(·) 将问题中的�
 								<span class="site-state-item-name">访客量</span>
 						</div>
 						<div class="site-state-item site-state-posts">
-								<span class="site-state-item-count">93.5k</span>
+								<span class="site-state-item-count">97.5k</span>
 								<span class="site-state-item-name">总字数</span>
 						</div>
           

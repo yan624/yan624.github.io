@@ -106,25 +106,43 @@
 <!--图片缩放插件样式-->
 <link rel="stylesheet" href="/lib/zoomify/zoomify.min.css">
 
-  <meta name="description" content="之前写的数学表达式明明可以渲染，但是接下去隔了n行的数学表达式无法渲染。推测是因为单行数学表达式在文字前面换行。比如说：  文字文字文字文字：·￥￥·该表达式渲染正常。  如果，  文字文字文字文字：·￥￥·那么下面的数学表达式将全部无法渲染。">
-<meta name="keywords" content="博客，java，javaWeb，NLP，python，机器学习，深度学习">
+  <meta name="description" content="Transformer位置信息&amp;emsp;&amp;emsp;引用自放弃幻想，全面拥抱Transformer：自然语言处理三大特征抽取器（CNN/RNN/TF）比较  &amp;emsp;&amp;emsp;NLP 句子中单词之间的相对位置是包含很多信息的，上面提过，RNN 因为结构就是线性序列的，所以天然会将位置信息编码进模型；而CNN的卷积层其实也是保留了位置相对信息的，所以什么也不做问题也不大。但是对于 Trans">
+<meta name="keywords" content="系列,学习笔记">
 <meta property="og:type" content="article">
-<meta property="og:title" content="在写了大量内容以及大量数学表达式后，mathJax无法渲染数学表达式">
-<meta property="og:url" content="http://yan624.github.io/在写了大量内容以及大量数学表达式后，mathJax无法渲染数学表达式.html">
+<meta property="og:title" content="深度学习算法（四）：Transformer">
+<meta property="og:url" content="http://yan624.github.io/zcy/深度学习算法（四）：Transformer.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="之前写的数学表达式明明可以渲染，但是接下去隔了n行的数学表达式无法渲染。推测是因为单行数学表达式在文字前面换行。比如说：  文字文字文字文字：·￥￥·该表达式渲染正常。  如果，  文字文字文字文字：·￥￥·那么下面的数学表达式将全部无法渲染。">
+<meta property="og:description" content="Transformer位置信息&amp;emsp;&amp;emsp;引用自放弃幻想，全面拥抱Transformer：自然语言处理三大特征抽取器（CNN/RNN/TF）比较  &amp;emsp;&amp;emsp;NLP 句子中单词之间的相对位置是包含很多信息的，上面提过，RNN 因为结构就是线性序列的，所以天然会将位置信息编码进模型；而CNN的卷积层其实也是保留了位置相对信息的，所以什么也不做问题也不大。但是对于 Trans">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-04-18T08:27:54.644Z">
+<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_positional_encoding_vectors.png">
+<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_positional_encoding_example.png">
+<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_self_attention_vectors.png">
+<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_self_attention_score.png">
+<meta property="og:image" content="https://jalammar.github.io/images/t/self-attention_softmax.png">
+<meta property="og:image" content="https://jalammar.github.io/images/t/self-attention-output.png">
+<meta property="og:image" content="https://jalammar.github.io/images/t/self-attention-matrix-calculation.png">
+<meta property="og:image" content="https://jalammar.github.io/images/t/self-attention-matrix-calculation-2.png">
+<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_attention_heads_qkv.png">
+<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_attention_heads_z.png">
+<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_attention_heads_weight_matrix_o.png">
+<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_multi-headed_self-attention-recap.png">
+<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_resideual_layer_norm.png">
+<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_resideual_layer_norm_2.png">
+<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_resideual_layer_norm_3.png">
+<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_decoding_1.gif">
+<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_decoding_2.gif">
+<meta property="og:updated_time" content="2019-08-07T06:48:05.817Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="在写了大量内容以及大量数学表达式后，mathJax无法渲染数学表达式">
-<meta name="twitter:description" content="之前写的数学表达式明明可以渲染，但是接下去隔了n行的数学表达式无法渲染。推测是因为单行数学表达式在文字前面换行。比如说：  文字文字文字文字：·￥￥·该表达式渲染正常。  如果，  文字文字文字文字：·￥￥·那么下面的数学表达式将全部无法渲染。">
+<meta name="twitter:title" content="深度学习算法（四）：Transformer">
+<meta name="twitter:description" content="Transformer位置信息&amp;emsp;&amp;emsp;引用自放弃幻想，全面拥抱Transformer：自然语言处理三大特征抽取器（CNN/RNN/TF）比较  &amp;emsp;&amp;emsp;NLP 句子中单词之间的相对位置是包含很多信息的，上面提过，RNN 因为结构就是线性序列的，所以天然会将位置信息编码进模型；而CNN的卷积层其实也是保留了位置相对信息的，所以什么也不做问题也不大。但是对于 Trans">
+<meta name="twitter:image" content="https://jalammar.github.io/images/t/transformer_positional_encoding_vectors.png">
 
 
 
 
 
 
-  <link rel="canonical" href="http://yan624.github.io/在写了大量内容以及大量数学表达式后，mathJax无法渲染数学表达式.html">
+  <link rel="canonical" href="http://yan624.github.io/zcy/深度学习算法（四）：Transformer.html">
 
 
 
@@ -134,7 +152,7 @@
   };
 </script>
 
-  <title>在写了大量内容以及大量数学表达式后，mathJax无法渲染数学表达式 | 博客</title>
+  <title>深度学习算法（四）：Transformer | 博客</title>
   
 
 
@@ -384,7 +402,7 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">111</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">113</span></a>
 
   </li>
 
@@ -436,7 +454,7 @@ if(pathname == '/flower.html'){
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/在写了大量内容以及大量数学表达式后，mathJax无法渲染数学表达式.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/zcy/深度学习算法（四）：Transformer.html">
     
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -453,9 +471,39 @@ if(pathname == '/flower.html'){
       <header class="post-header">
 				
 				
+	
+
+	
+		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
+			<script type="text/javascript" src="/lib/spop/spop.min.js"></script>
+			<!--判断该文章是否为学习笔记-->
+			<script>
+				spop({
+					template: '<h4 class="spop-title">注意</h4><p style="font-size:1.15em">如文章中未弹出此窗，则没什么大问题。</p>此文章仅为博主的学习笔记，并非教学，其中可能含有理论错误。',
+					group: 'tips',
+					position  : 'bottom-center',
+					style: 'success',
+					autoclose: 5500,
+					onOpen: function () {
+						//这里设置灰色背景色
+					},
+					onClose: function() {
+						//这里可以取消背景色
+						spop({
+							template: 'ε = = (づ′▽`)づ',
+							group: 'tips',
+							position  : 'bottom-center',
+							style: 'success',
+							autoclose: 1500
+						});
+					}
+				});
+			</script>
+	
+
         
         
-          <h1 class="post-title" itemprop="name headline">在写了大量内容以及大量数学表达式后，mathJax无法渲染数学表达式
+          <h1 class="post-title" itemprop="name headline">深度学习算法（四）：Transformer
 
               
             
@@ -481,7 +529,7 @@ if(pathname == '/flower.html'){
                 
               
 
-              <time title="创建时间：2019-04-18 16:23:46 / 修改时间：16:27:54" itemprop="dateCreated datePublished" datetime="2019-04-18T16:23:46+08:00">2019-04-18</time>
+              <time title="创建时间：2019-08-07 10:55:15 / 修改时间：14:48:05" itemprop="dateCreated datePublished" datetime="2019-08-07T10:55:15+08:00">2019-08-07</time>
             
 
             
@@ -504,14 +552,14 @@ if(pathname == '/flower.html'){
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/" itemprop="url" rel="index"><span itemprop="name">assorted</span></a></span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a></span>
 
                 
                 
                   ，
                 
               
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/hexo/" itemprop="url" rel="index"><span itemprop="name">hexo</span></a></span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/dl/" itemprop="url" rel="index"><span itemprop="name">dl</span></a></span>
 
                 
                 
@@ -552,14 +600,45 @@ if(pathname == '/flower.html'){
       
 
       
-        <p>之前写的数学表达式明明可以渲染，但是接下去隔了n行的数学表达式无法渲染。推测是因为单行数学表达式在文字前面换行。<br>比如说：</p>
+        <h1 id="Transformer位置信息"><a href="#Transformer位置信息" class="headerlink" title="Transformer位置信息"></a>Transformer位置信息</h1><p>&emsp;&emsp;引用自<a href="https://zhuanlan.zhihu.com/p/54743941" target="_blank" rel="noopener">放弃幻想，全面拥抱Transformer：自然语言处理三大特征抽取器（CNN/RNN/TF）比较</a></p>
 <blockquote>
-<p>文字文字文字文字：·￥￥·<br>该表达式渲染正常。</p>
+<p>&emsp;&emsp;NLP 句子中单词之间的相对位置是包含很多信息的，上面提过，RNN 因为结构就是线性序列的，所以天然会将位置信息编码进模型；而CNN的卷积层其实也是保留了位置相对信息的，所以什么也不做问题也不大。但是对于 Transformer 来说，为了能够保留输入句子单词之间的相对位置信息，必须要做点什么。为啥它必须要做点什么呢？因为输入的第一层网络是 Muli-head self attention 层，我们知道，Self attention 会让当前输入单词和句子中任意单词发生关系，然后集成到一个 embedding 向量里，但是当所有信息到了 embedding 后，位置信息并没有被编码进去。所以，Transformer 不像 RNN 或 CNN，必须明确的在输入端将 Positon 信息编码，Transformer 是用<strong>位置函数</strong>来进行位置编码的，而 Bert 等模型则给每个单词一个 <strong>Position embedding</strong>。将单词 embedding 和单词对应的 position embedding 加起来形成单词的输入 embedding，类似上文讲的 ConvS2S 的做法。</p>
 </blockquote>
-<p>如果，</p>
+<h1 id="encoder"><a href="#encoder" class="headerlink" title="encoder"></a>encoder</h1><p>&emsp;&emsp;从<a href="https://zhuanlan.zhihu.com/p/59629215" target="_blank" rel="noopener">文章</a>做的总结，此文为另一篇英文文章的翻译版，英文原文地址为 <a href="https://jalammar.github.io/illustrated-transformer/" target="_blank" rel="noopener">The Illustrated Transformer</a>。此外另一篇<a href="https://zhuanlan.zhihu.com/p/54356280" target="_blank" rel="noopener">文章</a>也做了翻译。<br>&emsp;&emsp;Transformer 不同于 RNN，它的输入是独立计算的，输入序列的某个单词并不依赖其它的单词。也就是说它可以并行运算。</p>
+<h2 id="Positional-Encoding"><a href="#Positional-Encoding" class="headerlink" title="Positional Encoding"></a>Positional Encoding</h2><p>&emsp;&emsp;在第一节中讲到，Transformer 天然的不具有句子<strong>位置</strong>属性，所以我们需要使用一种办法让它拥有句子的位置属性。<br>&emsp;&emsp;为解决这个问题，Transformer 为每个输入的词嵌入增加了一个向量。<br><img src="https://jalammar.github.io/images/t/transformer_positional_encoding_vectors.png" alt="To give the model a sense of the order of the words, we add positional encoding vectors -- the values of which follow a specific pattern."><br>&emsp;&emsp;如果假定词嵌入维度为4，那真实的位置编码如下：<br><img src="https://jalammar.github.io/images/t/transformer_positional_encoding_example.png" alt="A real example of positional encoding with a toy embedding size of 4"><br>&emsp;&emsp;位置编码的生成办法在原论文的 section 3.5 中有描述。你可以在 <a href="https://github.com/tensorflow/tensor2tensor/blob/23bd23b9830059fbc349381b70d9429b5c40a139/tensor2tensor/layers/common_attention.py" target="_blank" rel="noopener">get_timing_signal_1d()</a> 函数中看到用于生成位置编码的代码。这并不是生成位置编码的唯一方式。然而，它的优点在于可以扩展到看不见的序列长度（eg. 如果要翻译的句子的长度远长于训练集中最长的句子）。</p>
+<h2 id="self-Attention"><a href="#self-Attention" class="headerlink" title="self-Attention"></a>self-Attention</h2><p><img src="https://jalammar.github.io/images/t/transformer_self_attention_vectors.png" alt="Transformer计算机制"></p>
 <blockquote>
-<p>文字文字文字文字：<br>·￥￥·<br>那么下面的数学表达式将全部无法渲染。<br><a id="more"></a></p>
+<p>注意，这些新创建的向量的维度小于词嵌入向量(embedding vector)。它们（新创建的向量）的维度是 <strong>64</strong>，而词嵌入和编码器的输入输出向量的维度是 <strong>512</strong>。它们不必更小，这是一种架构选择，可以使多头注意力(multiheaded attention)计算不变。 </p>
 </blockquote>
+<ol>
+<li>需要从每个编码器的输入向量创建三个向量，即 <strong>Query</strong> 向量，<strong>Key</strong> 向量和 <strong>Value</strong> 向量；<ul>
+<li>那么，究竟什么是“query”，“key”，“value”向量呢？（以下为自己的猜测）<ul>
+<li>q 代表当前需要计算 score 的向量，此向量查询 key 中的权重，使得查询到自己需要的 score</li>
+<li>k 代表当前单词的权重</li>
+<li>v 代表单词的词向量</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>计算得分（score 权重）。这里的分数是通过将 query 向量与我们正在评分的单词的 key 向量做点积来得到。所以如果我们计算位置 #1 处的单词的 self-attention，第一个得分就是就是 <script type="math/tex">q_1</script> 和 <script type="math/tex">k_1</script> 的点积。第二个得分是 <script type="math/tex">q_1</script> 和 <script type="math/tex">k_2</script> 的点积。<br><img src="https://jalammar.github.io/images/t/transformer_self_attention_score.png" alt="计算 score"></li>
+<li>将分数除以8（论文中使用 Key 向量维数的平方根—-64。这可以有更稳定的梯度。实际上还可以有其他可能的值，这里使用默认值）<br><img src="https://jalammar.github.io/images/t/self-attention_softmax.png" alt="计算 score"></li>
+<li>然后经过一个softmax操作后输出结果。Softmax可以将分数归一化，这样使得结果都是正数并且加起来等于1<br><img src="https://jalammar.github.io/images/t/self-attention-output.png" alt=""></li>
+<li>将每个 value 向量乘以 softmax 得分（准备将他们相加）</li>
+<li>对加权值向量求和，这样就产生了在这个位置的self-attention的输出（对于第一个单词）</li>
+</ol>
+<p>&emsp;&emsp;上述为 self-attention 单个单词的计算步骤，其实它可以并行计算。<br><img src="https://jalammar.github.io/images/t/self-attention-matrix-calculation.png" alt="并行计算第一步"></p>
+<p><img src="https://jalammar.github.io/images/t/self-attention-matrix-calculation-2.png" alt="并行计算第二步"></p>
+<h2 id="multi-headed-attention"><a href="#multi-headed-attention" class="headerlink" title="multi-headed attention"></a>multi-headed attention</h2><p>&emsp;&emsp;看英文名感觉“高大上”，其实很简单。就是将上述的 self-attention 做多次，具体做几次你可以自行选择，Transformer 选择了 8 次。这样就产生了 8 个向量，但是我们训练时其实只要一个向量就够了，所以我们将这 8 个向量<strong>拼接</strong>起来，这样就形成了一个巨长无比的向量。那我们怎么得到我们所需长度的向量呢？很简单，只需要再乘一个权重矩阵就行了。<br><img src="https://jalammar.github.io/images/t/transformer_attention_heads_qkv.png" alt=""></p>
+<p><img src="https://jalammar.github.io/images/t/transformer_attention_heads_z.png" alt=""></p>
+<p><img src="https://jalammar.github.io/images/t/transformer_attention_heads_weight_matrix_o.png" alt=""></p>
+<p>&emsp;&emsp;全过程：<br><img src="https://jalammar.github.io/images/t/transformer_multi-headed_self-attention-recap.png" alt="全过程"></p>
+<h2 id="The-Residuals-与-layer-normalization"><a href="#The-Residuals-与-layer-normalization" class="headerlink" title="The Residuals 与 layer-normalization"></a>The Residuals 与 layer-normalization</h2><p>&emsp;&emsp;残差连接说白了就是跳过一层，输入到下一层（比较直白，不一定对）。<br><img src="https://jalammar.github.io/images/t/transformer_resideual_layer_norm.png" alt=""></p>
+<p>&emsp;&emsp;layer-normalization：<br><img src="https://jalammar.github.io/images/t/transformer_resideual_layer_norm_2.png" alt=""></p>
+<p>&emsp;&emsp;此步骤在解码层中是类似的操作。将内部件画全，就是如下所示一般（图中的 encoder、decoder 各有两个）：<br><img src="https://jalammar.github.io/images/t/transformer_resideual_layer_norm_3.png" alt=""></p>
+<h1 id="decodedr"><a href="#decodedr" class="headerlink" title="decodedr"></a>decodedr</h1><p>&emsp;&emsp;在讲解 decoder 之前，看一张动图，了解一下 Transformer 是如何运作的。编码器开始处理输入序列，然后将顶部编码器的输出变换为一组注意力向量 <strong>K</strong> 和 <strong>V</strong>，这些将在每个解码器的“encoder-decoder attention” 层使用，这有助于解码器集中注意力在输入序列的合适位置：<br><img src="https://jalammar.github.io/images/t/transformer_decoding_1.gif" alt=""></p>
+<p>&emsp;&emsp;注意上面的 gif 生成了第一个字母 I，接着下面的 gif 完成了余下的步骤。Transformer 将之前输出的 I 当做下一个时间步的输入，又走了一遍 decoder（猜测：那个 encoder 的输出生成的 K 和 V 也还是当做其中一个输入）。以此循环往复，直到输出一个结束标记 <code>&lt;EOS&gt;</code> 才结束循环。<strong>博主注</strong>：<strong>这样一来似乎对于 decoder 来说并不能实现并行运算</strong>。<br><img src="https://jalammar.github.io/images/t/transformer_decoding_2.gif" alt=""></p>
+<p>&emsp;&emsp;其中 decoder 中的 attention 与 encoder 的有所区别，但是无论是英文原文还是翻译版，我都看不懂他们在说什么。</p>
+<h1 id="The-Final-Linear-and-Softmax-Layer"><a href="#The-Final-Linear-and-Softmax-Layer" class="headerlink" title="The Final Linear and Softmax Layer"></a>The Final Linear and Softmax Layer</h1><p>&emsp;&emsp;如何将其转换为一个单词？这就是最后 Softmax 层和线性层的工作了。<br>&emsp;&emsp;线性层是一个简单的全连接神经网络，它将解码器堆叠(decoder stack)产生的向量映射到一个巨大的向量（词汇表的大小，原来的向量大小是词嵌入的大小）中去，这个向量称为 logits 向量。<br>&emsp;&emsp;Softmax 层将这些分数转化为概率(全部为正数，加起来为 1.0)。选择具有最高概率的单元，并将与其相关的单词作为本时间步的输出。<br><a id="more"></a></p>
 
       
     </div>
@@ -581,6 +660,14 @@ if(pathname == '/flower.html'){
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/系列/" rel="tag"># 系列</a>
+          
+            <a href="/tags/学习笔记/" rel="tag"># 学习笔记</a>
+          
+        </div>
+      
 
       
       
@@ -590,8 +677,8 @@ if(pathname == '/flower.html'){
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/运用其他的插件，在hexo中添加提示弹窗.html" rel="next" title="运用其他的插件，在hexo中添加提示弹窗">
-                <i class="fa fa-chevron-left"></i> 运用其他的插件，在hexo中添加提示弹窗
+              <a href="/zcy/【NLP-算法】（零）NLP基础算法.html" rel="next" title="【NLP 算法】（零）NLP基础算法">
+                <i class="fa fa-chevron-left"></i> 【NLP 算法】（零）NLP基础算法
               </a>
             
           </div>
@@ -599,10 +686,6 @@ if(pathname == '/flower.html'){
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/ViewPager无法刷新数据.html" rel="prev" title="ViewPager无法刷新数据">
-                ViewPager无法刷新数据 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -649,8 +732,17 @@ if(pathname == '/flower.html'){
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <div class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
@@ -667,7 +759,7 @@ if(pathname == '/flower.html'){
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">111</span>
+                    <span class="site-state-item-count">113</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -791,7 +883,7 @@ if(pathname == '/flower.html'){
 								<span class="site-state-item-name">访客量</span>
 						</div>
 						<div class="site-state-item site-state-posts">
-								<span class="site-state-item-count">93.5k</span>
+								<span class="site-state-item-count">97.5k</span>
 								<span class="site-state-item-name">总字数</span>
 						</div>
           
@@ -857,6 +949,23 @@ if(pathname == '/flower.html'){
         </div>
       </div>
 
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Transformer位置信息"><span class="nav-number">1.</span> <span class="nav-text">Transformer位置信息</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#encoder"><span class="nav-number">2.</span> <span class="nav-text">encoder</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Positional-Encoding"><span class="nav-number">2.1.</span> <span class="nav-text">Positional Encoding</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#self-Attention"><span class="nav-number">2.2.</span> <span class="nav-text">self-Attention</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#multi-headed-attention"><span class="nav-number">2.3.</span> <span class="nav-text">multi-headed attention</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#The-Residuals-与-layer-normalization"><span class="nav-number">2.4.</span> <span class="nav-text">The Residuals 与 layer-normalization</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#decodedr"><span class="nav-number">3.</span> <span class="nav-text">decodedr</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#The-Final-Linear-and-Softmax-Layer"><span class="nav-number">4.</span> <span class="nav-text">The Final Linear and Softmax Layer</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
       
 
       

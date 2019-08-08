@@ -106,32 +106,28 @@
 <!--图片缩放插件样式-->
 <link rel="stylesheet" href="/lib/zoomify/zoomify.min.css">
 
-  <meta name="description" content="TODO定义由于新手不太懂术语，规定行为一条数据，列为一组特征。特征代表一列数据。如性别、年龄、身高等。分类代表一个特征中不同的分类。如性别中分类为男女，天气中分类为晴、阴、雨、雪等，收入中分类为贫困、低收入、小康、中高收入者、富人等。 信息增益引用自《机器学习实战》  划分数据集的大原则：将无需的数据变得更加有序。我们可以使用多种方法划分数据集，但是每种方法都有各自的优缺点。组织杂乱无章数据的一">
-<meta name="keywords" content="学习笔记,机器学习算法">
+  <meta name="description" content="注&amp;emsp;&amp;emsp;论文地址。&amp;emsp;&amp;emsp;凉了。读完论文，发现论文中的实验是使用 python2 写的，而且由于没有 VPN 无法下载实验附带的数据，训练数据有 17G，我都不想下了。 引子&amp;emsp;&amp;emsp;人机对话时，人们通常会提出许多问题，其中大部分都可以通过大规模的 KG 回答。为此，我们提出了 Comples Sequential QA（CSQA） 任务，它由以下两">
+<meta name="keywords" content="论文笔记">
 <meta property="og:type" content="article">
-<meta property="og:title" content="机器学习算法（三）：决策树">
-<meta property="og:url" content="http://yan624.github.io/学习笔记/机器学习算法（三）：决策树.html">
+<meta property="og:title" content="论文笔记：Complex Sequential Question Answering: Towards Learning to Converse Over Linked Question Answer Pairs with a Knowledge Graph">
+<meta property="og:url" content="http://yan624.github.io/论文/30、Complex Sequential Question Answering：Towards Learning to Converse Over Linked Question Answer Pairs with a Knowledge Graph.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="TODO定义由于新手不太懂术语，规定行为一条数据，列为一组特征。特征代表一列数据。如性别、年龄、身高等。分类代表一个特征中不同的分类。如性别中分类为男女，天气中分类为晴、阴、雨、雪等，收入中分类为贫困、低收入、小康、中高收入者、富人等。 信息增益引用自《机器学习实战》  划分数据集的大原则：将无需的数据变得更加有序。我们可以使用多种方法划分数据集，但是每种方法都有各自的优缺点。组织杂乱无章数据的一">
+<meta property="og:description" content="注&amp;emsp;&amp;emsp;论文地址。&amp;emsp;&amp;emsp;凉了。读完论文，发现论文中的实验是使用 python2 写的，而且由于没有 VPN 无法下载实验附带的数据，训练数据有 17G，我都不想下了。 引子&amp;emsp;&amp;emsp;人机对话时，人们通常会提出许多问题，其中大部分都可以通过大规模的 KG 回答。为此，我们提出了 Comples Sequential QA（CSQA） 任务，它由以下两">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E4%BF%A1%E6%81%AF%E7%86%B5%E7%9A%84%E5%85%AC%E5%BC%8F.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%86%B3%E7%AD%96%E6%A0%91%E6%9E%84%E5%BB%BA%E6%AD%A5%E9%AA%A4%E2%80%94%E2%80%94%E4%B8%BE%E7%9A%84%E4%BE%8B%E5%AD%90%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%86%B3%E7%AD%96%E6%A0%91%E6%9E%84%E5%BB%BA%E6%AD%A5%E9%AA%A4%E2%80%94%E2%80%94%E8%AE%A1%E7%AE%97%E5%8E%9F%E5%A7%8B%E6%95%B0%E6%8D%AE%E7%9A%84%E7%86%B5%E5%80%BC.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%86%B3%E7%AD%96%E6%A0%91%E6%9E%84%E5%BB%BA%E6%AD%A5%E9%AA%A4%E2%80%94%E2%80%94%E8%AE%A1%E7%AE%97%E5%85%B6%E4%BB%96%E7%89%B9%E5%BE%81%E7%9A%84%E7%86%B5%E5%80%BC.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%86%B3%E7%AD%96%E6%A0%91%E6%9E%84%E5%BB%BA%E6%AD%A5%E9%AA%A4%E2%80%94%E2%80%94%E5%85%B6%E4%BB%96%E7%89%B9%E5%BE%81%E4%BB%A5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%86%B3%E7%AD%96%E6%A0%91%E7%AE%80%E5%8D%95%E4%B8%BE%E4%BE%8B%E6%9C%80%E7%BB%88%E7%BB%93%E6%9E%9C%E5%9B%BE.png">
-<meta property="og:updated_time" content="2019-07-06T05:10:37.704Z">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/复杂的连续问答：使用知识图谱在关联的问答对上学习交谈能力/提出的模型架构.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/复杂的连续问答：使用知识图谱在关联的问答对上学习交谈能力/实验结果.jpg">
+<meta property="og:updated_time" content="2019-08-06T08:43:41.777Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="机器学习算法（三）：决策树">
-<meta name="twitter:description" content="TODO定义由于新手不太懂术语，规定行为一条数据，列为一组特征。特征代表一列数据。如性别、年龄、身高等。分类代表一个特征中不同的分类。如性别中分类为男女，天气中分类为晴、阴、雨、雪等，收入中分类为贫困、低收入、小康、中高收入者、富人等。 信息增益引用自《机器学习实战》  划分数据集的大原则：将无需的数据变得更加有序。我们可以使用多种方法划分数据集，但是每种方法都有各自的优缺点。组织杂乱无章数据的一">
-<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E4%BF%A1%E6%81%AF%E7%86%B5%E7%9A%84%E5%85%AC%E5%BC%8F.jpg">
+<meta name="twitter:title" content="论文笔记：Complex Sequential Question Answering: Towards Learning to Converse Over Linked Question Answer Pairs with a Knowledge Graph">
+<meta name="twitter:description" content="注&amp;emsp;&amp;emsp;论文地址。&amp;emsp;&amp;emsp;凉了。读完论文，发现论文中的实验是使用 python2 写的，而且由于没有 VPN 无法下载实验附带的数据，训练数据有 17G，我都不想下了。 引子&amp;emsp;&amp;emsp;人机对话时，人们通常会提出许多问题，其中大部分都可以通过大规模的 KG 回答。为此，我们提出了 Comples Sequential QA（CSQA） 任务，它由以下两">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/复杂的连续问答：使用知识图谱在关联的问答对上学习交谈能力/提出的模型架构.jpg">
 
 
 
 
 
 
-  <link rel="canonical" href="http://yan624.github.io/学习笔记/机器学习算法（三）：决策树.html">
+  <link rel="canonical" href="http://yan624.github.io/论文/30、Complex Sequential Question Answering：Towards Learning to Converse Over Linked Question Answer Pairs with a Knowledge Graph.html">
 
 
 
@@ -141,7 +137,7 @@
   };
 </script>
 
-  <title>机器学习算法（三）：决策树 | 博客</title>
+  <title>论文笔记：Complex Sequential Question Answering: Towards Learning to Converse Over Linked Question Answer Pairs with a Knowledge Graph | 博客</title>
   
 
 
@@ -391,7 +387,7 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">111</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">113</span></a>
 
   </li>
 
@@ -443,7 +439,7 @@ if(pathname == '/flower.html'){
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/机器学习算法（三）：决策树.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/论文/30、Complex Sequential Question Answering：Towards Learning to Converse Over Linked Question Answer Pairs with a Knowledge Graph.html">
     
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -461,38 +457,10 @@ if(pathname == '/flower.html'){
 				
 				
 	
-		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
-			<script type="text/javascript" src="/lib/spop/spop.min.js"></script>
-			<!--判断该文章是否为学习笔记-->
-			<script>
-				spop({
-					template: '<h4 class="spop-title">注意</h4><p style="font-size:1.15em">如文章中未弹出此窗，则没什么大问题。</p>此文章仅为博主的学习笔记，并非教学，其中可能含有理论错误。',
-					group: 'tips',
-					position  : 'bottom-center',
-					style: 'success',
-					autoclose: 5500,
-					onOpen: function () {
-						//这里设置灰色背景色
-					},
-					onClose: function() {
-						//这里可以取消背景色
-						spop({
-							template: 'ε = = (づ′▽`)づ',
-							group: 'tips',
-							position  : 'bottom-center',
-							style: 'success',
-							autoclose: 1500
-						});
-					}
-				});
-			</script>
-	
-
-	
 
         
         
-          <h1 class="post-title" itemprop="name headline">机器学习算法（三）：决策树
+          <h1 class="post-title" itemprop="name headline">论文笔记：Complex Sequential Question Answering: Towards Learning to Converse Over Linked Question Answer Pairs with a Knowledge Graph
 
               
             
@@ -518,7 +486,7 @@ if(pathname == '/flower.html'){
                 
               
 
-              <time title="创建时间：2019-03-27 23:22:58" itemprop="dateCreated datePublished" datetime="2019-03-27T23:22:58+08:00">2019-03-27</time>
+              <time title="创建时间：2019-07-12 09:17:39" itemprop="dateCreated datePublished" datetime="2019-07-12T09:17:39+08:00">2019-07-12</time>
             
 
             
@@ -535,7 +503,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-07-06 13:10:37" itemprop="dateModified" datetime="2019-07-06T13:10:37+08:00">2019-07-06</time>
+                <time title="修改时间：2019-08-06 16:43:41" itemprop="dateModified" datetime="2019-08-06T16:43:41+08:00">2019-08-06</time>
               
             
           </span>
@@ -553,14 +521,14 @@ if(pathname == '/flower.html'){
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a></span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/" itemprop="url" rel="index"><span itemprop="name">assorted</span></a></span>
 
                 
                 
                   ，
                 
               
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/ml/" itemprop="url" rel="index"><span itemprop="name">ml</span></a></span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a></span>
 
                 
                 
@@ -601,31 +569,66 @@ if(pathname == '/flower.html'){
       
 
       
-        <h3 id="TODO"><a href="#TODO" class="headerlink" title="TODO"></a>TODO</h3><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>由于新手不太懂术语，规定行为一条数据，列为一组特征。<br><strong>特征</strong>代表一列数据。如性别、年龄、身高等。<br><strong>分类</strong>代表一个特征中不同的分类。如性别中分类为男女，天气中分类为晴、阴、雨、雪等，收入中分类为贫困、低收入、小康、中高收入者、富人等。</p>
-<h3 id="信息增益"><a href="#信息增益" class="headerlink" title="信息增益"></a>信息增益</h3><p>引用自《机器学习实战》</p>
-<blockquote>
-<p>划分数据集的大原则：将无需的数据变得更加有序。我们可以使用多种方法划分数据集，但是每种方法都有各自的优缺点。组织杂乱无章数据的一种办法就是使用信息论度量信息，信息论是量化处理信息的分支学科。我们可以在划分数据之前或之后使用信息论量化度量信息的内容。<br>在划分数据集之前之后信息发生的变化称为信息增益，知道如何计算信息增益，我们就可以计算每个特征值划分数据集获得的信息增益，获得信息增益最高的特征就是最好的选择。</p>
-</blockquote>
-<p>节选</p>
-<blockquote>
-<p>集合信息的度量方式称为香农熵或者简称为熵，这个名字来源于信息论之父克劳德·香农。</p>
-</blockquote>
-<p><strong>下面这一段待修改，在进一步学习后发现有问题</strong></p>
-<p>如果不懂什么是信息增益（information）和熵（entropy）也无所谓，只需要知道熵越大则不确定性越大即可。因为我们需要的是不确定性小的<strong>特征</strong>，所以熵越小越好。试想决策树就是将信息一分为二，是不是最好某一个特征只有两种<strong>分类</strong>，如男、女。这样不确定性是极小的，因为它只能分为男和女。如果某一个特征有多个分类，如鸟类下有多种详细的分类，那么该特征的熵值就会很大，不确定性也很大。想想决策树就是将信息一分为二，我该选哪条线将鸟类一分为二？这是很难想的事情，所以这个特征并不好。以上只是举例，在具体项目中不一定对，并且决策树也不一定是二叉树（此处存疑？）。<br>熵的计算公式如下，其中pi是选择该分类的概率，即有20条数据，其中13条是男性，7条是女性。则男性的pi=13/20，女性的pi=7/20。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E4%BF%A1%E6%81%AF%E7%86%B5%E7%9A%84%E5%85%AC%E5%BC%8F.jpg" alt="信息熵的公式"></p>
-<h3 id="决策树构建步骤"><a href="#决策树构建步骤" class="headerlink" title="决策树构建步骤"></a>决策树构建步骤</h3><p>决策树构建首先需要一个根节点，这是毋庸置疑的，但是根节点也不是一拍脑门就突然有了的。需要使用一些算法，现在一些常用的算法如：ID3(信息增益)、C4.5(信息增益率，解决ID3的问题，考虑自身熵)、CART(使用GINI系数来当做衡量标准，GINI系数和熵的衡量标准类似，但是计算方式不同)等。<br>以下使用<a href="https://baike.baidu.com/item/ID3%E7%AE%97%E6%B3%95/5522381" target="_blank" rel="noopener">ID3算法</a>，<strong>给出如下训练数据</strong>，来源于唐宇迪机器学习视频中的截图。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%86%B3%E7%AD%96%E6%A0%91%E6%9E%84%E5%BB%BA%E6%AD%A5%E9%AA%A4%E2%80%94%E2%80%94%E4%B8%BE%E7%9A%84%E4%BE%8B%E5%AD%90%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE.jpg" alt="例子中的数据"></p>
+        <h1 id="注"><a href="#注" class="headerlink" title="注"></a>注</h1><p>&emsp;&emsp;<a href="https://www.aaai.org/ocs/index.php/AAAI/AAAI18/paper/view/17181/15750" target="_blank" rel="noopener">论文地址</a>。<br>&emsp;&emsp;<strong>凉了。读完论文，发现论文中的实验是使用 python2 写的，而且由于没有 VPN 无法下载实验附带的数据，训练数据有 17G，我都不想下了。</strong></p>
+<h1 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h1><p>&emsp;&emsp;人机对话时，人们通常会提出许多问题，其中大部分都可以通过大规模的 KG 回答。为此，我们提出了 Comples Sequential QA（CSQA） 任务，它由以下两种任组成：</p>
 <ol>
-<li>首先计算全部数据的熵值，其实就是计算一下给出的数据中的最后一列（最后一列可以当做y）的熵值。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%86%B3%E7%AD%96%E6%A0%91%E6%9E%84%E5%BB%BA%E6%AD%A5%E9%AA%A4%E2%80%94%E2%80%94%E8%AE%A1%E7%AE%97%E5%8E%9F%E5%A7%8B%E6%95%B0%E6%8D%AE%E7%9A%84%E7%86%B5%E5%80%BC.jpg" alt="计算原始数据的熵值"></li>
-<li>计算其他特征的熵值。解释一下什么叫其他特征的熵值：比如 outlook 这个特征值，如果要计算它，首先需要知道 outlook 这个特征值分为 3 类，sunny、overcast 和 rainy，然后计算依次计算这三种类别的熵值。具体步骤是，比如计算 sunny 的熵值，那就将原数据中 outlook 不是 sunny 类别的数据全部删除，然后使用信息熵的公式计算剩余数据的熵值。其他的类别计算方式以此类推。计算完毕之后就得到了三个熵值，然后按照类别在特征中的比例相加即可。<br>&emsp;&emsp;如下图右侧，当天气为 sunny 时去打球的概率为<script type="math/tex">\frac{2}{5}</script>，不去打球的概率为<script type="math/tex">\frac{3}{5}</script>，利用上面的熵值公式计算结果为 0.971。再分别计算 outlook 其他<strong>分类</strong>：overcast 和 rainy 的熵值，此时得到了三个不同分类的熵值，即 sunny为<script type="math/tex">\frac{5}{14}</script>， overcast为<script type="math/tex">\frac{4}{14}</script>。最终 outlook 的熵值即为<script type="math/tex">\frac{5}{14} * 0.971 + \frac{4}{14} * 0 + \frac{5}{14} * 0.971 = 0.693</script>。最后其他特征值也需要分别计算它们的分类的熵值。<br>&emsp;&emsp;<strong>这里可能会出现困惑</strong>，如果每个特征值都有多个分类，那计算量不是特别大？而且这里的分类是文字，计算量较小，如果分类是数字那么分类几乎不会重复，计算量不是突破天际？我在学决策树时出现了这种疑惑，后来发现算法确实是这样的，并没有错。<br>&emsp;&emsp;分类为文字称为<strong>离散值</strong>，分类为数值称为<strong>连续值</strong>。上面说到决策树碰到连续值计算量会非常大，解决办法：<a href="https://www.baidu.com/s?wd=%E5%86%B3%E7%AD%96%E6%A0%91%E8%BF%9E%E7%BB%AD%E5%80%BC%E5%A4%84%E7%90%86" target="_blank" rel="noopener">决策树连续值处理</a><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%86%B3%E7%AD%96%E6%A0%91%E6%9E%84%E5%BB%BA%E6%AD%A5%E9%AA%A4%E2%80%94%E2%80%94%E8%AE%A1%E7%AE%97%E5%85%B6%E4%BB%96%E7%89%B9%E5%BE%81%E7%9A%84%E7%86%B5%E5%80%BC.jpg" alt="计算其他特征的熵值"><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%86%B3%E7%AD%96%E6%A0%91%E6%9E%84%E5%BB%BA%E6%AD%A5%E9%AA%A4%E2%80%94%E2%80%94%E5%85%B6%E4%BB%96%E7%89%B9%E5%BE%81%E4%BB%A5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB.jpg" alt="其他特征以及其分类"></li>
-<li>通过1和2对比，选择出熵值最低的特征，并且熵值需要小于原始数据的基本熵值。<br>&emsp;&emsp;上述123步，均可以直接在choose_best_feature_index(dataset)函数中计算获得，顶多加几个封装过的函数，比如calculate_entropy(dataset)，split_dataset(dataset, axis, value)等。</li>
-<li>删除已作出决策的数据，并将数据再次执行123步操作。<br>&emsp;&emsp;比如经过一轮筛选发现 outlook 为熵值最低的特征，则按照 outlook 的 3 个类别，决策树将会有 3 条分支，节点与节点连接的边上的值分别是 sunny、overcast 和 rainy。<br>&emsp;&emsp;首先按类别 sunny 继续往下决策，比如所有数据中，类别为 sunny 的数据全部为 yes，即想要出去打球，那么决策树递归结束。因为这个算法的目的就是要判断在这些特征下，这一天去打球是否合适，如果 sunny 下的每条数据都是 yes，就代表我们的目的已经达到了，也就没必要继续决策了。接下来假设类别 overcast 与 sunny 相反，那么就将类别是 overcast 的所有数据从原数据集中删去，再重复 123 步。</li>
-<li>构造决策树，决策树可以使用递归算法构建。<br>&emsp;&emsp;新手入门系列，完全可以仅使用python的dict来存储决策树。如：{‘tearRate’: {‘reduced’: ‘no lenses’, ‘normal’: {‘astigmatic’: {‘no’: {‘age’: {‘young’: ‘soft’, ‘pre’: ‘soft’, ‘presbyopic’: {‘prescript’: {‘hyper’: ‘soft’, ‘myope’: ‘no lenses’}}}}, ‘yes’: {‘prescript’: {‘hyper’: {‘age’: {‘young’: ‘hard’, ‘pre’: ‘no lenses’, ‘presbyopic’: ‘no lenses’}}, ‘myope’: ‘hard’}}}}}}</li>
+<li>在拥有百万个实体的 KG 上进行复杂的推理从而回答事实性问题；</li>
+<li>通过一系列连贯的链接问答对去学习交谈。</li>
 </ol>
-<h3 id="举一个简单的例子"><a href="#举一个简单的例子" class="headerlink" title="举一个简单的例子"></a>举一个简单的例子</h3><p><a href="https://github.com/yan624/machine_learning_algorithms/tree/master/decision_tree/simple_demo" target="_blank" rel="noopener">这里有一个简单例子</a><br>运行结果：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%86%B3%E7%AD%96%E6%A0%91%E7%AE%80%E5%8D%95%E4%B8%BE%E4%BE%8B%E6%9C%80%E7%BB%88%E7%BB%93%E6%9E%9C%E5%9B%BE.png" alt="决策树简单举例最终结果图"></p>
-<h3 id="其他还未解决的问题"><a href="#其他还未解决的问题" class="headerlink" title="其他还未解决的问题"></a>其他还未解决的问题</h3><ul>
-<li>决策树处理缺失值</li>
-<li>决策树处理连续值</li>
-<li>剪枝的问题<a id="more"></a></li>
+<p>&emsp;&emsp;接着还让工作人员创建了一个数据集，包括总共 1.6M 轮的 200k 的对话数据。我们还要求数据集含有<strong>逻辑推理</strong>（logical），<strong>定量推理</strong>（quantitative）以及<strong>比较推理</strong>（comparative ）的能力（此三种能力下面有详解）。因此这就迫使我们的模型要做到：</p>
+<ol>
+<li>解析复杂的自然语言问题；</li>
+<li>使用对话上下文解析表达中的<strong>共指</strong>（coreferences ）、<strong>省略</strong>（ellipsis ）问题；</li>
+<li>要求理清<strong>含糊不清</strong>（ambiguous ）的问题；</li>
+<li>检索相关的 KG 的子图去回答这些问题。</li>
+</ol>
+<p>&emsp;&emsp;说明：</p>
+<ul>
+<li><strong>共指问题</strong>（coreferences）：就是说一个代词指向多个对象，机器人无法理解具体指向哪个</li>
+<li><strong>省略问题</strong>（ellipsis）：表达没问题，但是表达中省略了一部分信息，需要人自己去上文中推测</li>
+<li><strong>含糊不清的问题</strong>（ambiguous）：（与 1 类似，请看 1）</li>
 </ul>
+<h1 id="本文贡献"><a href="#本文贡献" class="headerlink" title="本文贡献"></a>本文贡献</h1><ol>
+<li>引入 CSQA 的概念；</li>
+<li>展示一流的 QA 和对话系统的处理方法在解决这些任务时的不足之处；</li>
+<li>对 CSQA 提出了一个模型，由一流的 hierarchical conversation model（<strong>HRED</strong>）（<a href="https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/view/11957/12160" target="_blank" rel="noopener">Serban 2016a</a>，<a href="https://www.aaai.org/ocs/index.php/AAAI/AAAI17/paper/viewFile/14567/14219" target="_blank" rel="noopener">Serban 2017</a>） 和 key value（<strong>KV</strong>） based memory network model（<a href="https://arxiv.org/pdf/1606.03126.pdf" target="_blank" rel="noopener">Miller 2016</a>） 组成。</li>
+</ol>
+<h1 id="数据集创建"><a href="#数据集创建" class="headerlink" title="数据集创建"></a>数据集创建</h1><p>&emsp;&emsp;论文花了很大的篇幅描写了数据集是如何创建的。使用 14-Nov-2016 的 wiki data 创建，其中包含了 5.2k 的 relation（谓语），12.8M entity（主语），52.3M facts（宾语）。但是省略了像“ISO 3166-1 alpha-2 code”、“NDL Auth ID”等 relation，因为不期望用户会问这些模糊的问题。接着论文分别描述了 Simple Questions、Complex Questions 和 Linked Sequential QA 是如何创建的。</p>
+<h2 id="Simple-Questions"><a href="#Simple-Questions" class="headerlink" title="Simple Questions"></a>Simple Questions</h2><p>&emsp;&emsp;为了发现问题，我们要求 annotators 自己提出问题并用 KG 中的<strong>单个</strong>三元组进行回答。后来 annotators 认为对于个三元组，主要有三种类型的问题：</p>
+<ol>
+<li>基于宾语（object）的问题，问题中包含三元组中的主语和关系，答案包含三元组中的宾语；</li>
+<li>基于主语（subject）的问题，问题中包含三元组中的宾语和关系，答案包含三元组中的主语；</li>
+<li>基于关系（relation）（理解成谓语也可以）的问题。后来在创建的数据集中发现，此类问题没有多大的意义。比如，数据集中有人问了一个很不自然的问题“Q:How is Himalayas related to India? A:located in”。<strong>所以论文只关注前两个问题</strong>。</li>
+</ol>
+<h2 id="Complex-Questions"><a href="#Complex-Questions" class="headerlink" title="Complex Questions"></a>Complex Questions</h2><p>&emsp;&emsp;接下来要求 annotators 建立一些逻辑推理（Logical Reasoning）、定量推理（Quantitative Reasoning）、比较推理（Comparative Reasoning）类型的问题。</p>
+<ol>
+<li>逻辑推理：考虑问题“哪些河流流经中国和印度？”，为了回答这个问题首先需要创建两组集合i){flowthrough, India, river}，ii){flowthrough, China, river}。最后求交集。此类问题可由 Simple Questions 修改得到，如 <strong>AND</strong> 操作：<strong>“哪些河流流经印度”</strong>修改为<strong>“哪些河流流经印度”+“和中国”</strong>；<strong>OR</strong>操作：<strong>“哪些河流流经印度”</strong>修改为<strong>“哪些河流流经印度”+“或中国”</strong>。全部的操作包括以下三种：<ul>
+<li>AND</li>
+<li>OR</li>
+<li>NOT</li>
+</ul>
+</li>
+<li>定量推理：如遇到max、min、count、at least/almost/approxmately/equal to N 等问题需要做定量推理。中文类似。</li>
+<li>比较推理：基于某一个关系的问题需要做推理。如：“哪个国家拥有的河流比印度多？”</li>
+</ol>
+<h2 id="Linked-Sequential-QA"><a href="#Linked-Sequential-QA" class="headerlink" title="Linked Sequential QA"></a>Linked Sequential QA</h2><p>&emsp;&emsp;现在开始通过上述的 QA 对创建连续的对话，简单来说，如果两个问题共享一个 relation 或者 entity，那么就将两个问题放在一起。</p>
+<h1 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h1><p>&emsp;&emsp;CSQA 由对话和 QA 组成，我们提出的模型由 <strong>HRED</strong> 模型和 <strong>key value memory network</strong> 模型组合而成。其中 HRED 模型是对话系统中的一流模型，key value memory network 模型是 QA 系统中的一流模型。我们的模型由以下组件构成：</p>
+<ol>
+<li><strong>Hierarchical Encoder</strong>：</li>
+<li><strong>Handling Large Vocabulary</strong></li>
+<li><strong>Candidate generation</strong></li>
+<li><strong>Key Value Memory Network</strong></li>
+<li><strong>Decoder</strong></li>
+</ol>
+<p>其中 1234 是 encoder，5是 decoder。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/复杂的连续问答：使用知识图谱在关联的问答对上学习交谈能力/提出的模型架构.jpg" alt="提出的模型架构"></p>
+<h1 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h1><p>&emsp;&emsp;使用 <strong>Adam</strong> 算法作为优化算法。<br>&emsp;&emsp;然后调整以下超参数：<strong>learning rate</strong> <script type="math/tex">\in</script> {1e-3, 4e-4}， <strong>RNN hidden unit size</strong>、 <strong>word embeddingsize</strong>、 <strong>KG embedding size</strong> <script type="math/tex">\in</script> {256, 512}，<strong>batch size</strong> <script type="math/tex">\in</script> {32, 64}，<strong>dialog context size</strong> as 2。<br>&emsp;&emsp;使用 Precision 和 Recall 作为评估指标。对于验证和计数的问题我们使用 accuracy 作为评估指标，此类问题会产生 YES/NO 或者 counts 的结果。最后对于需要阐明（clarification）的问题，系统产生自然语言回应，这通常是 KG 实体和非 KG 单词的序列，因此使用 Precision/Recall 作为 KG 实体的预测，使用 BLEU 作为语义相似度的衡量指标。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/复杂的连续问答：使用知识图谱在关联的问答对上学习交谈能力/实验结果.jpg" alt="实验结果"></p>
+<h1 id="讨论"><a href="#讨论" class="headerlink" title="讨论"></a>讨论</h1><p>根据表 4 中的结果，我们讨论了现有方法的一些缺点，并提出了未来研究的领域。</p>
+<ol>
+<li><strong>Simple v/s Complex Questions</strong>：很明显在我们的模型上，与简单问题相比，复杂问题的性能非常差。改进点有很多，i)不确定现在逻辑函数是否可以处理定量、比较和逻辑推理问题；ii)不清楚现有的 encoder（HRED + key value memory network）是否能够有效地解析复杂问题并为 encoder 提供良好的表示。</li>
+<li><strong>Direct v/s Indirect Questions</strong>：用表 4 中的第 3、4 行跟第 2 行比较，发现在处理不完整的问题时，模型性能有所下降，这些问题都需要依赖上下文才能解决共指、省略等难点。即使现在的对话系统（HRED）确实捕捉到了上下文，也没有什么作用。因为其中的一个<em>关键点</em>是<strong>对于我们创建的数据集有一个巨大的挑战</strong>：数据集里的 <strong>named entities</strong> 和 <strong>relations</strong> 比上下文中<strong>其他单词更重要</strong>，所以我们需要一个更好的模型，可以在训练时标出 relations 和 entities 的重要性（例如：<strong>注意力机制</strong>）。</li>
+<li><strong>Candidate Generation</strong>：</li>
+<li><strong>Better organization of the memory</strong>：对于某些问题，特别是设计多个实体和逻辑操作的复杂问题，不可避免地需要使用大量的内存存储元组。大约有 15% 的问题需要超过 100k 个候选元组。这会使 GPU 超负荷，并且也会使 softmax 的计算开销巨大，所以需要i)更好的内存组织方式，ii)SoftMax 函数的近似方法。<a id="more"></a></li>
+</ol>
 
       
     </div>
@@ -649,9 +652,7 @@ if(pathname == '/flower.html'){
       
         <div class="post-tags">
           
-            <a href="/tags/学习笔记/" rel="tag"># 学习笔记</a>
-          
-            <a href="/tags/机器学习算法/" rel="tag"># 机器学习算法</a>
+            <a href="/tags/论文笔记/" rel="tag"># 论文笔记</a>
           
         </div>
       
@@ -664,8 +665,8 @@ if(pathname == '/flower.html'){
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/学习笔记/机器学习算法（二）：逻辑回归.html" rel="next" title="机器学习算法（二）：逻辑回归">
-                <i class="fa fa-chevron-left"></i> 机器学习算法（二）：逻辑回归
+              <a href="/zcy/机器学习算法（八）：Adaboost.html" rel="next" title="机器学习算法（八）：Adaboost">
+                <i class="fa fa-chevron-left"></i> 机器学习算法（八）：Adaboost
               </a>
             
           </div>
@@ -674,8 +675,8 @@ if(pathname == '/flower.html'){
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/linux-Ubuntu安装NVIDIA驱动.html" rel="prev" title="linux Ubuntu安装NVIDIA驱动">
-                linux Ubuntu安装NVIDIA驱动 <i class="fa fa-chevron-right"></i>
+              <a href="/leetcode/1. 两数之和.html" rel="prev" title="1. 两数之和">
+                1. 两数之和 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -750,7 +751,7 @@ if(pathname == '/flower.html'){
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">111</span>
+                    <span class="site-state-item-count">113</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -874,7 +875,7 @@ if(pathname == '/flower.html'){
 								<span class="site-state-item-name">访客量</span>
 						</div>
 						<div class="site-state-item site-state-posts">
-								<span class="site-state-item-count">93.5k</span>
+								<span class="site-state-item-count">97.5k</span>
 								<span class="site-state-item-name">总字数</span>
 						</div>
           
@@ -951,7 +952,7 @@ if(pathname == '/flower.html'){
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#TODO"><span class="nav-number">1.</span> <span class="nav-text">TODO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定义"><span class="nav-number">2.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#信息增益"><span class="nav-number">3.</span> <span class="nav-text">信息增益</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#决策树构建步骤"><span class="nav-number">4.</span> <span class="nav-text">决策树构建步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#举一个简单的例子"><span class="nav-number">5.</span> <span class="nav-text">举一个简单的例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他还未解决的问题"><span class="nav-number">6.</span> <span class="nav-text">其他还未解决的问题</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#注"><span class="nav-number">1.</span> <span class="nav-text">注</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#引子"><span class="nav-number">2.</span> <span class="nav-text">引子</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#本文贡献"><span class="nav-number">3.</span> <span class="nav-text">本文贡献</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据集创建"><span class="nav-number">4.</span> <span class="nav-text">数据集创建</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Simple-Questions"><span class="nav-number">4.1.</span> <span class="nav-text">Simple Questions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Complex-Questions"><span class="nav-number">4.2.</span> <span class="nav-text">Complex Questions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linked-Sequential-QA"><span class="nav-number">4.3.</span> <span class="nav-text">Linked Sequential QA</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模型"><span class="nav-number">5.</span> <span class="nav-text">模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结果"><span class="nav-number">6.</span> <span class="nav-text">结果</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#讨论"><span class="nav-number">7.</span> <span class="nav-text">讨论</span></a></li></ol></div>
             
 
           </div>

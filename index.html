@@ -384,7 +384,7 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">111</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">113</span></a>
 
   </li>
 
@@ -795,7 +795,7 @@ if(pathname == '/flower.html'){
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/zcy/[知识图谱]（一）从概念到实战.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/zcy/深度学习算法（四）：Transformer.html">
     
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -821,7 +821,434 @@ if(pathname == '/flower.html'){
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/zcy/[知识图谱]（一）从概念到实战.html" class="post-title-link" itemprop="url">[知识图谱]（一）从概念到实战</a>
+                <a href="/zcy/深度学习算法（四）：Transformer.html" class="post-title-link" itemprop="url">深度学习算法（四）：Transformer</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-07 10:55:15 / 修改时间：14:48:05" itemprop="dateCreated datePublished" datetime="2019-08-07T10:55:15+08:00">2019-08-07</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+          
+          
+          	
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/dl/" itemprop="url" rel="index"><span itemprop="name">dl</span></a></span>
+
+                
+                
+              
+            </span>
+          
+          
+          <!--不蒜子计数-->
+          <span id="busuanzi_container_site_uv">
+<span class="post-meta-divider">|</span>
+	浏览量：<span id="busuanzi_value_site_uv"></span>人次
+</span>
+				
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="Transformer位置信息"><a href="#Transformer位置信息" class="headerlink" title="Transformer位置信息"></a>Transformer位置信息</h1><p>&emsp;&emsp;引用自<a href="https://zhuanlan.zhihu.com/p/54743941" target="_blank" rel="noopener">放弃幻想，全面拥抱Transformer：自然语言处理三大特征抽取器（CNN/RNN/TF）比较</a></p>
+<blockquote>
+<p>&emsp;&emsp;NLP 句子中单词之间的相对位置是包含很多信息的，上面提过，RNN 因为结构就是线性序列的，所以天然会将位置信息编码进模型；而CNN的卷积层其实也是保留了位置相对信息的，所以什么也不做问题也不大。但是对于 Transformer 来说，为了能够保留输入句子单词之间的相对位置信息，必须要做点什么。为啥它必须要做点什么呢？因为输入的第一层网络是 Muli-head self attention 层，我们知道，Self attention 会让当前输入单词和句子中任意单词发生关系，然后集成到一个 embedding 向量里，但是当所有信息到了 embedding 后，位置信息并没有被编码进去。所以，Transformer 不像 RNN 或 CNN，必须明确的在输入端将 Positon 信息编码，Transformer 是用<strong>位置函数</strong>来进行位置编码的，而 Bert 等模型则给每个单词一个 <strong>Position embedding</strong>。将单词 embedding 和单词对应的 position embedding 加起来形成单词的输入 embedding，类似上文讲的 ConvS2S 的做法。</p>
+</blockquote>
+<h1 id="encoder"><a href="#encoder" class="headerlink" title="encoder"></a>encoder</h1><p>&emsp;&emsp;从<a href="https://zhuanlan.zhihu.com/p/59629215" target="_blank" rel="noopener">文章</a>做的总结，此文为另一篇英文文章的翻译版，英文原文地址为 <a href="https://jalammar.github.io/illustrated-transformer/" target="_blank" rel="noopener">The Illustrated Transformer</a>。此外另一篇<a href="https://zhuanlan.zhihu.com/p/54356280" target="_blank" rel="noopener">文章</a>也做了翻译。<br>&emsp;&emsp;Transformer 不同于 RNN，它的输入是独立计算的，输入序列的某个单词并不依赖其它的单词。也就是说它可以并行运算。</p>
+<h2 id="Positional-Encoding"><a href="#Positional-Encoding" class="headerlink" title="Positional Encoding"></a>Positional Encoding</h2><p>&emsp;&emsp;在第一节中讲到，Transformer 天然的不具有句子<strong>位置</strong>属性，所以我们需要使用一种办法让它拥有句子的位置属性。<br>&emsp;&emsp;为解决这个问题，Transformer 为每个输入的词嵌入增加了一个向量。<br><img src="https://jalammar.github.io/images/t/transformer_positional_encoding_vectors.png" alt="To give the model a sense of the order of the words, we add positional encoding vectors -- the values of which follow a specific pattern."><br>&emsp;&emsp;如果假定词嵌入维度为4，那真实的位置编码如下：<br><img src="https://jalammar.github.io/images/t/transformer_positional_encoding_example.png" alt="A real example of positional encoding with a toy embedding size of 4"><br>&emsp;&emsp;位置编码的生成办法在原论文的 section 3.5 中有描述。你可以在 <a href="https://github.com/tensorflow/tensor2tensor/blob/23bd23b9830059fbc349381b70d9429b5c40a139/tensor2tensor/layers/common_attention.py" target="_blank" rel="noopener">get_timing_signal_1d()</a> 函数中看到用于生成位置编码的代码。这并不是生成位置编码的唯一方式。然而，它的优点在于可以扩展到看不见的序列长度（eg. 如果要翻译的句子的长度远长于训练集中最长的句子）。</p>
+<h2 id="self-Attention"><a href="#self-Attention" class="headerlink" title="self-Attention"></a>self-Attention</h2><p><img src="https://jalammar.github.io/images/t/transformer_self_attention_vectors.png" alt="Transformer计算机制"></p>
+<blockquote>
+<p>注意，这些新创建的向量的维度小于词嵌入向量(embedding vector)。它们（新创建的向量）的维度是 <strong>64</strong>，而词嵌入和编码器的输入输出向量的维度是 <strong>512</strong>。它们不必更小，这是一种架构选择，可以使多头注意力(multiheaded attention)计算不变。 </p>
+</blockquote>
+<ol>
+<li>需要从每个编码器的输入向量创建三个向量，即 <strong>Query</strong> 向量，<strong>Key</strong> 向量和 <strong>Value</strong> 向量；<ul>
+<li>那么，究竟什么是“query”，“key”，“value”向量呢？（以下为自己的猜测）<ul>
+<li>q 代表当前需要计算 score 的向量，此向量查询 key 中的权重，使得查询到自己需要的 score</li>
+<li>k 代表当前单词的权重</li>
+<li>v 代表单词的词向量</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>计算得分（score 权重）。这里的分数是通过将 query 向量与我们正在评分的单词的 key 向量做点积来得到。所以如果我们计算位置 #1 处的单词的 self-attention，第一个得分就是就是 <script type="math/tex">q_1</script> 和 <script type="math/tex">k_1</script> 的点积。第二个得分是 <script type="math/tex">q_1</script> 和 <script type="math/tex">k_2</script> 的点积。<br><img src="https://jalammar.github.io/images/t/transformer_self_attention_score.png" alt="计算 score"></li>
+<li>将分数除以8（论文中使用 Key 向量维数的平方根—-64。这可以有更稳定的梯度。实际上还可以有其他可能的值，这里使用默认值）<br><img src="https://jalammar.github.io/images/t/self-attention_softmax.png" alt="计算 score"></li>
+<li>然后经过一个softmax操作后输出结果。Softmax可以将分数归一化，这样使得结果都是正数并且加起来等于1<br><img src="https://jalammar.github.io/images/t/self-attention-output.png" alt=""></li>
+<li>将每个 value 向量乘以 softmax 得分（准备将他们相加）</li>
+<li>对加权值向量求和，这样就产生了在这个位置的self-attention的输出（对于第一个单词）</li>
+</ol>
+<p>&emsp;&emsp;上述为 self-attention 单个单词的计算步骤，其实它可以并行计算。<br><img src="https://jalammar.github.io/images/t/self-attention-matrix-calculation.png" alt="并行计算第一步"></p>
+<p><img src="https://jalammar.github.io/images/t/self-attention-matrix-calculation-2.png" alt="并行计算第二步"></p>
+<h2 id="multi-headed-attention"><a href="#multi-headed-attention" class="headerlink" title="multi-headed attention"></a>multi-headed attention</h2><p>&emsp;&emsp;看英文名感觉“高大上”，其实很简单。就是将上述的 self-attention 做多次，具体做几次你可以自行选择，Transformer 选择了 8 次。这样就产生了 8 个向量，但是我们训练时其实只要一个向量就够了，所以我们将这 8 个向量<strong>拼接</strong>起来，这样就形成了一个巨长无比的向量。那我们怎么得到我们所需长度的向量呢？很简单，只需要再乘一个权重矩阵就行了。<br><img src="https://jalammar.github.io/images/t/transformer_attention_heads_qkv.png" alt=""></p>
+<p><img src="https://jalammar.github.io/images/t/transformer_attention_heads_z.png" alt=""></p>
+<p><img src="https://jalammar.github.io/images/t/transformer_attention_heads_weight_matrix_o.png" alt=""></p>
+<p>&emsp;&emsp;全过程：<br><img src="https://jalammar.github.io/images/t/transformer_multi-headed_self-attention-recap.png" alt="全过程"></p>
+<h2 id="The-Residuals-与-layer-normalization"><a href="#The-Residuals-与-layer-normalization" class="headerlink" title="The Residuals 与 layer-normalization"></a>The Residuals 与 layer-normalization</h2><p>&emsp;&emsp;残差连接说白了就是跳过一层，输入到下一层（比较直白，不一定对）。<br><img src="https://jalammar.github.io/images/t/transformer_resideual_layer_norm.png" alt=""></p>
+<p>&emsp;&emsp;layer-normalization：<br><img src="https://jalammar.github.io/images/t/transformer_resideual_layer_norm_2.png" alt=""></p>
+<p>&emsp;&emsp;此步骤在解码层中是类似的操作。将内部件画全，就是如下所示一般（图中的 encoder、decoder 各有两个）：<br><img src="https://jalammar.github.io/images/t/transformer_resideual_layer_norm_3.png" alt=""></p>
+<h1 id="decodedr"><a href="#decodedr" class="headerlink" title="decodedr"></a>decodedr</h1><p>&emsp;&emsp;在讲解 decoder 之前，看一张动图，了解一下 Transformer 是如何运作的。编码器开始处理输入序列，然后将顶部编码器的输出变换为一组注意力向量 <strong>K</strong> 和 <strong>V</strong>，这些将在每个解码器的“encoder-decoder attention” 层使用，这有助于解码器集中注意力在输入序列的合适位置：<br><img src="https://jalammar.github.io/images/t/transformer_decoding_1.gif" alt=""></p>
+<p>&emsp;&emsp;注意上面的 gif 生成了第一个字母 I，接着下面的 gif 完成了余下的步骤。Transformer 将之前输出的 I 当做下一个时间步的输入，又走了一遍 decoder（猜测：那个 encoder 的输出生成的 K 和 V 也还是当做其中一个输入）。以此循环往复，直到输出一个结束标记 <code>&lt;EOS&gt;</code> 才结束循环。<strong>博主注</strong>：<strong>这样一来似乎对于 decoder 来说并不能实现并行运算</strong>。<br><img src="https://jalammar.github.io/images/t/transformer_decoding_2.gif" alt=""></p>
+<p>&emsp;&emsp;其中 decoder 中的 attention 与 encoder 的有所区别，但是无论是英文原文还是翻译版，我都看不懂他们在说什么。</p>
+<h1 id="The-Final-Linear-and-Softmax-Layer"><a href="#The-Final-Linear-and-Softmax-Layer" class="headerlink" title="The Final Linear and Softmax Layer"></a>The Final Linear and Softmax Layer</h1><p>&emsp;&emsp;如何将其转换为一个单词？这就是最后 Softmax 层和线性层的工作了。<br>&emsp;&emsp;线性层是一个简单的全连接神经网络，它将解码器堆叠(decoder stack)产生的向量映射到一个巨大的向量（词汇表的大小，原来的向量大小是词嵌入的大小）中去，这个向量称为 logits 向量。<br>&emsp;&emsp;Softmax 层将这些分数转化为概率(全部为正数，加起来为 1.0)。选择具有最高概率的单元，并将与其相关的单词作为本时间步的输出。<br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/zcy/深度学习算法（四）：Transformer.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </p></div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/zcy/【NLP-算法】（零）NLP基础算法.html">
+    
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+				
+				
+	
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/zcy/【NLP-算法】（零）NLP基础算法.html" class="post-title-link" itemprop="url">【NLP 算法】（零）NLP基础算法</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-05 13:34:55" itemprop="dateCreated datePublished" datetime="2019-08-05T13:34:55+08:00">2019-08-05</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-08-07 10:18:21" itemprop="dateModified" datetime="2019-08-07T10:18:21+08:00">2019-08-07</time>
+              
+            
+          </span>
+          
+          
+          	
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/nlp/" itemprop="url" rel="index"><span itemprop="name">nlp</span></a></span>
+
+                
+                
+              
+            </span>
+          
+          
+          <!--不蒜子计数-->
+          <span id="busuanzi_container_site_uv">
+<span class="post-meta-divider">|</span>
+	浏览量：<span id="busuanzi_value_site_uv"></span>人次
+</span>
+				
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="one-hot"><a href="#one-hot" class="headerlink" title="one hot"></a>one hot</h1><h1 id="N-gram-算法"><a href="#N-gram-算法" class="headerlink" title="N-gram 算法"></a>N-gram 算法</h1><p>&emsp;&emsp;<a href="https://blog.csdn.net/baimafujinji/article/details/51281816" target="_blank" rel="noopener">参考文章</a></p>
+<ul>
+<li><strong>基本算法</strong><br>有句子：老王吃过了吗？<br>该句子可表示为 <script type="math/tex">S = w_1w_2w_3w_4w_5w_6</script><br>那么该句子的概率为 p(S)=p(w1w2w3w4w5w6) = <script type="math/tex">\prod</script>p(wt|w1w2…wt-1) = p(w1)p(w2|w1)p(w3|w1w2)…<br>由于该算法太复杂，所以就产生了其他的算法。马尔科夫模型，该模型认为，一个词的出现仅仅依赖于它前面出现的几个词。可理解为是n-gram。</li>
+<li><strong>n-gram</strong><br>n-gram只根据前n-1个单词来预测第n个单词的概率。<br>比如n=2时，也被称为bi-gram。公式为： p(wt|wt-1) = p(wtwt-1)/p(wt)<br>意思就是计算wt-1后面出现wt的概率<br>比如t等于1，则就是计算“老”后面出现“王”的概率<br><strong>剩下的问题就是如何计算一个字出现的概率</strong>。</li>
+<li><strong>如何计算概率</strong><br>可以做一个统计，将所拥有的数据计算出每个字出现的次数。并且再统计两个字连在一起的次数。比如：p(王|老) = p(老王)/p(王) = 600/10000 = 6%<br>在神经网络模型中，计算概率是通过 softmax 函数计算的，即将 one hot 编码的向量经过矩阵运算后传入 softmax 函数中。从而得到一个类似概率的值。</li>
+<li><strong>用途</strong><br><a href="http://blog.sciencenet.cn/blog-713101-797384.html" target="_blank" rel="noopener">参考</a><br>20世纪80年代至90年代初,n-gram技术被广泛地用来进行文本压缩,检查拼写错误,加速字符串查找,文献语种识别。90年代,该技术又在自然语言处理自动化领域得到新的应用,如自动分类,自动索引,超链的自动生成,文献检索,无分隔符语言文本的切分等。<br>目前N-gram最为有用的就是自然语言的自动分类功能。基于n-gram的自动分类方法有两大类,一类是人工干预的分类(Classification),又称分类;一类是无人工干预的分类(Clustering),又称聚类。</li>
+</ul>
+<h1 id="词袋模型——BOW"><a href="#词袋模型——BOW" class="headerlink" title="词袋模型——BOW"></a>词袋模型——BOW</h1><p>&emsp;&emsp;例如，有文档：你好棒棒</p>
+<ol>
+<li>建立字典<br>{‘你’:1, ‘好’:2, ‘棒’:3}</li>
+<li>bow模型<br>(1, 1)(2, 1)(3, 2)<br>其中第一个元素代表该单词在字典中的id，第二个元素代表该单词在所在文档中出现的次数。</li>
+</ol>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/zcy/【知识图谱】（一）从概念到实战.html">
+    
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+				
+				
+	
+
+	
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/zcy/【知识图谱】（一）从概念到实战.html" class="post-title-link" itemprop="url">【知识图谱】（一）从概念到实战</a>
               
             
           </h1>
@@ -863,7 +1290,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-08-05 11:11:34" itemprop="dateModified" datetime="2019-08-05T11:11:34+08:00">2019-08-05</time>
+                <time title="修改时间：2019-08-05 13:32:25" itemprop="dateModified" datetime="2019-08-05T13:32:25+08:00">2019-08-05</time>
               
             
           </span>
@@ -888,7 +1315,7 @@ if(pathname == '/flower.html'){
                   ，
                 
               
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/dl/" itemprop="url" rel="index"><span itemprop="name">dl</span></a></span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/nlp/" itemprop="url" rel="index"><span itemprop="name">nlp</span></a></span>
 
                 
                 
@@ -1086,7 +1513,7 @@ if(pathname == '/flower.html'){
           <!--noindex-->
           
             <div class="post-button text-center">
-              <a class="btn" href="/zcy/[知识图谱]（一）从概念到实战.html#more" rel="contents">
+              <a class="btn" href="/zcy/【知识图谱】（一）从概念到实战.html#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -2101,7 +2528,7 @@ if(pathname == '/flower.html'){
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/论文/30、复杂的连续问答：使用知识图谱在关联的问答对上学习交谈.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/论文/30、Complex Sequential Question Answering：Towards Learning to Converse Over Linked Question Answer Pairs with a Knowledge Graph.html">
     
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -2118,12 +2545,14 @@ if(pathname == '/flower.html'){
       <header class="post-header">
 				
 				
+	
+
         
         
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/论文/30、复杂的连续问答：使用知识图谱在关联的问答对上学习交谈.html" class="post-title-link" itemprop="url">复杂的连续问答：使用知识图谱在关联的问答对上学习交谈能力</a>
+                <a href="/论文/30、Complex Sequential Question Answering：Towards Learning to Converse Over Linked Question Answer Pairs with a Knowledge Graph.html" class="post-title-link" itemprop="url">论文笔记：Complex Sequential Question Answering: Towards Learning to Converse Over Linked Question Answer Pairs with a Knowledge Graph</a>
               
             
           </h1>
@@ -2165,7 +2594,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-07-14 13:27:43" itemprop="dateModified" datetime="2019-07-14T13:27:43+08:00">2019-07-14</time>
+                <time title="修改时间：2019-08-06 16:43:41" itemprop="dateModified" datetime="2019-08-06T16:43:41+08:00">2019-08-06</time>
               
             
           </span>
@@ -2232,7 +2661,7 @@ if(pathname == '/flower.html'){
 
       
         
-          <h1 id="注"><a href="#注" class="headerlink" title="注"></a>注</h1><p>&emsp;&emsp;<strong>凉了。读完论文，发现论文中的实验是使用 python2 写的，而且由于没有 VPN 无法下载实验附带的数据，训练数据有 17G，我都不想下了。</strong></p>
+          <h1 id="注"><a href="#注" class="headerlink" title="注"></a>注</h1><p>&emsp;&emsp;<a href="https://www.aaai.org/ocs/index.php/AAAI/AAAI18/paper/view/17181/15750" target="_blank" rel="noopener">论文地址</a>。<br>&emsp;&emsp;<strong>凉了。读完论文，发现论文中的实验是使用 python2 写的，而且由于没有 VPN 无法下载实验附带的数据，训练数据有 17G，我都不想下了。</strong></p>
 <h1 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h1><p>&emsp;&emsp;人机对话时，人们通常会提出许多问题，其中大部分都可以通过大规模的 KG 回答。为此，我们提出了 Comples Sequential QA（CSQA） 任务，它由以下两种任组成：</p>
 <ol>
 <li>在拥有百万个实体的 KG 上进行复杂的推理从而回答事实性问题；</li>
@@ -2294,7 +2723,7 @@ if(pathname == '/flower.html'){
           <!--noindex-->
           
             <div class="post-button text-center">
-              <a class="btn" href="/论文/30、复杂的连续问答：使用知识图谱在关联的问答对上学习交谈.html#more" rel="contents">
+              <a class="btn" href="/论文/30、Complex Sequential Question Answering：Towards Learning to Converse Over Linked Question Answer Pairs with a Knowledge Graph.html#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -2540,424 +2969,6 @@ if(pathname == '/flower.html'){
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/zcy/word2vec.html">
-    
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-				
-				
-	
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/zcy/word2vec.html" class="post-title-link" itemprop="url">word2vec</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-07-10 16:08:57" itemprop="dateCreated datePublished" datetime="2019-07-10T16:08:57+08:00">2019-07-10</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-07-11 20:50:45" itemprop="dateModified" datetime="2019-07-11T20:50:45+08:00">2019-07-11</time>
-              
-            
-          </span>
-          
-          
-          	
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/nlp/" itemprop="url" rel="index"><span itemprop="name">nlp</span></a></span>
-
-                
-                
-              
-            </span>
-          
-          
-          <!--不蒜子计数-->
-          <span id="busuanzi_container_site_uv">
-<span class="post-meta-divider">|</span>
-	浏览量：<span id="busuanzi_value_site_uv"></span>人次
-</span>
-				
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p><a href="https://blog.csdn.net/itplus/article/details/37969519" target="_blank" rel="noopener">word2vec 数学原理目录</a><br><a href="https://www.cnblogs.com/peghoty/p/3857839.html" target="_blank" rel="noopener">word2vec 数学原理</a><br><a href="http://www.hankcs.com/nlp/word2vec.html" target="_blank" rel="noopener">word2vec原理推导与代码分析</a></p>
-<h1 id="训练词向量得到的-accuracy"><a href="#训练词向量得到的-accuracy" class="headerlink" title="训练词向量得到的 accuracy"></a>训练词向量得到的 accuracy</h1><p>word2vec 的 accuracy 貌似没卵用。我反正用 keras 搭的 CBOW 模型，accuracy 极低，只有 1%不到。<br><a href="https://www.zhihu.com/question/271782463" target="_blank" rel="noopener">参考</a>  </p>
-<h1 id="自己训练-word2vec-还是直接用别人的"><a href="#自己训练-word2vec-还是直接用别人的" class="headerlink" title="自己训练 word2vec 还是直接用别人的"></a>自己训练 word2vec 还是直接用别人的</h1><p><a href="https://bbs.csdn.net/topics/392144812?list=4625705" target="_blank" rel="noopener">参考</a><br>可能还是自己训练 word2vec 比较好，用别人的 word2vec 不太行。</p>
-<h1 id="CBOW"><a href="#CBOW" class="headerlink" title="CBOW"></a>CBOW</h1>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/zcy/word2vec.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/zcy/代价函数.html">
-    
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-				
-				
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/zcy/代价函数.html" class="post-title-link" itemprop="url">代价函数</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-07-10 09:58:19 / 修改时间：16:19:59" itemprop="dateCreated datePublished" datetime="2019-07-10T09:58:19+08:00">2019-07-10</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-          
-          
-          	
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/ml/" itemprop="url" rel="index"><span itemprop="name">ml</span></a></span>
-
-                
-                
-              
-            </span>
-          
-          
-          <!--不蒜子计数-->
-          <span id="busuanzi_container_site_uv">
-<span class="post-meta-divider">|</span>
-	浏览量：<span id="busuanzi_value_site_uv"></span>人次
-</span>
-				
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="各类代价函数"><a href="#各类代价函数" class="headerlink" title="各类代价函数"></a>各类代价函数</h1><p><a href="https://blog.csdn.net/cqfdcw/article/details/78173839" target="_blank" rel="noopener">方差、协方差、标准差、均方差、均方根值、均方误差、均方根误差</a><br><a href="https://www.cnblogs.com/shujuxiong/p/9339916.html" target="_blank" rel="noopener">L1正则和L2正则的比较分析详解</a></p>
-<h1 id="各类距离公式"><a href="#各类距离公式" class="headerlink" title="各类距离公式"></a>各类距离公式</h1><p><a href="https://blog.csdn.net/guojingjuan/article/details/50396254" target="_blank" rel="noopener">python 各类距离公式实现</a></p>
-<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><div class="table-container">
-<table>
-<thead>
-<tr>
-<th>名称</th>
-<th>英文</th>
-<th>公式</th>
-<th>别称</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>残差平方和 SSE</td>
-<td>Sum of Squares for Error</td>
-<td>SSE = <script type="math/tex">\sum^m_{i=1}(y_i - \hat{y}_i)^2</script></td>
-<td>剩余平方和 RSS</td>
-</tr>
-<tr>
-<td>回归平方和 SSR</td>
-<td>Sum of Squares for Regression</td>
-<td>SSR = <script type="math/tex">\sum^m_{i=1}(\hat{y}_i - \bar{y})^2</script></td>
-<td>解释平方和 ESS</td>
-</tr>
-<tr>
-<td>总离差平方和 SST</td>
-<td>Sum of Squares for Total</td>
-<td>SST = <script type="math/tex">\sum^m_{i=1}(y_i - \bar{y})^2</script></td>
-<td>总离差平方和 TSS</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>三者之间的关系是 SST = SSR + SSE</p>
-<script type="math/tex; mode=display">R^2 = \frac{SSR}{SST} = 1 - \frac{SSE}{SST}</script>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/zcy/代价函数.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -3009,7 +3020,7 @@ if(pathname == '/flower.html'){
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">111</span>
+                    <span class="site-state-item-count">113</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -3133,7 +3144,7 @@ if(pathname == '/flower.html'){
 								<span class="site-state-item-name">访客量</span>
 						</div>
 						<div class="site-state-item site-state-posts">
-								<span class="site-state-item-count">93.5k</span>
+								<span class="site-state-item-count">97.5k</span>
 								<span class="site-state-item-name">总字数</span>
 						</div>
           
