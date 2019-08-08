@@ -846,12 +846,24 @@ if(pathname == '/flower.html'){
                 
               
 
-              <time title="创建时间：2019-08-07 10:55:15 / 修改时间：14:48:05" itemprop="dateCreated datePublished" datetime="2019-08-07T10:55:15+08:00">2019-08-07</time>
+              <time title="创建时间：2019-08-07 10:55:15" itemprop="dateCreated datePublished" datetime="2019-08-07T10:55:15+08:00">2019-08-07</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-08-08 13:06:07" itemprop="dateModified" datetime="2019-08-08T13:06:07+08:00">2019-08-08</time>
               
             
           </span>
@@ -956,7 +968,20 @@ if(pathname == '/flower.html'){
 <h1 id="decodedr"><a href="#decodedr" class="headerlink" title="decodedr"></a>decodedr</h1><p>&emsp;&emsp;在讲解 decoder 之前，看一张动图，了解一下 Transformer 是如何运作的。编码器开始处理输入序列，然后将顶部编码器的输出变换为一组注意力向量 <strong>K</strong> 和 <strong>V</strong>，这些将在每个解码器的“encoder-decoder attention” 层使用，这有助于解码器集中注意力在输入序列的合适位置：<br><img src="https://jalammar.github.io/images/t/transformer_decoding_1.gif" alt=""></p>
 <p>&emsp;&emsp;注意上面的 gif 生成了第一个字母 I，接着下面的 gif 完成了余下的步骤。Transformer 将之前输出的 I 当做下一个时间步的输入，又走了一遍 decoder（猜测：那个 encoder 的输出生成的 K 和 V 也还是当做其中一个输入）。以此循环往复，直到输出一个结束标记 <code>&lt;EOS&gt;</code> 才结束循环。<strong>博主注</strong>：<strong>这样一来似乎对于 decoder 来说并不能实现并行运算</strong>。<br><img src="https://jalammar.github.io/images/t/transformer_decoding_2.gif" alt=""></p>
 <p>&emsp;&emsp;其中 decoder 中的 attention 与 encoder 的有所区别，但是无论是英文原文还是翻译版，我都看不懂他们在说什么。</p>
-<h1 id="The-Final-Linear-and-Softmax-Layer"><a href="#The-Final-Linear-and-Softmax-Layer" class="headerlink" title="The Final Linear and Softmax Layer"></a>The Final Linear and Softmax Layer</h1><p>&emsp;&emsp;如何将其转换为一个单词？这就是最后 Softmax 层和线性层的工作了。<br>&emsp;&emsp;线性层是一个简单的全连接神经网络，它将解码器堆叠(decoder stack)产生的向量映射到一个巨大的向量（词汇表的大小，原来的向量大小是词嵌入的大小）中去，这个向量称为 logits 向量。<br>&emsp;&emsp;Softmax 层将这些分数转化为概率(全部为正数，加起来为 1.0)。选择具有最高概率的单元，并将与其相关的单词作为本时间步的输出。<br>
+<h1 id="The-Final-Linear-and-Softmax-Layer"><a href="#The-Final-Linear-and-Softmax-Layer" class="headerlink" title="The Final Linear and Softmax Layer"></a>The Final Linear and Softmax Layer</h1><p>&emsp;&emsp;如何将其转换为一个单词？这就是最后 Softmax 层和线性层的工作了。<br>&emsp;&emsp;线性层是一个简单的全连接神经网络，它将解码器堆叠(decoder stack)产生的向量映射到一个巨大的向量（词汇表的大小，原来的向量大小是词嵌入的大小）中去，这个向量称为 logits 向量。<br>&emsp;&emsp;Softmax 层将这些分数转化为概率(全部为正数，加起来为 1.0)。选择具有最高概率的单元，并将与其相关的单词作为本时间步的输出。</p>
+<h1 id="其他的重要部分"><a href="#其他的重要部分" class="headerlink" title="其他的重要部分"></a>其他的重要部分</h1><ol>
+<li>在 self_attention 之后要做一次 normalization，此均值归一化步骤的具体算法，详见：<ul>
+<li><a href="https://www.cnblogs.com/hellcat/p/9735041.html#_label3_0" target="_blank" rel="noopener">『计算机视觉』各种Normalization层辨析</a> </li>
+<li><a href="https://www.jianshu.com/p/c357c5717a60" target="_blank" rel="noopener">layer normalization 简单总结</a></li>
+</ul>
+</li>
+<li>无论 encoder 还是 decoder 都要做 mask（很多对 Transformer 的总结文章都只提到了 decoder 部分的 Masked Multihead Self-Attention，实际上 encoder 也要做一次）。mask 一共分为两种，寻常所见的 decoder 中的 mask 指的是 <strong>sequence mask</strong>，encoder 中的 mask 指的是 <strong>padding mask</strong>。详见：<ul>
+<li><a href="https://luozhouyang.github.io/transformer/" target="_blank" rel="noopener">Transformer模型的PyTorch实现</a></li>
+<li><a href="https://www.jianshu.com/p/405bc8d041e0" target="_blank" rel="noopener">The Transformer</a></li>
+</ul>
+</li>
+</ol>
+<p>&emsp;&emsp;<br>
           <!--noindex-->
           
             <div class="post-button text-center">
@@ -3144,7 +3169,7 @@ if(pathname == '/flower.html'){
 								<span class="site-state-item-name">访客量</span>
 						</div>
 						<div class="site-state-item site-state-posts">
-								<span class="site-state-item-count">97.5k</span>
+								<span class="site-state-item-count">97.7k</span>
 								<span class="site-state-item-name">总字数</span>
 						</div>
           
