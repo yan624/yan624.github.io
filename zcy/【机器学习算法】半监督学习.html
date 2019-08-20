@@ -106,27 +106,27 @@
 <!--图片缩放插件样式-->
 <link rel="stylesheet" href="/lib/zoomify/zoomify.min.css">
 
-  <meta name="description" content="原文 Notation在开始之前，我们先定义一些将会贯穿全文的符号：  emb_dim: Dimension of the token embeddings.input_length: Length of the input sequence (the same in all sequences in a specific batch due to padding).hidden_dim: Siz">
-<meta name="keywords" content="翻译">
+  <meta name="description" content="概念&amp;emsp;&amp;emsp;半监督学习就是在已有的带标签的数据之后，还有一组不带标签的数据。一般来说，在做无监督学习时，unlabeled data 远大于 labeled data。&amp;emsp;&amp;emsp;半监督学习一般分为两种：  Transductive learning：unlabeled data 就是你的 testing sdata Inductive learning：unlabel">
+<meta name="keywords" content="系列,zcy">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Dissecting BERT Part 1： The Encoder（BERT解析）">
-<meta property="og:url" content="http://yan624.github.io/Dissecting-BERT-Part-1：-The-Encoder（BERT解析）.html">
+<meta property="og:title" content="【机器学习算法】半监督学习">
+<meta property="og:url" content="http://yan624.github.io/zcy/【机器学习算法】半监督学习.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="原文 Notation在开始之前，我们先定义一些将会贯穿全文的符号：  emb_dim: Dimension of the token embeddings.input_length: Length of the input sequence (the same in all sequences in a specific batch due to padding).hidden_dim: Siz">
+<meta property="og:description" content="概念&amp;emsp;&amp;emsp;半监督学习就是在已有的带标签的数据之后，还有一组不带标签的数据。一般来说，在做无监督学习时，unlabeled data 远大于 labeled data。&amp;emsp;&amp;emsp;半监督学习一般分为两种：  Transductive learning：unlabeled data 就是你的 testing sdata Inductive learning：unlabel">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://cdn-images-1.medium.com/max/800/1*SdiFbDnvGZWRUhev7ynU9Q.jpeg">
-<meta property="og:updated_time" content="2019-06-04T05:22:19.709Z">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/【机器学习算法】半监督学习/导读.jpg">
+<meta property="og:updated_time" content="2019-08-13T08:56:44.101Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Dissecting BERT Part 1： The Encoder（BERT解析）">
-<meta name="twitter:description" content="原文 Notation在开始之前，我们先定义一些将会贯穿全文的符号：  emb_dim: Dimension of the token embeddings.input_length: Length of the input sequence (the same in all sequences in a specific batch due to padding).hidden_dim: Siz">
-<meta name="twitter:image" content="https://cdn-images-1.medium.com/max/800/1*SdiFbDnvGZWRUhev7ynU9Q.jpeg">
+<meta name="twitter:title" content="【机器学习算法】半监督学习">
+<meta name="twitter:description" content="概念&amp;emsp;&amp;emsp;半监督学习就是在已有的带标签的数据之后，还有一组不带标签的数据。一般来说，在做无监督学习时，unlabeled data 远大于 labeled data。&amp;emsp;&amp;emsp;半监督学习一般分为两种：  Transductive learning：unlabeled data 就是你的 testing sdata Inductive learning：unlabel">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/【机器学习算法】半监督学习/导读.jpg">
 
 
 
 
 
 
-  <link rel="canonical" href="http://yan624.github.io/Dissecting-BERT-Part-1：-The-Encoder（BERT解析）.html">
+  <link rel="canonical" href="http://yan624.github.io/zcy/【机器学习算法】半监督学习.html">
 
 
 
@@ -136,7 +136,7 @@
   };
 </script>
 
-  <title>Dissecting BERT Part 1： The Encoder（BERT解析） | 博客</title>
+  <title>【机器学习算法】半监督学习 | 博客</title>
   
 
 
@@ -386,7 +386,7 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">113</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">117</span></a>
 
   </li>
 
@@ -438,7 +438,7 @@ if(pathname == '/flower.html'){
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/Dissecting-BERT-Part-1：-The-Encoder（BERT解析）.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/zcy/【机器学习算法】半监督学习.html">
     
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -457,9 +457,11 @@ if(pathname == '/flower.html'){
 				
 	
 
+	
+
         
         
-          <h1 class="post-title" itemprop="name headline">Dissecting BERT Part 1： The Encoder（BERT解析）
+          <h1 class="post-title" itemprop="name headline">【机器学习算法】半监督学习
 
               
             
@@ -485,24 +487,12 @@ if(pathname == '/flower.html'){
                 
               
 
-              <time title="创建时间：2019-05-25 11:47:18" itemprop="dateCreated datePublished" datetime="2019-05-25T11:47:18+08:00">2019-05-25</time>
+              <time title="创建时间：2019-08-13 16:22:06 / 修改时间：16:56:44" itemprop="dateCreated datePublished" datetime="2019-08-13T16:22:06+08:00">2019-08-13</time>
             
 
             
               
 
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-06-04 13:22:19" itemprop="dateModified" datetime="2019-06-04T13:22:19+08:00">2019-06-04</time>
               
             
           </span>
@@ -527,7 +517,7 @@ if(pathname == '/flower.html'){
                   ，
                 
               
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/dl/" itemprop="url" rel="index"><span itemprop="name">dl</span></a></span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/ml/" itemprop="url" rel="index"><span itemprop="name">ml</span></a></span>
 
                 
                 
@@ -566,33 +556,20 @@ if(pathname == '/flower.html'){
 
       
       
-        <div class="post-gallery" itemscope="" itemtype="http://schema.org/ImageGallery">
-          
-          
-            <div class="post-gallery-row">
-              <a class="post-gallery-img fancybox" href="https://cdn-images-1.medium.com/max/800/1*SdiFbDnvGZWRUhev7ynU9Q.jpeg" rel="gallery_cjz2eikkt0009hk804l59nq5k" itemscope="" itemtype="http://schema.org/ImageObject" itemprop="url">
-                <img src="https://cdn-images-1.medium.com/max/800/1*SdiFbDnvGZWRUhev7ynU9Q.jpeg" itemprop="contentUrl">
-              </a>
-            
-          
-
-          
-          </div>
-        </div>
-      
 
       
-        <p><a href="">原文</a></p>
-<h1 id="Notation"><a href="#Notation" class="headerlink" title="Notation"></a>Notation</h1><p>在开始之前，我们先定义一些将会贯穿全文的符号：</p>
-<blockquote>
-<p>emb_dim: Dimension of the token embeddings.<br>input_length: Length of the input sequence (the same in all sequences in a specific batch due to padding).<br>hidden_dim: Size of the Feed-Forward network’s hidden layer.<br>vocab_size: Amount of words in the vocabulary (derived from the corpus).</p>
-</blockquote>
-<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p><strong>BERT</strong> 中使用的 <strong>Encoder</strong> 是基于注意力机制的架构，被用于 NLP 领域之中，一年之前 Encoder 在论文 <strong>Attention Is All You Need</strong> 中被提出。该论文介绍了一种被称为 <strong>Transformer</strong> 的架构，共由两部分组成，分别为 <strong>Encoder</strong> 和 <strong>Decoder</strong> 。因为 <strong>BERT</strong> 只使用了 <strong>Encoder</strong> ，所以我们在这篇博客中只解释 Encoder（如果你想要了解 <strong>Decoder</strong> 以及它是如何与 <strong>Encoder</strong> 集成的，<a href="https://medium.com/dissecting-bert/transformer-architecture-where-the-encoder-comes-from-3b86f66b0e5f" target="_blank" rel="noopener">这里</a>我们写了一篇单独的博客）。<br>自从年初</p>
-<h1 id="Information-Flow"><a href="#Information-Flow" class="headerlink" title="Information Flow"></a>Information Flow</h1><p>通过架构的数据流如下所示：</p>
-<ol>
-<li>该模型将每个标记表示为<em>emb_dim</em>大小的向量。</li>
-</ol>
-<a id="more"></a>
+        <h1 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h1><p>&emsp;&emsp;半监督学习就是在已有的带标签的数据之后，还有一组不带标签的数据。一般来说，在做无监督学习时，unlabeled data 远大于 labeled data。<br>&emsp;&emsp;半监督学习一般分为两种：</p>
+<ul>
+<li>Transductive learning：unlabeled data 就是你的 testing sdata</li>
+<li>Inductive learning：unlabeled data 不是你的 testing sdata</li>
+</ul>
+<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/【机器学习算法】半监督学习/导读.jpg" alt="导读"></p>
+<h2 id="为什么做半监督学习"><a href="#为什么做半监督学习" class="headerlink" title="为什么做半监督学习"></a>为什么做半监督学习</h2><p>&emsp;&emsp;有人说机器学习训练数据很少，其实不完全对。因为只是 labeled data 少，unlabeled data 随处可见。所以如果能将这些 unlabeled data 运用进去就好了。原因如下：</p>
+<ul>
+<li>搜集数据很简单，但是搜集 labeled data 代价昂贵</li>
+<li>生活中，我们自己也在做半监督学习</li>
+</ul>
+<h1 id="Semi-supervised-Learning-for-Generative-Model"><a href="#Semi-supervised-Learning-for-Generative-Model" class="headerlink" title="Semi-supervised Learning for Generative Model"></a>Semi-supervised Learning for Generative Model</h1><h1 id="Low-density-Separation-Assumption"><a href="#Low-density-Separation-Assumption" class="headerlink" title="Low-density Separation Assumption"></a>Low-density Separation Assumption</h1><h1 id="Smoothness-Assumption"><a href="#Smoothness-Assumption" class="headerlink" title="Smoothness Assumption"></a>Smoothness Assumption</h1><h1 id="Better-Representation"><a href="#Better-Representation" class="headerlink" title="Better Representation"></a>Better Representation</h1>
       
     </div>
 
@@ -615,7 +592,9 @@ if(pathname == '/flower.html'){
       
         <div class="post-tags">
           
-            <a href="/tags/翻译/" rel="tag"># 翻译</a>
+            <a href="/tags/系列/" rel="tag"># 系列</a>
+          
+            <a href="/tags/zcy/" rel="tag"># zcy</a>
           
         </div>
       
@@ -628,8 +607,8 @@ if(pathname == '/flower.html'){
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/zcy/深度学习算法（三）：RNN 各种机制.html" rel="next" title="深度学习算法（三）：RNN 各种机制">
-                <i class="fa fa-chevron-left"></i> 深度学习算法（三）：RNN 各种机制
+              <a href="/论文/34、Coarse-to-Fine Decoding for Neural Semantic Parsing.html" rel="next" title="论文笔记：Coarse-to-Fine Decoding for Neural Semantic Parsing">
+                <i class="fa fa-chevron-left"></i> 论文笔记：Coarse-to-Fine Decoding for Neural Semantic Parsing
               </a>
             
           </div>
@@ -638,8 +617,8 @@ if(pathname == '/flower.html'){
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/机器学习中优化算法以及各种函数的选择.html" rel="prev" title="机器学习中优化算法以及各种函数的选择">
-                机器学习中优化算法以及各种函数的选择 <i class="fa fa-chevron-right"></i>
+              <a href="/学习笔记/机器学习的下一步.html" rel="prev" title="机器学习的下一步">
+                机器学习的下一步 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -714,7 +693,7 @@ if(pathname == '/flower.html'){
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">113</span>
+                    <span class="site-state-item-count">117</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -838,7 +817,7 @@ if(pathname == '/flower.html'){
 								<span class="site-state-item-name">访客量</span>
 						</div>
 						<div class="site-state-item site-state-posts">
-								<span class="site-state-item-count">97.7k</span>
+								<span class="site-state-item-count">101k</span>
 								<span class="site-state-item-name">总字数</span>
 						</div>
           
@@ -915,7 +894,7 @@ if(pathname == '/flower.html'){
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Notation"><span class="nav-number">1.</span> <span class="nav-text">Notation</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Introduction"><span class="nav-number">2.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Information-Flow"><span class="nav-number">3.</span> <span class="nav-text">Information Flow</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#概念"><span class="nav-number">1.</span> <span class="nav-text">概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么做半监督学习"><span class="nav-number">1.1.</span> <span class="nav-text">为什么做半监督学习</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Semi-supervised-Learning-for-Generative-Model"><span class="nav-number">2.</span> <span class="nav-text">Semi-supervised Learning for Generative Model</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Low-density-Separation-Assumption"><span class="nav-number">3.</span> <span class="nav-text">Low-density Separation Assumption</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Smoothness-Assumption"><span class="nav-number">4.</span> <span class="nav-text">Smoothness Assumption</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Better-Representation"><span class="nav-number">5.</span> <span class="nav-text">Better Representation</span></a></li></ol></div>
             
 
           </div>
@@ -1204,7 +1183,7 @@ if(pathname == '/flower.html'){
 		bg.shuffle();
 		return bg;
 	}
-	$("body").backstretch(generateBG(4), {
+	$("body").backstretch(generateBG(6), {
 		duration:90000,//1min半一换
 		fade: 1500
 	});
