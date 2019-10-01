@@ -55,7 +55,7 @@
 
   
 
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/5.10.2/css/all.min.css">
 
 <link rel="stylesheet" href="/css/main.css?v=6.7.0">
 
@@ -303,7 +303,7 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">18</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">19</span></a>
 
   </li>
         
@@ -384,7 +384,7 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">117</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">122</span></a>
 
   </li>
 
@@ -436,8 +436,1279 @@ if(pathname == '/flower.html'){
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/论文/19、Semantic Parsing via Staged Query Graph Generation：Question Answering with Knowledge Base.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/论文/5、Large scale Simple Question Answering with Memory Network.html">
+
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
     
+      <header class="post-header">
+				
+				
+	
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/论文/5、Large scale Simple Question Answering with Memory Network.html" class="post-title-link" itemprop="url">论文笔记：Large-scale Simple Question Answering with Memory Network</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-07 18:49:45" itemprop="dateCreated datePublished" datetime="2019-07-07T18:49:45+08:00">2019-07-07</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-07-25 09:35:31" itemprop="dateModified" datetime="2019-07-25T09:35:31+08:00">2019-07-25</time>
+              
+            
+          </span>
+
+          
+
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/" itemprop="url" rel="index"><span itemprop="name">assorted</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://arxiv.org/pdf/1506.02075v1.pdf" target="_blank" rel="noopener">论文地址</a>，发表于 2015 年。<br>&emsp;&emsp;开放域问答系统的目的是在不受域限制的情况下，为用自然语言表达的问题提供准确的答案。问答系统有很长的历史，它们搜索文本文档或在网络上提取答案（see e.g.(Voorhees and Tice, 2000; Dumais et al., 2002)）。最近在公开的大型知识库（KBS）方面也取得了进展，如 Freebase 知识库。然而，尽管最近大家都在关注设计一个具有推理能力的系统，它可以检索并使用 KB 中的<strong>多重事实</strong>进行问答。但是其实只涉及 <strong>KB 中单个事实的简单问答</strong>都还没被解决，本论文中将其称为 Simple Question Answering。<br>&emsp;&emsp;本文贡献有二：</p>
+<ul>
+<li>其一，为了<strong>研究现有系统</strong>以及<strong>通过多任务学习在不同数据源上同时训练</strong>成为可能，我们收集了第一个基于知识库的大规模的问答数据集，称为 SimpleQuestions。包含了人类编写和 Freebase facts 相关的超过 10 万个问题，另外现有的基准数据集 WebQuestions 包含的问题少于 6 千个，这些问题是使用 google suggest api 自动创建的。</li>
+<li>其二，提出了一种基于词嵌入的问答系统，在 Memory Networks (MemNNs)（<a href="https://arxiv.org/pdf/1410.3916.pdf" target="_blank" rel="noopener">Weston et al., 2015</a>;<a href="https://papers.nips.cc/paper/5846-end-to-end-memory-networks.pdf" target="_blank" rel="noopener">Sukhbaatar et al., 2015</a>） 框架下开发而成。</li>
+</ul>
+<p>&emsp;&emsp;虽然我们的模型与之前的 QA 嵌入模型（<a href="https://arxiv.org/pdf/1406.3676.pdf" target="_blank" rel="noopener">Bordes et al., 2014a</a>;<a href="https://arxiv.org/pdf/1404.4326.pdf" target="_blank" rel="noopener">Bordes et al., 2014b</a>）相似，但使用 MemNNs 的框架为未来工作中更复杂的推理方案提供了思路，因为 MemNNs 在复杂的推理问答任务上表现了很好的性能（<a href="https://arxiv.org/pdf/1410.3916.pdf" target="_blank" rel="noopener">Weston et al., 2015</a>）。</p>
+<h1 id="论文内容介绍"><a href="#论文内容介绍" class="headerlink" title="论文内容介绍"></a>论文内容介绍</h1><ol>
+<li>Sections 3, 4：介绍了基于词嵌入的问答系统；</li>
+<li>Section 5：相关工作；</li>
+<li>Section 6：实验结果。</li>
+</ol>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/论文/5、Large scale Simple Question Answering with Memory Network.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/论文/24、An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge.html">
+
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+				
+				
+	
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/论文/24、An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge.html" class="post-title-link" itemprop="url">论文笔记：An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-06 16:52:07" itemprop="dateCreated datePublished" datetime="2019-07-06T16:52:07+08:00">2019-07-06</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-08-30 22:53:27" itemprop="dateModified" datetime="2019-08-30T22:53:27+08:00">2019-08-30</time>
+              
+            
+          </span>
+
+          
+
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/" itemprop="url" rel="index"><span itemprop="name">assorted</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><div class="note info">
+            <p>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/P17-1021" target="_blank" rel="noopener">论文地址</a>，发表于 2017 年。</p>
+          </div>
+<p>&emsp;&emsp;随着知识库数量的增加，人们越来越希望寻找到一些有效的方法来获取这些资源。现在有几种专门为<strong>查询 KBs</strong> 设计的<strong>语言</strong>：SPARQL（<a href="https://www.w3.org/TR/2008/REC-rdf-sparql-query-20080115/" target="_blank" rel="noopener">rudhommeaux and Seaborne, 2008</a>）。但要使用这些语言，用户不仅需要熟悉它们，还要了解 KBs 的体系结构。相比之下，<strong>以自然语言为查询语言</strong>的 KB-QA 是一种更友好的方案，近年来已成为研究热点。这项任务<strong>以前</strong>有两个主流的研究方向：</p>
+<ol>
+<li>基于语义解析（semantic parsing-base, SP-based）</li>
+<li>基于信息检索（information  retrieval-based, IR-based）</li>
+</ol>
+<p>&emsp;&emsp;<strong>现在</strong>随着神经网络方法的发展，基于神经网络的 KB-QA 已经取得了令人瞩目的成果。其中至关重要的步骤就是计算<strong>问题和候选答案</strong>之间的相似性分数，这一步骤的<strong>关键一点</strong>就是学习它们的表示。然而以往的研究更注重<strong>答案的学习表示</strong>。例如，<a href="https://arxiv.org/pdf/1406.3676.pdf" target="_blank" rel="noopener">Bordes et al. 2014a</a> 考虑候选答案子图的重要性，<a href="https://www.aclweb.org/anthology/P15-1026" target="_blank" rel="noopener">Dong et al. 2015</a>利用上下文和答案的类型。无论如何，<strong>问题的表示</strong>终究还是表达不全。现有的方法 <a href="https://arxiv.org/pdf/1406.3676.pdf" target="_blank" rel="noopener">Bordes et al., 2014a,</a> <a href="https://arxiv.org/pdf/1404.4326.pdf" target="_blank" rel="noopener">b</a> 使用 bag-of-word 模型将问题表示为一个向量，但是这样<strong>问题与答案的关联性</strong>还是被忽视了。我们认为一个问题应该根据回答时不同的侧重面来表示（注：<em>其实就是想用注意力机制</em>，回答的侧重面可以是答案实体本身、答案类型、答案上下文等）。<br>&emsp;&emsp;因此本文提出了一个端到端的神经网络模型，通过 <strong>cross-attention</strong> 机制，根据不同的候选答案动态地表示问题及对应的分数。此外还利用了 KB 中的全部知识，旨在将 KB 中丰富的知识集成到答案中，以此缓解 out-of-vocabulary(<strong>OOV</strong>) 的问题，从而帮助 cross-attention 更精确地表示问题。最后实验结果表明了该方法确实有效。<br>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/P15-1026" title="Question Answering over Freebase wit hMulti-Column Convolutional Neural Networks" target="_blank" rel="noopener">论文</a>（<a href="https://yan624.github.io/论文/23、Question Answering over Freebase with Multi-Column Convolutional Neural Networks.html">论文笔记地址</a>）中的方法很有启发性，但是由于简单地选择三个独立的 CNN ，因此过于机械化。所以我们使用了基于 cross-attention 的神经网络模型。<br>&emsp;&emsp;模型架构如下，步骤与之前的论文的步骤类似。<strong>1)</strong>先找到问题的主题（main entity/topic entity）；<strong>2)</strong>然后在知识库中找到主题相连的节点作为候选答案，<strong>3)</strong>最后送入 score layer 进行评分，排序分数选出分数最高的候选答案作为正确答案。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge/MCCNN总览.jpg" alt="MCCNN总览"></p>
+<p>&emsp;&emsp;为了方便描述，我们将任何一种基本元素称为资源（resource），无论是实体还是关系。比如 (/m/0f8l9c,location.country.capital,/m/05qtj) 的描述是法国的首都是巴黎，其中的 <em>/m/0f8l9c</em> 和 <em>/m/05qtj</em> 分别代表法国和巴黎，<em>location.country.capital</em> 是一种关系。</p>
+<h1 id="我们的方法"><a href="#我们的方法" class="headerlink" title="我们的方法"></a>我们的方法</h1><h2 id="候选者生成"><a href="#候选者生成" class="headerlink" title="候选者生成"></a>候选者生成</h2><p>&emsp;&emsp;略，我已经写过无数遍了。使用 Freebase API 构建的。</p>
+<h2 id="The-Neural-Cross-Attention-Model"><a href="#The-Neural-Cross-Attention-Model" class="headerlink" title="The Neural Cross-Attention Model"></a>The Neural Cross-Attention Model</h2><p>&emsp;&emsp;下图是模型的架构：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge/MCCNN架构.jpg" alt="MCCNN架构"></p>
+<ul>
+<li>问题表示（图 2 中左侧部分显示了处理步骤）<ol>
+<li>使用向量表示问题中的每个单词，这跟其他 NLP 任务差不多，不过它是随机初始化的词嵌入矩阵 <script type="math/tex">E_w \in \mathbb{R}^{d \text{x} v_w}</script>，然后取出对应单词的词向量。d 代表词向量的维度，<script type="math/tex">v_w</script> 代表词表的大小。</li>
+<li>将词向量送入 LSTM，值得注意的是我们没有使用单向 LSTM，因为这样一个单词表示只会捕获到之前的单词的信息而不会包含之后的单词。为此我们使用了双向 LSTM 外加 Bahdanau（<a href="https://arxiv.org/pdf/1409.0473.pdf" title="Neural machine translation by jointly learning to align and translate" target="_blank" rel="noopener">Bahdanau, 2014</a>） attention 的处理；</li>
+<li>这样就会获得两个表示 <script type="math/tex">(\overrightarrow{h_1}, \overrightarrow{h_2}, \dots, \overrightarrow{h_n})</script> 以及 <script type="math/tex">(\overleftarrow{h_1}, \overleftarrow{h_2}, \dots, \overleftarrow{h_n})</script>，然后将两个表示拼接起来组成 [<script type="math/tex">\overrightarrow{h_i};\overleftarrow{h_i}</script>]，正反向 LSTM 单元的大小都是 <script type="math/tex">\frac{d}{2}</script>。</li>
+</ol>
+</li>
+<li>回答的不同侧面表示（图 2 中右侧下方部分）<ol>
+<li>直接使用 KB 的嵌入矩阵 <script type="math/tex">E_k \in \mathbb{R}^{d \text{x} v_k}</script>，其中 <script type="math/tex">v_k</script> 代表知识库中资源的大小，该嵌入矩阵随机初始化并在训练时学习表示，使用全局信息对表示的进一步提高将在 3.3 节 Combining Global Knowledge（原论文）描述。具体来说我们使用回答的四个方面：问答实体 <script type="math/tex">a_e</script>，回答关系 <script type="math/tex">a_r</script>，回答类型 <script type="math/tex">a_t</script>，回答上下文 <script type="math/tex">a_c</script>。它们的嵌入被分别表示为 <script type="math/tex">e_e</script>, <script type="math/tex">e_r</script>, <script type="math/tex">e_t</script>, <script type="math/tex">e_c</script>；</li>
+<li>值得注意的是问答上下文由多个 KB 资源组成，我们将它们定义为 (<script type="math/tex">c_1, c_2, \dots, c_m</script>)，首先获得它们的嵌入 (<script type="math/tex">e_{c_1}, e_{c_2}, \dots, e_{c_m}</script>)，然后计算它们的平均值 <script type="math/tex">e_c = \frac{1}{m} \sum^m_{i=1} e_{c_i}</script></li>
+</ol>
+</li>
+<li>Cross-Attention model（图 2 中右侧上方部分以及最上方部分），详见 3.2.3 Cross-Attention model</li>
+</ul>
+<h2 id="Combining-Global-Knowledge"><a href="#Combining-Global-Knowledge" class="headerlink" title="Combining Global Knowledge"></a>Combining Global Knowledge</h2><p>&emsp;&emsp;Combining Global Knowledg，利用TransE得到knowledge embedding。</p>
+<h1 id="模型描述"><a href="#模型描述" class="headerlink" title="模型描述"></a>模型描述</h1><ol>
+<li>使用了 Bahdanau Attention 处理；</li>
+<li>使用了双向 LSTM，会得到两个向量，最后将这两个向量拼接在一起，就是 BiLSTM 这层的最终向量。另外正反的 LSTM 的长度都是 <script type="math/tex">\frac{d}{2}</script>；</li>
+<li>回答通过问答实体 <script type="math/tex">a_e</script>，回答关系 <script type="math/tex">a_r</script>，回答类型 <script type="math/tex">a_t</script>，回答上下文 <script type="math/tex">a_c</script> 四个方面来表示，其中 ac 是所有词向量的平均值。</li>
+</ol>
+<h1 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h1><ol>
+<li><a href="https://arxiv.org/pdf/1404.4326" title="Open question answering with weakly supervised embedding models" target="_blank" rel="noopener">Antoine Bordes 等 2014b</a>；</li>
+<li><a href="https://arxiv.org/pdf/1406.3676" title="Question Answering with Subgraph Embeddings" target="_blank" rel="noopener">Antoine Bordes 等 2014a</a>；</li>
+<li><a href="https://www.aclweb.org/anthology/P14-2105" title="Semantic Parsing for Single-Relation Question Answering" target="_blank" rel="noopener">Yih W 等 2014</a>，实际上是基于语义解析的，但是用了词向量；</li>
+<li><a href="https://www.aclweb.org/anthology/D14-1071" title="Joint relational embeddings for knowledge-based question answering" target="_blank" rel="noopener">Min-Chul Yang 等 2014</a>，实际上是基于语义解析的但是用了词向量；</li>
+<li><a href="https://www.aclweb.org/anthology/P15-1026" title="Question Answering over Freebase with Multi-Column Convolutional Neural Networks" target="_blank" rel="noopener">Dong 等 2015</a>，这篇是跟我们的文章最相近的（使用了 CNN 而非 RNN + Attention）；</li>
+<li><a href="https://www.aclweb.org/anthology/C16-1226" title="Hybrid Question Answering over Knowledge Base and Free Text" target="_blank" rel="noopener">Kun Xu 等 2016b</a>；<a href="https://arxiv.org/pdf/1603.00957.pdf" title="Question Answering on Freebase via Relation Extraction and Textual Evidence" target="_blank" rel="noopener">Xu K 等 2016a</a>。</li>
+</ol>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/论文/24、An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/论文/23、Question Answering over Freebase with Multi-Column Convolutional Neural Networks.html">
+
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+				
+				
+	
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/论文/23、Question Answering over Freebase with Multi-Column Convolutional Neural Networks.html" class="post-title-link" itemprop="url">论文笔记：Question Answering over Freebase with Multi-Column Convolutional Neural Networks</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-06 14:48:24" itemprop="dateCreated datePublished" datetime="2019-07-06T14:48:24+08:00">2019-07-06</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-08-06 10:24:20" itemprop="dateModified" datetime="2019-08-06T10:24:20+08:00">2019-08-06</time>
+              
+            
+          </span>
+
+          
+
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/" itemprop="url" rel="index"><span itemprop="name">assorted</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/P15-1026" target="_blank" rel="noopener">论文地址</a>，发表于 2015 年。<br>&emsp;&emsp;大多数现有的系统通常依靠人工制作的特性和规则来进行<em>问题理解</em>以及<em>答案排序</em>。此外，一些方法（<a href="https://arxiv.org/pdf/1406.3676.pdf" title="Question Answering with Subgraph Embeddings" target="_blank" rel="noopener">Bordes et al., 2014a</a>; <a href="https://arxiv.org/pdf/1404.4326.pdf" title="Open Question Answering with Weakly Supervised Embedding Models" target="_blank" rel="noopener">Bordeset al., 2014b</a>）使用问题的词嵌入的总和来表示问题，但是这忽略了<strong>词序信息</strong>，无法处理复杂问题，例如 who killed A 和 who A killed 两个问题的表示是一样的。本文介绍了 multi-column convolutional neural networks (MCCNNs)，从三个方面（<strong>回答路径（Answer Type），回答上下文（Answer Context），回答类型（Answer Path）</strong>）理解问题。使用 Freebase 作为知识库，在 WebQuestions 数据集上进行了广泛的实验。最终表明，此方法拥有更好的性能。<br>&emsp;&emsp;神经网络训练步骤：</p>
+<ol>
+<li>MCCNNs 从输入的问题中使用不同 column networks 去提取<strong>回答路径，回答上下文，回答类型</strong>。跟 Bordes 的论文一样，该论文知识库（本文就是 FreeBase）中的实体和关系也由向量表示。</li>
+<li>然后评分层（score layer）根据问题和候选答案的表示进行排序（点积）。</li>
+</ol>
+<h1 id="处理步骤"><a href="#处理步骤" class="headerlink" title="处理步骤"></a>处理步骤</h1><p>&emsp;&emsp;给定一个自然语言问题 <script type="math/tex">q = w_1 \dots w_n</script>，从 FreeBase 中检索相应的实体和属性，然后将它们作为候选答案 <script type="math/tex">C_q</script>。比如，问题 <em>when did Avatar release in UK</em> （阿凡达在英国的发行时间）的答案是 <em>2009-12-17</em>。需要注意的是对于该问题也许有一系列的正确答案。以下数据将被使用到：<strong>WebQuestions</strong>，<strong>FreeBase</strong>，<strong>WikiAnswers</strong>。<br>&emsp;&emsp;MCCNN 概览如图 1 所示：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Question Answering over Freebase with Multi-Column Convolutional Neural Networks/MCCNN概览.jpg" alt="MCCNN概览"></p>
+<p>&emsp;&emsp;比如说，对于问题 whendid Avatar release in UK，从 FreeBase 中查询 <strong>Avatar</strong>（可以称为 <strong>main entity</strong> 或者 <strong>topic entity</strong>） 的<strong>相连节点</strong>（related nodes），这些相连节点被认为是候选答案（<script type="math/tex">C_q</script>）。然后对于每个候选答案 a，模型将会预测一个分数 S(q,a) 以判断 a 是否为正确答案。<br>&emsp;&emsp;对于问题的三个侧面的向量表示分别以 <script type="math/tex">f_1(q)</script> <script type="math/tex">f_2(q)</script> <script type="math/tex">f_3(q)</script> 表示，同理答案的三个侧面分别以 <script type="math/tex">g_1(a)</script> <script type="math/tex">g_2(a)</script> <script type="math/tex">g_3(a)</script> 表示。<script type="math/tex">f_i(q)</script> 和 <script type="math/tex">g_i(a)</script>拥有相同的维度。使用这些问答的表示，我们可以计算问答对 (q,a) 的分数。具体来说，评分函数 S(q,a) 定义为（如图 1 所示，评分层计算分数并将其加起来）：</p>
+<script type="math/tex; mode=display">
+S(q,a) = \underbrace{f_1(q)^Tg_1(a)}_{\text{answer path}} + \underbrace{f_2(q)^Tg_2(a)}_{\text{answer context}} + \underbrace{f_3(q)^Tg_3(a)}_{\text{answer type}}</script><h2 id="候选者生成"><a href="#候选者生成" class="headerlink" title="候选者生成"></a>候选者生成</h2><p>&emsp;&emsp;训练神经网络的<strong>第一步是</strong>从 FreeBase 中为问题检索候选答案。用户提出的问题应该包含一个<strong>可识别</strong>的实体，该实体与知识库相连。我们使用 <strong>Freebase Search API</strong>（<a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.538.7139&amp;rep=rep1&amp;type=pdf" title="Freebase: a collaboratively created graph database for structuringhuman knowledge" target="_blank" rel="noopener">Bollacker et al., 2008)</a>） 查询问题中的命名体。如果没有任何命名体，则查询名词短语，我们使用调用 API 返回的列表中的第一个实体。这个实体解决办法也被 <a href="https://www.aclweb.org/anthology/P14-1090" title="Information Extraction over Structured Data: Question Answering with Freebase" target="_blank" rel="noopener">Yao and Van Durme, 2014)</a> 使用，还可以研发更好的办法，但不是本论文的关注点。<strong>最后关联实体的所有 2-hops（应该是周围的意思，我没有查到是什么意思，但是在<a href="https://yan624.github.io/论文/20、Open Question Answering with Weakly supervised Embedding Models.html#论文总结">博客笔记</a>中有所总结） 节点被认为是候选答案</strong>。并把问题 q 的候选答案集合称为 <script type="math/tex">C_q</script>。</p>
+<h2 id="MCCNNs-for-Question-Understanding"><a href="#MCCNNs-for-Question-Understanding" class="headerlink" title="MCCNNs for Question Understanding"></a>MCCNNs for Question Understanding</h2><p>&emsp;&emsp;MCCNNs 使用多列（<strong>列</strong>指的是图 1 中左侧那三片）卷积网络从字嵌入中学习不同方面。使用 <a href="http://www.jmlr.org/papers/volume12/collobert11a/collobert11a.pdf" title="Natural Language Processing (Almost) from Scratch" target="_blank" rel="noopener">Collobert R 等 2011</a> 的方法解决语言长度不一的问题。具体的做法可参考原论文 <strong>4.2 MCCNNs for Question Understanding</strong>。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>&emsp;&emsp;未来的探索方向：</p>
+<ol>
+<li>整合更多的外部知识源，如clueweb；</li>
+<li>以多任务学习方式训练MCCNN；</li>
+<li>由于我们的模型能够检测到问题中最重要的单词，因此使用结果挖掘有效的问题模式将是非常有趣的。</li>
+</ol>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/论文/23、Question Answering over Freebase with Multi-Column Convolutional Neural Networks.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/论文/22、Joint Relational Embeddings for Knowledge based Question Answering.html">
+
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+				
+				
+	
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/论文/22、Joint Relational Embeddings for Knowledge based Question Answering.html" class="post-title-link" itemprop="url">论文笔记：Joint Relational Embeddings for Knowledge-based Question Answering</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-06 13:37:44" itemprop="dateCreated datePublished" datetime="2019-07-06T13:37:44+08:00">2019-07-06</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-07-17 14:13:19" itemprop="dateModified" datetime="2019-07-17T14:13:19+08:00">2019-07-17</time>
+              
+            
+          </span>
+
+          
+
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/" itemprop="url" rel="index"><span itemprop="name">assorted</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/D14-1071" target="_blank" rel="noopener">论文地址</a>，发表于 2014 年。<br>&emsp;&emsp;将自然语言（natural language，NL）问题转换为对应的逻辑形式（logical form，LF）是基于知识库问答（KB-QA）任务的核心任务，转换问题也被称作语义分析。<del>在 KB-QA 任务领域，与以往（Mooney, 2007; Liang et al., 2011;Cai and Yates, 2013; Fader et al., 2013; Berant etal., 2013; Bao et al., 2014）<u>基于词汇化短语（lexicalized phrases）和逻辑谓语（logical predicates）之间的映射作为词汇触发器（lexical trigger）来执行语义分析中的转换任务</u>不同（其中 Fader 2013 提出的论文在<a href="https://yan624.github.io/论文/20、Open Question Answering with Weakly supervised Embedding Models.html">论文笔记1</a>和<a href="https://yan624.github.io/论文/21、Question Answering with Subgraph Embeddings.html">论文笔记2</a>中具有提及，ctrl f 之后搜索 <em>Paraphrase-Driven Learning for Open Question Answering</em> 或者 <em>Fader</em> 即可找到对应位置）</del>，本论文进一步提出了一种<strong>将 NL 问题映射到 LFs 中</strong>的新的<strong>嵌入式</strong>方法，其利用<strong>词汇表达</strong>与 <strong>KB 中的属性</strong>在隐含空间中的语义关联来实现。实验表明，在两个公开的 QA 数据集上，该方法优于其他三种 KB-QA 的基线方法。<br>&emsp;&emsp;先前工作必须处理以下两种限制：</p>
+<ol>
+<li>由于逻辑谓语的含义通常具有不同的自然语言表达（natural language expression，NLE）形式，因此从谓语提取的词汇触发器可能有时会受到大小限制；</li>
+<li>由于命名体识别（named entity recognition，NER）组件检测到的实体将用于与逻辑谓语一起组成逻辑形式，因此它们的类型也应该与谓语一致。然而，现有的 KB-QA 系统使用的 NER 组件大都独立于 NLE 到谓语的映射步骤。</li>
+</ol>
+<h1 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h1><p>&emsp;&emsp;一如既往地（我为什么要说一如既往？因为前两篇论文笔记都记录了）说明<strong>语义分析</strong>有多糟糕，需要使用大量的人力，继而只能被限制在特定的领域（以后关于这些劣势都不写了）。<br>&emsp;&emsp;一如既往地描述了 FreeBase。</p>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/论文/22、Joint Relational Embeddings for Knowledge based Question Answering.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/论文/21、Question Answering with Subgraph Embeddings.html">
+
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+				
+				
+	
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/论文/21、Question Answering with Subgraph Embeddings.html" class="post-title-link" itemprop="url">论文笔记：Question Answering with Subgraph Embeddings</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-05 15:58:26" itemprop="dateCreated datePublished" datetime="2019-07-05T15:58:26+08:00">2019-07-05</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-08-06 10:41:31" itemprop="dateModified" datetime="2019-08-06T10:41:31+08:00">2019-08-06</time>
+              
+            
+          </span>
+
+          
+
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/" itemprop="url" rel="index"><span itemprop="name">assorted</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://arxiv.org/pdf/1406.3676" target="_blank" rel="noopener">论文地址</a>，发表于 2014 年。<br>&emsp;&emsp;本文的作者在同年发表了另一篇论文，将上一篇论文称为 A，此论文称为 B，对于 A 论文我也做了<a href="https://yan624.github.io/论文/20、Open Question Answering with Weakly supervised Embedding Models.html">论文笔记</a>，本论文是上一篇论文的改进版。A 只是对简单问题进行研究，B 研究如何改进模型并回答更复杂的问题。<br>&emsp;&emsp;开放域问答中的一流技术大致可以分为两大类：1)基于信息检索；2)基于语义解析。<strong>信息检索</strong>系统首先通过 KBs 的搜索 API（转换方式估计是手写模版，论文中未细说） <strong>将问题转换为有效的查询语句</strong>（比如 neo4j 数据库的 CQL）以此检索到大量的候选答案，然后再仔细地识别准确的答案（<a href="https://www.sciencedirect.com/science/article/pii/S0020025511003860" title="A survey on question answering technology from an information retrieval perspective" target="_blank" rel="noopener">Kolomiyets O 等 2011</a>，<a href="https://www2012.universite-lyon.fr/proceedings/proceedings/p639.pdf" title="Template-based Question Answering over RDF Data" target="_blank" rel="noopener">Unger C 等 2012</a>，<a href="https://www.aclweb.org/anthology/P14-1090" title="Information Extraction over Structured Data: Question Answering with Freebase" target="_blank" rel="noopener">Yao X 等 2014</a>）。<strong>语义解析</strong>旨在通过语义分析系统正确<strong>解释</strong>问题的含义，<strong>解释步骤</strong>的做法是把问题转换为数据库查询语句（这里的查询语句应该是逻辑形式，比如<strong>组合范畴法</strong>），以此查询到正确的答案。尽管这两种方法有能力去处理大规模知识库，但是需要专家手动的创建词汇、语法以及 KB 协议才能有所成效。且<strong>没有通用性</strong>，<strong>无法方便地扩展到</strong>具有其他模式、更广泛词汇或英语以外语言的<strong>新数据库</strong>。<br>&emsp;&emsp;相反，<a href="https://www.aclweb.org/anthology/P13-1158" target="_blank" rel="noopener">Paraphrase-Driven Learning for Open Question Answering</a> 提出了一个几乎不需要人工注释的开放域 QA 框架，虽然这是一种有趣的方法，但是它被其他方法超越了。即第二段提到的论文 A。<br>&emsp;&emsp;相比于论文 A，作者作出了以下几点<strong>改进</strong>：1）对于候选答案，考虑更多更长的路径（之前只考虑了 main entity 周围的节点）；2）对候选答案进行更有意义的表示：答案的表示包含问答路径以及周围的子图。</p>
+<h1 id="任务定义"><a href="#任务定义" class="headerlink" title="任务定义"></a>任务定义</h1><p>&emsp;&emsp;假设所有潜在的答案都是 KB 中的实体，当 KB 中不存在该实体时，可以使用一些方法解决（论文中具体没说，只是说了一种极简单的方式：<em>When this entity is not given, plain string matching is used to perform entity resolution</em>）。<br>&emsp;&emsp;此外 N 代表词典的大小，其中 <script type="math/tex">N = N_W + N_S</script>，<script type="math/tex">N_W</script> 代表词嵌入的大小，<script type="math/tex">N_S</script> 代表实体和关系的数量。</p>
+<h1 id="改进：考虑多维度的信息"><a href="#改进：考虑多维度的信息" class="headerlink" title="改进：考虑多维度的信息"></a>改进：考虑多维度的信息</h1><p>&emsp;&emsp;以下描述一个候选答案的特征表示，论文将以三个角度进行表示：</p>
+<ol>
+<li>Single Entity：此表示方式与上一篇论文一样，没什么讲究。就是 Freebase 中的一个实体，<script type="math/tex">\psi(a)</script> 代表答案的 1-of-<script type="math/tex">N_S</script>（one hot）表示；</li>
+<li>Path Representation：答案被认为是一条 path，该 path 从<strong>问题中被提及的实体</strong>到<strong>答案实体</strong>。此实验中，考虑 1-hop 或者 2-hops 级别的 path。比如，(barack obama, people.person.place of birth, honolulu) 是 1-hop path，(barack obama, people.person.place of birth, location. location.containedby, hawaii) 是 2-hop path。这导致了 <script type="math/tex">\psi(a)</script> 代表 3-of-<script type="math/tex">N_S</script> 或者 4-of-<script type="math/tex">N_S</script> 的向量，至于为什么是 *-of-<script type="math/tex">N_S</script>，显而易见。</li>
+<li>Subgraph Representation：我们将 2 中的 <strong>Path</strong> 和连接候选答案的整个<strong>子图</strong>进行编码。<em>具体看论文，写的有点看不懂</em>。</li>
+</ol>
+<p>&emsp;&emsp;我们的假想是将所有的信息都编码进表示以提高结果，但是这不大可能。所以还是采用将子图编码进表示的方法。下图即为实验的模型，右下角显示了编码方式。<br><img src="https://img-blog.csdn.net/20171101002818501?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvTEFXXzEzMDYyNQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="架构图" title="架构图"></p>
+<h1 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h1><p>&emsp;&emsp;与论文 A 差不多，多了一个多任务训练，其他的细枝末节没仔细看。<br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/论文/21、Question Answering with Subgraph Embeddings.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </p></div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/论文/20、Open Question Answering with Weakly supervised Embedding Models.html">
+
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+				
+				
+	
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/论文/20、Open Question Answering with Weakly supervised Embedding Models.html" class="post-title-link" itemprop="url">论文笔记：Open Question Answering with Weakly supervised Embedding Models</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-05 10:54:15" itemprop="dateCreated datePublished" datetime="2019-07-05T10:54:15+08:00">2019-07-05</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-08-29 23:16:09" itemprop="dateModified" datetime="2019-08-29T23:16:09+08:00">2019-08-29</time>
+              
+            
+          </span>
+
+          
+
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/" itemprop="url" rel="index"><span itemprop="name">assorted</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://arxiv.org/pdf/1404.4326" target="_blank" rel="noopener">论文地址</a>，论文发表于 2014 年。<br>&emsp;&emsp;建立一个能够回答任何问题的计算机是人工智能的一个长期目标。这一领域一个重要的发展时大规模知识库的建立，如 <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.538.7139&amp;rep=rep1&amp;type=pdf" target="_blank" rel="noopener">Freebase</a> 和 <a href="https://content.iospress.com/download/semantic-web/sw134?id=semantic-web%2Fsw134" target="_blank" rel="noopener">DBPedia</a>，它们存储了大量的通用信息。它们由三元组的形式构成一个数据库，通过各种关系和格式连接成实体对。那么回答问题被定义为<strong>给定一个用自然语言表达的查询语句</strong>（一个查询语句的例子：中国的首都在哪？）<strong>从知识库中检索正确的实体或实体集的任务</strong>。<br>&emsp;&emsp;最近，通过将问题映射为<strong>逻辑形式</strong>或者类似<strong>数据库查询</strong>的方法取得了富有希望的进展。虽然这种方法可能有效，但是缺点是要采用大量的人为标记的数据或者需要工作人员定义词汇表和语法。<br>&emsp;&emsp;本文采用一种激进的学习方式，将问题映射为向量（无法人为解释）的特征表示。并且将重点放在回答一些基于比较宽泛的主题的简单事实性问题。这项任务的难点来自词汇的多样性，而不是句法的复杂性。<br>&emsp;&emsp;该方法采用随机梯度下降，然后使用 fine-tuning 进行训练。经验表明该模型能够捕获一些有意义的信号，且这是唯一一种能够在弱标记数据上训练的方法。</p>
+<h1 id="论文内容介绍"><a href="#论文内容介绍" class="headerlink" title="论文内容介绍"></a>论文内容介绍</h1><ol>
+<li>Section 2：讨论了之前的工作；</li>
+<li>Section 3：介绍了开放域问答的问题；</li>
+<li>Section 4：给出了模型；</li>
+<li>Section 5：实验结果。</li>
+</ol>
+<h1 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h1><ol>
+<li>大规模的问答历史悠久，主要由 TREC tracks（<a href="https://arxiv.org/pdf/cs/0110053.pdf" target="_blank" rel="noopener">Voorhees 2000</a>） 发起，这是第一个成功地<strong>将问题转换为查询</strong>的问答系统。将问题转换为查询之后，又<strong>将查询提供给 web 搜索引擎</strong>，然后<strong>从返回的页面或片段中取出答案</strong>（<a href="http://aiweb.cs.washington.edu/research/projects/ai3/mulder/mulder-www10.pdf" target="_blank" rel="noopener">Kwok 2001</a>, <a href="https://www.aaai.org/Papers/Symposia/Spring/2002/SS-02-06/SS02-06-002.pdf" target="_blank" rel="noopener">Banko 2002</a>）。这种方法需要大量的人工操作来处理查询，然后解析和搜索结果。</li>
+<li>大型 KBs 的出现，如 FreeBase 和 DBPedia（论文地址已在第一章给出），改变了上述状况，但是也带来巨大的挑战。语言的多样性以及 KBs 规模的庞大，使得需要通过监督学习来处理大量的<strong>带标签</strong>的数据。最早的方法是基于手写模板的 KBs 开放问答，然而对于日新月异 KBs（增加/删除三元组和实体） 还不够成熟。之后开始尝试使用较少的监督情况下<strong>学习 KBs 和自然语言之间的联系</strong>，但是这项工作实际上在解决<strong>信息提取</strong>的问题（<a href="https://www.aclweb.org/anthology/P09-1113" title="Distant supervision for relation extraction without labeled data" target="_blank" rel="noopener">Mintz M 等 2009</a>，<a href="https://www.aclweb.org/anthology/P11-1055" title="Knowledge-Based Weak Supervision for Information Extractionof Overlapping Relation" target="_blank" rel="noopener">Hoffmann R 等 2011</a>，<a href="https://www.aclweb.org/anthology/D12-1093" title="Reading The Web with Learned Syntactic-Semantic Inference Rules" target="_blank" rel="noopener">Lao N 等 2012</a>，<a href="https://www.aclweb.org/anthology/N13-1008" title="Relation Extraction with Matrix Factorization and Universal Schemas" target="_blank" rel="noopener">Riedel S 等 2013</a>）。以上以及本文未提及到的这些通过直接或者间接的监督机器学习来获得更多表现力的解决办法实际上是为了避开标签数据过多的问题。</li>
+<li>近年来，有一种基于语义解析器（<a href="https://www.aclweb.org/anthology/P13-1042" title="Large-scale Semantic Parsing via Schema Matching and Lexicon Extension" target="_blank" rel="noopener">Cai Q 等 2013</a>，<a href="https://www.aclweb.org/anthology/D13-1160" title="Semantic Parsing on Freebase from Question-Answer Pairs" target="_blank" rel="noopener">Berant J 等 2013</a>，<a href="https://www.aclweb.org/anthology/D13-1161" title="Scaling Semantic Parsers with On-the-fly Ontology Matching" target="_blank" rel="noopener">Kwiatkowski T 等 2013</a>）的新的问答系统被提出，它只具有少量标记数据。但仍需要耗费大量精力去仔细设计词汇，语法和知识库。</li>
+<li>所以本文（2014 年）提出了基于嵌入式的问答模型。据我们所知，这是以前从未尝试过的。</li>
+</ol>
+<h1 id="开放域问答"><a href="#开放域问答" class="headerlink" title="开放域问答"></a>开放域问答</h1><p>&emsp;&emsp;本文使用 <a href="https://www.aclweb.org/anthology/P13-1158" target="_blank" rel="noopener">Fader 2013</a> 的问答框架，并使用了相同的数据。</p>
+<h2 id="任务定义"><a href="#任务定义" class="headerlink" title="任务定义"></a>任务定义</h2><p>&emsp;&emsp;我们将回答问题的任务看作为：给定一个问题 q，对应的答案由 KB 中的三元组 t 给出。这意味着我们的问题由<strong>一组三元组 t</strong> 提供对问题及其答案的解释，例如：</p>
+<blockquote>
+<p>q: What environment does a dodo live in?（渡渡鸟生活在什么样的环境中？）<br>t: (dodo.e, live-in.r, makassar.e)<br>q: What are the symbols for Hannukah?（光明节的象征是什么？）<br>t: (menorah.e, be-for.r, hannukah.e)<br>q: What is a laser used for?（极光可以用来做什么？）<br>t: (hologram.e,be-produce-with.r,laser.e)</p>
+</blockquote>
+<p>&emsp;&emsp;这里每个问题我们只给出一个 t，但是实际上它可以有很多，所以上文说是一组三元组。本文其余部分，<strong>使用 <script type="math/tex">\kappa</script>（读作 kappa） 代表 KB ，使用 <script type="math/tex">\epsilon</script> 代表 KB 中的实体或者关系。问题的词表用 V 表示，<script type="math/tex">n_V</script> <script type="math/tex">n_{\epsilon}</script>分别表示 V 和 <script type="math/tex">\epsilon</script> 的大小</strong>。<br>&emsp;&emsp;我们的模型在于<strong>函数 S(·)</strong>，它可以为 question-answer triple pairs (q,t) 打分。因此，找到问题 q 的 top-ranked 的答案 <script type="math/tex">\hat{t}</script>(q) 直接由以下公式得出：</p>
+<script type="math/tex; mode=display">
+\hat{t}(q) = arg \max_{t' \in \kappa}S(q, t')</script><p>&emsp;&emsp;为了处理多个答案，我们将结果呈现为排完序的列表并对其评分，而不是直接采用最前面的预测结果。<br>&emsp;&emsp;使用评分函数可以直接查询 KB，而不需要在<strong>语义分析系统</strong>中一样为问题定义一个中间的结构化逻辑表示。我们的目标是学习 S(·)，余下将讲述用于训练的数据的创建步骤。</p>
+<h2 id="用于训练的数据"><a href="#用于训练的数据" class="headerlink" title="用于训练的数据"></a>用于训练的数据</h2><div class="note info">
+            <p>待续</p>
+          </div>
+<h1 id="Embedding-based-model"><a href="#Embedding-based-model" class="headerlink" title="Embedding-based model"></a>Embedding-based model</h1><p>&emsp;&emsp;模型使用了词嵌入（2019 年了，应该谁都知道了，不做解释）。</p>
+<h2 id="Question-KB-Triple-Scoring"><a href="#Question-KB-Triple-Scoring" class="headerlink" title="Question-KB Triple Scoring"></a>Question-KB Triple Scoring</h2><p>&emsp;&emsp;我们的框架关注的是函数 S(q,t) 的学习，该函数的目的是对一个<strong>问题 q</strong> 和 一个<strong>来自 <script type="math/tex">\kappa</script> 的三元组 t</strong> 进行打分。该评分方法受到了先前工作 labeling images withwords 的启发（<a href="https://link.springer.com/content/pdf/10.1007/s10994-010-5198-3.pdf" target="_blank" rel="noopener">Weston 2013</a>），我们采用该方法将图片和标签替换成了问题和三元组。直观来讲就是：<br>有点难翻译，故给出原文：</p>
+<blockquote>
+<p>&emsp;&emsp;Intuitively, it consists of projecting questions, treated as a bag of words(and possibly n-grams as well), on the one hand, and triples on the other hand,into a shared embedding space and then computing a similarity measure (the dot  product  in  this  paper)  between  both  projections.<br>&emsp;&emsp;大致意思，将问题和三元组使用词袋模型（也可以是 n-gram 模型）投射到共享的嵌入空间，然后计算二者的相似度（本文使用点积的方式）。</p>
+</blockquote>
+<p>&emsp;&emsp;那么评分函数为:</p>
+<script type="math/tex; mode=display">
+S(q,t) = f(q)^Tg(t)</script><p>&emsp;&emsp;<strong>其中 f(·) 将问题中的单词映射到 <script type="math/tex">\mathbb{R}^{\kappa}</script>，<script type="math/tex">f(q) = V^T \Theta(q)</script>。V 是关于 <script type="math/tex">\mathbb{R}^{n_v \times \kappa}</script> 包含所有词嵌入 v 的矩阵。<script type="math/tex">\Theta(q)</script>是 q（<script type="math/tex">\in \{0,1\}^{n_v}</script>） 的二进制（稀疏）表示。同样，g(·) 将 KB 三元组中的实体和关系映射到 <script type="math/tex">\mathbb{R}^{\kappa}</script>，<script type="math/tex">g(t) = W^T\Psi(t)</script>，W 是关于 <script type="math/tex">\mathbb{R}^{n_e \times \kappa}</script> 包含所有实体和关系的嵌入 w 的矩阵，<script type="math/tex">\Psi(t)</script> 是 t（<script type="math/tex">\in \{0,1\}^{n_e}</script>） 的二进制（稀疏）表示。</strong><br><div class="note info">
+            <p>&emsp;&emsp;注：上一段太长了，解释一下。f(q) 就是词向量，g(t) 就是实体和关系的向量（下一段原文写到 g(t) 是将三元组中的嵌入全部相加）。</p>
+          </div></p>
+<p>&emsp;&emsp;将单词表示为词袋模型似乎有一点局限性，但是由于我们特定的设置，语法都很简单，因此含有的信息十分有限，所以词袋模型应该也能带来不错的性能。当然也有反例，比如 <em>What are cats afraid of ?vs.What are afraid of cats ?</em> 这将会有不同的答案。不过这种情况十分罕见。未来考虑将 parse tree features 或者 semantic role labels 作为输入放入嵌入模型中。<br>&emsp;&emsp;与以前的工作（<a href="https://arxiv.org/pdf/1307.7973" target="_blank" rel="noopener">Weston 2013</a>）不同的是，在我们的模型中，实体出现三元组的不同侧面（左右侧）时，实体并非拥有相同的嵌入。KB 中的关系并不是对称的，所以会出现三元组中左侧和右侧的实体是不同的情况。<strong>由于 g(·) 是将三元组中的所有成分相加，所以每一个实体我们都需要两个嵌入</strong>。<br>&emsp;&emsp;这样就可以很容易地对任何三元组进行评分：</p>
+<script type="math/tex; mode=display">
+\hat{t}(q) = arg \max_{t' \in \kappa}S(q, t') = arg \max_{t' \in \kappa}(f(q)^Tg(t'))</script><p>&emsp;&emsp;接下来花了好几段讲怎么训练。</p>
+<h2 id="Fine-tuning-the-Similarity-between-Embeddings"><a href="#Fine-tuning-the-Similarity-between-Embeddings" class="headerlink" title="Fine-tuning the Similarity between Embeddings"></a>Fine-tuning the Similarity between Embeddings</h2><p>&emsp;&emsp;由于受到数据大小的限制，需要使用微调来改进性能。</p>
+<h1 id="论文总结"><a href="#论文总结" class="headerlink" title="论文总结"></a>论文总结</h1><p>&emsp;&emsp;通读论文之后还是有点搞不清论文是怎么训练的，后来看了一下 CCF ADL100 刘康老师的 PPT ，感觉有点理解了，以下是训练步骤：</p>
+<ol>
+<li>输入自然语言表达的问题，比如：姚明的老婆的是哪里人？</li>
+<li>使用 entity linking（论文中貌似没有这步，我在看 PPT 时也是一知半解，好在前几天我刚好在一篇论文中看到了这个 entity linking！<a href="https://yan624.github.io/论文/19、Semantic Parsing via Staged Query Graph Generation：Question Answering with Knowledge Base.html#链接主题实体">博客地址</a>，entity linking 源于<a href="https://arxiv.org/pdf/1609.08075.pdf" target="_blank" rel="noopener">Yang and Chang, 2015</a>）找到 main entity，main entity 周围的 entity 均是候选 entity。如下图，姚明是 main entity，姚明周围的实体都算作候选 entity，比如叶莉、火箭队、上海等。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Open Question Answering with Weakly supervised Embedding Models/姚明的老婆是谁的知识图谱的子图.jpg" alt="姚明的老婆是谁的知识图谱的子图"></li>
+<li>计算问题和候选 entity 的相似度，其中问题由词向量表示，候选 entity 是一个三元组的形式，难以直接用词向量表示，方法是将三元组中的三个对象分别用词向量表示，然后将三个词向量相加。这样就得到了问题的词向量和 entity 的词向量，点乘获得相似度。</li>
+<li>由于候选 entity 不一定只有一个，所以可以获得多个相似度。进行排序即可获得最相似的候选 entity。</li>
+</ol>
+<div class="note danger">
+            <p>&emsp;&emsp;以上的训练步骤并不是论文中的训练步骤，只是我为了给自己加深映像写的，具体的训练步骤在原论文第 4 节，具体在 4.1。</p>
+          </div>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/论文/20、Open Question Answering with Weakly supervised Embedding Models.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/论文/19、Semantic Parsing via Staged Query Graph Generation：Question Answering with Knowledge Base.html">
+
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="朱冲䶮">
@@ -506,9 +1777,9 @@ if(pathname == '/flower.html'){
               
             
           </span>
+
           
-          
-          	
+
             <span class="post-category">
             
               <span class="post-meta-divider">|</span>
@@ -534,13 +1805,7 @@ if(pathname == '/flower.html'){
               
             </span>
           
-          
-          <!--不蒜子计数-->
-          <span id="busuanzi_container_site_uv">
-<span class="post-meta-divider">|</span>
-	浏览量：<span id="busuanzi_value_site_uv"></span>人次
-</span>
-				
+
           
             
             
@@ -698,7 +1963,7 @@ if(pathname == '/flower.html'){
   
   <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yan624.github.io/在hexo中添加绘制流程图及其他图的功能.html">
-    
+
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="朱冲䶮">
@@ -753,9 +2018,9 @@ if(pathname == '/flower.html'){
               
             
           </span>
+
           
-          
-          	
+
             <span class="post-category">
             
               <span class="post-meta-divider">|</span>
@@ -781,13 +2046,7 @@ if(pathname == '/flower.html'){
               
             </span>
           
-          
-          <!--不蒜子计数-->
-          <span id="busuanzi_container_site_uv">
-<span class="post-meta-divider">|</span>
-	浏览量：<span id="busuanzi_value_site_uv"></span>人次
-</span>
-				
+
           
             
             
@@ -883,7 +2142,7 @@ if(pathname == '/flower.html'){
   
   <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yan624.github.io/zcy/机器学习算法（七）：K-NN.html">
-    
+
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="朱冲䶮">
@@ -954,9 +2213,9 @@ if(pathname == '/flower.html'){
               
             
           </span>
+
           
-          
-          	
+
             <span class="post-category">
             
               <span class="post-meta-divider">|</span>
@@ -982,13 +2241,7 @@ if(pathname == '/flower.html'){
               
             </span>
           
-          
-          <!--不蒜子计数-->
-          <span id="busuanzi_container_site_uv">
-<span class="post-meta-divider">|</span>
-	浏览量：<span id="busuanzi_value_site_uv"></span>人次
-</span>
-				
+
           
             
             
@@ -1099,8 +2352,8 @@ if(pathname == '/flower.html'){
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/2019-CCF会议总结.html">
-    
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/2019 CCF会议总结.html">
+
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="朱冲䶮">
@@ -1121,7 +2374,7 @@ if(pathname == '/flower.html'){
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2019-CCF会议总结.html" class="post-title-link" itemprop="url">2019 CCF会议总结</a>
+                <a href="/2019 CCF会议总结.html" class="post-title-link" itemprop="url">2019 CCF会议总结</a>
               
             
           </h1>
@@ -1163,13 +2416,13 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-06-29 13:00:38" itemprop="dateModified" datetime="2019-06-29T13:00:38+08:00">2019-06-29</time>
+                <time title="修改时间：2019-09-07 15:13:48" itemprop="dateModified" datetime="2019-09-07T15:13:48+08:00">2019-09-07</time>
               
             
           </span>
+
           
-          
-          	
+
             <span class="post-category">
             
               <span class="post-meta-divider">|</span>
@@ -1195,13 +2448,7 @@ if(pathname == '/flower.html'){
               
             </span>
           
-          
-          <!--不蒜子计数-->
-          <span id="busuanzi_container_site_uv">
-<span class="post-meta-divider">|</span>
-	浏览量：<span id="busuanzi_value_site_uv"></span>人次
-</span>
-				
+
           
             
             
@@ -1398,1534 +2645,7 @@ if(pathname == '/flower.html'){
           <!--noindex-->
           
             <div class="post-button text-center">
-              <a class="btn" href="/2019-CCF会议总结.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/机器学习中优化算法以及各种函数的选择.html">
-    
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-				
-				
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/机器学习中优化算法以及各种函数的选择.html" class="post-title-link" itemprop="url">机器学习中优化算法以及各种函数的选择</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-06-04 21:19:56 / 修改时间：21:33:18" itemprop="dateCreated datePublished" datetime="2019-06-04T21:19:56+08:00">2019-06-04</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-          
-          
-          	
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/ml/" itemprop="url" rel="index"><span itemprop="name">ml</span></a></span>
-
-                
-                
-              
-            </span>
-          
-          
-          <!--不蒜子计数-->
-          <span id="busuanzi_container_site_uv">
-<span class="post-meta-divider">|</span>
-	浏览量：<span id="busuanzi_value_site_uv"></span>人次
-</span>
-				
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="梯度下降"><a href="#梯度下降" class="headerlink" title="梯度下降"></a>梯度下降</h1><p>大部分梯度下降算法已经记录在<a href="https://yan624.github.io/学习笔记/对神经网络整体的理解.html#Mini-batch梯度下降">笔记</a>中。</p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>算法</th>
-<th>选择</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>SGD</td>
-<td></td>
-</tr>
-<tr>
-<td>Adagrad</td>
-<td>有优化过的 RMSprop 算法</td>
-</tr>
-<tr>
-<td>Momentum</td>
-<td></td>
-</tr>
-<tr>
-<td>RMSprop</td>
-<td>我的理解是 RMSprop 算法也算是在累计梯度。所以我感觉使用 RMSprop 和使用 Adam（是 Momentum 和 RMSprop 结合体） 差不多。但是吴恩达老师指出 Adam 比单独两个 Momentum 和 RMSprop 效果好。请看<a href="https://yan624.github.io/学习笔记/对神经网络整体的理解.html#优化算法总结">优化算法总结</a>。</td>
-</tr>
-<tr>
-<td>Adam</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</div>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/机器学习中优化算法以及各种函数的选择.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/zcy/深度学习算法（三）：RNN 各种机制.html">
-    
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-				
-				
-	
-
-	
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/zcy/深度学习算法（三）：RNN 各种机制.html" class="post-title-link" itemprop="url">深度学习算法（三）：RNN 各种机制</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-05-23 17:07:17" itemprop="dateCreated datePublished" datetime="2019-05-23T17:07:17+08:00">2019-05-23</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-08-15 15:22:24" itemprop="dateModified" datetime="2019-08-15T15:22:24+08:00">2019-08-15</time>
-              
-            
-          </span>
-          
-          
-          	
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/dl/" itemprop="url" rel="index"><span itemprop="name">dl</span></a></span>
-
-                
-                
-              
-            </span>
-          
-          
-          <!--不蒜子计数-->
-          <span id="busuanzi_container_site_uv">
-<span class="post-meta-divider">|</span>
-	浏览量：<span id="busuanzi_value_site_uv"></span>人次
-</span>
-				
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="GRU"><a href="#GRU" class="headerlink" title="GRU"></a>GRU</h1><h1 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h1><p>&emsp;&emsp;该<a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">博客</a>中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。<br>&emsp;&emsp;下图是吴恩达深度学习第五周作业中的图片，是一个 LSTM 单元。与李宏毅老师做的图有略微不同，并且在下图中将 input gate 称为了 update gate。</p>
-<ol>
-<li>首先是<strong>输入的问题</strong>。一般来说一个 LSTM 的输入是前一<strong>个</strong> LSTM 的输出值 <script type="math/tex">a</script> 以及输入值 <script type="math/tex">x</script>（对于第 2 层的 LSTM 的 输入值就是前一<strong>层</strong>的输出值）。但是众所周知，<strong>LSTM 每个门的输入肯定只有一个向量，<script type="math/tex">a</script> 和 <script type="math/tex">x</script> 是两个向量，那么如何处理呢？</strong> <strong>1)</strong>在下图中使用了 <script type="math/tex">[a^{<t-1>},x^{<t>}]</script> 进行向量拼接。<strong>2)</strong>在我看的代码中直接使用了加法进行相加，代码<a href="https://github.com/Alex-Fabbri/lang2logic-PyTorch/blob/master/seq2seq/atis/lstm/main.py" target="_blank" rel="noopener">在这</a>，但是代码量太大了，随便看看就行了。二者的差别无非是向量的维度。</li>
-<li>第一个 LSTM 的输入值怎么处理？因为它不存在前一个 LSTM。答：<strong>暂且使用随机初始化，具体还要补充</strong>（感觉 0 也可以，婴儿出生的时候不就是一张白纸吗。。。）。</li>
-<li>记忆单元中的数据也可以随机初始化或者直接为 0。</li>
-<li>每一层的 LSTM 都权重共享。意思是每一层都有多个 LSTM，里面的权重值其实是同一份。</li>
-</ol>
-<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（三）：RNN 各种机制/LSTM cell.jpg" alt="LSTM cell"></p>
-<p>&emsp;&emsp;下图是多个 LSTM 运行的示意图。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（三）：RNN 各种机制/多个 LSTM.jpg" alt="多个 LSTM"></p>
-<p>&emsp;&emsp;下图是 LSTM 的反向传播，被称为 BPTT（backpropagation through time）。由于还没遇到过，并且 pytorch 都已经是自动求导，所以目前处于待补充状态。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（三）：RNN 各种机制/LSTM反向传播.jpg" alt="LSTM反向传播"></p>
-<h1 id="Seq2Seq"><a href="#Seq2Seq" class="headerlink" title="Seq2Seq"></a>Seq2Seq</h1><p>&emsp;&emsp;该<a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#seq2seq">博文</a>也可供参考。以前想过 encoder-decoder 如何实现，以为很复杂。现在自己实现了一下，实际上就是很简单的代码，<a href="https://github.com/yan624/machine_learning_algorithms/blob/master/dl/seq2seq.py" target="_blank" rel="noopener">代码地址</a>。<br>&emsp;&emsp;由于 seq2seq 有两个输入。对于 encoder 输入包含隐藏状态 a 以及 输入值 x。对于 decoder 输入包含隐藏状态 a 和 encoder 的输出。这实际上跟 LSTM 差不多，如果 seq2seq 的神经元使用 LSTM 的话，实际上就一模一样了。我只使用了简单的加法，将两个输入合并。当然也可以使用其他方法，比如拼接。其他的方法可以自行发挥。<br>&emsp;&emsp;另外对于 seq2seq 学习，已经不需要每个输入的长度都相等了，可以在句子的最后加入一个结束符，如<code>&lt;EOS&gt;</code>，以此判断输入是否结束。但是这样做如何进行向量化呢？暂时未知，待补充。</p>
-<h1 id="Attention"><a href="#Attention" class="headerlink" title="Attention"></a>Attention</h1><p>&emsp;&emsp;<a href="https://www.zhihu.com/question/68482809/answer/264632289" target="_blank" rel="noopener">参考文章</a>；<a href="https://www.cnblogs.com/robert-dlut/p/5952032.html" target="_blank" rel="noopener">Attention历史</a><br>&emsp;&emsp;实际上九几年的时候在CV领域已经有这概念了。RNN 领域第一篇文章《Recurrent Models of Visual Attention》。<br>&emsp;&emsp;<a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#Attention">博客</a>中有写到如何计算 Attention。</p>
-<h2 id="Memory-Network"><a href="#Memory-Network" class="headerlink" title="Memory Network"></a>Memory Network</h2><p>&emsp;&emsp;<a href="https://papers.nips.cc/paper/5846-end-to-end-memory-networks.pdf" target="_blank" rel="noopener">论文地址</a><br>&emsp;&emsp;<a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#Memory-Network">博客</a>有记一些基础的东西。</p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/zcy/深度学习算法（三）：RNN 各种机制.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/zcy/深度学习算法（二）：simple RNN 推导与理解.html">
-    
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-				
-				
-	
-
-	
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/zcy/深度学习算法（二）：simple RNN 推导与理解.html" class="post-title-link" itemprop="url">深度学习算法（二）：simple RNN 推导与理解</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-05-23 15:48:00" itemprop="dateCreated datePublished" datetime="2019-05-23T15:48:00+08:00">2019-05-23</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-07-24 10:58:55" itemprop="dateModified" datetime="2019-07-24T10:58:55+08:00">2019-07-24</time>
-              
-            
-          </span>
-          
-          
-          	
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/dl/" itemprop="url" rel="index"><span itemprop="name">dl</span></a></span>
-
-                
-                
-              
-            </span>
-          
-          
-          <!--不蒜子计数-->
-          <span id="busuanzi_container_site_uv">
-<span class="post-meta-divider">|</span>
-	浏览量：<span id="busuanzi_value_site_uv"></span>人次
-</span>
-				
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p><a href="https://github.com/yan624/machine_learning_algorithms/tree/master/simple_recurrent_neural_network" target="_blank" rel="noopener">github地址</a><br>simple RNN只实现了正向传播，反向传播没有实现。是因为simple RNN有梯度消失的问题，索性直接不写了。下一节直接写LSTM。</p>
-<h1 id="simple-RNN和simple-NN的对比"><a href="#simple-RNN和simple-NN的对比" class="headerlink" title="simple RNN和simple NN的对比"></a>simple RNN和simple NN的对比</h1><p>本来觉得simple RNN挺简单的，只不过是simple NN的扩展，区别无非是将simple NN的神经元换成一个RNN cell。但是实际上没那么简单，特别是加上将数据向量化后计算。感觉简直和simple NN是两种架构。</p>
-<h2 id="input"><a href="#input" class="headerlink" title="input"></a>input</h2><p>下图是一个simple NN的架构，其中的一层也叫做全连接层。所以也叫做前馈神经网络。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版"><br>网络中输入的x是一个纯数字，而不是向量。如果输入的是向量，就代表一次输入了多条样本。总的来说，一条样本向量化为：</p>
-<script type="math/tex; mode=display">
-\begin{pmatrix}
-    x_1\\
-    x_2\\
-    x_3\\
-\end{pmatrix}</script><p>多条样本向量化为：</p>
-<script type="math/tex; mode=display">
-\begin{pmatrix}
-    x_1 & x_4\\
-    x_2 & x_5\\
-    x_3 & x_6\\
-\end{pmatrix}</script><p>但是在simple <strong>R</strong>NN中，因为RNN可以用做自然语言处理，在NLP领域一个数据就是一个单词或者一个词组，我们需要先将词组用数字表示，但是一个字只用一个数表示显然是不现实的。我们通常使用词向量（word vector）表示，所以问题就来了。如果我用simple NN来做自然语言处理，我该怎么处理这些数据。<br>我需要输入这句话——我 是 一名 学生。将其用变量一一对应：</p>
-<script type="math/tex; mode=display">
-\begin{pmatrix}
-    x_1 = \text{我}\\
-    x_2 = \text{是}\\
-    x_3 = \text{一名}\\
-    x_4 = \text{学生}\\
-\end{pmatrix}</script><p>如果再输入一句话——今天 天气 好像 不错。将其用变量一一对应：</p>
-<script type="math/tex; mode=display">
-\begin{pmatrix}
-    x_1 = \text{我} & x_5 = \text{今天}\\
-    x_2 = \text{是} & x_6 = \text{天气}\\
-    x_3 = \text{一名} & x_7 = \text{好像}\\
-    x_4 = \text{学生} & x_8 = \text{不错}\\
-\end{pmatrix}</script><p>这样会出现<strong>极大的问题</strong>，即文字无法进行数学运算。所以需要将文字转为词向量。但是问题是我如何在一个神经元输入一个向量？我如果输入多条样本，那么我整个输入值x就会变成<strong>3维的矩阵</strong>。simple NN显然是处理不了的。所以有个折中的方法，即将每个词的词向量加起来除以词的个数。即：</p>
-<script type="math/tex; mode=display">
-\frac{(v_{\text{我}} + v_{\text{是}} + v_{\text{一名}} + v_{\text{学生}})}{4} =  v_{\text{我是一名学生}}</script><p>其中v代表某个词对应的词向量。这样就将4个向量合并成一个向量了。然后simple NN就可以处理了。<br>但是这样处理肯定太勉强了，所以就出现了simple RNN，它可以处理上述这种问题。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/吴恩达深度学习中的RNN示意图.jpg" alt="吴恩达深度学习中的RNN示意图"><br>上图就是一个simple <strong>R</strong>NN架构，看起来跟simple NN不一样。但是其实你只要将图片往右旋转90度，就一样了。还有一点不太一样，就是simple <strong>R</strong>NN中的一个神经元跟simple NN中的一层神经元一样。<br><div class="note info">
-            <p>simple <strong>R</strong>NN其实就是simple NN的神经元被替换成了simple <strong>R</strong>NN的神经元。而simple <strong>R</strong>NN的一个神经元本身里面还有多个单元，图上就是一个神经元里有4个单元。<br>所以simple <strong>R</strong>NN的神经元可以被叫做记忆细胞。<br>如果重新描述一遍就是simple <strong>R</strong>NN其实就是simple NN的神经元被替换成了simple <strong>R</strong>NN的记忆细胞。<br>而simple <strong>R</strong>NN的记忆细胞里面有多个神经元用来处理进行向量计算。</p>
-          </div></p>
-<h2 id="simple-RNN的另一个输入值a"><a href="#simple-RNN的另一个输入值a" class="headerlink" title="simple RNN的另一个输入值a"></a>simple RNN的另一个输入值a</h2><p>下图是simple RNN的一个记忆细胞。由于其概念大都需要数值来演示，但是大量的数值难以书写，并且用语言实在难以描述。所以以下均使用一个矩阵的字母表示来演示。<br>此处会有几个问题：</p>
-<ol>
-<li>乍一看很简单，但是在实现代码的时候，脑子会转不过来。<strong>因为你碰到的是向量化后的运算</strong>。所以你对各个W，b，A以及X的形状难以确定。不信就自己写一下代码，如果你以前没写过simple RNN的代码，肯定要在确定形状这卡至少一个小时。</li>
-<li>A的形状尤其难确定，会一时之间绕不过来。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/simple%20rnn%20cell.png" alt="simple rnn cell"></li>
-</ol>
-<h3 id="以一个记忆细胞为例"><a href="#以一个记忆细胞为例" class="headerlink" title="以一个记忆细胞为例"></a>以一个记忆细胞为例</h3><p>设词向量的维度为300，一个记忆细胞的units为32——keras代码表示：simpleRNN(32)，并且进行的是18元分类问题。</p>
-<h4 id="以一个样本为例"><a href="#以一个样本为例" class="headerlink" title="以一个样本为例"></a>以一个样本为例</h4><p>，输入样本数为1。<br>则运算过程为：</p>
-<script type="math/tex; mode=display">
-\begin{align}
-    A\_next & = tanh(Wx_{32, 300} * X_{300, 1} + Wa_{32, 32} * A\_prev_{32, 1} + ba_{32, 1})\\
-    y & = softmax(Wy_{18, 32} * A\_next + by_{18, 1})
-\end{align}</script><p>(数字, 数字) 的表示形式是在线性代数里表示形式，这样看起来方便点。第一个数字表示行，第二个数字表示列。tanh和softmax就不解释了。<br>我依次解释：</p>
-<ol>
-<li>权重值Wx比较好理解，由于输入值X是一个 (300, 1) 的矩阵（也可以叫向量）。Wx为 (32, 300) 是因为记忆细胞的一个单元为32，并且词的特征为300。如果将一个记忆细胞看作是一个隐藏层，那么神经元个数就是32，300就代表前一层的输入。</li>
-<li>权重值Wa为什么是 (32, 32) ?由于a实际上就是激活值，激活值我们可以通过w * x计算得到。显然结果是 (32, 1) ，那么权重值Wa的第二个参数就可以确定大小了（矩阵相乘，第一个矩阵的第二维和第二个矩阵的第一维必须一样），权重值Wa的第一个参数实际上跟权重值Wx一样，都是units。</li>
-<li>Wy为什么是 (18, 32) ?18是因为这是一个18元分类问题，32是因为A的第一维是32。</li>
-</ol>
-<p>其中最难确定的就是Wa的形状。经过上面推导就可以知道了，第一维代表units，第二维代表需要与A的第一维，即为A的第一维的大小。</p>
-<h4 id="以128个样本为例"><a href="#以128个样本为例" class="headerlink" title="以128个样本为例"></a>以128个样本为例</h4><p>如果上面没懂可以再看一遍多个样本</p>
-<script type="math/tex; mode=display">
-\begin{align}
-    A\_next & = tanh(Wx_{32, 300} * X_{300, 128} + Wa_{32, 32} * A\_prev_{32, 128} + ba_{32, 1})\\
-    y & = softmax(Wy_{18, 32} * A\_next + by_{18, 1})
-\end{align}</script><p>说白了A其实激活值，看起来比较晕是因为多了一个初始的A0，实际上A0就是激活值，只不过需要初始化一下，它的形状就是激活值的形状。</p>
-<h3 id="以多个记忆细胞为例"><a href="#以多个记忆细胞为例" class="headerlink" title="以多个记忆细胞为例"></a>以多个记忆细胞为例</h3><p>过程就是上面的过程，唯一有区别的是输入值X。因为有了多个记忆细胞，所以X变成了3维，第3维就是timestep——时间步。<br>但是其实计算，跟上面一模一样，假设现在有6个时间步。伪代码如下：<br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">rnn_cell</span><span class="params">(A_prev, Xt, parameters)</span></span>:</span><br><span class="line">	<span class="keyword">do</span>上面的操作</span><br><span class="line"></span><br><span class="line">timesteps = <span class="number">6</span></span><br><span class="line">X = rand((<span class="number">300</span>, <span class="number">128</span>, timesteps))</span><br><span class="line">A0 = rand((<span class="number">32</span>, <span class="number">128</span>))</span><br><span class="line">parameters = 初始化所有参数</span><br><span class="line"><span class="keyword">for</span> ts <span class="keyword">in</span> range(timesteps):</span><br><span class="line">	rnn_cell(A0, X[:, :, ts], parameters)</span><br></pre></td></tr></table></figure></p>
-<p>其实就是遍历每一个时间步而已。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/RNN.png" alt="RNN"></p>
-<h1 id="simple-RNN-的缺陷"><a href="#simple-RNN-的缺陷" class="headerlink" title="simple-RNN 的缺陷"></a>simple-RNN 的缺陷</h1><p>RNN一个最大的缺陷就是梯度消失与梯度爆炸问题，由于这一缺陷，使得RNN在长文本中难以训练，这才诞生了LSTM及各种变体，来源于<a href="https://zhuanlan.zhihu.com/p/44163528" target="_blank" rel="noopener">专栏</a>。梯度消失的原因：参考<a href="https://zhuanlan.zhihu.com/p/28687529" target="_blank" rel="noopener">专栏</a></p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/zcy/深度学习算法（二）：simple RNN 推导与理解.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/2017CS224n学习笔记.html">
-    
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-				
-				
-	
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/学习笔记/2017CS224n学习笔记.html" class="post-title-link" itemprop="url">2017CS224n学习笔记</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-05-20 10:51:09" itemprop="dateCreated datePublished" datetime="2019-05-20T10:51:09+08:00">2019-05-20</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-06-04 13:19:05" itemprop="dateModified" datetime="2019-06-04T13:19:05+08:00">2019-06-04</time>
-              
-            
-          </span>
-          
-          
-          	
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/dl/" itemprop="url" rel="index"><span itemprop="name">dl</span></a></span>
-
-                
-                
-              
-            </span>
-          
-          
-          <!--不蒜子计数-->
-          <span id="busuanzi_container_site_uv">
-<span class="post-meta-divider">|</span>
-	浏览量：<span id="busuanzi_value_site_uv"></span>人次
-</span>
-				
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="词向量表示：word2vec"><a href="#词向量表示：word2vec" class="headerlink" title="词向量表示：word2vec"></a>词向量表示：word2vec</h1>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/学习笔记/2017CS224n学习笔记.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/zcy/深度学习算法（一）：simple NN（前馈神经网络的正反向推导）.html">
-    
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-				
-				
-	
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/zcy/深度学习算法（一）：simple NN（前馈神经网络的正反向推导）.html" class="post-title-link" itemprop="url">深度学习算法（一）：simple NN（前馈神经网络的正反向推导）</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-05-16 19:53:55" itemprop="dateCreated datePublished" datetime="2019-05-16T19:53:55+08:00">2019-05-16</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-07-11 19:54:34" itemprop="dateModified" datetime="2019-07-11T19:54:34+08:00">2019-07-11</time>
-              
-            
-          </span>
-          
-          
-          	
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/dl/" itemprop="url" rel="index"><span itemprop="name">dl</span></a></span>
-
-                
-                
-              
-            </span>
-          
-          
-          <!--不蒜子计数-->
-          <span id="busuanzi_container_site_uv">
-<span class="post-meta-divider">|</span>
-	浏览量：<span id="busuanzi_value_site_uv"></span>人次
-</span>
-				
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <div class="note info">
-            <p>本文的公式不存在次方的说法，所以看见上标，不要想成是次方。<br>对于权重的表示问题，请看<a href="https://yan624.github.io/学习笔记/《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题.html">博客</a>，但是由于是以前的学习笔记，不保证完全正确。<br>如果想了解为什么梯度下降要对w和b求导，可以看<a href="https://yan624.github.io/学习笔记/梯度下降算法的推导.html">这篇</a>。<br><strong>建议边看边写，否则思维跟不上。</strong></p>
-          </div>
-<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>参考<a href="https://www.cnblogs.com/charlotte77/p/5629865.html" target="_blank" rel="noopener">文章</a><br>以如下神经网络架构为例。参考<a href="https://www.cnblogs.com/charlotte77/p/5629865.html" target="_blank" rel="noopener">文章</a>中使用了一个2 2 2的神经网络架构，但是现实中神经网络架构不会这么整整齐齐。所以还是使用了略复杂的架构，此外原文中未对bias（偏差）更新。另外原文也没有实现向量化后的计算。虽然在后面的代码写了，但是由于代码太长了，有一种代码我给出来了，你们自己去看的感觉。说实话没多少注释，都没看的欲望(╬￣皿￣)。然后她所使用的符号让我不太习惯，因为看吴恩达以及李宏毅老师使用的符号都是<script type="math/tex">w^l_{ji}\ a^l_i</script>等等，所以自己重新推导一遍，并且使用了数学公式，而不是截图，更好看一点。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版"><br>解释一下最下面的神经元，这个神经元初始化为1，也就是意味着1 * b = b。输入值为1，一个偏差乘1还是偏差本身。</p>
-<h2 id="关于函数选用"><a href="#关于函数选用" class="headerlink" title="关于函数选用"></a>关于函数选用</h2><p>本文所有激活函数选择sigmoid函数，代价函数选择binary_crossentropy。</p>
-<h2 id="一些约定"><a href="#一些约定" class="headerlink" title="一些约定"></a>一些约定</h2><div class="note info">
-            <p>本文所有的输入值，激活值，输出值都是<strong>列向量</strong>。</p>
-          </div>
-<h1 id="初始化数据以及正向传播"><a href="#初始化数据以及正向传播" class="headerlink" title="初始化数据以及正向传播"></a>初始化数据以及正向传播</h1><h2 id="初始化数据"><a href="#初始化数据" class="headerlink" title="初始化数据"></a>初始化数据</h2><p>此处初始化各层的权重值，偏差。由于是演示，所以顺便把输入层也初始化了。<br>设</p>
-<script type="math/tex; mode=display">
-\begin{cases}
-    x_1 = a^0_1 = 0.55, x_2 = a^0_2 = 0.72\\
-    y_1 = 0.60, y_2 = 0.54\\
-\end{cases}\\
-\begin{cases}
-    w^1_{11}=0.4236548, w^1_{12}=0.64589411\quad|\quad w^1_{21}=0.43758721, w^1_{22}=0.891773\quad|\quad w^1_{31}=0.96366276, w^1_{32}=0.38344152\\
-    b^1_1=0.79172504, b^1_2=0.52889492, b^1_3=0.56804456\\
-    w^2_{11}=0.92559664, w^2_{12}=0.07103606, w^2_{13}=0.0871293\quad|\quad w^2_{21}=0.0202184, w^2_{22}=0.83261985, w^2_{23}=0.77815675\\
-    b^2_1=0.87001215, b^2_2=0.97861834\\
-\end{cases}</script><p>不用多看，反正也用不到几次。。。</p>
-<h2 id="正向传播"><a href="#正向传播" class="headerlink" title="正向传播"></a>正向传播</h2><p>对于正向传播，应该是很熟悉了，所以我直接一次写完，不做过多解释。</p>
-<h3 id="输入层到隐藏层"><a href="#输入层到隐藏层" class="headerlink" title="输入层到隐藏层"></a>输入层到隐藏层</h3><script type="math/tex; mode=display">
-z^1_1 = w^1_{11} * a^0_1 + w^1_{12} * a^0_2 + 1 * b^1_1\\
-z^1_2 = w^1_{21} * a^0_1 + w^1_{22} * a^0_2 + 1 * b^1_2\\
-z^1_3 = w^1_{31} * a^0_1 + w^1_{32} * a^0_2 + 1 * b^1_3\\</script><p>带入sigmoid函数中，以下开始省略bias乘的1：</p>
-<script type="math/tex; mode=display">
-a^1_1 = \sigma{(z^1_1)}\\
-a^1_2 = \sigma{(z^1_2)}\\
-a^1_3 = \sigma{(z^1_3)}\\</script><h3 id="隐藏层到输出层"><a href="#隐藏层到输出层" class="headerlink" title="隐藏层到输出层"></a>隐藏层到输出层</h3><script type="math/tex; mode=display">
-z^2_1 = w^2_{11} * a^1_1 + w^2_{12} * a^1_2 + w^2_{13} * a^1_3 + b^2_1\\
-z^2_2 = w^2_{21} * a^1_1 + w^2_{22} * a^1_2 + w^2_{13} * a^1_3 + b^2_2\\</script><p>带入sigmoid函数中：</p>
-<script type="math/tex; mode=display">
-a^2_1 = \sigma{(z^2_1)}\\
-a^2_2 = \sigma{(z^2_2)}\\</script><h3 id="计算代价"><a href="#计算代价" class="headerlink" title="计算代价"></a>计算代价</h3><p>以字母J记为代价函数的名称，最后一个表达式为最简版：</p>
-<script type="math/tex; mode=display">
-\begin{align}
-    J & = -[(y_1 * \log(a^2_1) + (1 - y_1) * \log(1 - a^2_1) + (y_2 * \log(a^2_2) + (1 - y_2) * \log(1 - a^2_2)]\\
-    J & = -\Sigma^2_{i = 1}{[(y_i * \log(a^2_i) + (1 - y_i) * \log(1 - a^2_i)]}\\
-    J & = -\Sigma{[(y * \log(a^2) + (1 - y) * \log(1 - a^2)]}\\
-\end{align}</script><h3 id="向量化"><a href="#向量化" class="headerlink" title="向量化"></a>向量化</h3><p>上述的表达式全部是一个一个列出来的，如果使用向量来表示乘积那就方便很多。可以看到下面只用了五行就写完了上面<a href="https://yan624.github.io/前馈神经网络的正反向推导.html#正向传播">正向传播</a>的所有步骤。<br><div class="note warning">
-            <p>如果无法理解这一步那就是不会线性代数的问题，线性代数不在此文的介绍范围之内。</p>
-          </div></p>
-<script type="math/tex; mode=display">
-\begin{align}
-    z^1 & = w^1 * a^0 + b^1 & \text{输入层到隐藏层}\\
-    a^1 & = \sigma{(z^1)} & \text{带入隐藏层的激活函数}\\
-    z^2 & = w^2 * a^1 + b^2 & \text{隐藏层到输出层}\\
-    a^2 & = \sigma{(z^2)} & \text{带入输出层的激活函数}\\
-    J & = -\Sigma{[(y * \log(a^2) + (1 - y) * \log(1 - a^2)]} & \text{计算代价}\\
-\end{align}</script><h2 id="上述表达式代码实现"><a href="#上述表达式代码实现" class="headerlink" title="上述表达式代码实现"></a>上述表达式代码实现</h2><p>最后几节有神经网络numpy实现的全部代码，可以直接跳过本节看下一节，这里的代码只是给出一个直观的理解，可以自己运行看看。<br>受到keras以及万物皆对象的启发，首先建立一个神经元对象<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SimpleNN</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, units, activation=<span class="string">'sigmoid'</span>)</span>:</span></span><br><span class="line">        self.units = units</span><br><span class="line">        self.activation = activation</span><br><span class="line">        self.hyperparameters = dict()</span><br><span class="line">        <span class="comment"># W, b, A_prev的导数</span></span><br><span class="line">        self.grads = dict()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_init_hyperparameters</span><span class="params">(self, shape)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        初始化超参数，在神经网络中权重值不能初始化为0，偏差可以</span></span><br><span class="line"><span class="string">        :param shape: 神经元的形状，(units, input_shape)</span></span><br><span class="line"><span class="string">        :return: hyperparameters，该神经元的超参数。可以通过hyperparameters['W']、hyperparameters['b']取值</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="comment"># 由于是演示，所以使用了随机初始化</span></span><br><span class="line">        W = np.random.rand(*shape)</span><br><span class="line">        b = np.random.rand(shape[<span class="number">0</span>], <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> W, b</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">build</span><span class="params">(self, input_shape)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        构造神经元，目前只执行初始化超参数的步骤</span></span><br><span class="line"><span class="string">        :param input_shape:</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        W, b = self._init_hyperparameters(shape=(self.units, input_shape))</span><br><span class="line">        self.hyperparameters[<span class="string">'W'</span>] = W</span><br><span class="line">        self.hyperparameters[<span class="string">'b'</span>] = b</span><br></pre></td></tr></table></figure></p>
-<p>为方便起见，将大部分的函数都放入Model中，下面给出所有的代码<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> simple_neural_network.activation_function <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> simple_neural_network.cost_function <span class="keyword">import</span> *</span><br><span class="line">np.random.seed(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SimpleNN</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, units, activation=<span class="string">'sigmoid'</span>)</span>:</span></span><br><span class="line">        self.units = units</span><br><span class="line">        self.activation = activation</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_init_hyperparameters</span><span class="params">(self, shape)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        初始化超参数，在神经网络中权重值不能初始化为0，偏差可以</span></span><br><span class="line"><span class="string">        :param shape: 神经元的形状，(units, input_shape)</span></span><br><span class="line"><span class="string">        :return: hyperparameters，该神经元的超参数。可以通过hyperparameters['W']、hyperparameters['b']取值</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="comment"># 用于是演示，所以使用了随机初始化</span></span><br><span class="line">        hyperparameters = &#123;</span><br><span class="line">                <span class="string">'W'</span>: np.random.rand(*shape),</span><br><span class="line">                <span class="string">'b'</span>: np.random.rand(shape[<span class="number">0</span>], <span class="number">1</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> hyperparameters</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">build</span><span class="params">(self, input_shape)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        构造神经元，目前只执行初始化超参数的步骤</span></span><br><span class="line"><span class="string">        :param input_shape:</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        self.hyperparameters = self._init_hyperparameters(shape=(self.units, input_shape))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Model</span>:</span></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="comment"># 全部的神经元，并且根据神经元数量计算神经网络架构的层数，在计算时需要减1因为输入层不算入神经网络层数</span></span><br><span class="line">        self.neurons = list()</span><br><span class="line">        <span class="comment"># 按顺序缓存A, (Z, W, b)，由于输入层不需要任何缓存，所以放入None填充此位置。方便根据索引取值</span></span><br><span class="line">        self.value_caches = [<span class="keyword">None</span>]</span><br><span class="line">        <span class="comment"># 代价函数</span></span><br><span class="line">        self.cost = <span class="string">''</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(self, neuron)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        在模型中添加神经元</span></span><br><span class="line"><span class="string">        :param neuron:</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        self.neurons.append(neuron)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">linear_forward</span><span class="params">(self, A_prev, W, b)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        正向传播，线性运算：Z = W * A + b</span></span><br><span class="line"><span class="string">        :param A_prev: 前一层的激活值</span></span><br><span class="line"><span class="string">        :param W: 权重值</span></span><br><span class="line"><span class="string">        :param b: 偏差</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        Z: 运算结果</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        Z = np.dot(W, A_prev) + b</span><br><span class="line">        cache = A_prev, (Z, W, b)</span><br><span class="line">        self.value_caches.append(cache)</span><br><span class="line">        <span class="keyword">return</span> Z</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">nonlinear_forward</span><span class="params">(self, A_prev, W, b, activation)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        进入激活函数进行非线性计算</span></span><br><span class="line"><span class="string">        :param A_prev:</span></span><br><span class="line"><span class="string">        :param W:</span></span><br><span class="line"><span class="string">        :param b:</span></span><br><span class="line"><span class="string">        :param activation:</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        Z = self.linear_forward(A_prev, W, b)</span><br><span class="line">        <span class="keyword">if</span> activation == <span class="string">'sigmoid'</span>:</span><br><span class="line">            <span class="keyword">return</span> sigmoid(Z)</span><br><span class="line">        <span class="keyword">elif</span> activation == <span class="string">'relu'</span>:</span><br><span class="line">            <span class="keyword">return</span> relu(Z)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">deep_forward</span><span class="params">(self, X)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        :param X: 输入值</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        A: 最后一层的运算结果，也就是输出层的激活值</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="comment"># 计算神经网络层数，减1是为了去掉输入层，众所周知输入层不需要进行计算</span></span><br><span class="line">        L = len(self.neurons) - <span class="number">1</span></span><br><span class="line">        A = X</span><br><span class="line">        <span class="comment"># 循环整个神经网络，进行正向传播，从1开始，因为索引0是输入层</span></span><br><span class="line">        <span class="keyword">for</span> l <span class="keyword">in</span> range(<span class="number">1</span>, L + <span class="number">1</span>):</span><br><span class="line">            <span class="comment"># 根据索引获取神经元实例</span></span><br><span class="line">            neuron = self.neurons[l]</span><br><span class="line">            A_prev = A</span><br><span class="line">            W = neuron.hyperparameters[<span class="string">'W'</span>]</span><br><span class="line">            b = neuron.hyperparameters[<span class="string">'b'</span>]</span><br><span class="line">            A = self.nonlinear_forward(A_prev, W, b, neuron.activation)</span><br><span class="line">        <span class="keyword">return</span> A</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">compile</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">fit</span><span class="params">(self, X, Y, epochs=<span class="number">1</span>)</span>:</span></span><br><span class="line">        <span class="comment"># 将输入层的神经元添加进去</span></span><br><span class="line">        self.neurons.insert(<span class="number">0</span>, SimpleNN(len(X)))</span><br><span class="line">        <span class="comment"># 初始化神经元的超参数</span></span><br><span class="line">        <span class="keyword">for</span> i, n <span class="keyword">in</span> enumerate(self.neurons[<span class="number">1</span>:]):</span><br><span class="line">            input_shape = self.neurons[i].units</span><br><span class="line">            n.build(input_shape)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 开始反向传播</span></span><br><span class="line">        AL = self.deep_forward(X)</span><br></pre></td></tr></table></figure></p>
-<p>激活函数<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sigmoid</span><span class="params">(z)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span> / (<span class="number">1</span> + np.exp(-z))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">relu</span><span class="params">(z)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> z * (z &gt; <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">relu_backward</span><span class="params">(dA, Z)</span>:</span></span><br><span class="line">    dZ = np.array(dA, copy=<span class="keyword">True</span>)  <span class="comment"># just converting dz to a correct object.</span></span><br><span class="line"></span><br><span class="line">    dZ[Z &lt;= <span class="number">0</span>] = <span class="number">0</span></span><br><span class="line">    <span class="keyword">return</span> dZ</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sigmoid_backward</span><span class="params">(dA, Z)</span>:</span></span><br><span class="line">    s = sigmoid(Z)</span><br><span class="line">    <span class="keyword">return</span> dA * s * (<span class="number">1</span> - s)</span><br></pre></td></tr></table></figure></p>
-<p>测试一下<br><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 输入值的大小</span></span><br><span class="line">input_size = 2</span><br><span class="line"><span class="comment"># 输出值的大小</span></span><br><span class="line">output_size = 2</span><br><span class="line"><span class="comment"># 方便书写，截断小数</span></span><br><span class="line">X0 = np.round(np.random.rand(input_size, 1), 2)</span><br><span class="line">Y0 = np.round(np.random.rand(output_size, 1),2)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 该模型为2 3 2架构</span></span><br><span class="line">model = Model()</span><br><span class="line">model.add(SimpleNN(3))</span><br><span class="line">model.add(SimpleNN(output_size))</span><br><span class="line">model.compile()</span><br><span class="line">model.fit(X0, Y0)</span><br><span class="line">print(model.value_caches[0])</span><br></pre></td></tr></table></figure></p>
-<h1 id="反向传播"><a href="#反向传播" class="headerlink" title="反向传播"></a>反向传播</h1><div class="note primary">
-            <p>说是说反向传播，实际上整个流程就是在<strong><a href="https://baike.baidu.com/item/链式法则/3314017?fr=aladdin" target="_blank" rel="noopener">链式求导</a></strong>。如果把这点想通了，整个神经网络的难点就只在向量化上了。一定要理解为什么整个流程只是在做链式求导的问题，在这里我并不是随便一提。</p>
-          </div>
-<p>为了便于查找，把之前的图再放这。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版"></p>
-<h2 id="首先更新输出层的权重值（W）以及偏差值（b）"><a href="#首先更新输出层的权重值（W）以及偏差值（b）" class="headerlink" title="首先更新输出层的权重值（W）以及偏差值（b）"></a>首先更新输出层的权重值（W）以及偏差值（b）</h2><p>梯度下降公式大家应该都知道：<script type="math/tex">W = W - \alpha * grad</script>。其中的grad实际上就是W的导数，<a href="https://yan624.github.io/学习笔记/梯度下降算法的推导.html">参考</a>。<br>可以对照上图观察，<strong>输出层</strong>的权重值分别为:</p>
-<script type="math/tex; mode=display">
-\begin{pmatrix}
-    w^2_{11}&w^2_{12}&w^2_{13}\\
-    w^2_{21}&w^2_{22}&w^2_{23}\\
-\end{pmatrix}</script><p>所以我们需要分别求：</p>
-<script type="math/tex; mode=display">
-\begin{pmatrix}
-    \frac{\partial J}{\partial w^2_{11}} & \frac{\partial J}{\partial w^2_{12}} & \frac{\partial J}{\partial w^2_{13}}\\
-    \frac{\partial J}{\partial w^2_{21}} & \frac{\partial J}{\partial w^2_{22}} & \frac{\partial J}{\partial w^2_{23}}\\
-\end{pmatrix} \tag{3.1.1}\label{3.1.1}</script><h3 id="求矩阵中第一个w的导数并更新w"><a href="#求矩阵中第一个w的导数并更新w" class="headerlink" title="求矩阵中第一个w的导数并更新w"></a>求矩阵中第一个w的导数并更新w</h3><p>先求<script type="math/tex">\frac{\partial J}{w^2_{11}}</script>，我们知道这个神经网络的代价的表达式是</p>
-<script type="math/tex; mode=display">
-J = -[(y_1 * \log(a^2_1) + (1 - y_1) * \log(1 - a^2_1) + (y_2 * \log(a^2_2) + (1 - y_2) * \log(1 - a^2_2)]</script><p><strong>为了方便对照我将隐藏层到输出层的正向传播的步骤</strong>也写在下面：</p>
-<script type="math/tex; mode=display">
-\begin{align}
-    z^2_1 & = w^2_{11} * a^1_1 + w^2_{12} * a^1_2 + w^2_{13} * a^1_3 + b^2_1\\
-    z^2_2 & = w^2_{21} * a^1_1 + w^2_{22} * a^1_2 + w^2_{13} * a^1_3 + b^2_2\\
-    a^2_1 & = \sigma{(z^2_1)} = \frac{1}{1 - e^{-z^2_1}}\\
-    a^2_2 & = \sigma{(z^2_2)} = \frac{1}{1 - e^{-z^2_2}}\\
-\end{align}</script><p>根据链式求导法则得：</p>
-<script type="math/tex; mode=display">
-\frac{\partial J}{\partial w^2_{11}} = \frac{\partial J}{\partial a^2_1} * \frac{\partial a^2_1}{\partial z^2_1} * \frac{\partial z^2_1}{\partial w^2_{11}}</script><p>我们将其拆解，一步一步地求：</p>
-<script type="math/tex; mode=display">
-\begin{align}
-    \frac{\partial J}{\partial a^2_1} & = -[(\frac{y_1}{a^2_1} + \frac{1 - y_1}{a^2_1 - 1}) + 0] & \text{首先对a求导，此步如果你不会微积分会有疑惑} \tag{3.1.2}\label{3.1.2}\\
-    \frac{\partial a^2_1}{\partial z^2_1} & = (a^2_1) * (1 - a^2_1) & \text{这是对sigmoid函数的求导，百度一下求导过程}\\
-    \frac{\partial J}{\partial z^2_1} & = \frac{\partial J}{\partial a^2_1} * \frac{\partial a^2_1}{\partial z^2_1} & \text{其次对z求导}\\
-                                      & = \frac{\partial J}{\partial a^2_1} * (a^2_1) * (1 - a^2_1) \tag{3.1.3}\label{3.1.3}\\
-    \frac{\partial z^2_1}{\partial w^2_{11}} & = a^1_1\\
-    \frac{\partial J}{\partial w^2_{11}} & = \frac{\partial J}{\partial z^2_1} * \frac{\partial z^2_1}{\partial w^2_{11}} & \text{最后对w求导} \tag{3.1.4}\label{3.1.4}\\
-                                         & = \frac{\partial J}{\partial z^2_1} * a^1_1\\
-    \frac{\partial J}{\partial w^2_{11}} & = -[(\frac{y_1}{a^2_1} + \frac{1 - y_1}{a^2_1 - 1}) + 0] * (a^2_1) * (1 - a^2_1) * a^1_1 & \text{整合在一起}\\
-\end{align}</script><p>其中<script type="math/tex">[(\frac{y_1}{a^2_1} + \frac{1 - y_1}{a^2_1 - 1}) + 0] * (a^2_1) * (1 - a^2_1)</script>实际上是可以化简的，化简为<script type="math/tex">a^2_1 - y_1</script>，同时去掉了负号，所以</p>
-<script type="math/tex; mode=display">
-\frac{\partial J}{\partial w^2_{11}} = (a^2_1 - y_1) * a^1_1</script><p>我们将数值带入其中，之前的正向传播已经得到了所有激活值。</p>
-<script type="math/tex; mode=display">\frac{\partial J}{\partial w^2_{11}} = (0.85220348 - 0.60) * 0.81604509 = 0.20580941153491322</script><p>对<script type="math/tex">w^2_{11}</script>更新，</p>
-<script type="math/tex; mode=display">
-w^2_{11} = w^2_{11} - \alpha * \frac{\partial J}{\partial w^2_{11}}</script><p>学习速率<script type="math/tex">\alpha</script>选1，经过简单的运算，<script type="math/tex">w^2_{11} = 0.92559664 - 1 * 0.20580941153491322 = 0.7197872284650868</script><br><div class="note info">
-            <p>如果细心点就会发现，<script type="math/tex">\frac{\partial J}{\partial w^2_{11}}</script>其实就等于这层的z的导数乘上前一层的激活值a。如果没发现也没关系，下面<a href="https://yan624.github.io/前馈神经网络的正反向推导.html#向量化-1">向量化</a>这节会做一个总结。</p>
-          </div></p>
-<h3 id="求所有w的导数"><a href="#求所有w的导数" class="headerlink" title="求所有w的导数"></a>求所有w的导数</h3><p>同理可以求出所有的导数</p>
-<script type="math/tex; mode=display">
-\begin{pmatrix}
-    \frac{\partial J}{\partial w^2_{11}} & \frac{\partial J}{\partial w^2_{12}} & \frac{\partial J}{\partial w^2_{13}}\\
-    \frac{\partial J}{\partial w^2_{21}} & \frac{\partial J}{\partial w^2_{22}} & \frac{\partial J}{\partial w^2_{23}}\\
-\end{pmatrix} \tag{\ref{3.1.1}}</script><h3 id="向量化-1"><a href="#向量化-1" class="headerlink" title="向量化"></a>向量化</h3><div class="note danger">
-            <p>上面只求了一个w的导数，虽然其他的w的求导都是类似操作，但是真要算起来，对于自己没去算过的人，可能花一天都没有办法将其用<strong>向量化表示</strong>。<br>求导是十分简单的，但是向量化可能会有点问题。问题的主要来源是<strong>想偷懒</strong>。对于这种问题，最好得到解决办法是暴力破解，即求出所有的w的导数，然后再将其向量化。</p>
-          </div>
-<p>首先观察上述公式<script type="math/tex">\ref{3.1.4}</script>：</p>
-<script type="math/tex; mode=display">
-\frac{\partial J}{\partial w^2_{11}} = \frac{\partial J}{\partial z^2_1} * \frac{\partial z^2_1}{\partial w^2_{11}}</script><p>它由两部分组成，一个是<script type="math/tex">\frac{\partial J}{\partial z^2_1}</script>，第二部分是<script type="math/tex">\frac{\partial z^2_1}{\partial w^2_{11}}</script>，如果你自己求过导就会发现其实<script type="math/tex">\frac{\partial z^2_1}{\partial w^2_{11}} = a^1_1</script>。为了方便你们观察，我列出所有式子：</p>
-<script type="math/tex; mode=display">
-\begin{align}
-    \frac{\partial J}{\partial w^2_{11}} = \frac{\partial J}{\partial z^2_1} * a^1_1 \quad \frac{\partial J}{\partial w^2_{12}} = \frac{\partial J}{\partial z^2_1} * a^1_2 \quad \frac{\partial J}{\partial w^2_{13}} = \frac{\partial J}{\partial z^2_1} * a^1_3\\
-    \frac{\partial J}{\partial w^2_{21}} = \frac{\partial J}{\partial z^2_2} * a^1_1 \quad \frac{\partial J}{\partial w^2_{22}} = \frac{\partial J}{\partial z^2_2} * a^1_2 \quad \frac{\partial J}{\partial w^2_{23}} = \frac{\partial J}{\partial z^2_2} * a^1_3\\
-\end{align}</script><p><strong>可能到这你有点烦躁了，因为表达式实在太多了。没关系，下方蓝色的note会给出总结，直接一步求解完毕。</strong><br>有没有发现，里面有一半是重复的元素？我们可以将它们组成向量得到：</p>
-<script type="math/tex; mode=display">
-\eqref{3.1.1}
-\begin{pmatrix}
-    \frac{\partial J}{\partial w^2_{11}} & \frac{\partial J}{\partial w^2_{12}} & \frac{\partial J}{\partial w^2_{13}}\\
-    \frac{\partial J}{\partial w^2_{21}} & \frac{\partial J}{\partial w^2_{22}} & \frac{\partial J}{\partial w^2_{23}}\\
-\end{pmatrix} = 
-\begin{pmatrix}
-\frac{\partial J}{\partial z^2_1}\\
-\frac{\partial J}{\partial z^2_2}\\
-\end{pmatrix} * 
-\begin{pmatrix}
-a^1_1 & a^1_2 & a^1_3
-\end{pmatrix} \tag{3.1.5}</script><p>公式3.1.5和上面那六个表达式实际上计算的东西是一样的。进一步缩写为</p>
-<script type="math/tex; mode=display">
-\frac{\partial J}{\partial w^2} = \frac{\partial J}{\partial z^2} * (a^1)^T \tag{3.1.6}</script><p>这里加了一个T代表转置，实际上我们所有的输入值，激活值，输出值都是列向量。<br><div class="note info">
-            <p>总结一下，在这里<strong>求<script type="math/tex">\frac{\partial J}{\partial w}</script>的步骤为：求权重值所在层的z的导数<script type="math/tex">\frac{\partial J}{\partial z}</script>再乘上前一层的激活值</strong>。这是对一个w求导所做的运算，而对一整个W矩阵求导那就是公式3.1.6的那个向量化操作。但是观察公式3.1.6发现，其实求一个w和求一个W矩阵并无区别，无非是将数字相乘改为向量（矩阵）相乘。<br>另外，其实这对神经网络中每一层的操作都是一样。如果不信可以自己算一下。所以以后理解的时候，可以用这种方式理解，加快理解速度。</p>
-          </div></p>
-<h3 id="更新偏差"><a href="#更新偏差" class="headerlink" title="更新偏差"></a>更新偏差</h3><p>偏差比权重简单很多。</p>
-<script type="math/tex; mode=display">
-\begin{align}
-    \frac{\partial J}{\partial a^2_1} & = -[(\frac{y_1}{a^2_1} + \frac{1 - y_1}{a^2_1 - 1}) + 0] \tag{\ref{3.1.2}}\\
-    \frac{\partial J}{\partial z^2_1} & = \frac{\partial J}{\partial a^2_1} * \frac{\partial a^2_1}{\partial z^2_1}\\
-                                      & = \frac{\partial J}{\partial a^2_1} * (a^2_1) * (1 - a^2_1) \tag{\ref{3.1.3}}\\
-    \frac{\partial J}{\partial b^2_1} & = \frac{\partial J}{\partial z^2_1} * \frac{\partial z^2_1}{\partial b^2_1} \\
-                                      & = \frac{\partial J}{\partial z^2_1}\\
-    \frac{\partial J}{\partial b^2_1} & = -[(\frac{y_1}{a^2_1} + \frac{1 - y_1}{a^2_1 - 1}) + 0] * (a^2_1) * (1 - a^2_1)\\
-\end{align}</script><p>可以看到</p>
-<script type="math/tex; mode=display">
-\frac{\partial J}{\partial b^2_1} = \frac{\partial J}{\partial z^2_1}</script><p>所以偏差的向量化比较简单：</p>
-<script type="math/tex; mode=display">
-\begin{pmatrix}
-    \frac{\partial J}{\partial b^2_1}\\
-    \frac{\partial J}{\partial b^2_2}\\
-\end{pmatrix} = 
-\begin{pmatrix}
-    \frac{\partial J}{\partial z^2_1}\\
-    \frac{\partial J}{\partial z^2_2}\\
-\end{pmatrix}</script><h3 id="整理"><a href="#整理" class="headerlink" title="整理"></a>整理</h3><p>整理一下上一波的求导过程。目标是求得<script type="math/tex">\frac{\partial J}{w^2_{11}}</script>，但是上面我并没有一步求导到底，相反我将每一步都写出来了，这是有原因的。因为<script type="math/tex">\frac{\partial J}{\partial z^2_1}</script>会在前一层对w求导时使用，所以在代码上当然需要保存副本。而<script type="math/tex">\frac{\partial J}{w^2_{11}}</script>已经在这次的反向传播中使用过了，它的价值也算是用完了。<br>在<a href="https://yan624.github.io/前馈神经网络的正反向推导.html#首先更新输出层的权重值（W）以及偏差值（b）">首先更新输出层的权重值（W）以及偏差值（b）</a>中<strong>略有瑕疵</strong>的步骤（也就是上述所有步骤）是：</p>
-<ol>
-<li>求出<script type="math/tex">\frac{\partial J}{\partial a^2}</script></li>
-<li>进一步求出<script type="math/tex">\frac{\partial J}{\partial z^2}</script></li>
-<li>分别求出<script type="math/tex">\frac{\partial J}{\partial w^2}\ \frac{\partial J}{\partial b^2}</script></li>
-</ol>
-<div class="note info">
-            <p>根据上面三步，我们可以观察出，如果需要求出一层的<script type="math/tex">\frac{\partial J}{\partial w^2}\ \frac{\partial J}{\partial b^2}</script>（<strong>步骤3</strong>），需要<strong>先</strong>求出<strong>同一层</strong>的<script type="math/tex">\frac{\partial J}{\partial a^2}\ \frac{\partial J}{\partial z^2}</script>（<strong>步骤1和2</strong>）。<strong><em>所以</em></strong>如果我们需要求出<strong>前一层</strong>的<script type="math/tex">\frac{\partial J}{\partial w^1}\ \frac{\partial J}{\partial b^1}</script>，必须先求出<strong>前一层</strong>的a的导数<script type="math/tex">\frac{\partial J}{\partial a^1}\ \frac{\partial J}{\partial z^1}</script>，而由于公式<script type="math/tex">z^2_1 = w^2_{11} * a^1_1 + w^2_{12} * a^1_2 + w^2_{13} * a^1_3 + b^2_1</script>，可以观察到上述<strong>步骤2</strong>对z求导之后其实拥有三个选项：</p><ol><li>求w的导数（<strong>步骤3</strong>）</li><li>求b的导数（<strong>步骤3</strong>）</li><li>求上一层a的导数</li></ol>
-          </div>
-<p>所以正确的步骤是：</p>
-<ol>
-<li>求出<script type="math/tex">\frac{\partial J}{\partial a^2}</script>（<strong>不变</strong>）</li>
-<li>进一步求出<script type="math/tex">\frac{\partial J}{\partial z^2}</script>（<strong>不变</strong>）</li>
-<li>分别求出<script type="math/tex">\frac{\partial J}{\partial w^2}\ \frac{\partial J}{\partial b^2}</script>（<strong>不变</strong>）</li>
-<li>最后求出前一层的<script type="math/tex">\frac{\partial J}{\partial a^1}</script>，准备下一步的计算。</li>
-</ol>
-<p><strong>也就是说，我们在一层中进行求导，需要分别求4个参数的导数，即当前层的a，w，b以及前一层的a的导数。</strong></p>
-<h2 id="更新隐藏层的权重值以及偏差值"><a href="#更新隐藏层的权重值以及偏差值" class="headerlink" title="更新隐藏层的权重值以及偏差值"></a>更新隐藏层的权重值以及偏差值</h2><p>由于上述步骤太多，来回滑动网页略繁琐，我再次把图放出来，以供参考。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版"><br>隐藏层的更新与输出层略微不同，由于看公式不太形象，可以看上面的图。观察发现，隐藏层的某一个神经元链接着输出层的<strong>所有</strong>神经元。所以隐藏层的神经元的误差其实来源于与它相连接的输出层的神经元。<br>根据链式求导法则，我们知道：一个函数对一个变量求导，如果有多条路径可以到达该变量，那么就需要对每条路径都求导，最后将结果相加。转换成数学公式就跟下面公式3.2.1的求导过程一样。</p>
-<h3 id="对第一个w求导"><a href="#对第一个w求导" class="headerlink" title="对第一个w求导"></a>对第一个w求导</h3><p>我们按照上一节<a href="https://yan624.github.io/前馈神经网络的正反向推导.html#整理">《整理》</a>的四个步骤来做，先求出a的导数：</p>
-<script type="math/tex; mode=display">
-\begin{align}
-    \frac{\partial J}{\partial a^1_1} & = \frac{\partial J}{\partial a^2_1} * \frac{\partial a^2_1}{\partial a^1_1} + \frac{\partial J}{\partial a^2_2} * \frac{\partial a^2_2}{\partial a^1_1} & \text{输出层两个神经元均要求导再相加}\\
-                                      & = \frac{\partial J}{\partial z^2_1} * \frac{\partial z^2_1}{\partial a^1_1} + \frac{\partial J}{\partial z^2_2} * \frac{\partial z^2_1}{\partial a^1_1} & \text{之前求过z的导数，为了方便书写用它替换}\\
-                                      & = \frac{\partial J}{\partial z^2_1} * w^2_{11} + \frac{\partial J}{\partial z^2_2} * w^2_{21} \tag{3.2.1}\label{3.2.1}\\
-\end{align}</script><div class="note info">
-            <p>我们可以观察到隐藏层的a的导数<script type="math/tex">\frac{\partial J}{\partial a^1_1}</script>实际上就是<strong>输出层</strong>的z的导数<script type="math/tex">\frac{\partial J}{\partial z^2_1}</script>乘上与之相连的<strong>输出层</strong>的神经元的w。<br>一般化之后就是：<strong>除了输出层</strong>，其他所有层的<strong>a的导数</strong>都是<strong>后一层</strong>的<strong>z的导数</strong>乘上<strong>后一层</strong>的w。因为输出层的<strong>a的导数</strong>是通过代价函数求的。</p>
-          </div>
-<p>所以下一步就是求z的导数：</p>
-<script type="math/tex; mode=display">
-\begin{align}
-    \frac{\partial J}{\partial z^1_1} & = \frac{\partial J}{\partial z^2_1} * \frac{\partial z^2_1}{\partial a^1_1} * \frac{\partial a^1_1}{\partial z^1_1} + \frac{\partial J}{\partial z^2_2} * \frac{\partial z^2_1}{\partial a^1_1} * \frac{\partial a^1_1}{\partial z^1_1}\\
-                                      & = \frac{\partial J}{\partial z^2_1} * w^2_{11} * \frac{\partial a^1_1}{\partial z^1_1}  + \frac{\partial J}{\partial z^2_2} * w^2_{21} * \frac{\partial a^1_1}{\partial z^1_1}\\
-                                      & = \frac{\partial J}{\partial a^1_1} * \frac{\partial a^1_1}{\partial z^1_1} & \text{这里a的导数参考}\ref{3.2.1}\\
-    \frac{\partial a^1_1}{\partial z^1_1} & = a^1_1 * (1 - a^1_1) & \text{对sigmoid函数求导，前面已经说过了}\\
-\end{align}</script><p>最后求出w的导数</p>
-<script type="math/tex; mode=display">
-\begin{align}
-    \frac{\partial J}{\partial w^1_{11}} & = \frac{\partial J}{\partial a^1_1} * \frac{\partial a^1_1}{\partial z^1_1} * \frac{\partial z^1_1}{\partial w^1_{11}}\\
-                                         & = \frac{\partial J}{\partial z^1_1} * \frac{\partial z^1_1}{\partial w^1_{11}}\\
-                                         & = \frac{\partial J}{\partial z^1_1} * a^0_1
-\end{align}</script><h3 id="向量化-2"><a href="#向量化-2" class="headerlink" title="向量化"></a>向量化</h3><p>你肯定已经想把它向量化了。先列出所有的表达式。</p>
-<script type="math/tex; mode=display">
-\frac{\partial J}{\partial w^1_{11}} = \frac{\partial J}{\partial z^1_1} * a^0_1\\
-\frac{\partial J}{\partial w^1_{12}} = \frac{\partial J}{\partial z^1_1} * a^0_2\\
-\frac{\partial J}{\partial w^1_{21}} = \frac{\partial J}{\partial z^1_2} * a^0_1\\
-\frac{\partial J}{\partial w^1_{22}} = \frac{\partial J}{\partial z^1_2} * a^0_2\\
-\frac{\partial J}{\partial w^1_{31}} = \frac{\partial J}{\partial z^1_3} * a^0_1\\
-\frac{\partial J}{\partial w^1_{32}} = \frac{\partial J}{\partial z^1_3} * a^0_2\\</script><p>可以发现这其实跟上面的向量化步骤一模一样：</p>
-<script type="math/tex; mode=display">
-\begin{align}
-    \begin{pmatrix}
-        \frac{\partial J}{\partial w^1_{11}} & \frac{\partial J}{\partial w^1_{12}}\\
-        \frac{\partial J}{\partial w^1_{21}} & \frac{\partial J}{\partial w^1_{22}}\\
-        \frac{\partial J}{\partial w^1_{31}} & \frac{\partial J}{\partial w^1_{32}}\\
-    \end{pmatrix} & = 
-    \begin{pmatrix}
-        \frac{\partial J}{\partial z^1_1}\\
-        \frac{\partial J}{\partial z^1_2}\\
-        \frac{\partial J}{\partial z^1_3}\\
-    \end{pmatrix} * 
-    \begin{pmatrix}
-        a^0_1 & a^0_2
-    \end{pmatrix} \\
-    \frac{\partial J}{\partial w^1} & = \frac{\partial J}{\partial z^1} * (a^0)^T
-\end{align}</script><h3 id="对偏差求导"><a href="#对偏差求导" class="headerlink" title="对偏差求导"></a>对偏差求导</h3><p>这一步更是简单，直接给结果了。</p>
-<script type="math/tex; mode=display">
-\begin{align}
-    \begin{pmatrix}
-        \frac{\partial J}{\partial b^1_1}\\
-        \frac{\partial J}{\partial b^1_2}\\
-        \frac{\partial J}{\partial b^1_3}\\
-    \end{pmatrix} & = 
-    \begin{pmatrix}
-        \frac{\partial J}{\partial z^1_1}\\
-        \frac{\partial J}{\partial z^1_2}\\
-        \frac{\partial J}{\partial z^1_3}\\
-    \end{pmatrix}\\
-    \frac{\partial J}{\partial b^1} & = \frac{\partial J}{\partial z^1}
-\end{align}</script><h3 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h3><p>上述步骤看起来没什么问题，但是在实际编程中会有很大问题。在向量化的时候，我直接使用了<script type="math/tex">\frac{\partial J}{\partial z^1}</script>，但是问题就是<script type="math/tex">\frac{\partial J}{\partial z^1}</script>的向量化我直接跳过了。要向量化<script type="math/tex">\frac{\partial J}{\partial z^1}</script>，实际上得先向量化<script type="math/tex">\frac{\partial J}{\partial a^1}</script>。观察表达式<script type="math/tex">\ref{3.2.1}</script>，先给出所有的式子：</p>
-<script type="math/tex; mode=display">
-\frac{\partial J}{\partial a^1_1} = \frac{\partial J}{\partial z^2_1} * w^2_{11} + \frac{\partial J}{\partial z^2_2} * w^2_{21}\\
-\frac{\partial J}{\partial a^1_2} = \frac{\partial J}{\partial z^2_1} * w^2_{12} + \frac{\partial J}{\partial z^2_2} * w^2_{22}\\
-\frac{\partial J}{\partial a^1_3} = \frac{\partial J}{\partial z^2_1} * w^2_{13} + \frac{\partial J}{\partial z^2_2} * w^2_{23}\\</script><h4 id="向量化-3"><a href="#向量化-3" class="headerlink" title="向量化"></a>向量化</h4><script type="math/tex; mode=display">
-\begin{pmatrix}
-    \frac{\partial J}{\partial a^1_1}\\
-    \frac{\partial J}{\partial a^1_2}\\
-    \frac{\partial J}{\partial a^1_3}\\
-\end{pmatrix} = 
-\begin{pmatrix}
-w^2_{11} & w^2_{12} & w^2_{13}\\
-w^2_{21} & w^2_{22} & w^2_{23}\\
-\end{pmatrix}^T * 
-\begin{pmatrix}
-\frac{\partial J}{\partial z^2_1} & \frac{\partial J}{\partial z^2_2}
-\end{pmatrix}</script><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>在反向传播中，每一层都只需要重复如下几步：</p>
-<ol>
-<li>求出<script type="math/tex">\frac{\partial J}{\partial a^2}</script></li>
-<li>进一步求出<script type="math/tex">\frac{\partial J}{\partial z^2}</script></li>
-<li>分别求出<script type="math/tex">\frac{\partial J}{\partial w^2}\ \frac{\partial J}{\partial b^2}</script></li>
-<li>最后求出前一层的<script type="math/tex">\frac{\partial J}{\partial a^1}</script>，准备下一步的计算。此步骤的向量化操作在<a href="https://yan624.github.io/前馈神经网络的正反向推导.html#注意点">注意点</a>。</li>
-</ol>
-<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p><a href="https://github.com/yan624/machine_learning_algorithms/tree/master/simple_neural_network" target="_blank" rel="noopener">使用numpy实现一个简单的神经网络</a></p>
-<h1 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h1><p>在做反向传播代码时，验算了很多遍，发现公式推导没有问题，但是梯度却一直在上升，心态都炸了。<br>最后发现，用了大半年的crossentropy在最前面居然要加上一个“-”号。以前由于是偷懒，在求导的时候一般不加负号，在求完导之后再补上。然后由于写习惯了，导致我忘记crossentropy居然是有负号的。</p>
-<h1 id="撒花"><a href="#撒花" class="headerlink" title="撒花"></a>撒花</h1><p>在第二节有一步是初始化数据，但是全篇都没用几个地方用到。是因为数据测试起来太麻烦了，我需要在代码里一步一步分析神经网络的计算过程，从而获得数据。以后再补充吧。</p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/zcy/深度学习算法（一）：simple NN（前馈神经网络的正反向推导）.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/linux非root用户配置环境变量.html">
-    
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-				
-				
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/linux非root用户配置环境变量.html" class="post-title-link" itemprop="url">linux非root用户配置环境变量</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-05-15 16:04:44" itemprop="dateCreated datePublished" datetime="2019-05-15T16:04:44+08:00">2019-05-15</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-06-04 13:22:49" itemprop="dateModified" datetime="2019-06-04T13:22:49+08:00">2019-06-04</time>
-              
-            
-          </span>
-          
-          
-          	
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a></span>
-
-                
-                
-              
-            </span>
-          
-          
-          <!--不蒜子计数-->
-          <span id="busuanzi_container_site_uv">
-<span class="post-meta-divider">|</span>
-	浏览量：<span id="busuanzi_value_site_uv"></span>人次
-</span>
-				
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p><a href="https://www.cnblogs.com/gstblog/p/10160976.html" target="_blank" rel="noopener">参考文章</a><br>本文以配置anaconda的环境变量为例。</p>
-<p>切换到用户目录<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~</span><br></pre></td></tr></table></figure></p>
-<p>输入，发现有一个名为<code>.bashrc</code>的文件<br><figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">ll</span></span><br></pre></td></tr></table></figure></p>
-<p>编辑它<br><figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim ~<span class="string">/.bashrc</span></span><br></pre></td></tr></table></figure></p>
-<p>在最后一行加上如下代码，保存并退出。<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="builtin-name">export</span> <span class="attribute">PATH</span>=~/anaconda3/bin:$PATH</span><br></pre></td></tr></table></figure></p>
-<div class="note warning">
-            <p>PATH和=之间不能有空格。由于写java代码习惯了，加上了空格，导致报错。</p>
-          </div>
-<p>更新配置<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure></p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/linux非root用户配置环境变量.html#more" rel="contents">
+              <a class="btn" href="/2019 CCF会议总结.html#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -2974,7 +2694,7 @@ w^2_{21} & w^2_{22} & w^2_{23}\\
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -3021,7 +2741,7 @@ w^2_{21} & w^2_{22} & w^2_{23}\\
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">117</span>
+                    <span class="site-state-item-count">122</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -3127,27 +2847,20 @@ w^2_{21} & w^2_{22} & w^2_{23}\\
                     
                       
                     
-                    <span class="site-state-item-count">18</span>
+                      
+                    
+                    <span class="site-state-item-count">19</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
               
+			  
+			  <!-- 不蒜子/busuanzi -->
+			  <div class="site-state-item site-state-posts">
+			  	<span class="site-state-item-count">108.4k</span>
+			  	<span class="site-state-item-name">总字数</span>
+			  </div>
             </nav>
-            <br>
-						<!--同个ip访问本站页面次数-->
-						<div class="site-state-item site-state-posts" style="border-left:none;">
-								<span class="site-state-item-count" id="busuanzi_value_site_pv"></span>
-								<span class="site-state-item-name">浏览量</span>
-						</div>
-						<!--不同ip访问本站次数-->
-						<div class="site-state-item site-state-posts">
-								<span class="site-state-item-count" id="busuanzi_value_site_uv"></span>
-								<span class="site-state-item-name">访客量</span>
-						</div>
-						<div class="site-state-item site-state-posts">
-								<span class="site-state-item-count">101k</span>
-								<span class="site-state-item-name">总字数</span>
-						</div>
           
 
           
@@ -3258,6 +2971,32 @@ w^2_{21} & w^2_{22} & w^2_{23}\\
 
 
         
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
 
 
 
@@ -3492,13 +3231,14 @@ w^2_{21} & w^2_{22} & w^2_{23}\\
 
   
 
-	<script src="/lib/my-utils.js"></script>
+  
+  # 自己新增的所有 js 文件
+  <script src="/lib/my-utils.js"></script>
 <!--图片缩放插件-->
 <script src="/lib/zoomify/zoomify.min.js"></script>
 <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-<!--不蒜子统计-->
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<!-- 背景插件 -->
+<script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
 <!-- 背景图片 -->
 <script>
 	function generateBG(count){
@@ -3510,7 +3250,7 @@ w^2_{21} & w^2_{22} & w^2_{23}\\
 		bg.shuffle();
 		return bg;
 	}
-	$("body").backstretch(generateBG(6), {
+	$("body").backstretch(generateBG(11), {
 		duration:90000,//1min半一换
 		fade: 1500
 	});
