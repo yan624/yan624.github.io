@@ -29,7 +29,7 @@
     
     
   <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
-  <link rel="stylesheet" href="/lib/pace/pace-theme-center-simple.min.css?v=1.0.2">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css?v=1.0.2">
 
 
 
@@ -390,11 +390,40 @@ if(pathname == '/flower.html'){
 
       
       
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
     </ul>
   
 
   
 
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
   
 </nav>
 
@@ -502,7 +531,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-07-25 09:35:31" itemprop="dateModified" datetime="2019-07-25T09:35:31+08:00">2019-07-25</time>
+                <time title="修改时间：2019-10-23 17:19:03" itemprop="dateModified" datetime="2019-10-23T17:19:03+08:00">2019-10-23</time>
               
             
           </span>
@@ -563,7 +592,7 @@ if(pathname == '/flower.html'){
 
       
         
-          <h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://arxiv.org/pdf/1506.02075v1.pdf" target="_blank" rel="noopener">论文地址</a>，发表于 2015 年。<br>&emsp;&emsp;开放域问答系统的目的是在不受域限制的情况下，为用自然语言表达的问题提供准确的答案。问答系统有很长的历史，它们搜索文本文档或在网络上提取答案（see e.g.(Voorhees and Tice, 2000; Dumais et al., 2002)）。最近在公开的大型知识库（KBS）方面也取得了进展，如 Freebase 知识库。然而，尽管最近大家都在关注设计一个具有推理能力的系统，它可以检索并使用 KB 中的<strong>多重事实</strong>进行问答。但是其实只涉及 <strong>KB 中单个事实的简单问答</strong>都还没被解决，本论文中将其称为 Simple Question Answering。<br>&emsp;&emsp;本文贡献有二：</p>
+          <h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://arxiv.org/pdf/1506.02075v1.pdf" target="_blank" rel="noopener">论文地址</a>，发表于 2015 年。<br>&emsp;&emsp;开放域问答系统的目的是在不受域限制的情况下，为用自然语言表达的问题提供准确的答案。问答系统有很长的历史，它们搜索文本文档或在网络上提取答案（see e.g.(Voorhees and Tice, 2000; Dumais et al., 2002)）。最近在公开的大型知识库（KBS）方面也取得了进展，如 Freebase 知识库。然而，尽管最近大家都在关注设计一个具有推理能力的系统，它可以检索并使用 KB 中的<strong>多重事实</strong>进行问答。但是其实只涉及 <strong>KB 中单个事实的简单问答</strong>都还没被解决，本论文中将其称为 Simple Question Answering。<br>&emsp;&emsp;KBQA 现存的方法：1）将 question 转为结构化的 KB 查询语句（Berant et al. 2013）；或者 2）学习将 question 以及 facts 嵌入到低维向量空间中，然后在这些向量中通过计算相似度检索答案（<a href="https://arxiv.org/pdf/1406.3676.pdf" target="_blank" rel="noopener">Bordes et al., 2014a</a>）。<br>&emsp;&emsp;本文贡献有二：</p>
 <ul>
 <li>其一，为了<strong>研究现有系统</strong>以及<strong>通过多任务学习在不同数据源上同时训练</strong>成为可能，我们收集了第一个基于知识库的大规模的问答数据集，称为 SimpleQuestions。包含了人类编写和 Freebase facts 相关的超过 10 万个问题，另外现有的基准数据集 WebQuestions 包含的问题少于 6 千个，这些问题是使用 google suggest api 自动创建的。</li>
 <li>其二，提出了一种基于词嵌入的问答系统，在 Memory Networks (MemNNs)（<a href="https://arxiv.org/pdf/1410.3916.pdf" target="_blank" rel="noopener">Weston et al., 2015</a>;<a href="https://papers.nips.cc/paper/5846-end-to-end-memory-networks.pdf" target="_blank" rel="noopener">Sukhbaatar et al., 2015</a>） 框架下开发而成。</li>
@@ -574,6 +603,30 @@ if(pathname == '/flower.html'){
 <li>Section 5：相关工作；</li>
 <li>Section 6：实验结果。</li>
 </ol>
+<h1 id="Memory-Network-for-Simple-QA"><a href="#Memory-Network-for-Simple-QA" class="headerlink" title="Memory Network for Simple QA"></a>Memory Network for Simple QA</h1><p>&emsp;&emsp;Memory network 由一个 memory（一个索引对象数组）和一个神经网络组成。神经网络由 Input map(I), Generalization(G), Output map(O) and Response(R) 构成。其工作流如下所示：</p>
+<ol>
+<li>Storing Freebase：第一阶段。解析 Freebase（可以是 FB2M 或 FB5M，取决于配置）并且将它存进 memory。它使用 Input module 去预处理数据；</li>
+<li>Training：第二阶段。训练 MemNN 去回答问题。此处使用 Input, Output and Response modules，训练主要关注核心 Output module 嵌入模型的参数；</li>
+<li>Connecting Reverb：第三阶段。将来自 Reverb 的 new facts 添加到 memory 中。这是在训练完毕后进行的，为了测试 MemNNs 在不需要重新训练的情况下处理 new facts 的能力。它使用 Input module 去预处理 Reverb facts 并且使用 Generalization module 将它们和已经被存储的 facts 连接。</li>
+</ol>
+<h2 id="Input-module"><a href="#Input-module" class="headerlink" title="Input module"></a>Input module</h2><p>&emsp;&emsp;此组件预处理 3 种类型的数据，它们会被输入进神经网络：</p>
+<ol>
+<li>Freebase facts：用于填充 memory；</li>
+<li>questions：系统需要回答的问题；</li>
+<li>Reverb facts：在 workflow 第二阶段中，我们用它扩展 memory。</li>
+</ol>
+<h3 id="preprocessing-Freebase"><a href="#preprocessing-Freebase" class="headerlink" title="preprocessing Freebase"></a>preprocessing Freebase</h3><p>&emsp;&emsp;Freebase 数据最初存储原子 facts，包括将单个实体作为主语或者宾语，再在它们之间加上一个联系（即谓语）。<strong>但是这样的存储需要从两个方面与 QA 任务适应</strong>。</p>
+<ol>
+<li>为了回答不止有一个答案的问题，我们将 fact 重新定义为一个三元组，其包含 subject，relationship 以及通过 relationship 连接至 subject 的一组 objetcs 。这个分组过程将 atomic facts 转为 grouped facts，以下将其简单的称为 facts。Table 2 显示了这样分组可以减少 facts 的数量。</li>
+<li></li>
+</ol>
+<h3 id="Preprocessing-Freebase-facts"><a href="#Preprocessing-Freebase-facts" class="headerlink" title="Preprocessing Freebase facts"></a>Preprocessing Freebase facts</h3><p>&emsp;&emsp;</p>
+<h3 id="Preprocessing-questions"><a href="#Preprocessing-questions" class="headerlink" title="Preprocessing questions"></a>Preprocessing questions</h3><h3 id="Preprocessing-Reverb-facts"><a href="#Preprocessing-Reverb-facts" class="headerlink" title="Preprocessing Reverb facts"></a>Preprocessing Reverb facts</h3><h2 id="Generalization-module"><a href="#Generalization-module" class="headerlink" title="Generalization module"></a>Generalization module</h2><p>&emsp;&emsp;此模块负责将新的元素增加到 memory 中。在我们的例子中，memory 具有一个 multigraph 结构，其中每个节点都是 Freebase 的一个实体，multigraph 中被标记的 arcs 是 Freebase 中的 relationships：预处理之后，所有 Freebase 的 facts 都使用此结构存储。<br>&emsp;&emsp;<br>&emsp;&emsp;为了将 Reverb 的 subject 和 object 链接到 Freebase 实体，我们使用 precomputed entity links (<a href="https://www.aclweb.org/anthology/W12-3016.pdf" target="_blank" rel="noopener">Lin et al., 2012</a>)。。。。</p>
+<h2 id="Output-module"><a href="#Output-module" class="headerlink" title="Output module"></a>Output module</h2><p>&emsp;&emsp;Output 模块通过给定 input ，在 memory 中执行查表（lookup）操作，返回该问题的 supporting facts。在我们的 simple QA 例子中，此模块只返回一个 supporting fact。为了避免为所有存储的 facts 评分（即为了避免时间代价太大），我们先执行一步<em>近似实体链接</em>（proximate entity linking），以生成一个小的候选 facts 集合。最后， supporting fact 指的是与嵌入模型中的问题最相似的候选 fact。</p>
+<h3 id="Candidate-generation"><a href="#Candidate-generation" class="headerlink" title="Candidate generation"></a>Candidate generation</h3><p>&emsp;&emsp;略。</p>
+<h3 id="Scoring"><a href="#Scoring" class="headerlink" title="Scoring"></a>Scoring</h3><p>&emsp;&emsp;略。</p>
+<h2 id="Response-module"><a href="#Response-module" class="headerlink" title="Response module"></a>Response module</h2><p>&emsp;&emsp;在 memory network 中，Response 模块对 Output 模块的结果进行后处理操作，以计算预期的答案。在我们的例子中，它返回被挑选出来的 supporting fact 的对象集（博主注：这个对象集我猜测是 KG 中的三元组）。<br>&emsp;&emsp;注：不必纠结 Response 模块的具体功能，可以自己定制，必然在<a href="https://zhuanlan.zhihu.com/p/29590286" target="_blank" rel="noopener">记忆网络之Memory Networks</a>中写到最初的 memory network 的 response 模块只是简单地将向量转成单词。</p>
+<h1 id="推荐阅读"><a href="#推荐阅读" class="headerlink" title="推荐阅读"></a>推荐阅读</h1><p>&emsp;&emsp;<a href="https://blog.csdn.net/liuchonge/article/details/78128238" target="_blank" rel="noopener">记忆网络之open-domain QA 应用</a>，csdn 的一篇博客，也对此论文的训练方法做了总结。</p>
           <!--noindex-->
           
             <div class="post-button text-center">
@@ -2857,7 +2910,7 @@ S(q,t) = f(q)^Tg(t)</script><p>&emsp;&emsp;<strong>其中 f(·) 将问题中的�
 			  
 			  <!-- 不蒜子/busuanzi -->
 			  <div class="site-state-item site-state-posts">
-			  	<span class="site-state-item-count">108.4k</span>
+			  	<span class="site-state-item-count">111.8k</span>
 			  	<span class="site-state-item-name">总字数</span>
 			  </div>
             </nav>
@@ -3094,6 +3147,341 @@ S(q,t) = f(q)^Tg(t)</script><p>&emsp;&emsp;<strong>其中 f(·) 将问题中的�
 
 
   
+
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+        // ref: https://github.com/ForbesLindesay/unescape-html
+        var unescapeHtml = function(html) {
+          return String(html)
+            .replace(/&quot;/g, '"')
+            .replace(/&#39;/g, '\'')
+            .replace(/&#x3A;/g, ':')
+            // replace all the other &#x; chars
+            .replace(/&#(\d+);/g, function (m, p) { return String.fromCharCode(p); })
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&amp;/g, '&');
+        };
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                content = unescapeHtml(content);
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
 
 
 

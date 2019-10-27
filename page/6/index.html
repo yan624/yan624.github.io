@@ -29,7 +29,7 @@
     
     
   <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
-  <link rel="stylesheet" href="/lib/pace/pace-theme-center-simple.min.css?v=1.0.2">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css?v=1.0.2">
 
 
 
@@ -390,11 +390,40 @@ if(pathname == '/flower.html'){
 
       
       
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
     </ul>
   
 
   
 
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
   
 </nav>
 
@@ -744,7 +773,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-09-25 16:52:16" itemprop="dateModified" datetime="2019-09-25T16:52:16+08:00">2019-09-25</time>
+                <time title="修改时间：2019-10-16 14:38:49" itemprop="dateModified" datetime="2019-10-16T14:38:49+08:00">2019-10-16</time>
               
             
           </span>
@@ -992,7 +1021,19 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
 <p>&emsp;&emsp;然后获得 <script type="math/tex">a^1_0 a^2_0 a^3_0 a^4_0</script>，之后将它们输入 softmax 层（有实验发现其实不经过 softmax 层也可以，甚至效果更好），最后将所有 a 分别乘上它们对应的向量并且相加，得到一个向量 <script type="math/tex">c^0</script>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Attention机制计算score.jpg" alt="Attention机制计算score"></p>
 <p>&emsp;&emsp;使用 Attention 机制计算完毕后，将向量 <script type="math/tex">c^0</script> 输入进 decoder 即可，接下来的计算都是以此类推。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Attention机制计算完毕后输入到decoder.jpg" alt="Attention机制计算完毕后输入到decoder"></p>
 <h3 id="Attention应用到Speach-Recognition"><a href="#Attention应用到Speach-Recognition" class="headerlink" title="Attention应用到Speach Recognition"></a>Attention应用到Speach Recognition</h3><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Attention for Speach Recognition.jpg" alt="Attention for Speach Recognition"></p>
-<h2 id="Memory-Network"><a href="#Memory-Network" class="headerlink" title="Memory Network"></a>Memory Network</h2><p>&emsp;&emsp;<a href="https://papers.nips.cc/paper/5846-end-to-end-memory-networks.pdf" target="_blank" rel="noopener">论文地址</a><br>&emsp;&emsp;Memory Network 最先被用在 Reading Comprehension，说白了就是一个 Attention 机制。下图就是一个简易的 Memory Network，其实还有更复杂的版本，但是由于文章写太长不好，我就不截图了。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/一个简易的Memory Network.jpg" alt="一个简易的Memory Network" title="一个简易的Memory Network"></p>
+<h2 id="Memory-Network"><a href="#Memory-Network" class="headerlink" title="Memory Network"></a>Memory Network</h2><p>&emsp;&emsp;<a href="https://papers.nips.cc/paper/5846-end-to-end-memory-networks.pdf" target="_blank" rel="noopener">论文地址</a>，<a href="https://www.bilibili.com/video/av9770302/?p=8" target="_blank" rel="noopener">视频地址</a>43:00开始。<br>&emsp;&emsp;Memory Network 最先被用在 Reading Comprehension，说白了就是一个 Attention 机制。下图就是一个简易的 <strong>Memory Network</strong>。</p>
+<ol>
+<li>首先将 document 由多个句子组成，句子由 vector x 表示。具体如何表示的问题，可以由自定义解决，如 bag of word 或者由词向量表示；</li>
+<li>query 就是问题，也由 vector q 表示；</li>
+<li>使用 q 对每个句子做 attention 得到 match score <script type="math/tex">\alpha</script>，然后使用 <script type="math/tex">\alpha</script> 和 x 做 weighted sum；</li>
+<li>最后将 weighted sum 后的 vector 和 vector q 都丢到 DNN 中，得到答案。</li>
+</ol>
+<p>&emsp;&emsp;注：这是在做阅读理解。document -&gt; vector 等于 input(I) 和 generalization(G)，attention 等于 output(O)，生成答案等于 response(R)。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/一个简易的Memory Network.jpg" alt="一个简易的Memory Network" title="一个简易的Memory Network"></p>
+<p>&emsp;&emsp;Memory Network 还有更复杂的版本，即 attention 的 vector 和抽取信息的 vector 并不需要是同一个，如下图所示。</p>
+<ol>
+<li>将 document  表示为句子时，使用两组向量。一组用于计算 match score，一组用于 weighted sum。</li>
+<li>其他的步骤都差不多，但是有一个地方不一样。在 weighted sum 得到一个 vector 之后，可以和 q 加在一起，得到一个新的 q，再重复 步骤 1。而且这个步骤可以做很多次，做完之后再输入进 DNN 获取答案。这个步骤被称之为 Hopping，注意从 document 抽取的两组 vector 在 hopping 的时候，可以是不一样的。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/更复杂的memory network.jpg" alt="更复杂的memory network"></li>
+</ol>
 <h2 id="Neural-Turing-Machine"><a href="#Neural-Turing-Machine" class="headerlink" title="Neural Turing Machine"></a>Neural Turing Machine</h2><h2 id="Tips-for-Generation"><a href="#Tips-for-Generation" class="headerlink" title="Tips for Generation"></a>Tips for Generation</h2><p>&emsp;&emsp;这里听不太懂，跳过了。有 Beam Search 之类的。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/对Generation的建议1.jpg" alt="对Generation的建议1"></p>
 <h1 id="Pointer-Network"><a href="#Pointer-Network" class="headerlink" title="Pointer Network"></a>Pointer Network</h1><p>&emsp;&emsp;<a href="https://pdfs.semanticscholar.org/eb5c/1ce6818333560d0d3247c0c74985ef295d9d.pdf" target="_blank" rel="noopener">论文地址</a><br>&emsp;&emsp;举一个简单的例子助于理解 Pointer Network。在二维坐标系中任意给出 4 个点，我们的目标是找到几个点，将它们连起来形成一个封闭圈，剩下的那几个点要正好在这个封闭圈之中，如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/助于理解Pointer Network的一个例子.jpg" alt="助于理解Pointer Network的一个例子"></p>
 <p>&emsp;&emsp;当然，这肯定已经有一些算法可以解了，比如在坐标系中计算距离。但是今天我们使用硬 train 一发的方法，即不管三七二十一将它输入到神经网络里面训练。首先制造一些训练数据，然后给 encoder-deocder 训练。<strong>具体的训练步骤为</strong>：输入点的坐标，输出 one-hot 表示 <code>{1,2,3,4,END}</code> 的五维向量，碰到 END 则代表解码完毕。<br>&emsp;&emsp;但结果是网络训练不起来，因为在上述的例子中我们只输入了 4 个点，我们的目的是得到 1-4 个点。但是如果我们的测试数据是输入 400 个点呢？那么我们也只会得到 1-4 个点，因为 <code>{1,2,3,4,END}</code> 是预先定义好的。你可能会想那就多定义一点啊，但是下次我要是输入 4000 个点呢？要是 40000 个点呢？总有你无法预先定义的时候。<br>&emsp;&emsp;所以我们需要 <strong>Pointer Network</strong> 来<strong>动态的改变类别</strong>（具体做法详见下一小节），注意我这里直接说成类别了，我们可以把 decoder 部分看作是多元分类的工作，如输出 4000 个点，就是 4000 元分类。<br>&emsp;&emsp;<strong>上面的例子其实是 Pointer Netwoek 论文中的一个例子，但是对于这个例子来说，使用 Pointer Network 其实没多大意义，因为问题本身有更简单的解法，下面说一下有意义的用途。</strong><br>&emsp;&emsp;Pointer Network 应用于 <strong>Summarization</strong>，<a href="https://www.aclweb.org/anthology/P17-1099" target="_blank" rel="noopener">论文地址</a>。给定一篇文档，让机器做出总结。对于此类问题，我们会碰到很多<strong>生僻的地名、人名</strong>等等字词。我们可以使用 Pointer Network 来解决这个问题。<br>&emsp;&emsp;下图就是做法，整张图的意思就是在做文本摘要的工作，输入一个句子，输出摘要。先不看中间的黄色圆圈 <script type="math/tex">p_{gen}</script>，看看其他部分（红黄两部分）就是很普通的 encoder-decoder。但是对于这个 encoder-decoder 来说，词表中并没有 <em>Aregentina</em> 这个单词。那么我们就可以使用 Pointer Network，这个 <script type="math/tex">p_{gen}</script> 就是概率（具体描述见下一节）。最后结果就是我们将注意力关注到 <em>Aregentina</em> 这个单词。当然对于 encoder-decoder 这部分的工作也是要做的，我们可以将两个结果加起来，从而判断出最终要产生哪个单词，做法详见原论文。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Pointer Network for Summarization.jpg" alt="Pointer Network for Summarization"></p>
@@ -2260,7 +2301,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-09-08 16:33:50" itemprop="dateModified" datetime="2019-09-08T16:33:50+08:00">2019-09-08</time>
+                <time title="修改时间：2019-10-14 15:17:46" itemprop="dateModified" datetime="2019-10-14T15:17:46+08:00">2019-10-14</time>
               
             
           </span>
@@ -2602,7 +2643,7 @@ A^L = \frac{e^{Z^L}}{\sum^n_{i=1}t_i},\quad A^L_i = \frac{t_i}{\sum^n_{i=1}t_i}\
             <p>首先虽然全部的过程已经理清，但是还有几个问题：为什么要对w求导？梯度下降的意义是什么？为什么使用梯度下降就可以解决误差问题？</p>
           </div>
 <p>本节的示例均建立在一个样本的情况下，如果是多个样本经过神经网络，可能略微不同。我看了吴恩达老师的深度学习课程，发现多个样本与一个样本的区别，可能只在偏差b那里会有点不同。<br>下图以一个三层神经网络为例，说明正向与反向传播过程。由于神经元之间的链接太多会导致混乱，所以下图只链接了第一个神经元。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E4%BD%BF%E7%94%A8%E5%AF%BC%E6%95%B0%E8%A7%A3%E9%87%8A%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95.jpg" alt="使用导数解释反向传播算法"><br>下图略微简化一下反向传播算法中的导数项，并且完成了最后的权重值优化。值得注意的是：如果cost function不同，下面求导结果会略微不同，本文统一使用<script type="math/tex">cost = \frac{1}{m} * \sum{(\hat{y} - y)^2}</script>，但是神经网络一般是使用<strong>交叉熵</strong>——crossentropy，其公式为：<script type="math/tex">cost = -\frac{1}{m} * (y * log(\hat{y}) + (1 - y) * log(1 - \hat{y}))</script>。使用前者，<script type="math/tex">\frac{\partial{J}}{\partial{z^{(3)}}} = (a^{(3)} - y) * g'(z^{(3)})</script>；如果使用后者，<script type="math/tex">\frac{\partial{J}}{\partial{z^{(3)}}} = a^{(3)} - y</script>。可以看到使用两个不同的代价函数，会有不同的结果，这是因为两个函数求导的结果不一样。而两者对表达式<script type="math/tex">\frac{\partial{J}}{\partial{z^{(3)}}}</script>的结果只差了一个<script type="math/tex">g'(z^{(3)})</script>，这完全是巧合罢了。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E7%AE%80%E5%8C%96%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95.jpg" alt="简化反向传播算法"><br><strong>另外再提醒一下自己，这里全是以一个样本为例。但是仅仅这样权重已经是一个二维矩阵了，要是如果传入多个样本，权重岂不是是一个三维矩阵？然而不管传入几个样本权重实际上对于不同的样本是没有变化的，所以还是二维矩阵。</strong></p>
-<h1 id="随机初始化"><a href="#随机初始化" class="headerlink" title="随机初始化"></a>随机初始化</h1><p>对于逻辑回归可以将<strong>权重</strong>（weight）全部初始化为0，但是对于神经网络来说，将个权重初始化为0，再使用梯度下降会完全无效。实际上将偏差b初始化为0是可以的，但是权重不行。<br>解释起来太麻烦，详情看吴恩达深度学习——01神经网络和深度学习第三周浅层神经网络，3.11随机初始化。吴恩达老师解释地还是很清楚的。<br>可以像以下这样设置weight：<script type="math/tex">w^l = np.random.randn((2, 2)) * 0.01</script>//这可以产生参数为(2, 2)的高斯分布随机变量，后面再成一个很小的数，比如0.01。而对于b，之前说了初始化为0也可以。<br>对于上式的0.01可能会感到很疑惑，为什么要乘这么一个值。因为我们一般将weight初始化为很小的值，如果weight值很大，最终导致z也很大，那么会落在sigmoid function或者tanh function的平缓部分，会使梯度的写了很小，意味着梯度下降算法会非常慢，所以学习得很慢。</p>
+<h1 id="※-随机初始化"><a href="#※-随机初始化" class="headerlink" title="※ 随机初始化"></a>※ 随机初始化</h1><p>对于逻辑回归可以将<strong>权重</strong>（weight）全部初始化为0，但是对于神经网络来说，将个权重初始化为0，再使用梯度下降会完全无效。实际上将偏差b初始化为0是可以的，但是权重不行。<br>解释起来太麻烦，详情看吴恩达深度学习——01神经网络和深度学习第三周浅层神经网络，3.11随机初始化。吴恩达老师解释地还是很清楚的。<br>可以像以下这样设置weight：<script type="math/tex">w^l = np.random.randn((2, 2)) * 0.01</script>//这可以产生参数为(2, 2)的高斯分布随机变量，后面再成一个很小的数，比如0.01。而对于b，之前说了初始化为0也可以。<br>对于上式的0.01可能会感到很疑惑，为什么要乘这么一个值。因为我们一般将weight初始化为很小的值，如果weight值很大，最终导致z也很大，那么会落在sigmoid function或者tanh function的平缓部分，会使梯度的写了很小，意味着梯度下降算法会非常慢，所以学习得很慢。</p>
 <h2 id="初始化补充"><a href="#初始化补充" class="headerlink" title="初始化补充"></a>初始化补充</h2><p>经在作业中做的测试得出如下结论：</p>
 <div class="table-container">
 <table>
@@ -2749,7 +2790,7 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} & \underbrace{y^{
 </tr>
 <tr>
 <td>Momentum</td>
-<td>累积梯度，充当动量，注：虽然 Momentum 和 RMSprop 类似，但是实际上在计算上并不一样， RMSprop 要多一个除以 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script> 的步骤<br> <strong>优点</strong>：1）一定程度上缓解了 SGD 收敛不稳定的问题，并且有一定的摆脱局部最优的能力（即如同一个滚轮下坡一样，它拥有惯性，在到达鞍点时不会立即停止，会因为惯性再向前一点距离，从而可能离开此鞍点）。<br> <strong>缺点</strong>：1）多了一个超参数需要调整，它的选取同样会影响到结果。</td>
+<td>累积梯度，充当动量，注：虽然 Momentum 和 RMSprop 类似，但是实际上在计算上并不一样， RMSprop 要多一个除以 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script> 的步骤，且没有偏差修正这一步骤<br> <strong>优点</strong>：1）一定程度上缓解了 SGD 收敛不稳定的问题，并且有一定的摆脱局部最优的能力（即如同一个滚轮下坡一样，它拥有惯性，在到达鞍点时不会立即停止，会因为惯性再向前一点距离，从而可能离开此鞍点）。<br> <strong>缺点</strong>：1）多了一个超参数需要调整，它的选取同样会影响到结果。</td>
 </tr>
 <tr>
 <td>RMSprop</td>
@@ -2799,7 +2840,7 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} & \underbrace{y^{
 </blockquote>
 <p>Momentum考虑到了之前的梯度，从而用其来缓和参数更新。我们将前一次梯度的“方向”存进变量v。后续不翻译了。</p>
 <h2 id="均方根传播——RMSprop"><a href="#均方根传播——RMSprop" class="headerlink" title="均方根传播——RMSprop"></a>均方根传播——RMSprop</h2><div class="note primary">
-            <p>&emsp;&emsp;对梯度做平方，且 <script type="math/tex">S_{dW}</script> 的计算公式是加法，那么 <script type="math/tex">S_{dW}</script> 岂不是会越来越大？不就意味着动量越来越大，到最后停不下来了？<br>&emsp;&emsp;<strong>以上是错的</strong>。可以减小。设 <script type="math/tex">dW_1 = 15 \quad dS_1 = 20 \quad \beta = 0.9 \quad dW_2 = 2</script>，则 <script type="math/tex">dS_2 = 0.9 * 20 + (1 - 0.9) * 15 = 19.5</script>，而 <script type="math/tex">dS_3 = 0.9 * 19.5 + (1 - 0.9) * 2 = 17.75</script>，比较 <script type="math/tex">dS_1 \, dS_2 \, dS_3</script>，明显在下降。比较 <script type="math/tex">dW_1 \, dW_2</script> 发现梯度减少引起得 <script type="math/tex">dS</script> 减少。<br>&emsp;&emsp;<strong>RMSProp 的本质</strong>是：在梯度大的地方，减小 <script type="math/tex">\alpha</script>（即陡坡则减小步伐）；在梯度小的地方，增大 <script type="math/tex">\alpha</script>（即缓坡则增大步伐）。解释如下：<br>&emsp;&emsp;RMSProp的更新公式为：</p><script type="math/tex; mode=display">    \begin{cases}        S_{dW} = \beta_2 * (S_{dW})_{prev} + (1 - \beta_2) * (dW)^2 \\        W -= \alpha * \frac{dW}{\sqrt{S_{dW}} + \epsilon} \\    \end{cases}</script><p>&emsp;&emsp;对于 <script type="math/tex">W -= \alpha * \frac{dW}{\sqrt{S_{dW}} + \epsilon}</script> 来说，其实就是普通的权重更新公式多除以一个 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script>。而由于 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script> 是梯度的累加，故为简便起见，将 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script> 看作梯度。<br>&emsp;&emsp;我们知道在<strong>陡坡</strong>处梯度大，我们需要<strong>减小步伐</strong>，要不然容易一步迈长了，而减小步伐的意思就是减小 <script type="math/tex">\alpha</script>。假设现在陡坡处梯度为 100，那么就是将原本的梯度下降公式多除以了 100（因为我们已将 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script> 视为梯度）。是不是梯度越大，则分母越大？分母越大则意味着 <script type="math/tex">\alpha</script> 越小。<br>&emsp;&emsp;反之，<strong>缓坡</strong>梯度小，我们就需要<strong>增大步伐</strong>，假设梯度为 0.1，那么就代表将原本的权重更新公式除以 0.1。分母越小，则 <script type="math/tex">\alpha</script> 越大。</p>
+            <p>&emsp;&emsp;问题：对梯度做平方，且 <script type="math/tex">S_{dW}</script> 的计算公式是加法（即修改过的指数加权平均），那么 <script type="math/tex">S_{dW}</script> 岂不是会越来越大？不就意味着动量越来越大，到最后停不下来了？<br>&emsp;&emsp;<strong>当然不是，可以减小</strong>。设 <script type="math/tex">dW_1 = 15 \quad S_{dW1} = 20 \quad \beta = 0.9 \quad dW_2 = 2</script>，则 <script type="math/tex">S_{dW2} = 0.9 * 20 + (1 - 0.9) * 15 = 19.5</script>，而 <script type="math/tex">S_{dW3} = 0.9 * 19.5 + (1 - 0.9) * 2 = 17.75</script>。比较 <script type="math/tex">S_{dW1} \, S_{dW2} \, S_{dW3}</script> = 20 19.5 17.75，明显在下降，比较 <script type="math/tex">dW_1 \, dW_2</script> 发现梯度减少引起得 <script type="math/tex">dS</script> 减少。<br>&emsp;&emsp;<strong>RMSProp 的本质</strong>是：在梯度大的地方，减小 <script type="math/tex">\alpha</script>（即陡坡则减小步伐）；在梯度小的地方，增大 <script type="math/tex">\alpha</script>（即缓坡则增大步伐）。解释如下：<br>&emsp;&emsp;RMSProp的更新公式为：</p><script type="math/tex; mode=display">    \begin{cases}        S_{dW} = \beta_2 * (S_{dW})_{prev} + (1 - \beta_2) * (dW)^2 \\        W -= \alpha * \frac{dW}{\sqrt{S_{dW}} + \epsilon} \\    \end{cases}</script><p>&emsp;&emsp;对于 <script type="math/tex">W -= \alpha * \frac{dW}{\sqrt{S_{dW}} + \epsilon}</script> 来说，其实就是普通的权重更新公式多除以一个 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script>。而由于 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script> 是梯度的累加，故为简便起见，将 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script> 看作梯度（Q：为什么可以将这个视为梯度？A：<script type="math/tex">\sqrt{S_{dW}}</script> 是对梯度 dW 的类似累加操作，开个根号后差不多就是梯度）。<br>&emsp;&emsp;我们知道在<strong>陡坡</strong>处梯度大，我们需要<strong>减小步伐</strong>，要不然容易一步迈长了，而减小步伐的意思就是减小 <script type="math/tex">\alpha</script>。<br>&emsp;&emsp;假设现在陡坡处梯度为 100，那么就是将原本的梯度下降公式多除以了 100（因为我们已将 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script> 视为梯度）。是不是梯度越大，则分母越大？分母越大则意味着 <script type="math/tex">\alpha</script> 越小。<br>&emsp;&emsp;反之，<strong>缓坡</strong>梯度小，我们就需要<strong>增大步伐</strong>，假设梯度为 0.1，那么就代表将原本的权重更新公式除以 0.1。分母越小，则 <script type="math/tex">\alpha</script> 越大。</p>
           </div>
 <p>Root mean square prop.<br>一个类似Momentum的算法，没必要死记公式，略。<a href="https://mooc.study.163.com/learn/2001281003?tid=2001391036&amp;_trace_c_p_k2_=48e14d97b8284ad0b4e8d32be2605c3d#/learn/content?type=detail&amp;id=2001702124" target="_blank" rel="noopener">视频地址</a>。<br>或者<a href="https://www.bilibili.com/video/av10590361/?p=18" target="_blank" rel="noopener">另一个参考视频</a>，36:00开始。<br><strong>RMSprop 没有使用偏差修正。</strong>但是在 Adam 中的 RMSprop 使用了偏差修正。</p>
 <script type="math/tex; mode=display">
@@ -3303,7 +3344,7 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} & \underbrace{y^{
 			  
 			  <!-- 不蒜子/busuanzi -->
 			  <div class="site-state-item site-state-posts">
-			  	<span class="site-state-item-count">108.4k</span>
+			  	<span class="site-state-item-count">111.8k</span>
 			  	<span class="site-state-item-name">总字数</span>
 			  </div>
             </nav>
@@ -3540,6 +3581,341 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} & \underbrace{y^{
 
 
   
+
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+        // ref: https://github.com/ForbesLindesay/unescape-html
+        var unescapeHtml = function(html) {
+          return String(html)
+            .replace(/&quot;/g, '"')
+            .replace(/&#39;/g, '\'')
+            .replace(/&#x3A;/g, ':')
+            // replace all the other &#x; chars
+            .replace(/&#(\d+);/g, function (m, p) { return String.fromCharCode(p); })
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&amp;/g, '&');
+        };
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                content = unescapeHtml(content);
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
 
 
 

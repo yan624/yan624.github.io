@@ -29,7 +29,7 @@
     
     
   <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
-  <link rel="stylesheet" href="/lib/pace/pace-theme-center-simple.min.css?v=1.0.2">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css?v=1.0.2">
 
 
 
@@ -142,7 +142,7 @@
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/mini-batch%E4%BD%BF%E7%94%A8Momentum%E5%90%8E.png">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E4%BB%8E%E7%B2%97%E7%B3%99%E5%88%B0%E7%B2%BE%E7%BB%86%E7%9A%84%E5%8F%96%E5%80%BC%E7%AD%96%E7%95%A5.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6%E9%80%89%E6%8B%A9.jpg">
-<meta property="og:updated_time" content="2019-09-08T08:33:50.182Z">
+<meta property="og:updated_time" content="2019-10-14T07:17:46.804Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="对神经网络整体的理解">
 <meta name="twitter:description" content="本文疑问的总结地址在这            大纲    序号 描述的内容     2~4 神经网络和深度学习的发展史。   5 从二元分类开始。   6~10 浅层神经网络的介绍。如神经网络中一些参数代表的意思、激活函数、梯度下降、随机初始化。   11~15 深层神经网络的介绍。正向传播和反向传播中向量化后的计算、参数和超参数、神经网络和大脑的关系。   16 一个S">
@@ -419,11 +419,40 @@ if(pathname == '/flower.html'){
 
       
       
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
     </ul>
   
 
   
 
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
   
 </nav>
 
@@ -555,7 +584,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-09-08 16:33:50" itemprop="dateModified" datetime="2019-09-08T16:33:50+08:00">2019-09-08</time>
+                <time title="修改时间：2019-10-14 15:17:46" itemprop="dateModified" datetime="2019-10-14T15:17:46+08:00">2019-10-14</time>
               
             
           </span>
@@ -903,7 +932,7 @@ A^L = \frac{e^{Z^L}}{\sum^n_{i=1}t_i},\quad A^L_i = \frac{t_i}{\sum^n_{i=1}t_i}\
             <p>首先虽然全部的过程已经理清，但是还有几个问题：为什么要对w求导？梯度下降的意义是什么？为什么使用梯度下降就可以解决误差问题？</p>
           </div>
 <p>本节的示例均建立在一个样本的情况下，如果是多个样本经过神经网络，可能略微不同。我看了吴恩达老师的深度学习课程，发现多个样本与一个样本的区别，可能只在偏差b那里会有点不同。<br>下图以一个三层神经网络为例，说明正向与反向传播过程。由于神经元之间的链接太多会导致混乱，所以下图只链接了第一个神经元。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E4%BD%BF%E7%94%A8%E5%AF%BC%E6%95%B0%E8%A7%A3%E9%87%8A%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95.jpg" alt="使用导数解释反向传播算法"><br>下图略微简化一下反向传播算法中的导数项，并且完成了最后的权重值优化。值得注意的是：如果cost function不同，下面求导结果会略微不同，本文统一使用<script type="math/tex">cost = \frac{1}{m} * \sum{(\hat{y} - y)^2}</script>，但是神经网络一般是使用<strong>交叉熵</strong>——crossentropy，其公式为：<script type="math/tex">cost = -\frac{1}{m} * (y * log(\hat{y}) + (1 - y) * log(1 - \hat{y}))</script>。使用前者，<script type="math/tex">\frac{\partial{J}}{\partial{z^{(3)}}} = (a^{(3)} - y) * g'(z^{(3)})</script>；如果使用后者，<script type="math/tex">\frac{\partial{J}}{\partial{z^{(3)}}} = a^{(3)} - y</script>。可以看到使用两个不同的代价函数，会有不同的结果，这是因为两个函数求导的结果不一样。而两者对表达式<script type="math/tex">\frac{\partial{J}}{\partial{z^{(3)}}}</script>的结果只差了一个<script type="math/tex">g'(z^{(3)})</script>，这完全是巧合罢了。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E7%AE%80%E5%8C%96%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95.jpg" alt="简化反向传播算法"><br><strong>另外再提醒一下自己，这里全是以一个样本为例。但是仅仅这样权重已经是一个二维矩阵了，要是如果传入多个样本，权重岂不是是一个三维矩阵？然而不管传入几个样本权重实际上对于不同的样本是没有变化的，所以还是二维矩阵。</strong></p>
-<h1 id="随机初始化"><a href="#随机初始化" class="headerlink" title="随机初始化"></a>随机初始化</h1><p>对于逻辑回归可以将<strong>权重</strong>（weight）全部初始化为0，但是对于神经网络来说，将个权重初始化为0，再使用梯度下降会完全无效。实际上将偏差b初始化为0是可以的，但是权重不行。<br>解释起来太麻烦，详情看吴恩达深度学习——01神经网络和深度学习第三周浅层神经网络，3.11随机初始化。吴恩达老师解释地还是很清楚的。<br>可以像以下这样设置weight：<script type="math/tex">w^l = np.random.randn((2, 2)) * 0.01</script>//这可以产生参数为(2, 2)的高斯分布随机变量，后面再成一个很小的数，比如0.01。而对于b，之前说了初始化为0也可以。<br>对于上式的0.01可能会感到很疑惑，为什么要乘这么一个值。因为我们一般将weight初始化为很小的值，如果weight值很大，最终导致z也很大，那么会落在sigmoid function或者tanh function的平缓部分，会使梯度的写了很小，意味着梯度下降算法会非常慢，所以学习得很慢。</p>
+<h1 id="※-随机初始化"><a href="#※-随机初始化" class="headerlink" title="※ 随机初始化"></a>※ 随机初始化</h1><p>对于逻辑回归可以将<strong>权重</strong>（weight）全部初始化为0，但是对于神经网络来说，将个权重初始化为0，再使用梯度下降会完全无效。实际上将偏差b初始化为0是可以的，但是权重不行。<br>解释起来太麻烦，详情看吴恩达深度学习——01神经网络和深度学习第三周浅层神经网络，3.11随机初始化。吴恩达老师解释地还是很清楚的。<br>可以像以下这样设置weight：<script type="math/tex">w^l = np.random.randn((2, 2)) * 0.01</script>//这可以产生参数为(2, 2)的高斯分布随机变量，后面再成一个很小的数，比如0.01。而对于b，之前说了初始化为0也可以。<br>对于上式的0.01可能会感到很疑惑，为什么要乘这么一个值。因为我们一般将weight初始化为很小的值，如果weight值很大，最终导致z也很大，那么会落在sigmoid function或者tanh function的平缓部分，会使梯度的写了很小，意味着梯度下降算法会非常慢，所以学习得很慢。</p>
 <h2 id="初始化补充"><a href="#初始化补充" class="headerlink" title="初始化补充"></a>初始化补充</h2><p>经在作业中做的测试得出如下结论：</p>
 <div class="table-container">
 <table>
@@ -1050,7 +1079,7 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} & \underbrace{y^{
 </tr>
 <tr>
 <td>Momentum</td>
-<td>累积梯度，充当动量，注：虽然 Momentum 和 RMSprop 类似，但是实际上在计算上并不一样， RMSprop 要多一个除以 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script> 的步骤<br> <strong>优点</strong>：1）一定程度上缓解了 SGD 收敛不稳定的问题，并且有一定的摆脱局部最优的能力（即如同一个滚轮下坡一样，它拥有惯性，在到达鞍点时不会立即停止，会因为惯性再向前一点距离，从而可能离开此鞍点）。<br> <strong>缺点</strong>：1）多了一个超参数需要调整，它的选取同样会影响到结果。</td>
+<td>累积梯度，充当动量，注：虽然 Momentum 和 RMSprop 类似，但是实际上在计算上并不一样， RMSprop 要多一个除以 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script> 的步骤，且没有偏差修正这一步骤<br> <strong>优点</strong>：1）一定程度上缓解了 SGD 收敛不稳定的问题，并且有一定的摆脱局部最优的能力（即如同一个滚轮下坡一样，它拥有惯性，在到达鞍点时不会立即停止，会因为惯性再向前一点距离，从而可能离开此鞍点）。<br> <strong>缺点</strong>：1）多了一个超参数需要调整，它的选取同样会影响到结果。</td>
 </tr>
 <tr>
 <td>RMSprop</td>
@@ -1100,7 +1129,7 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} & \underbrace{y^{
 </blockquote>
 <p>Momentum考虑到了之前的梯度，从而用其来缓和参数更新。我们将前一次梯度的“方向”存进变量v。后续不翻译了。</p>
 <h2 id="均方根传播——RMSprop"><a href="#均方根传播——RMSprop" class="headerlink" title="均方根传播——RMSprop"></a>均方根传播——RMSprop</h2><div class="note primary">
-            <p>&emsp;&emsp;对梯度做平方，且 <script type="math/tex">S_{dW}</script> 的计算公式是加法，那么 <script type="math/tex">S_{dW}</script> 岂不是会越来越大？不就意味着动量越来越大，到最后停不下来了？<br>&emsp;&emsp;<strong>以上是错的</strong>。可以减小。设 <script type="math/tex">dW_1 = 15 \quad dS_1 = 20 \quad \beta = 0.9 \quad dW_2 = 2</script>，则 <script type="math/tex">dS_2 = 0.9 * 20 + (1 - 0.9) * 15 = 19.5</script>，而 <script type="math/tex">dS_3 = 0.9 * 19.5 + (1 - 0.9) * 2 = 17.75</script>，比较 <script type="math/tex">dS_1 \, dS_2 \, dS_3</script>，明显在下降。比较 <script type="math/tex">dW_1 \, dW_2</script> 发现梯度减少引起得 <script type="math/tex">dS</script> 减少。<br>&emsp;&emsp;<strong>RMSProp 的本质</strong>是：在梯度大的地方，减小 <script type="math/tex">\alpha</script>（即陡坡则减小步伐）；在梯度小的地方，增大 <script type="math/tex">\alpha</script>（即缓坡则增大步伐）。解释如下：<br>&emsp;&emsp;RMSProp的更新公式为：</p><script type="math/tex; mode=display">    \begin{cases}        S_{dW} = \beta_2 * (S_{dW})_{prev} + (1 - \beta_2) * (dW)^2 \\        W -= \alpha * \frac{dW}{\sqrt{S_{dW}} + \epsilon} \\    \end{cases}</script><p>&emsp;&emsp;对于 <script type="math/tex">W -= \alpha * \frac{dW}{\sqrt{S_{dW}} + \epsilon}</script> 来说，其实就是普通的权重更新公式多除以一个 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script>。而由于 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script> 是梯度的累加，故为简便起见，将 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script> 看作梯度。<br>&emsp;&emsp;我们知道在<strong>陡坡</strong>处梯度大，我们需要<strong>减小步伐</strong>，要不然容易一步迈长了，而减小步伐的意思就是减小 <script type="math/tex">\alpha</script>。假设现在陡坡处梯度为 100，那么就是将原本的梯度下降公式多除以了 100（因为我们已将 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script> 视为梯度）。是不是梯度越大，则分母越大？分母越大则意味着 <script type="math/tex">\alpha</script> 越小。<br>&emsp;&emsp;反之，<strong>缓坡</strong>梯度小，我们就需要<strong>增大步伐</strong>，假设梯度为 0.1，那么就代表将原本的权重更新公式除以 0.1。分母越小，则 <script type="math/tex">\alpha</script> 越大。</p>
+            <p>&emsp;&emsp;问题：对梯度做平方，且 <script type="math/tex">S_{dW}</script> 的计算公式是加法（即修改过的指数加权平均），那么 <script type="math/tex">S_{dW}</script> 岂不是会越来越大？不就意味着动量越来越大，到最后停不下来了？<br>&emsp;&emsp;<strong>当然不是，可以减小</strong>。设 <script type="math/tex">dW_1 = 15 \quad S_{dW1} = 20 \quad \beta = 0.9 \quad dW_2 = 2</script>，则 <script type="math/tex">S_{dW2} = 0.9 * 20 + (1 - 0.9) * 15 = 19.5</script>，而 <script type="math/tex">S_{dW3} = 0.9 * 19.5 + (1 - 0.9) * 2 = 17.75</script>。比较 <script type="math/tex">S_{dW1} \, S_{dW2} \, S_{dW3}</script> = 20 19.5 17.75，明显在下降，比较 <script type="math/tex">dW_1 \, dW_2</script> 发现梯度减少引起得 <script type="math/tex">dS</script> 减少。<br>&emsp;&emsp;<strong>RMSProp 的本质</strong>是：在梯度大的地方，减小 <script type="math/tex">\alpha</script>（即陡坡则减小步伐）；在梯度小的地方，增大 <script type="math/tex">\alpha</script>（即缓坡则增大步伐）。解释如下：<br>&emsp;&emsp;RMSProp的更新公式为：</p><script type="math/tex; mode=display">    \begin{cases}        S_{dW} = \beta_2 * (S_{dW})_{prev} + (1 - \beta_2) * (dW)^2 \\        W -= \alpha * \frac{dW}{\sqrt{S_{dW}} + \epsilon} \\    \end{cases}</script><p>&emsp;&emsp;对于 <script type="math/tex">W -= \alpha * \frac{dW}{\sqrt{S_{dW}} + \epsilon}</script> 来说，其实就是普通的权重更新公式多除以一个 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script>。而由于 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script> 是梯度的累加，故为简便起见，将 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script> 看作梯度（Q：为什么可以将这个视为梯度？A：<script type="math/tex">\sqrt{S_{dW}}</script> 是对梯度 dW 的类似累加操作，开个根号后差不多就是梯度）。<br>&emsp;&emsp;我们知道在<strong>陡坡</strong>处梯度大，我们需要<strong>减小步伐</strong>，要不然容易一步迈长了，而减小步伐的意思就是减小 <script type="math/tex">\alpha</script>。<br>&emsp;&emsp;假设现在陡坡处梯度为 100，那么就是将原本的梯度下降公式多除以了 100（因为我们已将 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script> 视为梯度）。是不是梯度越大，则分母越大？分母越大则意味着 <script type="math/tex">\alpha</script> 越小。<br>&emsp;&emsp;反之，<strong>缓坡</strong>梯度小，我们就需要<strong>增大步伐</strong>，假设梯度为 0.1，那么就代表将原本的权重更新公式除以 0.1。分母越小，则 <script type="math/tex">\alpha</script> 越大。</p>
           </div>
 <p>Root mean square prop.<br>一个类似Momentum的算法，没必要死记公式，略。<a href="https://mooc.study.163.com/learn/2001281003?tid=2001391036&amp;_trace_c_p_k2_=48e14d97b8284ad0b4e8d32be2605c3d#/learn/content?type=detail&amp;id=2001702124" target="_blank" rel="noopener">视频地址</a>。<br>或者<a href="https://www.bilibili.com/video/av10590361/?p=18" target="_blank" rel="noopener">另一个参考视频</a>，36:00开始。<br><strong>RMSprop 没有使用偏差修正。</strong>但是在 Adam 中的 RMSprop 使用了偏差修正。</p>
 <script type="math/tex; mode=display">
@@ -1422,7 +1451,7 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} & \underbrace{y^{
 			  
 			  <!-- 不蒜子/busuanzi -->
 			  <div class="site-state-item site-state-posts">
-			  	<span class="site-state-item-count">108.4k</span>
+			  	<span class="site-state-item-count">111.8k</span>
 			  	<span class="site-state-item-name">总字数</span>
 			  </div>
             </nav>
@@ -1500,7 +1529,7 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} & \underbrace{y^{
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#大纲"><span class="nav-number">1.</span> <span class="nav-text">大纲</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经网络和深度学习的发展"><span class="nav-number">2.</span> <span class="nav-text">神经网络和深度学习的发展</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经网络和深度学习的关系"><span class="nav-number">3.</span> <span class="nav-text">神经网络和深度学习的关系</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么要深度学习"><span class="nav-number">4.</span> <span class="nav-text">为什么要深度学习</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#从二元分类开始"><span class="nav-number">5.</span> <span class="nav-text">从二元分类开始</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经网络的表示"><span class="nav-number">6.</span> <span class="nav-text">神经网络的表示</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#神经网络中神经元的一些参数的含义，特别解释w的含义"><span class="nav-number">6.1.</span> <span class="nav-text">神经网络中神经元的一些参数的含义，特别解释w的含义</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经网络中的输出是怎么计算的"><span class="nav-number">7.</span> <span class="nav-text">神经网络中的输出是怎么计算的</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#以一个样本为例"><span class="nav-number">7.1.</span> <span class="nav-text">以一个样本为例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#向量化计算多个样本"><span class="nav-number">7.2.</span> <span class="nav-text">向量化计算多个样本</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#※-激活函数"><span class="nav-number">8.</span> <span class="nav-text">※ 激活函数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Sigmoid"><span class="nav-number">8.1.</span> <span class="nav-text">Sigmoid</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#缺陷"><span class="nav-number">8.1.1.</span> <span class="nav-text">缺陷</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ReLU"><span class="nav-number">8.2.</span> <span class="nav-text">ReLU</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Softmax回归"><span class="nav-number">8.3.</span> <span class="nav-text">Softmax回归</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么需要非线性激活函数"><span class="nav-number">8.4.</span> <span class="nav-text">为什么需要非线性激活函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#梯度下降，反向传播算法——backpropagation解析"><span class="nav-number">9.</span> <span class="nav-text">梯度下降，反向传播算法——backpropagation解析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#随机初始化"><span class="nav-number">10.</span> <span class="nav-text">随机初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#初始化补充"><span class="nav-number">10.1.</span> <span class="nav-text">初始化补充</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#核对矩阵维数"><span class="nav-number">11.</span> <span class="nav-text">核对矩阵维数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么使用深度表示——Why-deep-representations"><span class="nav-number">12.</span> <span class="nav-text">为什么使用深度表示——Why deep representations</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#深层神经网络块"><span class="nav-number">13.</span> <span class="nav-text">深层神经网络块</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参数VS超参数"><span class="nav-number">14.</span> <span class="nav-text">参数VS超参数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经网络和大脑有什么关系？"><span class="nav-number">15.</span> <span class="nav-text">神经网络和大脑有什么关系？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一个Simple-NN的例子"><span class="nav-number">16.</span> <span class="nav-text">一个Simple NN的例子</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#训练-开发-测试集"><span class="nav-number">17.</span> <span class="nav-text">训练/开发/测试集</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#训练集和验证集-测试集分布不匹配"><span class="nav-number">17.1.</span> <span class="nav-text">训练集和验证集/测试集分布不匹配</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#偏差-方差"><span class="nav-number">18.</span> <span class="nav-text">偏差/方差</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#机器学习遇到偏差或方差的解决办法"><span class="nav-number">18.1.</span> <span class="nav-text">机器学习遇到偏差或方差的解决办法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正则化"><span class="nav-number">19.</span> <span class="nav-text">正则化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么正则化可以防止过拟合"><span class="nav-number">19.1.</span> <span class="nav-text">为什么正则化可以防止过拟合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dropout"><span class="nav-number">19.2.</span> <span class="nav-text">dropout</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#测试"><span class="nav-number">19.2.1.</span> <span class="nav-text">测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#理解dropout"><span class="nav-number">19.2.2.</span> <span class="nav-text">理解dropout</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他正则化方法"><span class="nav-number">19.3.</span> <span class="nav-text">其他正则化方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#均值归一化输入"><span class="nav-number">20.</span> <span class="nav-text">均值归一化输入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#梯度消失和梯度爆炸"><span class="nav-number">21.</span> <span class="nav-text">梯度消失和梯度爆炸</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#解决办法"><span class="nav-number">21.1.</span> <span class="nav-text">解决办法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#梯度检验"><span class="nav-number">22.</span> <span class="nav-text">梯度检验</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#注意事项"><span class="nav-number">22.1.</span> <span class="nav-text">注意事项</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Mini-batch梯度下降"><span class="nav-number">23.</span> <span class="nav-text">Mini-batch梯度下降</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#理解mini-batch"><span class="nav-number">23.1.</span> <span class="nav-text">理解mini-batch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mini-bacth实现步骤"><span class="nav-number">23.2.</span> <span class="nav-text">mini-bacth实现步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一些经验"><span class="nav-number">23.3.</span> <span class="nav-text">一些经验</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#指数加权平均"><span class="nav-number">24.</span> <span class="nav-text">指数加权平均</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#理解其作用"><span class="nav-number">24.1.</span> <span class="nav-text">理解其作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#偏差修正"><span class="nav-number">24.2.</span> <span class="nav-text">偏差修正</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#※-Learning-rate-decay"><span class="nav-number">25.</span> <span class="nav-text">※ Learning rate decay</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#动量梯度下降——Momentum"><span class="nav-number">25.1.</span> <span class="nav-text">动量梯度下降——Momentum</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#补充"><span class="nav-number">25.1.1.</span> <span class="nav-text">补充</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#均方根传播——RMSprop"><span class="nav-number">25.2.</span> <span class="nav-text">均方根传播——RMSprop</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优化算法历史介绍"><span class="nav-number">25.3.</span> <span class="nav-text">优化算法历史介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Adam"><span class="nav-number">25.4.</span> <span class="nav-text">Adam</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#超参数的选择"><span class="nav-number">25.4.1.</span> <span class="nav-text">超参数的选择</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他的学习速率衰减算法"><span class="nav-number">25.5.</span> <span class="nav-text">其他的学习速率衰减算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Adagrad"><span class="nav-number">25.5.1.</span> <span class="nav-text">Adagrad</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优化算法总结"><span class="nav-number">25.6.</span> <span class="nav-text">优化算法总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#如何为超参数选择范围"><span class="nav-number">26.</span> <span class="nav-text">如何为超参数选择范围</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#超参数的重要程度"><span class="nav-number">26.1.</span> <span class="nav-text">超参数的重要程度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#超参数的取值"><span class="nav-number">26.2.</span> <span class="nav-text">超参数的取值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#选择合适的范围"><span class="nav-number">26.3.</span> <span class="nav-text">选择合适的范围</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#补充——用神经网络训练另一个神经网络的超参数"><span class="nav-number">26.4.</span> <span class="nav-text">补充——用神经网络训练另一个神经网络的超参数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#batch-normalization——对激活值均值归一化"><span class="nav-number">27.</span> <span class="nav-text">batch normalization——对激活值均值归一化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#代价函数"><span class="nav-number">27.1.</span> <span class="nav-text">代价函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#选择深度学习框架"><span class="nav-number">28.</span> <span class="nav-text">选择深度学习框架</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#序列模型——RNN"><span class="nav-number">29.</span> <span class="nav-text">序列模型——RNN</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#大纲"><span class="nav-number">1.</span> <span class="nav-text">大纲</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经网络和深度学习的发展"><span class="nav-number">2.</span> <span class="nav-text">神经网络和深度学习的发展</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经网络和深度学习的关系"><span class="nav-number">3.</span> <span class="nav-text">神经网络和深度学习的关系</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么要深度学习"><span class="nav-number">4.</span> <span class="nav-text">为什么要深度学习</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#从二元分类开始"><span class="nav-number">5.</span> <span class="nav-text">从二元分类开始</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经网络的表示"><span class="nav-number">6.</span> <span class="nav-text">神经网络的表示</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#神经网络中神经元的一些参数的含义，特别解释w的含义"><span class="nav-number">6.1.</span> <span class="nav-text">神经网络中神经元的一些参数的含义，特别解释w的含义</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经网络中的输出是怎么计算的"><span class="nav-number">7.</span> <span class="nav-text">神经网络中的输出是怎么计算的</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#以一个样本为例"><span class="nav-number">7.1.</span> <span class="nav-text">以一个样本为例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#向量化计算多个样本"><span class="nav-number">7.2.</span> <span class="nav-text">向量化计算多个样本</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#※-激活函数"><span class="nav-number">8.</span> <span class="nav-text">※ 激活函数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Sigmoid"><span class="nav-number">8.1.</span> <span class="nav-text">Sigmoid</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#缺陷"><span class="nav-number">8.1.1.</span> <span class="nav-text">缺陷</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ReLU"><span class="nav-number">8.2.</span> <span class="nav-text">ReLU</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Softmax回归"><span class="nav-number">8.3.</span> <span class="nav-text">Softmax回归</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么需要非线性激活函数"><span class="nav-number">8.4.</span> <span class="nav-text">为什么需要非线性激活函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#梯度下降，反向传播算法——backpropagation解析"><span class="nav-number">9.</span> <span class="nav-text">梯度下降，反向传播算法——backpropagation解析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#※-随机初始化"><span class="nav-number">10.</span> <span class="nav-text">※ 随机初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#初始化补充"><span class="nav-number">10.1.</span> <span class="nav-text">初始化补充</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#核对矩阵维数"><span class="nav-number">11.</span> <span class="nav-text">核对矩阵维数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么使用深度表示——Why-deep-representations"><span class="nav-number">12.</span> <span class="nav-text">为什么使用深度表示——Why deep representations</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#深层神经网络块"><span class="nav-number">13.</span> <span class="nav-text">深层神经网络块</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参数VS超参数"><span class="nav-number">14.</span> <span class="nav-text">参数VS超参数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经网络和大脑有什么关系？"><span class="nav-number">15.</span> <span class="nav-text">神经网络和大脑有什么关系？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一个Simple-NN的例子"><span class="nav-number">16.</span> <span class="nav-text">一个Simple NN的例子</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#训练-开发-测试集"><span class="nav-number">17.</span> <span class="nav-text">训练/开发/测试集</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#训练集和验证集-测试集分布不匹配"><span class="nav-number">17.1.</span> <span class="nav-text">训练集和验证集/测试集分布不匹配</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#偏差-方差"><span class="nav-number">18.</span> <span class="nav-text">偏差/方差</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#机器学习遇到偏差或方差的解决办法"><span class="nav-number">18.1.</span> <span class="nav-text">机器学习遇到偏差或方差的解决办法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正则化"><span class="nav-number">19.</span> <span class="nav-text">正则化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么正则化可以防止过拟合"><span class="nav-number">19.1.</span> <span class="nav-text">为什么正则化可以防止过拟合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dropout"><span class="nav-number">19.2.</span> <span class="nav-text">dropout</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#测试"><span class="nav-number">19.2.1.</span> <span class="nav-text">测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#理解dropout"><span class="nav-number">19.2.2.</span> <span class="nav-text">理解dropout</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他正则化方法"><span class="nav-number">19.3.</span> <span class="nav-text">其他正则化方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#均值归一化输入"><span class="nav-number">20.</span> <span class="nav-text">均值归一化输入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#梯度消失和梯度爆炸"><span class="nav-number">21.</span> <span class="nav-text">梯度消失和梯度爆炸</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#解决办法"><span class="nav-number">21.1.</span> <span class="nav-text">解决办法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#梯度检验"><span class="nav-number">22.</span> <span class="nav-text">梯度检验</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#注意事项"><span class="nav-number">22.1.</span> <span class="nav-text">注意事项</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Mini-batch梯度下降"><span class="nav-number">23.</span> <span class="nav-text">Mini-batch梯度下降</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#理解mini-batch"><span class="nav-number">23.1.</span> <span class="nav-text">理解mini-batch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mini-bacth实现步骤"><span class="nav-number">23.2.</span> <span class="nav-text">mini-bacth实现步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一些经验"><span class="nav-number">23.3.</span> <span class="nav-text">一些经验</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#指数加权平均"><span class="nav-number">24.</span> <span class="nav-text">指数加权平均</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#理解其作用"><span class="nav-number">24.1.</span> <span class="nav-text">理解其作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#偏差修正"><span class="nav-number">24.2.</span> <span class="nav-text">偏差修正</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#※-Learning-rate-decay"><span class="nav-number">25.</span> <span class="nav-text">※ Learning rate decay</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#动量梯度下降——Momentum"><span class="nav-number">25.1.</span> <span class="nav-text">动量梯度下降——Momentum</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#补充"><span class="nav-number">25.1.1.</span> <span class="nav-text">补充</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#均方根传播——RMSprop"><span class="nav-number">25.2.</span> <span class="nav-text">均方根传播——RMSprop</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优化算法历史介绍"><span class="nav-number">25.3.</span> <span class="nav-text">优化算法历史介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Adam"><span class="nav-number">25.4.</span> <span class="nav-text">Adam</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#超参数的选择"><span class="nav-number">25.4.1.</span> <span class="nav-text">超参数的选择</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他的学习速率衰减算法"><span class="nav-number">25.5.</span> <span class="nav-text">其他的学习速率衰减算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Adagrad"><span class="nav-number">25.5.1.</span> <span class="nav-text">Adagrad</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优化算法总结"><span class="nav-number">25.6.</span> <span class="nav-text">优化算法总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#如何为超参数选择范围"><span class="nav-number">26.</span> <span class="nav-text">如何为超参数选择范围</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#超参数的重要程度"><span class="nav-number">26.1.</span> <span class="nav-text">超参数的重要程度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#超参数的取值"><span class="nav-number">26.2.</span> <span class="nav-text">超参数的取值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#选择合适的范围"><span class="nav-number">26.3.</span> <span class="nav-text">选择合适的范围</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#补充——用神经网络训练另一个神经网络的超参数"><span class="nav-number">26.4.</span> <span class="nav-text">补充——用神经网络训练另一个神经网络的超参数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#batch-normalization——对激活值均值归一化"><span class="nav-number">27.</span> <span class="nav-text">batch normalization——对激活值均值归一化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#代价函数"><span class="nav-number">27.1.</span> <span class="nav-text">代价函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#选择深度学习框架"><span class="nav-number">28.</span> <span class="nav-text">选择深度学习框架</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#序列模型——RNN"><span class="nav-number">29.</span> <span class="nav-text">序列模型——RNN</span></a></li></ol></div>
             
 
           </div>
@@ -1682,6 +1711,341 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} & \underbrace{y^{
 
 
   
+
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+        // ref: https://github.com/ForbesLindesay/unescape-html
+        var unescapeHtml = function(html) {
+          return String(html)
+            .replace(/&quot;/g, '"')
+            .replace(/&#39;/g, '\'')
+            .replace(/&#x3A;/g, ':')
+            // replace all the other &#x; chars
+            .replace(/&#(\d+);/g, function (m, p) { return String.fromCharCode(p); })
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&amp;/g, '&');
+        };
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                content = unescapeHtml(content);
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
 
 
 
