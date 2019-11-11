@@ -332,11 +332,15 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">22</span></a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">23</span></a>
 
   </li>
 
 
+            
+          
+            
+            
             
           
             
@@ -384,7 +388,7 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">122</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">124</span></a>
 
   </li>
 
@@ -449,6 +453,570 @@ if(pathname == '/flower.html'){
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/zcy/机器学习算法（七）：K-NN.html">
+
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+				
+				
+	
+
+	
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/zcy/机器学习算法（七）：K-NN.html" class="post-title-link" itemprop="url">机器学习算法（七）：K-NN</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-01 15:14:48" itemprop="dateCreated datePublished" datetime="2019-07-01T15:14:48+08:00">2019-07-01</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-07-06 13:10:25" itemprop="dateModified" datetime="2019-07-06T13:10:25+08:00">2019-07-06</time>
+              
+            
+          </span>
+
+          
+
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/ml/" itemprop="url" rel="index"><span itemprop="name">ml</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h1><blockquote>
+<p>K-NN 算法采用测量不同特征值之间的距离的方法进行分类。<br>工作原理：<br>存在一个<strong>样本数据集</strong>，也称作训练样本集，并且样本集中每个数据都存在标签。输入<strong>没有标签的新数据</strong>后，将<strong>新数据</strong>的每个特征与<strong>样本集</strong>中的数据对应特征进行比较，然后算法提取样本集中特征最相似的数据（最邻近）的分类<strong>标签</strong>。一般来说，只选择样本数据集中前 k 个最相似的数据，这就是 k-NN 算法中 k 的出处，通常 k 是不大于 20 的整数。<br>最后选择在 k 个最相似的数据中出现次数最多的分类，作为新数据的分类。</p>
+</blockquote>
+<div id="flowchart-0" class="flow-chart"></div>
+
+<p>简单来说，K-NN 算法使用了一种计算特征之间的距离的公式，然后选择距离前 k 近的数据，获取这些数据的标签。通过一个简单的统计，获取这 k 项数据中最多的类别。最后我们将新数据看作是这个类别。</p>
+<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> operator</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">np.random.seed(<span class="number">12</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_dataset</span><span class="params">()</span>:</span></span><br><span class="line">    group = np.array([[<span class="number">1.0</span>, <span class="number">1.1</span>], [<span class="number">1.0</span>, <span class="number">1.0</span>], [<span class="number">0</span>, <span class="number">0</span>], [<span class="number">0</span>, <span class="number">0.1</span>]])</span><br><span class="line">    labels = [<span class="string">'A'</span>, <span class="string">'A'</span>, <span class="string">'B'</span>, <span class="string">'B'</span>]</span><br><span class="line">    <span class="keyword">return</span> group, labels</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">classify</span><span class="params">(input, dataset, labels, k)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    K-NN 分类</span></span><br><span class="line"><span class="string">    :param input: 输入数据，即待分类的数据</span></span><br><span class="line"><span class="string">    :param dataset: 训练数据集</span></span><br><span class="line"><span class="string">    :param labels: dataset 对应的标签</span></span><br><span class="line"><span class="string">    :param k: 显而易见</span></span><br><span class="line"><span class="string">    :return: input 的类别</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="comment"># 计算特征之间的距离，只是一个很简单的算法</span></span><br><span class="line">    <span class="comment"># 先算差，再平方，然后将一个项数据的所有特征累加，最后开方</span></span><br><span class="line">    all_distances = np.sqrt(np.sum(np.power((input - dataset), <span class="number">2</span>), <span class="number">1</span>))</span><br><span class="line">    <span class="comment"># 对距离进行逆序排序</span></span><br><span class="line">    sorted_distance_indices = all_distances.argsort()</span><br><span class="line">    <span class="comment"># 对类别进行计数</span></span><br><span class="line">    class_count = &#123;&#125;</span><br><span class="line">    <span class="comment"># 选取前 k 项数据</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(k):</span><br><span class="line">        <span class="comment"># 第 i 项数据的标签</span></span><br><span class="line">        label = labels[sorted_distance_indices[i]]</span><br><span class="line">        <span class="comment"># 标签存在则加 1，不存在就默认是 0 再加 1</span></span><br><span class="line">        class_count[label] = class_count.get(label, <span class="number">0</span>) + <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 根据标签的数量排序</span></span><br><span class="line">    sorted_class_count = sorted(class_count.items(), key=operator.itemgetter(<span class="number">1</span>), reverse=<span class="keyword">True</span>)</span><br><span class="line">    <span class="keyword">return</span> sorted_class_count[<span class="number">0</span>][<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    X, Y = create_dataset()</span><br><span class="line">    res = classify([<span class="number">0</span>, <span class="number">0</span>], X, Y, <span class="number">3</span>)</span><br><span class="line">    print(res)</span><br></pre></td></tr></table></figure>
+<h2 id="均值归一化"><a href="#均值归一化" class="headerlink" title="均值归一化"></a>均值归一化</h2><p>由于有些数据范围波动较大，可以进行均值归一化处理。</p>
+<h1 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h1><p>引用《机器学习实战》中的应用。</p>
+<ol>
+<li>可以分类电影的类别，已知数据：打斗镜头、接吻镜头、<strong>电影的类别</strong>。如果给定一部新电影，则可以根据该电影的打斗镜头、接吻镜头来计算此部电影属于哪种类别。</li>
+<li>改进约会网站配对效果。已知数据：每年获得的飞行常客里程数、玩视频游戏所耗时间百分比、每周消费的冰淇淋公升数、<strong>用户交往对象的类别</strong>。其中<strong>用户交往对象的类别</strong>指：<ul>
+<li>不喜欢的人</li>
+<li>魅力一般的人</li>
+<li>极具魅力的人<br>则可以输入一个新的约会对象的数据，从而判断此人属于哪种类别，如果属于不喜欢的人的类别，那么用户可以提前得知，并且决定不去约会。</li>
+</ul>
+</li>
+<li>甚至可以识别手写数字。将图片转换成 0 1 表示，即数字部分用 1 表示，其他部分用 0 表示。组成一个 32 x 32 数字矩阵，然后将矩阵转换为 1 x 1024 的向量。其中的每一维度的值可以看作为一个特征。算法类似。</li>
+</ol>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/zcy/机器学习算法（七）：K-NN.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/2019 CCF会议总结.html">
+
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+				
+				
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019 CCF会议总结.html" class="post-title-link" itemprop="url">2019 CCF会议总结</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-06-27 21:33:09" itemprop="dateCreated datePublished" datetime="2019-06-27T21:33:09+08:00">2019-06-27</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-09-07 15:13:48" itemprop="dateModified" datetime="2019-09-07T15:13:48+08:00">2019-09-07</time>
+              
+            
+          </span>
+
+          
+
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/" itemprop="url" rel="index"><span itemprop="name">assorted</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/conference/" itemprop="url" rel="index"><span itemprop="name">conference</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="问答系统"><a href="#问答系统" class="headerlink" title="问答系统"></a>问答系统</h1><h2 id="知识图谱问答系统概述"><a href="#知识图谱问答系统概述" class="headerlink" title="知识图谱问答系统概述"></a>知识图谱问答系统概述</h2><p>现在的<strong>搜索引擎</strong>工作流程是输入要搜索的内容，搜索引擎返回一大堆内容，供你自己选择。<br><strong>问答系统</strong>是下一代的搜索引擎的基本形态。</p>
+<blockquote>
+<p>以直接而准确的方式回答用户自然语言提问的自动问答系统将构成下一代搜索引擎的基本形态。</p>
+</blockquote>
+<p>下图展示问答系统在近几十年的发展历史。</p>
+<ol>
+<li>1960 年的问答系统属于专家系统（模版系统）</li>
+<li>1990 - 2000 年的问答系统属于基于信息检索的 QA 系统</li>
+<li>2000 - 2010 年的问答系统属于社区 QA 系统</li>
+<li>2011 年之后的问答系统属于基于知识图谱的 QA 系统</li>
+</ol>
+<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/问答系统的历史.jpg" alt="问答系统的历史"></p>
+<h2 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h2><p>问答系统的分类（或者说三个阶段）：</p>
+<ol>
+<li>IR-based QA：基于<strong>关键词匹配 + 信息抽取</strong>，任然是基于<strong>浅层语义分析</strong></li>
+<li>Community QA：依赖于网民贡献，问答过程任然依赖于<strong>关键词检索技术</strong></li>
+<li>KB-based QA：Knowledge Base，例如：WolfframAlpha</li>
+</ol>
+<p>根据问答形式分类：</p>
+<ol>
+<li>一问一答：字面意思，也是演讲的主题</li>
+<li>交互式问答：就是进行连续的复杂的问答</li>
+<li>阅读理解</li>
+</ol>
+<div class="note warning">
+            <p>KB-QA 现在只能解决事实性的问题，无法解决：</p><ol><li>怎么去天安门</li><li>西红柿炒鸡蛋怎么做等提问</li></ol><p>某公司（在会议上没听清，可能是一个公司）只有 5% 的问题能用 KB-QA 解决。</p>
+          </div>
+<h2 id="什么是知识图谱"><a href="#什么是知识图谱" class="headerlink" title="什么是知识图谱"></a>什么是知识图谱</h2><h3 id="一个简单的例子"><a href="#一个简单的例子" class="headerlink" title="一个简单的例子"></a>一个简单的例子</h3><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/知识图谱示例.jpg" alt="知识图谱示例"></p>
+<h3 id="知识图谱基本架构"><a href="#知识图谱基本架构" class="headerlink" title="知识图谱基本架构"></a>知识图谱基本架构</h3><p>图中三元组中的 Ent1、Ent2 等指的是 entity。entity 可以在架构中选取，比如将 concept 作为 entity 或者将 instance 作为 entity。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/知识图谱基本架构.jpg" alt="知识图谱基本架构"></p>
+<h3 id="运用知识图谱问答"><a href="#运用知识图谱问答" class="headerlink" title="运用知识图谱问答"></a>运用知识图谱问答</h3><p>语义如何表示是其中的一个问题：</p>
+<ol>
+<li>使用符号表示的形式（传统方法）</li>
+<li>使用分布式表示方法</li>
+</ol>
+<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/运用知识图谱问答.jpg" alt="运用知识图谱问答"></p>
+<h3 id="知识图谱问答的两类方法（根据技术路线分）"><a href="#知识图谱问答的两类方法（根据技术路线分）" class="headerlink" title="知识图谱问答的两类方法（根据技术路线分）"></a>知识图谱问答的两类方法（根据技术路线分）</h3><ol>
+<li>语义解析(Semantic Parsing)：问句转换成形式化的查询语句，进行结构化查询得到答案</li>
+<li>语义检索（Answer Retrieval &amp; Ranking）：简单的搜索得到候选答案，利用问句和候选答案的匹配程度(特征)抽取答案</li>
+</ol>
+<h2 id="公开的评测数据集"><a href="#公开的评测数据集" class="headerlink" title="公开的评测数据集"></a>公开的评测数据集</h2><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/公开的评测数据集.jpg" alt="公开的评测数据集"><br>例如：</p>
+<script type="math/tex; mode=display">
+    \text{图数据结构}
+    \begin{cases}
+        QALD \\
+        WebQuestions \\
+        Simple Question\\
+    \end{cases}\\
+    \text{表数据结构}
+    \begin{cases}
+        WikiSQL & \text{一个表} \\
+        Spider & \text{多个表} \\
+    \end{cases}</script><h2 id="知识图谱问答基于的几种方法"><a href="#知识图谱问答基于的几种方法" class="headerlink" title="知识图谱问答基于的几种方法"></a>知识图谱问答基于的几种方法</h2><ol>
+<li>基于符号语义解析的知识图谱问答<ul>
+<li>语义表示（lambda 验算，DCS Tree）</li>
+<li>语义解析方法（CCG）<ul>
+<li>还有许多语义解析方法，略</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>基于语义检索的知识图谱问答<ul>
+<li>基于显示特征的知识检索</li>
+<li>基于端到端的知识图谱问答</li>
+</ul>
+</li>
+<li>基于神经符号计算的知识图谱问答<ul>
+<li>基于序列学习的解析方法</li>
+<li>基于动作序列的解析方法</li>
+<li>基于对战神经网络的端到端问答方法</li>
+</ul>
+</li>
+</ol>
+<h3 id="基于符号语义解析的知识图谱问答"><a href="#基于符号语义解析的知识图谱问答" class="headerlink" title="基于符号语义解析的知识图谱问答"></a>基于符号语义解析的知识图谱问答</h3><p>两种技术的具体实现过程略过，对比如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/Lambda演算vs.DCSTree.jpg" alt="Lambda演算vs.DCSTree"></p>
+<h3 id="基于语义检索的知识图谱问答"><a href="#基于语义检索的知识图谱问答" class="headerlink" title="基于语义检索的知识图谱问答"></a>基于语义检索的知识图谱问答</h3><ul>
+<li>基于显示特征的知识检索<ul>
+<li>关键词检索</li>
+<li>文本蕴含推理</li>
+<li>逻辑表达式</li>
+<li><div class="note primary">
+            <p>给出了许多研究进展。</p>
+          </div></li>
+</ul>
+</li>
+<li>基于端到端的知识图谱问答<ul>
+<li>LSTM</li>
+<li>Attention Model</li>
+<li>Memory Network</li>
+<li><div class="note primary">
+            <p>其中有部分问题：</p><ol><li>如何学习？<ul><li>RNN</li><li>CNN</li><li>Transformer</li></ul></li><li>问句如何表示？<ul><li>取所有词向量的平均值</li><li>关注答案不同的部分，问句的表示应该问句的不同部分</li><li>等</li></ul></li><li><strong>考虑多维度的相似度</strong><ul><li>从多个角度计算问句和知识的语义匹配（语义相似度）</li><li>问句如何表示？</li><li>依据问答特点，考虑答案不同维度的信息</li></ul></li></ol><p>PPT 中给出了许多研究进展，包括最基本的做法。</p>
+          </div>
+<img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/基于语义检索的知识图谱问答.jpg" alt="基于语义检索的知识图谱问答"></li>
+</ul>
+</li>
+</ul>
+<h3 id="基于神经符号计算的知识图谱问答"><a href="#基于神经符号计算的知识图谱问答" class="headerlink" title="基于神经符号计算的知识图谱问答"></a>基于神经符号计算的知识图谱问答</h3><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/符号语义解析vs.深度学习.jpg" alt="符号语义解析vs.深度学习"></p>
+<ul>
+<li><p>基于序列学习的解析方法</p>
+<ul>
+<li>seq2seq<ul>
+<li>RNN-based</li>
+<li>with Attention</li>
+</ul>
+</li>
+<li><p>基于序列学习的神经符号计算</p>
+<div class="note primary">
+            <p>就是运用<strong>基于符号语义解析的知识图谱问答</strong>的原理，让神经网络生成这些符号，而不是生成文字。</p>
+          </div>
+<blockquote>
+<p>基于序列学习的方法将问句和答案的逻辑表达式看作为两个序列</p>
+<ul>
+<li>使用序列转换的神经网络模型（如 Seq2Seq）来建模</li>
+<li>神经网络生成的逻辑表达式可能不合语法规范</li>
+</ul>
+</blockquote>
+<ul>
+<li>Seq2Tree</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>基于动作序列的解析方法<ul>
+<li>Seq2Action</li>
+</ul>
+</li>
+<li>基于对战神经网络的端到端问答方法</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>限定域的深度问答的准确度比较高，开放域的深度问答的准确度还是处于较低的水平。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/深度问答的性能.jpg" alt="深度问答的性能"></p>
+<h1 id="对话系统"><a href="#对话系统" class="headerlink" title="对话系统"></a>对话系统</h1><p>对话系统也可以直白的称为聊天机器人。<br>目前 54% 的用户会使用闲聊（开放域对话）功能。26% 的用户会选择使用某些功能性功能，比如查出行路线、查天气等。其余小部分用户使用其他的功能。<br>目前大部分的聊天机器人都基于<strong>微软小冰</strong>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/各种聊天机器人.jpg" alt="各种聊天机器人"></p>
+<p>聊天机器人一共分为两种：</p>
+<ol>
+<li>检索式</li>
+<li>生成式</li>
+</ol>
+<h2 id="Response-Selection-for-Retrieval-based-Chatbots"><a href="#Response-Selection-for-Retrieval-based-Chatbots" class="headerlink" title="Response Selection for Retrieval-based Chatbots"></a>Response Selection for Retrieval-based Chatbots</h2><p>检索式又分为单轮和多轮。<br>单轮不考虑回复历史。下图展示了一个单轮回复的场景，用户提出一个问题，机器人需要在一堆回复中检索出一个最有可能的结果来对用户进行回复。多轮回复与单轮类似，只不过多轮需要考虑上下文的对话。最后也是选择一个最优可能的结果进行回复。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/检索式单轮回复.jpg" alt="检索式单轮回复"></p>
+<div class="note info">
+            <p>&emsp;&emsp;对于单轮：<br>&emsp;&emsp;回复不只回复 Top1 的候选回复，而是要训练一个 classifier，从而随机地返回一个回复。因为如果回复总是为同一个，用户可能会感觉很无聊。<br>&emsp;&emsp;对于多轮：<br>&emsp;&emsp;有一些挑战：</p><ul><li>A hierarchical data structure<ul><li>Words -&gt; utterances -&gt; session</li></ul></li><li>Information redundancy<ul><li>Not all words and utterances are useful for response selection</li></ul></li><li>Logics<ul><li>Order of utterances matters in response selection</li><li>Long-term dependencies among words and utterances</li><li>Constraints to proper responses</li></ul></li></ul>
+          </div>
+<p>下面是检索式单轮回复系统架构图和多轮回复系统架构图的对比。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/检索式单轮回复架构图.jpg" alt="检索式单轮回复架构图"></p>
+<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/检索式多轮回复架构图.jpg" alt="检索式多轮回复架构图"></p>
+<h3 id="单轮回复中使用的模型"><a href="#单轮回复中使用的模型" class="headerlink" title="单轮回复中使用的模型"></a>单轮回复中使用的模型</h3><p>一共有两种框架，分别为：Framework I 和 Framework II。<br><strong>Framework I 和 Framework II 的区别是</strong>：</p>
+<ol>
+<li>Framework I 是将句子表示为向量，Framework II 将字表示为向量。</li>
+</ol>
+<p><strong>Framework I 和 Framework II 的比较：</strong></p>
+<ul>
+<li>Efficacy（功效）：<ol>
+<li>一般来讲，在外界公布出的数据集上，Framework II 模型比 Framework I 模型更好。因为在 Framework II 中的 interaction 充分保留了一个 message-response pair 中的匹配信息。</li>
+</ol>
+</li>
+<li>Efficiency（效率）：<ol>
+<li>由于过多的 interaction，Framework II 的模型普遍比 Framework I 的模型在计算上代价更大。</li>
+<li>由于可以预先计算 messages and responses 的表示并将它们以索引形式存储。所以当对线上响应时间有严格要求时， Framework I 的模型更可取。</li>
+</ol>
+</li>
+</ul>
+<p>下图是 Framework I 的架构，其中最下层的 sentence embedding layer 大概就是词向量，然后需要经过一个 Representation function（这个 function 下面会给出架构）。最后将已经经过 Representation function 转换后的 q 和 r 送入 Matching layer，该层有一个 Matching function（这个 function 下面也会给出架构）。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/检索式单轮回复的 Framework I.jpg" alt="检索式单轮回复的 Framework I"></p>
+<p>下图是 Representation funtion 的结构：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/检索式单轮回复的 Framework I 的 Representation funtion.jpg" alt="检索式单轮回复的 Framework I 的 Representation funtion"></p>
+<p>下图是 Matching funtion 的结构：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/检索式单轮回复的 Framework I 的 Matching funtion.jpg" alt="检索式单轮回复的 Framework I 的 Matching funtion"></p>
+<p><strong><em>有一些特殊的模型：Arc-I，Attentive LSTM 等</em></strong></p>
+<p>Framework II 的架构与 Framework I 类似，只是多了一个 Interaction Function。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/检索式单轮回复的 Framework II.jpg" alt="检索式单轮回复的 Framework II"></p>
+<p>Interaction 由两种形式：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019 CCF会议总结/检索式单轮回复的 Framework II 中 Interaction 的两种类型.jpg" alt="检索式单轮回复的 Framework II 中 Interaction 的两种类型"></p>
+<p><strong><em>有一些特殊的模型：Match Pyramid，Match LSTM 等</em></strong></p>
+<p>PPT 中有数据集。以及很多 reference。</p>
+<h3 id="多轮回复中使用的模型"><a href="#多轮回复中使用的模型" class="headerlink" title="多轮回复中使用的模型"></a>多轮回复中使用的模型</h3><p>&emsp;&emsp;对于多轮回复也有两种框架，分别为：Framework I 和 Framework II。<br>&emsp;&emsp;具体的架构略。PPT 里都有。</p>
+<h1 id="技术总结"><a href="#技术总结" class="headerlink" title="技术总结"></a>技术总结</h1><h2 id="技术"><a href="#技术" class="headerlink" title="技术"></a>技术</h2><h2 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h2>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2019 CCF会议总结.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -738,7 +1306,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-07-24 10:58:55" itemprop="dateModified" datetime="2019-07-24T10:58:55+08:00">2019-07-24</time>
+                <time title="修改时间：2019-11-11 13:44:22" itemprop="dateModified" datetime="2019-11-11T13:44:22+08:00">2019-11-11</time>
               
             
           </span>
@@ -829,7 +1397,7 @@ if(pathname == '/flower.html'){
     x_4 = \text{学生} & x_8 = \text{不错}\\
 \end{pmatrix}</script><p>这样会出现<strong>极大的问题</strong>，即文字无法进行数学运算。所以需要将文字转为词向量。但是问题是我如何在一个神经元输入一个向量？我如果输入多条样本，那么我整个输入值x就会变成<strong>3维的矩阵</strong>。simple NN显然是处理不了的。所以有个折中的方法，即将每个词的词向量加起来除以词的个数。即：</p>
 <script type="math/tex; mode=display">
-\frac{(v_{\text{我}} + v_{\text{是}} + v_{\text{一名}} + v_{\text{学生}})}{4} =  v_{\text{我是一名学生}}</script><p>其中v代表某个词对应的词向量。这样就将4个向量合并成一个向量了。然后simple NN就可以处理了。<br>但是这样处理肯定太勉强了，所以就出现了simple RNN，它可以处理上述这种问题。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/吴恩达深度学习中的RNN示意图.jpg" alt="吴恩达深度学习中的RNN示意图"><br>上图就是一个simple <strong>R</strong>NN架构，看起来跟simple NN不一样。但是其实你只要将图片往右旋转90度，就一样了。还有一点不太一样，就是simple <strong>R</strong>NN中的一个神经元跟simple NN中的一层神经元一样。<br><div class="note info">
+\frac{(v_{\text{我}} + v_{\text{是}} + v_{\text{一名}} + v_{\text{学生}})}{4} =  v_{\text{我是一名学生}}</script><p>其中v代表某个词对应的词向量。这样就将4个向量合并成一个向量了。然后simple NN就可以处理了。<br>但是这样处理肯定太勉强了，所以就出现了simple RNN，它可以处理上述这种问题。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%BB%BC%E5%90%88%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%85%A5%E9%97%A8/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84RNN%E7%A4%BA%E6%84%8F%E5%9B%BE.jpg" alt="吴恩达深度学习中的RNN示意图"><br>上图就是一个simple <strong>R</strong>NN架构，看起来跟simple NN不一样。但是其实你只要将图片往右旋转90度，就一样了。还有一点不太一样，就是simple <strong>R</strong>NN中的一个神经元跟simple NN中的一层神经元一样。<br><div class="note info">
             <p>simple <strong>R</strong>NN其实就是simple NN的神经元被替换成了simple <strong>R</strong>NN的神经元。而simple <strong>R</strong>NN的一个神经元本身里面还有多个单元，图上就是一个神经元里有4个单元。<br>所以simple <strong>R</strong>NN的神经元可以被叫做记忆细胞。<br>如果重新描述一遍就是simple <strong>R</strong>NN其实就是simple NN的神经元被替换成了simple <strong>R</strong>NN的记忆细胞。<br>而simple <strong>R</strong>NN的记忆细胞里面有多个神经元用来处理进行向量计算。</p>
           </div></p>
 <h2 id="simple-RNN的另一个输入值a"><a href="#simple-RNN的另一个输入值a" class="headerlink" title="simple RNN的另一个输入值a"></a>simple RNN的另一个输入值a</h2><p>下图是simple RNN的一个记忆细胞。由于其概念大都需要数值来演示，但是大量的数值难以书写，并且用语言实在难以描述。所以以下均使用一个矩阵的字母表示来演示。<br>此处会有几个问题：</p>
@@ -988,7 +1556,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-10-27 15:41:33" itemprop="dateModified" datetime="2019-10-27T15:41:33+08:00">2019-10-27</time>
+                <time title="修改时间：2019-10-30 13:14:00" itemprop="dateModified" datetime="2019-10-30T13:14:00+08:00">2019-10-30</time>
               
             
           </span>
@@ -1119,7 +1687,43 @@ v_a tanh(W_a [h_t;\bar{h}_s])
 <h2 id="Syntactically-Untied-RNN"><a href="#Syntactically-Untied-RNN" class="headerlink" title="Syntactically-Untied RNN"></a>Syntactically-Untied RNN</h2><p>&emsp;&emsp;语义解绑树形递归神经网络，这被证明是构建高质量解析器的一个成功的方法。<br>&emsp;&emsp;<a href="https://www.bilibili.com/video/av41393758/?p=14" target="_blank" rel="noopener">第十四讲 - 树 RNN 和短语句法分析</a>，50 分开始。</p>
 <h2 id="Compositionality-Through-Recursive-Matrix-Vector-Spaces"><a href="#Compositionality-Through-Recursive-Matrix-Vector-Spaces" class="headerlink" title="Compositionality Through Recursive Matrix-Vector Spaces"></a>Compositionality Through Recursive Matrix-Vector Spaces</h2><p>&emsp;&emsp;<a href="https://www.bilibili.com/video/av41393758/?p=14" target="_blank" rel="noopener">第十四讲 - 树 RNN 和短语句法分析</a>，65 分开始。</p>
 <h2 id="related-work-for-parsing"><a href="#related-work-for-parsing" class="headerlink" title="related work for parsing"></a>related work for parsing</h2><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/related work for parsing.jpg" alt="related work for parsing"></p>
-<h1 id="共指解析"><a href="#共指解析" class="headerlink" title="共指解析"></a>共指解析</h1><p>&emsp;&emsp;</p>
+<h1 id="共指解析"><a href="#共指解析" class="headerlink" title="共指解析"></a>共指解析</h1><p>&emsp;&emsp;<script type="math/tex">B^3</script>(B-CUBED) 算法用于评估。其他的一些算法：</p>
+<ul>
+<li>MUC Score (Vilain et al., 1995)</li>
+<li>BEAF (Luo 2005); entity based</li>
+<li>BLANC (Recasens and Hovy 2011) Cluster RAND-index</li>
+</ul>
+<p>&emsp;&emsp;在于语言学中，人们常区分两种关系。其中之一是共指，即两个词指代同一个实体，这和文本结构无关；另一种关系是首语重复，它指的是文本中某一项，一个照应语（或一个指代，anaphor）指代的事物由另一项决定，即先行词。<br>&emsp;&emsp;一些共指消解的做法：</p>
+<ul>
+<li>Mention Pair models</li>
+<li>Mention Ranking models</li>
+<li>Entity-Mention models</li>
+</ul>
+<p>&emsp;&emsp;神经共指模型，人们通过深度学习和共指做的内容。</p>
+<ul>
+<li>Wisemean, Rush, Shieber, and Weston (ACL 2015)<ul>
+<li>Mention-pair model. Only partially neural network system over conventional, categorical coreference features</li>
+</ul>
+</li>
+<li>Wiseman, Rush and Shieber (NAACL 2016)<ul>
+<li>Use RNNs to learn global representations of entity clusters from mentions</li>
+</ul>
+</li>
+<li>Clark and Manning (ACL 2016)<ul>
+<li>An entity-mention model based around clustering using distributed representations of mentions and entity clusters</li>
+</ul>
+</li>
+<li>Clark and Manning (EMNLP 2016)<ul>
+<li>Expolores deep reinforcement learning to improve a metion-pair model</li>
+</ul>
+</li>
+</ul>
+<div class="note info">
+            <p>&emsp;&emsp;此节视频讲了很多共指的理论，我没有记下来。实际内容比这里记的还要多一点。</p>
+          </div>
+<h1 id="用于回答问题的动态神经网络"><a href="#用于回答问题的动态神经网络" class="headerlink" title="用于回答问题的动态神经网络"></a>用于回答问题的动态神经网络</h1><p>&emsp;&emsp;略，这节听不懂。</p>
+<h1 id="NLP的问题和可能性架构"><a href="#NLP的问题和可能性架构" class="headerlink" title="NLP的问题和可能性架构"></a>NLP的问题和可能性架构</h1><p>&emsp;&emsp;</p>
+<h1 id="应对深度-NLP-的局限性"><a href="#应对深度-NLP-的局限性" class="headerlink" title="应对深度 NLP 的局限性"></a>应对深度 NLP 的局限性</h1>
           <!--noindex-->
           
             <div class="post-button text-center">
@@ -2476,406 +3080,6 @@ v  = -\frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}\\</script><p>之所以要�
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/练习Keras RNN的代码.html">
-
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-				
-				
-	
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/学习笔记/练习Keras RNN的代码.html" class="post-title-link" itemprop="url">练习Keras RNN的代码</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-04-27 15:28:20" itemprop="dateCreated datePublished" datetime="2019-04-27T15:28:20+08:00">2019-04-27</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-06-04 13:46:39" itemprop="dateModified" datetime="2019-06-04T13:46:39+08:00">2019-06-04</time>
-              
-            
-          </span>
-
-          
-
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/dl/" itemprop="url" rel="index"><span itemprop="name">dl</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="《Python深度学习》第6章预测imdb的影评"><a href="#《Python深度学习》第6章预测imdb的影评" class="headerlink" title="《Python深度学习》第6章预测imdb的影评"></a>《Python深度学习》第6章预测imdb的影评</h1><p><a href="https://github.com/yan624/deep-learning-notes/tree/master/RNN_learning/imdb_predication" target="_blank" rel="noopener">imdb影评代码</a></p>
-<h1 id="第五课第二周作业：Emojify"><a href="#第五课第二周作业：Emojify" class="headerlink" title="第五课第二周作业：Emojify"></a>第五课第二周作业：Emojify</h1><p>本文实现吴恩达深度学习第五课第二周的Emojify作业。目的是了解一个小型nlp系统的构建流程。<br>首先需要导入以下模块。由于在Jupyter中打开的ipynb文件全是英文，所以本文的大部分标题也用英文，方便ctrl F。<br>Emojifier-V1略。</p>
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>加了很多注释，但是代码的顺序我做了很大的改动。下面博客里面的代码，是作业里面的代码，基本没改几个字。<br><a href="https://github.com/yan624/deep-learning-notes/tree/master/RNN_learning/emojify" target="_blank" rel="noopener">emojify_V2代码</a></p>
-<h2 id="Emojifier-V2-Using-LSTMs-in-Keras"><a href="#Emojifier-V2-Using-LSTMs-in-Keras" class="headerlink" title="Emojifier-V2: Using LSTMs in Keras"></a>Emojifier-V2: Using LSTMs in Keras</h2><h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line">np<span class="selector-class">.random</span><span class="selector-class">.seed</span>(<span class="number">0</span>)</span><br><span class="line">from keras<span class="selector-class">.models</span> import Model</span><br><span class="line">from keras<span class="selector-class">.layers</span> import Dense, Input, Dropout, LSTM, Activation</span><br><span class="line">from keras<span class="selector-class">.layers</span><span class="selector-class">.embeddings</span> import Embedding</span><br><span class="line">from keras<span class="selector-class">.preprocessing</span> import sequence</span><br><span class="line">np<span class="selector-class">.random</span><span class="selector-class">.seed</span>(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
-<figure class="highlight capnproto"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.initializers <span class="keyword">import</span> glorot_uniform</span><br></pre></td></tr></table></figure>
-<h3 id="Overview-of-the-model"><a href="#Overview-of-the-model" class="headerlink" title="Overview of the model"></a>Overview of the model</h3><h3 id="Keras-and-mini-batching"><a href="#Keras-and-mini-batching" class="headerlink" title="Keras and mini-batching"></a>Keras and mini-batching</h3><p>本练习中，我们使用mini-batch算法训练Kears。大部分深度学习框架要求在相同的mini-batch中所有序列都要等长。这使得可以执行向量化，如果你有一个3个单词的句子和一个4个单词的句子，它们之间的计算会不同（一个需要3个timestep，一个需要4个timestep，也就是说需要的LSTM个数不同），所有同时计算它们是不可能的，即无法向量化。<br>通用的解决办法是使用padding。具体来说，设置一个序列的最大长度，然后使其他的序列都与该长度等长。比如序列的最大长度是20，那么将其他的序列在后面补充0，知道长度等于20。所以句子“I love you”会在“you”后面被补充17个0。即<script type="math/tex">\begin{pmatrix}e_i & e_{love} & e_{you} & \overrightarrow{0} & \overrightarrow{0} & \cdots & \overrightarrow{0}\end{pmatrix}</script>，e代表词向量。如果长度大于20的话会被裁剪。<br>以下代码实现将句子转换为句子中的每个单词转为索引，这个索引是GloVe词嵌入的，每一个单词对应一个id。id就是索引。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GRADED FUNCTION: sentences_to_indices</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将句子转为索引形式，短于max_len的句子后面补充0，长于max_len的句子直接截断</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sentences_to_indices</span><span class="params">(X, word_to_index, max_len)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Converts an array of sentences (strings) into an array of indices corresponding to words in the sentences.</span></span><br><span class="line"><span class="string">    The output shape should be such that it can be given to `Embedding()` (described in Figure 4). </span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Arguments:</span></span><br><span class="line"><span class="string">    X -- array of sentences (strings), of shape (m, 1)</span></span><br><span class="line"><span class="string">    word_to_index -- a dictionary containing the each word mapped to its index</span></span><br><span class="line"><span class="string">    max_len -- maximum number of words in a sentence. You can assume every sentence in X is no longer than this. </span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">    X_indices -- array of indices corresponding to words in the sentences from X, of shape (m, max_len)</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    </span><br><span class="line">    m = X.shape[<span class="number">0</span>]                                   <span class="comment"># number of training examples</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">### START CODE HERE ###</span></span><br><span class="line">    <span class="comment"># Initialize X_indices as a numpy matrix of zeros and the correct shape</span></span><br><span class="line">    X_indices = np.zeros((m, max_len))</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(m):                               <span class="comment"># loop over training examples</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># Convert the ith training sentence in lower case and split is into words. You should get a list of words.</span></span><br><span class="line">        sentence_words = X[i].lower().split()</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># Initialize j to 0</span></span><br><span class="line">        j = <span class="number">0</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># Loop over the words of sentence_words</span></span><br><span class="line">        <span class="keyword">for</span> w <span class="keyword">in</span> sentence_words:</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># Set the (i,j)th entry of X_indices to the index of the correct word.</span></span><br><span class="line">            X_indices[i, j] =word_to_index[w]</span><br><span class="line">            <span class="comment"># Increment j to j + 1</span></span><br><span class="line">            j = j + <span class="number">1</span></span><br><span class="line">            </span><br><span class="line">    <span class="comment">### END CODE HERE ###</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> X_indices</span><br></pre></td></tr></table></figure></p>
-<p>以下设计Embedding层，使用keras的Embedding类。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GRADED FUNCTION: pretrained_embedding_layer</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 此方法创建了一个Embedding层</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pretrained_embedding_layer</span><span class="params">(word_to_vec_map, word_to_index)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Creates a Keras Embedding() layer and loads in pre-trained GloVe 50-dimensional vectors.</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Arguments:</span></span><br><span class="line"><span class="string">    word_to_vec_map -- dictionary mapping words to their GloVe vector representation.</span></span><br><span class="line"><span class="string">    word_to_index -- dictionary mapping from words to their indices in the vocabulary (400,001 words)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">    embedding_layer -- pretrained layer Keras instance</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># GloVe的总单词数量</span></span><br><span class="line">    vocab_len = len(word_to_index) + <span class="number">1</span>                  <span class="comment"># adding 1 to fit Keras embedding (requirement)</span></span><br><span class="line">    emb_dim = word_to_vec_map[<span class="string">"cucumber"</span>].shape[<span class="number">0</span>]      <span class="comment"># define dimensionality of your GloVe word vectors (= 50)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">### START CODE HERE ###</span></span><br><span class="line">    <span class="comment"># Initialize the embedding matrix as a numpy array of zeros of shape (vocab_len, dimensions of word vectors = emb_dim)</span></span><br><span class="line">    <span class="comment"># 词嵌入矩阵，之前V1压根没用词嵌入矩阵，将这个矩阵放入Embedding层中供keras使用</span></span><br><span class="line">    emb_matrix = np.zeros((vocab_len, emb_dim))</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Set each row "index" of the embedding matrix to be the word vector representation of the "index"th word of the vocabulary</span></span><br><span class="line">    <span class="keyword">for</span> word, index <span class="keyword">in</span> word_to_index.items():</span><br><span class="line">        emb_matrix[index, :] = word_to_vec_map[word]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Define Keras embedding layer with the correct output/input sizes, make it trainable.</span></span><br><span class="line">    <span class="comment"># Use Embedding(...). Make sure to set trainable=False.</span></span><br><span class="line">    embedding_layer = Embedding(vocab_len, emb_dim, trainable=<span class="keyword">False</span>)</span><br><span class="line">    <span class="comment">### END CODE HERE ###</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Build the embedding layer, it is required before setting the weights of the embedding layer. Do not modify the "None".</span></span><br><span class="line">    embedding_layer.build((<span class="keyword">None</span>,))</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Set the weights of the embedding layer to the embedding matrix. Your layer is now pretrained.</span></span><br><span class="line">    embedding_layer.set_weights([emb_matrix])</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> embedding_layer</span><br></pre></td></tr></table></figure></p>
-<h3 id="Building-the-Emojifier-V2"><a href="#Building-the-Emojifier-V2" class="headerlink" title="Building the Emojifier-V2"></a>Building the Emojifier-V2</h3><p>以下代码完成Emojify。主要是keras代码。<br><figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GRADED FUNCTION: Emojify_V2</span></span><br><span class="line"></span><br><span class="line">def Emojify_V2(input_shape, word_to_vec_map, word_to_index):</span><br><span class="line">    <span class="string">""</span><span class="string">"</span></span><br><span class="line"><span class="string">    Function creating the Emojify-v2 model's graph.</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Arguments:</span></span><br><span class="line"><span class="string">    input_shape -- shape of the input, usually (max_len,)</span></span><br><span class="line"><span class="string">    word_to_vec_map -- dictionary mapping every word in a vocabulary into its 50-dimensional vector representation</span></span><br><span class="line"><span class="string">    word_to_index -- dictionary mapping from words to their indices in the vocabulary (400,001 words)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">    model -- a model instance in Keras</span></span><br><span class="line"><span class="string">    "</span><span class="string">""</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">### START CODE HERE ###</span></span><br><span class="line">    <span class="comment"># Define sentence_indices as the input of the graph, it should be of shape input_shape and dtype 'int32' (as it contains indices).</span></span><br><span class="line">    <span class="attr">sentence_indices</span> = Input(input_shape, <span class="attr">dtype='int32')</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Create the embedding layer pretrained with GloVe Vectors (≈1 line)</span></span><br><span class="line">    <span class="attr">embedding_layer</span> = pretrained_embedding_layer(word_to_vec_map, word_to_index)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Propagate sentence_indices through your embedding layer, you get back the embeddings</span></span><br><span class="line">    <span class="attr">embeddings</span> = embedding_layer(sentence_indices)   </span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Propagate the embeddings through an LSTM layer with 128-dimensional hidden state</span></span><br><span class="line">    <span class="comment"># Be careful, the returned output should be a batch of sequences.</span></span><br><span class="line">    <span class="comment"># 这个128是神经元的个数</span></span><br><span class="line">    <span class="attr">X</span> = LSTM(<span class="number">128</span>, <span class="attr">return_sequences=True)(embeddings)</span></span><br><span class="line">    <span class="comment"># Add dropout with a probability of 0.5</span></span><br><span class="line">    <span class="attr">X</span> = Dropout(<span class="number">0.5</span>)(X)</span><br><span class="line">    <span class="comment"># Propagate X trough another LSTM layer with 128-dimensional hidden state</span></span><br><span class="line">    <span class="comment"># Be careful, the returned output should be a single hidden state, not a batch of sequences.</span></span><br><span class="line">    <span class="attr">X</span> = LSTM(<span class="number">128</span>, <span class="attr">return_sequences=False)(X)</span></span><br><span class="line">    <span class="comment"># Add dropout with a probability of 0.5</span></span><br><span class="line">    <span class="attr">X</span> = Dropout(<span class="number">0.5</span>)(X)</span><br><span class="line">    <span class="comment"># Propagate X through a Dense layer with softmax activation to get back a batch of 5-dimensional vectors.</span></span><br><span class="line">    <span class="attr">X</span> = Dense(<span class="number">5</span>)(X)</span><br><span class="line">    <span class="comment"># Add a softmax activation</span></span><br><span class="line">    <span class="attr">X</span> = Activation('softmax')(X)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Create Model instance which converts sentence_indices into X.</span></span><br><span class="line">    <span class="attr">model</span> = Model(<span class="attr">inputs=sentence_indices,</span> <span class="attr">outputs=X)</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">### END CODE HERE ###</span></span><br><span class="line">    </span><br><span class="line">    return model</span><br></pre></td></tr></table></figure></p>
-<h2 id="系统整体流程"><a href="#系统整体流程" class="headerlink" title="系统整体流程"></a>系统整体流程</h2><p>RNN</p>
-<ol>
-<li>读取GloVe文件和训练数据</li>
-<li>将训练数据的label转为one hot表示</li>
-<li>求出所有训练数据中最长句子的长度，该长度就是LSTM的个数。由于向量化的要求，LSTM的个数需要相同，以最长长度作为LSTM的个数，当然并不需要每个项目都这么设置，完全可以自己选，随便举几个例子比如20,50，100等。</li>
-<li>设计Embedding层</li>
-<li>建立神经网络模型</li>
-<li>将每句话转换为索引表示，如果长度不够就填0，够了就截断。《Python深度学习》中使用了pad_sequences类</li>
-<li>使用模型预测，第6条就是输入的训练数据，第2条就是输入的标签</li>
-</ol>
-<p>Embedding层需要输入一个词嵌入矩阵，就是一个二维数组。每行代表一个单词的特征向量，行数就是单词的索引。而输入的训练数据被处理成单词的索引形式。如一组训练样本，每个单词被替换成唯一的索引。<br>Embedding层太过复杂，故不作详解。第一章的代码中全部有注释。</p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/学习笔记/练习Keras RNN的代码.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/bug/Jupyter出现gbk-codec-cant-decode-byte-0x93-in-position-3136：illegal-multibyte-sequence.html">
-
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-				
-				
-	
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/bug/Jupyter出现gbk-codec-cant-decode-byte-0x93-in-position-3136：illegal-multibyte-sequence.html" class="post-title-link" itemprop="url">Jupyter出现gbk codec cant decode byte 0x93 in position 3136：illegal multibyte sequence</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-04-27 14:45:05" itemprop="dateCreated datePublished" datetime="2019-04-27T14:45:05+08:00">2019-04-27</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-06-04 13:22:36" itemprop="dateModified" datetime="2019-06-04T13:22:36+08:00">2019-06-04</time>
-              
-            
-          </span>
-
-          
-
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/ml/" itemprop="url" rel="index"><span itemprop="name">ml</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>一般来说是open()方法没有加encoding=’utf-8’，但是没用，试了其他办法没一个能用。<br>解决办法：重启Jupyter。<br>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/bug/Jupyter出现gbk-codec-cant-decode-byte-0x93-in-position-3136：illegal-multibyte-sequence.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </p></div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2927,7 +3131,7 @@ v  = -\frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}\\</script><p>之所以要�
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">122</span>
+                    <span class="site-state-item-count">124</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2984,7 +3188,9 @@ v  = -\frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}\\</script><p>之所以要�
                     
                       
                     
-                    <span class="site-state-item-count">22</span>
+                      
+                    
+                    <span class="site-state-item-count">23</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -3043,7 +3249,7 @@ v  = -\frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}\\</script><p>之所以要�
 			  
 			  <!-- 不蒜子/busuanzi -->
 			  <div class="site-state-item site-state-posts">
-			  	<span class="site-state-item-count">111.8k</span>
+			  	<span class="site-state-item-count">117.5k</span>
 			  	<span class="site-state-item-name">总字数</span>
 			  </div>
             </nav>
@@ -3753,7 +3959,7 @@ v  = -\frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}\\</script><p>之所以要�
   
 
   
-  # 自己新增的所有 js 文件
+  <!-- 自己新增的所有 js 文件 -->
   <script src="/lib/my-utils.js"></script>
 <!--图片缩放插件-->
 <script src="/lib/zoomify/zoomify.min.js"></script>

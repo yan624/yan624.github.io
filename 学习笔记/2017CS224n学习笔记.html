@@ -129,7 +129,7 @@
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/parsing a sentence with rnn 3.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/parsing a sentence with rnn 4.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/related work for parsing.jpg">
-<meta property="og:updated_time" content="2019-10-27T07:41:33.342Z">
+<meta property="og:updated_time" content="2019-10-30T05:14:00.740Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2017CS224n学习笔记">
 <meta name="twitter:description" content="开场白&amp;emsp;&amp;emsp;略 词向量表示：word2vec&amp;emsp;&amp;emsp;课程计划如下： &amp;emsp;&amp;emsp;神经网络词嵌入学习的通用做法：定义一个模型，根据中心词 w_t 去预测上下文单词。给定 w_t 的条件下 context 的概率。  p(context|w_t) = \dots&amp;emsp;&amp;emsp;然后用损失函数判断预测的准确性，例如：  J = 1 - p(w_{-t">
@@ -348,11 +348,15 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">22</span></a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">23</span></a>
 
   </li>
 
 
+            
+          
+            
+            
             
           
             
@@ -400,7 +404,7 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">122</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">124</span></a>
 
   </li>
 
@@ -571,7 +575,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-10-27 15:41:33" itemprop="dateModified" datetime="2019-10-27T15:41:33+08:00">2019-10-27</time>
+                <time title="修改时间：2019-10-30 13:14:00" itemprop="dateModified" datetime="2019-10-30T13:14:00+08:00">2019-10-30</time>
               
             
           </span>
@@ -708,8 +712,43 @@ v_a tanh(W_a [h_t;\bar{h}_s])
 <h2 id="Syntactically-Untied-RNN"><a href="#Syntactically-Untied-RNN" class="headerlink" title="Syntactically-Untied RNN"></a>Syntactically-Untied RNN</h2><p>&emsp;&emsp;语义解绑树形递归神经网络，这被证明是构建高质量解析器的一个成功的方法。<br>&emsp;&emsp;<a href="https://www.bilibili.com/video/av41393758/?p=14" target="_blank" rel="noopener">第十四讲 - 树 RNN 和短语句法分析</a>，50 分开始。</p>
 <h2 id="Compositionality-Through-Recursive-Matrix-Vector-Spaces"><a href="#Compositionality-Through-Recursive-Matrix-Vector-Spaces" class="headerlink" title="Compositionality Through Recursive Matrix-Vector Spaces"></a>Compositionality Through Recursive Matrix-Vector Spaces</h2><p>&emsp;&emsp;<a href="https://www.bilibili.com/video/av41393758/?p=14" target="_blank" rel="noopener">第十四讲 - 树 RNN 和短语句法分析</a>，65 分开始。</p>
 <h2 id="related-work-for-parsing"><a href="#related-work-for-parsing" class="headerlink" title="related work for parsing"></a>related work for parsing</h2><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/related work for parsing.jpg" alt="related work for parsing"></p>
-<h1 id="共指解析"><a href="#共指解析" class="headerlink" title="共指解析"></a>共指解析</h1><p>&emsp;&emsp;</p>
-<a id="more"></a>
+<h1 id="共指解析"><a href="#共指解析" class="headerlink" title="共指解析"></a>共指解析</h1><p>&emsp;&emsp;<script type="math/tex">B^3</script>(B-CUBED) 算法用于评估。其他的一些算法：</p>
+<ul>
+<li>MUC Score (Vilain et al., 1995)</li>
+<li>BEAF (Luo 2005); entity based</li>
+<li>BLANC (Recasens and Hovy 2011) Cluster RAND-index</li>
+</ul>
+<p>&emsp;&emsp;在于语言学中，人们常区分两种关系。其中之一是共指，即两个词指代同一个实体，这和文本结构无关；另一种关系是首语重复，它指的是文本中某一项，一个照应语（或一个指代，anaphor）指代的事物由另一项决定，即先行词。<br>&emsp;&emsp;一些共指消解的做法：</p>
+<ul>
+<li>Mention Pair models</li>
+<li>Mention Ranking models</li>
+<li>Entity-Mention models</li>
+</ul>
+<p>&emsp;&emsp;神经共指模型，人们通过深度学习和共指做的内容。</p>
+<ul>
+<li>Wisemean, Rush, Shieber, and Weston (ACL 2015)<ul>
+<li>Mention-pair model. Only partially neural network system over conventional, categorical coreference features</li>
+</ul>
+</li>
+<li>Wiseman, Rush and Shieber (NAACL 2016)<ul>
+<li>Use RNNs to learn global representations of entity clusters from mentions</li>
+</ul>
+</li>
+<li>Clark and Manning (ACL 2016)<ul>
+<li>An entity-mention model based around clustering using distributed representations of mentions and entity clusters</li>
+</ul>
+</li>
+<li>Clark and Manning (EMNLP 2016)<ul>
+<li>Expolores deep reinforcement learning to improve a metion-pair model</li>
+</ul>
+</li>
+</ul>
+<div class="note info">
+            <p>&emsp;&emsp;此节视频讲了很多共指的理论，我没有记下来。实际内容比这里记的还要多一点。</p>
+          </div>
+<h1 id="用于回答问题的动态神经网络"><a href="#用于回答问题的动态神经网络" class="headerlink" title="用于回答问题的动态神经网络"></a>用于回答问题的动态神经网络</h1><p>&emsp;&emsp;略，这节听不懂。</p>
+<h1 id="NLP的问题和可能性架构"><a href="#NLP的问题和可能性架构" class="headerlink" title="NLP的问题和可能性架构"></a>NLP的问题和可能性架构</h1><p>&emsp;&emsp;</p>
+<h1 id="应对深度-NLP-的局限性"><a href="#应对深度-NLP-的局限性" class="headerlink" title="应对深度 NLP 的局限性"></a>应对深度 NLP 的局限性</h1><a id="more"></a>
       
     </div>
 
@@ -831,7 +870,7 @@ v_a tanh(W_a [h_t;\bar{h}_s])
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">122</span>
+                    <span class="site-state-item-count">124</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -888,7 +927,9 @@ v_a tanh(W_a [h_t;\bar{h}_s])
                     
                       
                     
-                    <span class="site-state-item-count">22</span>
+                      
+                    
+                    <span class="site-state-item-count">23</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -947,7 +988,7 @@ v_a tanh(W_a [h_t;\bar{h}_s])
 			  
 			  <!-- 不蒜子/busuanzi -->
 			  <div class="site-state-item site-state-posts">
-			  	<span class="site-state-item-count">111.8k</span>
+			  	<span class="site-state-item-count">117.5k</span>
 			  	<span class="site-state-item-name">总字数</span>
 			  </div>
             </nav>
@@ -1025,7 +1066,7 @@ v_a tanh(W_a [h_t;\bar{h}_s])
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#开场白"><span class="nav-number">1.</span> <span class="nav-text">开场白</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#词向量表示：word2vec"><span class="nav-number">2.</span> <span class="nav-text">词向量表示：word2vec</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#优化目标"><span class="nav-number">2.1.</span> <span class="nav-text">优化目标</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#确定相应的概率分布"><span class="nav-number">2.1.1.</span> <span class="nav-text">确定相应的概率分布</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#损失函数"><span class="nav-number">2.2.</span> <span class="nav-text">损失函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#计算"><span class="nav-number">2.3.</span> <span class="nav-text">计算</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#高级词向量表示"><span class="nav-number">3.</span> <span class="nav-text">高级词向量表示</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Word-Window分类与神经网络"><span class="nav-number">4.</span> <span class="nav-text">Word Window分类与神经网络</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#反向传播和项目建议"><span class="nav-number">5.</span> <span class="nav-text">反向传播和项目建议</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#依存分析"><span class="nav-number">6.</span> <span class="nav-text">依存分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#语言结构分析历史回顾"><span class="nav-number">6.1.</span> <span class="nav-text">语言结构分析历史回顾</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dependency-Grammar-and-Dependency-Structure"><span class="nav-number">6.2.</span> <span class="nav-text">Dependency Grammar and Dependency Structure</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Tensorflow-入门"><span class="nav-number">7.</span> <span class="nav-text">Tensorflow 入门</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RNN和语言模式"><span class="nav-number">8.</span> <span class="nav-text">RNN和语言模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#机器翻译和高级循环神经网络"><span class="nav-number">9.</span> <span class="nav-text">机器翻译和高级循环神经网络</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经机器翻译和注意力模型"><span class="nav-number">10.</span> <span class="nav-text">神经机器翻译和注意力模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#神经机器翻译"><span class="nav-number">10.1.</span> <span class="nav-text">神经机器翻译</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#attention"><span class="nav-number">10.2.</span> <span class="nav-text">attention</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#coverage"><span class="nav-number">10.3.</span> <span class="nav-text">coverage</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#search"><span class="nav-number">10.4.</span> <span class="nav-text">search</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#GRU及NMT的其他议题"><span class="nav-number">11.</span> <span class="nav-text">GRU及NMT的其他议题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#GRUs-LSTMs"><span class="nav-number">11.1.</span> <span class="nav-text">GRUs/LSTMs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NMT-evaluation"><span class="nav-number">11.2.</span> <span class="nav-text">NMT evaluation</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#语音处理的端对端模型"><span class="nav-number">12.</span> <span class="nav-text">语音处理的端对端模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#卷积神经网络"><span class="nav-number">13.</span> <span class="nav-text">卷积神经网络</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#树RNN和短语句分析"><span class="nav-number">14.</span> <span class="nav-text">树RNN和短语句分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#simple-tree-RNN"><span class="nav-number">14.1.</span> <span class="nav-text">simple tree RNN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#树RNN的计算"><span class="nav-number">14.1.1.</span> <span class="nav-text">树RNN的计算</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Syntactically-Untied-RNN"><span class="nav-number">14.2.</span> <span class="nav-text">Syntactically-Untied RNN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Compositionality-Through-Recursive-Matrix-Vector-Spaces"><span class="nav-number">14.3.</span> <span class="nav-text">Compositionality Through Recursive Matrix-Vector Spaces</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#related-work-for-parsing"><span class="nav-number">14.4.</span> <span class="nav-text">related work for parsing</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#共指解析"><span class="nav-number">15.</span> <span class="nav-text">共指解析</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#开场白"><span class="nav-number">1.</span> <span class="nav-text">开场白</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#词向量表示：word2vec"><span class="nav-number">2.</span> <span class="nav-text">词向量表示：word2vec</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#优化目标"><span class="nav-number">2.1.</span> <span class="nav-text">优化目标</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#确定相应的概率分布"><span class="nav-number">2.1.1.</span> <span class="nav-text">确定相应的概率分布</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#损失函数"><span class="nav-number">2.2.</span> <span class="nav-text">损失函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#计算"><span class="nav-number">2.3.</span> <span class="nav-text">计算</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#高级词向量表示"><span class="nav-number">3.</span> <span class="nav-text">高级词向量表示</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Word-Window分类与神经网络"><span class="nav-number">4.</span> <span class="nav-text">Word Window分类与神经网络</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#反向传播和项目建议"><span class="nav-number">5.</span> <span class="nav-text">反向传播和项目建议</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#依存分析"><span class="nav-number">6.</span> <span class="nav-text">依存分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#语言结构分析历史回顾"><span class="nav-number">6.1.</span> <span class="nav-text">语言结构分析历史回顾</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dependency-Grammar-and-Dependency-Structure"><span class="nav-number">6.2.</span> <span class="nav-text">Dependency Grammar and Dependency Structure</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Tensorflow-入门"><span class="nav-number">7.</span> <span class="nav-text">Tensorflow 入门</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RNN和语言模式"><span class="nav-number">8.</span> <span class="nav-text">RNN和语言模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#机器翻译和高级循环神经网络"><span class="nav-number">9.</span> <span class="nav-text">机器翻译和高级循环神经网络</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经机器翻译和注意力模型"><span class="nav-number">10.</span> <span class="nav-text">神经机器翻译和注意力模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#神经机器翻译"><span class="nav-number">10.1.</span> <span class="nav-text">神经机器翻译</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#attention"><span class="nav-number">10.2.</span> <span class="nav-text">attention</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#coverage"><span class="nav-number">10.3.</span> <span class="nav-text">coverage</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#search"><span class="nav-number">10.4.</span> <span class="nav-text">search</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#GRU及NMT的其他议题"><span class="nav-number">11.</span> <span class="nav-text">GRU及NMT的其他议题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#GRUs-LSTMs"><span class="nav-number">11.1.</span> <span class="nav-text">GRUs/LSTMs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NMT-evaluation"><span class="nav-number">11.2.</span> <span class="nav-text">NMT evaluation</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#语音处理的端对端模型"><span class="nav-number">12.</span> <span class="nav-text">语音处理的端对端模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#卷积神经网络"><span class="nav-number">13.</span> <span class="nav-text">卷积神经网络</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#树RNN和短语句分析"><span class="nav-number">14.</span> <span class="nav-text">树RNN和短语句分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#simple-tree-RNN"><span class="nav-number">14.1.</span> <span class="nav-text">simple tree RNN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#树RNN的计算"><span class="nav-number">14.1.1.</span> <span class="nav-text">树RNN的计算</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Syntactically-Untied-RNN"><span class="nav-number">14.2.</span> <span class="nav-text">Syntactically-Untied RNN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Compositionality-Through-Recursive-Matrix-Vector-Spaces"><span class="nav-number">14.3.</span> <span class="nav-text">Compositionality Through Recursive Matrix-Vector Spaces</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#related-work-for-parsing"><span class="nav-number">14.4.</span> <span class="nav-text">related work for parsing</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#共指解析"><span class="nav-number">15.</span> <span class="nav-text">共指解析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#用于回答问题的动态神经网络"><span class="nav-number">16.</span> <span class="nav-text">用于回答问题的动态神经网络</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#NLP的问题和可能性架构"><span class="nav-number">17.</span> <span class="nav-text">NLP的问题和可能性架构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#应对深度-NLP-的局限性"><span class="nav-number">18.</span> <span class="nav-text">应对深度 NLP 的局限性</span></a></li></ol></div>
             
 
           </div>
@@ -1658,7 +1699,7 @@ v_a tanh(W_a [h_t;\bar{h}_s])
   
 
   
-  # 自己新增的所有 js 文件
+  <!-- 自己新增的所有 js 文件 -->
   <script src="/lib/my-utils.js"></script>
 <!--图片缩放插件-->
 <script src="/lib/zoomify/zoomify.min.js"></script>

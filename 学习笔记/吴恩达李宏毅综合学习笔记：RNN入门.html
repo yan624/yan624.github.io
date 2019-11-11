@@ -163,7 +163,7 @@
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/助于理解Pointer Network的一个例子.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Pointer Network for Summarization.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Pointer Network的做法.jpg">
-<meta property="og:updated_time" content="2019-10-16T06:38:49.898Z">
+<meta property="og:updated_time" content="2019-11-11T07:42:32.858Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="吴恩达李宏毅综合学习笔记：RNN入门">
 <meta name="twitter:description" content="大纲    序号 课程 内容     2~8 吴恩达深度学习 one hot编码、RNN包括双向和深层、GRU、LSTM   9~14 李宏毅机器学习 RNN包括双向和深层、LSTM、RNN反向传播、seq2seq   15~20 李宏毅深度学习 计算图、语言模型中的深度学习、几个有用的网络架构。到原视频的 p12 结束，由于后续部分涉及到了 GAN 等其他模型，所以不在此处做笔记，详见对神经网络">
@@ -382,11 +382,15 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">22</span></a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">23</span></a>
 
   </li>
 
 
+            
+          
+            
+            
             
           
             
@@ -434,7 +438,7 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">122</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">124</span></a>
 
   </li>
 
@@ -605,7 +609,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-10-16 14:38:49" itemprop="dateModified" datetime="2019-10-16T14:38:49+08:00">2019-10-16</time>
+                <time title="修改时间：2019-11-11 15:42:32" itemprop="dateModified" datetime="2019-11-11T15:42:32+08:00">2019-11-11</time>
               
             
           </span>
@@ -759,7 +763,8 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
 <p>李宏毅机器学习</p>
 <hr>
 <h1 id="字母表示-1"><a href="#字母表示-1" class="headerlink" title="字母表示"></a>字母表示</h1><p>跟吴恩达老师讲的类似，李宏毅老师也讲了文字如何表示，与吴恩达老师不同的是，李宏毅老师多讲了几个。<br>最简单的方法利用向量来表示文字，就是上面说过的one-hot：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/1%20of%20N%20encoding.jpg" alt="1 of N encoding"><br>因为会出现某些单词没见到过，所以需要使用other这一维来表示。并且在右边的图中还可以使用字母来表示。然后理想上只要将词向量放入神经网络就会出现结果。但是Feedforward Network其实没办法解决这问题。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/beyond%201-of-N%20encoding.jpg" alt="beyond 1-of-N encoding"><br>可以看到下图，由于Feedforward Network没有记忆，所以两个句子对它来说是一个意思，但是对人来说可以很明显判断出第一句话台北是目的地，第二句话台北是出发地。Feedforward Network它只能训练当前的词，前一个词是什么它并不知道。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Feedforward%20Network%E6%97%A0%E6%B3%95%E8%A7%A3%E5%86%B3%E7%9A%84%E9%97%AE%E9%A2%98.jpg" alt="Feedforward Network无法解决的问题"></p>
-<h1 id="RNN"><a href="#RNN" class="headerlink" title="RNN"></a>RNN</h1><p>上面讲到Feedforward Network由于没有记忆，无法记住前一个或者前几个词，所以就诞生了RNN。RNN其实也没那么神秘，就是每次输入并交给激活函数计算完毕后，将计算结果存入缓存中，并且在下一次计算时，将缓存取出来一起计算。就是下图的蓝色方框，由于是第一次计算，其中初始化为0。下图第一遍已经在计算了，实际上已经准备更新蓝色方框中的值了。RNN在上面的章节中其实已经写过了，都是类似的。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/%E4%B8%80%E4%B8%AARNN%E7%9A%84%E5%B0%8F%E5%9E%8B%E4%BE%8B%E5%AD%90.jpg" alt="一个RNN的小型例子"><br>经过上面的例子发现，当前的输入已经在依赖前一个的缓存了，所以当顺序有所变化，或者前一个数据有所变化时，RNN可以察觉到，输出的结果也自然不同。</p>
+<h1 id="RNN"><a href="#RNN" class="headerlink" title="RNN"></a>RNN</h1><p>&emsp;&emsp;上面讲到Feedforward Network由于没有记忆，无法记住前一个或者前几个词，所以就诞生了RNN。RNN其实也没那么神秘，就是每次输入并交给激活函数计算完毕后，将计算结果存入缓存中，并且在下一次计算时，将缓存取出来一起计算（这里一起计算的意思是将 memory 也当做 input，也就是说<strong>下图的 RNN 有 4 个输入</strong>）。就是下图的蓝色方框，由于是第一次计算，其中初始化为0。下图第一遍已经在计算了，实际上已经准备更新蓝色方框中的值了。RNN在上面的章节中其实已经写过了，都是类似的。<br>&emsp;&emsp;<strong>注意一点，下图代表一个 RNN，那几个圆圈是一个神经细胞，而不代表一个 RNN</strong>。一个神经细胞中有一个权重向量，对比 simple NN 就能理解了。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/%E4%B8%80%E4%B8%AARNN%E7%9A%84%E5%B0%8F%E5%9E%8B%E4%BE%8B%E5%AD%90.jpg" alt="一个RNN的小型例子"></p>
+<p>&emsp;&emsp;经过上面的例子发现，当前的输入已经在依赖前一个的缓存了，所以当顺序有所变化，或者前一个数据有所变化时，RNN可以察觉到，输出的结果也自然不同。</p>
 <h2 id="deep-RNN"><a href="#deep-RNN" class="headerlink" title="deep RNN"></a>deep RNN</h2><p>我一共写了两个RNN的笔记，无论是吴恩达老师的还是李宏毅老师的到目前为止，RNN其实都不是deep的，之前也在疑惑，RNN横轴有很多层，但是实际上那些层只是不同时间的输入，根本不算deep。今天继续看下去，发现这个问题终于有解了，RNN也可以是deep的。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/deep%20RNN.jpg" alt="deep RNN"></p>
 <h2 id="Elman-Network-amp-Jordan-Network"><a href="#Elman-Network-amp-Jordan-Network" class="headerlink" title="Elman Network &amp; Jordan Network"></a>Elman Network &amp; Jordan Network</h2><p>上面讲的RNN都被称为Elman Network。还有另一种辩题叫做Jordan Network，它将输出值缓存起来。传说之中Jordan Network可以有更好的性能。<br><div class="note primary">
             <p>为什么有更好的性能</p>
@@ -770,7 +775,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
           </div>
 <p>上面讲的memory实际上是最简单的，LSTM才是现在最常用的Memory。Menory在RNN中实际只是一个神经元而已，它负责输入和输出。它们之间的关联是：RNN依旧是RNN，只不过把RNN中的神经元换成了LSTM。我们知道神经元的逻辑其实很简单，只有输入——计算——输入到激活函数——输出激活值，而LSTM只不过麻烦一点罢了。<br>下图就是一个LSTM。Input Gate中如果f(z)是1就代表Gate打开，也就是f(z)*g(z) = 1 * g(z) = g(z)，就相当于可以让外界输入。如果f(z)=0，Gate被关闭，那么 f(z)*g(z)=0，是不是就像不允许外界输入一样？因为你输入多少都被置为0。而Forget Gate也类似，当f(z)=1时，即Forget Gate被打开，这里与直觉有点相反，因为Gate打开，有点感觉像遗忘。但是其实c*f(z) = 1，所以Forget Gate为1其实是记住原本的c的意思。<br>另外图中也写到了，Gate的激活函数一般选sigmoid，里面的值就代表Gate的打开程度。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/LSTM%E7%A4%BA%E4%BE%8B.jpg" alt="LSTM示例"></p>
 <h2 id="LSTM的例子"><a href="#LSTM的例子" class="headerlink" title="LSTM的例子"></a>LSTM的例子</h2><p>例子介绍：只有一个LSTM，输入有3维，输出有1维。<script type="math/tex">x_2 = 1</script>则<script type="math/tex">x_1</script>的值就会被存到Memory中，<script type="math/tex">x_2 = -1</script>则重置Memory，<script type="math/tex">x_3 = 1</script>则输出。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/LSTM%E4%BE%8B%E5%AD%90%E4%BB%8B%E7%BB%8D.jpg" alt="LSTM例子介绍"><br>注：下图中的蓝色数字和灰色数字是权重值。<br><div class="note primary">
-            <p>权重值是初始化的？还是固定的？还是初始化后自己可以训练的？其实就是LSTM的反向传播算法要弄懂。</p>
+            <p>&emsp;&emsp;Q：权重值是初始化的？还是固定的？还是初始化后自己可以训练的？其实就是LSTM的反向传播算法要弄懂。<br>&emsp;&emsp;A：是初始化后自己可以训练的。2019 年 11 月 11 日回答。</p>
           </div><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/LSTM%E4%BE%8B%E5%AD%90%E8%AE%A1%E7%AE%97.jpg" alt="LSTM例子计算"></p>
 <ol>
 <li>Input Gate：<br>将偏差设为-10是因为我们通过x2来对Input Gate控制。平常x2=0，计算x*w+b=-10，那么通过sigmoid function就会得到一个接近于0的值，所以就实现了将Input Gate关闭的功能。而如果x2=1，那么x2*100=100，通过sigmoid function就会得到一个接近于1的值，Input Gate就实现了打开的功能。</li>
@@ -778,8 +783,8 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
 <li>Output Gate: 如果Output Gate被关闭，那么输出0.</li>
 </ol>
 <h2 id="多个LSTM工作场景"><a href="#多个LSTM工作场景" class="headerlink" title="多个LSTM工作场景"></a>多个LSTM工作场景</h2><p>里面的<script type="math/tex">x^t</script>就是对应于NN中的一个向量，它分别乘上4个参数矩阵得到4个不同的向量，以此操控LSTM，而LSTM实际上就等于神经元，说白了就是一个类似激活函数的功能。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/LSTM%E5%AE%9E%E9%99%85%E5%B7%A5%E4%BD%9C%E5%9C%BA%E6%99%AF.jpg" alt="LSTM实际工作场景"><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/LSTM%E5%AE%9E%E9%99%85%E5%B7%A5%E4%BD%9C%E5%9C%BA%E6%99%AF2.jpg" alt="LSTM实际工作场景2"><br>多个LSTM连起来工作就是像下面一样，红线和红线旁边的那个黑色曲线链接的值之前没有讲过，但是下图的这样才是LSTM实际的长相，所以之前讲的那么复杂实际上还是LSTM的简化版。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/LSTM%E5%AE%9E%E9%99%85%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.jpg" alt="LSTM实际工作流程"></p>
-<h1 id="RNN反向传播"><a href="#RNN反向传播" class="headerlink" title="RNN反向传播"></a>RNN反向传播</h1><p>BPTT——backpropagation through time，与NN的backpropagation类似，李宏毅老师也没讲原理直接跳过了。<br>然而不幸的是，RNN的training是很困难的。下面蓝色的线是希望的结果，但是实际上是绿色的线，会出现剧烈地抖动，最后在某个点出现NAN。这就是类似梯度消失问题。可以使用一些办法解决，但是现在用得最多的方法是LSTM。<br><div class="note primary">
-            <p>为什么LSTM能解决RNN的难题</p>
+<h1 id="RNN反向传播"><a href="#RNN反向传播" class="headerlink" title="RNN反向传播"></a>RNN反向传播</h1><p>&emsp;&emsp;BPTT——backpropagation through time，与 NN 的 backpropagation 类似，李宏毅老师也没讲原理直接跳过了。<br>&emsp;&emsp;然而不幸的是，RNN 的 training 是很困难的。下面蓝色的线是希望的结果，但是实际上是绿色的线，会出现剧烈地抖动，最后在某个点出现NAN。这就是类似梯度消失问题。可以使用一些办法解决，但是现在用得最多的方法是LSTM。<br><div class="note primary">
+            <p>&emsp;&emsp;Q：如何防止出现如下剧烈抖动的 loss 曲线？<br>&emsp;&emsp;A：<a href="https://yan624.github.io/比赛项目总结/flayai竞赛：今日头条新闻分类.html#clip-gradient">clip gradient 解决了 loss 剧烈抖动的问题</a><br>&emsp;&emsp;Q：LSTM 解决了 RNN 的什么难题？<br>&emsp;&emsp;A：<a href="https://yan624.github.io/比赛项目总结/flayai竞赛：今日头条新闻分类.html#LSTM-解决了-RNN-的什么问题">LSTM 解决了 RNN 的什么问题</a></p>
           </div><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/RNN%20training%E7%A2%B0%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98.jpg" alt="RNN trWaining碰到的问题"></p>
 <h1 id="其他解决梯度消失的办法"><a href="#其他解决梯度消失的办法" class="headerlink" title="其他解决梯度消失的办法"></a>其他解决梯度消失的办法</h1><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/%E5%85%B6%E4%BB%96%E8%A7%A3%E5%86%B3%E6%A2%AF%E5%BA%A6%E6%B6%88%E5%A4%B1%E7%9A%84%E5%8A%9E%E6%B3%95.jpg" alt="其他解决梯度消失的办法"></p>
 <h1 id="seq2seq"><a href="#seq2seq" class="headerlink" title="seq2seq"></a>seq2seq</h1><h2 id="Many-to-one"><a href="#Many-to-one" class="headerlink" title="Many to one"></a>Many to one</h2><p>输入一个向量sequence，只输出一个向量。</p>
@@ -999,7 +1004,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">122</span>
+                    <span class="site-state-item-count">124</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -1056,7 +1061,9 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
                     
                       
                     
-                    <span class="site-state-item-count">22</span>
+                      
+                    
+                    <span class="site-state-item-count">23</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -1115,7 +1122,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
 			  
 			  <!-- 不蒜子/busuanzi -->
 			  <div class="site-state-item site-state-posts">
-			  	<span class="site-state-item-count">111.8k</span>
+			  	<span class="site-state-item-count">117.5k</span>
 			  	<span class="site-state-item-name">总字数</span>
 			  </div>
             </nav>
@@ -1826,7 +1833,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
   
 
   
-  # 自己新增的所有 js 文件
+  <!-- 自己新增的所有 js 文件 -->
   <script src="/lib/my-utils.js"></script>
 <!--图片缩放插件-->
 <script src="/lib/zoomify/zoomify.min.js"></script>

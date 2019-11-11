@@ -115,10 +115,10 @@
 <meta property="og:description" content="代码github地址simple RNN只实现了正向传播，反向传播没有实现。是因为simple RNN有梯度消失的问题，索性直接不写了。下一节直接写LSTM。 simple RNN和simple NN的对比本来觉得simple RNN挺简单的，只不过是simple NN的扩展，区别无非是将simple NN的神经元换成一个RNN cell。但是实际上没那么简单，特别是加上将数据向量化后计算。感觉简">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/吴恩达深度学习中的RNN示意图.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%BB%BC%E5%90%88%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%85%A5%E9%97%A8/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84RNN%E7%A4%BA%E6%84%8F%E5%9B%BE.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/simple%20rnn%20cell.png">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/RNN.png">
-<meta property="og:updated_time" content="2019-07-24T02:58:55.452Z">
+<meta property="og:updated_time" content="2019-11-11T05:44:22.672Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="深度学习算法（二）：simple RNN 推导与理解">
 <meta name="twitter:description" content="代码github地址simple RNN只实现了正向传播，反向传播没有实现。是因为simple RNN有梯度消失的问题，索性直接不写了。下一节直接写LSTM。 simple RNN和simple NN的对比本来觉得simple RNN挺简单的，只不过是simple NN的扩展，区别无非是将simple NN的神经元换成一个RNN cell。但是实际上没那么简单，特别是加上将数据向量化后计算。感觉简">
@@ -337,11 +337,15 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">22</span></a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">23</span></a>
 
   </li>
 
 
+            
+          
+            
+            
             
           
             
@@ -389,7 +393,7 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">122</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">124</span></a>
 
   </li>
 
@@ -562,7 +566,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-07-24 10:58:55" itemprop="dateModified" datetime="2019-07-24T10:58:55+08:00">2019-07-24</time>
+                <time title="修改时间：2019-11-11 13:44:22" itemprop="dateModified" datetime="2019-11-11T13:44:22+08:00">2019-11-11</time>
               
             
           </span>
@@ -659,7 +663,7 @@ if(pathname == '/flower.html'){
     x_4 = \text{学生} & x_8 = \text{不错}\\
 \end{pmatrix}</script><p>这样会出现<strong>极大的问题</strong>，即文字无法进行数学运算。所以需要将文字转为词向量。但是问题是我如何在一个神经元输入一个向量？我如果输入多条样本，那么我整个输入值x就会变成<strong>3维的矩阵</strong>。simple NN显然是处理不了的。所以有个折中的方法，即将每个词的词向量加起来除以词的个数。即：</p>
 <script type="math/tex; mode=display">
-\frac{(v_{\text{我}} + v_{\text{是}} + v_{\text{一名}} + v_{\text{学生}})}{4} =  v_{\text{我是一名学生}}</script><p>其中v代表某个词对应的词向量。这样就将4个向量合并成一个向量了。然后simple NN就可以处理了。<br>但是这样处理肯定太勉强了，所以就出现了simple RNN，它可以处理上述这种问题。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型/吴恩达深度学习中的RNN示意图.jpg" alt="吴恩达深度学习中的RNN示意图"><br>上图就是一个simple <strong>R</strong>NN架构，看起来跟simple NN不一样。但是其实你只要将图片往右旋转90度，就一样了。还有一点不太一样，就是simple <strong>R</strong>NN中的一个神经元跟simple NN中的一层神经元一样。<br><div class="note info">
+\frac{(v_{\text{我}} + v_{\text{是}} + v_{\text{一名}} + v_{\text{学生}})}{4} =  v_{\text{我是一名学生}}</script><p>其中v代表某个词对应的词向量。这样就将4个向量合并成一个向量了。然后simple NN就可以处理了。<br>但是这样处理肯定太勉强了，所以就出现了simple RNN，它可以处理上述这种问题。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%BB%BC%E5%90%88%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%85%A5%E9%97%A8/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84RNN%E7%A4%BA%E6%84%8F%E5%9B%BE.jpg" alt="吴恩达深度学习中的RNN示意图"><br>上图就是一个simple <strong>R</strong>NN架构，看起来跟simple NN不一样。但是其实你只要将图片往右旋转90度，就一样了。还有一点不太一样，就是simple <strong>R</strong>NN中的一个神经元跟simple NN中的一层神经元一样。<br><div class="note info">
             <p>simple <strong>R</strong>NN其实就是simple NN的神经元被替换成了simple <strong>R</strong>NN的神经元。而simple <strong>R</strong>NN的一个神经元本身里面还有多个单元，图上就是一个神经元里有4个单元。<br>所以simple <strong>R</strong>NN的神经元可以被叫做记忆细胞。<br>如果重新描述一遍就是simple <strong>R</strong>NN其实就是simple NN的神经元被替换成了simple <strong>R</strong>NN的记忆细胞。<br>而simple <strong>R</strong>NN的记忆细胞里面有多个神经元用来处理进行向量计算。</p>
           </div></p>
 <h2 id="simple-RNN的另一个输入值a"><a href="#simple-RNN的另一个输入值a" class="headerlink" title="simple RNN的另一个输入值a"></a>simple RNN的另一个输入值a</h2><p>下图是simple RNN的一个记忆细胞。由于其概念大都需要数值来演示，但是大量的数值难以书写，并且用语言实在难以描述。所以以下均使用一个矩阵的字母表示来演示。<br>此处会有几个问题：</p>
@@ -813,7 +817,7 @@ if(pathname == '/flower.html'){
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">122</span>
+                    <span class="site-state-item-count">124</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -870,7 +874,9 @@ if(pathname == '/flower.html'){
                     
                       
                     
-                    <span class="site-state-item-count">22</span>
+                      
+                    
+                    <span class="site-state-item-count">23</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
@@ -929,7 +935,7 @@ if(pathname == '/flower.html'){
 			  
 			  <!-- 不蒜子/busuanzi -->
 			  <div class="site-state-item site-state-posts">
-			  	<span class="site-state-item-count">111.8k</span>
+			  	<span class="site-state-item-count">117.5k</span>
 			  	<span class="site-state-item-name">总字数</span>
 			  </div>
             </nav>
@@ -1640,7 +1646,7 @@ if(pathname == '/flower.html'){
   
 
   
-  # 自己新增的所有 js 文件
+  <!-- 自己新增的所有 js 文件 -->
   <script src="/lib/my-utils.js"></script>
 <!--图片缩放插件-->
 <script src="/lib/zoomify/zoomify.min.js"></script>
