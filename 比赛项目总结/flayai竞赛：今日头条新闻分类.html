@@ -115,7 +115,7 @@
 <meta property="og:description" content="&amp;emsp;&amp;emsp;本竞赛涉及知识点或技巧如下：LSTMpytorch loss 的使用以及一些坑            总结写在前pytorch loss function&amp;emsp;&amp;emsp;pytorch 的多元分类 loss 有 CrossEntropyLoss 和 NLLLoss。NLLLoss 全称 Negative Log Likelihood Los">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/flayai竞赛：今日头条新闻分类/the error surface is rough.jpg">
-<meta property="og:updated_time" content="2019-11-11T14:48:25.440Z">
+<meta property="og:updated_time" content="2019-11-12T09:16:00.278Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="flayai竞赛：今日头条新闻分类">
 <meta name="twitter:description" content="&amp;emsp;&amp;emsp;本竞赛涉及知识点或技巧如下：LSTMpytorch loss 的使用以及一些坑            总结写在前pytorch loss function&amp;emsp;&amp;emsp;pytorch 的多元分类 loss 有 CrossEntropyLoss 和 NLLLoss。NLLLoss 全称 Negative Log Likelihood Los">
@@ -533,7 +533,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-11-11 22:48:25" itemprop="dateModified" datetime="2019-11-11T22:48:25+08:00">2019-11-11</time>
+                <time title="修改时间：2019-11-12 17:16:00" itemprop="dateModified" datetime="2019-11-12T17:16:00+08:00">2019-11-12</time>
               
             
           </span>
@@ -635,8 +635,8 @@ crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)</script><p>&em
 <p>&emsp;&emsp;如果只看图，会发现有一个像峭壁一样的东西，它就是罪魁祸首。当我们将一个小球往前移动时，有时候正好迈过峭壁，小球得以正常移动。但是当小球碰到峭壁时，小球就会被反弹回去，导致 loss 发生剧烈变化。<br>&emsp;&emsp;从数学角度来看，那个峭壁就是梯度。<strong>需要注意的是</strong>，由于 z 轴标注的 total loss，所以第一印象感觉峭壁代表 total loss，但是<strong>峭壁代表的是梯度，而不是 total loss</strong>。根据参数更新公式 <script type="math/tex">w -= \alpha * \Delta w</script>，其中 <script type="math/tex">\Delta w</script> 代表 w 的梯度，所以 w 的更新方向其实与梯度直接相关。<strong>当 w 不幸到达某个值时，遇到梯度极大的情况，那么不管梯度是正还是负，都会将 w 更新到一个相对很大的值，从而 loss 值也会跟着改变。注：这里其实也与 learning rate 有关，因为原本的梯度都很小，所以我们初始设置的 lr 都很大。突然梯度增大，而 lr 没有适应，一个大的梯度乘上一个大的 lr，那就更大了</strong>。<br>&emsp;&emsp;<strong>解决办法</strong>是：当 gradient 大于某个 threshold 时，就不让它大于 threshold（视频中说作者的代码中将 threshold 设置为 15，但是这个 threshold 应该是具体情况具体分析）。<br><div class="note warning">
             <p>&emsp;&emsp;Q：那么是什么导致了出现梯度猛增的现象呢？（ps：梯度消失也会出现）<br>&emsp;&emsp;A：首先不是 sigmoid 的锅。sigmoid 函数会出现 gradient vanishing（梯度消失）的问题，按理说换成 ReLU 就能解决了。但是将 RNN 的激活函数换成 ReLU 并没有解决问题，所以跟激活函数没什么关系。<em><a href="http://localhost:4000/zcy/对神经网络整体的理解.html#缺陷" target="_blank" rel="noopener">sigmoid 的缺陷</a>这一章说明了 sigmoid 具有梯度消失的缺陷</em>。<br>&emsp;&emsp;我们只需要小小地改变一个参数，然后观察 output 的变化，就能测出这个参数的 gradient 的大小。现在假设激活函数是 y = w * x，序列长度为 1000，并且第一个 timestep 的输入为 1，其他的 timestep 皆为 0，则<script type="math/tex">1^{1000} = 1</script>，而 <script type="math/tex">1.01^{1000} \approx 20000</script>。我们可能会想到去减小 learning rate 从而减小梯度，但是 <script type="math/tex">0.99^{1000} \approx 0</script>，你又要调大 learning rate，导致 lr 调起来很麻烦，所以调不调 lr 并没有什么区别。而这里就分别出现了梯度消失和梯度爆炸。这是由于 RNN 是序列模型，它需要处理一连串的序列。前一个的输出是后一个输入，类似于蝴蝶效应，一个很小的值，经过多个函数也能被放的很大。<br>&emsp;&emsp;那么为什么可以通过观察一个参数的变化从而观察 gradient 的变化呢？很简单，例如 y = w * x，用上面的例子，第 1000 个输出会是 <script type="math/tex">y_{1000} = w^{1000} * x</script>，对 w 求导得 <script type="math/tex">\Delta w = 1000 w^{999} x</script>，由于 <script type="math/tex">w^{999}</script> 比 <script type="math/tex">w^{1000}</script> 消不了多少，所以 gradient 很大。<br>&emsp;&emsp;经过上面的例子我们就知道了问题出现的原因。当然一般情况下不会像上面序列长度有 1000 那么离谱。现在设序列长度就 40，当我们遇到一个较大的值时，依旧会出现梯度爆炸的问题。<br>&emsp;&emsp;解决办法：LSTM，clipping 等。<strong>注意：LSTM 只解决了 gradient vanishing 的问题，没有解决 gradient explode。详见下面的《LSTM 解决了 RNN 的什么问题》章节</strong>。同理 clipping 也只能解决 gradient explode 的问题，因为它能将梯度限制在一个点上（<strong>这是博主的思考，视频中并没有给出此结论</strong>）。那么我们可以结合 LSTM 和 clipping。<br>&emsp;&emsp;根据上面的例子得出，在 RNN 中，即使参数在很小一个范围内，梯度的变化也会很大。<br>&emsp;&emsp;最后还有一个问题，就是上面的例子是用 y = w <em> x 的例子，但是实际上，激活函数是用的 sigmoid, tanh 等，所以每个神经元的输出都永远在 [-1, 1] 中间，ReLU 类似 y = w </em> x 就不说了。那么怎么会造成上面的例子中的情况呢？详见下一个框。</p>
           </div></p>
-<div class="note warning">
-            <p>&emsp;&emsp;以下为自己的看法。其实上面的例子只是一个比喻，当然当激活函数为 ReLU 时确实适用。真正的原因是反向传播时做的链式求导，它导致了梯度的连乘。</p>
+<div class="note info">
+            <p>&emsp;&emsp;以下为自己的看法。其实上面的例子只是一个比喻，当然当激活函数为 ReLU 时确实适用。真正的原因是反向传播时做的链式求导，它导致了梯度的连乘。<br>&emsp;&emsp;以下以序列长度为 2 为例。RNN 的模型以及参数名参考<a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#循环神经网络——RNN">此处</a>，LSTM 参考<a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">此处</a>。</p><script type="math/tex; mode=display">\begin{aligned}    RNN: a_2 & = w_{aa} (w_{aa} * 0 + w_{ax} * x^1 + b_a) + w_{ax} * x^2 + b_a \\    a_1 & = w_{aa} * 0 + w_{ax} * x^1 + b_a \\    a_0 & = 0 \\    LSTM: a_i & = h(g(z_i) * input(z_i) + memory * forget(z_i)) * output(z_i) \\    memory_{new} & = g(z_i) * input(z_i) + memory * forget(z_i) \\    z_i & = [a_{i - 1}; x_i] \\\end{aligned}</script><p>&emsp;&emsp;</p>
           </div>
 <p>&emsp;&emsp;参考资料：</p>
 <ol>
@@ -905,7 +905,7 @@ LSTM: memory_{new} = a * input + b * memory \\</script><p>&emsp;&emsp;cell() 代
 			  
 			  <!-- 不蒜子/busuanzi -->
 			  <div class="site-state-item site-state-posts">
-			  	<span class="site-state-item-count">117.5k</span>
+			  	<span class="site-state-item-count">117.7k</span>
 			  	<span class="site-state-item-name">总字数</span>
 			  </div>
             </nav>
