@@ -1,6 +1,289 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>tips</title>
+    <url>/tips.html</url>
+    <content><![CDATA[<blockquote>
+<p><strong>提示：先按住ctrl再点击超链接可以在新窗口打开</strong></p>
+</blockquote>
+<a id="more"></a>]]></content>
+  </entry>
+  <entry>
+    <title>一些快捷键</title>
+    <url>/assorted/%E4%B8%80%E4%BA%9B%E5%BF%AB%E6%8D%B7%E9%94%AE.html</url>
+    <content><![CDATA[<p>最近老是用到win10的快捷键，但是用过之后过几天就忘了，所以记录下。<br>还有有谁知道怎么用快捷键打开高级系统设置，设置环境变量老是要打开这个，烦得很。</p>
+<h1 id="vim"><a href="#vim" class="headerlink" title="vim"></a>vim</h1><p>按 V 进入 Visual Mode，然后可以上下左右选择行数。按 y 复制，d 剪切，p 粘贴。</p>
+<h1 id="win10"><a href="#win10" class="headerlink" title="win10"></a>win10</h1><ol>
+<li>win+E 打开我的电脑</li>
+<li>win+R 打开运行</li>
+<li>win+L 锁屏</li>
+<li>fn+ESC 打开/关闭功能键。f5是刷新键，但是有时候发现按f5无效，其实是因为功能键打开了，只需要按fn+ESC关闭就可。</li>
+<li>四指在触摸板向左/向右滑动，切换桌面。</li>
+<li>三指向上滑动将当前的任务以小窗口显示在桌面，三指向下滑动隐藏。</li>
+<li>win+Tab类似6</li>
+<li>win+d最小化所有打开的窗口</li>
+</ol>
+<a id="more"></a>]]></content>
+      <categories>
+        <category>assorted</category>
+      </categories>
+      <tags>
+        <tag>快捷键</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>论文笔记：Enriching Word Vectors with Subword Information</title>
+    <url>/%E8%AE%BA%E6%96%87/50.%20Enriching%20Word%20Vectors%20with%20Subword%20Information.html</url>
+    <content><![CDATA[<div class="note info">
+            <p>&emsp;&emsp;<a href="https://arxiv.org/abs/1607.04606.pdf" target="_blank" rel="noopener">论文地址</a>，作者 Piotr Bojanowski et al.，发表于 2016 年。</p>
+          </div>
+<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;现在流行的模型对单词表征的学习忽视了词法（morphology of word），它们直接给单词分配了不同的向量。这有一定的局限性，尤其对大规模词表并且含有大量稀有单词的语言。本论文提出基于 <strong>skipgram model</strong> 的方法，每个单词都被表示为一个 <strong>character n-grams</strong>（博主注：注意是 character，不是 word）词袋。每个 character n-grams 有一个向量，而单词由这些表征相加表示（即 e(where) = e(wh) + e(whe) + e(her) + e(ere) + e(re)，e() 表示 character n-grams 对应的向量）。<br>&emsp;&emsp;模型<strong>快</strong>，且可以计算那些不<strong>在训练数据中的单词表征</strong>（OOV 单词）。</p>
+<h1 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h1><p>&emsp;&emsp;介绍了很多关于词嵌入的工作，可以参考。</p>
+<h2 id="Morphological-word-representations"><a href="#Morphological-word-representations" class="headerlink" title="Morphological word representations"></a>Morphological word representations</h2><h2 id="Character-level-features-for-NLP"><a href="#Character-level-features-for-NLP" class="headerlink" title="Character level features for NLP"></a>Character level features for NLP</h2><h1 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h1><p>&emsp;&emsp;首先提出通用模型，阐述我们如何训练词向量。然后提出 subword 模型，最终描述我们如何处理 character n-grams 的词表。</p>
+<h2 id="通用模型"><a href="#通用模型" class="headerlink" title="通用模型"></a>通用模型</h2><p>&emsp;&emsp;</p>
+<h2 id="Subword模型"><a href="#Subword模型" class="headerlink" title="Subword模型"></a>Subword模型</h2><p>&emsp;&emsp;<strong>对每一个单词赋予一个不同的向量这忽视了单词内在的结构</strong>。为了考虑这一信息，本节提出一个不同的<strong>评分函数</strong>（scoring function） <strong>s</strong>。<br>&emsp;&emsp;<strong>1）</strong>每一个单词 w 都被表示为一个 character n-gram 的词袋。<strong>2）</strong>我们在单词的开始和结尾增加了特殊的边界符号 <code>&lt;</code> 和 <code>&gt;</code>，以便<strong>区分来自其他单词的前缀和后缀</strong>。<strong>3）</strong>我们也将单词 w 本身放入了它的 n-grams 集合，以学习每一个单词（除了 character n-grams）的表征。以单词 <em>where</em> 和 <script type="math/tex">n = 3</script> 为例，它被表示为该 character n-grams：</p>
+<script type="math/tex; mode=display">
+<wh, whe, her, ere, re></script><p>&emsp;&emsp;以及它的特殊序列：</p>
+<script type="math/tex; mode=display">
+<where></script><p>&emsp;&emsp;注意序列 <code>&lt;her&gt;</code> 对应于单词 <em>her</em>。单词 <em>her</em> 不同于来自单词 <em>where</em> 的 trigram <em>her</em>。在实践中，我们提取所有 <script type="math/tex">3 <= n <= 6</script> 的 n-grams（<strong>博主注</strong>：如果我没理解错，是提取了所有的 3~6-grams）。这是一种非常简单的方法，并且可以考虑不同的 n-grams 集合（<strong>博主注</strong>：为什么可以考虑不同的 n-grams？因为一个单词他们提取了所有的 3~6-grams），例如取所有前缀和后缀。<br>&emsp;&emsp;假设给出一个 G 大小 n-grams 词表。给定一个单词 w，将其表示为 <script type="math/tex">G_w \subset \{1, \dots, G\}</script>，其中 n-grams 集合 <script type="math/tex">G_w</script> 会出现在 w 中。我们将一个向量表征 <script type="math/tex">\boldsymbol{z_g}</script> 与每一个 n-gram <script type="math/tex">g</script> 关联。而一个单词由其 n-grams 的向量表征相加表示。因此我们获得评分函数（<strong>博主注</strong>：这应该在计算相似度）：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{
+    s(w,c) = \sum_{g \in G_w} z^T_g v_c
+}</script><p>&emsp;&emsp;这个简单的模型允许<strong>跨单词共享</strong>表征，从而允许学习<strong>稀有单词</strong>可靠的表征。（<strong>博主注</strong>：由于每个单词都被拆分开来，这样一个稀有单词就有很大概率可以由细碎的 n-grams 表示）<br>&emsp;&emsp;为了限制我们模型的内存需求，巴拉巴拉，我没看懂什么意思，大致意思是由于 n-grams 诞生的 token 太多了，所以需要使用 hash 的技巧来缩小存储空间。使用一个 token 来查找其对应的索引非常耗时，而使用 hash 算法就快多了。参考了：</p>
+<ul>
+<li><a href="https://www.jiqizhixin.com/articles/2018-06-05-3" target="_blank" rel="noopener">fastText，智慧与美貌并重的文本分类及向量化工具</a></li>
+</ul>
+<h1 id="实验设置"><a href="#实验设置" class="headerlink" title="实验设置"></a>实验设置</h1><ol>
+<li>baseline：几乎所有实验的基线都为 C 实现的 <a href="https://code.google.com/archive/p/word2vec" target="_blank" rel="noopener">word2vec 包</a>，除了论文中的 5.3 节；</li>
+<li>optimization：对前面（<strong>博主注</strong>：通用模型一节中）提出的负对数似然估计，进行 <strong>SGD</strong> 优化。在基线的 skipgram 模型中，我们使用<strong>基于步长的线性衰减</strong>。给定一个包含 T 个单词的训练集，并且在上传递的次数等于 P，则 t 时刻的步长等于 <script type="math/tex">\gamma_0 (1 - \frac{t}{TP})</script>，其中 <script type="math/tex">\gamma_0</script> 是一个固定的参数（<strong>博主注</strong>：<strong>这部分的线性衰减没看懂什么意思</strong>）。我们通过使用 <strong><a href="http://papers.nips.cc/paper/4390-hogwild-a-lock-free-approach-to-parallelizing-stochastic-gradient-descent" target="_blank" rel="noopener">Hogwild</a></strong>（Recht et al., 2011）并行地执行优化，所有线程以异步方式共享参数和更新向量；</li>
+<li>实现细节：</li>
+<li>datasets：</li>
+</ol>
+<h1 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h1><p>&emsp;&emsp;在以下几个方面评估我们的模型：</p>
+<ol>
+<li>Human similarity judgement</li>
+<li>Word analogy tasks</li>
+<li>Comparison with morphological representations：与顶尖模型的比较</li>
+<li>Effect of the size of the training data</li>
+<li>Effect of the size of n-grams</li>
+<li>从我们的模型中获取到的词向量在语言模型任务中的评估</li>
+</ol>
+<h1 id="定性分析"><a href="#定性分析" class="headerlink" title="定性分析"></a>定性分析</h1><p>&emsp;&emsp;</p>
+<a id="more"></a>]]></content>
+      <categories>
+        <category>assorted</category>
+        <category>paper</category>
+      </categories>
+      <tags>
+        <tag>论文笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>学习意见</title>
+    <url>/%E5%AD%A6%E4%B9%A0%E6%84%8F%E8%A7%81.html</url>
+    <content><![CDATA[<h1 id="推荐的论文"><a href="#推荐的论文" class="headerlink" title="推荐的论文"></a>推荐的论文</h1><p>参考：</p>
+<ol>
+<li><a href="https://www.zhihu.com/question/31785984" target="_blank" rel="noopener">深度学习入门必看的书和论文？有哪些必备的技能需学习？</a>，直接定位作者：<strong>景略集智</strong>，还有很多没搬运。</li>
+</ol>
+<h2 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h2><ol>
+<li><a href="http://pages.cs.wisc.edu/~dyer/cs540/handouts/deep-learning-nature2015.pdf" target="_blank" rel="noopener">Deep learning</a>，Hinton,lecun,bengio 三巨头写的 deep learning 综述。</li>
+<li>《Neural Networks Tricks of the Trade》，调参技巧。</li>
+<li><a href="https://arxiv.org/pdf/1207.0580.pdf" target="_blank" rel="noopener">Improving neural networks by preventing co-adaptation of feature detectors</a>，论文作者 Geoffrey Hinton 等人，Hinton 提出了 <strong>Dropout</strong>。</li>
+<li><a href="https://www.cs.toronto.edu/~hinton/absps/JMLRdropout.pdf" target="_blank" rel="noopener">Dropout: a simple way to prevent neural networks from overfitting</a>，论文作者 Srivastava Nitish，对 <strong>dropout</strong> 的理解。</li>
+<li><a href="https://arxiv.org/pdf/1502.03167.pdf" target="_blank" rel="noopener">Batch normalization: Accelerating deep network training by reducing internal covariate shift</a>，论文作者 Ioffe Sergey 和 Christian Szegedy，提出 <strong>Batch normalization</strong>。</li>
+<li><a href="https://arxiv.org/pdf/1607.06450.pdf?utm_source=sciontist.com&amp;utm_medium=refer&amp;utm_campaign=promote" target="_blank" rel="noopener">Layer normalization</a>，作者 Jamie Ryan Kiros 和 Geoffrey E. Hinton 等人，本篇论文是对 Batch Normalization 的进一步研究成果，提出 <strong>Layer normalization</strong>。</li>
+<li><a href="https://www.semanticscholar.org/paper/Binarized-Neural-Networks%3A-Training-Deep-Neural-and-Courbariaux-Hubara/6eecc808d4c74e7d0d7ef6b8a4112c985ced104d" target="_blank" rel="noopener">Binarized Neural Networks: Training Neural Networks with Weights and Activations Constrained to+ 1 or−1</a>，论文作者 Courbariaux Matthieu 等，提出了一种速度非常快的新模型。</li>
+<li><a href="https://arxiv.org/pdf/1608.05343.pdf" target="_blank" rel="noopener">Decoupled neural interfaces using synthetic gradients</a>，论文作者 Jaderberg Max 等，论文提出了一种非常创新的训练方法。</li>
+<li><a href="https://arxiv.org/pdf/1308.0850.pdf" target="_blank" rel="noopener">Generating sequences with recurrent neural networks</a>，论文作者 Graves Alex，使用 RNN 进行生成序列。</li>
+<li><a href="https://arxiv.org/pdf/1406.1078.pdf" target="_blank" rel="noopener">Learning phrase representations using RNN encoder-decoder for statistical machine translation</a>，论文作者 Cho Kyunghyun，第一篇 <strong>seq2seq</strong> 论文。</li>
+<li><a href="https://arxiv.org/pdf/1409.3215.pdf" target="_blank" rel="noopener">Sequence to sequence learning with neural networks</a>，论文作者 Sutskever Ilya 等人。</li>
+<li><a href="https://arxiv.org/pdf/1410.3916.pdf" target="_blank" rel="noopener">Memory networks</a>，论文作者 Weston Jason 和 Sumit Chopra。</li>
+<li><a href="http://papers.nips.cc/paper/5846-end-to-end-memory-networks.pdf" target="_blank" rel="noopener">End-to-end memory networks</a>，论文作者 Sukhbaatar Sainbayar 和 Jason Weston。</li>
+<li><a href="http://papers.nips.cc/paper/5866-pointer-networks.pdf" target="_blank" rel="noopener">Pointer networks</a>，作者 Vinyals Oriol 和 Meire Fortunato 等。</li>
+<li><a href="http://web.eecs.utk.edu/~ielhanan/courses/ECE-692/Bobby_paper1.pdf" target="_blank" rel="noopener">Long short-term memory</a>，LSTM。</li>
+</ol>
+<h2 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h2><ol>
+<li><a href="http://proceedings.mlr.press/v28/sutskever13.pdf" target="_blank" rel="noopener">On the importance of initialization and momentum in deep learning</a>，作者 Sutskever Ilya 等，论文提出了 <strong>Momentum optimizer</strong>。</li>
+<li><a href="https://arxiv.org/pdf/1412.6980.pdf" target="_blank" rel="noopener">Adam: A method for stochastic optimization</a>，作者 Kingma Diederik 等，提出 Adam。</li>
+</ol>
+<a id="more"></a>]]></content>
+  </entry>
+  <entry>
+    <title>特征工程：笔记</title>
+    <url>/zcy/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B%EF%BC%9A%E7%AC%94%E8%AE%B0.html</url>
+    <content><![CDATA[<h1 id="《特征工程入门与实践》"><a href="#《特征工程入门与实践》" class="headerlink" title="《特征工程入门与实践》"></a>《特征工程入门与实践》</h1><h1 id="3、特征增强：清洗数据"><a href="#3、特征增强：清洗数据" class="headerlink" title="3、特征增强：清洗数据"></a>3、特征增强：清洗数据</h1><h2 id="填充缺失值"><a href="#填充缺失值" class="headerlink" title="填充缺失值"></a>填充缺失值</h2><p>&emsp;&emsp;通常数据集会因为各种原因有所缺失。必须尽可能地了解数据集，以便找到使用<strong>其他符号填充的</strong>确实数据。<strong>公开数据集的文档</strong>里面有可能会提到缺失数据的问题。<br>&emsp;&emsp;如果没有文档，缺失值的常见填充方法有：</p>
+<ul>
+<li>0（数值型）</li>
+<li>unknown 或 Unknown（类别型）</li>
+<li>?（类别型）</li>
+</ul>
+<h3 id="处理缺失值"><a href="#处理缺失值" class="headerlink" title="处理缺失值"></a>处理缺失值</h3><p>&emsp;&emsp;如果 pandas 将缺失值自动填充了 0（需要自行判断 0 是否缺失值），那么可以先用 python 的 None 填充缺失值，以便使用 pandas 的 fillna, dropna and isnull 等方法。<br>&emsp;&emsp;现在开始介绍方法，处理缺失值的主要办法是：1. 删除缺失值的行；2. 填充缺失值。</p>
+<ol>
+<li>最常见也是最容易的方法大概是直接删除存在缺失值的行。通过这种操作，我们会留下具有数据的完整数据点。可以使用 pandas 的 dropna 方法获取新的 DataFrame。<br>但是我们可能会丢失大量的原始数据（书中的例子使用的是《皮马印第安人糖尿病预测数据集》，丢失 51% 的行）。从机器学习的角度考虑，尽管数据都有值、很干净，但是我们没有利用尽可能多的数据。经书中使用 pandas 分析，某些数据的均值下降严重，所以<strong>我们应该保留下尽可能多的数据</strong>。<br>然后此书的作者使用去除缺失值的数据集运行了一个 KNN 模型，最终得到最好的结果为：k=7，acc=74.5%。但是如果用到所有的数据，会不会更好？</li>
+<li>填充缺失值是一种更复杂的方法。<strong>填充</strong>指用现有的知识/数据来确定缺失的数量值，并填充的行为。<br>我们有几种选择，最常见的是用<strong>此列其余部分的均值</strong>填充缺失值。可以使用 pandas 的 fillna(mean_value) 方法即可填充，但是这有点麻烦，我们可以选用 scikit-learn 预处理类的 Imputer 模块，它更简单。只需指定策略 <script type="math/tex">Imputer = Imputer(strategy='mean')</script>，再调用 <script type="math/tex">pima_imputed = imputer.fit_transform(pima)</script> 即可。<br>那么来验证一下这样填充的 acc 如何。首先全部填充 0 用来充当对照组，发现 KNN 模型的 acc=73.31%，明显低于 74.5%。然后填充均值，发现 acc=65.625%，居然更低了。<br>这里需要解释一点，其实使用上述的方法去填充缺失值是错误的。我们<strong>将整个数据集的一列的均值去填充对应列的缺失值</strong>实际上犯了一个错误，即<strong>当预测测试集的响应值（即 y）时，不能假设我们已经知道了整个数据集的均值</strong>。所以我们应该<strong>使用训练集的均值去填充训练集和测试集的缺失值</strong>。注：我们假设测试集是未知的，所以它并没有均值，并且我们使用了训练集的信息去训练，所以我们需要使用训练集的均值去填充测试集的缺失值。<br><strong>但是</strong>最 sao 的是，此书中用正确的填充方法，最后得到的 acc=73.18%，比直接填充 0 还低。另外使用<strong>中位数</strong>填充得到的 acc=73.57%，始终没有高于<strong>直接删除缺失值</strong>得到的 acc。</li>
+</ol>
+<h2 id="标准化与归一化"><a href="#标准化与归一化" class="headerlink" title="标准化与归一化"></a>标准化与归一化</h2><p>&emsp;&emsp;仔细观察数据，我们发现数据的大小差别很大。而某些机器学习模型受数据尺度（scale）的影响很大。数据工程师可以选用某种归一化操作。我们将重点关注 3 种归一化方法，<strong>前两个方法特别用于调整特征，第三个方法虽然操作行，但效果与前两个相当</strong>。</p>
+<ul>
+<li>z 分数标准化</li>
+<li>min-max 标准化</li>
+<li>行归一化</li>
+</ul>
+<p>&emsp;&emsp;<strong>z 分数标准化</strong>是最常见的标准化技术，即均值归一化。使得输出会被重新缩放，使<strong>均值为 0、标准差为 1</strong>。公式为：</p>
+<script type="math/tex; mode=display">
+    z = \frac{x - \mu}{\sigma}</script><ul>
+<li>z 是新的值</li>
+<li>x 是单元格中原来的值</li>
+<li><script type="math/tex">\mu</script> 是该列的均值</li>
+<li><script type="math/tex">\sigma</script> 是列的标准差</li>
+</ul>
+<p>&emsp;&emsp;<strong>min-max 标准化</strong>与 z 分数标准化类似，它也用一个公式替换列中的每个值。它会使得每一列的值都位于 [0,1] 。公式为：</p>
+<script type="math/tex; mode=display">
+    m = \frac{(x - x_{min})}{x_{max} - x_{min}}</script><ul>
+<li>m 是新的值；</li>
+<li>x 是单元格原来的值；</li>
+<li><script type="math/tex">x_{min}</script> 是该列的最小值；</li>
+<li><script type="math/tex">x_{max}</script> 是该列的最大值。</li>
+</ul>
+<p>&emsp;&emsp;<strong>行归一化</strong>是关于行的，而不是关于列的。它不是计算每列的统计值（均值、最小值、最大值），而是保证每行都有<strong>单位范数</strong>，意味着每行的向量长度相同。计算方式如下所示，即 L2 范数，其他范数方式这里不讨论。</p>
+<script type="math/tex; mode=display">
+    ||x|| = \sqrt{(x^2_1 + x^2_2 + \dots + x^2_n)}</script><h2 id="整合"><a href="#整合" class="headerlink" title="整合"></a>整合</h2><p>&emsp;&emsp;最后我们将填充缺失值的方法和标准化（或归一化）的方法结合起来用，在 pima 数据集上发现使用<strong>均值填充 + min-max 标准化</strong>的交叉验证准确率最高。</p>
+<h1 id="4、特征构建：我能生成新特征吗"><a href="#4、特征构建：我能生成新特征吗" class="headerlink" title="4、特征构建：我能生成新特征吗"></a>4、特征构建：我能生成新特征吗</h1><ol>
+<li>填充分类特征</li>
+<li>编码分类变量</li>
+<li>扩展数值特征：多项式</li>
+<li>针对文本：词袋模型、TF-IDF…</li>
+</ol>
+<h1 id="5、特征选择：对坏属性说不"><a href="#5、特征选择：对坏属性说不" class="headerlink" title="5、特征选择：对坏属性说不"></a>5、特征选择：对坏属性说不</h1><p>&emsp;&emsp;</p>
+<h1 id="6、特征转换：数学显神通"><a href="#6、特征转换：数学显神通" class="headerlink" title="6、特征转换：数学显神通"></a>6、特征转换：数学显神通</h1><p>&emsp;&emsp;</p>
+<h1 id="7、特征学习：以AI促AI"><a href="#7、特征学习：以AI促AI" class="headerlink" title="7、特征学习：以AI促AI"></a>7、特征学习：以AI促AI</h1><p>&emsp;&emsp;</p>
+<a id="more"></a>]]></content>
+  </entry>
+  <entry>
+    <title>多领域seq2lf</title>
+    <url>/%E6%AF%94%E8%B5%9B%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/%E5%A4%9A%E9%A2%86%E5%9F%9Fseq2lf.html</url>
+    <content><![CDATA[<div class="note info">
+            <p>&emsp;&emsp;本竞赛涉及知识点或技巧如下：</p><ol><li>LSTM</li><li>pytorch loss 的使用以及一些坑</li></ol>
+          </div>
+<h1 id="总结写在前"><a href="#总结写在前" class="headerlink" title="总结写在前"></a>总结写在前</h1><h2 id="pytorch-loss-function"><a href="#pytorch-loss-function" class="headerlink" title="pytorch loss function"></a>pytorch loss function</h2><p>&emsp;&emsp;pytorch 的多元分类 loss 有 CrossEntropyLoss 和 NLLLoss。NLLLoss 全称 Negative Log Likelihood Loss，说白了就是求对数概率并取负，我们从函数图像就可以理解。模型输出的概率分布在 0-1 之间，log 函数的 0-1 区间正好全是负数，所以要加上一个负号，让 loss 值为正数。显而易见，概率越接近 1，loss 值越小。接下来描述一下这两个函数。</p>
+<ol>
+<li>CrossEntropyLoss = LogSoftmax + NLLLoss；</li>
+<li>CrossEntropyLoss 中已经附带了 log_softmax 操作，所以如果你想省事，那么直接将输出向量输入 CrossEntropyLoss 即可；</li>
+<li>如果使用 NLLLoss，那么在使用 NLLLoss 之前，还需要经过一层 LogSoftmax。</li>
+</ol>
+<p>&emsp;&emsp;需要注意一点，我感觉网上很多人也没有理解什么是 CrossEntropyLoss，导致很多人都被误导了。首先 nll 的公式如下：</p>
+<script type="math/tex; mode=display">
+nll\_loss = -log(pred)</script><div class="note warning">
+            <p>&emsp;&emsp;nll loss 可以有多种表达方式，我把在网上看到的公式都罗列一下。<br>&emsp;&emsp;以下的公式与 crossentropy 一样。（实际上公式就是一样的，只不过在概念上有点不同，由于输出值 y 是 one hot 形式，为 0 时，就相当于没有加，最后的结果就是上面的公式）</p><script type="math/tex; mode=display">nll\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred)</script><p>&emsp;&emsp;这里的 class 就是指第几个标签，它不是 one hot 表示形式。大家会发现这里少了一个 log 函数，实际上 pred 是使用 log_softmax 函数计算之后的结果。</p><script type="math/tex; mode=display">nll\_loss = -pred[class]</script>
+          </div>
+<p>&emsp;&emsp;CrossEntropyLoss 公式如下：</p>
+<script type="math/tex; mode=display">
+crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i)</script><p>&emsp;&emsp;<del>无法理解的原因之一是，在学机器学习的时候，大家都知道啥是 crossentropy，后来在学多元分类时，开始分 binary_crossentropy 和 crossentropy。这点大家都能理解，但是到看到 NLLLoss 时，就开始懵逼了。</del><br>&emsp;&emsp;<del>由于 CrossEntropyLoss = LogSoftmax + NLLLoss，在 crossentropy 的公式中貌似没有出现 softmax（更没有 log_softmax），所以开始懵了，无法理解其中的 LogSoftmax 是干啥的。</del><br>&emsp;&emsp;首先我要解释一点 CrossEntropyLoss 是 LogSoftmax 和 NLLLoss 两个步骤之和，之前说的“+”号，并非是数学意义上的加号。也就是说，CrossEntropyLoss 就比 NLLLoss 多做了一步 LogSoftmax（<strong>博主注</strong>：<em>个人认为实际上只是多做了一步 softmax，说多做了一步 log_softmax，是因为站在 pytorch 框架的角度</em>）。<br>&emsp;&emsp;其次，对于真实输出值 y 来说，无非就是 0 和 1（注意多元分类也只有 0 和 1），并且根据上述 crossentropy 的公式。实际上公式可以化简为以下所示，其中的 m 代表真实值为 1 的索引。</p>
+<script type="math/tex; mode=display">
+crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)</script><p>&emsp;&emsp;请注意这里的 <script type="math/tex">pred_m</script>。我们都知道在进行分类问题时，我们需要将输出结果置于 0-1 之间，对于二元分类我们使用 sigmoid 函数，对于多元分类我们使用 softmax（到这开始有内味了）。由于分类问题都是要这么做的，所以将 softmax 这个函数放到公式 <script type="math/tex">crossentropy\_loss = -log(pred_m)</script> 中，我们惊奇的发现 crossentropy 函数变成了 log_softmax（最前面的负号暂时不看）。即 crossentropy + softmax = -log_softmax。</p>
+<div class="note warning">
+            <p>&emsp;&emsp;请始终留意，pred 是一个向量通过 softmax/log_softmax 计算之后的值。</p>
+          </div>
+<p>&emsp;&emsp;最后你会发现这样还是不对。<script type="math/tex">nll\_loss = -log(pred)</script>，之前说 CrossEntropyLoss = <strong>LogSoftmax</strong> + NLLLoss，我把 log_softmax 放到 nll 里，变成了 <script type="math/tex">LogSoftmax + NLLLoss = -log(log(pred))</script>，怎么多了一个 log？实际上 nll 的公式应该以 <script type="math/tex">nll\_loss = -pred[class]</script> 为准，你会发现这个公式中没有 log 函数。这样将 logsoftmax 放入 nll loss 中，就正好是 crossentropy 了。<br>&emsp;&emsp;那么你就会问 nll 明明是 Negative Log Liklihood，log 不见了，这不就是名存实亡了？<br>&emsp;&emsp;<strong>这可能是因为 pytorch 想要简化操作，才这么设置的，别的框架可能并不是这样。简而言之，pytorch 框架中，nll loss 的公式是 -pred。crossentropy 的公式是 logsoftmax + nll loss，即 nll(log_softmax(output))</strong><br>&emsp;&emsp;<strong>也就是说，如果神经网络的最后一层输出是 logsoftmax，那么就使用 nll loss（上一段 nll loss 那个 pred 就是通过 log_softmax 的输出值）。如果最后一层只是输出，偷懒不想写 logsoftmax，那么就使用 crossentropy loss（上一段 crossentropy 中的 output 就是一个普通的神经网络输出）。</strong><br>&emsp;&emsp;参考：</p>
+<ol>
+<li><a href="http://blog.leanote.com/post/lee-romantic/crossentry" target="_blank" rel="noopener">CrossEntropyLoss和NLLLoss的理解</a></li>
+<li><a href="https://www.cnblogs.com/ranjiewen/p/10059490.html" target="_blank" rel="noopener">Pytorch之CrossEntropyLoss() 与 NLLLoss() 的区别</a></li>
+<li><a href="https://blog.csdn.net/m0_38133212/article/details/88087206" target="_blank" rel="noopener">CrossEntropyLoss与NLLLoss的总结</a></li>
+<li><a href="https://www.cnblogs.com/marsggbo/p/10401215.html" target="_blank" rel="noopener">Pytorch里的CrossEntropyLoss详解</a></li>
+</ol>
+<h3 id="顺便一提KLDivLoss"><a href="#顺便一提KLDivLoss" class="headerlink" title="顺便一提KLDivLoss"></a>顺便一提KLDivLoss</h3><p>&emsp;&emsp;<a href="https://www.cnblogs.com/charlotte77/p/5392052.html" target="_blank" rel="noopener">【原】浅谈KL散度（相对熵）在用户画像中的应用</a><br>&emsp;&emsp;暂时还没用过这个 loss，简单来说，是用来比较两个概率分布之间的信息熵差异，如 AB 两组群体，有对某一商品的总消费分布 P 和群体人数的分布 Q，可以计算 PQ 之间的信息熵差异，从而获得 AB 两组群体对该商品的偏爱程度。</p>
+<h2 id="optimizer-zero-grad"><a href="#optimizer-zero-grad" class="headerlink" title="optimizer.zero_grad()"></a>optimizer.zero_grad()</h2><p>&emsp;&emsp;在 pytorch 中，为什么要在每个循环之初调用这个方法？因为 pytorch 把计算的每个梯度都累加起来，并不会每迭代一次就将梯度清零。这样做看起来令人费解，并反常理。但是实际上这样做可以做更多神奇的操作，比如</p>
+<ul>
+<li><a href="https://www.zhihu.com/question/303070254" target="_blank" rel="noopener">https://www.zhihu.com/question/303070254</a></li>
+</ul>
+<p>&emsp;&emsp;还有，试想本来你想运行 batch_size=1024，但是由于电脑太差，只能运行 batch_size=256 的批次数据。那么只需要每循环两次调用一次 zero_grad() 即可。<br>&emsp;&emsp;参考：</p>
+<ol>
+<li><a href="https://blog.csdn.net/u011959041/article/details/102760868" target="_blank" rel="noopener">pytorch中为什么要用 zero_grad() 将梯度清零</a></li>
+</ol>
+<h2 id="clip-gradient"><a href="#clip-gradient" class="headerlink" title="clip gradient"></a>clip gradient</h2><p>&emsp;&emsp;<a href="http://proceedings.mlr.press/v28/pascanu13.pdf" target="_blank" rel="noopener">此论文</a>提出了 clip gradient（以下称 clipping）。首先看下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/多领域seq2lf/the error surface is rough.jpg" alt="the error surface is rough"></p>
+<p>&emsp;&emsp;如果只看图，会发现有一个像峭壁一样的东西，它就是罪魁祸首。当我们将一个小球往前移动时，有时候正好迈过峭壁，小球得以正常移动。但是当小球碰到峭壁时，小球就会被反弹回去，导致 loss 发生剧烈变化。<br>&emsp;&emsp;从数学角度来看，那个峭壁就是梯度。<strong>需要注意的是</strong>，由于 z 轴标注的 total loss，所以第一印象感觉峭壁代表 total loss，但是<strong>峭壁代表的是梯度，而不是 total loss</strong>。根据参数更新公式 <script type="math/tex">w -= \alpha * \Delta w</script>，其中 <script type="math/tex">\Delta w</script> 代表 w 的梯度，所以 w 的更新方向其实与梯度直接相关。<strong>当 w 不幸到达某个值时，遇到梯度极大的情况，那么不管梯度是正还是负，都会将 w 更新到一个相对很大的值，从而 loss 值也会跟着改变。注：这里其实也与 learning rate 有关，因为原本的梯度都很小，所以我们初始设置的 lr 都很大。突然梯度增大，而 lr 没有适应，一个大的梯度乘上一个大的 lr，那就更大了</strong>。<br>&emsp;&emsp;<strong>解决办法</strong>是：当 gradient 大于某个 threshold 时，就不让它大于 threshold（视频中说作者的代码中将 threshold 设置为 15，但是这个 threshold 应该是具体情况具体分析）。<br><div class="note warning">
+            <p>&emsp;&emsp;Q：那么是什么导致了出现梯度猛增的现象呢？（ps：梯度消失也会出现）<br>&emsp;&emsp;A：首先不是 sigmoid 的锅。sigmoid 函数会出现 gradient vanishing（梯度消失）的问题，按理说换成 ReLU 就能解决了。但是将 RNN 的激活函数换成 ReLU 并没有解决问题，所以跟激活函数没什么关系。<em><a href="https://yan624.github.io/zcy/对神经网络整体的理解.html#缺陷">sigmoid 的缺陷</a>这一章说明了 sigmoid 具有梯度消失的缺陷</em>。<br>&emsp;&emsp;我们只需要小小地改变一个参数，然后观察 output 的变化，就能测出这个参数的 gradient 的大小。现在假设激活函数是 y = w * x，序列长度为 1000，并且第一个 timestep 的输入为 1，其他的 timestep 皆为 0，则<script type="math/tex">1^{1000} = 1</script>，而 <script type="math/tex">1.01^{1000} \approx 20000</script>。我们可能会想到去减小 learning rate 从而减小梯度，但是 <script type="math/tex">0.99^{1000} \approx 0</script>，你又要调大 learning rate，导致 lr 调起来很麻烦，所以调不调 lr 并没有什么区别。而这里就分别出现了梯度消失和梯度爆炸。这是由于 RNN 是序列模型，它需要处理一连串的序列。前一个的输出是后一个输入，类似于蝴蝶效应，一个很小的值，经过多个函数也能被放的很大。<br>&emsp;&emsp;那么为什么可以通过观察一个参数的变化从而观察 gradient 的变化呢？很简单，例如 y = w * x，用上面的例子，第 1000 个输出会是 <script type="math/tex">y_{1000} = w^{1000} * x</script>，对 w 求导得 <script type="math/tex">\Delta w = 1000 w^{999} x</script>，由于 <script type="math/tex">w^{999}</script> 比 <script type="math/tex">w^{1000}</script> 消不了多少，所以 gradient 很大。<br>&emsp;&emsp;经过上面的例子我们就知道了问题出现的原因。当然一般情况下不会像上面序列长度有 1000 那么离谱。现在设序列长度就 40，当我们遇到一个较大的值时，依旧会出现梯度爆炸的问题。<br>&emsp;&emsp;解决办法：LSTM，clipping 等。<strong>注意：LSTM 只解决了 gradient vanishing 的问题，没有解决 gradient explode。详见下面的《LSTM 解决了 RNN 的什么问题》章节</strong>。同理 clipping 也只能解决 gradient explode 的问题，因为它能将梯度限制在一个点上（<strong>这是博主的思考，视频中并没有给出此结论</strong>）。那么我们可以结合 LSTM 和 clipping。<br>&emsp;&emsp;根据上面的例子得出，在 RNN 中，即使参数在很小一个范围内，梯度的变化也会很大。<br>&emsp;&emsp;最后还有一个问题，就是上面的例子是用 y = w * x 的例子，但是实际上，激活函数是用的 sigmoid, tanh 等，所以每个神经元的输出都永远在 [-1, 1] 中间。那么怎么会造成上面的例子中的情况呢？其实上面的例子只是一个比喻，当然当激活函数为 ReLU 时确实适用。真正的原因是反向传播时做的链式求导，它导致了梯度的连乘。详细推导见 <a href="https://yan624.github.io/zcy/深度学习算法（二）：simple RNN 推导与理解.html#simple-RNN-的缺陷">simple RNN 的缺陷</a> 蓝色提示框。</p>
+          </div></p>
+<p>&emsp;&emsp;参考资料：</p>
+<ol>
+<li><a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">P37 26: Recurrent Neural Network (Part II)</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/34203833" target="_blank" rel="noopener">深入理解lstm及其变种gru</a></li>
+</ol>
+<p>&emsp;&emsp;以下对新闻分类进行测评，将使用了 clipping 与没使用 clipping 的结果进行对比。</p>
+<ol>
+<li>测评一条新闻的分类：“<strong>广西最美的县城，很多人第一次旅行就是去这里</strong>”。没有使用 clip gradient 的结果是：<strong>news_agriculture</strong>。使用 clip gradient 的结果是：<strong>news_travel</strong>。</li>
+<li>测评一条新闻的分类：“<strong>在越南游玩，有漂亮女子问“要不要生菜”，这是什么意思？</strong>”。没有使用 clip gradient 的结果是：<strong>news_military</strong>。使用 clip gradient 的结果是：<strong>news_agriculture</strong>。</li>
+<li>测评一条新闻的分类：“<strong>去西藏旅游时，导游反复叮嘱：无论多脏都最好不要洗澡？</strong>”。没有使用 clip gradient 的结果是：<strong>news_agriculture</strong>。使用 clip gradient 的结果是：<strong>news_story</strong>。</li>
+</ol>
+<p>&emsp;&emsp;使用 clip gradient 之后，分类结果好像有点正确了，第二句里面有菜，所以是农业。第三句跟农业好像没什么关系，但是跟 story 虽然说不上有关系，但是好像也不是完全没关系。另外以上三条新闻的正确分类其实都是<strong>旅行</strong>。需要说明的是这只是随便一个例子，用来说明加了 clip gradient 之后，对网络的预测有点用。示例中所用的神经网络只是一个简单的 LSTM，仅供参考：）。</p>
+<h2 id="learning-rate-decay"><a href="#learning-rate-decay" class="headerlink" title="learning rate decay"></a>learning rate decay</h2><p>&emsp;&emsp;在什么时候需要使用 learning rate decay？</p>
+<h2 id="LSTM-解决了-RNN-的什么问题"><a href="#LSTM-解决了-RNN-的什么问题" class="headerlink" title="LSTM 解决了 RNN 的什么问题"></a>LSTM 解决了 RNN 的什么问题</h2><p>&emsp;&emsp;解决了两点。仅为个人观点。</p>
+<ol>
+<li>memory 机制</li>
+<li>梯度消失</li>
+</ol>
+<h3 id="memory机制"><a href="#memory机制" class="headerlink" title="memory机制"></a>memory机制</h3><p>&emsp;&emsp;<strong>第一</strong>，RNN 受到短期记忆的影响。如果序列很长，他们将很难将信息从较早的时间步传送到后面的时间步。LSTM 通过改进 memory，可以更好地保留序列信息。<br>&emsp;&emsp;在每个时间点， RNN 都只用每个 cell 的 output 覆盖 memory 里的值，即每个 tiemstep 中的信息都会被覆盖掉。而在 LSTM 中，它会将 memory 乘上一个权重再加上 input，从而获得新的 memory。它不会每次都 forget memory，除非 forget gate 计算结果等于 0。从公式的角度看就是：</p>
+<script type="math/tex; mode=display">
+RNN: memory_{new} = cell(memory, input) \\
+LSTM: memory_{new} = a * input + b * memory \\</script><p>&emsp;&emsp;cell() 代表一个简单的 sigmoid 函数，memory 与 input 可以做拼接处理，也可以 memory + input，具体自己设计。a 是 input gate 的计算结果，b 是 forget gate 的计算结果，说白了都是一个权重，可以忽略。<br>&emsp;&emsp;这样乍一看好像 RNN 和 LSTM 没什么区别，它们都是会进行一些计算，然后获得一个新的 memory。但是 RNN 的计算方式是将 memory 与 input <strong>一起</strong>输入进 neuron，从而产生一个 output，最后将这个 output 作为新的 memory。你会发现，在 RNN 中，虽然 output 是由 memory 和 input 计算得来的，但是在更新 memory 时不是采用 LSTM 的策略，而是直接用 output 将 memory 覆盖掉，<strong>这既没考虑到原 memory 的值，也没考虑当前 input 的值</strong>。而 LSTM 在覆盖 memory 时，会考虑当前 memory 以及 input 的值。<strong>理解该段的重点是：下面的 1</strong>。</p>
+<ol>
+<li><strong>个人理解</strong>：RNN 看似用到了原 memory 和 input，但是在实际计算时（即 cell() 函数所做的操作），由它俩 train 出来的权重矩阵只是为了使 cell() 计算的结果尽可能地接近 y，而并非在计算一个好的 memory。这里尤其要注意，cell() 函数的功能跟 memory 没关系，RNN 与 memory 有关的操作仅仅只有一步，即 <script type="math/tex">memory_{new} = output</script>，它只是将以前的 memory 覆盖掉。而 LSTM 不光在更新 memory 时用到了原 memory 和 input，它里面的 3 个 gate 也都需要通过 input 计算，所以 input 对 LSTM 的输出影响很大，对 memory 的更新自然也大。</li>
+<li><strong>李宏毅机器学习视频中的说法</strong>：如果 weight 可以影响到 memory 里的值，那么这个影响会一直存在。我觉得李宏毅老师的讲解跟我的应该差不多，重点也是 LSTM 多了一个可以训练 memory 的权重。</li>
+<li>memory 本质是在记忆之前所有的 input。</li>
+</ol>
+<p>&emsp;&emsp;其实 forget gate 还是有几率清空 memory 的，那么为什么不直接取消 forget gate 呢？你不是要充分利用 input 吗？实际上在 LSTM 的第一个版本是没有 forget gate 的，它是后来才加上去的。甚至现在的说法是在训练 LSTM 时，不要给 forget gate 太大的权重，要让它大部分时间都是开着的，即大部分时间都不要清空 memory。如果以后训练 LSTM 时，觉得过拟合严重，可以使用 GRU，GRU 只有两个 gate（无 output gate）。（<em>引用<a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">教学视频</a> 22:50 的话</em>）。 </p>
+<h3 id="梯度消失"><a href="#梯度消失" class="headerlink" title="梯度消失"></a>梯度消失</h3><p>&emsp;&emsp;<strong>第二</strong>，反向传播时出现的问题，以下 Q 为问题，A 为解释。<br>&emsp;&emsp;引子：如《clip gradient》一章黄框中所说，RNN 很容易出现峭壁和平原。<strong>LSTM 只解决了 gradient vanishing 的问题</strong>，没有解决 gradient explode。LSTM 使得 error surface 不那么崎岖，<strong>消除了训练时的一些平坦的地方</strong>。虽然梯度在有些地方依然崎岖，但是不会有太平坦的地方。<strong>所以在训练时可以放心的将 lr 调小</strong>，不需要担心会出现平坦的地方，导致训练过慢。<br>&emsp;&emsp;如果公司问为什么把 RNN 换成 LSTM？<del>回答 LSTM 比较潮、因为 LSTM 比较复杂。</del>回答 LSTM 可以处理 gradient vanishing 的问题。具体解释如下：<br>&emsp;&emsp;<strong>Q</strong>：为什么 LSTM 可以解决 gradient vanishing 的问题？（解决梯度消失也可以说成避免 gradient 特别小（消除平原））<br>&emsp;&emsp;<strong>A</strong>：在 RNN 中利用 memory 的方式是一种复合函数的结构，所以在反向传播时，需要链式求导，梯度与梯度相乘容易造成<strong>梯度消失</strong>和<strong>梯度爆炸</strong>。关于 RNN 反向传播的求导结果可以参考 <a href="https://yan624.github.io/zcy/深度学习算法（二）：simple RNN 推导与理解.html#simple-RNN-的缺陷">simple RNN 的缺陷</a> 蓝色提示框。<br>&emsp;&emsp;虽然这样的求导大致已经可以解释了梯度消失的问题，但是如果仔细想想就会发现盲点。在此之前，我想先说明 RNN 家族的反向传播路径与其他的神经网络不同，它的 loss 值是每一个 timestep 的真实值 y 与输出值 的 loss 之和。<a href="https://mooc.study.163.com/learn/2001280005?tid=2001391038&amp;_trace_c_p_k2_=72573d316c3441869416d70899cdf382#/learn/content?type=detail&amp;id=2001770031" target="_blank" rel="noopener">此视频</a> 大致讲明白了这个总 loss 值到底是由哪些 loss 相加得到的。<br>&emsp;&emsp;知道了上面的前提条件，就可以很简单的理解接下来的内容了。<strong>参考资料 1 大致解释了这一问题</strong>，这一段可能比较绕，<strong>简单来说就是后面的 timestep（比如下图中 <script type="math/tex">loss_4</script>）在反向传播时，求 <script type="math/tex">\Delta W</script> 会出现梯度消失（注意 RNN 每个 timestep 的 W 都是一样），这是因为在求梯度时，函数已经复合了好几层</strong>。而对 <script type="math/tex">loss_1</script> 求 W 的导数时，由于它本身就在序列的前面，函数还没有复合，所以 <script type="math/tex">\Delta W</script> 的导数还没梯度消失。<strong>最后在计算总的 loss 时，是将各个阶段的梯度加起来</strong>，即使后面的 loss 会得到一个很小的的梯度 <script type="math/tex">\Delta W</script>，但由于 <script type="math/tex">loss_1</script> 的原因，并不会发生梯度消失。<br>&emsp;&emsp;但是事实上是会发生的，那么梯度消失从何而来呢？是因为后面的 loss 在求梯度时，导致前面输入值的梯度很小，从而产生了<strong>信息丢失</strong>。信息丢失就是 RNN 的梯度消失。有一点需要考虑，RNN 在反向传播时，是需要传播到输入值 x 的，即词向量。在计算 <script type="math/tex">loss_4</script> 时，RNN 中 W 的梯度肯定是很小的，但是在更新 <script type="math/tex">x_4</script> 时，这里的梯度 <script type="math/tex">\Delta W</script> 还不是很小，所以信息无问题。但是当反向传播到 <script type="math/tex">x_1</script> 时，梯度已经很小了，由于小梯度导致 <script type="math/tex">x_1</script> 无法得到很好的更新，于是产生了信息丢失。<script type="math/tex">loss_3</script> 以及 <script type="math/tex">loss_2</script> 以此类推，不过对于 <script type="math/tex">loss_1</script> 并无问题，因为它没有复合函数。<br>&emsp;&emsp;注：<strong>上两段，还参考了参考资料 3，个人认为参考资料 1 中内容并不是很完整</strong>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/多领域seq2lf/total loss.jpg" alt="total loss"></p>
+<p>&emsp;&emsp;以上的参考资料：</p>
+<ol>
+<li><a href="https://www.zhihu.com/question/34878706/answer/665429718" target="_blank" rel="noopener">LSTM如何来避免梯度弥散和梯度爆炸？</a></li>
+<li><a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">李宏毅机器学习</a>)</li>
+<li><a href="https://www.bilibili.com/video/av41393758?p=8" target="_blank" rel="noopener">RNN 和语言模式</a>，19.50 开始</li>
+</ol>
+<p>&emsp;&emsp;而在 LSTM 中，是使用加和的计算方式（博主注：<strong>由于我没有计算过，所以我也不是很肯定</strong>），所以大致解决了梯度消失的问题。注意我没有说解决了梯度爆炸的问题。<br><div class="note success">
+            <p>&emsp;&emsp;LSTM 的模型以及参数名参考<a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">此处</a>。</p><script type="math/tex; mode=display">\begin{aligned}    LSTM: z_i & = [a_{i - 1}; x_i] \\    memory_{new} & = g(z_i) * input(z_i) + memory * forget(z_i) \\    a_i & = h(g(z_i) * input(z_i) + memory * forget(z_i)) * output(z_i) \\\end{aligned}</script><p>&emsp;&emsp;对 LSTM 的求导结果很复杂，就不写了（实际上算得我自己都乱了）。。。它的复杂结构使得它不会出现一个数被连乘，导致极小。<strong>注意 LSTM 并没有解决梯度爆炸的问题。可以结合 clipping 训练 LSTM</strong>。<br>参考资料：</p><ol><li><a href="https://zhuanlan.zhihu.com/p/28749444" target="_blank" rel="noopener">LSTM如何解决梯度消失问题</a></li><li><a href="https://zhuanlan.zhihu.com/p/36101196" target="_blank" rel="noopener">漫谈LSTM系列的梯度问题</a></li><li><a href="https://www.zhihu.com/question/34878706/answer/192444888" target="_blank" rel="noopener">LSTM如何来避免梯度弥散和梯度爆炸？</a></li><li><a href="https://zhuanlan.zhihu.com/p/83496936" target="_blank" rel="noopener">人人都能看懂的LSTM介绍及反向传播算法推导（非常详细）</a></li></ol>
+          </div></p>
+<p>&emsp;&emsp;其他一些思考：LSTM 虽然可以永久的记住以前的 input 信息，但是 memory 说白了就是一个权重矩阵，不可能无限制的记住任何信息。所以可以对 memory 进行一些魔改，比如 memory network 将 memory 修改成用数组存储。<br>&emsp;&emsp;那么问题来了，GRU 解决了什么问题呢？为什么过拟合严重，可以使用 GRU？详见下一章。</p>
+<h3 id="其他解决梯度消失的办法"><a href="#其他解决梯度消失的办法" class="headerlink" title="其他解决梯度消失的办法"></a>其他解决梯度消失的办法</h3><ol>
+<li>Clockwise RNN</li>
+<li>Structurally Constrained Recurrent Network(SCRN)</li>
+<li></li>
+</ol>
+<h3 id="LSTM-为什么没有解决梯度爆炸？"><a href="#LSTM-为什么没有解决梯度爆炸？" class="headerlink" title="LSTM 为什么没有解决梯度爆炸？"></a>LSTM 为什么没有解决梯度爆炸？</h3><p>&emsp;&emsp;理论上，梯度爆炸也同样糟糕。但在实践上，其实我们可以直接砍一刀（原话：it turns out we can actually have a hack），这由 Thomas Mikolov 首次提出。在某种程度上是不精确的，比如说“<strong>现在你有一个很大的梯度 100，让我们把它限制在 5 吧</strong>”。这方法就结束了。你只要定义一个临界值，当梯度大于临界值时，就使梯度等于临界值。虽然不是一个数学方法，但结果表明在实践中效果不错。<br>&emsp;&emsp;参考资料：</p>
+<ol>
+<li><a href="https://www.bilibili.com/video/av41393758?p=8" target="_blank" rel="noopener">RNN 和语言模式</a> 49.06 - 62.38</li>
+</ol>
+<h2 id="GRU-改进了-LSTM-的啥"><a href="#GRU-改进了-LSTM-的啥" class="headerlink" title="GRU 改进了 LSTM 的啥"></a>GRU 改进了 LSTM 的啥</h2><p>&emsp;&emsp;简化了 Gate，GRU 能够达到 LSTM 相当的效果，并且相比之下更容易进行训练，能够很大程度上提高训练效率。<br>&emsp;&emsp;参考资料：</p>
+<ol>
+<li><a href="https://zhuanlan.zhihu.com/p/32481747" target="_blank" rel="noopener">人人都能看懂的GRU</a></li>
+</ol>
+<h2 id="attention"><a href="#attention" class="headerlink" title="attention"></a>attention</h2><p>&emsp;&emsp;本人的笔记</p>
+<ol>
+<li><a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#Attention">吴恩达李宏毅综合学习笔记：RNN入门</a></li>
+<li><a href="http://localhost:4000/学习笔记/CS224n学习笔记.html#attention" target="_blank" rel="noopener">CS224n学习笔记</a></li>
+<li><strong><a href="http://localhost:4000/zcy/深度学习算法（三）：RNN 各种机制.html#Attention" target="_blank" rel="noopener">RNN 各种机制</a></strong></li>
+</ol>
+<p>&emsp;&emsp;参考资料：</p>
+<ol>
+<li><a href="https://zhuanlan.zhihu.com/p/67909876" target="_blank" rel="noopener">浅谈Attention注意力机制及其实现</a></li>
+</ol>
+<h2 id="Dropout"><a href="#Dropout" class="headerlink" title="Dropout"></a>Dropout</h2><p>&emsp;&emsp;参考资料：<br><a href="https://zhuanlan.zhihu.com/p/38200980" target="_blank" rel="noopener">深度学习中Dropout原理解析</a></p>
+<h2 id="处理OOV"><a href="#处理OOV" class="headerlink" title="处理OOV"></a>处理OOV</h2><p>&emsp;&emsp;参考资料：</p>
+<ol>
+<li><a href="https://www.zhihu.com/question/329708785" target="_blank" rel="noopener">word2vec缺少单词怎么办？</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/72312668" target="_blank" rel="noopener">香侬读 | 怎样在小数据集下学习OOV词向量？</a></li>
+</ol>
+<h2 id="Batch-Norm"><a href="#Batch-Norm" class="headerlink" title="Batch Norm"></a>Batch Norm</h2><h2 id="可视化训练结果"><a href="#可视化训练结果" class="headerlink" title="可视化训练结果"></a>可视化训练结果</h2><p>&emsp;&emsp;以前一直用 matplotlib 来画图，现在用了 tensorboardX 之后，感觉人瞬间就爽了，以下为教程。无法启动看 2，启动后网页无法显示看 3，代码不会写看 1。<br>&emsp;&emsp;参考资料：</p>
+<ol>
+<li><a href="https://tensorboardx.readthedocs.io/en/latest/tutorial.html#what-is-tensorboard-x" target="_blank" rel="noopener">官方文档</a></li>
+<li><a href="https://blog.csdn.net/qq_40605167/article/details/95761885" target="_blank" rel="noopener">tensorboard OSError: [Errno 22] Invalid argument错误处理</a></li>
+<li><a href="https://blog.csdn.net/weixin_44135282/article/details/86156961" target="_blank" rel="noopener">tensorboard生成的网址打不开的解决方法</a></li>
+<li><a href="https://blog.csdn.net/bigbennyguo/article/details/87956434" target="_blank" rel="noopener">详解PyTorch项目使用TensorboardX进行训练可视化</a></li>
+</ol>
+<a id="more"></a>]]></content>
+      <categories>
+        <category>project</category>
+      </categories>
+  </entry>
+  <entry>
     <title>论文笔记：Improved Representation Learning for Question Answer Matching</title>
     <url>/%E8%AE%BA%E6%96%87/49%E3%80%81Improved-Representation-Learning-for-Question-Answer-Matching.html</url>
     <content><![CDATA[<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;自从短文级别（passage-level）的问答匹配需要有效的表征以捕获问题与答案之间复杂的语义关联开始，它就成为一个巨大的挑战。本文我们提出一系列的深度学习模型去解决如何选择短文答案。<br>&emsp;&emsp;将短文答案与符合语义关系的问题相匹配，不同于之前的大多数工作，即只使用一个深度学习结构。我们开发了一个混合模型去处理文本，其中用到了 CNN 和 RNN，结合了两种结构提取语言信息的优点。<br>&emsp;&emsp;此外，还开发了简单而有效的注意力机制。在两个数据集 InsuranceQA and TREC-QA 上显示此模型超出基线。</p>
@@ -54,132 +337,6 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
       </tags>
   </entry>
   <entry>
-    <title></title>
-    <url>/%E8%AE%BA%E6%96%87/paper_result.html</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
-    <title>tips</title>
-    <url>/tips.html</url>
-    <content><![CDATA[<blockquote>
-<p><strong>提示：先按住ctrl再点击超链接可以在新窗口打开</strong></p>
-</blockquote>
-<a id="more"></a>]]></content>
-  </entry>
-  <entry>
-    <title>一些快捷键</title>
-    <url>/%E4%B8%80%E4%BA%9B%E5%BF%AB%E6%8D%B7%E9%94%AE.html</url>
-    <content><![CDATA[<p>最近老是用到win10的快捷键，但是用过之后过几天就忘了，所以记录下。<br>还有有谁知道怎么用快捷键打开高级系统设置，设置环境变量老是要打开这个，烦得很。</p>
-<h1 id="vim"><a href="#vim" class="headerlink" title="vim"></a>vim</h1><p>按 V 进入 Visual Mode，然后可以上下左右选择行数。按 y 复制，d 剪切，p 粘贴。</p>
-<h1 id="win10"><a href="#win10" class="headerlink" title="win10"></a>win10</h1><ol>
-<li>win+E 打开我的电脑</li>
-<li>win+R 打开运行</li>
-<li>win+L 锁屏</li>
-<li>fn+ESC 打开/关闭功能键。f5是刷新键，但是有时候发现按f5无效，其实是因为功能键打开了，只需要按fn+ESC关闭就可。</li>
-<li>四指在触摸板向左/向右滑动，切换桌面。</li>
-<li>三指向上滑动将当前的任务以小窗口显示在桌面，三指向下滑动隐藏。</li>
-<li>win+Tab类似6</li>
-<li>win+d最小化所有打开的窗口</li>
-</ol>
-<a id="more"></a>]]></content>
-      <categories>
-        <category>assorted</category>
-      </categories>
-      <tags>
-        <tag>快捷键</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>flayai竞赛：今日头条新闻分类</title>
-    <url>/%E6%AF%94%E8%B5%9B%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/flayai%E7%AB%9E%E8%B5%9B%EF%BC%9A%E4%BB%8A%E6%97%A5%E5%A4%B4%E6%9D%A1%E6%96%B0%E9%97%BB%E5%88%86%E7%B1%BB.html</url>
-    <content><![CDATA[<div class="note info">
-            <p>&emsp;&emsp;本竞赛涉及知识点或技巧如下：</p><ol><li>LSTM</li><li>pytorch loss 的使用以及一些坑</li></ol>
-          </div>
-<h1 id="总结写在前"><a href="#总结写在前" class="headerlink" title="总结写在前"></a>总结写在前</h1><h2 id="pytorch-loss-function"><a href="#pytorch-loss-function" class="headerlink" title="pytorch loss function"></a>pytorch loss function</h2><p>&emsp;&emsp;pytorch 的多元分类 loss 有 CrossEntropyLoss 和 NLLLoss。NLLLoss 全称 Negative Log Likelihood Loss，说白了就是求对数概率并取负，我们从函数图像就可以理解。模型输出的概率分布在 0-1 之间，log 函数的 0-1 区间正好全是负数，所以要加上一个负号，让 loss 值为正数。显而易见，概率越接近 1，loss 值越小。接下来描述一下这两个函数。</p>
-<ol>
-<li>CrossEntropyLoss = LogSoftmax + NLLLoss；</li>
-<li>CrossEntropyLoss 中已经附带了 log_softmax 操作，所以如果你想省事，那么直接将输出向量输入 CrossEntropyLoss 即可；</li>
-<li>如果使用 NLLLoss，那么在使用 NLLLoss 之前，还需要经过一层 LogSoftmax。</li>
-</ol>
-<p>&emsp;&emsp;需要注意一点，我感觉网上很多人也没有理解什么是 CrossEntropyLoss，导致很多人都被误导了。首先 nll 的公式如下：</p>
-<script type="math/tex; mode=display">
-nll\_loss = -log(pred)</script><div class="note warning">
-            <p>&emsp;&emsp;nll loss 可以有多种表达方式，我把在网上看到的公式都罗列一下。<br>&emsp;&emsp;以下的公式与 crossentropy 一样。（实际上公式就是一样的，只不过在概念上有点不同，由于输出值 y 是 one hot 形式，为 0 时，就相当于没有加，最后的结果就是上面的公式）</p><script type="math/tex; mode=display">nll\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred)</script><p>&emsp;&emsp;这里的 class 就是指第几个标签，它不是 one hot 表示形式。大家会发现这里少了一个 log 函数，实际上 pred 是使用 log_softmax 函数计算之后的结果。</p><script type="math/tex; mode=display">nll\_loss = -pred[class]</script>
-          </div>
-<p>&emsp;&emsp;CrossEntropyLoss 公式如下：</p>
-<script type="math/tex; mode=display">
-crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i)</script><p>&emsp;&emsp;<del>无法理解的原因之一是，在学机器学习的时候，大家都知道啥是 crossentropy，后来在学多元分类时，开始分 binary_crossentropy 和 crossentropy。这点大家都能理解，但是到看到 NLLLoss 时，就开始懵逼了。</del><br>&emsp;&emsp;<del>由于 CrossEntropyLoss = LogSoftmax + NLLLoss，在 crossentropy 的公式中貌似没有出现 softmax（更没有 log_softmax），所以开始懵了，无法理解其中的 LogSoftmax 是干啥的。</del><br>&emsp;&emsp;首先我要解释一点 CrossEntropyLoss 是 LogSoftmax 和 NLLLoss 两个步骤之和，之前说的“+”号，并非是数学意义上的加号。也就是说，CrossEntropyLoss 就比 NLLLoss 多做了一步 LogSoftmax（<strong>博主注</strong>：<em>个人认为实际上只是多做了一步 softmax，说多做了一步 log_softmax，是因为站在 pytorch 框架的角度</em>）。<br>&emsp;&emsp;其次，对于真实输出值 y 来说，无非就是 0 和 1（注意多元分类也只有 0 和 1），并且根据上述 crossentropy 的公式。实际上公式可以化简为以下所示，其中的 m 代表真实值为 1 的索引。</p>
-<script type="math/tex; mode=display">
-crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)</script><p>&emsp;&emsp;请注意这里的 <script type="math/tex">pred_m</script>。我们都知道在进行分类问题时，我们需要将输出结果置于 0-1 之间，对于二元分类我们使用 sigmoid 函数，对于多元分类我们使用 softmax（到这开始有内味了）。由于分类问题都是要这么做的，所以将 softmax 这个函数放到公式 <script type="math/tex">crossentropy\_loss = -log(pred_m)</script> 中，我们惊奇的发现 crossentropy 函数变成了 log_softmax（最前面的负号暂时不看）。即 crossentropy + softmax = -log_softmax。</p>
-<div class="note warning">
-            <p>&emsp;&emsp;请始终留意，pred 是一个向量通过 softmax/log_softmax 计算之后的值。</p>
-          </div>
-<p>&emsp;&emsp;最后你会发现这样还是不对。<script type="math/tex">nll\_loss = -log(pred)</script>，之前说 CrossEntropyLoss = <strong>LogSoftmax</strong> + NLLLoss，我把 log_softmax 放到 nll 里，变成了 <script type="math/tex">LogSoftmax + NLLLoss = -log(log(pred))</script>，怎么多了一个 log？实际上 nll 的公式应该以 <script type="math/tex">nll\_loss = -pred[class]</script> 为准，你会发现这个公式中没有 log 函数。这样将 logsoftmax 放入 nll loss 中，就正好是 crossentropy 了。<br>&emsp;&emsp;那么你就会问 nll 明明是 Negative Log Liklihood，log 不见了，这不就是名存实亡了？<br>&emsp;&emsp;<strong>这可能是因为 pytorch 想要简化操作，才这么设置的，别的框架可能并不是这样。简而言之，pytorch 框架中，nll loss 的公式是 -pred。crossentropy 的公式是 logsoftmax + nll loss，即 nll(log_softmax(output))</strong><br>&emsp;&emsp;<strong>也就是说，如果神经网络的最后一层输出是 logsoftmax，那么就使用 nll loss（上一段 nll loss 那个 pred 就是通过 log_softmax 的输出值）。如果最后一层只是输出，偷懒不想写 logsoftmax，那么就使用 crossentropy loss（上一段 crossentropy 中的 output 就是一个普通的神经网络输出）。</strong><br>&emsp;&emsp;参考：</p>
-<ol>
-<li><a href="http://blog.leanote.com/post/lee-romantic/crossentry" target="_blank" rel="noopener">CrossEntropyLoss和NLLLoss的理解</a></li>
-<li><a href="https://www.cnblogs.com/ranjiewen/p/10059490.html" target="_blank" rel="noopener">Pytorch之CrossEntropyLoss() 与 NLLLoss() 的区别</a></li>
-<li><a href="https://blog.csdn.net/m0_38133212/article/details/88087206" target="_blank" rel="noopener">CrossEntropyLoss与NLLLoss的总结</a></li>
-<li><a href="https://www.cnblogs.com/marsggbo/p/10401215.html" target="_blank" rel="noopener">Pytorch里的CrossEntropyLoss详解</a></li>
-</ol>
-<h3 id="顺便一提KLDivLoss"><a href="#顺便一提KLDivLoss" class="headerlink" title="顺便一提KLDivLoss"></a>顺便一提KLDivLoss</h3><p>&emsp;&emsp;<a href="https://www.cnblogs.com/charlotte77/p/5392052.html" target="_blank" rel="noopener">【原】浅谈KL散度（相对熵）在用户画像中的应用</a><br>&emsp;&emsp;暂时还没用过这个 loss，简单来说，是用来比较两个概率分布之间的信息熵差异，如 AB 两组群体，有对某一商品的总消费分布 P 和群体人数的分布 Q，可以计算 PQ 之间的信息熵差异，从而获得 AB 两组群体对该商品的偏爱程度。</p>
-<h2 id="optimizer-zero-grad"><a href="#optimizer-zero-grad" class="headerlink" title="optimizer.zero_grad()"></a>optimizer.zero_grad()</h2><p>&emsp;&emsp;在 pytorch 中，为什么要在每个循环之初调用这个方法？因为 pytorch 把计算的每个梯度都累加起来，并不会每迭代一次就将梯度清零。这样做看起来令人费解，并反常理。但是实际上这样做可以做更多神奇的操作，比如</p>
-<ul>
-<li><a href="https://www.zhihu.com/question/303070254" target="_blank" rel="noopener">https://www.zhihu.com/question/303070254</a></li>
-</ul>
-<p>&emsp;&emsp;还有，试想本来你想运行 batch_size=1024，但是由于电脑太差，只能运行 batch_size=256 的批次数据。那么只需要每循环两次调用一次 zero_grad() 即可。<br>&emsp;&emsp;参考：</p>
-<ol>
-<li><a href="https://blog.csdn.net/u011959041/article/details/102760868" target="_blank" rel="noopener">pytorch中为什么要用 zero_grad() 将梯度清零</a></li>
-</ol>
-<h2 id="clip-gradient"><a href="#clip-gradient" class="headerlink" title="clip gradient"></a>clip gradient</h2><p>&emsp;&emsp;<a href="http://proceedings.mlr.press/v28/pascanu13.pdf" target="_blank" rel="noopener">此论文</a>提出了 clip gradient（以下称 clipping）。首先看下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/flayai竞赛：今日头条新闻分类/the error surface is rough.jpg" alt="the error surface is rough"></p>
-<p>&emsp;&emsp;如果只看图，会发现有一个像峭壁一样的东西，它就是罪魁祸首。当我们将一个小球往前移动时，有时候正好迈过峭壁，小球得以正常移动。但是当小球碰到峭壁时，小球就会被反弹回去，导致 loss 发生剧烈变化。<br>&emsp;&emsp;从数学角度来看，那个峭壁就是梯度。<strong>需要注意的是</strong>，由于 z 轴标注的 total loss，所以第一印象感觉峭壁代表 total loss，但是<strong>峭壁代表的是梯度，而不是 total loss</strong>。根据参数更新公式 <script type="math/tex">w -= \alpha * \Delta w</script>，其中 <script type="math/tex">\Delta w</script> 代表 w 的梯度，所以 w 的更新方向其实与梯度直接相关。<strong>当 w 不幸到达某个值时，遇到梯度极大的情况，那么不管梯度是正还是负，都会将 w 更新到一个相对很大的值，从而 loss 值也会跟着改变。注：这里其实也与 learning rate 有关，因为原本的梯度都很小，所以我们初始设置的 lr 都很大。突然梯度增大，而 lr 没有适应，一个大的梯度乘上一个大的 lr，那就更大了</strong>。<br>&emsp;&emsp;<strong>解决办法</strong>是：当 gradient 大于某个 threshold 时，就不让它大于 threshold（视频中说作者的代码中将 threshold 设置为 15，但是这个 threshold 应该是具体情况具体分析）。<br><div class="note warning">
-            <p>&emsp;&emsp;Q：那么是什么导致了出现梯度猛增的现象呢？（ps：梯度消失也会出现）<br>&emsp;&emsp;A：首先不是 sigmoid 的锅。sigmoid 函数会出现 gradient vanishing（梯度消失）的问题，按理说换成 ReLU 就能解决了。但是将 RNN 的激活函数换成 ReLU 并没有解决问题，所以跟激活函数没什么关系。<em><a href="http://localhost:4000/zcy/对神经网络整体的理解.html#缺陷" target="_blank" rel="noopener">sigmoid 的缺陷</a>这一章说明了 sigmoid 具有梯度消失的缺陷</em>。<br>&emsp;&emsp;我们只需要小小地改变一个参数，然后观察 output 的变化，就能测出这个参数的 gradient 的大小。现在假设激活函数是 y = w * x，序列长度为 1000，并且第一个 timestep 的输入为 1，其他的 timestep 皆为 0，则<script type="math/tex">1^{1000} = 1</script>，而 <script type="math/tex">1.01^{1000} \approx 20000</script>。我们可能会想到去减小 learning rate 从而减小梯度，但是 <script type="math/tex">0.99^{1000} \approx 0</script>，你又要调大 learning rate，导致 lr 调起来很麻烦，所以调不调 lr 并没有什么区别。而这里就分别出现了梯度消失和梯度爆炸。这是由于 RNN 是序列模型，它需要处理一连串的序列。前一个的输出是后一个输入，类似于蝴蝶效应，一个很小的值，经过多个函数也能被放的很大。<br>&emsp;&emsp;那么为什么可以通过观察一个参数的变化从而观察 gradient 的变化呢？很简单，例如 y = w * x，用上面的例子，第 1000 个输出会是 <script type="math/tex">y_{1000} = w^{1000} * x</script>，对 w 求导得 <script type="math/tex">\Delta w = 1000 w^{999} x</script>，由于 <script type="math/tex">w^{999}</script> 比 <script type="math/tex">w^{1000}</script> 消不了多少，所以 gradient 很大。<br>&emsp;&emsp;经过上面的例子我们就知道了问题出现的原因。当然一般情况下不会像上面序列长度有 1000 那么离谱。现在设序列长度就 40，当我们遇到一个较大的值时，依旧会出现梯度爆炸的问题。<br>&emsp;&emsp;解决办法：LSTM，clipping 等。<strong>注意：LSTM 只解决了 gradient vanishing 的问题，没有解决 gradient explode。详见下面的《LSTM 解决了 RNN 的什么问题》章节</strong>。同理 clipping 也只能解决 gradient explode 的问题，因为它能将梯度限制在一个点上（<strong>这是博主的思考，视频中并没有给出此结论</strong>）。那么我们可以结合 LSTM 和 clipping。<br>&emsp;&emsp;根据上面的例子得出，在 RNN 中，即使参数在很小一个范围内，梯度的变化也会很大。<br>&emsp;&emsp;最后还有一个问题，就是上面的例子是用 y = w <em> x 的例子，但是实际上，激活函数是用的 sigmoid, tanh 等，所以每个神经元的输出都永远在 [-1, 1] 中间，ReLU 类似 y = w </em> x 就不说了。那么怎么会造成上面的例子中的情况呢？详见下一个框。</p>
-          </div></p>
-<div class="note info">
-            <p>&emsp;&emsp;以下为自己的看法。其实上面的例子只是一个比喻，当然当激活函数为 ReLU 时确实适用。真正的原因是反向传播时做的链式求导，它导致了梯度的连乘。<br>&emsp;&emsp;以下以序列长度为 2 为例。RNN 的模型以及参数名参考<a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#循环神经网络——RNN">此处</a>，LSTM 参考<a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">此处</a>。</p><script type="math/tex; mode=display">\begin{aligned}    RNN: a_2 & = w_{aa} (w_{aa} * 0 + w_{ax} * x^1 + b_a) + w_{ax} * x^2 + b_a \\    a_1 & = w_{aa} * 0 + w_{ax} * x^1 + b_a \\    a_0 & = 0 \\    LSTM: a_i & = h(g(z_i) * input(z_i) + memory * forget(z_i)) * output(z_i) \\    memory_{new} & = g(z_i) * input(z_i) + memory * forget(z_i) \\    z_i & = [a_{i - 1}; x_i] \\\end{aligned}</script><p>&emsp;&emsp;</p>
-          </div>
-<p>&emsp;&emsp;参考资料：</p>
-<ol>
-<li><a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">P37 26: Recurrent Neural Network (Part II)</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/34203833" target="_blank" rel="noopener">深入理解lstm及其变种gru</a></li>
-</ol>
-<p>&emsp;&emsp;以下对新闻分类进行测评，将使用了 clipping 与没使用 clipping 的结果进行对比。</p>
-<ol>
-<li>测评一条新闻的分类：“<strong>广西最美的县城，很多人第一次旅行就是去这里</strong>”。没有使用 clip gradient 的结果是：<strong>news_agriculture</strong>。使用 clip gradient 的结果是：<strong>news_travel</strong>。</li>
-<li>测评一条新闻的分类：“<strong>在越南游玩，有漂亮女子问“要不要生菜”，这是什么意思？</strong>”。没有使用 clip gradient 的结果是：<strong>news_military</strong>。使用 clip gradient 的结果是：<strong>news_agriculture</strong>。</li>
-<li>测评一条新闻的分类：“<strong>去西藏旅游时，导游反复叮嘱：无论多脏都最好不要洗澡？</strong>”。没有使用 clip gradient 的结果是：<strong>news_agriculture</strong>。使用 clip gradient 的结果是：<strong>news_story</strong>。</li>
-</ol>
-<p>&emsp;&emsp;使用 clip gradient 之后，分类结果好像有点正确了，第二句里面有菜，所以是农业。第三句跟农业好像没什么关系，但是跟 story 虽然说不上有关系，但是好像也不是完全没关系。另外以上三条新闻的正确分类其实都是<strong>旅行</strong>。需要说明的是这只是随便一个例子，用来说明加了 clip gradient 之后，对网络的预测有点用。示例中所用的神经网络只是一个简单的 LSTM，仅供参考：）。</p>
-<h2 id="learning-rate-decay"><a href="#learning-rate-decay" class="headerlink" title="learning rate decay"></a>learning rate decay</h2><p>&emsp;&emsp;在什么时候需要使用 learning rate decay？</p>
-<h2 id="LSTM-解决了-RNN-的什么问题"><a href="#LSTM-解决了-RNN-的什么问题" class="headerlink" title="LSTM 解决了 RNN 的什么问题"></a>LSTM 解决了 RNN 的什么问题</h2><p>&emsp;&emsp;第一，RNN 受到短期记忆的影响。如果序列很长，他们将很难将信息从较早的时间步传送到后面的时间步。LSTM 通过改进 memory，可以更好地保留序列信息。<br>&emsp;&emsp;第二，反向传播出现的问题，以下全部内容均为解释。<br>&emsp;&emsp;如《clip gradient》一章黄框中所说，RNN 很容易出现峭壁和平原。<strong>LSTM 只解决了 gradient vanishing 的问题</strong>，没有解决 gradient explode。<br>&emsp;&emsp;LSTM 使得 error surface 不那么崎岖，<strong>消除了训练时的一些平坦的地方</strong>。虽然梯度在有些地方依然崎岖，但是不会有太平坦的地方。<strong>所以在训练时可以放心的将 lr 调小</strong>，不需要担心会出现平坦的地方，导致训练过慢。<br>&emsp;&emsp;如果公司问为什么把 RNN 换成 LSTM？<del>回答 LSTM 比较潮、因为 LSTM 比较复杂。</del>回答 LSTM 可以处理 gradient vanishing 的问题。<br>&emsp;&emsp;Q：为什么 LSTM 可以解决 gradient vanishing 的问题？为什么它可以避免 gradient 特别小呢？<br>&emsp;&emsp;A：由于在每个时间点， RNN 都只用每个 cell 的 output 覆盖 memory 里的值，即每个 tiemstep 中的信息都会被覆盖掉。而在 LSTM 中，它会将 memory 乘上一个权重再加上 input，从而获得新的 memory。它不会每次都 forget memory，除非 forget gate 计算结果等于 0。从公式的角度看就是：</p>
-<script type="math/tex; mode=display">
-RNN: memory_{new} = cell(memory, input) \\
-LSTM: memory_{new} = a * input + b * memory \\</script><p>&emsp;&emsp;cell() 代表一个简单的 sigmoid 函数，memory 与 input 可以做拼接处理，也可以 memory + input，具体自己设计。a 是 input gate 的计算结果，b 是 forget gate 的计算结果，说白了都是一个权重，可以忽略。<br>&emsp;&emsp;这样乍一看好像 RNN 和 LSTM 没什么区别，它们都是会进行一些计算，然后获得一个新的 memory。但是 RNN 的计算方式是将 memory 与 input <strong>一起</strong>输入进 neuron，从而产生一个 output，最后将这个 output 作为新的 memory。你会发现，在 RNN 中，虽然 output 是由 memory 和 input 计算得来的，但是在更新 memory 时不是采用 LSTM 的策略，而是直接用 output 将 memory 覆盖掉，<strong>这既没考虑到原 memory 的值，也没考虑当前 input 的值</strong>。而 LSTM 在覆盖 memory 时，会考虑当前 memory 以及 input 的值。<strong>理解该段的重点是：下面的 1</strong>。</p>
-<ol>
-<li><strong>个人理解</strong>：<ul>
-<li>RNN 看似用到了原 memory 和 input，但是在实际计算时（即 cell() 函数所做的操作），由它俩 train 出来的权重矩阵只是为了使 cell() 计算的结果尽可能地接近 y，而并非在计算一个好的 memory。这里尤其要注意，cell() 函数的功能跟 memory 没关系，RNN 与 memory 有关的操作仅仅只有一步，即 <script type="math/tex">memory_{new} = output</script>，它只是将以前的 memory 覆盖掉。而 LSTM 不光在更新 memory 时用到了原 memory 和 input，它里面的 3 个 gate 也都需要通过 input 计算，所以 input 对 LSTM 的输出影响很大，对 memory 的更新自然也大。</li>
-<li>在 RNN 中利用 memory 的方式是一种复合函数的结构，所以在反向传播时，需要链式求导，即 <script type="math/tex">f(g(x)) = f'(g(x))·g'(x)</script>，梯度与梯度相乘容易造成梯度消失和梯度爆炸。而在 LSTM 中，是使用加和的计算方式。</li>
-</ul>
-</li>
-<li><strong>李宏毅机器学习视频中的说法</strong>：如果 weight 可以影响到 memory 里的值，那么这个影响会一直存在。我觉得李宏毅老师的讲解跟我的应该差不多，重点也是 LSTM 多了一个可以训练 memory 的权重。</li>
-<li>memory 本质是在记忆之前所有的 input。</li>
-</ol>
-<p>&emsp;&emsp;其实 forget gate 还是有几率清空 memory 的，那么为什么不直接取消 forget gate 呢？你不是要充分利用 input 吗？实际上在 LSTM 的第一个版本是没有 forget gate 的，它是后来才加上去的。甚至现在的说法是在训练 LSTM 时，不要给 forget gate 太大的权重，要让它大部分时间都是开着的，即大部分时间都不要清空 memory。如果以后训练 LSTM 时，觉得过拟合严重，可以使用 GRU，GRU 只有两个 gate（无 output gate）。（<em>引用<a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">教学视频</a> 22:50 的话</em>）。<br>&emsp;&emsp;因为对 memory 的操控，所以解决了 gradient vanishing 的问题，避免 gradient 特别小。有 memory 在，即使你的 input 有问题，它也会用 memory 尽可能地抵消。RNN 虽然也有 memory，但是它的 memory 只是做了一个简单的更新操作，它依然不知道以前的 input 是什么情况。不规范来说就是瞎记，但聊胜于无。<br>&emsp;&emsp;博主注：LSTM 虽然可以永久的记住以前的 input 信息，但是 memory 说白了就是一个权重矩阵，不可能无限制的记住任何信息。所以可以对 memory 进行一些魔改，比如 memory network 将 memory 修改成用数组存储。<br>&emsp;&emsp;那么问题来了，GRU 解决了什么问题呢？为什么过拟合严重，可以使用 GRU？详见下一章。<br>&emsp;&emsp;参考资料：</p>
-<ol>
-<li><a href="https://zhuanlan.zhihu.com/p/81549798" target="_blank" rel="noopener">GIF动图一步一步看懂LSTM和GRU</a>；</li>
-<li><a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">李宏毅机器学习</a>)</li>
-<li><a href="https://zhuanlan.zhihu.com/p/34203833" target="_blank" rel="noopener">深入理解lstm及其变种gru</a></li>
-</ol>
-<h3 id="其他解决梯度消失的办法"><a href="#其他解决梯度消失的办法" class="headerlink" title="其他解决梯度消失的办法"></a>其他解决梯度消失的办法</h3><ol>
-<li>Clockwise RNN</li>
-<li>Structurally Constrained Recurrent Network(SCRN)</li>
-</ol>
-<h2 id="GRU-改进了-LSTM-的啥"><a href="#GRU-改进了-LSTM-的啥" class="headerlink" title="GRU 改进了 LSTM 的啥"></a>GRU 改进了 LSTM 的啥</h2><p>&emsp;&emsp;</p>
-<a id="more"></a>]]></content>
-      <categories>
-        <category>project</category>
-      </categories>
-  </entry>
-  <entry>
     <title>【读书笔记】：《自然语言处理综论》（第二版）</title>
     <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%EF%BC%9A%E3%80%8A%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86%E7%BB%BC%E8%AE%BA%E3%80%8B%EF%BC%88%E7%AC%AC%E4%BA%8C%E7%89%88%EF%BC%89.html</url>
     <content><![CDATA[<h1 id="正则表达式与自动机"><a href="#正则表达式与自动机" class="headerlink" title="正则表达式与自动机"></a>正则表达式与自动机</h1><h2 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h2><p>&emsp;&emsp;正则表达式首先由 Kleene（1956）研制的。</p>
@@ -230,6 +387,11 @@ LSTM: memory_{new} = a * input + b * memory \\</script><p>&emsp;&emsp;cell() 代
       <tags>
         <tag>论文笔记</tag>
       </tags>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/%E8%AE%BA%E6%96%87/paper_result.html</url>
+    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>论文笔记：Neural Semantic Parsing over Multiple Knowledge-bases</title>
@@ -348,7 +510,7 @@ LSTM: memory_{new} = a * input + b * memory \\</script><p>&emsp;&emsp;cell() 代
   </entry>
   <entry>
     <title>pytorch踩坑总结</title>
-    <url>/pytorch%E8%B8%A9%E5%9D%91%E6%80%BB%E7%BB%93.html</url>
+    <url>/python/pytorch%E8%B8%A9%E5%9D%91%E6%80%BB%E7%BB%93.html</url>
     <content><![CDATA[<ol>
 <li><code>tensor.view()</code> 相当于numpy中resize（）的功能，但是用法可能不太一样。</li>
 <li>关于 nn.LSTM 的用法：如果不想手动初始化隐藏状态，而是想让 pytorch 帮你初始化，那么就只需要填入输入值即可。举个例子，下面的代码输入向量所对应的自然语句是 [‘how are you’, ‘i’m fine’]。<br>其中输入值 x 的形状为 (seq_len, batch_size, input_size)，比如上面的例子就是 (3, 2, 300)，代表序列长度为 3（因为上面的两句话的最大长度为 3），批量大小为 2，词向量维度为 300。注意一点：<strong>pytorch 会根据你输入的序列长度</strong>（输入的张量必须是一样长的，参差不齐的张量无法输入，当然了，你也无法创建出这样的张量）<strong>自动帮你做时间步上的计算，比如你输入的序列长度为 20，那么它会自动在神经网络的第一层计算 20 次，再返回结果给你。</strong>如果看不懂这里是什么意思，说明你不会 LSTM。可以再看看 LSTM 是怎么计算的。<figure class="highlight verilog"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cell</span> = nn<span class="variable">.LSTM</span>(input_size, hidden_size, num_layers)</span><br><span class="line"><span class="keyword">output</span>, (a, m) = <span class="keyword">cell</span>(x)</span><br></pre></td></tr></table></figure>
@@ -715,7 +877,7 @@ LSTM: memory_{new} = a * input + b * memory \\</script><p>&emsp;&emsp;cell() 代
   </entry>
   <entry>
     <title>2019 普开培训</title>
-    <url>/2019%20%E6%99%AE%E5%BC%80%E5%9F%B9%E8%AE%AD.html</url>
+    <url>/assorted/conference/2019%20%E6%99%AE%E5%BC%80%E5%9F%B9%E8%AE%AD.html</url>
     <content><![CDATA[<h1 id="第一天"><a href="#第一天" class="headerlink" title="第一天"></a>第一天</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>&emsp;&emsp;知识图谱是一种新型的<strong>数据库</strong>，是一种基于图的数据结构。每个节点表示现实世界中存在的“实体”，每条边为实体与实体之间的“关系”。以下为知识图谱的几点作用：</p>
 <ul>
 <li>从“关系”分析问题</li>
@@ -1095,7 +1257,7 @@ LSTM: memory_{new} = a * input + b * memory \\</script><p>&emsp;&emsp;cell() 代
   </entry>
   <entry>
     <title>2. 两数相加</title>
-    <url>/leetcode/2.%20%E4%B8%A4%E6%95%B0%E7%9B%B8%E5%8A%A0.html</url>
+    <url>/algorithm/2.%20%E4%B8%A4%E6%95%B0%E7%9B%B8%E5%8A%A0.html</url>
     <content><![CDATA[<h1 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h1><h1 id="有问题的解法1"><a href="#有问题的解法1" class="headerlink" title="有问题的解法1"></a>有问题的解法1</h1><p>代码<br><figure class="highlight axapta"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * public class ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     ListNode next;</span></span><br><span class="line"><span class="comment"> *     ListNode(int x) &#123; val = x; &#125;</span></span><br><span class="line"><span class="comment"> * &#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> ListNode addTwoNumbers(ListNode l1, ListNode l2) &#123;</span><br><span class="line">        <span class="keyword">int</span> nextNodeCarryValue = <span class="number">0</span>;</span><br><span class="line">        ListNode <span class="keyword">sum</span> = <span class="keyword">new</span> ListNode(nextNodeCarryValue);</span><br><span class="line">        ListNode s = <span class="keyword">sum</span>;</span><br><span class="line">        </span><br><span class="line">        ListNode t1 = l1, t2 = l2;</span><br><span class="line">        <span class="keyword">int</span> a = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> b = <span class="number">0</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">while</span>(t1 != <span class="keyword">null</span> || t2 != <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="comment">// 计算和</span></span><br><span class="line">            <span class="keyword">int</span> res = t1.val + t2.val;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">int</span> nodeValue = res % <span class="number">10</span>;</span><br><span class="line">            nextNodeCarryValue = res / <span class="number">10</span>;</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 先创建下一个节点</span></span><br><span class="line">            ListNode nextNode = <span class="keyword">new</span> ListNode(nextNodeCarryValue);</span><br><span class="line">            </span><br><span class="line">            s.val += nodeValue;</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 移动节点</span></span><br><span class="line">            t1 = t1.next;</span><br><span class="line">            t2 = t2.next;</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 顺便处理最后一个节点，这里的代码十分难理解</span></span><br><span class="line">            <span class="keyword">if</span>((t1 != <span class="keyword">null</span> || t2 != <span class="keyword">null</span>) || nextNodeCarryValue != <span class="number">0</span>)&#123;</span><br><span class="line">                s.next = nextNode;</span><br><span class="line">                s = s.next;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 进最后一位</span></span><br><span class="line">        <span class="comment">// if(nextNodeCarryValue != 0)&#123;</span></span><br><span class="line">        <span class="comment">//     s.next = new ListNode(nextNodeCarryValue); </span></span><br><span class="line">        <span class="comment">// &#125;</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">//处理两个 ListNode 不等长的情况</span></span><br><span class="line">        ListNode t = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">if</span>(t1 != <span class="keyword">null</span>)&#123;</span><br><span class="line">            t = t1;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            t =t2;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">while</span>(t != <span class="keyword">null</span>)&#123;</span><br><span class="line">            s.next = <span class="keyword">new</span> ListNode(t.val);</span><br><span class="line">            t = t.next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">sum</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <a id="more"></a>]]></content>
       <categories>
@@ -1107,7 +1269,7 @@ LSTM: memory_{new} = a * input + b * memory \\</script><p>&emsp;&emsp;cell() 代
   </entry>
   <entry>
     <title>1. 两数之和</title>
-    <url>/leetcode/1.%20%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C.html</url>
+    <url>/algorithm/1.%20%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C.html</url>
     <content><![CDATA[<h1 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h1><p>给定一个整数数组 nums 和一个目标值 target，请你在该数组中找出和为目标值的那 两个 整数，并返回他们的数组下标。你可以假设每种输入只会对应一个答案。但是，你不能重复利用这个数组中同样的元素。<br><strong>示例</strong>：</p>
 <blockquote>
 <p>给定 nums = [2, 7, 11, 15], target = 9<br>因为 nums[0] + nums[1] = 2 + 7 = 9<br>所以返回 [0, 1]</p>
@@ -1319,7 +1481,7 @@ LSTM: memory_{new} = a * input + b * memory \\</script><p>&emsp;&emsp;cell() 代
   </entry>
   <entry>
     <title>管理hexo中的自定义代码</title>
-    <url>/%E7%AE%A1%E7%90%86hexo%E4%B8%AD%E7%9A%84%E8%87%AA%E5%AE%9A%E4%B9%89%E4%BB%A3%E7%A0%81.html</url>
+    <url>/assorted/hexo/%E7%AE%A1%E7%90%86hexo%E4%B8%AD%E7%9A%84%E8%87%AA%E5%AE%9A%E4%B9%89%E4%BB%A3%E7%A0%81.html</url>
     <content><![CDATA[<h1 id="管理代码"><a href="#管理代码" class="headerlink" title="管理代码"></a>管理代码</h1><p>&emsp;&emsp;最近一直用 next 主题，也在里面加入了许多自定义代码，但是怕以后更新把我的代码覆盖掉。所以打算把代码集中处理一下。<br>&emsp;&emsp;next 主题下的 layout 文件夹存放了大部分布局代码。下面是next主题的 layout 文件夹目录。<br><figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">layout</span><br><span class="line">  ├─_custom</span><br><span class="line">  │  ├─head.swig</span><br><span class="line">  │  ├─<span class="selector-tag">header</span>.swig</span><br><span class="line">  │  └─sidebar.swig</span><br><span class="line">  ├─_macro</span><br><span class="line">  │  ├─menu</span><br><span class="line">  │  └─sidebar.swig</span><br><span class="line">  ├─_partials</span><br><span class="line">  │  ├─head</span><br><span class="line">  │  ├─header</span><br><span class="line">  │  ├─page</span><br><span class="line">  │  ├─post</span><br><span class="line">  │  ├─search</span><br><span class="line">  │  └─share</span><br><span class="line">  ├─_scripts</span><br><span class="line">  └─_third-party</span><br></pre></td></tr></table></figure></p>
 <p>&emsp;&emsp;其中需要注意的是 <strong>_custom</strong> 文件夹，因为我们要把自定义文件放在这里，其次我们还要注意下 <strong>_partials</strong> 文件夹，里面存放的都是主要的布局代码。由于我们经常会遇到要添加 css、js 文件的需求，所以有必要认识一下 <strong>_partials</strong> 文件夹下的 <strong>head</strong> 和 <strong>header</strong> 文件夹，其中 head 文件夹代表存放一些申明性质的代码，如果我说<code>&lt;head&gt;&lt;/head&gt;</code>这个标签大家应该就都懂了，而 header 文件夹存放的则是网页的头部信息布局，同理<code>&lt;header&gt;&lt;/header&gt;</code>标签就是指网页布局中的头部。<br>&emsp;&emsp;打开 <strong>_custom</strong> 文件夹会发现里面一共有三个文件，分别是：<br><figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">_custom</span><br><span class="line">  ├─head.swig</span><br><span class="line">  ├─<span class="selector-tag">header</span>.swig</span><br><span class="line">  ├─siderbar.swig</span><br></pre></td></tr></table></figure></p>
 <p>&emsp;&emsp;这三部分是网页中最重要的三部分，这些文件里面全是空白的，也就是可以供用户自定义。而且这些文件已经在代码中加载了，如果你写上了代码，不需要手动调用，程序会自动调用。程序具体在哪引用了就不说了，太过复杂，有兴趣可以自己去找。<br>&emsp;&emsp;有了这三个自定义文件已经可以解决绝大部分的问题了。</p>
@@ -1376,7 +1538,7 @@ LSTM: memory_{new} = a * input + b * memory \\</script><p>&emsp;&emsp;cell() 代
     <content><![CDATA[<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><div class="note info">
             <p>&emsp;&emsp;<a href="https://arxiv.org/pdf/1601.01280.pdf" target="_blank" rel="noopener">论文地址</a>，发表于 2016 年。</p>
           </div>
-<p>&emsp;&emsp;语义分析的目的是将自然语言映射到机器可解释的有意义表示。传统的方法依赖于高质量的词汇、人工构建的模板以及特定领域或表示的语言特性，本文提出了一种注意力增强的 encoder-decoder 通用模型。将输入的话表示为向量形式，并通过调节输出序列或者树生成逻辑形式（总结来说，就是<strong>将话语转为逻辑形式</strong>，详情请看图 1）。<br>&emsp;&emsp;下图将一句话转为了逻辑形式，不同于以前的方法，它是通过神经网络生成的，而以前的方法依赖于手写的规则。图片取自 <a href="https://www.aclweb.org/anthology/W00-1317" title="Automated construction ofdatabase interfaces: Intergrating statistical and rela-tional learning for semantic parsing" target="_blank" rel="noopener">Tang and Mooney200</a>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language to Logical Form with Neural Attention/语句转为逻辑形式.jpg" alt="语句转为逻辑形式"></p>
+<p>&emsp;&emsp;语义分析的目的是将自然语言映射到机器可解释的有意义表示。传统的方法依赖于高质量的词汇、人工构建的模板以及特定领域或特定表示的语言特征，本文提出了一种注意力增强的 encoder-decoder 通用模型。将输入的话表示为向量形式，并通过调节输出序列或者树生成逻辑形式（总结来说，就是<strong>将话语转为逻辑形式</strong>，详情请看图 1）。<br>&emsp;&emsp;下图将一句话转为了逻辑形式，不同于以前的方法，它是通过神经网络生成的，而以前的方法依赖于手写的规则。图片取自 <a href="https://www.aclweb.org/anthology/W00-1317" title="Automated construction ofdatabase interfaces: Intergrating statistical and rela-tional learning for semantic parsing" target="_blank" rel="noopener">Tang and Mooney200</a>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language to Logical Form with Neural Attention/语句转为逻辑形式.jpg" alt="语句转为逻辑形式"></p>
 <p>&emsp;&emsp;基于 RNN 的 encoder-decoder 已成功应用于各种 NLP 任务，图 1 中使用了 LSTM，我们的做法是提出了两个变体模型。<strong>第一个模型</strong>将语义解析视为普通的序列转换任务，<strong>第二个模型</strong>配备了层次树解码器，该解码器明确地捕获逻辑形式的组合结构。我们还引入了<strong>注意力机制</strong>，并提出一个识别步骤来<strong>识别很少提到的实体</strong>和<strong>数字</strong>。<br>&emsp;&emsp;对<strong>四个数据集</strong>的实验结果表明，我们的方法在不使用人工设计特征的情况下具有竞争力，并且易于迁移。<br>&emsp;&emsp;我们的工作综合了两种标准研究，即<strong>语义分析</strong>和 <strong>encoder-decoder 架构的神经网络</strong>。</p>
 <h1 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h1><p>&emsp;&emsp;学习语义解析器的问题引起了广泛的关注，可以追溯到 Woods（1973年）。。。。</p>
 <h1 id="任务定义"><a href="#任务定义" class="headerlink" title="任务定义"></a>任务定义</h1><p>&emsp;&emsp;我们的目标是学习一个模型，将<u><strong>自然语言输入 <script type="math/tex">q = x_1 \dots x_{|q|}</script></strong></u> 映射为其含义的<u><strong>逻辑形式（logical form）表示 <script type="math/tex">a = y_1 \dots y_{|a|}</script></strong></u>。条件概率被分解为：</p>
@@ -1412,7 +1574,7 @@ p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)</script><p><img src="h
 <h2 id="推论"><a href="#推论" class="headerlink" title="推论"></a>推论</h2><p>&emsp;&emsp;暂时略。</p>
 <h2 id="参数识别"><a href="#参数识别" class="headerlink" title="参数识别"></a>参数识别</h2><p>&emsp;&emsp;大多数的语义分析数据集都是为问答开发的。在经典的系统中，问题被映射乘逻辑形式，并在知识库中获取答案。由于问答任务的性质，许多自然语言的语句都包含实体或数字，它们通常被解析为逻辑形式的参数。其中不可避免地会有一些罕见或者根本不会出现在数据集中的实体或数字（对于小规模数据集尤其如此）。传统的序列编码器只是简单地用一个特殊的位置单词符号替换稀有单词（<a href="https://arxiv.org/pdf/1410.8206.pdf" title="Addressing the Rare Word Problem in Neural Machine Translation" target="_blank" rel="noopener">Luong et al. 2015a</a>; <a href="https://arxiv.org/pdf/1412.2007.pdf" title="On Using Very Large Target Vocabulary for Neural Machine Translation" target="_blank" rel="noopener">Jean et al. 2015</a>），这对语义分析是有害的。<br>&emsp;&emsp;为此开发了一个简单的参数识别程序。具体来说就是在输入的问题中标识实体和数字，并用它们的<strong>类型</strong>和<strong>唯一 id</strong> 替换它们。例如，将训练样本“<em>jobs with a salary of 40000</em>”及其逻辑形式“job(ANS), salary_greater_than(ANS,40000, year)”预处理为“jobs with a salary of <em><script type="math/tex">num_0</script></em>”和“job(ANS), salary_greater_than(<em>ANS</em>,<em><script type="math/tex">num_0</script></em>,<em>year</em>)”。一旦解码完毕，后处理步骤就会将所有标记 <script type="math/tex">type_i</script> 恢复到它们以前的实体或数字。</p>
 <h1 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h1><p>&emsp;&emsp;我们将我们的方法在四个数据集上分别与以前的多个系统进行比较，下面将描述这些数据集。代码可在此处获得<a href="https://github.com/donglixp/lang2logic" target="_blank" rel="noopener">https://github.com/donglixp/lang2logic</a>（lua 版，官方），<a href="https://github.com/Alex-Fabbri/lang2logic-PyTorch" target="_blank" rel="noopener">https://github.com/Alex-Fabbri/lang2logic-PyTorch</a>（python 版，非官方）。</p>
-<h2 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h2><p>&emsp;&emsp;<strong>JOBS</strong>    工作<br>&emsp;&emsp;<strong>GEO</strong>        Gene Expression Omnibus（基因表达综合）<br>&emsp;&emsp;<strong>ATIS</strong>    Airline Travel Information System（航空旅行信息系统）<br>&emsp;&emsp;<strong>IFTTT</strong>    if this then that（<a href="https://ifttt.com/" target="_blank" rel="noopener">地址</a> <a href="https://baike.baidu.com/item/ifttt/8378533" target="_blank" rel="noopener">百度百科介绍</a>），<a href="https://www.aclweb.org/anthology/P15-1085" target="_blank" rel="noopener">Quirk et al.2015</a> 从 IFTTT 网站提取大量的 if-this-then-that 来创建此数据库<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language to Logical Form with Neural Attention/数据集介绍.jpg" alt="数据集介绍"></p>
+<h2 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h2><p>&emsp;&emsp;<strong>JOBS</strong>    工作<br>&emsp;&emsp;<strong>GEO</strong>        Geoquery data<br>&emsp;&emsp;<strong>ATIS</strong>    Airline Travel Information System（航空旅行信息系统）<br>&emsp;&emsp;<strong>IFTTT</strong>    if this then that（<a href="https://ifttt.com/" target="_blank" rel="noopener">地址</a> <a href="https://baike.baidu.com/item/ifttt/8378533" target="_blank" rel="noopener">百度百科介绍</a>），<a href="https://www.aclweb.org/anthology/P15-1085" target="_blank" rel="noopener">Quirk et al.2015</a> 从 IFTTT 网站提取大量的 if-this-then-that 来创建此数据库<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language to Logical Form with Neural Attention/数据集介绍.jpg" alt="数据集介绍"></p>
 <h2 id="设置"><a href="#设置" class="headerlink" title="设置"></a>设置</h2><p>&emsp;&emsp;自然语言语句是小写的，并且使用基于维基百科的常见拼写错误列表来纠正拼写错误。使用 NLTK 来限制词汇（[Bird et al.2009] Natural Language Processing with Python. O’Reilly Media.），对于 IFTTT 过滤了在训练集中出现少于五次的 token，channels 和 functions。对于其他数据集，过滤了在训练集中至少两次没有出现的输入词，但保留了逻辑形式中的所有 token。并且使用了<strong>参数识别</strong>，当然也可以使用更复杂的办法。<br>&emsp;&emsp;超参数在 JOBS 和 GEO 上使用了交叉验证，使用了 ATIS 和 IFTTT 作为标准开发集（就是验证集，不同的叫法而已 development/validation）。</p>
 <ul>
 <li><strong>RMSProp</strong>：batch size = 20；parameter = 0.95；</li>
@@ -1747,7 +1909,7 @@ S(q,t) = f(q)^Tg(t)</script><p>&emsp;&emsp;<strong>其中 f(·) 将问题中的�
   </entry>
   <entry>
     <title>在hexo中添加绘制流程图及其他图的功能</title>
-    <url>/%E5%9C%A8hexo%E4%B8%AD%E6%B7%BB%E5%8A%A0%E7%BB%98%E5%88%B6%E6%B5%81%E7%A8%8B%E5%9B%BE%E5%8F%8A%E5%85%B6%E4%BB%96%E5%9B%BE%E7%9A%84%E5%8A%9F%E8%83%BD.html</url>
+    <url>/assorted/hexo/%E5%9C%A8hexo%E4%B8%AD%E6%B7%BB%E5%8A%A0%E7%BB%98%E5%88%B6%E6%B5%81%E7%A8%8B%E5%9B%BE%E5%8F%8A%E5%85%B6%E4%BB%96%E5%9B%BE%E7%9A%84%E5%8A%9F%E8%83%BD.html</url>
     <content><![CDATA[<p>hexo 本身不支持绘制流程图，但是可以使用以下命令安装插件来实现此功能。<br><figure class="highlight processing"><table><tr><td class="code"><pre><span class="line">npm install --<span class="built_in">save</span> hexo-<span class="built_in">filter</span>-flowchart</span><br></pre></td></tr></table></figure></p>
 <p><a href="https://github.com/bubkoo/hexo-filter-flowchart" target="_blank" rel="noopener">插件地址</a><br>语法可以<a href="https://cloud.tencent.com/developer/article/1142260" target="_blank" rel="noopener">在这</a>找<br>一个简单的例子<br>(`乘3)flow<br>st=&gt;start: Start|past:&gt;<a href="http://www.google.com[blank" target="_blank" rel="noopener">http://www.google.com[blank</a>]<br>e=&gt;end: End:&gt;<a href="http://www.google.com" target="_blank" rel="noopener">http://www.google.com</a><br>op1=&gt;operation: My Operation|past<br>op2=&gt;operation: Stuff|current<br>sub1=&gt;subroutine: My Subroutine|invalid<br>cond=&gt;condition: Yes<br>or No?|approved:&gt;<a href="http://www.google.com" target="_blank" rel="noopener">http://www.google.com</a><br>c2=&gt;condition: Good idea|rejected<br>io=&gt;inputoutput: catch something…|request</p>
 <p>st-&gt;op1(right)-&gt;cond<br>cond(yes, right)-&gt;c2<br>cond(no)-&gt;sub1(left)-&gt;op1<br>c2(yes)-&gt;io-&gt;e<br>c2(no)-&gt;op2-&gt;e<br>(`乘3)<br><a id="more"></a></p>
@@ -1804,7 +1966,7 @@ c1(no)->e2(left)->st</textarea><textarea id="flowchart-0-options" style="display
   </entry>
   <entry>
     <title>2019 CCF会议总结</title>
-    <url>/2019%20CCF%E4%BC%9A%E8%AE%AE%E6%80%BB%E7%BB%93.html</url>
+    <url>/assorted/conference/2019%20CCF%E4%BC%9A%E8%AE%AE%E6%80%BB%E7%BB%93.html</url>
     <content><![CDATA[<h1 id="问答系统"><a href="#问答系统" class="headerlink" title="问答系统"></a>问答系统</h1><h2 id="知识图谱问答系统概述"><a href="#知识图谱问答系统概述" class="headerlink" title="知识图谱问答系统概述"></a>知识图谱问答系统概述</h2><p>现在的<strong>搜索引擎</strong>工作流程是输入要搜索的内容，搜索引擎返回一大堆内容，供你自己选择。<br><strong>问答系统</strong>是下一代的搜索引擎的基本形态。</p>
 <blockquote>
 <p>以直接而准确的方式回答用户自然语言提问的自动问答系统将构成下一代搜索引擎的基本形态。</p>
@@ -2006,7 +2168,7 @@ c1(no)->e2(left)->st</textarea><textarea id="flowchart-0-options" style="display
     <url>/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%BA%8C%EF%BC%89%EF%BC%9Asimple%20RNN%20%E6%8E%A8%E5%AF%BC%E4%B8%8E%E7%90%86%E8%A7%A3.html</url>
     <content><![CDATA[<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p><a href="https://github.com/yan624/machine_learning_algorithms/tree/master/simple_recurrent_neural_network" target="_blank" rel="noopener">github地址</a><br>simple RNN只实现了正向传播，反向传播没有实现。是因为simple RNN有梯度消失的问题，索性直接不写了。下一节直接写LSTM。</p>
 <h1 id="simple-RNN和simple-NN的对比"><a href="#simple-RNN和simple-NN的对比" class="headerlink" title="simple RNN和simple NN的对比"></a>simple RNN和simple NN的对比</h1><p>本来觉得simple RNN挺简单的，只不过是simple NN的扩展，区别无非是将simple NN的神经元换成一个RNN cell。但是实际上没那么简单，特别是加上将数据向量化后计算。感觉简直和simple NN是两种架构。</p>
-<h2 id="input"><a href="#input" class="headerlink" title="input"></a>input</h2><p>下图是一个simple NN的架构，其中的一层也叫做全连接层。所以也叫做前馈神经网络。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版"><br>网络中输入的x是一个纯数字，而不是向量。如果输入的是向量，就代表一次输入了多条样本。总的来说，一条样本向量化为：</p>
+<h2 id="input"><a href="#input" class="headerlink" title="input"></a>input</h2><p>下图是一个simple NN的架构，其中的一层也叫做全连接层。所以也叫做前馈神经网络。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple RNN 推导与理解/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版"><br>网络中输入的x是一个纯数字，而不是向量。如果输入的是向量，就代表一次输入了多条样本。总的来说，一条样本向量化为：</p>
 <script type="math/tex; mode=display">
 \begin{pmatrix}
     x_1\\
@@ -2034,7 +2196,7 @@ c1(no)->e2(left)->st</textarea><textarea id="flowchart-0-options" style="display
     x_4 = \text{学生} & x_8 = \text{不错}\\
 \end{pmatrix}</script><p>这样会出现<strong>极大的问题</strong>，即文字无法进行数学运算。所以需要将文字转为词向量。但是问题是我如何在一个神经元输入一个向量？我如果输入多条样本，那么我整个输入值x就会变成<strong>3维的矩阵</strong>。simple NN显然是处理不了的。所以有个折中的方法，即将每个词的词向量加起来除以词的个数。即：</p>
 <script type="math/tex; mode=display">
-\frac{(v_{\text{我}} + v_{\text{是}} + v_{\text{一名}} + v_{\text{学生}})}{4} =  v_{\text{我是一名学生}}</script><p>其中v代表某个词对应的词向量。这样就将4个向量合并成一个向量了。然后simple NN就可以处理了。<br>但是这样处理肯定太勉强了，所以就出现了simple RNN，它可以处理上述这种问题。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%BB%BC%E5%90%88%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%85%A5%E9%97%A8/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84RNN%E7%A4%BA%E6%84%8F%E5%9B%BE.jpg" alt="吴恩达深度学习中的RNN示意图"><br>上图就是一个simple <strong>R</strong>NN架构，看起来跟simple NN不一样。但是其实你只要将图片往右旋转90度，就一样了。还有一点不太一样，就是simple <strong>R</strong>NN中的一个神经元跟simple NN中的一层神经元一样。<br><div class="note info">
+\frac{(v_{\text{我}} + v_{\text{是}} + v_{\text{一名}} + v_{\text{学生}})}{4} =  v_{\text{我是一名学生}}</script><p>其中v代表某个词对应的词向量。这样就将4个向量合并成一个向量了。然后simple NN就可以处理了。<br>但是这样处理肯定太勉强了，所以就出现了simple RNN，它可以处理上述这种问题。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple RNN 推导与理解/吴恩达深度学习中的RNN示意图.jpg" alt="吴恩达深度学习中的RNN示意图"><br>上图就是一个simple <strong>R</strong>NN架构，看起来跟simple NN不一样。但是其实你只要将图片往右旋转90度，就一样了。还有一点不太一样，就是simple <strong>R</strong>NN中的一个神经元跟simple NN中的一层神经元一样。<br><div class="note info">
             <p>simple <strong>R</strong>NN其实就是simple NN的神经元被替换成了simple <strong>R</strong>NN的神经元。而simple <strong>R</strong>NN的一个神经元本身里面还有多个单元，图上就是一个神经元里有4个单元。<br>所以simple <strong>R</strong>NN的神经元可以被叫做记忆细胞。<br>如果重新描述一遍就是simple <strong>R</strong>NN其实就是simple NN的神经元被替换成了simple <strong>R</strong>NN的记忆细胞。<br>而simple <strong>R</strong>NN的记忆细胞里面有多个神经元用来处理进行向量计算。</p>
           </div></p>
 <h2 id="simple-RNN的另一个输入值a"><a href="#simple-RNN的另一个输入值a" class="headerlink" title="simple RNN的另一个输入值a"></a>simple RNN的另一个输入值a</h2><p>下图是simple RNN的一个记忆细胞。由于其概念大都需要数值来演示，但是大量的数值难以书写，并且用语言实在难以描述。所以以下均使用一个矩阵的字母表示来演示。<br>此处会有几个问题：</p>
@@ -2051,7 +2213,7 @@ W_{ax} x^{<t>} + W_{aa} a^{<t-1>} =
  a^{<t-1>} \\
 \end{pmatrix}</script></li>
 </ol>
-<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/simple%20rnn%20cell.png" alt="simple rnn cell"></p>
+<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple RNN 推导与理解/simple rnn cell.png" alt="simple rnn cell"></p>
 <h3 id="以一个记忆细胞为例"><a href="#以一个记忆细胞为例" class="headerlink" title="以一个记忆细胞为例"></a>以一个记忆细胞为例</h3><p>设词向量的维度为300，一个记忆细胞的units为32——keras代码表示：simpleRNN(32)，并且进行的是18元分类问题。</p>
 <h4 id="以一个样本为例"><a href="#以一个样本为例" class="headerlink" title="以一个样本为例"></a>以一个样本为例</h4><p>，输入样本数为1。<br>则运算过程为：</p>
 <script type="math/tex; mode=display">
@@ -2072,8 +2234,38 @@ W_{ax} x^{<t>} + W_{aa} a^{<t-1>} =
     y & = softmax(Wy_{18, 32} * A\_next + by_{18, 1})
 \end{align}</script><p>说白了A其实激活值，看起来比较晕是因为多了一个初始的A0，实际上A0就是激活值，只不过需要初始化一下，它的形状就是激活值的形状。</p>
 <h3 id="以多个记忆细胞为例"><a href="#以多个记忆细胞为例" class="headerlink" title="以多个记忆细胞为例"></a>以多个记忆细胞为例</h3><p>过程就是上面的过程，唯一有区别的是输入值X。因为有了多个记忆细胞，所以X变成了3维，第3维就是timestep——时间步。<br>但是其实计算，跟上面一模一样，假设现在有6个时间步。伪代码如下：<br><figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">rnn_cell</span><span class="params">(A_prev, Xt, parameters)</span></span>:</span><br><span class="line">	<span class="keyword">do</span>上面的操作</span><br><span class="line"></span><br><span class="line">timesteps = <span class="number">6</span></span><br><span class="line">X = rand((<span class="number">300</span>, <span class="number">128</span>, timesteps))</span><br><span class="line">A0 = rand((<span class="number">32</span>, <span class="number">128</span>))</span><br><span class="line">parameters = 初始化所有参数</span><br><span class="line"><span class="keyword">for</span> ts <span class="keyword">in</span> range(timesteps):</span><br><span class="line">	rnn_cell(A0, X[:, :, ts], parameters)</span><br></pre></td></tr></table></figure></p>
-<p>其实就是遍历每一个时间步而已。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/RNN.png" alt="RNN"></p>
-<h1 id="simple-RNN-的缺陷"><a href="#simple-RNN-的缺陷" class="headerlink" title="simple-RNN 的缺陷"></a>simple-RNN 的缺陷</h1><p>RNN一个最大的缺陷就是梯度消失与梯度爆炸问题，由于这一缺陷，使得RNN在长文本中难以训练，这才诞生了LSTM及各种变体，来源于<a href="https://zhuanlan.zhihu.com/p/44163528" target="_blank" rel="noopener">专栏</a>。梯度消失的原因：参考<a href="https://zhuanlan.zhihu.com/p/28687529" target="_blank" rel="noopener">专栏</a></p>
+<p>其实就是遍历每一个时间步而已。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple RNN 推导与理解/RNN.png" alt="RNN"></p>
+<h2 id="反向传播（BPTT）"><a href="#反向传播（BPTT）" class="headerlink" title="反向传播（BPTT）"></a>反向传播（BPTT）</h2><p>&emsp;&emsp;以《input》一章的第二张图为例，序列长度设为 3，则公式为如下所示，其中 S 代表 sigmoid 函数，下标用于区分不同复合函数，并且注意 w 和 b 是共享的。</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+    a^0 & = 0 \\
+    a^1 & = S_1(W_{aa} * a^0 + W_{ax} * x^1 + b) \\
+    a^2 & = S_2(W_{aa} * a^1 + W_{ax} * x^2 + b) \\
+    a^3 & = S_3(W_{aa} * a^2 + W_{ax} * x^3 + b) \\
+\end{aligned}</script><p>&emsp;&emsp;则对 <script type="math/tex">W_{aa}</script> 的求导结果 <script type="math/tex">\Delta W_{aa}</script> 如下所示，其中 <script type="math/tex">\frac{\partial{a^0}}{\partial{W_{aa}}}</script> 等于 0，并且 <script type="math/tex">\frac{\partial{a^1}}{\partial{W_{aa}}}</script> 没必要求。因为 <script type="math/tex">a^0 = 0</script>，所以 <script type="math/tex">S_1</script> 的表达式中 <script type="math/tex">W_{aa}</script> 根本不存在，自然就没有 <script type="math/tex">W_{aa}</script> 的导数，但是由于为了具有一般性，我还是都写上了。</p>
+<script type="math/tex; mode=display">
+\frac{\partial{a^3}}{\partial{W_{aa}}} = S_3 * (1 - S_3) * 
+\{
+    a^2 + W_{aa} * \underbrace{
+        S_2 * (1 - S_2)[
+            a^1 + W_{aa} * \underbrace{
+                S_1 * (1 - S_1) * \frac{\partial{a^0}}{\partial{W_{aa}}}
+            }_{\frac{\partial{a^1}}{\partial{W_{aa}}}}
+        ]
+    }_{\frac{\partial{a^2}}{\partial{W_{aa}}}}
+\}</script><p>&emsp;&emsp;实际上上式很容易就可以发现是一个递归形式的表达式，所以可以写为以下的形式，其中 k 代表第几个激活值，也可以理解为第几个时间步。</p>
+<script type="math/tex; mode=display">
+\frac{\partial{a^k}}{\partial{W_{aa}}} = S_k * (1 - S_k) * (a^{k - 1} + W_{aa} * \frac{\partial{a^{k - 1}}}{W_{aa}})</script><h1 id="simple-RNN-的缺陷"><a href="#simple-RNN-的缺陷" class="headerlink" title="simple-RNN 的缺陷"></a>simple-RNN 的缺陷</h1><p>&emsp;&emsp;RNN一个最大的缺陷就是梯度消失与梯度爆炸问题，由于这一缺陷，使得RNN在长文本中难以训练，这才诞生了LSTM及各种变体，来源于<a href="https://zhuanlan.zhihu.com/p/44163528" target="_blank" rel="noopener">专栏</a>。梯度消失的原因：参考<a href="https://zhuanlan.zhihu.com/p/28687529" target="_blank" rel="noopener">专栏</a>。<br>&emsp;&emsp;个人的解释如下：<br>&emsp;&emsp;在 RNN 中利用 memory 的方式是一种复合函数的结构，所以在反向传播时，需要链式求导，即 <script type="math/tex">f(g(x)) = f'(g(x))·g'(x)</script>，梯度与梯度相乘容易造成<strong>梯度消失</strong>和<strong>梯度爆炸</strong>。而在 LSTM 中，是使用加和的计算方式，所以大致解决了梯度消失的问题。<br><div class="note info">
+            <p>&emsp;&emsp;在 RNN 中，求导得到的表达式为连乘，而 sigmoid 的输出值在 [0-1] 之间，造成了梯度消失。当然也会造成梯度爆炸，因为激活函数不一定非是 sigmoid，换成 ReLU 输出值就会大于 1 了。<br>&emsp;&emsp;接下来我带入数字来讲解一遍，<strong>具体公式详见上一节，下面只讲求导后的函数</strong>。我们先把公式拿过来，并设 <script type="math/tex">a^3 = 0.2</script>, <script type="math/tex">a^2 = 0.1</script>, <script type="math/tex">a^1 = 0.05</script>, <script type="math/tex">w_{aa} = 0.07</script>。并且<strong>易得</strong> <script type="math/tex">S^1 = a^1</script>, <script type="math/tex">S^2 = a^2</script>, <script type="math/tex">S^3 = a^3</script>（易得部分都不懂的，建议看看上面的《反向传播（BPTT）》就明白了。</p><script type="math/tex; mode=display">\frac{\partial{a^3}}{\partial{W_{aa}}} = S_3 * (1 - S_3) * \{    a^2 + W_{aa} * \underbrace{        S_2 * (1 - S_2)[            a^1 + W_{aa} * \underbrace{                S_1 * (1 - S_1) * \frac{\partial{a^0}}{\partial{W_{aa}}}            }_{\frac{\partial{a^1}}{\partial{W_{aa}}}}        ]    }_{\frac{\partial{a^2}}{\partial{W_{aa}}}}\}</script><p>&emsp;&emsp;则</p><script type="math/tex; mode=display">\frac{\partial{a^3}}{\partial{W_{aa}}} = a^3 * (1 - a^3) * \{a^2 + W_{aa} * a^2 * (1 - a^2) * [a^1 + 0]\}</script><p>&emsp;&emsp;首先需要明白一点，对于 RNN 来说，激活值 a 就是 memory。我们将设置的值带入得到 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.0160504</script>。可以发现梯度很小，而这仅仅是在序列长度为 3 的情况下。那么假设我们修改值，将 <script type="math/tex">w_{aa}</script> 改为 0.7，则 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.016504</script>，将 <script type="math/tex">w_{aa}</script> 改为 7，则 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.02104</script>。我们发现即使 <script type="math/tex">w_{aa}</script> 的变化很大，梯度值的变化效果也不是明显。也就是说对于 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}}</script>，<script type="math/tex">W_{aa}</script> 这个值不是很重要，在计算梯度时，可以忽略。<br>&emsp;&emsp;综上所述，我们发现 W 几乎无法阻止梯度越变越小。而剩下的值全都是 [0-1] 范围内的激活值 a，所以就产生了梯度消失——gradient vanishing。<br>&emsp;&emsp;反之，如果 a 是大于 1 的值，就造成了梯度爆炸。<br>&emsp;&emsp;然而梯度消失的真正原因并不完全是这个，详见 <a href="http://localhost:4000/比赛项目总结/flayai竞赛：今日头条新闻分类.html#LSTM-解决了-RNN-的什么问题" target="_blank" rel="noopener">LSTM 解决了 RNN 的什么问题</a> 的第二点。</p>
+          </div></p>
+<p>&emsp;&emsp;RNN 的 loss 是每个 timestep 上的 loss 的加和，下图显示了这种情况下是如何求导的。不过有时候 RNN 的 loss 也就最后一个 tiemstep 会有一个 loss，比如分类任务。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple RNN 推导与理解/vanishing gradient problem details.jpg" alt="vanishing gradient problem details"></p>
+<p>&emsp;&emsp;参考资料：</p>
+<ol>
+<li><a href="https://zhuanlan.zhihu.com/p/28749444" target="_blank" rel="noopener">LSTM如何解决梯度消失问题</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/34203833" target="_blank" rel="noopener">深入理解lstm及其变种gru</a></li>
+<li><a href="https://www.zhihu.com/question/34878706/answer/192444888" target="_blank" rel="noopener">LSTM如何来避免梯度弥散和梯度爆炸？</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/83496936" target="_blank" rel="noopener">人人都能看懂的LSTM介绍及反向传播算法推导（非常详细）</a></li>
+</ol>
 <a id="more"></a>]]></content>
       <categories>
         <category>AI</category>
@@ -2085,9 +2277,12 @@ W_{ax} x^{<t>} + W_{aa} a^{<t-1>} =
       </tags>
   </entry>
   <entry>
-    <title>2017CS224n学习笔记</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/2017CS224n%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.html</url>
-    <content><![CDATA[<h1 id="开场白"><a href="#开场白" class="headerlink" title="开场白"></a>开场白</h1><p>&emsp;&emsp;略</p>
+    <title>CS224n学习笔记</title>
+    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/CS224n%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.html</url>
+    <content><![CDATA[<div class="note info">
+            <p>&emsp;&emsp;本笔记记录的内容来源于 <a href="https://www.bilibili.com/video/av41393758" target="_blank" rel="noopener">b站——CS224n 斯坦福深度自然语言处理课</a>。<br>&emsp;&emsp;之后我补充了18 章之后的内容，其来源为<a href="https://www.bilibili.com/video/av46216519" target="_blank" rel="noopener">b站——(2019)斯坦福CS224n深度学习自然语言处理课程 by Chris Manning</a></p>
+          </div>
+<h1 id="开场白"><a href="#开场白" class="headerlink" title="开场白"></a>开场白</h1><p>&emsp;&emsp;略</p>
 <h1 id="词向量表示：word2vec"><a href="#词向量表示：word2vec" class="headerlink" title="词向量表示：word2vec"></a>词向量表示：word2vec</h1><p>&emsp;&emsp;课程计划如下：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/课程计划.jpg" alt="课程计划"></p>
 <p>&emsp;&emsp;<strong>神经网络词嵌入学习的通用做法</strong>：定义一个模型，根据中心词 <script type="math/tex">w_t</script> 去预测上下文单词。给定 <script type="math/tex">w_t</script> 的条件下 context 的概率。</p>
 <script type="math/tex; mode=display">
@@ -2116,13 +2311,26 @@ J(\theta) = -\frac{1}{T} \sum^T_{t=1} \sum_{-m \leq m, j \neq 0} log \, p(w_{t+j
     = & \sum^v_{x=1} \frac{exp(u^T_x v_c)}{\sum^v_{w=1} exp(u^T_w v_c)} \, u_x \\
     = & \sum^v_{x=1} p(x|c) u_x \\
      & u_o - \sum^v_{x=1} p(x|c) u_x & \text{合并}\\
-\end{align}</script><h1 id="高级词向量表示"><a href="#高级词向量表示" class="headerlink" title="高级词向量表示"></a>高级词向量表示</h1><p>&emsp;&emsp;略。</p>
-<h1 id="Word-Window分类与神经网络"><a href="#Word-Window分类与神经网络" class="headerlink" title="Word Window分类与神经网络"></a>Word Window分类与神经网络</h1><p>&emsp;&emsp;略。</p>
+\end{align}</script><h1 id="高级词向量表示"><a href="#高级词向量表示" class="headerlink" title="高级词向量表示"></a>高级词向量表示</h1><p>&emsp;&emsp;略。说了一些 word2vec 算法以及 GloVe 等算法。</p>
+<h1 id="Word-Window分类与神经网络"><a href="#Word-Window分类与神经网络" class="headerlink" title="Word Window分类与神经网络"></a>Word Window分类与神经网络</h1><p>&emsp;&emsp;略。讲 Word Window 分类和简单的神经网络。</p>
 <h1 id="反向传播和项目建议"><a href="#反向传播和项目建议" class="headerlink" title="反向传播和项目建议"></a>反向传播和项目建议</h1><p>&emsp;&emsp;讲反向传播，略。</p>
-<h1 id="依存分析"><a href="#依存分析" class="headerlink" title="依存分析"></a>依存分析</h1><h2 id="语言结构分析历史回顾"><a href="#语言结构分析历史回顾" class="headerlink" title="语言结构分析历史回顾"></a>语言结构分析历史回顾</h2><h2 id="Dependency-Grammar-and-Dependency-Structure"><a href="#Dependency-Grammar-and-Dependency-Structure" class="headerlink" title="Dependency Grammar and Dependency Structure"></a>Dependency Grammar and Dependency Structure</h2><p>&emsp;&emsp;</p>
+<h1 id="※-依存分析"><a href="#※-依存分析" class="headerlink" title="※ 依存分析"></a>※ 依存分析</h1><p>&emsp;&emsp;6分38秒开始进入正题，之前都在说学校里的事。</p>
+<h2 id="语言结构的两种观点"><a href="#语言结构的两种观点" class="headerlink" title="语言结构的两种观点"></a>语言结构的两种观点</h2><p>&emsp;&emsp;Constituency=phrase structure grammar=context-free grammars(CFGs)。上下文无关文法。<br>&emsp;&emsp;Dependency。依存句法分析。<br>&emsp;&emsp;传统上讲，语言学家和自然语言处理器想做的是描述人类语言结构。过去有两个工具可以做到这点，1. 上下文无关文法（计算机科学中）/短语结构文法（语言学家）；2. 依存句法结构。<br>&emsp;&emsp;依存句法分析做的是<strong>通过找到句子中每一个词所依赖的部分来描述句子的结构</strong>。如果一个词修饰另一个词或者是另一些词的论证，那么它就是那个词的依赖。例：“barking dog”，barking 是 dong 的依赖，因为 barking 修饰 dog。“dog by the door”，by the door 也是 dog 的依赖。我们可以<strong>在词之间添加依存关系，通常用箭头表示它们之间的依存关系</strong>，可以参考 <a href="http://hanlp.com/" target="_blank" rel="noopener">这里</a> 加以理解。<br>&emsp;&emsp;对于语义含糊的例子，都可以考虑使用依存分析，例如下图。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/scientistis study whales from space的句法分析.jpg" alt="scientistis study whales from space的句法分析"></p>
+<p>&emsp;&emsp;一个重要的概念：<strong>人类的语言确实有歧义，我们希望可以通过这些依存关系来描述人类语言</strong>。可以发现我们分析出了两组关系。<br>&emsp;&emsp;另一个重要的概念是：<strong>完整的语言学以树库（treebanks）的形式标注数据</strong>。1990年开始，将网络上的句子的句法结构描述为依存关系图，如下图所示，这是来自雅虎问答上的句子，我们将这些称为树库。1990年，我们投入了大量资源来建立这种标注型树库。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/example of treebanks.jpg" alt="example of treebanks"></p>
+<p>&emsp;&emsp;此处没有讲上下文语法，在过去的 10 年间（视频中的时间是 2017 年），nlp 中，<strong>依存句法分析</strong>已经取代了<strong>上下文无关文法</strong>。人们发现<strong>依存分析文法</strong>是一种（依存句法分析应该是依存分析文法的一种实现）仅仅构建语义表征就能轻松得到语言理解的合适框架。</p>
+<h2 id="Dependency-Grammar-and-Dependency-Structure"><a href="#Dependency-Grammar-and-Dependency-Structure" class="headerlink" title="Dependency Grammar and Dependency Structure"></a>Dependency Grammar and Dependency Structure</h2><p>&emsp;&emsp;开始时间 22.19。<br>&emsp;&emsp;上面了解了什么是<strong>依存分析语法</strong>（从此节开始称之为语法，我感觉“文法”翻译得怪怪的），接下来讲解具体应该怎么做。<br>&emsp;&emsp;句法分析的思想是<strong>一个句法模型就是我们有一个词法项之间的关系或者词之间的关系</strong>。也就是说我们在词法项之间画箭头，这些箭头就是依存。通常我们做依存分析时，要做的工作要比这多。通常我们会根据一些语法关系来给这些依存关系分类并命名，比如主语、谓语、辅助修饰词等。</p>
+<h2 id="Dependency-parsing"><a href="#Dependency-parsing" class="headerlink" title="Dependency parsing"></a>Dependency parsing</h2><p>&emsp;&emsp;依存分析有多种方式，视频中采用 Greedy transition-based parsing。视频开始于 52.05。<br>&emsp;&emsp;</p>
 <h1 id="Tensorflow-入门"><a href="#Tensorflow-入门" class="headerlink" title="Tensorflow 入门"></a>Tensorflow 入门</h1><p>&emsp;&emsp;略，不学 tensorflow。</p>
-<h1 id="RNN和语言模式"><a href="#RNN和语言模式" class="headerlink" title="RNN和语言模式"></a>RNN和语言模式</h1><p>&emsp;&emsp;详解 RNN 很多问题。</p>
-<h1 id="机器翻译和高级循环神经网络"><a href="#机器翻译和高级循环神经网络" class="headerlink" title="机器翻译和高级循环神经网络"></a>机器翻译和高级循环神经网络</h1><p>&emsp;&emsp;花了二三十分钟讲机器翻译，然后讲解各类 RNN。</p>
+<h1 id="RNN和语言模式"><a href="#RNN和语言模式" class="headerlink" title="RNN和语言模式"></a>RNN和语言模式</h1><p>&emsp;&emsp;讲了传统语言模型，例如马尔科夫模型，n-gram 模型等。讲了 simple RNN ，bi-RNN and deep bi-RNN。提到了梯度消失，梯度爆炸，grad clipping 等。大部分都会，主要记录一些不会的内容。</p>
+<h2 id="梯度消失"><a href="#梯度消失" class="headerlink" title="梯度消失"></a>梯度消失</h2><p>&emsp;&emsp;19.50 - 49.05</p>
+<h2 id="梯度爆炸"><a href="#梯度爆炸" class="headerlink" title="梯度爆炸"></a>梯度爆炸</h2><p>&emsp;&emsp;49.06 - 62.38</p>
+<h2 id="序列模型用于其他任务"><a href="#序列模型用于其他任务" class="headerlink" title="序列模型用于其他任务"></a>序列模型用于其他任务</h2><p>&emsp;&emsp;66:00</p>
+<ul>
+<li>NER</li>
+<li>Entity level sentiment in context</li>
+<li>opinionated expressions</li>
+</ul>
+<h1 id="机器翻译和高级循环神经网络"><a href="#机器翻译和高级循环神经网络" class="headerlink" title="机器翻译和高级循环神经网络"></a>机器翻译和高级循环神经网络</h1><p>&emsp;&emsp;花了二三十分钟讲机器翻译，然后讲解各类 RNN，包括 GRU, LSTM, <strong>Pointer-Sentinel Model</strong>。</p>
 <h1 id="神经机器翻译和注意力模型"><a href="#神经机器翻译和注意力模型" class="headerlink" title="神经机器翻译和注意力模型"></a>神经机器翻译和注意力模型</h1><p>&emsp;&emsp;先将机器翻译，后讲 attention。</p>
 <h2 id="神经机器翻译"><a href="#神经机器翻译" class="headerlink" title="神经机器翻译"></a>神经机器翻译</h2><h2 id="attention"><a href="#attention" class="headerlink" title="attention"></a>attention</h2><p>&emsp;&emsp;下图是 attention 的工作原理。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/attention机制.jpg" alt="attention机制"></p>
 <ol>
@@ -2141,8 +2349,11 @@ v_a tanh(W_a [h_t;\bar{h}_s])
 </ol>
 <p>&emsp;&emsp;下图是加 attention 机制和不加的区别。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/加入attention机制后的性能.jpg" alt="加入attention机制后的性能"></p>
 <h2 id="coverage"><a href="#coverage" class="headerlink" title="coverage"></a>coverage</h2><p>&emsp;&emsp;coverage = more attention，想法源于计算机视觉，请看下图。神经网络读入一张图片，要求输出一段话。但是我们知道一段话不仅要描写图中的鸟，还要描写鸟旁边的事物，所以就引出了多次注意，即神经网络需要注意图中更多的地方。将这一想法引入 NLP 中，其实就是多做几次 attention，<em>注：这一想法貌似就是后来 transformer 的 multi-head attention</em>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/more attention（coverage）.jpg" alt="more attention(coverage)"></p>
-<h2 id="search"><a href="#search" class="headerlink" title="search"></a>search</h2><p>&emsp;&emsp;</p>
-<h1 id="GRU及NMT的其他议题"><a href="#GRU及NMT的其他议题" class="headerlink" title="GRU及NMT的其他议题"></a>GRU及NMT的其他议题</h1><h2 id="GRUs-LSTMs"><a href="#GRUs-LSTMs" class="headerlink" title="GRUs/LSTMs"></a>GRUs/LSTMs</h2><h2 id="NMT-evaluation"><a href="#NMT-evaluation" class="headerlink" title="NMT evaluation"></a>NMT evaluation</h2><h1 id="语音处理的端对端模型"><a href="#语音处理的端对端模型" class="headerlink" title="语音处理的端对端模型"></a>语音处理的端对端模型</h1><h1 id="卷积神经网络"><a href="#卷积神经网络" class="headerlink" title="卷积神经网络"></a>卷积神经网络</h1><h1 id="树RNN和短语句分析"><a href="#树RNN和短语句分析" class="headerlink" title="树RNN和短语句分析"></a>树RNN和短语句分析</h1><p>&emsp;&emsp;人类语言具有嵌套结构（训练结构、树结构），如：[The man from [the company that you spoke with about [the project] yesterday]]。<br>&emsp;&emsp;那么如何使用向量来表示这些句子的语义呢？可以使用 tree RNN，如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/Recursive vs. recurrent neural network.jpg" alt="Recursive vs. recurrent neural network"></p>
+<h2 id="※-search"><a href="#※-search" class="headerlink" title="※ search"></a>※ search</h2><p>&emsp;&emsp;</p>
+<h1 id="※-GRU及NMT的其他议题"><a href="#※-GRU及NMT的其他议题" class="headerlink" title="※ GRU及NMT的其他议题"></a>※ GRU及NMT的其他议题</h1><h2 id="GRUs-LSTMs"><a href="#GRUs-LSTMs" class="headerlink" title="GRUs/LSTMs"></a>GRUs/LSTMs</h2><p>&emsp;&emsp;gated unit 是如何解决 BPTT 的。</p>
+<h2 id="NMT-evaluation"><a href="#NMT-evaluation" class="headerlink" title="NMT evaluation"></a>NMT evaluation</h2><h1 id="语音处理的端对端模型"><a href="#语音处理的端对端模型" class="headerlink" title="语音处理的端对端模型"></a>语音处理的端对端模型</h1><p>&emsp;&emsp;略，不做语音。</p>
+<h1 id="卷积神经网络"><a href="#卷积神经网络" class="headerlink" title="卷积神经网络"></a>卷积神经网络</h1><p>&emsp;&emsp;略，不学 CNN。</p>
+<h1 id="※-树RNN和短语句分析"><a href="#※-树RNN和短语句分析" class="headerlink" title="※ 树RNN和短语句分析"></a>※ 树RNN和短语句分析</h1><p>&emsp;&emsp;人类语言具有嵌套结构（训练结构、树结构），如：[The man from [the company that you spoke with about [the project] yesterday]]。<br>&emsp;&emsp;那么如何使用向量来表示这些句子的语义呢？可以使用 tree RNN，如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/Recursive vs. recurrent neural network.jpg" alt="Recursive vs. recurrent neural network"></p>
 <blockquote>
 <p>&emsp;&emsp;<strong>Tree recursive neural network 的问题在于你需要得到一个树形结构</strong>，这是一个比较大的问题。树形网络并没有火遍全球，在语言方面确实有原因喜欢这类的模型（原因后面会有讲到），但是如果你在 arxiv 里面找，人们在语言神经网络研究中所使用的的方法时，你会发现人们并不多使用树形结构模型。LSTMs 的比例几乎是其十倍之多。<br>&emsp;&emsp;这里面比较大的原因是树形递归神经网络的使用者必须构建一个树形结构。<strong>在你构建完成后，使用反向传播学习模型会是一个问题</strong>。<br>&emsp;&emsp;<a href="https://www.bilibili.com/video/av41393758/?p=14" target="_blank" rel="noopener">第十四讲 - 树 RNN 和短语句法分析</a> 25分开始。</p>
 </blockquote>
@@ -2157,7 +2368,7 @@ v_a tanh(W_a [h_t;\bar{h}_s])
 <h2 id="Syntactically-Untied-RNN"><a href="#Syntactically-Untied-RNN" class="headerlink" title="Syntactically-Untied RNN"></a>Syntactically-Untied RNN</h2><p>&emsp;&emsp;语义解绑树形递归神经网络，这被证明是构建高质量解析器的一个成功的方法。<br>&emsp;&emsp;<a href="https://www.bilibili.com/video/av41393758/?p=14" target="_blank" rel="noopener">第十四讲 - 树 RNN 和短语句法分析</a>，50 分开始。</p>
 <h2 id="Compositionality-Through-Recursive-Matrix-Vector-Spaces"><a href="#Compositionality-Through-Recursive-Matrix-Vector-Spaces" class="headerlink" title="Compositionality Through Recursive Matrix-Vector Spaces"></a>Compositionality Through Recursive Matrix-Vector Spaces</h2><p>&emsp;&emsp;<a href="https://www.bilibili.com/video/av41393758/?p=14" target="_blank" rel="noopener">第十四讲 - 树 RNN 和短语句法分析</a>，65 分开始。</p>
 <h2 id="related-work-for-parsing"><a href="#related-work-for-parsing" class="headerlink" title="related work for parsing"></a>related work for parsing</h2><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/related work for parsing.jpg" alt="related work for parsing"></p>
-<h1 id="共指解析"><a href="#共指解析" class="headerlink" title="共指解析"></a>共指解析</h1><p>&emsp;&emsp;<script type="math/tex">B^3</script>(B-CUBED) 算法用于评估。其他的一些算法：</p>
+<h1 id="※-共指解析"><a href="#※-共指解析" class="headerlink" title="※ 共指解析"></a>※ 共指解析</h1><p>&emsp;&emsp;<script type="math/tex">B^3</script>(B-CUBED) 算法用于评估。其他的一些算法：</p>
 <ul>
 <li>MUC Score (Vilain et al., 1995)</li>
 <li>BEAF (Luo 2005); entity based</li>
@@ -2192,11 +2403,11 @@ v_a tanh(W_a [h_t;\bar{h}_s])
             <p>&emsp;&emsp;此节视频讲了很多共指的理论，我没有记下来。实际内容比这里记的还要多一点。</p>
           </div>
 <h1 id="用于回答问题的动态神经网络"><a href="#用于回答问题的动态神经网络" class="headerlink" title="用于回答问题的动态神经网络"></a>用于回答问题的动态神经网络</h1><p>&emsp;&emsp;略，这节听不懂。</p>
-<h1 id="NLP的问题和可能性架构"><a href="#NLP的问题和可能性架构" class="headerlink" title="NLP的问题和可能性架构"></a>NLP的问题和可能性架构</h1><p>&emsp;&emsp;</p>
-<h1 id="应对深度-NLP-的局限性"><a href="#应对深度-NLP-的局限性" class="headerlink" title="应对深度 NLP 的局限性"></a>应对深度 NLP 的局限性</h1><a id="more"></a>]]></content>
+<h1 id="※-NLP的问题和可能性架构"><a href="#※-NLP的问题和可能性架构" class="headerlink" title="※ NLP的问题和可能性架构"></a>※ NLP的问题和可能性架构</h1><p>&emsp;&emsp;tree-RNN、pointer model、sub-word and character-based model 等。</p>
+<h1 id="※-应对深度-NLP-的局限性"><a href="#※-应对深度-NLP-的局限性" class="headerlink" title="※ 应对深度 NLP 的局限性"></a>※ 应对深度 NLP 的局限性</h1><a id="more"></a>]]></content>
       <categories>
         <category>AI</category>
-        <category>dl</category>
+        <category>nlp</category>
       </categories>
       <tags>
         <tag>学习笔记</tag>
@@ -2470,7 +2681,7 @@ w^2_{21} & w^2_{22} & w^2_{23}\\
   </entry>
   <entry>
     <title>linux非root用户配置环境变量</title>
-    <url>/linux%E9%9D%9Eroot%E7%94%A8%E6%88%B7%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F.html</url>
+    <url>/linux/linux%E9%9D%9Eroot%E7%94%A8%E6%88%B7%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F.html</url>
     <content><![CDATA[<p><a href="https://www.cnblogs.com/gstblog/p/10160976.html" target="_blank" rel="noopener">参考文章</a><br>本文以配置anaconda的环境变量为例。</p>
 <p>切换到用户目录<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~</span><br></pre></td></tr></table></figure></p>
 <p>输入，发现有一个名为<code>.bashrc</code>的文件<br><figure class="highlight ebnf"><table><tr><td class="code"><pre><span class="line"><span class="attribute">ll</span></span><br></pre></td></tr></table></figure></p>
@@ -2657,7 +2868,7 @@ v  = -\frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}\\</script><p>之所以要�
   </entry>
   <entry>
     <title>Jupyter出现gbk codec cant decode byte 0x93 in position 3136：illegal multibyte sequence</title>
-    <url>/bug/Jupyter%E5%87%BA%E7%8E%B0gbk-codec-cant-decode-byte-0x93-in-position-3136%EF%BC%9Aillegal-multibyte-sequence.html</url>
+    <url>/Jupyter%E5%87%BA%E7%8E%B0gbk-codec-cant-decode-byte-0x93-in-position-3136%EF%BC%9Aillegal-multibyte-sequence.html</url>
     <content><![CDATA[<p>一般来说是open()方法没有加encoding=’utf-8’，但是没用，试了其他办法没一个能用。<br>解决办法：重启Jupyter。<br><a id="more"></a></p>
 ]]></content>
       <categories>
@@ -2726,7 +2937,7 @@ v  = -\frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}\\</script><p>之所以要�
 <a id="more"></a>]]></content>
       <categories>
         <category>AI</category>
-        <category>dl</category>
+        <category>nlp</category>
       </categories>
       <tags>
         <tag>学习笔记</tag>
@@ -2991,7 +3202,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
   </entry>
   <entry>
     <title>更改hexo next主题的fontawesome版本至最新</title>
-    <url>/%E6%9B%B4%E6%94%B9hexo-next%E4%B8%BB%E9%A2%98%E7%9A%84fontawesome%E7%89%88%E6%9C%AC%E8%87%B3%E6%9C%80%E6%96%B0.html</url>
+    <url>/assorted/hexo/%E6%9B%B4%E6%94%B9hexo-next%E4%B8%BB%E9%A2%98%E7%9A%84fontawesome%E7%89%88%E6%9C%AC%E8%87%B3%E6%9C%80%E6%96%B0.html</url>
     <content><![CDATA[<p>由于在后续又发现在其他地方也用到了icon，所以需要大量更改配置。<strong>如果不会写程序的还是别改了。</strong></p>
 <p>next的fontawesome默认版本是4.6.2，在写本文时，fontawesome的最新版本是5.8.1。貌似fontawesome在5.0.0版本之后改版了。总之一直出现方框乱码。<br>后来发现，现在的fontawesome链接已经跟以前不一样了，它现在分为3大类别。<br>现在的使用方法是：在next主题的_config.xml中搜索fontawesome，并更改属性<code>fontawesome: //cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css</code>，注意里面的文件是all.min.css，而不是font-awesom.min.css。<br>但是这样更改之后还是会出现方框乱码，原因是next默认使用的fa的类，而有时候我们需要使用fab或其他的类。所以需要修改一下源代码。<br>找到layout/_macro/menu/menu-item.swig，定位class=”menu-item-icon，将后面的“fa fa-fw fa-”删去。以后再修改icon不能只加一个名字了。可以像我这样修改：<code>assorted: /assorted || fa fa-fw fa-layer-group</code>。<br>可以看到我将icon的名称补全了。如果想用fab的类，可以像这样修改：<code>python: /python || fab fa-fw fa-python</code>。以此类推。</p>
 <p>这样修改以后，如果不想用fontawesome了，想用其他的icon库，改起来也很方便。</p>
@@ -3005,7 +3216,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
   </entry>
   <entry>
     <title>ViewPager无法刷新数据</title>
-    <url>/ViewPager%E6%97%A0%E6%B3%95%E5%88%B7%E6%96%B0%E6%95%B0%E6%8D%AE.html</url>
+    <url>/assorted/android/ViewPager%E6%97%A0%E6%B3%95%E5%88%B7%E6%96%B0%E6%95%B0%E6%8D%AE.html</url>
     <content><![CDATA[<p>实现ViewPager刷新数据功能，在网上找了很多资料都已经过时了。<br>由于本人并不是android开发出身，完全是做app玩的。所以很多术语都不知道，如果看不懂就算了。。。</p>
 <p>实现PagerAdapter类，我命名为HomePagerAdapter<br><figure class="highlight aspectj"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HomePagerAdapter</span> <span class="keyword">extends</span> <span class="title">PagerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ArrayList&lt;View&gt; pageView;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HomePagerAdapter</span><span class="params">(ArrayList&lt;View&gt; pageView)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.pageView = pageView;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mChildCount = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">notifyDataSetChanged</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        mChildCount = getCount();</span><br><span class="line">        <span class="keyword">super</span>.notifyDataSetChanged();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">int</span> <span class="title">getItemPosition</span><span class="params">(Object object)</span>   </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> ( mChildCount &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            mChildCount --;</span><br><span class="line">            <span class="keyword">return</span> POSITION_NONE;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">return</span> <span class="keyword">super</span>.<span class="title">getItemPosition</span><span class="params">(object)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="comment">//获取当前窗体界面数</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">int</span> <span class="title">getCount</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">        <span class="function"><span class="keyword">return</span> pageView.<span class="title">size</span><span class="params">()</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="comment">//判断是否由对象生成界面</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">isViewFromObject</span><span class="params">(View arg0, Object arg1)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">        <span class="keyword">return</span> arg0==arg1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">destroyItem</span><span class="params">(ViewGroup container, <span class="keyword">int</span> position, Object object)</span> </span>&#123;</span><br><span class="line">        container.removeView(pageView.get(position));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function">Object <span class="title">instantiateItem</span><span class="params">(ViewGroup container, <span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">        View view = pageView.get(position);</span><br><span class="line">        container.addView(view);</span><br><span class="line">        <span class="keyword">return</span> view;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">finishUpdate</span><span class="params">(ViewGroup container)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(container.getChildCount() == <span class="number">0</span>)&#123;</span><br><span class="line">            pageView.clear();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>注意destroyItem、instantiateItem方法，PagerAdapter中还有两个同名的方法，但是已被废弃，注意参数不同。<br>实现刷新数据主要在destroyItem、instantiateItem、finishUpdate三个方法。其他的方法其实别人的教程也写了，但是我这三个方法是我自己研究的，我没见别人写过。</p>
@@ -3021,7 +3232,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
   </entry>
   <entry>
     <title>在写了大量内容以及大量数学表达式后，mathJax无法渲染数学表达式</title>
-    <url>/bug/%E5%9C%A8%E5%86%99%E4%BA%86%E5%A4%A7%E9%87%8F%E5%86%85%E5%AE%B9%E4%BB%A5%E5%8F%8A%E5%A4%A7%E9%87%8F%E6%95%B0%E5%AD%A6%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%90%8E%EF%BC%8CmathJax%E6%97%A0%E6%B3%95%E6%B8%B2%E6%9F%93%E6%95%B0%E5%AD%A6%E8%A1%A8%E8%BE%BE%E5%BC%8F.html</url>
+    <url>/assorted/hexo/%E5%9C%A8%E5%86%99%E4%BA%86%E5%A4%A7%E9%87%8F%E5%86%85%E5%AE%B9%E4%BB%A5%E5%8F%8A%E5%A4%A7%E9%87%8F%E6%95%B0%E5%AD%A6%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%90%8E%EF%BC%8CmathJax%E6%97%A0%E6%B3%95%E6%B8%B2%E6%9F%93%E6%95%B0%E5%AD%A6%E8%A1%A8%E8%BE%BE%E5%BC%8F.html</url>
     <content><![CDATA[<p>之前写的数学表达式明明可以渲染，但是接下去隔了n行的数学表达式无法渲染。推测是因为单行数学表达式在文字前面换行。<br>比如说：</p>
 <blockquote>
 <p>文字文字文字文字：·￥￥·<br>该表达式渲染正常。</p>
@@ -3038,7 +3249,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
   </entry>
   <entry>
     <title>运用其他的插件，在hexo中添加提示弹窗</title>
-    <url>/%E8%BF%90%E7%94%A8%E5%85%B6%E4%BB%96%E7%9A%84%E6%8F%92%E4%BB%B6%EF%BC%8C%E5%9C%A8hexo%E4%B8%AD%E6%B7%BB%E5%8A%A0%E6%8F%90%E7%A4%BA%E5%BC%B9%E7%AA%97.html</url>
+    <url>/assorted/hexo/%E8%BF%90%E7%94%A8%E5%85%B6%E4%BB%96%E7%9A%84%E6%8F%92%E4%BB%B6%EF%BC%8C%E5%9C%A8hexo%E4%B8%AD%E6%B7%BB%E5%8A%A0%E6%8F%90%E7%A4%BA%E5%BC%B9%E7%AA%97.html</url>
     <content><![CDATA[<p>由于我写了很多学习记录，但是这些都是自己看书或者看视频学来的。万一有错误的地方正好被人看见，他又是新手，误以为我的是对的，这样就不好了。所以准备做一个提示弹窗，在所有的带有“学习笔记”的标签的文章中自动弹出提示。</p>
 <ol>
 <li>下载一个自己喜欢的弹窗插件，可以去<a href="http://www.jq22.com/" target="_blank" rel="noopener">jQuery插件库</a>找。</li>
@@ -3055,7 +3266,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
   </entry>
   <entry>
     <title>Android开发，使用腾讯云的API请求对象存储中的资源始终失败</title>
-    <url>/bug/Android%E5%BC%80%E5%8F%91%EF%BC%8C%E4%BD%BF%E7%94%A8%E8%85%BE%E8%AE%AF%E4%BA%91%E7%9A%84API%E8%AF%B7%E6%B1%82%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E4%B8%AD%E7%9A%84%E8%B5%84%E6%BA%90%E5%A7%8B%E7%BB%88%E5%A4%B1%E8%B4%A5.html</url>
+    <url>/assorted/android/Android%E5%BC%80%E5%8F%91%EF%BC%8C%E4%BD%BF%E7%94%A8%E8%85%BE%E8%AE%AF%E4%BA%91%E7%9A%84API%E8%AF%B7%E6%B1%82%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E4%B8%AD%E7%9A%84%E8%B5%84%E6%BA%90%E5%A7%8B%E7%BB%88%E5%A4%B1%E8%B4%A5.html</url>
     <content><![CDATA[<ol>
 <li>腾讯云api内部在调用时，把url转义了。我的链接是<a href="http://###.cos.ap-shanghai.myqcloud.com/11111/app_list.txt?abcdefg，它内部给我转义成http://###.cos.ap-shanghai.myqcloud.com/11111/app_list.txt%3Fabcdefg，就是把&quot;?&quot;转义成了&quot;%3F&quot;。总而言之，我使用api一直获取不到资源，然后我在浏览器上试验了一下。发现把%3F改回?就可以访问了，实际上应该不是这样，反正就给我产生了误导。我想尽办法都不能将其转义回来，最后只好放弃。腾讯云api内部肯定自己转义了一下，真的坑爹。" target="_blank" rel="noopener">http://###.cos.ap-shanghai.myqcloud.com/11111/app_list.txt?abcdefg，它内部给我转义成http://###.cos.ap-shanghai.myqcloud.com/11111/app_list.txt%3Fabcdefg，就是把&quot;?&quot;转义成了&quot;%3F&quot;。总而言之，我使用api一直获取不到资源，然后我在浏览器上试验了一下。发现把%3F改回?就可以访问了，实际上应该不是这样，反正就给我产生了误导。我想尽办法都不能将其转义回来，最后只好放弃。腾讯云api内部肯定自己转义了一下，真的坑爹。</a></li>
 <li>尝试自己写代码请求资源，结果发现如果url的协议是https就可以访问到资源了。这可能是android的问题，于是我又使用腾讯的api，配置更改如下：<figure class="highlight pony"><table><tr><td class="code"><pre><span class="line"><span class="type">CosXmlServiceConfig</span> serviceConfig = <span class="function"><span class="keyword">new</span> <span class="title">Builder</span>()</span></span><br><span class="line"><span class="function">				.<span class="title">isHttps</span>(true)</span></span><br><span class="line"><span class="function">                .<span class="title">setRegion</span>(region)</span></span><br><span class="line"><span class="function">                .<span class="title">setDebuggable</span>(true)</span></span><br><span class="line"><span class="function">                .<span class="title">builder</span>();</span></span><br></pre></td></tr></table></figure>
@@ -3651,7 +3862,7 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} & \underbrace{y^{
   </entry>
   <entry>
     <title>next主题中使用Mathjax</title>
-    <url>/next%E4%B8%BB%E9%A2%98%E4%B8%AD%E4%BD%BF%E7%94%A8Mathjax.html</url>
+    <url>/assorted/hexo/next%E4%B8%BB%E9%A2%98%E4%B8%AD%E4%BD%BF%E7%94%A8Mathjax.html</url>
     <content><![CDATA[<p>百度了一圈最后还是没有解决问题，因为其他的博客都说要去<code>/node_modules/hexo-renderer-kramed/lib/renderer.js</code>文件修改源代码，但是我压根没有这个文件，hexo-renderer-kramed这个文件夹不存在。</p>
 <p>最后还是自己试出来了，步骤如下：</p>
 <ol>
@@ -3765,7 +3976,7 @@ w^3_{42}\\
   </entry>
   <entry>
     <title>FutureWarning: Conversion of the second argument of issubdtype from `float` to `np.floating` is deprecated. In future, it will be treated as `np.float64 == np.dtype(float).type`.</title>
-    <url>/bug/FutureWarning-Conversion-of-the-second-argument-of-issubdtype-from-float-to-np-floating-is-deprecated-In-future-it-will-be-treated-as-np-float64-np-dtype-float-type.html</url>
+    <url>/python/FutureWarning-Conversion-of-the-second-argument-of-issubdtype-from-float-to-np-floating-is-deprecated-In-future-it-will-be-treated-as-np-float64-np-dtype-float-type.html</url>
     <content><![CDATA[<p>网上很多人说要修改h5py的版本，但是我压根没装这个库。<br><a href="https://blog.csdn.net/u013092293/article/details/80447201" target="_blank" rel="noopener">参考文章</a><br>将numpy版本降低即可，我原先好像是1.16，记不清了，我没留意到。<br><figure class="highlight lsl"><table><tr><td class="code"><pre><span class="line">conda install numpy==<span class="number">1.13</span><span class="number">.0</span></span><br></pre></td></tr></table></figure></p>
 <a id="more"></a>]]></content>
       <categories>
@@ -3876,7 +4087,7 @@ w^3_{42}\\
   </entry>
   <entry>
     <title>selenium下打开Chrome闪退</title>
-    <url>/bug/selenium%E4%B8%8B%E6%89%93%E5%BC%80Chrome%E9%97%AA%E9%80%80.html</url>
+    <url>/python/selenium%E4%B8%8B%E6%89%93%E5%BC%80Chrome%E9%97%AA%E9%80%80.html</url>
     <content><![CDATA[<p>网上的其他解决办法都不对，后来发现了是因为一个很逗的错。<br>以下代码闪退<br><figure class="highlight armasm"><table><tr><td class="code"><pre><span class="line"><span class="symbol">from</span> <span class="keyword">selenium </span><span class="meta">import</span> webdriver</span><br><span class="line"><span class="symbol">webdriver.Chrome</span>()</span><br></pre></td></tr></table></figure></p>
 <p>以下代码正常运行<br><figure class="highlight armasm"><table><tr><td class="code"><pre><span class="line"><span class="symbol">from</span> <span class="keyword">selenium </span><span class="meta">import</span> webdriver</span><br><span class="line"><span class="symbol">chrome</span> = webdriver.Chrome()</span><br></pre></td></tr></table></figure></p>
 <a id="more"></a>]]></content>
@@ -3920,7 +4131,7 @@ w^3_{42}\\
   </entry>
   <entry>
     <title>linux Ubuntu安装NVIDIA驱动</title>
-    <url>/linux-Ubuntu%E5%AE%89%E8%A3%85NVIDIA%E9%A9%B1%E5%8A%A8.html</url>
+    <url>/linux/linux-Ubuntu%E5%AE%89%E8%A3%85NVIDIA%E9%A9%B1%E5%8A%A8.html</url>
     <content><![CDATA[<p><a href="https://blog.csdn.net/ghw15221836342/article/details/79571559" target="_blank" rel="noopener">参考文章</a><br>以下步骤基于ubuntu16，下载的文件在Downloads文件夹。</p>
 <ol>
 <li>使用命令<code>lspci |grep -i nvidia</code>，查看显卡型号</li>
@@ -4072,7 +4283,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>anaconda的锅：使用pyquery出现urlopen-error-unknown-url-type-https</title>
-    <url>/bug/anaconda%E7%9A%84%E9%94%85%EF%BC%9A%E4%BD%BF%E7%94%A8pyquery%E5%87%BA%E7%8E%B0urlopen-error-unknown-url-type-https.html</url>
+    <url>/python/anaconda%E7%9A%84%E9%94%85%EF%BC%9A%E4%BD%BF%E7%94%A8pyquery%E5%87%BA%E7%8E%B0urlopen-error-unknown-url-type-https.html</url>
     <content><![CDATA[<p>使用pyquery出现urlopen-error-unknown-url-type-https的异常，上网查发现是openssl的问题。话不多说直接说结果。<br>参考文章如下：<br><a href="https://blog.csdn.net/gw85047034/article/details/88039705" target="_blank" rel="noopener">anaconda新建环境在PyCharm执行import ssl失败</a></p>
 <p>由于anaconda的python版本是3.7.0，而我在创建虚拟环境时，使用命令<code>conda create -n spider python=3</code>，最后的python=3会选择python最新的版本安装，所以anaconda选择了python3.7.3。于是anaconda的python版本和虚拟环境的python版本冲突了，而我把虚拟环境给PyCharm用了，所以就是anaconda和PyCharm冲突了。只要把虚拟环境的python版本换成和anaconda的python版本一致就可以了。<br><a id="more"></a></p>
 ]]></content>
@@ -4112,7 +4323,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>anaconda安装问题以及之前安装的Python环境取舍问题</title>
-    <url>/bug/anaconda%E5%AE%89%E8%A3%85%E9%97%AE%E9%A2%98%E4%BB%A5%E5%8F%8A%E4%B9%8B%E5%89%8D%E5%AE%89%E8%A3%85%E7%9A%84Python%E7%8E%AF%E5%A2%83%E5%8F%96%E8%88%8D%E9%97%AE%E9%A2%98.html</url>
+    <url>/python/anaconda%E5%AE%89%E8%A3%85%E9%97%AE%E9%A2%98%E4%BB%A5%E5%8F%8A%E4%B9%8B%E5%89%8D%E5%AE%89%E8%A3%85%E7%9A%84Python%E7%8E%AF%E5%A2%83%E5%8F%96%E8%88%8D%E9%97%AE%E9%A2%98.html</url>
     <content><![CDATA[<p>今天安装anaconda时发现了一些问题。</p>
 <h3 id="背景介绍"><a href="#背景介绍" class="headerlink" title="背景介绍"></a>背景介绍</h3><p>我在安装anaconda之前，已经安装了Python3.6，这个Python环境是很久以前还在学Java时安装的。然后现在安装完anaconda之后，发现anaconda不会自动将原有的Python环境收为己用。所以就出现了原有的Python怎么处理的问题。</p>
 <h3 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h3><p>如果原先的Python环境不是很重要，可以直接删了，改用anaconda提供的虚拟环境。当然同时也要删除电脑环境变量中的Python路径。为了保险可以先删除电脑环境变量中的Python路径，然后打开命令行，输入python，发现已经移除后再删除Python。最后还需要将anaconda添加到环境变量中，不过anaconda在安装时有个选项可以直接将其添加进环境变量，如果之前选择了这个选项。可以不用再添加环境变量了。anaconda环境变量总共需要输入三个变量，如下：<br><figure class="highlight taggerscript"><table><tr><td class="code"><pre><span class="line">D:<span class="symbol">\a</span>naconda</span><br><span class="line">D:<span class="symbol">\a</span>naconda<span class="symbol">\S</span>cripts</span><br><span class="line">D:<span class="symbol">\a</span>naconda<span class="symbol">\L</span>ibrary<span class="symbol">\b</span>in</span><br></pre></td></tr></table></figure></p>
@@ -4124,12 +4335,13 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
         <category>python</category>
       </categories>
       <tags>
+        <tag>error</tag>
         <tag>anaconda</tag>
       </tags>
   </entry>
   <entry>
     <title>spring boot中使用@ConfigurationProperties注解</title>
-    <url>/spring%20boot%E4%B8%AD%E4%BD%BF%E7%94%A8%20ConfigurationProperties%E6%B3%A8%E8%A7%A3.html</url>
+    <url>/java/spring%20boot%E4%B8%AD%E4%BD%BF%E7%94%A8%20ConfigurationProperties%E6%B3%A8%E8%A7%A3.html</url>
     <content><![CDATA[<p>在使用@ConfigurationProperties注解前必须引入这个依赖<br><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 为了使用@ConfigurationProperties注解，必须加入这个--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-configuration-processor<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">optional</span>&gt;</span>true<span class="tag">&lt;/<span class="name">optional</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
 <p>使用方法：<br><figure class="highlight less"><table><tr><td class="code"><pre><span class="line"><span class="variable">@Component</span></span><br><span class="line"><span class="variable">@ConfigurationProperties</span>(prefix = <span class="string">"io.github.yan624.file"</span>)</span><br><span class="line"><span class="variable">@Data</span></span><br><span class="line">public class PropertiesConfig &#123;</span><br><span class="line">    <span class="selector-tag">private</span> <span class="selector-tag">String</span> <span class="selector-tag">root</span>;</span><br><span class="line">    <span class="selector-tag">private</span> <span class="selector-tag">String</span> <span class="selector-tag">qrPath</span>;</span><br><span class="line">    <span class="selector-tag">private</span> <span class="selector-tag">String</span> <span class="selector-tag">imgPath</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>yml文件：<br><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">io:</span></span><br><span class="line"><span class="attr">  github:</span></span><br><span class="line"><span class="attr">    yan624:</span></span><br><span class="line"><span class="attr">      file:</span></span><br><span class="line"><span class="attr">        root:</span> <span class="attr">E:/itchat4j/</span></span><br><span class="line"><span class="attr">        qr-path:</span> <span class="string">$&#123;io.github.yan624.file.root&#125;/login</span></span><br><span class="line"><span class="attr">        img-path:</span> <span class="string">$&#123;io.github.yan624.file.root&#125;/img</span></span><br><span class="line"><span class="string">...</span></span><br></pre></td></tr></table></figure></p>
@@ -4223,7 +4435,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>用idea创建gradle构建的kotlin项目</title>
-    <url>/%E7%94%A8idea%E5%88%9B%E5%BB%BAgradle%E6%9E%84%E5%BB%BA%E7%9A%84kotlin%E9%A1%B9%E7%9B%AE.html</url>
+    <url>/assorted/android/%E7%94%A8idea%E5%88%9B%E5%BB%BAgradle%E6%9E%84%E5%BB%BA%E7%9A%84kotlin%E9%A1%B9%E7%9B%AE.html</url>
     <content><![CDATA[<p>在网上找了找发现没几个人用maven创建kotlin项目，而我以前一直都用maven，没用过gradle，所以只能当学习gradle了。<br>第一步：选择gradle<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/f9fdef1607a94d4788848429af5af5a6.png" alt="选择gradle" title="选择gradle"><br>第二步填写GroupId和ArrtifactId，这个很简单。略。<br>第三步，默认是这样的窗口，但是我选择了User auto-import（自动导包功能），其他都是默认值。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/70cb9fa0d58142f094e14a8c8a9f0a79.png" alt="一些配置" title="一些配置"><br>第四步，看看项目的所在文件夹没问题就可以finish了。<br>第五步，发现项目的文件夹有问题，只有个.idea。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/fa8abf0e9fa54d658512abb05b9436ae.png" alt="项目目录只有.idea文件夹" title="项目目录只有.idea文件夹"><br>第六步，我是第一次用gradle，只要等gradle下完就行了。如果下完还是没有，那么重启一下idea就行了。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/6acb9a4b777f4c08b60fcce2a8f425eb.png" alt="成功构建" title="成功构建"><br><a id="more"></a></p>
 ]]></content>
       <categories>
@@ -4236,7 +4448,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>（十）搭建springcloud：记录项目运行的日志</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%EF%BC%88%E5%8D%81%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E8%AE%B0%E5%BD%95%E9%A1%B9%E7%9B%AE%E8%BF%90%E8%A1%8C%E7%9A%84%E6%97%A5%E5%BF%97.html</url>
+    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E5%8D%81%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E8%AE%B0%E5%BD%95%E9%A1%B9%E7%9B%AE%E8%BF%90%E8%A1%8C%E7%9A%84%E6%97%A5%E5%BF%97.html</url>
     <content><![CDATA[<p>项目运行避免不了出现错误，这是日志就帮了大忙。<br>springboot提供了一个便捷的方法配置日志。在application.yml中加入以下配置，其中com.yan624代表包名，即这个包下的所有类输出的日志都是error以上级别。<br><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">logging:</span></span><br><span class="line"><span class="attr">  file:</span> <span class="string">upms.log</span></span><br><span class="line"><span class="attr">  level:</span></span><br><span class="line">    <span class="string">com.yan624:</span> <span class="string">error</span></span><br><span class="line"><span class="string">...</span></span><br></pre></td></tr></table></figure></p>
 <p>如果如下配置，就代表项目的所有类输出的日志都是error以上级别</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">logging:</span></span><br><span class="line"><span class="attr">  file:</span> <span class="string">upms.log</span></span><br><span class="line"><span class="attr">  level:</span></span><br><span class="line"><span class="attr">    root:</span> <span class="string">error</span></span><br><span class="line"><span class="string">...</span></span><br></pre></td></tr></table></figure>
@@ -4257,7 +4469,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>（九）搭建springcloud：在linux上运行springboot项目</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%EF%BC%88%E4%B9%9D%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E5%9C%A8linux%E4%B8%8A%E8%BF%90%E8%A1%8Cspringboot%E9%A1%B9%E7%9B%AE.html</url>
+    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E4%B9%9D%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E5%9C%A8linux%E4%B8%8A%E8%BF%90%E8%A1%8Cspringboot%E9%A1%B9%E7%9B%AE.html</url>
     <content><![CDATA[<p>具将本地的jar文件拖到服务器上时发现，jar文件只有3kb。果然使用“java -jar 项目名.jar”命令后，显示<strong>no main manifest attribute, in springboot项目名.jar</strong>。<br>解决办法：在项目中（不是聚合父工程中）添加如下代码</p>
 <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                <span class="comment">&lt;!-- 指定该Main Class为全局的唯一入口 --&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">mainClass</span>&gt;</span>com.yan624.eureka.Eureka_Server7001<span class="tag">&lt;/<span class="name">mainClass</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">layout</span>&gt;</span>JAR<span class="tag">&lt;/<span class="name">layout</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">executions</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">execution</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">goals</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">goal</span>&gt;</span>repackage<span class="tag">&lt;/<span class="name">goal</span>&gt;</span><span class="comment">&lt;!--可以把依赖的包都打包到生成的Jar包中--&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">goals</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">execution</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">executions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>由于如果直接使用java -jar 项目名.jar启动springboot项目，会造成你启动了这个项目就不用想输入其他命令了，所以使用 “<strong>nohup java -jar springboot项目名.jar &gt;记录日志的文件名.log 2&gt;&amp;1 &amp;</strong>”命令，来让spirngboot项目后台运行，并且记录日志。<br>如果不想输出日志，可以使用“<strong>nohup java -jar springboot项目名.jar &gt;/dev/null 2&gt;&amp;1 &amp;</strong>”</p>
@@ -4275,7 +4487,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>springboot启动出现Unable to start EmbeddedWebApplicationContext due to missing EmbeddedServlet</title>
-    <url>/bug/springboot%E5%90%AF%E5%8A%A8%E5%87%BA%E7%8E%B0Unable-to-start-EmbeddedWebApplicationContext-due-to-missing-EmbeddedServlet.html</url>
+    <url>/java/springboot%E5%90%AF%E5%8A%A8%E5%87%BA%E7%8E%B0Unable-to-start-EmbeddedWebApplicationContext-due-to-missing-EmbeddedServlet.html</url>
     <content><![CDATA[<p>网上的解决办法打都相同，但是我这个问题纯属操作失误。<br>因为我想要启动我的微服务，但是在idea里配置的时候配置错了。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/abaa4d89631040ac90ccc023a34ac1d3.png" alt="idea配置" title="idea配置"><br>我把主启动类配错了。可以看到下图主启动类是CMS_BLOG8082，但是手滑选择了CmsBlogApiApplication。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/a61afd34f52f46299eca32ab412f668b.png" alt="主启动类" title="主启动类"><br><a id="more"></a></p>
 ]]></content>
       <categories>
@@ -4283,27 +4495,27 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
         <category>spring</category>
       </categories>
       <tags>
-        <tag>印象笔记上的博文</tag>
         <tag>error</tag>
+        <tag>印象笔记上的博文</tag>
       </tags>
   </entry>
   <entry>
     <title>idea启动的项目，打开网页出现部分文字乱码</title>
-    <url>/bug/idea%E5%90%AF%E5%8A%A8%E7%9A%84%E9%A1%B9%E7%9B%AE%EF%BC%8C%E6%89%93%E5%BC%80%E7%BD%91%E9%A1%B5%E5%87%BA%E7%8E%B0%E9%83%A8%E5%88%86%E6%96%87%E5%AD%97%E4%B9%B1%E7%A0%81.html</url>
+    <url>/assorted/idea%E5%90%AF%E5%8A%A8%E7%9A%84%E9%A1%B9%E7%9B%AE%EF%BC%8C%E6%89%93%E5%BC%80%E7%BD%91%E9%A1%B5%E5%87%BA%E7%8E%B0%E9%83%A8%E5%88%86%E6%96%87%E5%AD%97%E4%B9%B1%E7%A0%81.html</url>
     <content><![CDATA[<p>起因：<br>在文件中右键点击file encoding，打算更改编码，但是出现一个窗口显示Reloead,Convert,Cancel。由于不懂这几个按键按后的效果是什么所以瞎按，导致文件完全乱码，恢复不回去。<br>之后在打开网页时，发现有部分中文乱码，而且乱码还是出现在前端部分，而且我的文件格式全是utf-8，所以按理说应该没有任何问题。最终也没有解决问题。<br>解决办法：<br>重新配置idea。重置方法详见：<a href="https://jingyan.baidu.com/article/fa4125ac1c613f28ac7092c1.html" target="_blank" rel="noopener">https://jingyan.baidu.com/article/fa4125ac1c613f28ac7092c1.html</a><br><em>更新：这个方法治标不治本，导致了部分页面恢复正常了，但是其他页面还是有问题。</em><br><strong>终极解决办法：</strong>找到错误的根源，可能是html，也可能是js。大部分都是js的错误，由于js动态地将中文添加到页面，导致乱码。所以需要将这份js文件，复制出来，用windows的文本文档打开，另存为的时候修改编码为urf-8。再复制回项目即可。</p>
 <a id="more"></a>]]></content>
       <categories>
         <category>assorted</category>
       </categories>
       <tags>
-        <tag>印象笔记上的博文</tag>
         <tag>error</tag>
+        <tag>印象笔记上的博文</tag>
         <tag>idea</tag>
       </tags>
   </entry>
   <entry>
     <title>（零）搭建springcloud：创建项目</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%EF%BC%88%E9%9B%B6%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE.html</url>
+    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E9%9B%B6%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE.html</url>
     <content><![CDATA[<h3 id="创建springboot项目"><a href="#创建springboot项目" class="headerlink" title="创建springboot项目"></a>创建springboot项目</h3><p>右键父工程选择new-&gt;module，创建一个子项目（packaging为jar）。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/33cb351041724b248d26b86121954e93.png" alt="创建module" title="创建module"><br>点击Module之后会出现如下界面，选择spring Initializr(你如果要创建maven项目的话也选这个)，什么都不要干，点击Next。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/41f65d0615394aefa53946aa6300d5d2.png" alt="创建springboot项目" title="创建springboot项目"><br>之后会出现这个界面，填写好信息，注意Packaging是jar，因为springboot是用netty启动的，不需要打成war包，点击Next。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/4ad4d8919f1341098719e99ceaee285b.png" alt="配置" title="配置"></p>
 <h3 id="创建聚合工程"><a href="#创建聚合工程" class="headerlink" title="创建聚合工程"></a>创建聚合工程</h3><p>右键父工程选择new-&gt;module，创建一个子项目（jpackaging为pom）。<br>选择maven即可。</p>
 <h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><p><a href="https://yan624.github.io/（零）搭建springcloud：创建项目.html">（零）搭建springcloud：创建项目</a><br><a href="https://yan624.github.io/（一）搭建springcloud：springboot整合thymeleaf.html">（一）搭建springcloud：springboot整合thymeleaf</a><br><a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a><br><a href="https://yan624.github.io/（三）搭建springcloud：整合mybatis-plus.html">（三）搭建springcloud：整合mybatis-plus</a><br><a href="https://yan624.github.io/（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）.html">（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</a><br><a href="https://yan624.github.io/（五）搭建springcloud：在idea启动springboot项目.html">（五）搭建springcloud：在idea启动springboot项目</a><br><a href="https://yan624.github.io/（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）.html">（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</a><br><a href="https://yan624.github.io/（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器.html">（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</a><br><a href="https://yan624.github.io/（八）搭建springcloud：修改静态文件，如html，js后立即生效.html">（八）搭建springcloud：修改静态文件，如html，js后立即生效</a><br><a href="https://yan624.github.io/（九）搭建springcloud：在linux上运行springboot项目.html">（九）搭建springcloud：在linux上运行springboot项目</a><br><a href="https://yan624.github.io/（十）搭建springcloud：记录项目运行的日志.html">（十）搭建springcloud：记录项目运行的日志</a><br><a id="more"></a></p>
@@ -4320,7 +4532,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>ip地址引起的无法单点登录</title>
-    <url>/bug/ip%E5%9C%B0%E5%9D%80%E5%BC%95%E8%B5%B7%E7%9A%84%E6%97%A0%E6%B3%95%E5%8D%95%E7%82%B9%E7%99%BB%E5%BD%95.html</url>
+    <url>/java/ip%E5%9C%B0%E5%9D%80%E5%BC%95%E8%B5%B7%E7%9A%84%E6%97%A0%E6%B3%95%E5%8D%95%E7%82%B9%E7%99%BB%E5%BD%95.html</url>
     <content><![CDATA[<p>今天碰到一个很奇怪的问题，单点登录明明自认为代码没有任何问题，但是始终登录不进去。<br>最后发现，测试配置的cas-service地址是手动输入的localhost，所以当使用单点登录时在sso系统进行验证完毕时会回调这个地址回到原系统。这一切都符合预期运行。但是当原系统调用backUrl时出问题了。因为我点的是eureka的Application表格的Status列中链接，而这个链接我正好配置显示更详细的ip地址，所以由本来的localhost替换成了我的局域网中的ip地址。<br>综上：我需要登录的地址是localhost，而我需要回调的ip地址是我局域网的地址，显然两个ip不同那么shiro的subject也会不同，自然造成了每次使用isAuthenticated方法都会出问题。当然这只是特例，因为我的上述的两个地址虽然说不同但是实际上都是我一个人的，而上线之后应该不会遇到这种情况了。<br>可以尝试将这几个ip地址映射为一个地址，或者在当用户多次跳转回登录页面时，让它的地址栏强制去除backUrl参数，并给出相应提示。<br><a id="more"></a></p>
 ]]></content>
       <categories>
@@ -4333,7 +4545,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>（八）搭建springcloud：修改静态文件，如html，js后立即生效</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%EF%BC%88%E5%85%AB%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E4%BF%AE%E6%94%B9%E9%9D%99%E6%80%81%E6%96%87%E4%BB%B6%EF%BC%8C%E5%A6%82html%EF%BC%8Cjs%E5%90%8E%E7%AB%8B%E5%8D%B3%E7%94%9F%E6%95%88.html</url>
+    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E5%85%AB%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E4%BF%AE%E6%94%B9%E9%9D%99%E6%80%81%E6%96%87%E4%BB%B6%EF%BC%8C%E5%A6%82html%EF%BC%8Cjs%E5%90%8E%E7%AB%8B%E5%8D%B3%E7%94%9F%E6%95%88.html</url>
     <content><![CDATA[<ol>
 <li>setting—&gt;Build,Execution,Deployment—&gt;Compiler  找到 build project automatically<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/0e3e14335ea94258adf2616de29ed82d.PNG" alt="idea配置自动构建" title="idea配置自动构建"></li>
 <li>按ctrl+shift+alt+/，选择 Registry<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/1ed4835b01e54c82b6d0023db60873ac.jpg" alt="更改注册" title="更改注册"></li>
@@ -4353,7 +4565,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%EF%BC%88%E4%B8%83%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9Aspringboot%E5%A6%82%E4%BD%95%E5%B0%86%E6%89%80%E4%BE%9D%E8%B5%96%E7%9A%84jar%E5%8C%85%E7%9A%84%E7%B1%BB%E6%94%BE%E5%85%A5spring%E5%AE%B9%E5%99%A8.html</url>
+    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E4%B8%83%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9Aspringboot%E5%A6%82%E4%BD%95%E5%B0%86%E6%89%80%E4%BE%9D%E8%B5%96%E7%9A%84jar%E5%8C%85%E7%9A%84%E7%B1%BB%E6%94%BE%E5%85%A5spring%E5%AE%B9%E5%99%A8.html</url>
     <content><![CDATA[<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableEurekaClient</span></span><br><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">Upms8081</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	public <span class="keyword">static</span> <span class="keyword">void</span> main(<span class="built_in">String</span>[] args) &#123;</span><br><span class="line">		<span class="built_in">Object</span>[] objects = <span class="keyword">new</span> <span class="built_in">Object</span>[<span class="number">3</span>];</span><br><span class="line">		objects[<span class="number">0</span>] = Upms8081.<span class="keyword">class</span>;</span><br><span class="line">		objects[<span class="number">1</span>] = UpmsApiAppliction.<span class="keyword">class</span>;</span><br><span class="line">		objects[<span class="number">2</span>] = CommonServiceStarter.<span class="keyword">class</span>;</span><br><span class="line">		SpringApplication.run(objects, args);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>其他的class对象分别是所需要初始化类jar包中的springboot启动类</p>
 <h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><p><a href="https://yan624.github.io/（零）搭建springcloud：创建项目.html">（零）搭建springcloud：创建项目</a><br><a href="https://yan624.github.io/（一）搭建springcloud：springboot整合thymeleaf.html">（一）搭建springcloud：springboot整合thymeleaf</a><br><a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a><br><a href="https://yan624.github.io/（三）搭建springcloud：整合mybatis-plus.html">（三）搭建springcloud：整合mybatis-plus</a><br><a href="https://yan624.github.io/（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）.html">（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</a><br><a href="https://yan624.github.io/（五）搭建springcloud：在idea启动springboot项目.html">（五）搭建springcloud：在idea启动springboot项目</a><br><a href="https://yan624.github.io/（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）.html">（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</a><br><a href="https://yan624.github.io/（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器.html">（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</a><br><a href="https://yan624.github.io/（八）搭建springcloud：修改静态文件，如html，js后立即生效.html">（八）搭建springcloud：修改静态文件，如html，js后立即生效</a><br><a href="https://yan624.github.io/（九）搭建springcloud：在linux上运行springboot项目.html">（九）搭建springcloud：在linux上运行springboot项目</a><br><a href="https://yan624.github.io/（十）搭建springcloud：记录项目运行的日志.html">（十）搭建springcloud：记录项目运行的日志</a></p>
@@ -4370,7 +4582,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>shiro的filter配置问题，自定义的filter交给spring容器管理会有问题</title>
-    <url>/bug/shiro%E7%9A%84filter%E9%85%8D%E7%BD%AE%E9%97%AE%E9%A2%98%EF%BC%8C%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84filter%E4%BA%A4%E7%BB%99spring%E5%AE%B9%E5%99%A8%E7%AE%A1%E7%90%86%E4%BC%9A%E6%9C%89%E9%97%AE%E9%A2%98.html</url>
+    <url>/java/shiro%E7%9A%84filter%E9%85%8D%E7%BD%AE%E9%97%AE%E9%A2%98%EF%BC%8C%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84filter%E4%BA%A4%E7%BB%99spring%E5%AE%B9%E5%99%A8%E7%AE%A1%E7%90%86%E4%BC%9A%E6%9C%89%E9%97%AE%E9%A2%98.html</url>
     <content><![CDATA[<p>此项目基于springboot，放在springmvc中，filter由spring管理不知道为什么就没问题。<br>我配置了/api/v1/<strong>——&gt;roles[]，/</strong>———&gt;authc<br>/api/v1/<strong>一直无法访问，一直调转到authc这个过滤器去验证，我就怀疑是不是/</strong>也匹配到了/api/v1/**，但是以前做的时候一直没问题，所以绕了一大圈。<br>最后发现！！！！！<br>重要的事说三遍，不要将自定义的filter交给spring容器管理！不要将自定义的filter交给spring容器管理！不要将自定义的filter交给spring容器管理！<br>因为在一个链接的所有配置好的filter执行完毕后，它会接着执行另外一个过滤链，该过滤链由servlet容器提供。也就是说shiro一共会执行两个过滤链，一个是你自己配置好的，第二个是servlet提供的（由于本人没有阅读过spring源码，故不清楚spring注册的bean是怎么进入servlet容器的）。<br>所以当你把自定义的过滤器交给spring管理时，这个过滤器无论如何都会至少执行一次。<br>具体的代码在org.apache.shiro.web.servlet.doFilter(ServletRequest request, ServletResponse response)，第一行就是判断自定义的过滤链是否执行完毕，如果执行完毕就执行servlet提供的过滤链。（注shiro版本为1.4.0）<br>如果出现这个问题只需要将filter的创建由自己完成即可。<br>tips:由于可能在filter中需要注入某些对象。这时只能用springContext获取bean了。</p>
 <a id="more"></a>]]></content>
       <categories>
@@ -4383,7 +4595,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%EF%BC%88%E5%85%AD%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E5%9C%A8idea%E5%90%AF%E5%8A%A8%E9%A1%B9%E7%9B%AE%E5%87%BA%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%88hibernate-validator%E4%B8%8Ejavax-validation%E7%9A%84%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%EF%BC%89.html</url>
+    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E5%85%AD%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E5%9C%A8idea%E5%90%AF%E5%8A%A8%E9%A1%B9%E7%9B%AE%E5%87%BA%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%88hibernate-validator%E4%B8%8Ejavax-validation%E7%9A%84%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%EF%BC%89.html</url>
     <content><![CDATA[<p>由于是从eclipse迁移过来，之前的不同ide开发的问题搞了好久终于搞完了，以为终于成功了，然而又出了一大堆问题。<br>项目无法启动，报了一个奇葩的错：</p>
 <blockquote>
 <p>Could not initialize class org.hibernate.validator.internal.engine.Configuration</p>
@@ -4404,7 +4616,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>（五）搭建springcloud：在idea启动springboot项目</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%EF%BC%88%E4%BA%94%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E5%9C%A8idea%E5%90%AF%E5%8A%A8springboot%E9%A1%B9%E7%9B%AE.html</url>
+    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E4%BA%94%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E5%9C%A8idea%E5%90%AF%E5%8A%A8springboot%E9%A1%B9%E7%9B%AE.html</url>
     <content><![CDATA[<p>点击idea右上角 edit configuration<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/4803d077b7534b4fbf2f6f5a915db876.png" alt="idea配置启动类" title="idea配置启动类"><br>点击左上角的<font color="green">绿色“+”</font>然后点击maven就会出现右边窗口，注意要起一个name，然后下面的参数这么配置点击ok<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/e3a99aa12a0b4ad7a5544eaf1510cf4d.png" alt="idea配置maven命令" title="idea配置maven命令"><br>然后再到相同位置就会多了一个你起的名称的一个运行配置。点击即可。<br>最后还有最<strong>重要</strong>的一点，需要在你启动的项目的pom.xml文件中加上配置如下（主要是spring-boot-maven-plugin）：</p>
 <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-surefire-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">skip</span>&gt;</span>true<span class="tag">&lt;/<span class="name">skip</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p><strong>更新：此方式启动，无法进行调试，貌似可以通过配置解决。后来我都不用这个方式启动项目，在图二中不选择maven，选择Spring Boot即可运行正常。</strong></p>
@@ -4422,7 +4634,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%EF%BC%88%E5%9B%9B%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9Aeclipse%E8%BF%81%E7%A7%BB%E5%88%B0idea%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%88maven-install%E5%91%BD%E4%BB%A4%E5%87%BA%E9%94%99%EF%BC%89.html</url>
+    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E5%9B%9B%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9Aeclipse%E8%BF%81%E7%A7%BB%E5%88%B0idea%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%88maven-install%E5%91%BD%E4%BB%A4%E5%87%BA%E9%94%99%EF%BC%89.html</url>
     <content><![CDATA[<p>在使用maven的install命令时出现java.lang.ArrayIndexOutOfBoundsException: 10640<br>试了三个小时，一直以为idea有问题，最后没想到是maven版本的问题，我的是3.5.0，只要改成3.5.2以上就可以了（我改成3.5.4）<br>真的奇怪之前在eclipse上用一直好好地</p>
 <h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><p><a href="https://yan624.github.io/（零）搭建springcloud：创建项目.html">（零）搭建springcloud：创建项目</a><br><a href="https://yan624.github.io/（一）搭建springcloud：springboot整合thymeleaf.html">（一）搭建springcloud：springboot整合thymeleaf</a><br><a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a><br><a href="https://yan624.github.io/（三）搭建springcloud：整合mybatis-plus.html">（三）搭建springcloud：整合mybatis-plus</a><br><a href="https://yan624.github.io/（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）.html">（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</a><br><a href="https://yan624.github.io/（五）搭建springcloud：在idea启动springboot项目.html">（五）搭建springcloud：在idea启动springboot项目</a><br><a href="https://yan624.github.io/（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）.html">（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</a><br><a href="https://yan624.github.io/（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器.html">（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</a><br><a href="https://yan624.github.io/（八）搭建springcloud：修改静态文件，如html，js后立即生效.html">（八）搭建springcloud：修改静态文件，如html，js后立即生效</a><br><a href="https://yan624.github.io/（九）搭建springcloud：在linux上运行springboot项目.html">（九）搭建springcloud：在linux上运行springboot项目</a><br><a href="https://yan624.github.io/（十）搭建springcloud：记录项目运行的日志.html">（十）搭建springcloud：记录项目运行的日志</a></p>
 <a id="more"></a>]]></content>
@@ -4438,7 +4650,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>（三）搭建springcloud：整合mybatis-plus</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%EF%BC%88%E4%B8%89%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E6%95%B4%E5%90%88mybatis-plus.html</url>
+    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E4%B8%89%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E6%95%B4%E5%90%88mybatis-plus.html</url>
     <content><![CDATA[<p>由于一直使用mybatis的example，无法忍受着过长的代码，所以转向了mybatis-plus，配置过于简单，就不演示了。<br>参考官网<a href="http://mp.baomidou.com/#/install" target="_blank" rel="noopener">http://mp.baomidou.com/#/install</a><br>如果看不懂，可以看mybatis-plus提供的整合springboot例子<br>网址：<a href="https://gitee.com/baomidou/mybatisplus-spring-boot" target="_blank" rel="noopener">https://gitee.com/baomidou/mybatisplus-spring-boot</a><br>如果还看不懂，尼玛别整合了。（手动狗头）<br>提示：<br>Service可以继承mybatis-plus提供的ServiceImpl类<br>mapper层可以继承BaseMapper，这样如果有些mapper比较简单完全可以省去mapper.xml<br>IService可以继承IService</p>
 <h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><p><a href="https://yan624.github.io/（零）搭建springcloud：创建项目.html">（零）搭建springcloud：创建项目</a><br><a href="https://yan624.github.io/（一）搭建springcloud：springboot整合thymeleaf.html">（一）搭建springcloud：springboot整合thymeleaf</a><br><a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a><br><a href="https://yan624.github.io/（三）搭建springcloud：整合mybatis-plus.html">（三）搭建springcloud：整合mybatis-plus</a><br><a href="https://yan624.github.io/（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）.html">（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</a><br><a href="https://yan624.github.io/（五）搭建springcloud：在idea启动springboot项目.html">（五）搭建springcloud：在idea启动springboot项目</a><br><a href="https://yan624.github.io/（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）.html">（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</a><br><a href="https://yan624.github.io/（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器.html">（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</a><br><a href="https://yan624.github.io/（八）搭建springcloud：修改静态文件，如html，js后立即生效.html">（八）搭建springcloud：修改静态文件，如html，js后立即生效</a><br><a href="https://yan624.github.io/（九）搭建springcloud：在linux上运行springboot项目.html">（九）搭建springcloud：在linux上运行springboot项目</a><br><a href="https://yan624.github.io/（十）搭建springcloud：记录项目运行的日志.html">（十）搭建springcloud：记录项目运行的日志</a></p>
 <a id="more"></a>]]></content>
@@ -4454,7 +4666,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>（一）搭建springcloud：springboot整合thymeleaf</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%EF%BC%88%E4%B8%80%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9Aspringboot%E6%95%B4%E5%90%88thymeleaf.html</url>
+    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E4%B8%80%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9Aspringboot%E6%95%B4%E5%90%88thymeleaf.html</url>
     <content><![CDATA[<p>thymeleaf的配置类如下，要注意的是它的prefix不是以前的”/WEB-INF/“，而是”classpath:/templates/“。templates文件夹位于resources源文件夹下，该文件夹的名称不是我随便写的，是springboot规定的，用于放置动态文件。类似的还有static用于放置静态文件。<br>其中我分别写了linux（即生产环境）及windows（即开发环境）下的配置，可以根据需要自己删留。（由于一般开发环境为windows，所以我自己偷懒写的加载bean条件，如果开发环境也是linux那么可以直接删掉）其中还可能包含我自己写的工具类，可以直接删去。<br>注：差点忘了，我的thymeleaf是3.0以上的版本，3.0以上的版本变动有些大，如果不是该版本以上，可能无法使用该配置类。springboot默认依赖的版本是2.1.6（貌似），所以需要手动更改，不会的看<a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a><br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ComponentScan</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThymeleafConfig</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger LOGGER = LoggerFactory.getLogger(ThymeleafConfig.class);</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ThymeleafViewResolver <span class="title">viewResolver</span><span class="params">(SpringTemplateEngine templateEngine)</span></span>&#123;</span><br><span class="line">        ThymeleafViewResolver viewResolver = <span class="keyword">new</span> ThymeleafViewResolver();</span><br><span class="line">        viewResolver.setTemplateEngine(templateEngine);</span><br><span class="line">        viewResolver.setOrder(<span class="number">1</span>);</span><br><span class="line">        viewResolver.setCharacterEncoding(<span class="string">"utf-8"</span>);</span><br><span class="line">        <span class="comment">//不知道这个缓存和下面的模板解析器的缓存是什么关系，但是应该不是同一个意思</span></span><br><span class="line">        <span class="comment">//我在模板解析器设置false，在这行代码之上打印了一下还是true</span></span><br><span class="line">        viewResolver.setCache(<span class="keyword">false</span>);</span><br><span class="line">        viewResolver.setViewNames(<span class="keyword">new</span> String[] &#123;<span class="string">"thymeleaf/*"</span>, <span class="string">".html"</span>, <span class="string">".xhtml"</span>&#125;);</span><br><span class="line">        <span class="keyword">return</span> viewResolver;</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 模板解析器</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Conditional</span>(WindowsCondition.class)</span><br><span class="line">    <span class="meta">@Primary</span><span class="comment">//springboot貌似内置一个模板解析器，所以将这个bean定义为首选</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> SpringResourceTemplateResolver <span class="title">windowsTemplateResolver</span><span class="params">()</span></span>&#123;</span><br><span class="line">        SpringResourceTemplateResolver templateResolver = <span class="keyword">new</span> SpringResourceTemplateResolver();</span><br><span class="line">        templateResolver.setPrefix(<span class="string">"classpath:/templates/"</span>);</span><br><span class="line">        templateResolver.setSuffix(<span class="string">".html"</span>);</span><br><span class="line">        templateResolver.setOrder(<span class="number">1</span>);</span><br><span class="line">        templateResolver.setTemplateMode(TemplateMode.HTML);</span><br><span class="line">        <span class="comment">//不缓存页面，即服务器开启时修改thymeleaf页面会有变化。</span></span><br><span class="line">        templateResolver.setCacheable(<span class="keyword">false</span>);</span><br><span class="line">        LOGGER.info(<span class="keyword">new</span> LogPrintingTemplate()</span><br><span class="line">                .type(<span class="string">"thymeleaf页面缓存禁用(￣▽￣)~*"</span>)</span><br><span class="line">                .print());</span><br><span class="line">        templateResolver.setCharacterEncoding(<span class="string">"utf-8"</span>);</span><br><span class="line">        <span class="keyword">return</span> templateResolver;</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">    <span class="meta">@Conditional</span>(LinuxCondition.class)</span><br><span class="line">    <span class="meta">@Primary</span><span class="comment">//springboot貌似内置一个模板解析器，所以将这个bean定义为首选</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> SpringResourceTemplateResolver <span class="title">linuxTemplateResolver</span><span class="params">()</span></span>&#123;</span><br><span class="line">        SpringResourceTemplateResolver templateResolver = <span class="keyword">new</span> SpringResourceTemplateResolver();</span><br><span class="line">        templateResolver.setPrefix(<span class="string">"classpath:/WEB-INF/"</span>);</span><br><span class="line">        templateResolver.setSuffix(<span class="string">".html"</span>);</span><br><span class="line">        templateResolver.setOrder(<span class="number">1</span>);</span><br><span class="line">        templateResolver.setTemplateMode(TemplateMode.HTML);</span><br><span class="line">        <span class="comment">//缓存页面</span></span><br><span class="line">        templateResolver.setCacheable(<span class="keyword">true</span>);</span><br><span class="line">        LOGGER.info(<span class="keyword">new</span> LogPrintingTemplate()</span><br><span class="line">                .type(<span class="string">"thymeleaf页面缓存开启(￣▽￣)~*"</span>)</span><br><span class="line">                .print());</span><br><span class="line">        templateResolver.setCharacterEncoding(<span class="string">"utf-8"</span>);</span><br><span class="line">        <span class="keyword">return</span> templateResolver;</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 模版引擎</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> SpringTemplateEngine <span class="title">templateEngine</span><span class="params">(ITemplateResolver templateResolver)</span></span>&#123;</span><br><span class="line">        SpringTemplateEngine templateEngine = <span class="keyword">new</span> SpringTemplateEngine();</span><br><span class="line">        templateEngine.setTemplateResolver(templateResolver);</span><br><span class="line">        templateEngine.setEnableSpringELCompiler(<span class="keyword">true</span>);</span><br><span class="line">        <span class="keyword">return</span> templateEngine;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>Conditional里的类如下，linux的类似</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WindowsCondition</span> <span class="keyword">implements</span> <span class="title">Condition</span></span>&#123;</span><br><span class="line">       </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">matches</span><span class="params">(ConditionContext context, AnnotatedTypeMetadata metadata)</span> </span>&#123;</span><br><span class="line">        Environment environment = context.getEnvironment();</span><br><span class="line">        String osName = environment.getProperty(<span class="string">"os.name"</span>);</span><br><span class="line">        <span class="keyword">boolean</span> isWindows = <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">if</span>(osName.toLowerCase().contains(<span class="string">"windows"</span>))   isWindows = <span class="keyword">true</span>;</span><br><span class="line">         </span><br><span class="line">        <span class="keyword">return</span> isWindows;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -4478,7 +4690,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>（二）搭建springcloud：修改thymeleaf版本</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%EF%BC%88%E4%BA%8C%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E4%BF%AE%E6%94%B9thymeleaf%E7%89%88%E6%9C%AC.html</url>
+    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E4%BA%8C%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E4%BF%AE%E6%94%B9thymeleaf%E7%89%88%E6%9C%AC.html</url>
     <content><![CDATA[<p>起因：springboot整合thymeleaf默认依赖的版本是3.0以下的版本，而我一直是用的3.0以上的版本，而且貌似3.0以上的版本性能更好，所以果断自己做了版本的更改。但是在更改是有一点问题。</p>
 <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- thymeleaf --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-thymeleaf<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>由于我想排除依赖，所以我在其中排除了thymeleaf-spring4的依赖，但是我发现thymeleaf核心包的版本还是3.0以下，具体解决过程不写了，解决如下：<br>上面的依赖不要删，在下面再添加依赖，父工程中添加版本，可以选择3.0以上的版本（我的是3.0.9）</p>
@@ -4501,7 +4713,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>腾讯云安装mysql</title>
-    <url>/%E8%85%BE%E8%AE%AF%E4%BA%91%E5%AE%89%E8%A3%85mysql.html</url>
+    <url>/linux/%E8%85%BE%E8%AE%AF%E4%BA%91%E5%AE%89%E8%A3%85mysql.html</url>
     <content><![CDATA[<p><a href="https://www.cnblogs.com/itor/p/6339505.html" target="_blank" rel="noopener">linux下mysql-5.6忘记root密码，重置root密码详细过程</a><br><a href="https://www.cnblogs.com/BenWong/p/4322085.html" target="_blank" rel="noopener">Linux 下MySql 重置密码</a><br>这两篇结合着看就大致装完了，但是会有一个问题，就是外网连不上mysql，这是由于mysql默认不允许外网连接，所以需要做一点小变动。</p>
 <p>当执行第三行时可能会出现：Duplicate entry ‘%-root’ for key ‘PRIMARY’的错误提示信息，但是不需要管它</p>
 <figure class="highlight n1ql"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br><span class="line">mysql&gt;use mysql;</span><br><span class="line">mysql&gt;<span class="keyword">update</span> <span class="keyword">user</span> <span class="keyword">set</span> host = <span class="string">'%'</span> <span class="keyword">where</span> <span class="keyword">user</span> = <span class="string">'root'</span>;</span><br><span class="line">mysql&gt;<span class="keyword">select</span> host, <span class="keyword">user</span> <span class="keyword">from</span> <span class="keyword">user</span>;</span><br></pre></td></tr></table></figure>
@@ -4516,7 +4728,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>linux下安装redis</title>
-    <url>/linux%E4%B8%8B%E5%AE%89%E8%A3%85redis.html</url>
+    <url>/linux/linux%E4%B8%8B%E5%AE%89%E8%A3%85redis.html</url>
     <content><![CDATA[<h3 id="下载redis"><a href="#下载redis" class="headerlink" title="下载redis"></a>下载redis</h3><p>首先下载redis，由于是linux下安装，所以下载tar.gz压缩包，官网地址<a href="https://redis.io/" target="_blank" rel="noopener">https://redis.io/</a><br>然后使用工具把下载下来的压缩包上传到服务器上（我用的是腾讯云），我放在了/usr/local/redis下</p>
 <h3 id="解压"><a href="#解压" class="headerlink" title="解压"></a>解压</h3><p><code>tar zxvf  redis-4.0.10.tar.gz</code></p>
 <h3 id="进入解压后的文件夹"><a href="#进入解压后的文件夹" class="headerlink" title="进入解压后的文件夹"></a>进入解压后的文件夹</h3><p><code>cd redis-4.0.10</code></p>
@@ -4538,7 +4750,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>thymeleaf在@{}中无法使用其他服务器链接的问题</title>
-    <url>/thymeleaf%E5%9C%A8-%E4%B8%AD%E6%97%A0%E6%B3%95%E4%BD%BF%E7%94%A8%E5%85%B6%E4%BB%96%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%93%BE%E6%8E%A5%E7%9A%84%E9%97%AE%E9%A2%98.html</url>
+    <url>/java/thymeleaf%E5%9C%A8-%E4%B8%AD%E6%97%A0%E6%B3%95%E4%BD%BF%E7%94%A8%E5%85%B6%E4%BB%96%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%93%BE%E6%8E%A5%E7%9A%84%E9%97%AE%E9%A2%98.html</url>
     <content><![CDATA[<p>以下是官网原话</p>
 <ul>
 <li>Absolute URLs: <a href="http://www.thymeleaf.org" target="_blank" rel="noopener">http://www.thymeleaf.org</a></li>
@@ -4601,7 +4813,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>基于shiro的单点退出功能</title>
-    <url>/%E5%9F%BA%E4%BA%8Eshiro%E7%9A%84%E5%8D%95%E7%82%B9%E9%80%80%E5%87%BA%E5%8A%9F%E8%83%BD.html</url>
+    <url>/java/%E5%9F%BA%E4%BA%8Eshiro%E7%9A%84%E5%8D%95%E7%82%B9%E9%80%80%E5%87%BA%E5%8A%9F%E8%83%BD.html</url>
     <content><![CDATA[<p><strong>2019.01.24更新：发现其他sso系统的实现思路跟我的不一样，我也不知道这样对不对，但是功能是能实现的。</strong></p>
 <hr>
 <p>由于非单点登录系统在检测用户是否已经单点退出时有点复杂。<br>分两种情况：</p>
@@ -4629,7 +4841,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>solr使用自动建议搜索出现No suggester named default was configured</title>
-    <url>/bug/solr%E4%BD%BF%E7%94%A8%E8%87%AA%E5%8A%A8%E5%BB%BA%E8%AE%AE%E6%90%9C%E7%B4%A2%E5%87%BA%E7%8E%B0No-suggester-named-default-was-configured.html</url>
+    <url>/java/solr%E4%BD%BF%E7%94%A8%E8%87%AA%E5%8A%A8%E5%BB%BA%E8%AE%AE%E6%90%9C%E7%B4%A2%E5%87%BA%E7%8E%B0No-suggester-named-default-was-configured.html</url>
     <content><![CDATA[<p>solr的默认配置文件中，有一个路径为/suggest的requestHandler，它里面没有配置suggest.dictionary，这个意思就是建议的字典。而默认值可能就是default，所以出现这个错误，只需要配置一下字典就行了。我碰到的时候我也想不明白，用全文搜索都没搜到default。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/b093167a98b9425ca7318393fb6ed37a.PNG" alt="solr配置" title="solr配置"><br><a id="more"></a></p>
 ]]></content>
       <categories>
@@ -4637,13 +4849,13 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
         <category>other-framework</category>
       </categories>
       <tags>
-        <tag>印象笔记上的博文</tag>
         <tag>error</tag>
+        <tag>印象笔记上的博文</tag>
       </tags>
   </entry>
   <entry>
     <title>Solr中文分词以及拼写纠错</title>
-    <url>/Solr%E4%B8%AD%E6%96%87%E5%88%86%E8%AF%8D%E4%BB%A5%E5%8F%8A%E6%8B%BC%E5%86%99%E7%BA%A0%E9%94%99.html</url>
+    <url>/java/Solr%E4%B8%AD%E6%96%87%E5%88%86%E8%AF%8D%E4%BB%A5%E5%8F%8A%E6%8B%BC%E5%86%99%E7%BA%A0%E9%94%99.html</url>
     <content><![CDATA[<p>由于在更改配置文件后，重启tomcat，solr的web页面可以直接看到变化，所以我都懒得使用dataimport了。<br>我之前一直配置中文分词以及拼写纠错失败，我把配置中默认查询字段就改了一个名字，把text改为spell，每一处都替换掉，居然会产生不一样的结果。我搞了一个多小时，发现怎么换都是这样，前后结果完全不同。要么可以分词要么可以拼写纠错，二者没有同时出现过。最后要睡觉的时候，dataimport了一下。发现居然可以了。<br>我猜测可能在建立索引时把text作为键，于是我更改了text的名字，自然是无法查询到任何东西。</p>
 <a id="more"></a>]]></content>
       <categories>
@@ -4656,7 +4868,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>二、将mysql的数据导入到solr中</title>
-    <url>/%E4%BA%8C%E3%80%81%E5%B0%86mysql%E7%9A%84%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5%E5%88%B0solr%E4%B8%AD.html</url>
+    <url>/java/%E4%BA%8C%E3%80%81%E5%B0%86mysql%E7%9A%84%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5%E5%88%B0solr%E4%B8%AD.html</url>
     <content><![CDATA[<h3 id="一、solr部署于tomcat"><a href="#一、solr部署于tomcat" class="headerlink" title="一、solr部署于tomcat"></a>一、solr部署于tomcat</h3><p><a href="https://yan624.github.io/一、solr部署于tomcat">上一篇</a></p>
 <h3 id="二、将mysql的数据导入到solr中"><a href="#二、将mysql的数据导入到solr中" class="headerlink" title="二、将mysql的数据导入到solr中"></a>二、将mysql的数据导入到solr中</h3><p>tomcat同级目录中的solr被称为solr_home<br>tomcat的webapps文件夹中的solr是solr的web工程<br>将从apache上下下来的solr<font color="red">根</font>文件夹中的/contrib和/dist，复制到solr_home的lib文件夹中，如果没有这个文件夹可以自己建一个。如下图:<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/1375f60bca34409d952810bc12beb13c.PNG" alt="solr lib" title="solr lib"><br>这两个文件夹中全是jar包。现在只是复制过来了，solr还不能用它们，所以需要配置一下。<br>solr_home中应该有一个collection1文件夹，这是solr的一个示例，如果不放心可以拷贝一份，改一个名字。注意如果拷贝了一份，需要进入你拷贝的这份文件夹，找到core.properties，将里面的name属性改为你的文件夹名字。<br>我复制了一份，取名为order，如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/a193f1c3fea84613b0b048c0791dd1b2.PNG" alt="solr官方示例" title="solr官方示例"><br>进入order文件夹，里面有一个conf文件夹，再进入，找到solrconfig.xml文件，打开编辑。前几十行很多注释，往下大概80行的样子，有几个lib标签，这些标签就是代表导入之前的jar包。但是我们的路径发生了改变，所以这里需要配置一下。</p>
 <figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line">&lt;lib <span class="attribute">dir</span>=<span class="string">"../lib/contrib/dataimporthandler/lib"</span> <span class="attribute">regex</span>=<span class="string">".*\.jar"</span> /&gt;</span><br><span class="line">&lt;lib <span class="attribute">dir</span>=<span class="string">"../lib/dist/"</span> <span class="attribute">regex</span>=<span class="string">"solr-dataimporthandler-\d.*\.jar"</span> /&gt;</span><br><span class="line">   </span><br><span class="line">&lt;lib <span class="attribute">dir</span>=<span class="string">"../lib/contrib/extraction/lib"</span> <span class="attribute">regex</span>=<span class="string">".*\.jar"</span> /&gt;</span><br><span class="line">&lt;lib <span class="attribute">dir</span>=<span class="string">"../lib/dist/"</span> <span class="attribute">regex</span>=<span class="string">"solr-cell-\d.*\.jar"</span> /&gt;</span><br><span class="line"></span><br><span class="line">&lt;lib <span class="attribute">dir</span>=<span class="string">"../lib/contrib/clustering/lib/"</span> <span class="attribute">regex</span>=<span class="string">".*\.jar"</span> /&gt;</span><br><span class="line">&lt;lib <span class="attribute">dir</span>=<span class="string">"../lib/dist/"</span> <span class="attribute">regex</span>=<span class="string">"solr-clustering-\d.*\.jar"</span> /&gt;</span><br><span class="line"></span><br><span class="line">&lt;lib <span class="attribute">dir</span>=<span class="string">"../lib/contrib/langid/lib/"</span> <span class="attribute">regex</span>=<span class="string">".*\.jar"</span> /&gt;</span><br><span class="line">&lt;lib <span class="attribute">dir</span>=<span class="string">"../lib/dist/"</span> <span class="attribute">regex</span>=<span class="string">"solr-langid-\d.*\.jar"</span> /&gt;</span><br><span class="line"></span><br><span class="line">&lt;lib <span class="attribute">dir</span>=<span class="string">"../lib/contrib/velocity/lib"</span> <span class="attribute">regex</span>=<span class="string">".*\.jar"</span> /&gt;</span><br><span class="line">&lt;lib <span class="attribute">dir</span>=<span class="string">"../lib/dist/"</span> <span class="attribute">regex</span>=<span class="string">"solr-velocity-\d.*\.jar"</span> /&gt;</span><br></pre></td></tr></table></figure>
@@ -4681,7 +4893,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>一、solr部署于tomcat</title>
-    <url>/%E4%B8%80%E3%80%81solr%E9%83%A8%E7%BD%B2%E4%BA%8Etomcat.html</url>
+    <url>/java/%E4%B8%80%E3%80%81solr%E9%83%A8%E7%BD%B2%E4%BA%8Etomcat.html</url>
     <content><![CDATA[<h3 id="一、solr部署于tomcat"><a href="#一、solr部署于tomcat" class="headerlink" title="一、solr部署于tomcat"></a>一、solr部署于tomcat</h3><p>solr版本：solr-4.7.1<br>操作时间：2018-4-11<br>tomcat版本：tomcat9</p>
 <p>由于《solr实战》是用solr4.*，所以我就下了一个版本4的。但是其实已经出到版本7了。<br>下载地址：<a href="http://archive.apache.org/dist/lucene/solr/4.7.1/" target="_blank" rel="noopener">http://archive.apache.org/dist/lucene/solr/4.7.1/</a></p>
 <p>我是先照着《solr实战》中基础部分，在jetty中练习了大概一两个小时再移到tomcat中玩的，如果以前没玩过solr建议先知道哪些文档有哪些作用，再移到tomcat。因为移到tomcat和直接在jetty中玩，文件路径有点不一样，而且配置也有点不一样。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/b0e4d6cd5265431fae04c44c4debf8a1.PNG" alt="solr文件路径" title="solr文件路径"></p>
@@ -4701,14 +4913,14 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
       </categories>
       <tags>
         <tag>印象笔记上的博文</tag>
-        <tag>安装与部署</tag>
         <tag>系列</tag>
+        <tag>安装与部署</tag>
         <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
     <title>访问browse页面solr出现lazy loading error</title>
-    <url>/bug/%E8%AE%BF%E9%97%AEbrowse%E9%A1%B5%E9%9D%A2solr%E5%87%BA%E7%8E%B0lazy-loading-error.html</url>
+    <url>/java/%E8%AE%BF%E9%97%AEbrowse%E9%A1%B5%E9%9D%A2solr%E5%87%BA%E7%8E%B0lazy-loading-error.html</url>
     <content><![CDATA[<p>如图<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/4494aa77feea482388e892e7e6793b8a.PNG" alt="lazy loading error" title="lazy loading error"><br>如果你将下载下来的solr自己部署到tomcat下，然后启动无异常，但是访问browse路径下时，出现该异常。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/c84bd8f2e8b1496284c705b515bbc522.PNG" alt="solr配置" title="solr配置"><br>看选中的那行，参数名wt它的值时velocity，意识是让solr返回以velocity模版引擎构建的页面。而velocity实际上也是一个配置。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/b1c20a04a208423ba9a5cb73aef2caf2.PNG" alt="solr velocity配置" title="solr velocity配置"><br>同一份配置文件，往最下面拉，看见这个配置，原因是没有这个类，<code>class=&quot;solr.VelocityResponseWriter&quot;</code>，这里有问题。所以只需要导入该包，或者直接在访问browse时跟一个参数，wt=xml或者wt=json等等。<br><a id="more"></a></p>
 ]]></content>
       <categories>
@@ -4721,7 +4933,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>thymeleaf遍历列表出现的问题</title>
-    <url>/thymeleaf%E9%81%8D%E5%8E%86%E5%88%97%E8%A1%A8%E5%87%BA%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98.html</url>
+    <url>/java/thymeleaf%E9%81%8D%E5%8E%86%E5%88%97%E8%A1%A8%E5%87%BA%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98.html</url>
     <content><![CDATA[<p>今天做一个功能，找了好久，也看了thymeleaf的官网好久，发现th遍历集合居然不能根据索引获取对象。还要后台自己整理结构，真的麻烦。<br><a id="more"></a></p>
 ]]></content>
       <categories>
@@ -4735,7 +4947,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>swagger的初步运用</title>
-    <url>/swagger%E7%9A%84%E5%88%9D%E6%AD%A5%E8%BF%90%E7%94%A8.html</url>
+    <url>/java/swagger%E7%9A%84%E5%88%9D%E6%AD%A5%E8%BF%90%E7%94%A8.html</url>
     <content><![CDATA[<p>网上的介绍很多，我主要描述网上不常见的：<br><code>@ApiImplicitParam</code><br>这个注解有一个属性：paramType。它的有效值仅有5中，分别为：path，query，form，body，header。<br>但是这几个值，我感觉用起来特别麻烦。</p>
 <h3 id="path（配合-PathVariable）"><a href="#path（配合-PathVariable）" class="headerlink" title="path（配合@PathVariable）"></a>path（配合@PathVariable）</h3><p>这是最简单的，如/user/{userId}，如果使用这种形式，就可以使用path；</p>
 <h3 id="query（配合-RequestParam）"><a href="#query（配合-RequestParam）" class="headerlink" title="query（配合@RequestParam）"></a>query（配合@RequestParam）</h3><p>这个我认为是有bug的，如果在swagger2的配置中这样写：</p>
@@ -4757,7 +4969,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>shiro角色和权限的用法</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/shiro%E8%A7%92%E8%89%B2%E5%92%8C%E6%9D%83%E9%99%90%E7%9A%84%E7%94%A8%E6%B3%95.html</url>
+    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/shiro%E8%A7%92%E8%89%B2%E5%92%8C%E6%9D%83%E9%99%90%E7%9A%84%E7%94%A8%E6%B3%95.html</url>
     <content><![CDATA[<h3 id="shiro通配符的理解"><a href="#shiro通配符的理解" class="headerlink" title="shiro通配符的理解"></a>shiro通配符的理解</h3><p>shiro提供通配符，例如<code>*:*:*</code>的形式<br>意味着：第一部分代表一个域，第二部分代表操作，第三部分代表实例。<br>举个例子，现在有一个权限管理系统，称为<code>:upms</code>，可以写出权限<code>upms:update:coment</code>,这个权限值代表可以在upms这个域中对coment进行update操作。但是也不要思维定死，“域就是一个系统”。<br>再比如说一个权限值<code>upms:update:user</code>,代表可以更新一个用户的信息，这里的域的确是upms，但是并不是所有的用户都用这个域（事实上也不能用）。比如普通的用户也有权限更新自己的信息，那么可以再创建一个权限值比如“user:update:15900000000”,意味着一个用户可以更新15900000000这个账号的信息。</p>
 <h3 id="shiro角色和权限的理解"><a href="#shiro角色和权限的理解" class="headerlink" title="shiro角色和权限的理解"></a>shiro角色和权限的理解</h3><p>之前一直想角色和权限的用法差不多，为什么还要分角色和权限？<br>然后看了<a href="http://shiro.apache.org/permissions.html" target="_blank" rel="noopener">shiro官网的文档</a>貌似懂了一些。<br>官网说shiro一共有三种权限粒度，分为：资源级别，实例级别，属性级别（ <a href="http://shiro.apache.org/java-authorization-guide.html#levels-of-permission-granularity" target="_blank" rel="noopener">这三种粒度的描述页面</a>）<br>角色可以控制对资源的访问，比如对一个页面的访问。如果程序中已经设置了隐式角色，那么直接使用注解的形式可以很快速的控制这个网页的浏览权限。<br>而权限是对角色更细粒度的划分。比如现在有一个角色名为“admin”，他拥有对系统中所有权限的CRUD操作，现在需要临时给另外一个很普通的用户（比如只是一个user）查看权限的操作（R）。如果没有shiro提供的权限控制，<font color="red">那么只能给这个用户一个临时的“admin”角色，但是这样他的权限就太大了，因为“admin”是可以查看权限，但是他同样可以删除权限。</font></p>
 <p>上述是个人理解。</p>
@@ -4783,7 +4995,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>linux安装nginx</title>
-    <url>/linux%E5%AE%89%E8%A3%85nginx.html</url>
+    <url>/linux/linux%E5%AE%89%E8%A3%85nginx.html</url>
     <content><![CDATA[<p>参照<a href="https://www.linuxidc.com/Linux/2016-08/134110.htm" target="_blank" rel="noopener">Linux中Nginx安装与配置详解</a><br>但是出了点小问题，按照步骤往下直到 配置nginx的时候出现了找不到openssl的错误（我的是阿里云的服务器）。<br>然后自己去下了一个openssl的包去安装死活不行。 最后执行<code>yum -y install openssl openssl-devel</code>就可以了。。<br>其次该博文中提示需要在某个文件中加入一句话，并重启防火墙，但是这样做我之前安装的tomcat也访问不了了，所以只要把防火墙关了就可以暂时解决了。</p>
 <p>注：博文中的方法是为了开启防火墙，并且只运行80端口访问。我的服务器的防火墙不是iptables，而是firewall，所以不应该用博文中的方法，应该为firewall添加允许80端口访问<br>详见<a href="http://blog.csdn.net/codepen/article/details/52738906" target="_blank" rel="noopener">centos7 Firewall防火墙开启80端口</a><br><a id="more"></a></p>
 ]]></content>
@@ -4797,7 +5009,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>阿里云部署javaweb项目</title>
-    <url>/%E9%98%BF%E9%87%8C%E4%BA%91%E9%83%A8%E7%BD%B2javaweb%E9%A1%B9%E7%9B%AE.html</url>
+    <url>/linux/%E9%98%BF%E9%87%8C%E4%BA%91%E9%83%A8%E7%BD%B2javaweb%E9%A1%B9%E7%9B%AE.html</url>
     <content><![CDATA[<h3 id="配置java运行环境"><a href="#配置java运行环境" class="headerlink" title="配置java运行环境"></a>配置java运行环境</h3><h4 id="查看服务器系统版本"><a href="#查看服务器系统版本" class="headerlink" title="查看服务器系统版本"></a>查看服务器系统版本</h4><p><code>#getconf LONG_BIT</code></p>
 <blockquote>
 <p>64</p>
@@ -4837,7 +5049,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>关于shiro的session总结</title>
-    <url>/%E5%85%B3%E4%BA%8Eshiro%E7%9A%84session%E6%80%BB%E7%BB%93.html</url>
+    <url>/java/%E5%85%B3%E4%BA%8Eshiro%E7%9A%84session%E6%80%BB%E7%BB%93.html</url>
     <content><![CDATA[<ul>
 <li>关闭浏览器，使用shiro记住我功能时，session失效，即重新打开浏览器需要重新登录。其实并没有失效，而是再次打开浏览器时，shiro又重新创建了一个session，所以导致之前的session与现在的session不一致。所以造成了session失效的假象.</li>
 <li>使用浏览器，在地址栏输入访问的链接但是不按回车时（意思就是只在地址栏输入一个链接不访问网页），系统会产生一个session，但是马上（一秒不到）自动删掉。</li>
@@ -4856,7 +5068,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>在shiro的realm中注入service引发的惨案</title>
-    <url>/%E5%9C%A8shiro%E7%9A%84realm%E4%B8%AD%E6%B3%A8%E5%85%A5service%E5%BC%95%E5%8F%91%E7%9A%84%E6%83%A8%E6%A1%88.html</url>
+    <url>/java/%E5%9C%A8shiro%E7%9A%84realm%E4%B8%AD%E6%B3%A8%E5%85%A5service%E5%BC%95%E5%8F%91%E7%9A%84%E6%83%A8%E6%A1%88.html</url>
     <content><![CDATA[<p><strong><em>2019.01.24更新，由于发现了mybatis-plus插件已经实现了我要实现的功能，我自己写的肯定没别人研发的框架写得好，所以此方法已经废弃。</em></strong></p>
 <hr>
 <p>环境介绍一下：由于service层的代码重复太多，于是我想直接把一些重复的代码抽出来。<br>比如说这个方法，它可以实现根据条件查询，框架是mybatis。而注入的mapper是有spring提供的方法获取到的，问题就出在这里了。<br><figure class="highlight monkey"><table><tr><td class="code"><pre><span class="line">@SuppressWarnings(<span class="string">"unchecked"</span>)</span><br><span class="line">@Override</span><br><span class="line"><span class="keyword">public</span> List&lt;Record&gt; selectByExample(Example example) &#123;</span><br><span class="line">    <span class="class"><span class="keyword">Class</span>&lt;? <span class="keyword">extends</span> <span class="title">Object</span>&gt; <span class="title">mapperClazz</span> = <span class="title">mapper</span>.<span class="title">getClass</span>();</span></span><br><span class="line">    List&lt;Record&gt; res = <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="function"><span class="keyword">Method</span> <span class="title">method</span> =</span> mapperClazz.getDeclaredMethod(<span class="string">"selectByExample"</span>, example.getClass());</span><br><span class="line">        res = (List&lt;Record&gt;) <span class="function"><span class="keyword">method</span>.<span class="title">invoke</span>(</span>mapper, example);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalAccessException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalArgumentException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InvocationTargetException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (NoSuchMethodException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (SecurityException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
@@ -4883,7 +5095,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>vo,dto,do,po的理解</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/vo-dto-do-po%E7%9A%84%E7%90%86%E8%A7%A3.html</url>
+    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/vo-dto-do-po%E7%9A%84%E7%90%86%E8%A7%A3.html</url>
     <content><![CDATA[<ul>
 <li>po:持久化对象，没啥好说的，数据库里一张表对应一个po。</li>
 <li>vo:视图对象，是指某个指定页面的所有数据，注意是<font color="red">所有数据</font>。</li>
@@ -4931,7 +5143,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>再探String</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E5%86%8D%E6%8E%A2String.html</url>
+    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%E5%86%8D%E6%8E%A2String.html</url>
     <content><![CDATA[<p>估计是最终版了。</p>
 <figure class="highlight arduino"><table><tr><td class="code"><pre><span class="line"><span class="keyword">String</span> s1 = <span class="keyword">new</span> <span class="keyword">String</span>(<span class="string">"张三"</span>);</span><br><span class="line"><span class="keyword">String</span> s2 = <span class="keyword">new</span> <span class="keyword">String</span>(<span class="string">"张三"</span>);</span><br><span class="line"><span class="keyword">String</span> s3 = <span class="string">"张三"</span>;</span><br><span class="line"><span class="keyword">String</span> s4 = <span class="string">"张三"</span>;</span><br></pre></td></tr></table></figure>
 <p>我们都知道<code>String s3 = &quot;张三&quot;;</code>这句代码的”张三”字符串位 于常量池中，而s3==s4这种明显就是小儿科，true！<br>我们来解析一下<code>String s3 = &quot;张三&quot;;</code>这句代码。</p>
@@ -4980,7 +5192,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>理解接口和抽象类</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E7%90%86%E8%A7%A3%E6%8E%A5%E5%8F%A3%E5%92%8C%E6%8A%BD%E8%B1%A1%E7%B1%BB.html</url>
+    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%E7%90%86%E8%A7%A3%E6%8E%A5%E5%8F%A3%E5%92%8C%E6%8A%BD%E8%B1%A1%E7%B1%BB.html</url>
     <content><![CDATA[<p>这篇只是自学java基础时的个人理解而已。</p>
 <p>初学abstract和interface时会感到很疑惑，明明这两个没有具体实现的方法，为什么还要继承或者实现他们呢？明明可以自己在自己编写的类中写一个方法，而不去继承或实现。现在看来大概是因为一种规范，也是为了让别人更好的看懂，如果自己写方法，自己去用，当然不需要多此一举。如果编写一个Run的接口，让别人去用，别人一看就知道这个接口是用来让某种东西跑起来。</p>
 <ul>
@@ -5006,7 +5218,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>自动装箱和自动拆箱功能</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E8%87%AA%E5%8A%A8%E8%A3%85%E7%AE%B1%E5%92%8C%E8%87%AA%E5%8A%A8%E6%8B%86%E7%AE%B1%E5%8A%9F%E8%83%BD.html</url>
+    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%E8%87%AA%E5%8A%A8%E8%A3%85%E7%AE%B1%E5%92%8C%E8%87%AA%E5%8A%A8%E6%8B%86%E7%AE%B1%E5%8A%9F%E8%83%BD.html</url>
     <content><![CDATA[<p><code>Integer a = new Integer(1000);</code><br>在jdk5.0之后走了自动装箱功能<br><code>Integer a = 1000;</code>即与上面的等式相同。<br>在编译阶段，编译器帮助我们改进代码，将<code>Integer a = new Integer(1000);</code><br>自动改为<code>Integer a = 1000;</code></p>
 <p><code>int c = new Integer(1500);</code>进行自动拆箱。<br>编译器将上述代码自动改为<code>int c = new Integer(1500).intValue();</code></p>
 <p>但是在–128到127之间的数依然会当做基本数据类型处理。</p>
@@ -5023,7 +5235,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>StringBuilder和StringBuffer的区别</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/StringBuilder%E5%92%8CStringBuffer%E7%9A%84%E5%8C%BA%E5%88%AB.html</url>
+    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/StringBuilder%E5%92%8CStringBuffer%E7%9A%84%E5%8C%BA%E5%88%AB.html</url>
     <content><![CDATA[<p>StringBuilder线程不安全，效率高。<br>DtringBuffer线程安全，效率低。<br>都是可变字符序列。<br><code>StringBuilder s = new StringBuilder()</code>字符数组长度初始化为16<br><code>StringBuilder s = new StringBuilder(32)</code>字符数组长度初始化为32<br>其中的append方法最终返回this，可以实现方法链，<code>s.append(&quot;ab&quot;).append(&quot;cd&quot;)</code></p>
 <figure class="highlight less"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">StringBuilder</span>(String s)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="selector-tag">super</span>(s.length() + <span class="number">16</span>);</span><br><span class="line">	<span class="selector-tag">append</span>(s);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>StringBuilder类的其中一个构造器，建立一个初始化内容的长度加上16的数组<br>如果传入的一个数组比初始化的大，则会进行数组扩容。<br>新容量 = 旧容量 * 2+2<br><a id="more"></a></p>
@@ -5038,7 +5250,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>区分“==”和equals</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E5%8C%BA%E5%88%86%E7%AD%89%E5%8F%B7%E2%80%9C==%E2%80%9D%E5%92%8Cequals.html</url>
+    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%E5%8C%BA%E5%88%86%E7%AD%89%E5%8F%B7%E2%80%9C==%E2%80%9D%E5%92%8Cequals.html</url>
     <content><![CDATA[<p>比如</p>
 <figure class="highlight arduino"><table><tr><td class="code"><pre><span class="line"><span class="keyword">String</span> s1=<span class="keyword">new</span> <span class="keyword">String</span>(<span class="string">"abc"</span>);</span><br><span class="line"><span class="keyword">String</span> s2=<span class="keyword">new</span> <span class="keyword">String</span>(<span class="string">"abc"</span>);</span><br></pre></td></tr></table></figure>
 <p>s1==s2返回的是faluse，因为s1指向的是String类的value数组，而s2指向的是另一个String类的value数组，对象不同。<br>而s1.equals(s2)返回true。因为eauals比较的是内容，即value数组。</p>
@@ -5055,7 +5267,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>new String(abc)与String s=abc的区别</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/new-String-abc-%E4%B8%8EString-s-abc%E7%9A%84%E5%8C%BA%E5%88%AB.html</url>
+    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/new-String-abc-%E4%B8%8EString-s-abc%E7%9A%84%E5%8C%BA%E5%88%AB.html</url>
     <content><![CDATA[<p>String类是不可变字符序列。<br>比如<code>String s=&quot;abc&quot;;</code><br>原理是将字符串”abc”存入value数组，而value数组是final，所以value数组是不能改变的，但是String产生的s对象，s这个指针是可变的。<br>局部变量s在栈中产生，指向在堆(方法区的常量池)中的”abc”,然后如果想在字符串后面添加字符，则会诞生一个新的字符串(比如”abcd”)，然后将s指针指向”abcd”。<br>而<code>String s=new String(&quot;abc&quot;);</code><br>同理s产生在栈中，字符串”abc”产生在堆(方法区的常量池)中，但是s不直接指向”abc”。<br>new String在堆中产生一个对象，由常量池中的”abc”对它进行初始化，而s对象指向的是new String这个对象。<br>s指向String，String指向”abc”。</p>
 <p>总结:new String()比String多创建了一个对象，浪费内存。<br>用<code>String s=new String()</code>创建了在栈中的s对象以及String类对象。<br>用String s仅仅创建了s对象<br><a id="more"></a></p>
 ]]></content>
