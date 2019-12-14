@@ -32,11 +32,181 @@
       </tags>
   </entry>
   <entry>
+    <title>论文笔记：Neural Machine Translation of Rare Words with Subword Units</title>
+    <url>/%E8%AE%BA%E6%96%87/53.%20Neural%20Machine%20Translation%20of%20Rare%20Words%20with%20Subword%20Units.html</url>
+    <content><![CDATA[<h1 id=""><a href="#" class="headerlink" title=" "></a> </h1><p>&emsp;&emsp;</p>
+<a id="more"></a>]]></content>
+      <categories>
+        <category>assorted</category>
+        <category>paper</category>
+      </categories>
+      <tags>
+        <tag>论文笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>论文笔记：A Sketch-Based System for Semantic Parsing</title>
+    <url>/%E8%AE%BA%E6%96%87/52.%20A%20Sketch-Based%20System%20for%20Semantic%20Parsing.html</url>
+    <content><![CDATA[<div class="note info">
+            <p>&emsp;&emsp;<a href="https://arxiv.xilesou.top/pdf/1909.00574.pdf" target="_blank" rel="noopener">论文地址</a>，论文作者 Zechang Li 等，发表于 2019 年 9 月。</p>
+          </div>
+<h1 id="论文介绍"><a href="#论文介绍" class="headerlink" title="论文介绍"></a>论文介绍</h1><p>&emsp;&emsp;</p>
+<a id="more"></a>]]></content>
+      <categories>
+        <category>assorted</category>
+        <category>paper</category>
+      </categories>
+      <tags>
+        <tag>论文笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>论文笔记：A Transformer-based Semantic Parser for NLPCC-2019 Shared Task 2</title>
+    <url>/%E8%AE%BA%E6%96%87/51.%20A%20Transformer-based%20Semantic%20Parser%20for%20NLPCC-2019%20Shared%20Task%202.html</url>
+    <content><![CDATA[<div class="note info">
+            <p>&emsp;&emsp;<a href="http://tcci.ccf.org.cn/conference/2019/papers/EV15.pdf" target="_blank" rel="noopener">论文地址</a>，论文作者 D Ge 等，发表于 2019 年。</p>
+          </div>
+<h1 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h1><p>&emsp;&emsp;使用 BPE、Sharing Vocab、Synthetic Training Instance 极大地提高了准确率。</p>
+<h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>&emsp;&emsp;seq2seq 方法将语义解析形式化为一个翻译任务，即将一个句子转换为其对应的 lf（logical form）。然而，在缺少大规模标注过的数据集的情况下，即使在一流的 seq2seq 模型（如 Transformer）中也会遇到数据稀疏的问题。为了解决这个问题，本文探索了<strong>三种广泛应用于<u>神经机器翻译</u>的技术</strong>，以更好地适应 seq2seq 模型的语义分析任务。</p>
+<ol>
+<li>byte pair encoding (<strong>BPE</strong>): 将单词分割成子词（subword），将稀有单词转换成高频的子词；</li>
+<li>我们在 source 和 target 共享词表（<strong>Sharing Vocab</strong>）；</li>
+<li>我们定义启发式规则生成合成的实例，以提高训练集的覆盖率（<strong>Synthetic Training Instance</strong>）。</li>
+</ol>
+<h1 id="建立基准模型"><a href="#建立基准模型" class="headerlink" title="建立基准模型"></a>建立基准模型</h1><p>&emsp;&emsp;使用 Transformer 建立基准模型。</p>
+<h2 id="预处理数据"><a href="#预处理数据" class="headerlink" title="预处理数据"></a>预处理数据</h2><p>&emsp;&emsp;在 MSParS 数据集中的每一个实例都是一个包含 4 个元素的元组，包括 question, its logical form, parameters, and question type。在本论文中我们只使用问题和其对应的 lf 来训练我们的解析模型，忽视 parameters and question type，因为它们没有被评估过。实验步骤是：question —fed-into—&gt; encoder, lf —fed-into—&gt; decoder。<br>&emsp;&emsp;<strong>注意在 lf 中，一个实体被表示一个由多个单词组成并以“_”相连的字符串</strong>。在预处理中，我们将实体分割成它对应的单词和“_”。例如，lf: <code>( lambda ?x ( mso:film.film.art director “ i see you ” from avatar ?x ) )</code>，在后处理中，我们只需要将“ _ ”替换为“_”即可。<br>&emsp;&emsp;我们还尝试将实体类型的字符串拆分为多个片段。例如，<code>mso:film.film.art director</code>被分为<code>mso : film . film . art director</code>。然而，我们的初步实验表明，这对性能有轻微的影响。</p>
+<h2 id="seq2seq-model"><a href="#seq2seq-model" class="headerlink" title="seq2seq model"></a>seq2seq model</h2><p>&emsp;&emsp;介绍什么是 Transformer，略。</p>
+<h2 id="生成合成的训练实例"><a href="#生成合成的训练实例" class="headerlink" title="生成合成的训练实例"></a>生成合成的训练实例</h2><p>&emsp;&emsp;监督机器学习算法容易出现数据不平衡问题。在 MSParS 数据集中，我们发现实体类型包含<strong>偏态分布</strong>(Skewed distribution)，例如，实体类型 mso:film.actor.film 包含大多数实体实例，共有 1832 个，而实体类型 mso:barball.batting statistics.slugging_pct 只有一个实体实例。<strong>在这样一种数据集上训练的 seq2seq 模型可能会被数量多的实体类型的训练实例所淹没，而数量小的实体类型的参数则没有很好的学习</strong>。由于泛化能力有限，所得到的模型容易在测试集上获得相对较差的性能。<br>&emsp;&emsp;为了解决这一数据不平衡的问题，我们从以下两个角度生成<strong>合成的训练实例</strong>。</p>
+<ul>
+<li>Entity-based: 给定一个来自原训练集中的一个句子和其对应的 lf，我们选择句子中的一个实体 A，将其替换成一个随机的实体 B，A 与 B 拥有相同的实体类型（<strong>博主注</strong>：原文中是 entity type，但是我认为用 entity type 不恰当，因为在 MSParS 中确实存在着一个 entity type，与前面提到的重名了，我觉得叫 realation 或者 predicate 更合适）。如：<br><strong>Original pair</strong><br>Sentence: movies jim bob duggar has done<br>Logical Form: ( lambda ?x ( mso:film.actor.film jim_bob_duggar ?x ) )<br><strong>Synthetic pair</strong><br>Sentence: movies marisa tomei has done<br>Logical Form: ( lambda ?x ( mso:film.actor.film marisa_tomei ?x ) )</li>
+<li>Labeled-based: 选择一个拥有多个实体类型的实体，将其的实体类型替换为其他一个有效的实体。如下所示，<code>&quot;_i_see_you_&quot;_from_avatar</code> 拥有多个实体类型，我们随机的选择另一个实体类型（不能是 film.film.art_director）进行替换。<br><strong>Original pair</strong><br>Sentence: who is film art directors of “ i see you “ from avatar<br>Logical Form: ( lambda ?x ( mso:film.film.art_director “_i_see_you_“_from_avatar ?x ) )<br><strong>Synthetic pair</strong><br>Sentence: who is film art directors of “ i see you “ from avatar<br>Logical Form: ( lambda ?x ( mso:film.film.editor “_i_see_you_“_from_avatar ?x ) )</li>
+</ul>
+<h1 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h1><p>&emsp;&emsp;本节中，1）我们首先介绍使用的<strong>数据集</strong>。2）然后描述了实验中我们<strong>模型的设置</strong>。3）之后，将我们的系统与其他参与的系统进行了<strong>比较研究</strong>。（博主注：数据集的介绍和模型的设置我直接跳过了）</p>
+<h2 id="实验设置"><a href="#实验设置" class="headerlink" title="实验设置"></a>实验设置</h2><p>&emsp;&emsp;测试集未提供给参赛队伍，组织者根据某一标准将测试集分割，选择一个 hard subset。所以每个团队都有两个结果：full set score and hard subset score。<br>&emsp;&emsp;评估标准为 accuracy(ACC)，即生成的逻辑形式与正确的逻辑形式完全吻合。<br>&emsp;&emsp;参数设置略。为了克服数据稀疏的问题，在所有的问题中，我们跟随 <a href="https://www.ijcai.org/proceedings/2019/0691.pdf" target="_blank" rel="noopener">Ge et al</a>，在输入和输出都<strong>共享词表</strong>。为了解决稀有单词的翻译，我们通过 <strong>BPE</strong>（这篇论文暂时找不到） 将单词分割为 subword。我们对最后 20 个模型的参数进行平均，以提高性能。</p>
+<h2 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h2><p>&emsp;&emsp;对语义解析来说，这显示了对解决数据稀疏的问题有两个办法。<strong>BPE</strong> 和 <strong>vocabulary sharing</strong>。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>ACC</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Baseline</td>
+<td><strong>85.93</strong></td>
+</tr>
+<tr>
+<td>-BPE</td>
+<td>54.90</td>
+</tr>
+<tr>
+<td>-Sharing Vocab.</td>
+<td>84.00</td>
+</tr>
+<tr>
+<td>-Both</td>
+<td>52.47</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>&emsp;&emsp;生成合成的训练实例的方法从本质上增加了我们训练集实例的数量。如下表所示，添加生成合成的训练实例的方法后，数量几乎翻了一倍，并且两种方法都取得了相似的性能提升，这表明我们的两种方法在提高训练实例覆盖率方面是有效的。（<strong>博主注</strong>：ACC 几乎与 baseline 相等，训练集翻了 3 倍多，我佛了）然而，这两种方法的覆盖率存在重叠。在一种方法存在的情况下，另一种方法实现有限或无改进。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th># Instances</th>
+<th>ACC</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Original</td>
+<td>63,826</td>
+<td>85.93</td>
+</tr>
+<tr>
+<td>+Entity-based</td>
+<td>137,198</td>
+<td>86.78</td>
+</tr>
+<tr>
+<td>+Label-based</td>
+<td>140,485</td>
+<td>86.94</td>
+</tr>
+<tr>
+<td>+Both (our final model)</td>
+<td>213,857</td>
+<td><strong>86.96</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>&emsp;&emsp;我们还将我们的最终系统与表4中其他参与者的系统进行了比较。从结果可以看出，我们的最终系统达到了最高的性能，特别是在 hard subset 上。这说明了我们的基于 seq2seq 的语义分析是可行和有效的。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>ACC on full set</th>
+<th>ACC on hard subset</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Soochow_SP (this paper)</td>
+<td>85.68</td>
+<td>57.43</td>
+</tr>
+<tr>
+<td>NP-Parser</td>
+<td>83.73</td>
+<td>51.93</td>
+</tr>
+<tr>
+<td>WLIS</td>
+<td>82.53</td>
+<td>47.83</td>
+</tr>
+<tr>
+<td>Binbin Deng</td>
+<td>68.82</td>
+<td>35.41</td>
+</tr>
+<tr>
+<td>kg_nlpca_ai_lr</td>
+<td>30.79</td>
+<td>14.89</td>
+</tr>
+<tr>
+<td>TriJ</td>
+<td>26.77</td>
+<td>14.49</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 id="错误分析"><a href="#错误分析" class="headerlink" title="错误分析"></a>错误分析</h1><p>&emsp;&emsp;分析为什么预测出错。<br><a id="more"></a></p>
+]]></content>
+      <categories>
+        <category>assorted</category>
+        <category>paper</category>
+      </categories>
+      <tags>
+        <tag>论文笔记</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>论文笔记：Enriching Word Vectors with Subword Information</title>
     <url>/%E8%AE%BA%E6%96%87/50.%20Enriching%20Word%20Vectors%20with%20Subword%20Information.html</url>
     <content><![CDATA[<div class="note info">
             <p>&emsp;&emsp;<a href="https://arxiv.org/abs/1607.04606.pdf" target="_blank" rel="noopener">论文地址</a>，作者 Piotr Bojanowski et al.，发表于 2016 年。</p>
           </div>
+<h1 id="使用fasttext"><a href="#使用fasttext" class="headerlink" title="使用fasttext"></a>使用fasttext</h1><p>&emsp;&emsp;</p>
 <h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;现在流行的模型对单词表征的学习忽视了词法（morphology of word），它们直接给单词分配了不同的向量。这有一定的局限性，尤其对大规模词表并且含有大量稀有单词的语言。本论文提出基于 <strong>skipgram model</strong> 的方法，每个单词都被表示为一个 <strong>character n-grams</strong>（博主注：注意是 character，不是 word）词袋。每个 character n-grams 有一个向量，而单词由这些表征相加表示（即 e(where) = e(wh) + e(whe) + e(her) + e(ere) + e(re)，e() 表示 character n-grams 对应的向量）。<br>&emsp;&emsp;模型<strong>快</strong>，且可以计算那些不<strong>在训练数据中的单词表征</strong>（OOV 单词）。</p>
 <h1 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h1><p>&emsp;&emsp;介绍了很多关于词嵌入的工作，可以参考。</p>
 <h2 id="Morphological-word-representations"><a href="#Morphological-word-representations" class="headerlink" title="Morphological word representations"></a>Morphological word representations</h2><h2 id="Character-level-features-for-NLP"><a href="#Character-level-features-for-NLP" class="headerlink" title="Character level features for NLP"></a>Character level features for NLP</h2><h1 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h1><p>&emsp;&emsp;首先提出通用模型，阐述我们如何训练词向量。然后提出 subword 模型，最终描述我们如何处理 character n-grams 的词表。</p>
@@ -49,7 +219,7 @@
 <script type="math/tex; mode=display">
 \boldsymbol{
     s(w,c) = \sum_{g \in G_w} z^T_g v_c
-}</script><p>&emsp;&emsp;这个简单的模型允许<strong>跨单词共享</strong>表征，从而允许学习<strong>稀有单词</strong>可靠的表征。（<strong>博主注</strong>：由于每个单词都被拆分开来，这样一个稀有单词就有很大概率可以由细碎的 n-grams 表示）<br>&emsp;&emsp;为了限制我们模型的内存需求，巴拉巴拉，我没看懂什么意思，大致意思是由于 n-grams 诞生的 token 太多了，所以需要使用 hash 的技巧来缩小存储空间。使用一个 token 来查找其对应的索引非常耗时，而使用 hash 算法就快多了。参考了：</p>
+}</script><p>&emsp;&emsp;这个简单的模型允许<strong>跨单词共享</strong>表征，从而允许学习<strong>稀有单词</strong>可靠的表征。（<strong>博主注</strong>：由于每个单词都被拆分开来，这样一个稀有单词就有很大概率可以由细碎的 n-grams 表示）<br>&emsp;&emsp;<strong>为了限制我们模型的内存需求</strong>，巴拉巴拉，我没看懂什么意思，大致意思是由于 n-grams 诞生的 token 太多了，所以需要使用 hash 的技巧来缩小存储空间。使用一个 token 来查找其对应的索引非常耗时，而使用 hash 算法就快多了。参考了：</p>
 <ul>
 <li><a href="https://www.jiqizhixin.com/articles/2018-06-05-3" target="_blank" rel="noopener">fastText，智慧与美貌并重的文本分类及向量化工具</a></li>
 </ul>
@@ -81,30 +251,72 @@
   <entry>
     <title>学习意见</title>
     <url>/%E5%AD%A6%E4%B9%A0%E6%84%8F%E8%A7%81.html</url>
-    <content><![CDATA[<h1 id="推荐的论文"><a href="#推荐的论文" class="headerlink" title="推荐的论文"></a>推荐的论文</h1><p>参考：</p>
+    <content><![CDATA[<h1 id="推荐的论文"><a href="#推荐的论文" class="headerlink" title="推荐的论文"></a>推荐的论文</h1><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>技术</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>tricks</td>
+<td></td>
+</tr>
+<tr>
+<td>模型</td>
+<td></td>
+</tr>
+<tr>
+<td>优化器</td>
+<td></td>
+</tr>
+<tr>
+<td>word embedding</td>
+<td>fasttext</td>
+</tr>
+<tr>
+<td>nlp任务模型</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>参考：</p>
 <ol>
-<li><a href="https://www.zhihu.com/question/31785984" target="_blank" rel="noopener">深度学习入门必看的书和论文？有哪些必备的技能需学习？</a>，直接定位作者：<strong>景略集智</strong>，还有很多没搬运。</li>
+<li><a href="https://www.zhihu.com/question/31785984" target="_blank" rel="noopener">深度学习入门必看的书和论文？有哪些必备的技能需学习？</a>，直接定位作者：<strong>景略集智</strong>。</li>
 </ol>
-<h2 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h2><ol>
-<li><a href="http://pages.cs.wisc.edu/~dyer/cs540/handouts/deep-learning-nature2015.pdf" target="_blank" rel="noopener">Deep learning</a>，Hinton,lecun,bengio 三巨头写的 deep learning 综述。</li>
-<li>《Neural Networks Tricks of the Trade》，调参技巧。</li>
+<h2 id="tricks"><a href="#tricks" class="headerlink" title="tricks"></a>tricks</h2><ol>
 <li><a href="https://arxiv.org/pdf/1207.0580.pdf" target="_blank" rel="noopener">Improving neural networks by preventing co-adaptation of feature detectors</a>，论文作者 Geoffrey Hinton 等人，Hinton 提出了 <strong>Dropout</strong>。</li>
 <li><a href="https://www.cs.toronto.edu/~hinton/absps/JMLRdropout.pdf" target="_blank" rel="noopener">Dropout: a simple way to prevent neural networks from overfitting</a>，论文作者 Srivastava Nitish，对 <strong>dropout</strong> 的理解。</li>
 <li><a href="https://arxiv.org/pdf/1502.03167.pdf" target="_blank" rel="noopener">Batch normalization: Accelerating deep network training by reducing internal covariate shift</a>，论文作者 Ioffe Sergey 和 Christian Szegedy，提出 <strong>Batch normalization</strong>。</li>
 <li><a href="https://arxiv.org/pdf/1607.06450.pdf?utm_source=sciontist.com&amp;utm_medium=refer&amp;utm_campaign=promote" target="_blank" rel="noopener">Layer normalization</a>，作者 Jamie Ryan Kiros 和 Geoffrey E. Hinton 等人，本篇论文是对 Batch Normalization 的进一步研究成果，提出 <strong>Layer normalization</strong>。</li>
+</ol>
+<h2 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h2><ol>
 <li><a href="https://www.semanticscholar.org/paper/Binarized-Neural-Networks%3A-Training-Deep-Neural-and-Courbariaux-Hubara/6eecc808d4c74e7d0d7ef6b8a4112c985ced104d" target="_blank" rel="noopener">Binarized Neural Networks: Training Neural Networks with Weights and Activations Constrained to+ 1 or−1</a>，论文作者 Courbariaux Matthieu 等，提出了一种速度非常快的新模型。</li>
 <li><a href="https://arxiv.org/pdf/1608.05343.pdf" target="_blank" rel="noopener">Decoupled neural interfaces using synthetic gradients</a>，论文作者 Jaderberg Max 等，论文提出了一种非常创新的训练方法。</li>
+</ol>
+<h2 id="优化器"><a href="#优化器" class="headerlink" title="优化器"></a>优化器</h2><ol>
+<li><a href="http://proceedings.mlr.press/v28/sutskever13.pdf" target="_blank" rel="noopener">On the importance of initialization and momentum in deep learning</a>，作者 Sutskever Ilya 等，论文提出了 <strong>Momentum optimizer</strong>。</li>
+<li><a href="https://arxiv.org/pdf/1412.6980.pdf" target="_blank" rel="noopener">Adam: A method for stochastic optimization</a>，作者 Kingma Diederik 等，提出 Adam。</li>
+</ol>
+<h2 id="word-embedding"><a href="#word-embedding" class="headerlink" title="word embedding"></a>word embedding</h2><ol>
+<li><a href="https://arxiv.org/abs/1607.04606" target="_blank" rel="noopener">Enriching Word Vectors with Subword Information</a>，作者 Piotr Bojanowski 和 Edouard Grave，提出了 <strong>fasttext</strong>。<a href="https://github.com/facebookresearch/fastText/" target="_blank" rel="noopener">代码地址</a>，<strong><a href="https://yan624.github.io/论文/50. Enriching Word Vectors with Subword Information.html">论文笔记</a></strong>。应用场景：处理 OOV 词或者低频词。</li>
+</ol>
+<h2 id="nlp任务模型"><a href="#nlp任务模型" class="headerlink" title="nlp任务模型"></a>nlp任务模型</h2><ol>
 <li><a href="https://arxiv.org/pdf/1308.0850.pdf" target="_blank" rel="noopener">Generating sequences with recurrent neural networks</a>，论文作者 Graves Alex，使用 RNN 进行生成序列。</li>
 <li><a href="https://arxiv.org/pdf/1406.1078.pdf" target="_blank" rel="noopener">Learning phrase representations using RNN encoder-decoder for statistical machine translation</a>，论文作者 Cho Kyunghyun，第一篇 <strong>seq2seq</strong> 论文。</li>
 <li><a href="https://arxiv.org/pdf/1409.3215.pdf" target="_blank" rel="noopener">Sequence to sequence learning with neural networks</a>，论文作者 Sutskever Ilya 等人。</li>
 <li><a href="https://arxiv.org/pdf/1410.3916.pdf" target="_blank" rel="noopener">Memory networks</a>，论文作者 Weston Jason 和 Sumit Chopra。</li>
 <li><a href="http://papers.nips.cc/paper/5846-end-to-end-memory-networks.pdf" target="_blank" rel="noopener">End-to-end memory networks</a>，论文作者 Sukhbaatar Sainbayar 和 Jason Weston。</li>
-<li><a href="http://papers.nips.cc/paper/5866-pointer-networks.pdf" target="_blank" rel="noopener">Pointer networks</a>，作者 Vinyals Oriol 和 Meire Fortunato 等。</li>
 <li><a href="http://web.eecs.utk.edu/~ielhanan/courses/ECE-692/Bobby_paper1.pdf" target="_blank" rel="noopener">Long short-term memory</a>，LSTM。</li>
+<li><a href="http://papers.nips.cc/paper/5866-pointer-networks.pdf" target="_blank" rel="noopener">Pointer networks</a>，作者 Vinyals Oriol 和 Meire Fortunato 等。</li>
+<li><a href="https://arxiv.xilesou.top/pdf/1409.0473.pdf" target="_blank" rel="noopener"></a></li>
 </ol>
-<h2 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h2><ol>
-<li><a href="http://proceedings.mlr.press/v28/sutskever13.pdf" target="_blank" rel="noopener">On the importance of initialization and momentum in deep learning</a>，作者 Sutskever Ilya 等，论文提出了 <strong>Momentum optimizer</strong>。</li>
-<li><a href="https://arxiv.org/pdf/1412.6980.pdf" target="_blank" rel="noopener">Adam: A method for stochastic optimization</a>，作者 Kingma Diederik 等，提出 Adam。</li>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><ol>
+<li><a href="http://pages.cs.wisc.edu/~dyer/cs540/handouts/deep-learning-nature2015.pdf" target="_blank" rel="noopener">Deep learning</a>，Hinton,lecun,bengio 三巨头写的 deep learning 综述。</li>
+<li>《Neural Networks Tricks of the Trade》，调参技巧。</li>
 </ol>
 <a id="more"></a>]]></content>
   </entry>
@@ -399,7 +611,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
     <content><![CDATA[<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><div class="note info">
             <p>&emsp;&emsp;<a href="https://arxiv.gg363.site/pdf/1702.01569.pdf" target="_blank" rel="noopener">论文地址</a>，发表于 2017 年。</p>
           </div>
-<p>&emsp;&emsp;思想：将不同领域的数据集合并，以提高训练集大小。<br>&emsp;&emsp;语义分析被认为是将语言语句翻译为可执行的逻辑形式的技术。要做到普遍使用语义分析的一个基本阻碍是<strong>在新领域标注逻辑形式的代价太大</strong>。为了解决这一问题，先前工作的策略有从 denotations、paraphrases、m declarative sentences 训练。<br>&emsp;&emsp;本论文提出一个正交解：将来自不同域中的多个数据集的样本合并到一起，每个数据集对应一个单独的知识库（KB），并在所有示例上训练模型。这次方法由于观察到知识库在实体和属性上有所不同，但语言组合的结构在领域之间重复，所以由此启发而来。例如，语言中的“最大”对应于“argmax”，动词后跟一个名词通常表示连接操作。与仅在单个领域上训练的模型相比，跨域共享信息的模型可以提高泛化能力。<br>&emsp;&emsp;最近 <a href="https://arxiv.gg363.site/pdf/1606.03622.pdf" target="_blank" rel="noopener">Jia and Liang, 2016: Data recombination for neural semantic parsing</a> 以及 <a href="https://arxiv.gg363.site/pdf/1601.01280.pdf" target="_blank" rel="noopener">Dong and Lapata, 2016: Language to logical form with neural attention</a> 提出了用于语义分析的 seq2seq 模型。将语言和逻辑形式简单地表示为向量形式，这些神经网络模型大致上能促进信息共享。我们以他们的工作为基础，研究了在语言编码和逻辑形式解码过程中跨领域共享表示的模型（即研究语言和逻辑形式在不同领域如何表示，如医学和旅游业）。我们最终发现，<strong>通过向解码器提供领域的表示，我们可以在多个领域上训练单个领域，并且与在每个领域上分别训练的模型相比，大大提高了准确性</strong>。在 Overnight 数据集上提高了性能，并减少了网络参数。</p>
+<p>&emsp;&emsp;思想：将不同领域的数据集合并，以提高训练集大小。<br>&emsp;&emsp;语义分析被认为是将语言语句翻译为可执行的逻辑形式的技术。要做到普遍使用语义分析的一个基本阻碍是<strong>在新领域标注逻辑形式的代价太大</strong>。为了解决这一问题，先前工作的策略有从 denotations、paraphrases、m declarative sentences 训练。<br>&emsp;&emsp;本论文提出一个正交解：将来自不同域中的多个数据集的样本合并到一起，每个数据集对应一个单独的知识库（KB），并在所有示例上训练模型。这次方法由于观察到知识库在实体和属性上有所不同，但语言组合的结构在领域之间重复，所以由此启发而来。例如，语言中的“最大”对应于“argmax”，动词后跟一个名词通常表示连接操作。与仅在单个领域上训练的模型相比，跨域共享信息的模型可以提高泛化能力。<br>&emsp;&emsp;最近 <a href="https://arxiv.gg363.site/pdf/1606.03622.pdf" target="_blank" rel="noopener">Jia and Liang, 2016: Data recombination for neural semantic parsing</a> 以及 <a href="https://arxiv.gg363.site/pdf/1601.01280.pdf" target="_blank" rel="noopener">Dong and Lapata, 2016: Language to logical form with neural attention</a> 提出了用于语义分析的 seq2seq 模型。将语言和逻辑形式简单地表示为向量形式，这些神经网络模型大致上能促进信息共享。我们以他们的工作为基础，研究了在语言编码和逻辑形式解码过程中跨领域共享表示的模型（即研究语言和逻辑形式在不同领域如何表示，如医学和旅游业）。我们最终发现，<strong>通过向解码器提供领域的表征，我们可以在多个领域上训练单个模型，并且与在每个领域上分别训练的模型相比，大大提高了准确性</strong>。在 Overnight 数据集上提高了性能，并减少了网络参数。</p>
 <h1 id="设置"><a href="#设置" class="headerlink" title="设置"></a>设置</h1><p>&emsp;&emsp;seq2seq + attention.</p>
 <h1 id="多个-KB-上的模型"><a href="#多个-KB-上的模型" class="headerlink" title="多个 KB 上的模型"></a>多个 KB 上的模型</h1><p>&emsp;&emsp;本文，我们强调一项设置：我们访问来自不同领域的训练集 K，每个领域对应不同的 KB。所有领域的输入都是自然语句，标签都是逻辑形式（<strong>我们假定被标注逻辑形式可以被转换为单个形如 lambda-DCS 的形式语言</strong>）。虽然从单词到 KB 常量的映射在每个域都是特定的，但是我们期望语言所表达的意义可以跨域共享。下面开始描述模型架构。</p>
 <h2 id="One-to-one-model"><a href="#One-to-one-model" class="headerlink" title="One-to-one model"></a>One-to-one model</h2><p>&emsp;&emsp;此模型类似于 <strong>Section 2</strong> 所描述的模型（Jia and Liang, 2016），如 Figure 2 所示。它由一个 encoder 和一个 decoder 组成，可以用于生成所有领域的输出。因此，模型所有参数由所有领域共享，并且模型从所有样本中训练。</p>
@@ -448,8 +660,8 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
         <category>nlp</category>
       </categories>
       <tags>
-        <tag>系列</tag>
         <tag>zcy</tag>
+        <tag>系列</tag>
       </tags>
   </entry>
   <entry>
@@ -588,8 +800,8 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
         <category>ml</category>
       </categories>
       <tags>
-        <tag>系列</tag>
         <tag>zcy</tag>
+        <tag>系列</tag>
       </tags>
   </entry>
   <entry>
@@ -628,7 +840,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
 <h2 id="Positional-Encoding"><a href="#Positional-Encoding" class="headerlink" title="Positional Encoding"></a>Positional Encoding</h2><p>&emsp;&emsp;在第一节中讲到，Transformer 天然地不具有句子的<strong>位置</strong>属性，所以我们需要使用一种办法让它拥有句子的位置属性。<br>&emsp;&emsp;为解决这个问题，Transformer 为每个输入的词嵌入增加了一个向量。<br><img src="https://jalammar.github.io/images/t/transformer_positional_encoding_vectors.png" alt="To give the model a sense of the order of the words, we add positional encoding vectors -- the values of which follow a specific pattern."></p>
 <p>&emsp;&emsp;如果假定词嵌入维度为4，那真实的位置编码如下：<br><img src="https://jalammar.github.io/images/t/transformer_positional_encoding_example.png" alt="A real example of positional encoding with a toy embedding size of 4"></p>
 <p>&emsp;&emsp;位置编码的生成方法在原论文的 section 3.5 中有描述。你可以在 <a href="https://github.com/tensorflow/tensor2tensor/blob/23bd23b9830059fbc349381b70d9429b5c40a139/tensor2tensor/layers/common_attention.py" target="_blank" rel="noopener">get_timing_signal_1d()</a> 函数中看到用于生成位置编码的代码。这并不是生成位置编码的唯一方式。然而，它的优点在于可以扩展到看不见的序列长度（eg. 如果要翻译的句子的长度远长于训练集中最长的句子）。</p>
-<h2 id="self-Attention"><a href="#self-Attention" class="headerlink" title="self-Attention"></a>self-Attention</h2><p><img src="https://jalammar.github.io/images/t/transformer_self_attention_vectors.png" alt="Transformer计算机制"></p>
+<h2 id="self-Attention"><a href="#self-Attention" class="headerlink" title="self-Attention"></a>self-Attention</h2><p>&emsp;&emsp;在 <a href="https://www.bilibili.com/video/av46561029?p=60" target="_blank" rel="noopener">此视频</a>（08:30） 中，x 首先要乘一个权重变成 a。但是<strong>实际上是一样的</strong>，视频中的 x 指的是 one hot，而 a 指的是 embedding。然后将 x 分别乘上三个不同的 transformation 来得到<strong>不同</strong>的 q, k, v。<br><img src="https://jalammar.github.io/images/t/transformer_self_attention_vectors.png" alt="Transformer计算机制"></p>
 <blockquote>
 <p>注意，这些新创建的向量的维度小于词嵌入向量(embedding vector)。它们（新创建的向量）的维度是 <strong>64</strong>，而词嵌入和编码器的输入输出向量的维度是 <strong>512</strong>。它们不必更小，这是一种架构选择，可以使多头注意力(multiheaded attention)计算不变。 </p>
 </blockquote>
@@ -704,8 +916,8 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
         <category>nlp</category>
       </categories>
       <tags>
-        <tag>系列</tag>
         <tag>zcy</tag>
+        <tag>系列</tag>
       </tags>
   </entry>
   <entry>
@@ -1386,8 +1598,8 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
         <category>ml</category>
       </categories>
       <tags>
-        <tag>学习笔记</tag>
         <tag>机器学习算法</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -1406,8 +1618,8 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
         <category>nlp</category>
       </categories>
       <tags>
-        <tag>系列</tag>
         <tag>zcy</tag>
+        <tag>系列</tag>
       </tags>
   </entry>
   <entry>
@@ -1960,8 +2172,8 @@ c1(no)->e2(left)->st</textarea><textarea id="flowchart-0-options" style="display
         <category>ml</category>
       </categories>
       <tags>
-        <tag>学习笔记</tag>
         <tag>机器学习算法</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -2140,11 +2352,12 @@ c1(no)->e2(left)->st</textarea><textarea id="flowchart-0-options" style="display
   <entry>
     <title>深度学习算法（三）：RNN 各种机制</title>
     <url>/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9ARNN%20%E5%90%84%E7%A7%8D%E6%9C%BA%E5%88%B6.html</url>
-    <content><![CDATA[<h1 id="GRU"><a href="#GRU" class="headerlink" title="GRU"></a>GRU</h1><h1 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h1><p>&emsp;&emsp;该<a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">博客</a>中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。<br>&emsp;&emsp;下图是吴恩达深度学习第五周作业中的图片，是一个 LSTM 单元。与李宏毅老师做的图有略微不同，并且在下图中将 input gate 称为了 update gate。</p>
+    <content><![CDATA[<h1 id="GRU"><a href="#GRU" class="headerlink" title="GRU"></a>GRU</h1><h1 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h1><p>&emsp;&emsp;该<a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">博客</a>中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。<br>&emsp;&emsp;下图是吴恩达深度学习第五周作业中的图片，是一个 LSTM 单元。<strong>与李宏毅老师做的图有略微不同，并且在下图中将 input gate 称为了 update gate，并且在李宏毅老师所提供的图片中，g(z) 是由 sigmoid 函数计算出来的，而这里是由 tanh 计算出来的，即下图 update gate 旁边的函数</strong>。另外在李宏毅老师提供的图片中，为了简便，并没有使用上个时间步的激活值。</p>
 <ol>
 <li>首先是<strong>输入的问题</strong>。一般来说一个 LSTM 的输入是前一<strong>个</strong> LSTM 的输出值 <script type="math/tex">a</script> 以及输入值 <script type="math/tex">x</script>（对于第 2 层的 LSTM 的 输入值就是前一<strong>层</strong>的输出值）。但是众所周知，<strong>LSTM 每个门的输入肯定只有一个向量，<script type="math/tex">a</script> 和 <script type="math/tex">x</script> 是两个向量，那么如何处理呢？</strong> <strong>1)</strong>在下图中使用了 <script type="math/tex">[a^{<t-1>},x^{<t>}]</script> 进行向量拼接。<strong>2)</strong>在我看的代码中直接使用了加法进行相加，代码<a href="https://github.com/Alex-Fabbri/lang2logic-PyTorch/blob/master/seq2seq/atis/lstm/main.py" target="_blank" rel="noopener">在这</a>，但是代码量太大了，随便看看就行了。二者的差别无非是向量的维度。</li>
-<li>第一个 LSTM 的输入值怎么处理？因为它不存在前一个 LSTM。答：<strong>暂且使用随机初始化，具体还要补充</strong>（感觉 0 也可以，婴儿出生的时候不就是一张白纸吗。。。）。</li>
-<li>记忆单元中的数据也可以随机初始化或者直接为 0。</li>
+<li>之前说过 update gate 就是 input gate，它的输出 <script type="math/tex">\Gamma^{<t>}_u</script> 实际上也是一个向量，而 <script type="math/tex">\tilde{c^{<t>}}</script> 就是输入向量。<script type="math/tex">\Gamma^{<t>}_u</script> 的意思就是限制 <script type="math/tex">\tilde{c^{<t>}}</script> 的信息进入 memory，试想 <script type="math/tex">\Gamma^{<t>}_u</script> 的输出值范围为 (0, 1)，这不就是在说 <script type="math/tex">\Gamma^{<t>}_u</script> 将 <script type="math/tex">\tilde{c^{<t>}}</script> 的每个元素都按其比例进行调整？就类似于将 <script type="math/tex">\tilde{c^{<t>}}</script> 中的信息丢失一部分。如果 <script type="math/tex">\tilde{c^{<t>}}</script> 的输出全是 1，就代表 <script type="math/tex">\tilde{c^{<t>}}</script> 中的信息我全都要。如果 <script type="math/tex">\tilde{c^{<t>}}</script> 的输出全是 0，就代表 <script type="math/tex">\tilde{c^{<t>}}</script> 中的信息我全都不要。</li>
+<li>问：由于第一个 LSTM 不存在前一个LSTM，那么它的输入值怎么处理？答：<strong>暂且使用随机初始化，具体还要补充</strong>（感觉 0 也可以，婴儿出生的时候不就是一张白纸吗。。。）。</li>
+<li>记忆单元（下图中的 c，也可以称作 memory(m)）中的数据也可以随机初始化或者直接为 0。</li>
 <li>每一层的 LSTM 都权重共享。意思是每一层都有多个 LSTM，里面的权重值其实是同一份。</li>
 </ol>
 <p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（三）：RNN 各种机制/LSTM cell.jpg" alt="LSTM cell"></p>
@@ -3050,8 +3263,11 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
 <li>Output Gate: 如果Output Gate被关闭，那么输出0.</li>
 </ol>
 <h2 id="多个LSTM工作场景"><a href="#多个LSTM工作场景" class="headerlink" title="多个LSTM工作场景"></a>多个LSTM工作场景</h2><p>里面的<script type="math/tex">x^t</script>就是对应于NN中的一个向量，它分别乘上4个参数矩阵得到4个不同的向量，以此操控LSTM，而LSTM实际上就等于神经元，说白了就是一个类似激活函数的功能。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/LSTM%E5%AE%9E%E9%99%85%E5%B7%A5%E4%BD%9C%E5%9C%BA%E6%99%AF.jpg" alt="LSTM实际工作场景"><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/LSTM%E5%AE%9E%E9%99%85%E5%B7%A5%E4%BD%9C%E5%9C%BA%E6%99%AF2.jpg" alt="LSTM实际工作场景2"><br>多个LSTM连起来工作就是像下面一样，红线和红线旁边的那个黑色曲线链接的值之前没有讲过，但是下图的这样才是LSTM实际的长相，所以之前讲的那么复杂实际上还是LSTM的简化版。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/LSTM%E5%AE%9E%E9%99%85%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.jpg" alt="LSTM实际工作流程"></p>
-<h1 id="RNN反向传播"><a href="#RNN反向传播" class="headerlink" title="RNN反向传播"></a>RNN反向传播</h1><p>&emsp;&emsp;BPTT——backpropagation through time，与 NN 的 backpropagation 类似，李宏毅老师也没讲原理直接跳过了。<br>&emsp;&emsp;然而不幸的是，RNN 的 training 是很困难的。下面蓝色的线是希望的结果，但是实际上是绿色的线，会出现剧烈地抖动，最后在某个点出现NAN。这就是类似梯度消失问题。可以使用一些办法解决，但是现在用得最多的方法是LSTM。<br><div class="note primary">
-            <p>&emsp;&emsp;Q：如何防止出现如下剧烈抖动的 loss 曲线？<br>&emsp;&emsp;A：<a href="https://yan624.github.io/比赛项目总结/flayai竞赛：今日头条新闻分类.html#clip-gradient">clip gradient 解决了 loss 剧烈抖动的问题</a><br>&emsp;&emsp;Q：LSTM 解决了 RNN 的什么难题？<br>&emsp;&emsp;A：<a href="https://yan624.github.io/比赛项目总结/flayai竞赛：今日头条新闻分类.html#LSTM-解决了-RNN-的什么问题">LSTM 解决了 RNN 的什么问题</a></p>
+<h1 id="RNN反向传播"><a href="#RNN反向传播" class="headerlink" title="RNN反向传播"></a>RNN反向传播</h1><div class="note info">
+            <p>&emsp;&emsp;此处的笔记来源于 <a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">26: Recurrent Neural Network (Part II)</a> 从 0 分开始。</p>
+          </div>
+<p>&emsp;&emsp;BPTT——backpropagation through time，与 NN 的 backpropagation 类似，李宏毅老师也没讲原理直接跳过了。<br>&emsp;&emsp;然而不幸的是，RNN 的 training 是很困难的。下面蓝色的线是希望的结果，但是实际上是绿色的线，会出现剧烈地抖动，最后在某个点出现NAN。这就是类似梯度消失问题。可以使用一些办法解决，但是现在用得最多的方法是LSTM。<br>&emsp;&emsp;<strong>视频中花了很长的时间去讲解梯度爆炸和梯度消失的问题，但是我没有将它记录在这，详情可访问下面两个链接。</strong><br><div class="note primary">
+            <p>&emsp;&emsp;Q：如何防止出现如下剧烈抖动的 loss 曲线？<br>&emsp;&emsp;A：<a href="https://yan624.github.io/比赛项目总结/多领域seq2lf#clip-gradient">clip gradient 解决了 loss 剧烈抖动的问题</a><br>&emsp;&emsp;Q：LSTM 解决了 RNN 的什么难题？<br>&emsp;&emsp;A：<a href="https://yan624.github.io/比赛项目总结/多领域seq2lf#LSTM-解决了-RNN-的什么问题">LSTM 解决了 RNN 的什么问题</a></p>
           </div><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/RNN%20training%E7%A2%B0%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98.jpg" alt="RNN trWaining碰到的问题"></p>
 <h1 id="其他解决梯度消失的办法"><a href="#其他解决梯度消失的办法" class="headerlink" title="其他解决梯度消失的办法"></a>其他解决梯度消失的办法</h1><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/%E5%85%B6%E4%BB%96%E8%A7%A3%E5%86%B3%E6%A2%AF%E5%BA%A6%E6%B6%88%E5%A4%B1%E7%9A%84%E5%8A%9E%E6%B3%95.jpg" alt="其他解决梯度消失的办法"></p>
 <h1 id="seq2seq"><a href="#seq2seq" class="headerlink" title="seq2seq"></a>seq2seq</h1><h2 id="Many-to-one"><a href="#Many-to-one" class="headerlink" title="Many to one"></a>Many to one</h2><p>输入一个向量sequence，只输出一个向量。</p>
@@ -3085,7 +3301,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
 <h2 id="反向传播的好处"><a href="#反向传播的好处" class="headerlink" title="反向传播的好处"></a>反向传播的好处</h2><p>如果你的root只有一个，那么这个Computational Graph中的所有偏微分就都可以一次性算出。对应于神经网络，我们就是要这样的效果。</p>
 <h2 id="参数共享（Parameter-sharing）"><a href="#参数共享（Parameter-sharing）" class="headerlink" title="参数共享（Parameter sharing）"></a>参数共享（Parameter sharing）</h2><p>略，看了一眼貌似挺简单。16:20</p>
 <h2 id="Computational-Graph-for-Feedforword-Net"><a href="#Computational-Graph-for-Feedforword-Net" class="headerlink" title="Computational Graph for Feedforword Net"></a>Computational Graph for Feedforword Net</h2><p>李宏毅深度学习p3从21:16到52:48讲解梯度下降算法、前馈神经网络以及反向传播算法的具体数学原理<br>一直没看懂原理，以后再看。</p>
-<h2 id="Computational-Graph-for-Recurrent-Network"><a href="#Computational-Graph-for-Recurrent-Network" class="headerlink" title="Computational Graph for Recurrent Network"></a>Computational Graph for Recurrent Network</h2><h1 id="Deep-Learning-for-Language-Modeling"><a href="#Deep-Learning-for-Language-Modeling" class="headerlink" title="Deep Learning for Language Modeling"></a>Deep Learning for Language Modeling</h1><p>语言模型就是预测一个word sequence出现的几率有多大。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Language%20Modeling.jpg" alt="Language Modeling"></p>
+<h2 id="Computational-Graph-for-Recurrent-Network"><a href="#Computational-Graph-for-Recurrent-Network" class="headerlink" title="Computational Graph for Recurrent Network"></a>Computational Graph for Recurrent Network</h2><h1 id="※-Deep-Learning-for-Language-Modeling"><a href="#※-Deep-Learning-for-Language-Modeling" class="headerlink" title="※ Deep Learning for Language Modeling"></a>※ Deep Learning for Language Modeling</h1><p>语言模型就是预测一个word sequence出现的几率有多大。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Language%20Modeling.jpg" alt="Language Modeling"></p>
 <h2 id="N-gram"><a href="#N-gram" class="headerlink" title="N-gram"></a>N-gram</h2><p>N-gram是自然语言处理中的算法。2-gram读作bi-gram。</p>
 <h3 id="传统做法"><a href="#传统做法" class="headerlink" title="传统做法"></a>传统做法</h3><ul>
 <li>怎么预测一句话出现的几率</li>
@@ -3127,7 +3343,13 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
 <h1 id="Conditional-Generation-by-RNN-amp-Attention"><a href="#Conditional-Generation-by-RNN-amp-Attention" class="headerlink" title="Conditional Generation by RNN &amp; Attention"></a>Conditional Generation by RNN &amp; Attention</h1><p>&emsp;&emsp;注意本文讲的是 RNN <strong>入门</strong>，而下面的部分也只是讲普通的 RNN Generation，甚至连 decoder 部分都没用。下图是生成文字，其实也可以生成图片、音频等，我就不一一截图了，第二张图将这些<strong>想法</strong>及其<strong>论文</strong>都汇总了。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/一个简单的Generation.jpg" alt="一个简单的Generation"></p>
 <p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Generation汇总.jpg" alt="Generation汇总"></p>
 <h2 id="Conditional-Generation"><a href="#Conditional-Generation" class="headerlink" title="Conditional Generation"></a>Conditional Generation</h2><p>&emsp;&emsp;但是在真实的场景中，我们不仅仅是希望只生成随机的句子，我们更偏向于生成一些基于某些条件的句子，比如：当看见一张一个人正在跳舞的图片，我们希望电脑生成“A young girl is dancing”；当给予一个条件“Hello”时，我们希望电脑生成“Hello, nice to see you.”。<br>&emsp;&emsp;一个实际的例子，我们可以将一张图片输入进 CNN，从而产生一个向量，再把该向量输入进 decoder 部分，最后生成句子。如下图所示，其他类型的<strong>条件生成</strong>也类似。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Image Caption Generation.jpg" alt="Image Caption Generation" title="Image Caption Generation"></p>
-<h2 id="Attention"><a href="#Attention" class="headerlink" title="Attention"></a>Attention</h2><p>&emsp;&emsp;将 <script type="math/tex">z_0</script> 与 <script type="math/tex">h_1 h_2 h_3 h_4</script> 分别做一次 match，至于 match 怎么计算可以看下图右边，总而言之，就是可以由你自己设计。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Attention机制.jpg" alt="Attention机制"></p>
+<h2 id="Attention"><a href="#Attention" class="headerlink" title="Attention"></a>Attention</h2><p>&emsp;&emsp;将 <script type="math/tex">z_0</script> 与 <script type="math/tex">h_1 h_2 h_3 h_4</script> 分别做一次 match，至于 match 怎么计算可以看下图右边。<br>&emsp;&emsp;计算步骤可以参考下列公式：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+    h & = [h^1, h^2, h^3, h^4] \\
+    s & = h^T z \\
+    c^0 & = h^t s \\
+\end{align}</script><p>&emsp;&emsp;attention score 的计算公式可以由自己设计，下图使用的是 <script type="math/tex">h^T W z</script>，有兴趣的话，<a href="https://yan624.github.io/学习笔记/CS224n学习笔记.html#attention">这里</a>介绍了三个。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Attention机制.jpg" alt="Attention机制"></p>
 <p>&emsp;&emsp;然后获得 <script type="math/tex">a^1_0 a^2_0 a^3_0 a^4_0</script>，之后将它们输入 softmax 层（有实验发现其实不经过 softmax 层也可以，甚至效果更好），最后将所有 a 分别乘上它们对应的向量并且相加，得到一个向量 <script type="math/tex">c^0</script>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Attention机制计算score.jpg" alt="Attention机制计算score"></p>
 <p>&emsp;&emsp;使用 Attention 机制计算完毕后，将向量 <script type="math/tex">c^0</script> 输入进 decoder 即可，接下来的计算都是以此类推。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Attention机制计算完毕后输入到decoder.jpg" alt="Attention机制计算完毕后输入到decoder"></p>
 <h3 id="Attention应用到Speach-Recognition"><a href="#Attention应用到Speach-Recognition" class="headerlink" title="Attention应用到Speach Recognition"></a>Attention应用到Speach Recognition</h3><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Attention for Speach Recognition.jpg" alt="Attention for Speach Recognition"></p>
@@ -3257,7 +3479,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
 <li>打开layout文件夹，进入_macro文件夹，找到post.swig文件。搜索class=”post-block”，这个标签的位置在下图箭头所指的地方：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/hexo/%E5%BC%B9%E7%AA%97%E6%8F%92%E4%BB%B6%E4%BB%A3%E7%A0%81%E5%86%99%E5%85%A5%E7%9A%84%E4%BD%8D%E7%BD%AE.png" alt="弹窗插件代码写入的位置"><br>如果打开了这个文件，找了post-block标签，可以看到标签内部第一行代码为<code>&lt;link itemprop=&quot;mainEntityOfPage&quot; href=&quot;{ config.url }{ url_for(post.path) }&quot;/&gt;</code>。由于hexo渲染问题我将href属性里的值去掉了一对{}。<br>将下面的代码放在上述代码上面或者下面即可。<figure class="highlight django"><table><tr><td class="code"><pre><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">for</span></span> tag <span class="keyword">in</span> post.tags %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">	<span class="comment">&lt;!--判断该文章是否为学习笔记--&gt;</span></span></span><br><span class="line"><span class="xml">	</span><span class="template-tag">&#123;% <span class="name"><span class="name">if</span></span> tag.name == '学习笔记' and !is_home() %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">  		<span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">type</span>=<span class="string">"text/css"</span> <span class="attr">href</span>=<span class="string">"/css/spop/spop.min.css"</span>&gt;</span></span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span> <span class="attr">src</span>=<span class="string">"/js/spop/spop.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span></span></span><br><span class="line"><span class="xml">			spop(&#123;</span></span><br><span class="line"><span class="xml">				template: '<span class="tag">&lt;<span class="name">h4</span> <span class="attr">class</span>=<span class="string">"spop-title"</span>&gt;</span>注意<span class="tag">&lt;/<span class="name">h4</span>&gt;</span>此文章仅为博主的学习笔记，其中可能含有极大的理论错误。',</span></span><br><span class="line"><span class="xml">				group: 'tips',</span></span><br><span class="line"><span class="xml">				position  : 'bottom-center',</span></span><br><span class="line"><span class="xml">				style: 'success',</span></span><br><span class="line"><span class="xml">				autoclose: 5500,</span></span><br><span class="line"><span class="xml">				onOpen: function () &#123;</span></span><br><span class="line"><span class="xml">					//这里设置灰色背景色</span></span><br><span class="line"><span class="xml">				&#125;,</span></span><br><span class="line"><span class="xml">				onClose: function() &#123;</span></span><br><span class="line"><span class="xml">					//这里可以取消背景色</span></span><br><span class="line"><span class="xml">					spop(&#123;</span></span><br><span class="line"><span class="xml">						template: 'ε = = (づ′▽`)づ',</span></span><br><span class="line"><span class="xml">						group: 'tips',</span></span><br><span class="line"><span class="xml">						position  : 'bottom-center',</span></span><br><span class="line"><span class="xml">						style: 'success',</span></span><br><span class="line"><span class="xml">						autoclose: 1500</span></span><br><span class="line"><span class="xml">					&#125;);</span></span><br><span class="line"><span class="xml">				&#125;</span></span><br><span class="line"><span class="xml">			&#125;);</span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line"><span class="xml">	</span><span class="template-tag">&#123;% <span class="name"><span class="name">endif</span></span> %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">endfor</span></span> %&#125;</span><span class="xml"></span></span><br></pre></td></tr></table></figure>
 </li>
 </ol>
-<p>is_home()是next主题的方法，用于判断当前页面是否在主页。因为主页一次性加载了所有的文章，如果不加这个方法，会在主页弹出无数个弹窗。效果如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/hexo/%E6%8F%90%E7%A4%BA%E5%BC%B9%E7%AA%97%E6%95%88%E6%9E%9C%E5%9B%BE.jpg" alt="提示弹窗效果图"><br><a id="more"></a></p>
+<p>is_home()是next主题的方法，用于判断当前页面是否在主页。因为主页一次性加载了所有的文章，如果不加这个方法，会在主页弹出无数个弹窗。<br>最终效果如下图所示：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/hexo/%E6%8F%90%E7%A4%BA%E5%BC%B9%E7%AA%97%E6%95%88%E6%9E%9C%E5%9B%BE.jpg" alt="提示弹窗效果图"><br><a id="more"></a></p>
 ]]></content>
       <categories>
         <category>assorted</category>
@@ -3713,15 +3935,27 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} & \underbrace{y^{
 <tbody>
 <tr>
 <td>SGD</td>
+<td>问：为什么 SGD 比 batch gradient descent 快？答：因为 SGD 可以使用极小的 epoch 更新多次权重，而 BGD 必须要大 epoch 才可以。详见<a href="https://www.zhihu.com/question/40892922" target="_blank" rel="noopener">此处</a>  </td>
+</tr>
+<tr>
+<td></td>
 <td><strong>优点</strong>：<br> 1）在损失函数是凸函数的情况下能够保证收敛到一个较好的全局最优解；2）数据量过大时，batch 方法可以减少机器压力，从而更快地收敛；3）当训练集有很多冗余时（类似的样本出现多次），batch方法收敛更快。<br> <strong>缺点</strong>：<br>1）<script type="math/tex">\alpha</script> 是一个定值，它的选取直接决定了解的好坏，过小会导致收敛太慢，过大会导致震荡而无法收敛到最优解；2）对于非凸问题，只能收敛到局部最优，并且没有任何摆脱局部最优的能力（一旦梯度为0就不会再有任何变化）；3）更新方向完全依赖当前的 batch</td>
 </tr>
 <tr>
 <td>Momentum</td>
-<td>累积梯度，充当动量，注：虽然 Momentum 和 RMSprop 类似，但是实际上在计算上并不一样， RMSprop 要多一个除以 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script> 的步骤，且没有偏差修正这一步骤<br> <strong>优点</strong>：1）一定程度上缓解了 SGD 收敛不稳定的问题，并且有一定的摆脱局部最优的能力（即如同一个滚轮下坡一样，它拥有惯性，在到达鞍点时不会立即停止，会因为惯性再向前一点距离，从而可能离开此鞍点）。<br> <strong>缺点</strong>：1）多了一个超参数需要调整，它的选取同样会影响到结果。</td>
+<td>累积梯度，充当动量，注：虽然 Momentum 和 RMSprop 类似，但是实际上在计算上并不一样， RMSprop 要多一个除以 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script> 的步骤，且没有偏差修正这一步骤  </td>
+</tr>
+<tr>
+<td></td>
+<td><strong>优点</strong>：1）一定程度上缓解了 SGD 收敛不稳定的问题，并且有一定的摆脱局部最优的能力（即如同一个滚轮下坡一样，它拥有惯性，在到达鞍点时不会立即停止，会因为惯性再向前一点距离，从而可能离开此鞍点）。<br> <strong>缺点</strong>：1）多了一个超参数需要调整，它的选取同样会影响到结果。</td>
 </tr>
 <tr>
 <td>RMSprop</td>
-<td>通过除以 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script> 减小波动幅度从而收敛更快<br> <strong>优点</strong>：1）不需要手动调整学习率，可以自动调整。<br></td>
+<td>通过除以 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script> 减小波动幅度从而收敛更快 </td>
+</tr>
+<tr>
+<td></td>
+<td><strong>优点</strong>：1）不需要手动调整学习率，可以自动调整。</td>
 </tr>
 <tr>
 <td>Adam</td>
@@ -3729,11 +3963,19 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} & \underbrace{y^{
 </tr>
 <tr>
 <td>Adagrad</td>
-<td>RMSProp 的简化版<br> <strong>适用场景</strong>：Adagrad非常适合处理稀疏数据（如 one-hot）<br> <strong>优点</strong>：1）不需要手动调节 <script type="math/tex">\alpha</script>，它会发生自适应的变化。<br> <strong>缺点</strong>：1）学习率单调递减，在迭代后期可能导致学习率变得特别小而导致收敛及其缓慢。</td>
+<td>RMSProp 的简化版<br> <strong>适用场景</strong>：Adagrad非常适合处理稀疏数据（如 one-hot）  </td>
+</tr>
+<tr>
+<td></td>
+<td><strong>优点</strong>：1）不需要手动调节 <script type="math/tex">\alpha</script>，它会发生自适应的变化。<br> <strong>缺点</strong>：1）学习率单调递减，在迭代后期可能导致学习率变得特别小而导致收敛及其缓慢。</td>
 </tr>
 <tr>
 <td>Adadelta</td>
-<td>Adadelta 是 Adagrad 的一种扩展算法，以处理Adagrad学习速率单调递减的问题。RMSprop 可以算作 Adadelta 的一个特例<br> <strong>优点</strong>：1）不需要手动调整学习率，可以自动调整；2）不需要手动设置<strong>初始</strong> <script type="math/tex">\alpha</script>。<br> <strong>缺点</strong>：1）后期容易在小范围内产生震荡</td>
+<td>Adadelta 是 Adagrad 的一种扩展算法，以处理Adagrad学习速率单调递减的问题。RMSprop 可以算作 Adadelta 的一个特例  </td>
+</tr>
+<tr>
+<td></td>
+<td><strong>优点</strong>：1）不需要手动调整学习率，可以自动调整；2）不需要手动设置<strong>初始</strong> <script type="math/tex">\alpha</script>。<br> <strong>缺点</strong>：1）后期容易在小范围内产生震荡</td>
 </tr>
 <tr>
 <td>—————-</td>
@@ -4039,8 +4281,8 @@ w^3_{42}\\
         <category>ml</category>
       </categories>
       <tags>
-        <tag>学习笔记</tag>
         <tag>机器学习算法</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -4052,8 +4294,8 @@ w^3_{42}\\
         <category>ml</category>
       </categories>
       <tags>
-        <tag>学习笔记</tag>
         <tag>机器学习算法</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -4081,8 +4323,8 @@ w^3_{42}\\
         <category>ml</category>
       </categories>
       <tags>
-        <tag>学习笔记</tag>
         <tag>机器学习算法</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -4195,8 +4437,8 @@ w^3_{42}\\
         <category>ml</category>
       </categories>
       <tags>
-        <tag>学习笔记</tag>
         <tag>机器学习算法</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -4208,8 +4450,8 @@ w^3_{42}\\
         <category>ml</category>
       </categories>
       <tags>
-        <tag>学习笔记</tag>
         <tag>机器学习算法</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -4260,8 +4502,8 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
         <category>ml</category>
       </categories>
       <tags>
-        <tag>学习笔记</tag>
         <tag>机器学习算法</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -4633,9 +4875,9 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
       </tags>
   </entry>
   <entry>
-    <title>（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E5%9B%9B%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9Aeclipse%E8%BF%81%E7%A7%BB%E5%88%B0idea%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%88maven-install%E5%91%BD%E4%BB%A4%E5%87%BA%E9%94%99%EF%BC%89.html</url>
-    <content><![CDATA[<p>在使用maven的install命令时出现java.lang.ArrayIndexOutOfBoundsException: 10640<br>试了三个小时，一直以为idea有问题，最后没想到是maven版本的问题，我的是3.5.0，只要改成3.5.2以上就可以了（我改成3.5.4）<br>真的奇怪之前在eclipse上用一直好好地</p>
+    <title>（三）搭建springcloud：整合mybatis-plus</title>
+    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E4%B8%89%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E6%95%B4%E5%90%88mybatis-plus.html</url>
+    <content><![CDATA[<p>由于一直使用mybatis的example，无法忍受着过长的代码，所以转向了mybatis-plus，配置过于简单，就不演示了。<br>参考官网<a href="http://mp.baomidou.com/#/install" target="_blank" rel="noopener">http://mp.baomidou.com/#/install</a><br>如果看不懂，可以看mybatis-plus提供的整合springboot例子<br>网址：<a href="https://gitee.com/baomidou/mybatisplus-spring-boot" target="_blank" rel="noopener">https://gitee.com/baomidou/mybatisplus-spring-boot</a><br>如果还看不懂，尼玛别整合了。（手动狗头）<br>提示：<br>Service可以继承mybatis-plus提供的ServiceImpl类<br>mapper层可以继承BaseMapper，这样如果有些mapper比较简单完全可以省去mapper.xml<br>IService可以继承IService</p>
 <h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><p><a href="https://yan624.github.io/（零）搭建springcloud：创建项目.html">（零）搭建springcloud：创建项目</a><br><a href="https://yan624.github.io/（一）搭建springcloud：springboot整合thymeleaf.html">（一）搭建springcloud：springboot整合thymeleaf</a><br><a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a><br><a href="https://yan624.github.io/（三）搭建springcloud：整合mybatis-plus.html">（三）搭建springcloud：整合mybatis-plus</a><br><a href="https://yan624.github.io/（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）.html">（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</a><br><a href="https://yan624.github.io/（五）搭建springcloud：在idea启动springboot项目.html">（五）搭建springcloud：在idea启动springboot项目</a><br><a href="https://yan624.github.io/（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）.html">（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</a><br><a href="https://yan624.github.io/（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器.html">（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</a><br><a href="https://yan624.github.io/（八）搭建springcloud：修改静态文件，如html，js后立即生效.html">（八）搭建springcloud：修改静态文件，如html，js后立即生效</a><br><a href="https://yan624.github.io/（九）搭建springcloud：在linux上运行springboot项目.html">（九）搭建springcloud：在linux上运行springboot项目</a><br><a href="https://yan624.github.io/（十）搭建springcloud：记录项目运行的日志.html">（十）搭建springcloud：记录项目运行的日志</a></p>
 <a id="more"></a>]]></content>
       <categories>
@@ -4649,9 +4891,9 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
       </tags>
   </entry>
   <entry>
-    <title>（三）搭建springcloud：整合mybatis-plus</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E4%B8%89%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E6%95%B4%E5%90%88mybatis-plus.html</url>
-    <content><![CDATA[<p>由于一直使用mybatis的example，无法忍受着过长的代码，所以转向了mybatis-plus，配置过于简单，就不演示了。<br>参考官网<a href="http://mp.baomidou.com/#/install" target="_blank" rel="noopener">http://mp.baomidou.com/#/install</a><br>如果看不懂，可以看mybatis-plus提供的整合springboot例子<br>网址：<a href="https://gitee.com/baomidou/mybatisplus-spring-boot" target="_blank" rel="noopener">https://gitee.com/baomidou/mybatisplus-spring-boot</a><br>如果还看不懂，尼玛别整合了。（手动狗头）<br>提示：<br>Service可以继承mybatis-plus提供的ServiceImpl类<br>mapper层可以继承BaseMapper，这样如果有些mapper比较简单完全可以省去mapper.xml<br>IService可以继承IService</p>
+    <title>（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</title>
+    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E5%9B%9B%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9Aeclipse%E8%BF%81%E7%A7%BB%E5%88%B0idea%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%88maven-install%E5%91%BD%E4%BB%A4%E5%87%BA%E9%94%99%EF%BC%89.html</url>
+    <content><![CDATA[<p>在使用maven的install命令时出现java.lang.ArrayIndexOutOfBoundsException: 10640<br>试了三个小时，一直以为idea有问题，最后没想到是maven版本的问题，我的是3.5.0，只要改成3.5.2以上就可以了（我改成3.5.4）<br>真的奇怪之前在eclipse上用一直好好地</p>
 <h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><p><a href="https://yan624.github.io/（零）搭建springcloud：创建项目.html">（零）搭建springcloud：创建项目</a><br><a href="https://yan624.github.io/（一）搭建springcloud：springboot整合thymeleaf.html">（一）搭建springcloud：springboot整合thymeleaf</a><br><a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a><br><a href="https://yan624.github.io/（三）搭建springcloud：整合mybatis-plus.html">（三）搭建springcloud：整合mybatis-plus</a><br><a href="https://yan624.github.io/（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）.html">（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</a><br><a href="https://yan624.github.io/（五）搭建springcloud：在idea启动springboot项目.html">（五）搭建springcloud：在idea启动springboot项目</a><br><a href="https://yan624.github.io/（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）.html">（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</a><br><a href="https://yan624.github.io/（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器.html">（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</a><br><a href="https://yan624.github.io/（八）搭建springcloud：修改静态文件，如html，js后立即生效.html">（八）搭建springcloud：修改静态文件，如html，js后立即生效</a><br><a href="https://yan624.github.io/（九）搭建springcloud：在linux上运行springboot项目.html">（九）搭建springcloud：在linux上运行springboot项目</a><br><a href="https://yan624.github.io/（十）搭建springcloud：记录项目运行的日志.html">（十）搭建springcloud：记录项目运行的日志</a></p>
 <a id="more"></a>]]></content>
       <categories>
@@ -4914,8 +5156,8 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
       <tags>
         <tag>印象笔记上的博文</tag>
         <tag>系列</tag>
-        <tag>安装与部署</tag>
         <tag>学习笔记</tag>
+        <tag>安装与部署</tag>
       </tags>
   </entry>
   <entry>

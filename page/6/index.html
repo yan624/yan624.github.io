@@ -388,7 +388,7 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">127</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">130</span></a>
 
   </li>
 
@@ -453,6 +453,956 @@ if(pathname == '/flower.html'){
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/CS224n学习笔记.html">
+
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+				
+				
+	
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/学习笔记/CS224n学习笔记.html" class="post-title-link" itemprop="url">CS224n学习笔记</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-20 10:51:09" itemprop="dateCreated datePublished" datetime="2019-05-20T10:51:09+08:00">2019-05-20</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-11-20 18:55:28" itemprop="dateModified" datetime="2019-11-20T18:55:28+08:00">2019-11-20</time>
+              
+            
+          </span>
+
+          
+
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/nlp/" itemprop="url" rel="index"><span itemprop="name">nlp</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <div class="note info">
+            <p>&emsp;&emsp;本笔记记录的内容来源于 <a href="https://www.bilibili.com/video/av41393758" target="_blank" rel="noopener">b站——CS224n 斯坦福深度自然语言处理课</a>。<br>&emsp;&emsp;之后我补充了18 章之后的内容，其来源为<a href="https://www.bilibili.com/video/av46216519" target="_blank" rel="noopener">b站——(2019)斯坦福CS224n深度学习自然语言处理课程 by Chris Manning</a></p>
+          </div>
+<h1 id="开场白"><a href="#开场白" class="headerlink" title="开场白"></a>开场白</h1><p>&emsp;&emsp;略</p>
+<h1 id="词向量表示：word2vec"><a href="#词向量表示：word2vec" class="headerlink" title="词向量表示：word2vec"></a>词向量表示：word2vec</h1><p>&emsp;&emsp;课程计划如下：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/课程计划.jpg" alt="课程计划"></p>
+<p>&emsp;&emsp;<strong>神经网络词嵌入学习的通用做法</strong>：定义一个模型，根据中心词 <script type="math/tex">w_t</script> 去预测上下文单词。给定 <script type="math/tex">w_t</script> 的条件下 context 的概率。</p>
+<script type="math/tex; mode=display">
+p(context|w_t) = \dots</script><p>&emsp;&emsp;然后用损失函数判断预测的准确性，例如：</p>
+<script type="math/tex; mode=display">
+J = 1 - p(w_{-t}|w_t), \quad  \text{-t 代表 t 周围的单词}</script><p>&emsp;&emsp;如果可以精准地根据 t 预测到这些单词，那么概率就为 1，于是损失就没有了。但通常情况下，做不到这点。<strong>所以我们应该调整词汇表示，从而使损失最小化</strong>。<br>&emsp;&emsp;下图是以前的低维词向量表示方法，2003 年 Bengio 发表的这篇现在属于开创性的论文其实并没有太多人关注，因为那时候深度学习并没有很流行。但是当这篇论文开始流行的时候，就开始大行其道了。于是 2008 年 Collobert 和 Weston 开启了一个新方向，<strong>他们觉得如果我们只想要得到好的单词表示，我们甚至不需要构建一个具有预测功能的概率语言模型（probabilistic language model），我们只需要找到一种学习单词表示的方法即可</strong>。于是 2013 年有了 word2vec 模型。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/以前的低维词向量表示方法.jpg" alt="以前的低维词向量表示方法"></p>
+<p>&emsp;&emsp;word2vec 是一个软件，实际上，它里面包含很多东西。有两个用于生成词汇向量的算法（Hierarchical softamx，negative sampling），还有两套效率中等的训练方法（Skip-grams，CBOW）。<em>这里的软件应该指的不是那种可以运行 exe 文件</em>。本节只讲 skip-grams 算法，并且不会讲那两个高效的词向量生成算法，而是将一个效率极低的算法（因为比较简单且包含了基本概念）。<br>&emsp;&emsp;skip-grams 模型的概念是：在每一个估算步中，都取一个词为中心词汇，然后尝试预测它<strong>一定范围内</strong>的上下文的词汇。这个模型将定义一个概率分布：<strong>给定一个中心词汇预测某个单词在它上下文中出现的概率</strong>。如下图所示：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/skip-grams模型.jpg" alt="skip-grams模型"></p>
+<p>&emsp;&emsp;我们将会选取词汇的向量表示，以让概率分布值最大化。</p>
+<h2 id="优化目标"><a href="#优化目标" class="headerlink" title="优化目标"></a>优化目标</h2><p>&emsp;&emsp;我们需要做的是定义一个半径 m，然后从中心词汇开始到距离为 m 的位置来预测周围的词汇。这句话比较抽象，因为到这为止，你还是构建不出一个模型（优化目标）。下面先给出模型的公式，注意一撇不是求导：</p>
+<script type="math/tex; mode=display">
+J'(\theta) = \prod^T_{t=1} \prod_{-m \leq m, j \neq 0} p(w_{t+j}|w_t;\theta)</script><p>&emsp;&emsp;其中定义一句话有 T 个单词，word t = 1 <script type="math/tex">\dots</script> T。上式中 m 为半径窗口，j 为整个窗口之中的索引。先不看第一个累乘符号，当 t = 1 时，也就是当中心词的索引为 1 时，以 m 为半径，预测该中心词汇的上下文单词出现的概率，并将所有的概率累乘。即公式： <script type="math/tex">\prod_{-m \leq m, j \neq 0} p(w_{t+j}|w_t;\theta)</script>。而第一个累乘符号指的是，将句子中每一个字都当做一次中心词汇，然后将概率再累乘起来。当然当中心词的索引比较靠前时，可能窗口会超出句子的前部，比如 中心词汇所以为 1，而 m = 5，则需要预测 -4，-3… 的位置，这显然不可能，所以需要自己做一下处理。<br>&emsp;&emsp;公式中的 <script type="math/tex">\theta</script> 是模型唯一的参数，让上下文所有词汇出现的概率都尽可能的高，其实 <script type="math/tex">\theta</script> 就是词向量，而模型的输入就是 one-hot 表示。但是，处理概率问题是一件很不爽的事，我们要做最大化操作，实际上就是解决对数分布的问题。这样求积就会变成求和，如下所示：</p>
+<script type="math/tex; mode=display">
+J(\theta) = -\frac{1}{T} \sum^T_{t=1} \sum_{-m \leq m, j \neq 0} log \, p(w_{t+j}|w_t;\theta)</script><p>&emsp;&emsp;这样我们就得到了<strong>负的对数似然</strong>，上述公式就是最终版。但是这里还有一小点就是 m 其实也算是模型的参数，但是确是<strong>超参数</strong>，需要自己手动改的。所以上面说“<em>公式中的 <script type="math/tex">\theta</script> 是模型唯一的参数</em>”也没错。事实上这个模型还有很多其他的超参数，但是现在暂且视为常数。<br>&emsp;&emsp;公式前面有个负号，是因为我们要求最小化问题，而原式只能取最大值，所以取了个负号。</p>
+<h3 id="确定相应的概率分布"><a href="#确定相应的概率分布" class="headerlink" title="确定相应的概率分布"></a>确定相应的概率分布</h3><p>&emsp;&emsp;那么我们具体应该怎么通过中心词汇来预测周围单词出现的概率呢？也就是说公式中的函数 p 应该是什么。其实 p 就是 softmax 函数。具体来说就是用由词向量构成的中心词汇去预测周围词汇的概率分布。下图就是 softmax 函数。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/softmax.jpg" alt="softmax"></p>
+<h2 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h2><p>&emsp;&emsp;最前面讲到需要有一个损失函数来判断预测的准确性。我们使用 cross-entropy loss。</p>
+<h2 id="计算"><a href="#计算" class="headerlink" title="计算"></a>计算</h2><script type="math/tex; mode=display">
+\begin{align}
+     & \frac{\partial}{\partial v_c} log \frac{exp(u^T_o v_c)}{\sum^v_{w=1} exp(u^T_w v_c))} \\
+    = & \frac{\partial}{\partial v_c} (\underbrace{log \, exp(u^T_o v_c)}_{1} - \underbrace{log \, \sum^v_{w=1} exp(u^T_w v_c)}_2) \\
+     & \frac{\partial}{\partial v_c} log \, exp(u^T_o v_c) & \text{1} \\
+    = & \frac{\partial}{\partial v_c} u^T_o v_c = u_o  \\
+     & \frac{\partial}{\partial v_c} log \, \sum^v_{w=1} exp(u^T_w v_c) & \text{2} \\
+    = & \frac{1}{\sum^v_{w=1} exp(u^T_w v_c)} \frac{\partial}{\partial v_c} \sum^v_{x=1} exp(u^T_x v_c) \\
+    = & \frac{1}{\sum^v_{w=1} exp(u^T_w v_c)} \sum^v_{x=1} \frac{\partial}{\partial v_c} exp(u^T_x v_c) \\
+    = & \frac{1}{\sum^v_{w=1} exp(u^T_w v_c)} \sum^v_{x=1} exp(u^T_x v_c) \, u_x \\
+    = & \sum^v_{x=1} \frac{exp(u^T_x v_c)}{\sum^v_{w=1} exp(u^T_w v_c)} \, u_x \\
+    = & \sum^v_{x=1} p(x|c) u_x \\
+     & u_o - \sum^v_{x=1} p(x|c) u_x & \text{合并}\\
+\end{align}</script><h1 id="高级词向量表示"><a href="#高级词向量表示" class="headerlink" title="高级词向量表示"></a>高级词向量表示</h1><p>&emsp;&emsp;略。说了一些 word2vec 算法以及 GloVe 等算法。</p>
+<h1 id="Word-Window分类与神经网络"><a href="#Word-Window分类与神经网络" class="headerlink" title="Word Window分类与神经网络"></a>Word Window分类与神经网络</h1><p>&emsp;&emsp;略。讲 Word Window 分类和简单的神经网络。</p>
+<h1 id="反向传播和项目建议"><a href="#反向传播和项目建议" class="headerlink" title="反向传播和项目建议"></a>反向传播和项目建议</h1><p>&emsp;&emsp;讲反向传播，略。</p>
+<h1 id="※-依存分析"><a href="#※-依存分析" class="headerlink" title="※ 依存分析"></a>※ 依存分析</h1><p>&emsp;&emsp;6分38秒开始进入正题，之前都在说学校里的事。</p>
+<h2 id="语言结构的两种观点"><a href="#语言结构的两种观点" class="headerlink" title="语言结构的两种观点"></a>语言结构的两种观点</h2><p>&emsp;&emsp;Constituency=phrase structure grammar=context-free grammars(CFGs)。上下文无关文法。<br>&emsp;&emsp;Dependency。依存句法分析。<br>&emsp;&emsp;传统上讲，语言学家和自然语言处理器想做的是描述人类语言结构。过去有两个工具可以做到这点，1. 上下文无关文法（计算机科学中）/短语结构文法（语言学家）；2. 依存句法结构。<br>&emsp;&emsp;依存句法分析做的是<strong>通过找到句子中每一个词所依赖的部分来描述句子的结构</strong>。如果一个词修饰另一个词或者是另一些词的论证，那么它就是那个词的依赖。例：“barking dog”，barking 是 dong 的依赖，因为 barking 修饰 dog。“dog by the door”，by the door 也是 dog 的依赖。我们可以<strong>在词之间添加依存关系，通常用箭头表示它们之间的依存关系</strong>，可以参考 <a href="http://hanlp.com/" target="_blank" rel="noopener">这里</a> 加以理解。<br>&emsp;&emsp;对于语义含糊的例子，都可以考虑使用依存分析，例如下图。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/scientistis study whales from space的句法分析.jpg" alt="scientistis study whales from space的句法分析"></p>
+<p>&emsp;&emsp;一个重要的概念：<strong>人类的语言确实有歧义，我们希望可以通过这些依存关系来描述人类语言</strong>。可以发现我们分析出了两组关系。<br>&emsp;&emsp;另一个重要的概念是：<strong>完整的语言学以树库（treebanks）的形式标注数据</strong>。1990年开始，将网络上的句子的句法结构描述为依存关系图，如下图所示，这是来自雅虎问答上的句子，我们将这些称为树库。1990年，我们投入了大量资源来建立这种标注型树库。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/example of treebanks.jpg" alt="example of treebanks"></p>
+<p>&emsp;&emsp;此处没有讲上下文语法，在过去的 10 年间（视频中的时间是 2017 年），nlp 中，<strong>依存句法分析</strong>已经取代了<strong>上下文无关文法</strong>。人们发现<strong>依存分析文法</strong>是一种（依存句法分析应该是依存分析文法的一种实现）仅仅构建语义表征就能轻松得到语言理解的合适框架。</p>
+<h2 id="Dependency-Grammar-and-Dependency-Structure"><a href="#Dependency-Grammar-and-Dependency-Structure" class="headerlink" title="Dependency Grammar and Dependency Structure"></a>Dependency Grammar and Dependency Structure</h2><p>&emsp;&emsp;开始时间 22.19。<br>&emsp;&emsp;上面了解了什么是<strong>依存分析语法</strong>（从此节开始称之为语法，我感觉“文法”翻译得怪怪的），接下来讲解具体应该怎么做。<br>&emsp;&emsp;句法分析的思想是<strong>一个句法模型就是我们有一个词法项之间的关系或者词之间的关系</strong>。也就是说我们在词法项之间画箭头，这些箭头就是依存。通常我们做依存分析时，要做的工作要比这多。通常我们会根据一些语法关系来给这些依存关系分类并命名，比如主语、谓语、辅助修饰词等。</p>
+<h2 id="Dependency-parsing"><a href="#Dependency-parsing" class="headerlink" title="Dependency parsing"></a>Dependency parsing</h2><p>&emsp;&emsp;依存分析有多种方式，视频中采用 Greedy transition-based parsing。视频开始于 52.05。<br>&emsp;&emsp;</p>
+<h1 id="Tensorflow-入门"><a href="#Tensorflow-入门" class="headerlink" title="Tensorflow 入门"></a>Tensorflow 入门</h1><p>&emsp;&emsp;略，不学 tensorflow。</p>
+<h1 id="RNN和语言模式"><a href="#RNN和语言模式" class="headerlink" title="RNN和语言模式"></a>RNN和语言模式</h1><p>&emsp;&emsp;讲了传统语言模型，例如马尔科夫模型，n-gram 模型等。讲了 simple RNN ，bi-RNN and deep bi-RNN。提到了梯度消失，梯度爆炸，grad clipping 等。大部分都会，主要记录一些不会的内容。</p>
+<h2 id="梯度消失"><a href="#梯度消失" class="headerlink" title="梯度消失"></a>梯度消失</h2><p>&emsp;&emsp;19.50 - 49.05</p>
+<h2 id="梯度爆炸"><a href="#梯度爆炸" class="headerlink" title="梯度爆炸"></a>梯度爆炸</h2><p>&emsp;&emsp;49.06 - 62.38</p>
+<h2 id="序列模型用于其他任务"><a href="#序列模型用于其他任务" class="headerlink" title="序列模型用于其他任务"></a>序列模型用于其他任务</h2><p>&emsp;&emsp;66:00</p>
+<ul>
+<li>NER</li>
+<li>Entity level sentiment in context</li>
+<li>opinionated expressions</li>
+</ul>
+<h1 id="机器翻译和高级循环神经网络"><a href="#机器翻译和高级循环神经网络" class="headerlink" title="机器翻译和高级循环神经网络"></a>机器翻译和高级循环神经网络</h1><p>&emsp;&emsp;花了二三十分钟讲机器翻译，然后讲解各类 RNN，包括 GRU, LSTM, <strong>Pointer-Sentinel Model</strong>。</p>
+<h1 id="神经机器翻译和注意力模型"><a href="#神经机器翻译和注意力模型" class="headerlink" title="神经机器翻译和注意力模型"></a>神经机器翻译和注意力模型</h1><p>&emsp;&emsp;先将机器翻译，后讲 attention。</p>
+<h2 id="神经机器翻译"><a href="#神经机器翻译" class="headerlink" title="神经机器翻译"></a>神经机器翻译</h2><h2 id="attention"><a href="#attention" class="headerlink" title="attention"></a>attention</h2><p>&emsp;&emsp;下图是 attention 的工作原理。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/attention机制.jpg" alt="attention机制"></p>
+<ol>
+<li>图中的 a 代表 score，<script type="math/tex">\bar{h}_s</script> 代表 encoder 中每个 time step 生成的隐藏状态向量，<script type="math/tex">c_t</script> 代表 attention 之后的向量；</li>
+<li>首先将开始标志输入到一个 decoder，代表开始进行翻译，输出一个单词后，将该 decoder 的<strong>隐藏状态</strong>（注意是隐藏状态而不是输出值，此节课视频中有明确指出）与 encoder 中的<strong>隐藏状态</strong>进行计算得到一个 score。打分的公式为 <script type="math/tex">score(h_{t - 1}, \bar{h}_s)</script>，score 具体是什么公式可以自己定义，最简单就是向量内积，下面会细说；</li>
+<li>关于 score 函数，它有多种选择，<strong>注意一点</strong>下面的 score 函数只是对<strong>一个</strong>时间步上的隐藏状态打分，<script type="math/tex">\bar{h}_s</script> 也可以是个矩阵，即一步计算所有时间步的 attention score（这做法是最好的）。以下罗列几种做法，被广泛采用（2017 年的说法，现不知）的是第二个表达式，第三个表达式的 <script type="math/tex">v_a</script> 也是一个向量参数。另外对于第三个表达式 <script type="math/tex">v_a tanh(W_a [h_t;\bar{h}_s])</script>，它不是 score function，而是 Bahdanau，不知道为什么把它放到 score function 这。<script type="math/tex; mode=display">
+score(h_t, \bar{h}_s) = 
+\begin{cases}
+h^T_t \bar{h}_s \\
+h^T_t W_a \bar{h}_s \\
+v_a tanh(W_a [h_t;\bar{h}_s])
+\end{cases}</script></li>
+<li>将 score 送入 softmax 得到概率；</li>
+<li>通过公式 <script type="math/tex">c_t = \sum_s a_t(s)\bar{h}_s</script>，将所有的向量乘上注意力分数加起来；</li>
+<li>将此新向量当做下一个 decoder 的输入；</li>
+</ol>
+<p>&emsp;&emsp;下图是加 attention 机制和不加的区别。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/加入attention机制后的性能.jpg" alt="加入attention机制后的性能"></p>
+<h2 id="coverage"><a href="#coverage" class="headerlink" title="coverage"></a>coverage</h2><p>&emsp;&emsp;coverage = more attention，想法源于计算机视觉，请看下图。神经网络读入一张图片，要求输出一段话。但是我们知道一段话不仅要描写图中的鸟，还要描写鸟旁边的事物，所以就引出了多次注意，即神经网络需要注意图中更多的地方。将这一想法引入 NLP 中，其实就是多做几次 attention，<em>注：这一想法貌似就是后来 transformer 的 multi-head attention</em>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/more attention（coverage）.jpg" alt="more attention(coverage)"></p>
+<h2 id="※-search"><a href="#※-search" class="headerlink" title="※ search"></a>※ search</h2><p>&emsp;&emsp;</p>
+<h1 id="※-GRU及NMT的其他议题"><a href="#※-GRU及NMT的其他议题" class="headerlink" title="※ GRU及NMT的其他议题"></a>※ GRU及NMT的其他议题</h1><h2 id="GRUs-LSTMs"><a href="#GRUs-LSTMs" class="headerlink" title="GRUs/LSTMs"></a>GRUs/LSTMs</h2><p>&emsp;&emsp;gated unit 是如何解决 BPTT 的。</p>
+<h2 id="NMT-evaluation"><a href="#NMT-evaluation" class="headerlink" title="NMT evaluation"></a>NMT evaluation</h2><h1 id="语音处理的端对端模型"><a href="#语音处理的端对端模型" class="headerlink" title="语音处理的端对端模型"></a>语音处理的端对端模型</h1><p>&emsp;&emsp;略，不做语音。</p>
+<h1 id="卷积神经网络"><a href="#卷积神经网络" class="headerlink" title="卷积神经网络"></a>卷积神经网络</h1><p>&emsp;&emsp;略，不学 CNN。</p>
+<h1 id="※-树RNN和短语句分析"><a href="#※-树RNN和短语句分析" class="headerlink" title="※ 树RNN和短语句分析"></a>※ 树RNN和短语句分析</h1><p>&emsp;&emsp;人类语言具有嵌套结构（训练结构、树结构），如：[The man from [the company that you spoke with about [the project] yesterday]]。<br>&emsp;&emsp;那么如何使用向量来表示这些句子的语义呢？可以使用 tree RNN，如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/Recursive vs. recurrent neural network.jpg" alt="Recursive vs. recurrent neural network"></p>
+<blockquote>
+<p>&emsp;&emsp;<strong>Tree recursive neural network 的问题在于你需要得到一个树形结构</strong>，这是一个比较大的问题。树形网络并没有火遍全球，在语言方面确实有原因喜欢这类的模型（原因后面会有讲到），但是如果你在 arxiv 里面找，人们在语言神经网络研究中所使用的的方法时，你会发现人们并不多使用树形结构模型。LSTMs 的比例几乎是其十倍之多。<br>&emsp;&emsp;这里面比较大的原因是树形递归神经网络的使用者必须构建一个树形结构。<strong>在你构建完成后，使用反向传播学习模型会是一个问题</strong>。<br>&emsp;&emsp;<a href="https://www.bilibili.com/video/av41393758/?p=14" target="_blank" rel="noopener">第十四讲 - 树 RNN 和短语句法分析</a> 25分开始。</p>
+</blockquote>
+<h2 id="simple-tree-RNN"><a href="#simple-tree-RNN" class="headerlink" title="simple tree RNN"></a>simple tree RNN</h2><h3 id="树RNN的计算"><a href="#树RNN的计算" class="headerlink" title="树RNN的计算"></a>树RNN的计算</h3><p>&emsp;&emsp;那么具体如何使用树形递归神经网络计算呢？比如下图中使用向量 [3 3] 和 [8 5] 计算，输入进神经网络之后，就会输出一个向量 [8 3] 和一个分数 1.3，这个分数代表输出的向量 [8 3] 是否合理（即结构是否合理。如果不太理解什么是结构是否合理，请看下两张图以及博客内容即可理解）。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/recursive neural network for training.jpg" alt="recursive neural network for training"></p>
+<p>&emsp;&emsp;具体的做法如下图所示。应该很好理解，就不详细说明了，其中对于计算 score 的 U，我猜测可能是一个 trainable 的参数，视频中并没有详细的说明。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/recursive neural network details.jpg" alt="recursive neural network details"></p>
+<p>&emsp;&emsp;那么到了真正的实战阶段应该怎么做呢？训练一个贪心的解析器，对于单词两两组合，然后发现最前的两个单词 “The cat” 组成的短语训练之后的分数最高，然后我们将 “The cat” 看作一个成分并且尤其对应的语义 [5 2]。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/parsing a sentence with rnn 1.jpg" alt="parsing a sentence with rnn"></p>
+<p>&emsp;&emsp;接下来继续重复做，请注意现在的 “The cat” 是一个成分（可看作单词），而不是两个单词。又做一遍解析之后发现 “the mat” 的分数最高。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/parsing a sentence with rnn 2.jpg" alt="parsing a sentence with rnn——2"></p>
+<p>&emsp;&emsp;再将 “the mat” 看作一个成分，并拥有对应的语义。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/parsing a sentence with rnn 3.jpg" alt="parsing a sentence with rnn 3"></p>
+<p>&emsp;&emsp;以此类推，我们发现 “on the mat” 的分数最高，然后发现 “sat on the mat” 的分数最高，最后就得到 “The cat sat on the mat” 的分数最高。如下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/parsing a sentence with rnn 4.jpg" alt="parsing a sentence with rnn 4"></p>
+<p>&emsp;&emsp;这是一棵解析树（parse tree），我们会得到这棵解析树的分数，它的分数由每个节点的分数加和得到。<strong>我们要做的就是找到由这堆节点所能组成的分数最高的解析树</strong>。<br>&emsp;&emsp;还需要一个优化目标，similar to max-margin parsing(Taskar et al. 2004), a supervised max-margin objective:</p>
+<script type="math/tex; mode=display">J = \sum_i s(x_i, y_i) - \max_{y \in A(x_i)} (s(x_i, y) - \Delta(y, y_i))</script><p>&emsp;&emsp;最后我们还需要反向传播算法进行计算，这一工作早在 20 世纪 90 年代就由几个德国人做过了。Goller 和 Kuchler 提出了这个算法，并命名为 <strong>back propagation through structure</strong>.</p>
+<h2 id="Syntactically-Untied-RNN"><a href="#Syntactically-Untied-RNN" class="headerlink" title="Syntactically-Untied RNN"></a>Syntactically-Untied RNN</h2><p>&emsp;&emsp;语义解绑树形递归神经网络，这被证明是构建高质量解析器的一个成功的方法。<br>&emsp;&emsp;<a href="https://www.bilibili.com/video/av41393758/?p=14" target="_blank" rel="noopener">第十四讲 - 树 RNN 和短语句法分析</a>，50 分开始。</p>
+<h2 id="Compositionality-Through-Recursive-Matrix-Vector-Spaces"><a href="#Compositionality-Through-Recursive-Matrix-Vector-Spaces" class="headerlink" title="Compositionality Through Recursive Matrix-Vector Spaces"></a>Compositionality Through Recursive Matrix-Vector Spaces</h2><p>&emsp;&emsp;<a href="https://www.bilibili.com/video/av41393758/?p=14" target="_blank" rel="noopener">第十四讲 - 树 RNN 和短语句法分析</a>，65 分开始。</p>
+<h2 id="related-work-for-parsing"><a href="#related-work-for-parsing" class="headerlink" title="related work for parsing"></a>related work for parsing</h2><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/related work for parsing.jpg" alt="related work for parsing"></p>
+<h1 id="※-共指解析"><a href="#※-共指解析" class="headerlink" title="※ 共指解析"></a>※ 共指解析</h1><p>&emsp;&emsp;<script type="math/tex">B^3</script>(B-CUBED) 算法用于评估。其他的一些算法：</p>
+<ul>
+<li>MUC Score (Vilain et al., 1995)</li>
+<li>BEAF (Luo 2005); entity based</li>
+<li>BLANC (Recasens and Hovy 2011) Cluster RAND-index</li>
+</ul>
+<p>&emsp;&emsp;在于语言学中，人们常区分两种关系。其中之一是共指，即两个词指代同一个实体，这和文本结构无关；另一种关系是首语重复，它指的是文本中某一项，一个照应语（或一个指代，anaphor）指代的事物由另一项决定，即先行词。<br>&emsp;&emsp;一些共指消解的做法：</p>
+<ul>
+<li>Mention Pair models</li>
+<li>Mention Ranking models</li>
+<li>Entity-Mention models</li>
+</ul>
+<p>&emsp;&emsp;神经共指模型，人们通过深度学习和共指做的内容。</p>
+<ul>
+<li>Wisemean, Rush, Shieber, and Weston (ACL 2015)<ul>
+<li>Mention-pair model. Only partially neural network system over conventional, categorical coreference features</li>
+</ul>
+</li>
+<li>Wiseman, Rush and Shieber (NAACL 2016)<ul>
+<li>Use RNNs to learn global representations of entity clusters from mentions</li>
+</ul>
+</li>
+<li>Clark and Manning (ACL 2016)<ul>
+<li>An entity-mention model based around clustering using distributed representations of mentions and entity clusters</li>
+</ul>
+</li>
+<li>Clark and Manning (EMNLP 2016)<ul>
+<li>Expolores deep reinforcement learning to improve a metion-pair model</li>
+</ul>
+</li>
+</ul>
+<div class="note info">
+            <p>&emsp;&emsp;此节视频讲了很多共指的理论，我没有记下来。实际内容比这里记的还要多一点。</p>
+          </div>
+<h1 id="用于回答问题的动态神经网络"><a href="#用于回答问题的动态神经网络" class="headerlink" title="用于回答问题的动态神经网络"></a>用于回答问题的动态神经网络</h1><p>&emsp;&emsp;略，这节听不懂。</p>
+<h1 id="※-NLP的问题和可能性架构"><a href="#※-NLP的问题和可能性架构" class="headerlink" title="※ NLP的问题和可能性架构"></a>※ NLP的问题和可能性架构</h1><p>&emsp;&emsp;tree-RNN、pointer model、sub-word and character-based model 等。</p>
+<h1 id="※-应对深度-NLP-的局限性"><a href="#※-应对深度-NLP-的局限性" class="headerlink" title="※ 应对深度 NLP 的局限性"></a>※ 应对深度 NLP 的局限性</h1>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/学习笔记/CS224n学习笔记.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/zcy/深度学习算法（一）：simple NN（前馈神经网络的正反向推导）.html">
+
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+				
+				
+	
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/zcy/深度学习算法（一）：simple NN（前馈神经网络的正反向推导）.html" class="post-title-link" itemprop="url">深度学习算法（一）：simple NN（前馈神经网络的正反向推导）</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-16 19:53:55" itemprop="dateCreated datePublished" datetime="2019-05-16T19:53:55+08:00">2019-05-16</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-07-11 19:54:34" itemprop="dateModified" datetime="2019-07-11T19:54:34+08:00">2019-07-11</time>
+              
+            
+          </span>
+
+          
+
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/dl/" itemprop="url" rel="index"><span itemprop="name">dl</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <div class="note info">
+            <p>本文的公式不存在次方的说法，所以看见上标，不要想成是次方。<br>对于权重的表示问题，请看<a href="https://yan624.github.io/学习笔记/《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题.html">博客</a>，但是由于是以前的学习笔记，不保证完全正确。<br>如果想了解为什么梯度下降要对w和b求导，可以看<a href="https://yan624.github.io/学习笔记/梯度下降算法的推导.html">这篇</a>。<br><strong>建议边看边写，否则思维跟不上。</strong></p>
+          </div>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>参考<a href="https://www.cnblogs.com/charlotte77/p/5629865.html" target="_blank" rel="noopener">文章</a><br>以如下神经网络架构为例。参考<a href="https://www.cnblogs.com/charlotte77/p/5629865.html" target="_blank" rel="noopener">文章</a>中使用了一个2 2 2的神经网络架构，但是现实中神经网络架构不会这么整整齐齐。所以还是使用了略复杂的架构，此外原文中未对bias（偏差）更新。另外原文也没有实现向量化后的计算。虽然在后面的代码写了，但是由于代码太长了，有一种代码我给出来了，你们自己去看的感觉。说实话没多少注释，都没看的欲望(╬￣皿￣)。然后她所使用的符号让我不太习惯，因为看吴恩达以及李宏毅老师使用的符号都是<script type="math/tex">w^l_{ji}\ a^l_i</script>等等，所以自己重新推导一遍，并且使用了数学公式，而不是截图，更好看一点。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版"><br>解释一下最下面的神经元，这个神经元初始化为1，也就是意味着1 * b = b。输入值为1，一个偏差乘1还是偏差本身。</p>
+<h2 id="关于函数选用"><a href="#关于函数选用" class="headerlink" title="关于函数选用"></a>关于函数选用</h2><p>本文所有激活函数选择sigmoid函数，代价函数选择binary_crossentropy。</p>
+<h2 id="一些约定"><a href="#一些约定" class="headerlink" title="一些约定"></a>一些约定</h2><div class="note info">
+            <p>本文所有的输入值，激活值，输出值都是<strong>列向量</strong>。</p>
+          </div>
+<h1 id="初始化数据以及正向传播"><a href="#初始化数据以及正向传播" class="headerlink" title="初始化数据以及正向传播"></a>初始化数据以及正向传播</h1><h2 id="初始化数据"><a href="#初始化数据" class="headerlink" title="初始化数据"></a>初始化数据</h2><p>此处初始化各层的权重值，偏差。由于是演示，所以顺便把输入层也初始化了。<br>设</p>
+<script type="math/tex; mode=display">
+\begin{cases}
+    x_1 = a^0_1 = 0.55, x_2 = a^0_2 = 0.72\\
+    y_1 = 0.60, y_2 = 0.54\\
+\end{cases}\\
+\begin{cases}
+    w^1_{11}=0.4236548, w^1_{12}=0.64589411\quad|\quad w^1_{21}=0.43758721, w^1_{22}=0.891773\quad|\quad w^1_{31}=0.96366276, w^1_{32}=0.38344152\\
+    b^1_1=0.79172504, b^1_2=0.52889492, b^1_3=0.56804456\\
+    w^2_{11}=0.92559664, w^2_{12}=0.07103606, w^2_{13}=0.0871293\quad|\quad w^2_{21}=0.0202184, w^2_{22}=0.83261985, w^2_{23}=0.77815675\\
+    b^2_1=0.87001215, b^2_2=0.97861834\\
+\end{cases}</script><p>不用多看，反正也用不到几次。。。</p>
+<h2 id="正向传播"><a href="#正向传播" class="headerlink" title="正向传播"></a>正向传播</h2><p>对于正向传播，应该是很熟悉了，所以我直接一次写完，不做过多解释。</p>
+<h3 id="输入层到隐藏层"><a href="#输入层到隐藏层" class="headerlink" title="输入层到隐藏层"></a>输入层到隐藏层</h3><script type="math/tex; mode=display">
+z^1_1 = w^1_{11} * a^0_1 + w^1_{12} * a^0_2 + 1 * b^1_1\\
+z^1_2 = w^1_{21} * a^0_1 + w^1_{22} * a^0_2 + 1 * b^1_2\\
+z^1_3 = w^1_{31} * a^0_1 + w^1_{32} * a^0_2 + 1 * b^1_3\\</script><p>带入sigmoid函数中，以下开始省略bias乘的1：</p>
+<script type="math/tex; mode=display">
+a^1_1 = \sigma{(z^1_1)}\\
+a^1_2 = \sigma{(z^1_2)}\\
+a^1_3 = \sigma{(z^1_3)}\\</script><h3 id="隐藏层到输出层"><a href="#隐藏层到输出层" class="headerlink" title="隐藏层到输出层"></a>隐藏层到输出层</h3><script type="math/tex; mode=display">
+z^2_1 = w^2_{11} * a^1_1 + w^2_{12} * a^1_2 + w^2_{13} * a^1_3 + b^2_1\\
+z^2_2 = w^2_{21} * a^1_1 + w^2_{22} * a^1_2 + w^2_{13} * a^1_3 + b^2_2\\</script><p>带入sigmoid函数中：</p>
+<script type="math/tex; mode=display">
+a^2_1 = \sigma{(z^2_1)}\\
+a^2_2 = \sigma{(z^2_2)}\\</script><h3 id="计算代价"><a href="#计算代价" class="headerlink" title="计算代价"></a>计算代价</h3><p>以字母J记为代价函数的名称，最后一个表达式为最简版：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+    J & = -[(y_1 * \log(a^2_1) + (1 - y_1) * \log(1 - a^2_1) + (y_2 * \log(a^2_2) + (1 - y_2) * \log(1 - a^2_2)]\\
+    J & = -\Sigma^2_{i = 1}{[(y_i * \log(a^2_i) + (1 - y_i) * \log(1 - a^2_i)]}\\
+    J & = -\Sigma{[(y * \log(a^2) + (1 - y) * \log(1 - a^2)]}\\
+\end{align}</script><h3 id="向量化"><a href="#向量化" class="headerlink" title="向量化"></a>向量化</h3><p>上述的表达式全部是一个一个列出来的，如果使用向量来表示乘积那就方便很多。可以看到下面只用了五行就写完了上面<a href="https://yan624.github.io/前馈神经网络的正反向推导.html#正向传播">正向传播</a>的所有步骤。<br><div class="note warning">
+            <p>如果无法理解这一步那就是不会线性代数的问题，线性代数不在此文的介绍范围之内。</p>
+          </div></p>
+<script type="math/tex; mode=display">
+\begin{align}
+    z^1 & = w^1 * a^0 + b^1 & \text{输入层到隐藏层}\\
+    a^1 & = \sigma{(z^1)} & \text{带入隐藏层的激活函数}\\
+    z^2 & = w^2 * a^1 + b^2 & \text{隐藏层到输出层}\\
+    a^2 & = \sigma{(z^2)} & \text{带入输出层的激活函数}\\
+    J & = -\Sigma{[(y * \log(a^2) + (1 - y) * \log(1 - a^2)]} & \text{计算代价}\\
+\end{align}</script><h2 id="上述表达式代码实现"><a href="#上述表达式代码实现" class="headerlink" title="上述表达式代码实现"></a>上述表达式代码实现</h2><p>最后几节有神经网络numpy实现的全部代码，可以直接跳过本节看下一节，这里的代码只是给出一个直观的理解，可以自己运行看看。<br>受到keras以及万物皆对象的启发，首先建立一个神经元对象<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SimpleNN</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, units, activation=<span class="string">'sigmoid'</span>)</span>:</span></span><br><span class="line">        self.units = units</span><br><span class="line">        self.activation = activation</span><br><span class="line">        self.hyperparameters = dict()</span><br><span class="line">        <span class="comment"># W, b, A_prev的导数</span></span><br><span class="line">        self.grads = dict()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_init_hyperparameters</span><span class="params">(self, shape)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        初始化超参数，在神经网络中权重值不能初始化为0，偏差可以</span></span><br><span class="line"><span class="string">        :param shape: 神经元的形状，(units, input_shape)</span></span><br><span class="line"><span class="string">        :return: hyperparameters，该神经元的超参数。可以通过hyperparameters['W']、hyperparameters['b']取值</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="comment"># 由于是演示，所以使用了随机初始化</span></span><br><span class="line">        W = np.random.rand(*shape)</span><br><span class="line">        b = np.random.rand(shape[<span class="number">0</span>], <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> W, b</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">build</span><span class="params">(self, input_shape)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        构造神经元，目前只执行初始化超参数的步骤</span></span><br><span class="line"><span class="string">        :param input_shape:</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        W, b = self._init_hyperparameters(shape=(self.units, input_shape))</span><br><span class="line">        self.hyperparameters[<span class="string">'W'</span>] = W</span><br><span class="line">        self.hyperparameters[<span class="string">'b'</span>] = b</span><br></pre></td></tr></table></figure></p>
+<p>为方便起见，将大部分的函数都放入Model中，下面给出所有的代码<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> simple_neural_network.activation_function <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> simple_neural_network.cost_function <span class="keyword">import</span> *</span><br><span class="line">np.random.seed(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SimpleNN</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, units, activation=<span class="string">'sigmoid'</span>)</span>:</span></span><br><span class="line">        self.units = units</span><br><span class="line">        self.activation = activation</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_init_hyperparameters</span><span class="params">(self, shape)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        初始化超参数，在神经网络中权重值不能初始化为0，偏差可以</span></span><br><span class="line"><span class="string">        :param shape: 神经元的形状，(units, input_shape)</span></span><br><span class="line"><span class="string">        :return: hyperparameters，该神经元的超参数。可以通过hyperparameters['W']、hyperparameters['b']取值</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="comment"># 用于是演示，所以使用了随机初始化</span></span><br><span class="line">        hyperparameters = &#123;</span><br><span class="line">                <span class="string">'W'</span>: np.random.rand(*shape),</span><br><span class="line">                <span class="string">'b'</span>: np.random.rand(shape[<span class="number">0</span>], <span class="number">1</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> hyperparameters</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">build</span><span class="params">(self, input_shape)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        构造神经元，目前只执行初始化超参数的步骤</span></span><br><span class="line"><span class="string">        :param input_shape:</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        self.hyperparameters = self._init_hyperparameters(shape=(self.units, input_shape))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Model</span>:</span></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="comment"># 全部的神经元，并且根据神经元数量计算神经网络架构的层数，在计算时需要减1因为输入层不算入神经网络层数</span></span><br><span class="line">        self.neurons = list()</span><br><span class="line">        <span class="comment"># 按顺序缓存A, (Z, W, b)，由于输入层不需要任何缓存，所以放入None填充此位置。方便根据索引取值</span></span><br><span class="line">        self.value_caches = [<span class="keyword">None</span>]</span><br><span class="line">        <span class="comment"># 代价函数</span></span><br><span class="line">        self.cost = <span class="string">''</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(self, neuron)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        在模型中添加神经元</span></span><br><span class="line"><span class="string">        :param neuron:</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        self.neurons.append(neuron)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">linear_forward</span><span class="params">(self, A_prev, W, b)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        正向传播，线性运算：Z = W * A + b</span></span><br><span class="line"><span class="string">        :param A_prev: 前一层的激活值</span></span><br><span class="line"><span class="string">        :param W: 权重值</span></span><br><span class="line"><span class="string">        :param b: 偏差</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        Z: 运算结果</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        Z = np.dot(W, A_prev) + b</span><br><span class="line">        cache = A_prev, (Z, W, b)</span><br><span class="line">        self.value_caches.append(cache)</span><br><span class="line">        <span class="keyword">return</span> Z</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">nonlinear_forward</span><span class="params">(self, A_prev, W, b, activation)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        进入激活函数进行非线性计算</span></span><br><span class="line"><span class="string">        :param A_prev:</span></span><br><span class="line"><span class="string">        :param W:</span></span><br><span class="line"><span class="string">        :param b:</span></span><br><span class="line"><span class="string">        :param activation:</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        Z = self.linear_forward(A_prev, W, b)</span><br><span class="line">        <span class="keyword">if</span> activation == <span class="string">'sigmoid'</span>:</span><br><span class="line">            <span class="keyword">return</span> sigmoid(Z)</span><br><span class="line">        <span class="keyword">elif</span> activation == <span class="string">'relu'</span>:</span><br><span class="line">            <span class="keyword">return</span> relu(Z)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">deep_forward</span><span class="params">(self, X)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        :param X: 输入值</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        A: 最后一层的运算结果，也就是输出层的激活值</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="comment"># 计算神经网络层数，减1是为了去掉输入层，众所周知输入层不需要进行计算</span></span><br><span class="line">        L = len(self.neurons) - <span class="number">1</span></span><br><span class="line">        A = X</span><br><span class="line">        <span class="comment"># 循环整个神经网络，进行正向传播，从1开始，因为索引0是输入层</span></span><br><span class="line">        <span class="keyword">for</span> l <span class="keyword">in</span> range(<span class="number">1</span>, L + <span class="number">1</span>):</span><br><span class="line">            <span class="comment"># 根据索引获取神经元实例</span></span><br><span class="line">            neuron = self.neurons[l]</span><br><span class="line">            A_prev = A</span><br><span class="line">            W = neuron.hyperparameters[<span class="string">'W'</span>]</span><br><span class="line">            b = neuron.hyperparameters[<span class="string">'b'</span>]</span><br><span class="line">            A = self.nonlinear_forward(A_prev, W, b, neuron.activation)</span><br><span class="line">        <span class="keyword">return</span> A</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">compile</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">fit</span><span class="params">(self, X, Y, epochs=<span class="number">1</span>)</span>:</span></span><br><span class="line">        <span class="comment"># 将输入层的神经元添加进去</span></span><br><span class="line">        self.neurons.insert(<span class="number">0</span>, SimpleNN(len(X)))</span><br><span class="line">        <span class="comment"># 初始化神经元的超参数</span></span><br><span class="line">        <span class="keyword">for</span> i, n <span class="keyword">in</span> enumerate(self.neurons[<span class="number">1</span>:]):</span><br><span class="line">            input_shape = self.neurons[i].units</span><br><span class="line">            n.build(input_shape)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 开始反向传播</span></span><br><span class="line">        AL = self.deep_forward(X)</span><br></pre></td></tr></table></figure></p>
+<p>激活函数<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sigmoid</span><span class="params">(z)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span> / (<span class="number">1</span> + np.exp(-z))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">relu</span><span class="params">(z)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> z * (z &gt; <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">relu_backward</span><span class="params">(dA, Z)</span>:</span></span><br><span class="line">    dZ = np.array(dA, copy=<span class="keyword">True</span>)  <span class="comment"># just converting dz to a correct object.</span></span><br><span class="line"></span><br><span class="line">    dZ[Z &lt;= <span class="number">0</span>] = <span class="number">0</span></span><br><span class="line">    <span class="keyword">return</span> dZ</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sigmoid_backward</span><span class="params">(dA, Z)</span>:</span></span><br><span class="line">    s = sigmoid(Z)</span><br><span class="line">    <span class="keyword">return</span> dA * s * (<span class="number">1</span> - s)</span><br></pre></td></tr></table></figure></p>
+<p>测试一下<br><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 输入值的大小</span></span><br><span class="line">input_size = 2</span><br><span class="line"><span class="comment"># 输出值的大小</span></span><br><span class="line">output_size = 2</span><br><span class="line"><span class="comment"># 方便书写，截断小数</span></span><br><span class="line">X0 = np.round(np.random.rand(input_size, 1), 2)</span><br><span class="line">Y0 = np.round(np.random.rand(output_size, 1),2)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 该模型为2 3 2架构</span></span><br><span class="line">model = Model()</span><br><span class="line">model.add(SimpleNN(3))</span><br><span class="line">model.add(SimpleNN(output_size))</span><br><span class="line">model.compile()</span><br><span class="line">model.fit(X0, Y0)</span><br><span class="line">print(model.value_caches[0])</span><br></pre></td></tr></table></figure></p>
+<h1 id="反向传播"><a href="#反向传播" class="headerlink" title="反向传播"></a>反向传播</h1><div class="note primary">
+            <p>说是说反向传播，实际上整个流程就是在<strong><a href="https://baike.baidu.com/item/链式法则/3314017?fr=aladdin" target="_blank" rel="noopener">链式求导</a></strong>。如果把这点想通了，整个神经网络的难点就只在向量化上了。一定要理解为什么整个流程只是在做链式求导的问题，在这里我并不是随便一提。</p>
+          </div>
+<p>为了便于查找，把之前的图再放这。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版"></p>
+<h2 id="首先更新输出层的权重值（W）以及偏差值（b）"><a href="#首先更新输出层的权重值（W）以及偏差值（b）" class="headerlink" title="首先更新输出层的权重值（W）以及偏差值（b）"></a>首先更新输出层的权重值（W）以及偏差值（b）</h2><p>梯度下降公式大家应该都知道：<script type="math/tex">W = W - \alpha * grad</script>。其中的grad实际上就是W的导数，<a href="https://yan624.github.io/学习笔记/梯度下降算法的推导.html">参考</a>。<br>可以对照上图观察，<strong>输出层</strong>的权重值分别为:</p>
+<script type="math/tex; mode=display">
+\begin{pmatrix}
+    w^2_{11}&w^2_{12}&w^2_{13}\\
+    w^2_{21}&w^2_{22}&w^2_{23}\\
+\end{pmatrix}</script><p>所以我们需要分别求：</p>
+<script type="math/tex; mode=display">
+\begin{pmatrix}
+    \frac{\partial J}{\partial w^2_{11}} & \frac{\partial J}{\partial w^2_{12}} & \frac{\partial J}{\partial w^2_{13}}\\
+    \frac{\partial J}{\partial w^2_{21}} & \frac{\partial J}{\partial w^2_{22}} & \frac{\partial J}{\partial w^2_{23}}\\
+\end{pmatrix} \tag{3.1.1}\label{3.1.1}</script><h3 id="求矩阵中第一个w的导数并更新w"><a href="#求矩阵中第一个w的导数并更新w" class="headerlink" title="求矩阵中第一个w的导数并更新w"></a>求矩阵中第一个w的导数并更新w</h3><p>先求<script type="math/tex">\frac{\partial J}{w^2_{11}}</script>，我们知道这个神经网络的代价的表达式是</p>
+<script type="math/tex; mode=display">
+J = -[(y_1 * \log(a^2_1) + (1 - y_1) * \log(1 - a^2_1) + (y_2 * \log(a^2_2) + (1 - y_2) * \log(1 - a^2_2)]</script><p><strong>为了方便对照我将隐藏层到输出层的正向传播的步骤</strong>也写在下面：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+    z^2_1 & = w^2_{11} * a^1_1 + w^2_{12} * a^1_2 + w^2_{13} * a^1_3 + b^2_1\\
+    z^2_2 & = w^2_{21} * a^1_1 + w^2_{22} * a^1_2 + w^2_{13} * a^1_3 + b^2_2\\
+    a^2_1 & = \sigma{(z^2_1)} = \frac{1}{1 - e^{-z^2_1}}\\
+    a^2_2 & = \sigma{(z^2_2)} = \frac{1}{1 - e^{-z^2_2}}\\
+\end{align}</script><p>根据链式求导法则得：</p>
+<script type="math/tex; mode=display">
+\frac{\partial J}{\partial w^2_{11}} = \frac{\partial J}{\partial a^2_1} * \frac{\partial a^2_1}{\partial z^2_1} * \frac{\partial z^2_1}{\partial w^2_{11}}</script><p>我们将其拆解，一步一步地求：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+    \frac{\partial J}{\partial a^2_1} & = -[(\frac{y_1}{a^2_1} + \frac{1 - y_1}{a^2_1 - 1}) + 0] & \text{首先对a求导，此步如果你不会微积分会有疑惑} \tag{3.1.2}\label{3.1.2}\\
+    \frac{\partial a^2_1}{\partial z^2_1} & = (a^2_1) * (1 - a^2_1) & \text{这是对sigmoid函数的求导，百度一下求导过程}\\
+    \frac{\partial J}{\partial z^2_1} & = \frac{\partial J}{\partial a^2_1} * \frac{\partial a^2_1}{\partial z^2_1} & \text{其次对z求导}\\
+                                      & = \frac{\partial J}{\partial a^2_1} * (a^2_1) * (1 - a^2_1) \tag{3.1.3}\label{3.1.3}\\
+    \frac{\partial z^2_1}{\partial w^2_{11}} & = a^1_1\\
+    \frac{\partial J}{\partial w^2_{11}} & = \frac{\partial J}{\partial z^2_1} * \frac{\partial z^2_1}{\partial w^2_{11}} & \text{最后对w求导} \tag{3.1.4}\label{3.1.4}\\
+                                         & = \frac{\partial J}{\partial z^2_1} * a^1_1\\
+    \frac{\partial J}{\partial w^2_{11}} & = -[(\frac{y_1}{a^2_1} + \frac{1 - y_1}{a^2_1 - 1}) + 0] * (a^2_1) * (1 - a^2_1) * a^1_1 & \text{整合在一起}\\
+\end{align}</script><p>其中<script type="math/tex">[(\frac{y_1}{a^2_1} + \frac{1 - y_1}{a^2_1 - 1}) + 0] * (a^2_1) * (1 - a^2_1)</script>实际上是可以化简的，化简为<script type="math/tex">a^2_1 - y_1</script>，同时去掉了负号，所以</p>
+<script type="math/tex; mode=display">
+\frac{\partial J}{\partial w^2_{11}} = (a^2_1 - y_1) * a^1_1</script><p>我们将数值带入其中，之前的正向传播已经得到了所有激活值。</p>
+<script type="math/tex; mode=display">\frac{\partial J}{\partial w^2_{11}} = (0.85220348 - 0.60) * 0.81604509 = 0.20580941153491322</script><p>对<script type="math/tex">w^2_{11}</script>更新，</p>
+<script type="math/tex; mode=display">
+w^2_{11} = w^2_{11} - \alpha * \frac{\partial J}{\partial w^2_{11}}</script><p>学习速率<script type="math/tex">\alpha</script>选1，经过简单的运算，<script type="math/tex">w^2_{11} = 0.92559664 - 1 * 0.20580941153491322 = 0.7197872284650868</script><br><div class="note info">
+            <p>如果细心点就会发现，<script type="math/tex">\frac{\partial J}{\partial w^2_{11}}</script>其实就等于这层的z的导数乘上前一层的激活值a。如果没发现也没关系，下面<a href="https://yan624.github.io/前馈神经网络的正反向推导.html#向量化-1">向量化</a>这节会做一个总结。</p>
+          </div></p>
+<h3 id="求所有w的导数"><a href="#求所有w的导数" class="headerlink" title="求所有w的导数"></a>求所有w的导数</h3><p>同理可以求出所有的导数</p>
+<script type="math/tex; mode=display">
+\begin{pmatrix}
+    \frac{\partial J}{\partial w^2_{11}} & \frac{\partial J}{\partial w^2_{12}} & \frac{\partial J}{\partial w^2_{13}}\\
+    \frac{\partial J}{\partial w^2_{21}} & \frac{\partial J}{\partial w^2_{22}} & \frac{\partial J}{\partial w^2_{23}}\\
+\end{pmatrix} \tag{\ref{3.1.1}}</script><h3 id="向量化-1"><a href="#向量化-1" class="headerlink" title="向量化"></a>向量化</h3><div class="note danger">
+            <p>上面只求了一个w的导数，虽然其他的w的求导都是类似操作，但是真要算起来，对于自己没去算过的人，可能花一天都没有办法将其用<strong>向量化表示</strong>。<br>求导是十分简单的，但是向量化可能会有点问题。问题的主要来源是<strong>想偷懒</strong>。对于这种问题，最好得到解决办法是暴力破解，即求出所有的w的导数，然后再将其向量化。</p>
+          </div>
+<p>首先观察上述公式<script type="math/tex">\ref{3.1.4}</script>：</p>
+<script type="math/tex; mode=display">
+\frac{\partial J}{\partial w^2_{11}} = \frac{\partial J}{\partial z^2_1} * \frac{\partial z^2_1}{\partial w^2_{11}}</script><p>它由两部分组成，一个是<script type="math/tex">\frac{\partial J}{\partial z^2_1}</script>，第二部分是<script type="math/tex">\frac{\partial z^2_1}{\partial w^2_{11}}</script>，如果你自己求过导就会发现其实<script type="math/tex">\frac{\partial z^2_1}{\partial w^2_{11}} = a^1_1</script>。为了方便你们观察，我列出所有式子：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+    \frac{\partial J}{\partial w^2_{11}} = \frac{\partial J}{\partial z^2_1} * a^1_1 \quad \frac{\partial J}{\partial w^2_{12}} = \frac{\partial J}{\partial z^2_1} * a^1_2 \quad \frac{\partial J}{\partial w^2_{13}} = \frac{\partial J}{\partial z^2_1} * a^1_3\\
+    \frac{\partial J}{\partial w^2_{21}} = \frac{\partial J}{\partial z^2_2} * a^1_1 \quad \frac{\partial J}{\partial w^2_{22}} = \frac{\partial J}{\partial z^2_2} * a^1_2 \quad \frac{\partial J}{\partial w^2_{23}} = \frac{\partial J}{\partial z^2_2} * a^1_3\\
+\end{align}</script><p><strong>可能到这你有点烦躁了，因为表达式实在太多了。没关系，下方蓝色的note会给出总结，直接一步求解完毕。</strong><br>有没有发现，里面有一半是重复的元素？我们可以将它们组成向量得到：</p>
+<script type="math/tex; mode=display">
+\eqref{3.1.1}
+\begin{pmatrix}
+    \frac{\partial J}{\partial w^2_{11}} & \frac{\partial J}{\partial w^2_{12}} & \frac{\partial J}{\partial w^2_{13}}\\
+    \frac{\partial J}{\partial w^2_{21}} & \frac{\partial J}{\partial w^2_{22}} & \frac{\partial J}{\partial w^2_{23}}\\
+\end{pmatrix} = 
+\begin{pmatrix}
+\frac{\partial J}{\partial z^2_1}\\
+\frac{\partial J}{\partial z^2_2}\\
+\end{pmatrix} * 
+\begin{pmatrix}
+a^1_1 & a^1_2 & a^1_3
+\end{pmatrix} \tag{3.1.5}</script><p>公式3.1.5和上面那六个表达式实际上计算的东西是一样的。进一步缩写为</p>
+<script type="math/tex; mode=display">
+\frac{\partial J}{\partial w^2} = \frac{\partial J}{\partial z^2} * (a^1)^T \tag{3.1.6}</script><p>这里加了一个T代表转置，实际上我们所有的输入值，激活值，输出值都是列向量。<br><div class="note info">
+            <p>总结一下，在这里<strong>求<script type="math/tex">\frac{\partial J}{\partial w}</script>的步骤为：求权重值所在层的z的导数<script type="math/tex">\frac{\partial J}{\partial z}</script>再乘上前一层的激活值</strong>。这是对一个w求导所做的运算，而对一整个W矩阵求导那就是公式3.1.6的那个向量化操作。但是观察公式3.1.6发现，其实求一个w和求一个W矩阵并无区别，无非是将数字相乘改为向量（矩阵）相乘。<br>另外，其实这对神经网络中每一层的操作都是一样。如果不信可以自己算一下。所以以后理解的时候，可以用这种方式理解，加快理解速度。</p>
+          </div></p>
+<h3 id="更新偏差"><a href="#更新偏差" class="headerlink" title="更新偏差"></a>更新偏差</h3><p>偏差比权重简单很多。</p>
+<script type="math/tex; mode=display">
+\begin{align}
+    \frac{\partial J}{\partial a^2_1} & = -[(\frac{y_1}{a^2_1} + \frac{1 - y_1}{a^2_1 - 1}) + 0] \tag{\ref{3.1.2}}\\
+    \frac{\partial J}{\partial z^2_1} & = \frac{\partial J}{\partial a^2_1} * \frac{\partial a^2_1}{\partial z^2_1}\\
+                                      & = \frac{\partial J}{\partial a^2_1} * (a^2_1) * (1 - a^2_1) \tag{\ref{3.1.3}}\\
+    \frac{\partial J}{\partial b^2_1} & = \frac{\partial J}{\partial z^2_1} * \frac{\partial z^2_1}{\partial b^2_1} \\
+                                      & = \frac{\partial J}{\partial z^2_1}\\
+    \frac{\partial J}{\partial b^2_1} & = -[(\frac{y_1}{a^2_1} + \frac{1 - y_1}{a^2_1 - 1}) + 0] * (a^2_1) * (1 - a^2_1)\\
+\end{align}</script><p>可以看到</p>
+<script type="math/tex; mode=display">
+\frac{\partial J}{\partial b^2_1} = \frac{\partial J}{\partial z^2_1}</script><p>所以偏差的向量化比较简单：</p>
+<script type="math/tex; mode=display">
+\begin{pmatrix}
+    \frac{\partial J}{\partial b^2_1}\\
+    \frac{\partial J}{\partial b^2_2}\\
+\end{pmatrix} = 
+\begin{pmatrix}
+    \frac{\partial J}{\partial z^2_1}\\
+    \frac{\partial J}{\partial z^2_2}\\
+\end{pmatrix}</script><h3 id="整理"><a href="#整理" class="headerlink" title="整理"></a>整理</h3><p>整理一下上一波的求导过程。目标是求得<script type="math/tex">\frac{\partial J}{w^2_{11}}</script>，但是上面我并没有一步求导到底，相反我将每一步都写出来了，这是有原因的。因为<script type="math/tex">\frac{\partial J}{\partial z^2_1}</script>会在前一层对w求导时使用，所以在代码上当然需要保存副本。而<script type="math/tex">\frac{\partial J}{w^2_{11}}</script>已经在这次的反向传播中使用过了，它的价值也算是用完了。<br>在<a href="https://yan624.github.io/前馈神经网络的正反向推导.html#首先更新输出层的权重值（W）以及偏差值（b）">首先更新输出层的权重值（W）以及偏差值（b）</a>中<strong>略有瑕疵</strong>的步骤（也就是上述所有步骤）是：</p>
+<ol>
+<li>求出<script type="math/tex">\frac{\partial J}{\partial a^2}</script></li>
+<li>进一步求出<script type="math/tex">\frac{\partial J}{\partial z^2}</script></li>
+<li>分别求出<script type="math/tex">\frac{\partial J}{\partial w^2}\ \frac{\partial J}{\partial b^2}</script></li>
+</ol>
+<div class="note info">
+            <p>根据上面三步，我们可以观察出，如果需要求出一层的<script type="math/tex">\frac{\partial J}{\partial w^2}\ \frac{\partial J}{\partial b^2}</script>（<strong>步骤3</strong>），需要<strong>先</strong>求出<strong>同一层</strong>的<script type="math/tex">\frac{\partial J}{\partial a^2}\ \frac{\partial J}{\partial z^2}</script>（<strong>步骤1和2</strong>）。<strong><em>所以</em></strong>如果我们需要求出<strong>前一层</strong>的<script type="math/tex">\frac{\partial J}{\partial w^1}\ \frac{\partial J}{\partial b^1}</script>，必须先求出<strong>前一层</strong>的a的导数<script type="math/tex">\frac{\partial J}{\partial a^1}\ \frac{\partial J}{\partial z^1}</script>，而由于公式<script type="math/tex">z^2_1 = w^2_{11} * a^1_1 + w^2_{12} * a^1_2 + w^2_{13} * a^1_3 + b^2_1</script>，可以观察到上述<strong>步骤2</strong>对z求导之后其实拥有三个选项：</p><ol><li>求w的导数（<strong>步骤3</strong>）</li><li>求b的导数（<strong>步骤3</strong>）</li><li>求上一层a的导数</li></ol>
+          </div>
+<p>所以正确的步骤是：</p>
+<ol>
+<li>求出<script type="math/tex">\frac{\partial J}{\partial a^2}</script>（<strong>不变</strong>）</li>
+<li>进一步求出<script type="math/tex">\frac{\partial J}{\partial z^2}</script>（<strong>不变</strong>）</li>
+<li>分别求出<script type="math/tex">\frac{\partial J}{\partial w^2}\ \frac{\partial J}{\partial b^2}</script>（<strong>不变</strong>）</li>
+<li>最后求出前一层的<script type="math/tex">\frac{\partial J}{\partial a^1}</script>，准备下一步的计算。</li>
+</ol>
+<p><strong>也就是说，我们在一层中进行求导，需要分别求4个参数的导数，即当前层的a，w，b以及前一层的a的导数。</strong></p>
+<h2 id="更新隐藏层的权重值以及偏差值"><a href="#更新隐藏层的权重值以及偏差值" class="headerlink" title="更新隐藏层的权重值以及偏差值"></a>更新隐藏层的权重值以及偏差值</h2><p>由于上述步骤太多，来回滑动网页略繁琐，我再次把图放出来，以供参考。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版"><br>隐藏层的更新与输出层略微不同，由于看公式不太形象，可以看上面的图。观察发现，隐藏层的某一个神经元链接着输出层的<strong>所有</strong>神经元。所以隐藏层的神经元的误差其实来源于与它相连接的输出层的神经元。<br>根据链式求导法则，我们知道：一个函数对一个变量求导，如果有多条路径可以到达该变量，那么就需要对每条路径都求导，最后将结果相加。转换成数学公式就跟下面公式3.2.1的求导过程一样。</p>
+<h3 id="对第一个w求导"><a href="#对第一个w求导" class="headerlink" title="对第一个w求导"></a>对第一个w求导</h3><p>我们按照上一节<a href="https://yan624.github.io/前馈神经网络的正反向推导.html#整理">《整理》</a>的四个步骤来做，先求出a的导数：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+    \frac{\partial J}{\partial a^1_1} & = \frac{\partial J}{\partial a^2_1} * \frac{\partial a^2_1}{\partial a^1_1} + \frac{\partial J}{\partial a^2_2} * \frac{\partial a^2_2}{\partial a^1_1} & \text{输出层两个神经元均要求导再相加}\\
+                                      & = \frac{\partial J}{\partial z^2_1} * \frac{\partial z^2_1}{\partial a^1_1} + \frac{\partial J}{\partial z^2_2} * \frac{\partial z^2_1}{\partial a^1_1} & \text{之前求过z的导数，为了方便书写用它替换}\\
+                                      & = \frac{\partial J}{\partial z^2_1} * w^2_{11} + \frac{\partial J}{\partial z^2_2} * w^2_{21} \tag{3.2.1}\label{3.2.1}\\
+\end{align}</script><div class="note info">
+            <p>我们可以观察到隐藏层的a的导数<script type="math/tex">\frac{\partial J}{\partial a^1_1}</script>实际上就是<strong>输出层</strong>的z的导数<script type="math/tex">\frac{\partial J}{\partial z^2_1}</script>乘上与之相连的<strong>输出层</strong>的神经元的w。<br>一般化之后就是：<strong>除了输出层</strong>，其他所有层的<strong>a的导数</strong>都是<strong>后一层</strong>的<strong>z的导数</strong>乘上<strong>后一层</strong>的w。因为输出层的<strong>a的导数</strong>是通过代价函数求的。</p>
+          </div>
+<p>所以下一步就是求z的导数：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+    \frac{\partial J}{\partial z^1_1} & = \frac{\partial J}{\partial z^2_1} * \frac{\partial z^2_1}{\partial a^1_1} * \frac{\partial a^1_1}{\partial z^1_1} + \frac{\partial J}{\partial z^2_2} * \frac{\partial z^2_1}{\partial a^1_1} * \frac{\partial a^1_1}{\partial z^1_1}\\
+                                      & = \frac{\partial J}{\partial z^2_1} * w^2_{11} * \frac{\partial a^1_1}{\partial z^1_1}  + \frac{\partial J}{\partial z^2_2} * w^2_{21} * \frac{\partial a^1_1}{\partial z^1_1}\\
+                                      & = \frac{\partial J}{\partial a^1_1} * \frac{\partial a^1_1}{\partial z^1_1} & \text{这里a的导数参考}\ref{3.2.1}\\
+    \frac{\partial a^1_1}{\partial z^1_1} & = a^1_1 * (1 - a^1_1) & \text{对sigmoid函数求导，前面已经说过了}\\
+\end{align}</script><p>最后求出w的导数</p>
+<script type="math/tex; mode=display">
+\begin{align}
+    \frac{\partial J}{\partial w^1_{11}} & = \frac{\partial J}{\partial a^1_1} * \frac{\partial a^1_1}{\partial z^1_1} * \frac{\partial z^1_1}{\partial w^1_{11}}\\
+                                         & = \frac{\partial J}{\partial z^1_1} * \frac{\partial z^1_1}{\partial w^1_{11}}\\
+                                         & = \frac{\partial J}{\partial z^1_1} * a^0_1
+\end{align}</script><h3 id="向量化-2"><a href="#向量化-2" class="headerlink" title="向量化"></a>向量化</h3><p>你肯定已经想把它向量化了。先列出所有的表达式。</p>
+<script type="math/tex; mode=display">
+\frac{\partial J}{\partial w^1_{11}} = \frac{\partial J}{\partial z^1_1} * a^0_1\\
+\frac{\partial J}{\partial w^1_{12}} = \frac{\partial J}{\partial z^1_1} * a^0_2\\
+\frac{\partial J}{\partial w^1_{21}} = \frac{\partial J}{\partial z^1_2} * a^0_1\\
+\frac{\partial J}{\partial w^1_{22}} = \frac{\partial J}{\partial z^1_2} * a^0_2\\
+\frac{\partial J}{\partial w^1_{31}} = \frac{\partial J}{\partial z^1_3} * a^0_1\\
+\frac{\partial J}{\partial w^1_{32}} = \frac{\partial J}{\partial z^1_3} * a^0_2\\</script><p>可以发现这其实跟上面的向量化步骤一模一样：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+    \begin{pmatrix}
+        \frac{\partial J}{\partial w^1_{11}} & \frac{\partial J}{\partial w^1_{12}}\\
+        \frac{\partial J}{\partial w^1_{21}} & \frac{\partial J}{\partial w^1_{22}}\\
+        \frac{\partial J}{\partial w^1_{31}} & \frac{\partial J}{\partial w^1_{32}}\\
+    \end{pmatrix} & = 
+    \begin{pmatrix}
+        \frac{\partial J}{\partial z^1_1}\\
+        \frac{\partial J}{\partial z^1_2}\\
+        \frac{\partial J}{\partial z^1_3}\\
+    \end{pmatrix} * 
+    \begin{pmatrix}
+        a^0_1 & a^0_2
+    \end{pmatrix} \\
+    \frac{\partial J}{\partial w^1} & = \frac{\partial J}{\partial z^1} * (a^0)^T
+\end{align}</script><h3 id="对偏差求导"><a href="#对偏差求导" class="headerlink" title="对偏差求导"></a>对偏差求导</h3><p>这一步更是简单，直接给结果了。</p>
+<script type="math/tex; mode=display">
+\begin{align}
+    \begin{pmatrix}
+        \frac{\partial J}{\partial b^1_1}\\
+        \frac{\partial J}{\partial b^1_2}\\
+        \frac{\partial J}{\partial b^1_3}\\
+    \end{pmatrix} & = 
+    \begin{pmatrix}
+        \frac{\partial J}{\partial z^1_1}\\
+        \frac{\partial J}{\partial z^1_2}\\
+        \frac{\partial J}{\partial z^1_3}\\
+    \end{pmatrix}\\
+    \frac{\partial J}{\partial b^1} & = \frac{\partial J}{\partial z^1}
+\end{align}</script><h3 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h3><p>上述步骤看起来没什么问题，但是在实际编程中会有很大问题。在向量化的时候，我直接使用了<script type="math/tex">\frac{\partial J}{\partial z^1}</script>，但是问题就是<script type="math/tex">\frac{\partial J}{\partial z^1}</script>的向量化我直接跳过了。要向量化<script type="math/tex">\frac{\partial J}{\partial z^1}</script>，实际上得先向量化<script type="math/tex">\frac{\partial J}{\partial a^1}</script>。观察表达式<script type="math/tex">\ref{3.2.1}</script>，先给出所有的式子：</p>
+<script type="math/tex; mode=display">
+\frac{\partial J}{\partial a^1_1} = \frac{\partial J}{\partial z^2_1} * w^2_{11} + \frac{\partial J}{\partial z^2_2} * w^2_{21}\\
+\frac{\partial J}{\partial a^1_2} = \frac{\partial J}{\partial z^2_1} * w^2_{12} + \frac{\partial J}{\partial z^2_2} * w^2_{22}\\
+\frac{\partial J}{\partial a^1_3} = \frac{\partial J}{\partial z^2_1} * w^2_{13} + \frac{\partial J}{\partial z^2_2} * w^2_{23}\\</script><h4 id="向量化-3"><a href="#向量化-3" class="headerlink" title="向量化"></a>向量化</h4><script type="math/tex; mode=display">
+\begin{pmatrix}
+    \frac{\partial J}{\partial a^1_1}\\
+    \frac{\partial J}{\partial a^1_2}\\
+    \frac{\partial J}{\partial a^1_3}\\
+\end{pmatrix} = 
+\begin{pmatrix}
+w^2_{11} & w^2_{12} & w^2_{13}\\
+w^2_{21} & w^2_{22} & w^2_{23}\\
+\end{pmatrix}^T * 
+\begin{pmatrix}
+\frac{\partial J}{\partial z^2_1} & \frac{\partial J}{\partial z^2_2}
+\end{pmatrix}</script><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>在反向传播中，每一层都只需要重复如下几步：</p>
+<ol>
+<li>求出<script type="math/tex">\frac{\partial J}{\partial a^2}</script></li>
+<li>进一步求出<script type="math/tex">\frac{\partial J}{\partial z^2}</script></li>
+<li>分别求出<script type="math/tex">\frac{\partial J}{\partial w^2}\ \frac{\partial J}{\partial b^2}</script></li>
+<li>最后求出前一层的<script type="math/tex">\frac{\partial J}{\partial a^1}</script>，准备下一步的计算。此步骤的向量化操作在<a href="https://yan624.github.io/前馈神经网络的正反向推导.html#注意点">注意点</a>。</li>
+</ol>
+<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p><a href="https://github.com/yan624/machine_learning_algorithms/tree/master/simple_neural_network" target="_blank" rel="noopener">使用numpy实现一个简单的神经网络</a></p>
+<h1 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h1><p>在做反向传播代码时，验算了很多遍，发现公式推导没有问题，但是梯度却一直在上升，心态都炸了。<br>最后发现，用了大半年的crossentropy在最前面居然要加上一个“-”号。以前由于是偷懒，在求导的时候一般不加负号，在求完导之后再补上。然后由于写习惯了，导致我忘记crossentropy居然是有负号的。</p>
+<h1 id="撒花"><a href="#撒花" class="headerlink" title="撒花"></a>撒花</h1><p>在第二节有一步是初始化数据，但是全篇都没用几个地方用到。是因为数据测试起来太麻烦了，我需要在代码里一步一步分析神经网络的计算过程，从而获得数据。以后再补充吧。</p>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/zcy/深度学习算法（一）：simple NN（前馈神经网络的正反向推导）.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/linux/linux非root用户配置环境变量.html">
+
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+				
+				
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/linux/linux非root用户配置环境变量.html" class="post-title-link" itemprop="url">linux非root用户配置环境变量</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-15 16:04:44" itemprop="dateCreated datePublished" datetime="2019-05-15T16:04:44+08:00">2019-05-15</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-06-04 13:22:49" itemprop="dateModified" datetime="2019-06-04T13:22:49+08:00">2019-06-04</time>
+              
+            
+          </span>
+
+          
+
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p><a href="https://www.cnblogs.com/gstblog/p/10160976.html" target="_blank" rel="noopener">参考文章</a><br>本文以配置anaconda的环境变量为例。</p>
+<p>切换到用户目录<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~</span><br></pre></td></tr></table></figure></p>
+<p>输入，发现有一个名为<code>.bashrc</code>的文件<br><figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">ll</span></span><br></pre></td></tr></table></figure></p>
+<p>编辑它<br><figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim ~<span class="string">/.bashrc</span></span><br></pre></td></tr></table></figure></p>
+<p>在最后一行加上如下代码，保存并退出。<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="builtin-name">export</span> <span class="attribute">PATH</span>=~/anaconda3/bin:$PATH</span><br></pre></td></tr></table></figure></p>
+<div class="note warning">
+            <p>PATH和=之间不能有空格。由于写java代码习惯了，加上了空格，导致报错。</p>
+          </div>
+<p>更新配置<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure></p>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/linux/linux非root用户配置环境变量.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -1851,7 +2801,7 @@ v  = -\frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}\\</script><p>之所以要�
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-11-12 16:00:04" itemprop="dateModified" datetime="2019-11-12T16:00:04+08:00">2019-11-12</time>
+                <time title="修改时间：2019-12-13 21:15:32" itemprop="dateModified" datetime="2019-12-13T21:15:32+08:00">2019-12-13</time>
               
             
           </span>
@@ -2016,8 +2966,11 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
 <li>Output Gate: 如果Output Gate被关闭，那么输出0.</li>
 </ol>
 <h2 id="多个LSTM工作场景"><a href="#多个LSTM工作场景" class="headerlink" title="多个LSTM工作场景"></a>多个LSTM工作场景</h2><p>里面的<script type="math/tex">x^t</script>就是对应于NN中的一个向量，它分别乘上4个参数矩阵得到4个不同的向量，以此操控LSTM，而LSTM实际上就等于神经元，说白了就是一个类似激活函数的功能。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/LSTM%E5%AE%9E%E9%99%85%E5%B7%A5%E4%BD%9C%E5%9C%BA%E6%99%AF.jpg" alt="LSTM实际工作场景"><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/LSTM%E5%AE%9E%E9%99%85%E5%B7%A5%E4%BD%9C%E5%9C%BA%E6%99%AF2.jpg" alt="LSTM实际工作场景2"><br>多个LSTM连起来工作就是像下面一样，红线和红线旁边的那个黑色曲线链接的值之前没有讲过，但是下图的这样才是LSTM实际的长相，所以之前讲的那么复杂实际上还是LSTM的简化版。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/LSTM%E5%AE%9E%E9%99%85%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.jpg" alt="LSTM实际工作流程"></p>
-<h1 id="RNN反向传播"><a href="#RNN反向传播" class="headerlink" title="RNN反向传播"></a>RNN反向传播</h1><p>&emsp;&emsp;BPTT——backpropagation through time，与 NN 的 backpropagation 类似，李宏毅老师也没讲原理直接跳过了。<br>&emsp;&emsp;然而不幸的是，RNN 的 training 是很困难的。下面蓝色的线是希望的结果，但是实际上是绿色的线，会出现剧烈地抖动，最后在某个点出现NAN。这就是类似梯度消失问题。可以使用一些办法解决，但是现在用得最多的方法是LSTM。<br><div class="note primary">
-            <p>&emsp;&emsp;Q：如何防止出现如下剧烈抖动的 loss 曲线？<br>&emsp;&emsp;A：<a href="https://yan624.github.io/比赛项目总结/flayai竞赛：今日头条新闻分类.html#clip-gradient">clip gradient 解决了 loss 剧烈抖动的问题</a><br>&emsp;&emsp;Q：LSTM 解决了 RNN 的什么难题？<br>&emsp;&emsp;A：<a href="https://yan624.github.io/比赛项目总结/flayai竞赛：今日头条新闻分类.html#LSTM-解决了-RNN-的什么问题">LSTM 解决了 RNN 的什么问题</a></p>
+<h1 id="RNN反向传播"><a href="#RNN反向传播" class="headerlink" title="RNN反向传播"></a>RNN反向传播</h1><div class="note info">
+            <p>&emsp;&emsp;此处的笔记来源于 <a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">26: Recurrent Neural Network (Part II)</a> 从 0 分开始。</p>
+          </div>
+<p>&emsp;&emsp;BPTT——backpropagation through time，与 NN 的 backpropagation 类似，李宏毅老师也没讲原理直接跳过了。<br>&emsp;&emsp;然而不幸的是，RNN 的 training 是很困难的。下面蓝色的线是希望的结果，但是实际上是绿色的线，会出现剧烈地抖动，最后在某个点出现NAN。这就是类似梯度消失问题。可以使用一些办法解决，但是现在用得最多的方法是LSTM。<br>&emsp;&emsp;<strong>视频中花了很长的时间去讲解梯度爆炸和梯度消失的问题，但是我没有将它记录在这，详情可访问下面两个链接。</strong><br><div class="note primary">
+            <p>&emsp;&emsp;Q：如何防止出现如下剧烈抖动的 loss 曲线？<br>&emsp;&emsp;A：<a href="https://yan624.github.io/比赛项目总结/多领域seq2lf#clip-gradient">clip gradient 解决了 loss 剧烈抖动的问题</a><br>&emsp;&emsp;Q：LSTM 解决了 RNN 的什么难题？<br>&emsp;&emsp;A：<a href="https://yan624.github.io/比赛项目总结/多领域seq2lf#LSTM-解决了-RNN-的什么问题">LSTM 解决了 RNN 的什么问题</a></p>
           </div><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/RNN%20training%E7%A2%B0%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98.jpg" alt="RNN trWaining碰到的问题"></p>
 <h1 id="其他解决梯度消失的办法"><a href="#其他解决梯度消失的办法" class="headerlink" title="其他解决梯度消失的办法"></a>其他解决梯度消失的办法</h1><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/%E5%85%B6%E4%BB%96%E8%A7%A3%E5%86%B3%E6%A2%AF%E5%BA%A6%E6%B6%88%E5%A4%B1%E7%9A%84%E5%8A%9E%E6%B3%95.jpg" alt="其他解决梯度消失的办法"></p>
 <h1 id="seq2seq"><a href="#seq2seq" class="headerlink" title="seq2seq"></a>seq2seq</h1><h2 id="Many-to-one"><a href="#Many-to-one" class="headerlink" title="Many to one"></a>Many to one</h2><p>输入一个向量sequence，只输出一个向量。</p>
@@ -2051,7 +3004,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
 <h2 id="反向传播的好处"><a href="#反向传播的好处" class="headerlink" title="反向传播的好处"></a>反向传播的好处</h2><p>如果你的root只有一个，那么这个Computational Graph中的所有偏微分就都可以一次性算出。对应于神经网络，我们就是要这样的效果。</p>
 <h2 id="参数共享（Parameter-sharing）"><a href="#参数共享（Parameter-sharing）" class="headerlink" title="参数共享（Parameter sharing）"></a>参数共享（Parameter sharing）</h2><p>略，看了一眼貌似挺简单。16:20</p>
 <h2 id="Computational-Graph-for-Feedforword-Net"><a href="#Computational-Graph-for-Feedforword-Net" class="headerlink" title="Computational Graph for Feedforword Net"></a>Computational Graph for Feedforword Net</h2><p>李宏毅深度学习p3从21:16到52:48讲解梯度下降算法、前馈神经网络以及反向传播算法的具体数学原理<br>一直没看懂原理，以后再看。</p>
-<h2 id="Computational-Graph-for-Recurrent-Network"><a href="#Computational-Graph-for-Recurrent-Network" class="headerlink" title="Computational Graph for Recurrent Network"></a>Computational Graph for Recurrent Network</h2><h1 id="Deep-Learning-for-Language-Modeling"><a href="#Deep-Learning-for-Language-Modeling" class="headerlink" title="Deep Learning for Language Modeling"></a>Deep Learning for Language Modeling</h1><p>语言模型就是预测一个word sequence出现的几率有多大。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Language%20Modeling.jpg" alt="Language Modeling"></p>
+<h2 id="Computational-Graph-for-Recurrent-Network"><a href="#Computational-Graph-for-Recurrent-Network" class="headerlink" title="Computational Graph for Recurrent Network"></a>Computational Graph for Recurrent Network</h2><h1 id="※-Deep-Learning-for-Language-Modeling"><a href="#※-Deep-Learning-for-Language-Modeling" class="headerlink" title="※ Deep Learning for Language Modeling"></a>※ Deep Learning for Language Modeling</h1><p>语言模型就是预测一个word sequence出现的几率有多大。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Language%20Modeling.jpg" alt="Language Modeling"></p>
 <h2 id="N-gram"><a href="#N-gram" class="headerlink" title="N-gram"></a>N-gram</h2><p>N-gram是自然语言处理中的算法。2-gram读作bi-gram。</p>
 <h3 id="传统做法"><a href="#传统做法" class="headerlink" title="传统做法"></a>传统做法</h3><ul>
 <li>怎么预测一句话出现的几率</li>
@@ -2093,7 +3046,13 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
 <h1 id="Conditional-Generation-by-RNN-amp-Attention"><a href="#Conditional-Generation-by-RNN-amp-Attention" class="headerlink" title="Conditional Generation by RNN &amp; Attention"></a>Conditional Generation by RNN &amp; Attention</h1><p>&emsp;&emsp;注意本文讲的是 RNN <strong>入门</strong>，而下面的部分也只是讲普通的 RNN Generation，甚至连 decoder 部分都没用。下图是生成文字，其实也可以生成图片、音频等，我就不一一截图了，第二张图将这些<strong>想法</strong>及其<strong>论文</strong>都汇总了。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/一个简单的Generation.jpg" alt="一个简单的Generation"></p>
 <p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Generation汇总.jpg" alt="Generation汇总"></p>
 <h2 id="Conditional-Generation"><a href="#Conditional-Generation" class="headerlink" title="Conditional Generation"></a>Conditional Generation</h2><p>&emsp;&emsp;但是在真实的场景中，我们不仅仅是希望只生成随机的句子，我们更偏向于生成一些基于某些条件的句子，比如：当看见一张一个人正在跳舞的图片，我们希望电脑生成“A young girl is dancing”；当给予一个条件“Hello”时，我们希望电脑生成“Hello, nice to see you.”。<br>&emsp;&emsp;一个实际的例子，我们可以将一张图片输入进 CNN，从而产生一个向量，再把该向量输入进 decoder 部分，最后生成句子。如下图所示，其他类型的<strong>条件生成</strong>也类似。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Image Caption Generation.jpg" alt="Image Caption Generation" title="Image Caption Generation"></p>
-<h2 id="Attention"><a href="#Attention" class="headerlink" title="Attention"></a>Attention</h2><p>&emsp;&emsp;将 <script type="math/tex">z_0</script> 与 <script type="math/tex">h_1 h_2 h_3 h_4</script> 分别做一次 match，至于 match 怎么计算可以看下图右边，总而言之，就是可以由你自己设计。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Attention机制.jpg" alt="Attention机制"></p>
+<h2 id="Attention"><a href="#Attention" class="headerlink" title="Attention"></a>Attention</h2><p>&emsp;&emsp;将 <script type="math/tex">z_0</script> 与 <script type="math/tex">h_1 h_2 h_3 h_4</script> 分别做一次 match，至于 match 怎么计算可以看下图右边。<br>&emsp;&emsp;计算步骤可以参考下列公式：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+    h & = [h^1, h^2, h^3, h^4] \\
+    s & = h^T z \\
+    c^0 & = h^t s \\
+\end{align}</script><p>&emsp;&emsp;attention score 的计算公式可以由自己设计，下图使用的是 <script type="math/tex">h^T W z</script>，有兴趣的话，<a href="https://yan624.github.io/学习笔记/CS224n学习笔记.html#attention">这里</a>介绍了三个。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Attention机制.jpg" alt="Attention机制"></p>
 <p>&emsp;&emsp;然后获得 <script type="math/tex">a^1_0 a^2_0 a^3_0 a^4_0</script>，之后将它们输入 softmax 层（有实验发现其实不经过 softmax 层也可以，甚至效果更好），最后将所有 a 分别乘上它们对应的向量并且相加，得到一个向量 <script type="math/tex">c^0</script>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Attention机制计算score.jpg" alt="Attention机制计算score"></p>
 <p>&emsp;&emsp;使用 Attention 机制计算完毕后，将向量 <script type="math/tex">c^0</script> 输入进 decoder 即可，接下来的计算都是以此类推。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Attention机制计算完毕后输入到decoder.jpg" alt="Attention机制计算完毕后输入到decoder"></p>
 <h3 id="Attention应用到Speach-Recognition"><a href="#Attention应用到Speach-Recognition" class="headerlink" title="Attention应用到Speach Recognition"></a>Attention应用到Speach Recognition</h3><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Attention for Speach Recognition.jpg" alt="Attention for Speach Recognition"></p>
@@ -2127,584 +3086,6 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
         
       
     </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/学习笔记/git学习记录.html">
-
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-				
-				
-	
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/学习笔记/git学习记录.html" class="post-title-link" itemprop="url">git学习记录</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-04-22 23:51:08" itemprop="dateCreated datePublished" datetime="2019-04-22T23:51:08+08:00">2019-04-22</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-04-24 23:34:20" itemprop="dateModified" datetime="2019-04-24T23:34:20+08:00">2019-04-24</time>
-              
-            
-          </span>
-
-          
-
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/" itemprop="url" rel="index"><span itemprop="name">assorted</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>本文是在学习<a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000" target="_blank" rel="noopener">该教程</a>时/后做的笔记。<br>我现在用git基本都是用<a href="https://desktop.github.com/" target="_blank" rel="noopener">Github Desktop</a>，前面的是下载地址。用起来方便又快捷。事实上我也不会用git的命令o(<em>￣︶￣</em>)o所以今天稍微学一下。</p>
-<h1 id="git-init"><a href="#git-init" class="headerlink" title="git init"></a>git init</h1><p>切换到想要创建仓库的文件夹，执行命令<code>git init</code>就会在该文件夹下创建一个.git的文件夹，这个文件夹是隐藏的。</p>
-<h1 id="git-add-git-commit"><a href="#git-add-git-commit" class="headerlink" title="git add/git commit"></a>git add/git commit</h1><p>使用命令<code>git add whatever.txt</code>将文件添加到仓库。使用命令<code>git commit -m &quot;wrote a file&quot;</code>将文件提交到仓库，-m后面的是描述这份文件你改了什么。其实就是相当于desktop的一个按钮，按一下就把全部有改动文件都提交了。<br>这样就完成了提交一份文件。这里就会有疑问了，为什么设计成先add再commit？直接commit不就行了？因为commit可以提交多份文件，你可以使用add命令一份一份地添加文件，再使用commit一次性提交到仓库。<br>该命令指示推送到本地仓库，并非远程仓库。</p>
-<h1 id="git-status"><a href="#git-status" class="headerlink" title="git status"></a>git status</h1><p>查看仓库当前的修改状态</p>
-<h1 id="git-diff"><a href="#git-diff" class="headerlink" title="git diff"></a>git diff</h1><p>发现某份文件被修改了，但是忘记改了什么怎么办？使用命令<code>git diff modified_file.txt</code>查看，它会显示文件哪里被修改了。diff就是difference的意思。</p>
-<h1 id="git-log"><a href="#git-log" class="headerlink" title="git log"></a>git log</h1><p>git可以记住你的历史提交版本，如果有一天电脑损坏，自己干了什么完全忘记，可以使用<code>git log</code>命令。它会显示以前所有的历史记录。这条命令会显示很详细的信息，但是就是因为信息太详细了，人可能看不过来，可以加上<code>--pretty=oneline</code>来限制。类似<code>c3fca95239a4bbe21ee2991e0a914fb522060e74</code>这种是版本号（commit id）。</p>
-<h1 id="git-rest"><a href="#git-rest" class="headerlink" title="git rest"></a>git rest</h1><p>该命令可以回退版本。<code>git reset --hard HEAD^</code>，命令里的HEAD代表当前版本，^代表上一个版本，如果想要回退至前100个版本，可以使用HEAD~100。<br>也可以直接指定commit id，如<code>git reset --hard c3fca95239a4bbe21ee2991e0a914fb522060e74</code>，commit id可以不写全，写个开头就行了<code>git reset --hard c3fca</code><br>注意回退版本后，如果关闭git bash那么就无法查询到该版本之后的所有版本。</p>
-<h1 id="git-reflog"><a href="#git-reflog" class="headerlink" title="git reflog"></a>git reflog</h1><p>该命令记住了你每一步操作，如果回退版本后后悔了，可以使用该命令查询以前的commit id。</p>
-<h1 id="git-checkout-—filename"><a href="#git-checkout-—filename" class="headerlink" title="git checkout —filename"></a>git checkout —filename</h1><p>把文件夹在工作区的修改全部撤销。总之，就是让这个文件回到最近一次git commit或git add时的状态。<br>参考<a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/001374831943254ee90db11b13d4ba9a73b9047f4fb968d000" target="_blank" rel="noopener">文章</a></p>
-<h1 id="git-rm"><a href="#git-rm" class="headerlink" title="git rm"></a>git rm</h1><p>删除文件，与linux命令类似。</p>
-<h1 id="git-remote"><a href="#git-remote" class="headerlink" title="git remote"></a>git remote</h1><p>将本地的仓库和远程的仓库关联，使用命令<code>git remote add origin git@github.com:github_account_name/repository_name.git</code><br>注意将github_account_name和repository_name分别替换成github账号名和仓库名。添加关联后，远程库的名字就是origin，这是Git默认的叫法，也可以改成别的。下一步，就可以把本地库的所有内容推送到远程库上。</p>
-<h1 id="git-push"><a href="#git-push" class="headerlink" title="git push"></a>git push</h1><p><code>git push -u origin master</code></p>
-<blockquote>
-<p>把本地库的内容推送到远程，用git push命令，实际上是把当前分支master推送到远程。<br>由于远程库是空的，我们第一次推送master分支时，加上了-u参数，Git不但会把本地的master分支内容推送的远程新的master分支，还会把本地的master分支和远程的master分支关联起来，在以后的推送或者拉取时就可以简化命令。<br>从现在起，只要本地作了提交，就可以通过命令：<br><code>git push origin master</code><br>把本地master分支的最新修改推送至GitHub，现在，你就拥有了真正的分布式版本库！</p>
-</blockquote>
-<h1 id="git-clone"><a href="#git-clone" class="headerlink" title="git clone"></a>git clone</h1><p>上面说了将本地仓库和远程仓库关联，并将本地仓库的文件推送到远程仓库，那么自然也可以从远程仓库clone文件到本地仓库。<br>使用命令：<code>git clone git@github.com:github_account_name/repository_name.git</code><br>还可以从<a href="https://github.com/yan624/yan624.github.io.git这样的地址克隆" target="_blank" rel="noopener">https://github.com/yan624/yan624.github.io.git这样的地址克隆</a></p>
-<h1 id="对分支的管理"><a href="#对分支的管理" class="headerlink" title="对分支的管理"></a>对分支的管理</h1><p>字太多，不想打了。看下面教程。<br><a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/001375840038939c291467cc7c747b1810aab2fb8863508000" target="_blank" rel="noopener">教程</a></p>
-<h2 id="git-checkout-b-branch-name"><a href="#git-checkout-b-branch-name" class="headerlink" title="git checkout -b branch_name"></a>git checkout -b branch_name</h2><p>创建名为branch_name的分支并切换到该分支，-b参数代表切换。</p>
-<h2 id="git-branch"><a href="#git-branch" class="headerlink" title="git branch"></a>git branch</h2><p>查看当前分支，如果分支之前有*就代表这个分支是主分支。</p>
-<h2 id="git-merge-branch-name"><a href="#git-merge-branch-name" class="headerlink" title="git merge branch_name"></a>git merge branch_name</h2><p>合并分支</p>
-<h2 id="git-branch-d-branch-name"><a href="#git-branch-d-branch-name" class="headerlink" title="git branch -d branch_name"></a>git branch -d branch_name</h2><p>删除名为branch_name分支</p>
-<h2 id="合并分支发生冲突"><a href="#合并分支发生冲突" class="headerlink" title="合并分支发生冲突"></a>合并分支发生冲突</h2><p><a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/001375840202368c74be33fbd884e71b570f2cc3c0d1dcf000" target="_blank" rel="noopener">解决办法</a></p>
-<h2 id="强大的分支功能"><a href="#强大的分支功能" class="headerlink" title="强大的分支功能"></a>强大的分支功能</h2><p><a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/0013758410364457b9e3d821f4244beb0fd69c61a185ae0000" target="_blank" rel="noopener">创建分支的策略</a></p>
-<h2 id="bug分支。将当前工作暂存，先修改出现的bug"><a href="#bug分支。将当前工作暂存，先修改出现的bug" class="headerlink" title="bug分支。将当前工作暂存，先修改出现的bug"></a>bug分支。将当前工作暂存，先修改出现的bug</h2><p><a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/00137602359178794d966923e5c4134bc8bf98dfb03aea3000" target="_blank" rel="noopener">暂存命令</a></p>
-<h2 id="feature分支"><a href="#feature分支" class="headerlink" title="feature分支"></a>feature分支</h2><p>与上面类似，无非概念不同</p>
-<h2 id="多人协作"><a href="#多人协作" class="headerlink" title="多人协作"></a>多人协作</h2><p><a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/0013760174128707b935b0be6fc4fc6ace66c4f15618f8d000" target="_blank" rel="noopener">教程</a></p>
-<h2 id="git-rebase"><a href="#git-rebase" class="headerlink" title="git rebase"></a>git rebase</h2><p><a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/0015266568413773c73cdc8b4ab4f9aa9be10ef3078be3f000" target="_blank" rel="noopener">教程</a></p>
-<h1 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h1><p><a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/0015266568413773c73cdc8b4ab4f9aa9be10ef3078be3f000" target="_blank" rel="noopener">教程</a></p>
-<h1 id="使用github"><a href="#使用github" class="headerlink" title="使用github"></a>使用github</h1><p><a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/0015266568413773c73cdc8b4ab4f9aa9be10ef3078be3f000" target="_blank" rel="noopener">教程</a></p>
-<h1 id="使用码云"><a href="#使用码云" class="headerlink" title="使用码云"></a>使用码云</h1><p><a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/00150154460073692d151e784de4d718c67ce836f72c7c4000" target="_blank" rel="noopener">教程</a></p>
-<h1 id="配置文件的更多配置"><a href="#配置文件的更多配置" class="headerlink" title="配置文件的更多配置"></a>配置文件的更多配置</h1><p><a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/00150154460073692d151e784de4d718c67ce836f72c7c4000" target="_blank" rel="noopener">教程</a></p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/学习笔记/git学习记录.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/assorted/hexo/更改hexo-next主题的fontawesome版本至最新.html">
-
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-				
-				
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/assorted/hexo/更改hexo-next主题的fontawesome版本至最新.html" class="post-title-link" itemprop="url">更改hexo next主题的fontawesome版本至最新</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-04-22 13:23:47 / 修改时间：15:09:00" itemprop="dateCreated datePublished" datetime="2019-04-22T13:23:47+08:00">2019-04-22</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/" itemprop="url" rel="index"><span itemprop="name">assorted</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/hexo/" itemprop="url" rel="index"><span itemprop="name">hexo</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>由于在后续又发现在其他地方也用到了icon，所以需要大量更改配置。<strong>如果不会写程序的还是别改了。</strong></p>
-<p>next的fontawesome默认版本是4.6.2，在写本文时，fontawesome的最新版本是5.8.1。貌似fontawesome在5.0.0版本之后改版了。总之一直出现方框乱码。<br>后来发现，现在的fontawesome链接已经跟以前不一样了，它现在分为3大类别。<br>现在的使用方法是：在next主题的_config.xml中搜索fontawesome，并更改属性<code>fontawesome: //cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css</code>，注意里面的文件是all.min.css，而不是font-awesom.min.css。<br>但是这样更改之后还是会出现方框乱码，原因是next默认使用的fa的类，而有时候我们需要使用fab或其他的类。所以需要修改一下源代码。<br>找到layout/_macro/menu/menu-item.swig，定位class=”menu-item-icon，将后面的“fa fa-fw fa-”删去。以后再修改icon不能只加一个名字了。可以像我这样修改：<code>assorted: /assorted || fa fa-fw fa-layer-group</code>。<br>可以看到我将icon的名称补全了。如果想用fab的类，可以像这样修改：<code>python: /python || fab fa-fw fa-python</code>。以此类推。</p>
-<p>这样修改以后，如果不想用fontawesome了，想用其他的icon库，改起来也很方便。</p>
-<p>layout/_macro/menu/menu-item.swig被layout/_partials/header/sub-menu.swig引用。</p>
-<p>另外由于fontawesome版本改动，社交软件的icon也需要更改，在_config.xml中搜索github，将icon改为<code>fab fa-fw fa-github</code>。找到ayout/_macro/siderbar.swig，搜索fa fa-fw fa-，看看定位的地点上面是不是<code>{百分号  if theme.social_icons.enable 百分号}</code>。是的话将fa fa-fw fa-删除。<br>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/assorted/hexo/更改hexo-next主题的fontawesome版本至最新.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </p></div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/assorted/android/ViewPager无法刷新数据.html">
-
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-				
-				
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/assorted/android/ViewPager无法刷新数据.html" class="post-title-link" itemprop="url">ViewPager无法刷新数据</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-04-18 22:15:24 / 修改时间：22:38:54" itemprop="dateCreated datePublished" datetime="2019-04-18T22:15:24+08:00">2019-04-18</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/" itemprop="url" rel="index"><span itemprop="name">assorted</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/android/" itemprop="url" rel="index"><span itemprop="name">android</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>实现ViewPager刷新数据功能，在网上找了很多资料都已经过时了。<br>由于本人并不是android开发出身，完全是做app玩的。所以很多术语都不知道，如果看不懂就算了。。。</p>
-<p>实现PagerAdapter类，我命名为HomePagerAdapter<br><figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HomePagerAdapter</span> <span class="keyword">extends</span> <span class="title">PagerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ArrayList&lt;View&gt; pageView;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HomePagerAdapter</span><span class="params">(ArrayList&lt;View&gt; pageView)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.pageView = pageView;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mChildCount = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">notifyDataSetChanged</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        mChildCount = getCount();</span><br><span class="line">        <span class="keyword">super</span>.notifyDataSetChanged();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">int</span> <span class="title">getItemPosition</span><span class="params">(Object object)</span>   </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> ( mChildCount &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            mChildCount --;</span><br><span class="line">            <span class="keyword">return</span> POSITION_NONE;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">return</span> <span class="keyword">super</span>.<span class="title">getItemPosition</span><span class="params">(object)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="comment">//获取当前窗体界面数</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">int</span> <span class="title">getCount</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">        <span class="function"><span class="keyword">return</span> pageView.<span class="title">size</span><span class="params">()</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="comment">//判断是否由对象生成界面</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">isViewFromObject</span><span class="params">(View arg0, Object arg1)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">        <span class="keyword">return</span> arg0==arg1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">destroyItem</span><span class="params">(ViewGroup container, <span class="keyword">int</span> position, Object object)</span> </span>&#123;</span><br><span class="line">        container.removeView(pageView.get(position));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function">Object <span class="title">instantiateItem</span><span class="params">(ViewGroup container, <span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">        View view = pageView.get(position);</span><br><span class="line">        container.addView(view);</span><br><span class="line">        <span class="keyword">return</span> view;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">finishUpdate</span><span class="params">(ViewGroup container)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(container.getChildCount() == <span class="number">0</span>)&#123;</span><br><span class="line">            pageView.clear();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>注意destroyItem、instantiateItem方法，PagerAdapter中还有两个同名的方法，但是已被废弃，注意参数不同。<br>实现刷新数据主要在destroyItem、instantiateItem、finishUpdate三个方法。其他的方法其实别人的教程也写了，但是我这三个方法是我自己研究的，我没见别人写过。</p>
-<p>解释流程。<br>第一步，改变数据，我是将数据保存在了<code>private ArrayList&lt;View&gt; pageView;</code>中。<br>第二步，调用<code>adapter.notifyDataSetChanged();</code>方法，它首先会销毁item，即调用<code>destroyItem(ViewGroup container, int position, Object object)</code>方法。随即调用<code>instantiateItem(ViewGroup container, int position)</code>方法。<br>一般来说大家都是这么干的，因为将数据改变后，调用<code>adapter.notifyDataSetChanged();</code>方法。直觉认为这么做合乎常理。<br>但是这里注意一点，假设<code>private ArrayList&lt;View&gt; pageView;</code>中原先保存两个View，改变数据将这个View删除，从新添加三个新的View，那么在<code>destroyItem(ViewGroup container, int position, Object object)</code>方法中，它无法删除，仔细看里面的代码<code>container.removeView(pageView.get(position));</code>，发现它是通过position这个索引获取对象，再在container容器中通过对象查找删除。那么问题来了，你之前已经将两份View删除了，它还怎么通过position获取到呢？所以在这一步出了问题。<br>当然这一步出了问题后，后面的创建页面步骤更是稀巴烂。</p>
-<p>正确步骤如下：<br><figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将页面刷新，渲染新的数据集</span></span><br><span class="line"><span class="selector-tag">homePagerAdapter</span><span class="selector-class">.notifyDataSetChanged</span>();</span><br><span class="line"><span class="selector-tag">changeData</span>(inflater, data);</span><br><span class="line"><span class="selector-tag">homePagerAdapter</span><span class="selector-class">.notifyDataSetChanged</span>();</span><br></pre></td></tr></table></figure></p>
-<p>第一步，不要更改数据，直接调用<code>homePagerAdapter.notifyDataSetChanged();</code>，目的是让其删除原先的view。<br>第二步，更改数据。<br>第三步，再次调用<code>homePagerAdapter.notifyDataSetChanged();</code>，完成页面的创建。由于container中已经没有view了，所以删除那个步骤做了也等于没做，但是由于数据已经更新页面还是会被创建出来。</p>
-<p>最后强调用一点。在HomePagerAdapter类中一个<code>finishUpdate(ViewGroup container)</code>方法，注意看里面的代码。<strong>以上的所有步骤，全部依赖于这几句代码。</strong><br>上面第一步说到直接调用notifyDataSetChanged()方法目的是删除原先的view，但是view删除后，你必须将<code>private ArrayList&lt;View&gt; pageView;</code>中的数据也删除。<strong>这里补充一点，pageView内是我创建的View，而container中是android自己维护的界面</strong>，我也不知道怎么称呼，就将其称为界面吧。<br>在finishUpdate()方法中判断，如果container中已经没有界面了，那就直接移除pageView中所有的数据，也就是算更新数据了。值得注意的是，这里面逻辑及其复杂，这行清空数据的代码，只有放在<code>finishUpdate(ViewGroup container)</code>中执行，并且必须加上那个if条件判断，app才能正常运行。<br>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/assorted/android/ViewPager无法刷新数据.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </p></div>
 
     
 
@@ -2792,7 +3173,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">127</span>
+                    <span class="site-state-item-count">130</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2910,7 +3291,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
 			  
 			  <!-- 不蒜子/busuanzi -->
 			  <div class="site-state-item site-state-posts">
-			  	<span class="site-state-item-count">123.1k</span>
+			  	<span class="site-state-item-count">125.4k</span>
 			  	<span class="site-state-item-name">总字数</span>
 			  </div>
             </nav>

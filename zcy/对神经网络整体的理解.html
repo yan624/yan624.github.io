@@ -142,7 +142,7 @@
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/mini-batch%E4%BD%BF%E7%94%A8Momentum%E5%90%8E.png">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E4%BB%8E%E7%B2%97%E7%B3%99%E5%88%B0%E7%B2%BE%E7%BB%86%E7%9A%84%E5%8F%96%E5%80%BC%E7%AD%96%E7%95%A5.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6%E9%80%89%E6%8B%A9.jpg">
-<meta property="og:updated_time" content="2019-11-11T05:38:33.696Z">
+<meta property="og:updated_time" content="2019-12-07T12:37:27.345Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="对神经网络整体的理解">
 <meta name="twitter:description" content="本文疑问的总结地址在这            大纲    序号 描述的内容     2~4 神经网络和深度学习的发展史。   5 从二元分类开始。   6~10 浅层神经网络的介绍。如神经网络中一些参数代表的意思、激活函数、梯度下降、随机初始化。   11~15 深层神经网络的介绍。正向传播和反向传播中向量化后的计算、参数和超参数、神经网络和大脑的关系。   16 一个S">
@@ -417,7 +417,7 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">127</span></a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">130</span></a>
 
   </li>
 
@@ -588,7 +588,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-11-11 13:38:33" itemprop="dateModified" datetime="2019-11-11T13:38:33+08:00">2019-11-11</time>
+                <time title="修改时间：2019-12-07 20:37:27" itemprop="dateModified" datetime="2019-12-07T20:37:27+08:00">2019-12-07</time>
               
             
           </span>
@@ -1079,15 +1079,27 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} & \underbrace{y^{
 <tbody>
 <tr>
 <td>SGD</td>
+<td>问：为什么 SGD 比 batch gradient descent 快？答：因为 SGD 可以使用极小的 epoch 更新多次权重，而 BGD 必须要大 epoch 才可以。详见<a href="https://www.zhihu.com/question/40892922" target="_blank" rel="noopener">此处</a>  </td>
+</tr>
+<tr>
+<td></td>
 <td><strong>优点</strong>：<br> 1）在损失函数是凸函数的情况下能够保证收敛到一个较好的全局最优解；2）数据量过大时，batch 方法可以减少机器压力，从而更快地收敛；3）当训练集有很多冗余时（类似的样本出现多次），batch方法收敛更快。<br> <strong>缺点</strong>：<br>1）<script type="math/tex">\alpha</script> 是一个定值，它的选取直接决定了解的好坏，过小会导致收敛太慢，过大会导致震荡而无法收敛到最优解；2）对于非凸问题，只能收敛到局部最优，并且没有任何摆脱局部最优的能力（一旦梯度为0就不会再有任何变化）；3）更新方向完全依赖当前的 batch</td>
 </tr>
 <tr>
 <td>Momentum</td>
-<td>累积梯度，充当动量，注：虽然 Momentum 和 RMSprop 类似，但是实际上在计算上并不一样， RMSprop 要多一个除以 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script> 的步骤，且没有偏差修正这一步骤<br> <strong>优点</strong>：1）一定程度上缓解了 SGD 收敛不稳定的问题，并且有一定的摆脱局部最优的能力（即如同一个滚轮下坡一样，它拥有惯性，在到达鞍点时不会立即停止，会因为惯性再向前一点距离，从而可能离开此鞍点）。<br> <strong>缺点</strong>：1）多了一个超参数需要调整，它的选取同样会影响到结果。</td>
+<td>累积梯度，充当动量，注：虽然 Momentum 和 RMSprop 类似，但是实际上在计算上并不一样， RMSprop 要多一个除以 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script> 的步骤，且没有偏差修正这一步骤  </td>
+</tr>
+<tr>
+<td></td>
+<td><strong>优点</strong>：1）一定程度上缓解了 SGD 收敛不稳定的问题，并且有一定的摆脱局部最优的能力（即如同一个滚轮下坡一样，它拥有惯性，在到达鞍点时不会立即停止，会因为惯性再向前一点距离，从而可能离开此鞍点）。<br> <strong>缺点</strong>：1）多了一个超参数需要调整，它的选取同样会影响到结果。</td>
 </tr>
 <tr>
 <td>RMSprop</td>
-<td>通过除以 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script> 减小波动幅度从而收敛更快<br> <strong>优点</strong>：1）不需要手动调整学习率，可以自动调整。<br></td>
+<td>通过除以 <script type="math/tex">\sqrt{S_{dW}} + \epsilon</script> 减小波动幅度从而收敛更快 </td>
+</tr>
+<tr>
+<td></td>
+<td><strong>优点</strong>：1）不需要手动调整学习率，可以自动调整。</td>
 </tr>
 <tr>
 <td>Adam</td>
@@ -1095,11 +1107,19 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} & \underbrace{y^{
 </tr>
 <tr>
 <td>Adagrad</td>
-<td>RMSProp 的简化版<br> <strong>适用场景</strong>：Adagrad非常适合处理稀疏数据（如 one-hot）<br> <strong>优点</strong>：1）不需要手动调节 <script type="math/tex">\alpha</script>，它会发生自适应的变化。<br> <strong>缺点</strong>：1）学习率单调递减，在迭代后期可能导致学习率变得特别小而导致收敛及其缓慢。</td>
+<td>RMSProp 的简化版<br> <strong>适用场景</strong>：Adagrad非常适合处理稀疏数据（如 one-hot）  </td>
+</tr>
+<tr>
+<td></td>
+<td><strong>优点</strong>：1）不需要手动调节 <script type="math/tex">\alpha</script>，它会发生自适应的变化。<br> <strong>缺点</strong>：1）学习率单调递减，在迭代后期可能导致学习率变得特别小而导致收敛及其缓慢。</td>
 </tr>
 <tr>
 <td>Adadelta</td>
-<td>Adadelta 是 Adagrad 的一种扩展算法，以处理Adagrad学习速率单调递减的问题。RMSprop 可以算作 Adadelta 的一个特例<br> <strong>优点</strong>：1）不需要手动调整学习率，可以自动调整；2）不需要手动设置<strong>初始</strong> <script type="math/tex">\alpha</script>。<br> <strong>缺点</strong>：1）后期容易在小范围内产生震荡</td>
+<td>Adadelta 是 Adagrad 的一种扩展算法，以处理Adagrad学习速率单调递减的问题。RMSprop 可以算作 Adadelta 的一个特例  </td>
+</tr>
+<tr>
+<td></td>
+<td><strong>优点</strong>：1）不需要手动调整学习率，可以自动调整；2）不需要手动设置<strong>初始</strong> <script type="math/tex">\alpha</script>。<br> <strong>缺点</strong>：1）后期容易在小范围内产生震荡</td>
 </tr>
 <tr>
 <td>—————-</td>
@@ -1339,7 +1359,7 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} & \underbrace{y^{
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">127</span>
+                    <span class="site-state-item-count">130</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -1457,7 +1477,7 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} & \underbrace{y^{
 			  
 			  <!-- 不蒜子/busuanzi -->
 			  <div class="site-state-item site-state-posts">
-			  	<span class="site-state-item-count">123.1k</span>
+			  	<span class="site-state-item-count">125.4k</span>
 			  	<span class="site-state-item-name">总字数</span>
 			  </div>
             </nav>
