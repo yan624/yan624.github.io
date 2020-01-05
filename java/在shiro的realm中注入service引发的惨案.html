@@ -114,7 +114,7 @@
 <meta property="og:site_name" content="博客">
 <meta property="og:description" content="2019.01.24更新，由于发现了mybatis-plus插件已经实现了我要实现的功能，我自己写的肯定没别人研发的框架写得好，所以此方法已经废弃。  环境介绍一下：由于service层的代码重复太多，于是我想直接把一些重复的代码抽出来。比如说这个方法，它可以实现根据条件查询，框架是mybatis。而注入的mapper是有spring提供的方法获取到的，问题就出在这里了。1234567891011">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-01-24T11:03:10.748Z">
+<meta property="og:updated_time" content="2020-01-05T08:52:21.003Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="在shiro的realm中注入service引发的惨案">
 <meta name="twitter:description" content="2019.01.24更新，由于发现了mybatis-plus插件已经实现了我要实现的功能，我自己写的肯定没别人研发的框架写得好，所以此方法已经废弃。  环境介绍一下：由于service层的代码重复太多，于是我想直接把一些重复的代码抽出来。比如说这个方法，它可以实现根据条件查询，框架是mybatis。而注入的mapper是有spring提供的方法获取到的，问题就出在这里了。1234567891011">
@@ -303,7 +303,7 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">19</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">18</span></a>
 
   </li>
         
@@ -337,6 +337,10 @@ if(pathname == '/flower.html'){
   </li>
 
 
+            
+          
+            
+            
             
           
             
@@ -533,7 +537,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-01-24 19:03:10" itemprop="dateModified" datetime="2019-01-24T19:03:10+08:00">2019-01-24</time>
+                <time title="修改时间：2020-01-05 16:52:21" itemprop="dateModified" datetime="2020-01-05T16:52:21+08:00">2020-01-05</time>
               
             
           </span>
@@ -603,6 +607,7 @@ if(pathname == '/flower.html'){
         <p><strong><em>2019.01.24更新，由于发现了mybatis-plus插件已经实现了我要实现的功能，我自己写的肯定没别人研发的框架写得好，所以此方法已经废弃。</em></strong></p>
 <hr>
 <p>环境介绍一下：由于service层的代码重复太多，于是我想直接把一些重复的代码抽出来。<br>比如说这个方法，它可以实现根据条件查询，框架是mybatis。而注入的mapper是有spring提供的方法获取到的，问题就出在这里了。<br><figure class="highlight monkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">@SuppressWarnings(<span class="string">"unchecked"</span>)</span><br><span class="line">@Override</span><br><span class="line"><span class="keyword">public</span> List&lt;Record&gt; selectByExample(Example example) &#123;</span><br><span class="line">    <span class="class"><span class="keyword">Class</span>&lt;? <span class="keyword">extends</span> <span class="title">Object</span>&gt; <span class="title">mapperClazz</span> = <span class="title">mapper</span>.<span class="title">getClass</span>();</span></span><br><span class="line">    List&lt;Record&gt; res = <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="function"><span class="keyword">Method</span> <span class="title">method</span> =</span> mapperClazz.getDeclaredMethod(<span class="string">"selectByExample"</span>, example.getClass());</span><br><span class="line">        res = (List&lt;Record&gt;) <span class="function"><span class="keyword">method</span>.<span class="title">invoke</span>(</span>mapper, example);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalAccessException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalArgumentException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InvocationTargetException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (NoSuchMethodException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (SecurityException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<a id="more"></a>
 <p>这个方法获取到了mapper的类型，即CLass对象。</p>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SuppressWarnings(<span class="meta-string">"unchecked"</span>)</span></span><br><span class="line"><span class="keyword">public</span> Class&lt;Mapper&gt; getMapperType() &#123;</span><br><span class="line">    ParameterizedType genericSuperclass = (ParameterizedType) <span class="keyword">this</span>.getClass().getGenericSuperclass();</span><br><span class="line">    <span class="keyword">return</span> (Class&lt;Mapper&gt;) genericSuperclass.getActualTypeArguments()[<span class="number">2</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>在这里使用了我自定义的SpringContextUtil类获取了mapper这个bean。注意我这里使用了构造器初始化，问题就出在这里。</p>
@@ -615,7 +620,7 @@ if(pathname == '/flower.html'){
 <figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">initMapper</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Class&lt;Mapper&gt; mapperType = getMapperType();</span><br><span class="line">    <span class="keyword">this</span>.mapper = (Mapper) SpringContextUtil.getBean(mapperType);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>注意@Override注解。<br>那么现在问题就是，怎么调用这个方法。<br>经过度娘之后，终于解决了。贴上类，我就不解释了。附上链接<a href="https://www.cnblogs.com/rollenholt/p/3612440.html" target="_blank" rel="noopener">https://www.cnblogs.com/rollenholt/p/3612440.html</a></p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MapperInit</span> <span class="keyword">implements</span> <span class="title">ApplicationListener</span>&lt;<span class="title">ContextRefreshedEvent</span>&gt; &#123;</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> onApplicationEvent(ContextRefreshedEvent event) &#123;</span><br><span class="line">        <span class="comment">//下面的方法执行就行了，这个方法会执行两次，我们不需要这么做</span></span><br><span class="line">    &#125;</span><br><span class="line">       </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 需要执行的逻辑代码，当spring容器初始化完成后就会执行该方法。</span></span><br><span class="line"><span class="comment">     * 由于加了<span class="doctag">@PostConstruct</span>注解所以这个方法跟上面的onApplicationEvent一样。</span></span><br><span class="line"><span class="comment">     * 但是这个方法只会在root application context环境中执行，不会在 projectName-servlet context中执行</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@SuppressWarnings</span>(<span class="string">"rawtypes"</span>)</span><br><span class="line">    <span class="meta">@PostConstruct</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> initMapper() &#123;</span><br><span class="line">        Map&lt;String, BaseService&gt; beansOfType = SpringContextUtil.getApplicationContext().getBeansOfType(BaseService.<span class="keyword">class</span>);</span><br><span class="line">        <span class="keyword">for</span>(Map.Entry&lt;String, BaseService&gt; <span class="string">entrySet :</span> beansOfType.entrySet()) &#123;</span><br><span class="line">            BaseService service = entrySet.getValue();</span><br><span class="line">            service.initMapper();</span><br><span class="line">            System.out.println(service);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
+<!-- more -->
       
     </div>
 
@@ -836,9 +841,7 @@ if(pathname == '/flower.html'){
                     
                       
                     
-                      
-                    
-                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-count">18</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -846,7 +849,7 @@ if(pathname == '/flower.html'){
 			  
 			  <!-- 不蒜子/busuanzi -->
 			  <div class="site-state-item site-state-posts">
-			  	<span class="site-state-item-count">125.4k</span>
+			  	<span class="site-state-item-count">127.1k</span>
 			  	<span class="site-state-item-name">总字数</span>
 			  </div>
             </nav>
@@ -934,7 +937,7 @@ if(pathname == '/flower.html'){
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2020</span>
   <span class="with-love" id="animate">
     <i class="fa fa-heart"></i>
   </span>

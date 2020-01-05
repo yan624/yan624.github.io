@@ -114,7 +114,7 @@
 <meta property="og:site_name" content="博客">
 <meta property="og:description" content="《Python深度学习》第6章预测imdb的影评imdb影评代码 第五课第二周作业：Emojify本文实现吴恩达深度学习第五课第二周的Emojify作业。目的是了解一个小型nlp系统的构建流程。首先需要导入以下模块。由于在Jupyter中打开的ipynb文件全是英文，所以本文的大部分标题也用英文，方便ctrl F。Emojifier-V1略。 代码加了很多注释，但是代码的顺序我做了很大的改动。下面">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-06-04T05:46:39.768Z">
+<meta property="og:updated_time" content="2020-01-05T08:37:54.559Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="练习Keras RNN的代码">
 <meta name="twitter:description" content="《Python深度学习》第6章预测imdb的影评imdb影评代码 第五课第二周作业：Emojify本文实现吴恩达深度学习第五课第二周的Emojify作业。目的是了解一个小型nlp系统的构建流程。首先需要导入以下模块。由于在Jupyter中打开的ipynb文件全是英文，所以本文的大部分标题也用英文，方便ctrl F。Emojifier-V1略。 代码加了很多注释，但是代码的顺序我做了很大的改动。下面">
@@ -303,7 +303,7 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">19</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">18</span></a>
 
   </li>
         
@@ -337,6 +337,10 @@ if(pathname == '/flower.html'){
   </li>
 
 
+            
+          
+            
+            
             
           
             
@@ -559,7 +563,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-06-04 13:46:39" itemprop="dateModified" datetime="2019-06-04T13:46:39+08:00">2019-06-04</time>
+                <time title="修改时间：2020-01-05 16:37:54" itemprop="dateModified" datetime="2020-01-05T16:37:54+08:00">2020-01-05</time>
               
             
           </span>
@@ -628,7 +632,7 @@ if(pathname == '/flower.html'){
       
         <h1 id="《Python深度学习》第6章预测imdb的影评"><a href="#《Python深度学习》第6章预测imdb的影评" class="headerlink" title="《Python深度学习》第6章预测imdb的影评"></a>《Python深度学习》第6章预测imdb的影评</h1><p><a href="https://github.com/yan624/deep-learning-notes/tree/master/RNN_learning/imdb_predication" target="_blank" rel="noopener">imdb影评代码</a></p>
 <h1 id="第五课第二周作业：Emojify"><a href="#第五课第二周作业：Emojify" class="headerlink" title="第五课第二周作业：Emojify"></a>第五课第二周作业：Emojify</h1><p>本文实现吴恩达深度学习第五课第二周的Emojify作业。目的是了解一个小型nlp系统的构建流程。<br>首先需要导入以下模块。由于在Jupyter中打开的ipynb文件全是英文，所以本文的大部分标题也用英文，方便ctrl F。<br>Emojifier-V1略。</p>
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>加了很多注释，但是代码的顺序我做了很大的改动。下面博客里面的代码，是作业里面的代码，基本没改几个字。<br><a href="https://github.com/yan624/deep-learning-notes/tree/master/RNN_learning/emojify" target="_blank" rel="noopener">emojify_V2代码</a></p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>加了很多注释，但是代码的顺序我做了很大的改动。下面博客里面的代码，是作业里面的代码，基本没改几个字。<br><a href="https://github.com/yan624/deep-learning-notes/tree/master/RNN_learning/emojify" target="_blank" rel="noopener">emojify_V2代码</a><br><a id="more"></a></p>
 <h2 id="Emojifier-V2-Using-LSTMs-in-Keras"><a href="#Emojifier-V2-Using-LSTMs-in-Keras" class="headerlink" title="Emojifier-V2: Using LSTMs in Keras"></a>Emojifier-V2: Using LSTMs in Keras</h2><h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line">np<span class="selector-class">.random</span><span class="selector-class">.seed</span>(<span class="number">0</span>)</span><br><span class="line">from keras<span class="selector-class">.models</span> import Model</span><br><span class="line">from keras<span class="selector-class">.layers</span> import Dense, Input, Dropout, LSTM, Activation</span><br><span class="line">from keras<span class="selector-class">.layers</span><span class="selector-class">.embeddings</span> import Embedding</span><br><span class="line">from keras<span class="selector-class">.preprocessing</span> import sequence</span><br><span class="line">np<span class="selector-class">.random</span><span class="selector-class">.seed</span>(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
 <figure class="highlight capnproto"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.initializers <span class="keyword">import</span> glorot_uniform</span><br></pre></td></tr></table></figure>
 <h3 id="Overview-of-the-model"><a href="#Overview-of-the-model" class="headerlink" title="Overview of the model"></a>Overview of the model</h3><h3 id="Keras-and-mini-batching"><a href="#Keras-and-mini-batching" class="headerlink" title="Keras and mini-batching"></a>Keras and mini-batching</h3><p>本练习中，我们使用mini-batch算法训练Kears。大部分深度学习框架要求在相同的mini-batch中所有序列都要等长。这使得可以执行向量化，如果你有一个3个单词的句子和一个4个单词的句子，它们之间的计算会不同（一个需要3个timestep，一个需要4个timestep，也就是说需要的LSTM个数不同），所有同时计算它们是不可能的，即无法向量化。<br>通用的解决办法是使用padding。具体来说，设置一个序列的最大长度，然后使其他的序列都与该长度等长。比如序列的最大长度是20，那么将其他的序列在后面补充0，知道长度等于20。所以句子“I love you”会在“you”后面被补充17个0。即<script type="math/tex">\begin{pmatrix}e_i & e_{love} & e_{you} & \overrightarrow{0} & \overrightarrow{0} & \cdots & \overrightarrow{0}\end{pmatrix}</script>，e代表词向量。如果长度大于20的话会被裁剪。<br>以下代码实现将句子转换为句子中的每个单词转为索引，这个索引是GloVe词嵌入的，每一个单词对应一个id。id就是索引。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GRADED FUNCTION: sentences_to_indices</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将句子转为索引形式，短于max_len的句子后面补充0，长于max_len的句子直接截断</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sentences_to_indices</span><span class="params">(X, word_to_index, max_len)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Converts an array of sentences (strings) into an array of indices corresponding to words in the sentences.</span></span><br><span class="line"><span class="string">    The output shape should be such that it can be given to `Embedding()` (described in Figure 4). </span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Arguments:</span></span><br><span class="line"><span class="string">    X -- array of sentences (strings), of shape (m, 1)</span></span><br><span class="line"><span class="string">    word_to_index -- a dictionary containing the each word mapped to its index</span></span><br><span class="line"><span class="string">    max_len -- maximum number of words in a sentence. You can assume every sentence in X is no longer than this. </span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">    X_indices -- array of indices corresponding to words in the sentences from X, of shape (m, max_len)</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    </span><br><span class="line">    m = X.shape[<span class="number">0</span>]                                   <span class="comment"># number of training examples</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">### START CODE HERE ###</span></span><br><span class="line">    <span class="comment"># Initialize X_indices as a numpy matrix of zeros and the correct shape</span></span><br><span class="line">    X_indices = np.zeros((m, max_len))</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(m):                               <span class="comment"># loop over training examples</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># Convert the ith training sentence in lower case and split is into words. You should get a list of words.</span></span><br><span class="line">        sentence_words = X[i].lower().split()</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># Initialize j to 0</span></span><br><span class="line">        j = <span class="number">0</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># Loop over the words of sentence_words</span></span><br><span class="line">        <span class="keyword">for</span> w <span class="keyword">in</span> sentence_words:</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># Set the (i,j)th entry of X_indices to the index of the correct word.</span></span><br><span class="line">            X_indices[i, j] =word_to_index[w]</span><br><span class="line">            <span class="comment"># Increment j to j + 1</span></span><br><span class="line">            j = j + <span class="number">1</span></span><br><span class="line">            </span><br><span class="line">    <span class="comment">### END CODE HERE ###</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> X_indices</span><br></pre></td></tr></table></figure></p>
@@ -645,7 +649,7 @@ if(pathname == '/flower.html'){
 <li>使用模型预测，第6条就是输入的训练数据，第2条就是输入的标签</li>
 </ol>
 <p>Embedding层需要输入一个词嵌入矩阵，就是一个二维数组。每行代表一个单词的特征向量，行数就是单词的索引。而输入的训练数据被处理成单词的索引形式。如一组训练样本，每个单词被替换成唯一的索引。<br>Embedding层太过复杂，故不作详解。第一章的代码中全部有注释。</p>
-<a id="more"></a>
+<!-- more -->
       
     </div>
 
@@ -691,8 +695,8 @@ if(pathname == '/flower.html'){
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/学习笔记/深度学习学习记录大纲.html" rel="prev" title="深度学习学习记录大纲">
-                深度学习学习记录大纲 <i class="fa fa-chevron-right"></i>
+              <a href="/学习笔记/深度学习中的一些疑问总结.html" rel="prev" title="深度学习中的一些疑问总结">
+                深度学习中的一些疑问总结 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -875,9 +879,7 @@ if(pathname == '/flower.html'){
                     
                       
                     
-                      
-                    
-                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-count">18</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -885,7 +887,7 @@ if(pathname == '/flower.html'){
 			  
 			  <!-- 不蒜子/busuanzi -->
 			  <div class="site-state-item site-state-posts">
-			  	<span class="site-state-item-count">125.4k</span>
+			  	<span class="site-state-item-count">127.1k</span>
 			  	<span class="site-state-item-name">总字数</span>
 			  </div>
             </nav>
@@ -990,7 +992,7 @@ if(pathname == '/flower.html'){
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2020</span>
   <span class="with-love" id="animate">
     <i class="fa fa-heart"></i>
   </span>

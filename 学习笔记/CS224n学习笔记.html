@@ -131,7 +131,7 @@
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/parsing a sentence with rnn 3.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/parsing a sentence with rnn 4.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/related work for parsing.jpg">
-<meta property="og:updated_time" content="2019-11-20T10:55:28.209Z">
+<meta property="og:updated_time" content="2020-01-05T08:32:25.077Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CS224n学习笔记">
 <meta name="twitter:description" content="&amp;emsp;&amp;emsp;本笔记记录的内容来源于 b站——CS224n 斯坦福深度自然语言处理课。&amp;emsp;&amp;emsp;之后我补充了18 章之后的内容，其来源为b站——(2019)斯坦福CS224n深度学习自然语言处理课程 by Chris Manning            开场白&amp;emsp;&amp;emsp;略 词向量表示：word2vec&amp;emsp;&amp;emsp;课程计划">
@@ -321,7 +321,7 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">19</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">18</span></a>
 
   </li>
         
@@ -355,6 +355,10 @@ if(pathname == '/flower.html'){
   </li>
 
 
+            
+          
+            
+            
             
           
             
@@ -577,7 +581,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-11-20 18:55:28" itemprop="dateModified" datetime="2019-11-20T18:55:28+08:00">2019-11-20</time>
+                <time title="修改时间：2020-01-05 16:32:25" itemprop="dateModified" datetime="2020-01-05T16:32:25+08:00">2020-01-05</time>
               
             
           </span>
@@ -653,7 +657,7 @@ if(pathname == '/flower.html'){
 <script type="math/tex; mode=display">
 p(context|w_t) = \dots</script><p>&emsp;&emsp;然后用损失函数判断预测的准确性，例如：</p>
 <script type="math/tex; mode=display">
-J = 1 - p(w_{-t}|w_t), \quad  \text{-t 代表 t 周围的单词}</script><p>&emsp;&emsp;如果可以精准地根据 t 预测到这些单词，那么概率就为 1，于是损失就没有了。但通常情况下，做不到这点。<strong>所以我们应该调整词汇表示，从而使损失最小化</strong>。<br>&emsp;&emsp;下图是以前的低维词向量表示方法，2003 年 Bengio 发表的这篇现在属于开创性的论文其实并没有太多人关注，因为那时候深度学习并没有很流行。但是当这篇论文开始流行的时候，就开始大行其道了。于是 2008 年 Collobert 和 Weston 开启了一个新方向，<strong>他们觉得如果我们只想要得到好的单词表示，我们甚至不需要构建一个具有预测功能的概率语言模型（probabilistic language model），我们只需要找到一种学习单词表示的方法即可</strong>。于是 2013 年有了 word2vec 模型。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/以前的低维词向量表示方法.jpg" alt="以前的低维词向量表示方法"></p>
+J = 1 - p(w_{-t}|w_t), \quad  \text{-t 代表 t 周围的单词}</script><p>&emsp;&emsp;如果可以精准地根据 t 预测到这些单词，那么概率就为 1，于是损失就没有了。但通常情况下，做不到这点。<strong>所以我们应该调整词汇表示，从而使损失最小化</strong>。<br><a id="more"></a><br>&emsp;&emsp;下图是以前的低维词向量表示方法，2003 年 Bengio 发表的这篇现在属于开创性的论文其实并没有太多人关注，因为那时候深度学习并没有很流行。但是当这篇论文开始流行的时候，就开始大行其道了。于是 2008 年 Collobert 和 Weston 开启了一个新方向，<strong>他们觉得如果我们只想要得到好的单词表示，我们甚至不需要构建一个具有预测功能的概率语言模型（probabilistic language model），我们只需要找到一种学习单词表示的方法即可</strong>。于是 2013 年有了 word2vec 模型。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/以前的低维词向量表示方法.jpg" alt="以前的低维词向量表示方法"></p>
 <p>&emsp;&emsp;word2vec 是一个软件，实际上，它里面包含很多东西。有两个用于生成词汇向量的算法（Hierarchical softamx，negative sampling），还有两套效率中等的训练方法（Skip-grams，CBOW）。<em>这里的软件应该指的不是那种可以运行 exe 文件</em>。本节只讲 skip-grams 算法，并且不会讲那两个高效的词向量生成算法，而是将一个效率极低的算法（因为比较简单且包含了基本概念）。<br>&emsp;&emsp;skip-grams 模型的概念是：在每一个估算步中，都取一个词为中心词汇，然后尝试预测它<strong>一定范围内</strong>的上下文的词汇。这个模型将定义一个概率分布：<strong>给定一个中心词汇预测某个单词在它上下文中出现的概率</strong>。如下图所示：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/skip-grams模型.jpg" alt="skip-grams模型"></p>
 <p>&emsp;&emsp;我们将会选取词汇的向量表示，以让概率分布值最大化。</p>
 <h2 id="优化目标"><a href="#优化目标" class="headerlink" title="优化目标"></a>优化目标</h2><p>&emsp;&emsp;我们需要做的是定义一个半径 m，然后从中心词汇开始到距离为 m 的位置来预测周围的词汇。这句话比较抽象，因为到这为止，你还是构建不出一个模型（优化目标）。下面先给出模型的公式，注意一撇不是求导：</p>
@@ -769,7 +773,7 @@ v_a tanh(W_a [h_t;\bar{h}_s])
           </div>
 <h1 id="用于回答问题的动态神经网络"><a href="#用于回答问题的动态神经网络" class="headerlink" title="用于回答问题的动态神经网络"></a>用于回答问题的动态神经网络</h1><p>&emsp;&emsp;略，这节听不懂。</p>
 <h1 id="※-NLP的问题和可能性架构"><a href="#※-NLP的问题和可能性架构" class="headerlink" title="※ NLP的问题和可能性架构"></a>※ NLP的问题和可能性架构</h1><p>&emsp;&emsp;tree-RNN、pointer model、sub-word and character-based model 等。</p>
-<h1 id="※-应对深度-NLP-的局限性"><a href="#※-应对深度-NLP-的局限性" class="headerlink" title="※ 应对深度 NLP 的局限性"></a>※ 应对深度 NLP 的局限性</h1><a id="more"></a>
+<h1 id="※-应对深度-NLP-的局限性"><a href="#※-应对深度-NLP-的局限性" class="headerlink" title="※ 应对深度 NLP 的局限性"></a>※ 应对深度 NLP 的局限性</h1>
       
     </div>
 
@@ -999,9 +1003,7 @@ v_a tanh(W_a [h_t;\bar{h}_s])
                     
                       
                     
-                      
-                    
-                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-count">18</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -1009,7 +1011,7 @@ v_a tanh(W_a [h_t;\bar{h}_s])
 			  
 			  <!-- 不蒜子/busuanzi -->
 			  <div class="site-state-item site-state-posts">
-			  	<span class="site-state-item-count">125.4k</span>
+			  	<span class="site-state-item-count">127.1k</span>
 			  	<span class="site-state-item-name">总字数</span>
 			  </div>
             </nav>
@@ -1114,7 +1116,7 @@ v_a tanh(W_a [h_t;\bar{h}_s])
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2020</span>
   <span class="with-love" id="animate">
     <i class="fa fa-heart"></i>
   </span>

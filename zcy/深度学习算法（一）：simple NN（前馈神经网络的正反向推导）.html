@@ -117,7 +117,7 @@
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg">
-<meta property="og:updated_time" content="2019-07-11T11:54:34.960Z">
+<meta property="og:updated_time" content="2020-01-05T08:32:35.640Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="深度学习算法（一）：simple NN（前馈神经网络的正反向推导）">
 <meta name="twitter:description" content="本文的公式不存在次方的说法，所以看见上标，不要想成是次方。对于权重的表示问题，请看博客，但是由于是以前的学习笔记，不保证完全正确。如果想了解为什么梯度下降要对w和b求导，可以看这篇。建议边看边写，否则思维跟不上。            前言参考文章以如下神经网络架构为例。参考文章中使用了一个2 2 2的神经网络架构，但是现实中神经网络架构不会这么整整齐齐。所以还是使用了略">
@@ -307,7 +307,7 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">19</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">18</span></a>
 
   </li>
         
@@ -341,6 +341,10 @@ if(pathname == '/flower.html'){
   </li>
 
 
+            
+          
+            
+            
             
           
             
@@ -537,7 +541,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-07-11 19:54:34" itemprop="dateModified" datetime="2019-07-11T19:54:34+08:00">2019-07-11</time>
+                <time title="修改时间：2020-01-05 16:32:35" itemprop="dateModified" datetime="2020-01-05T16:32:35+08:00">2020-01-05</time>
               
             
           </span>
@@ -607,7 +611,7 @@ if(pathname == '/flower.html'){
         <div class="note info">
             <p>本文的公式不存在次方的说法，所以看见上标，不要想成是次方。<br>对于权重的表示问题，请看<a href="https://yan624.github.io/学习笔记/《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题.html">博客</a>，但是由于是以前的学习笔记，不保证完全正确。<br>如果想了解为什么梯度下降要对w和b求导，可以看<a href="https://yan624.github.io/学习笔记/梯度下降算法的推导.html">这篇</a>。<br><strong>建议边看边写，否则思维跟不上。</strong></p>
           </div>
-<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>参考<a href="https://www.cnblogs.com/charlotte77/p/5629865.html" target="_blank" rel="noopener">文章</a><br>以如下神经网络架构为例。参考<a href="https://www.cnblogs.com/charlotte77/p/5629865.html" target="_blank" rel="noopener">文章</a>中使用了一个2 2 2的神经网络架构，但是现实中神经网络架构不会这么整整齐齐。所以还是使用了略复杂的架构，此外原文中未对bias（偏差）更新。另外原文也没有实现向量化后的计算。虽然在后面的代码写了，但是由于代码太长了，有一种代码我给出来了，你们自己去看的感觉。说实话没多少注释，都没看的欲望(╬￣皿￣)。然后她所使用的符号让我不太习惯，因为看吴恩达以及李宏毅老师使用的符号都是<script type="math/tex">w^l_{ji}\ a^l_i</script>等等，所以自己重新推导一遍，并且使用了数学公式，而不是截图，更好看一点。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版"><br>解释一下最下面的神经元，这个神经元初始化为1，也就是意味着1 * b = b。输入值为1，一个偏差乘1还是偏差本身。</p>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>参考<a href="https://www.cnblogs.com/charlotte77/p/5629865.html" target="_blank" rel="noopener">文章</a><br>以如下神经网络架构为例。参考<a href="https://www.cnblogs.com/charlotte77/p/5629865.html" target="_blank" rel="noopener">文章</a>中使用了一个2 2 2的神经网络架构，但是现实中神经网络架构不会这么整整齐齐。所以还是使用了略复杂的架构，此外原文中未对bias（偏差）更新。另外原文也没有实现向量化后的计算。虽然在后面的代码写了，但是由于代码太长了，有一种代码我给出来了，你们自己去看的感觉。说实话没多少注释，都没看的欲望(╬￣皿￣)。然后她所使用的符号让我不太习惯，因为看吴恩达以及李宏毅老师使用的符号都是<script type="math/tex">w^l_{ji}\ a^l_i</script>等等，所以自己重新推导一遍，并且使用了数学公式，而不是截图，更好看一点。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版"><br>解释一下最下面的神经元，这个神经元初始化为1，也就是意味着1 * b = b。输入值为1，一个偏差乘1还是偏差本身。<br><a id="more"></a></p>
 <h2 id="关于函数选用"><a href="#关于函数选用" class="headerlink" title="关于函数选用"></a>关于函数选用</h2><p>本文所有激活函数选择sigmoid函数，代价函数选择binary_crossentropy。</p>
 <h2 id="一些约定"><a href="#一些约定" class="headerlink" title="一些约定"></a>一些约定</h2><div class="note info">
             <p>本文所有的输入值，激活值，输出值都是<strong>列向量</strong>。</p>
@@ -858,7 +862,7 @@ w^2_{21} & w^2_{22} & w^2_{23}\\
 <h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p><a href="https://github.com/yan624/machine_learning_algorithms/tree/master/simple_neural_network" target="_blank" rel="noopener">使用numpy实现一个简单的神经网络</a></p>
 <h1 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h1><p>在做反向传播代码时，验算了很多遍，发现公式推导没有问题，但是梯度却一直在上升，心态都炸了。<br>最后发现，用了大半年的crossentropy在最前面居然要加上一个“-”号。以前由于是偷懒，在求导的时候一般不加负号，在求完导之后再补上。然后由于写习惯了，导致我忘记crossentropy居然是有负号的。</p>
 <h1 id="撒花"><a href="#撒花" class="headerlink" title="撒花"></a>撒花</h1><p>在第二节有一步是初始化数据，但是全篇都没用几个地方用到。是因为数据测试起来太麻烦了，我需要在代码里一步一步分析神经网络的计算过程，从而获得数据。以后再补充吧。</p>
-<a id="more"></a>
+<!-- more -->
       
     </div>
 
@@ -1088,9 +1092,7 @@ w^2_{21} & w^2_{22} & w^2_{23}\\
                     
                       
                     
-                      
-                    
-                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-count">18</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -1098,7 +1100,7 @@ w^2_{21} & w^2_{22} & w^2_{23}\\
 			  
 			  <!-- 不蒜子/busuanzi -->
 			  <div class="site-state-item site-state-posts">
-			  	<span class="site-state-item-count">125.4k</span>
+			  	<span class="site-state-item-count">127.1k</span>
 			  	<span class="site-state-item-name">总字数</span>
 			  </div>
             </nav>
@@ -1203,7 +1205,7 @@ w^2_{21} & w^2_{22} & w^2_{23}\\
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2020</span>
   <span class="with-love" id="animate">
     <i class="fa fa-heart"></i>
   </span>

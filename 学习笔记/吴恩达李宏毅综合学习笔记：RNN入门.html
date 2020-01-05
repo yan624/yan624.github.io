@@ -163,7 +163,7 @@
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/助于理解Pointer Network的一个例子.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Pointer Network for Summarization.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Pointer Network的做法.jpg">
-<meta property="og:updated_time" content="2019-12-13T13:15:32.227Z">
+<meta property="og:updated_time" content="2020-01-05T08:12:09.559Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="吴恩达李宏毅综合学习笔记：RNN入门">
 <meta name="twitter:description" content="大纲    序号 课程 内容     2~8 吴恩达深度学习 one hot编码、RNN包括双向和深层、GRU、LSTM   9~14 李宏毅机器学习 RNN包括双向和深层、LSTM、RNN反向传播、seq2seq   15~20 李宏毅深度学习 计算图、语言模型中的深度学习、几个有用的网络架构。到原视频的 p12 结束，由于后续部分涉及到了 GAN 等其他模型，所以不在此处做笔记，详见对神经网络">
@@ -353,7 +353,7 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">19</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">18</span></a>
 
   </li>
         
@@ -387,6 +387,10 @@ if(pathname == '/flower.html'){
   </li>
 
 
+            
+          
+            
+            
             
           
             
@@ -609,7 +613,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-12-13 21:15:32" itemprop="dateModified" datetime="2019-12-13T21:15:32+08:00">2019-12-13</time>
+                <time title="修改时间：2020-01-05 16:12:09" itemprop="dateModified" datetime="2020-01-05T16:12:09+08:00">2020-01-05</time>
               
             
           </span>
@@ -704,6 +708,7 @@ if(pathname == '/flower.html'){
 </tbody>
 </table>
 </div>
+<a id="more"></a>
 <h1 id="字母表示"><a href="#字母表示" class="headerlink" title="字母表示"></a>字母表示</h1><p>假设：<br>x: Harry Potter and Hermione Granger invented a new spell.<br>y: 1 1 0 1 1 0 0 0 0<br>其中1代表人名地名之类的单词。这句话一共有九个单词，则x可以表示为：<script type="math/tex">x^{<1>} x^{<2>} \cdots x^{<t>} \cdots x^{<9>}</script>。<br>则y可以表示为：<script type="math/tex">y^{<1>} y^{<2>} \cdots y^{<t>} \cdots y^{<9>}</script><br>输入的长度表示为<script type="math/tex">T_x</script>，则<script type="math/tex">T_x = 9</script>。<br>输出的长度表示为<script type="math/tex">T_y</script>，则<script type="math/tex">T_y = 9</script>。<br>之前在神经网络中<script type="math/tex">X^i</script>或<script type="math/tex">X^(i)</script>代表第i个训练样本。现在在序列模型中，<script type="math/tex">X^{(i)<t>}</script>代表代表第i个训练样本的第t个元素。对应地，<script type="math/tex">T^i_x</script>就代表第i个样本的输入长度。</p>
 <h1 id="one-hot编码"><a href="#one-hot编码" class="headerlink" title="one hot编码"></a>one hot编码</h1><p>在我们做自然语言处理时，一件需要事先决定的是，怎么表示一个序列里的单词。<br>第一件事就是做一张词表（Vocabulary）有时也叫字典（Dictionary），然后将表示方法中要使用的单词列出一列。最后将一个单词用一个稀疏向量表示，如Harry表示为<script type="math/tex">\begin{pmatrix}0&0&0&\cdots&1&0&\cdots&0\end{pmatrix}</script>。1所在位置就是Harry这个单词在词表中的所在位置。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/ont%20hot%E4%BE%8B%E5%AD%90.jpg" alt="ont hot例子"></p>
 <h1 id="循环神经网络——RNN"><a href="#循环神经网络——RNN" class="headerlink" title="循环神经网络——RNN"></a>循环神经网络——RNN</h1><p>与Simple Neural Network不同的是，循环神经网络的每一层都要有输入x和输出y。<br>第一步与Simple Neural Network类似，<script type="math/tex">a_1 = w_{ax} * x^{<1>} + b_a</script>，这样就获得了激活值a，但是这时需要使用sigmoid函数或者其他函数直接算出y，另外与Simple Neural Network不同的是，它在计算激活值时需要附带加上前一层的激活值乘上一个权重，此权重与其他的权重类似，也是NN自己训练的。所以第二个序列的计算公式是<script type="math/tex">a_2 = w_{aa} * a_1 + w_{ax} * x^{<2>} + b_a</script>。后面的序列就跟第二个序列一样。<strong>注意一点，RNN中平行方向是时间序列，并不是隐藏层，并且此例中为了方便起见，垂直方向只有一个隐藏层。那几个圆圈是神经元</strong>。看下图。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84RNN%E7%A4%BA%E6%84%8F%E5%9B%BE.jpg" alt="吴恩达深度学习中的RNN示意图"></p>
@@ -740,7 +745,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
 <li>The cats, which already ate…, were full.</li>
 </ul>
 <p>这两个句子只有复数形式上的不同，但是开头的名词影响到了最后面的be动词。但是我们目前见到的最基本的RNN不擅长捕获这种长期依赖效应。<br>用梯度消失解释一下为什么，其实原理相同的，这里引用之前的文章<br><a href="https://yan624.github.io//%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3.html#%E6%A2%AF%E5%BA%A6%E6%B6%88%E5%A4%B1%E5%92%8C%E6%A2%AF%E5%BA%A6%E7%88%86%E7%82%B8">梯度消失和梯度爆炸</a></p>
-<h1 id="GRU单元——Gate-Recurrent-Unit"><a href="#GRU单元——Gate-Recurrent-Unit" class="headerlink" title="GRU单元——Gate Recurrent Unit"></a>GRU单元——Gate Recurrent Unit</h1><p>中文名为门控循环单元。它解决了梯度消失的问题。</p>
+<h1 id="GRU单元——Gate-Recurrent-Unit"><a href="#GRU单元——Gate-Recurrent-Unit" class="headerlink" title="GRU单元——Gate Recurrent Unit"></a>GRU单元——Gate Recurrent Unit</h1><p>中文名为门控循环单元。它也解决了梯度消失的问题。</p>
 <h2 id="符号表示"><a href="#符号表示" class="headerlink" title="符号表示"></a>符号表示</h2><p>c = memonry cell，使用<script type="math/tex">c^{<t>}</script>符号表示输出，其中<script type="math/tex">c^{<t>} = a^{<t>}</script>，由于后面的LSTM的c和a代表意思不同，所以这里直接使用c来表示输出值。所以本小章下的c你都看作是a即可。</p>
 <h2 id="GRU工作流程"><a href="#GRU工作流程" class="headerlink" title="GRU工作流程"></a>GRU工作流程</h2><p>由于通过<script type="math/tex">c^{<t-1>}</script>来更新<script type="math/tex">c^{<t>}</script>的值，但是现在我们使用GRU，GRU就是来控制是否更新<script type="math/tex">c^{<t>}</script>的值的，这里使用“更新”的名词可能有点怪，因为<script type="math/tex">c^{<t>}</script>实际上是通过<script type="math/tex">c^{<t-1>}</script><strong>计算</strong>出来的。那么公式<script type="math/tex">a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)</script>变为<script type="math/tex">\tilde{c}^{<t>} = tanh(w_{c} * [c^{<t-1>}, x^{<t>}] + b_c)</script>，这里的<script type="math/tex">\tilde{c}^{<t>}</script>是一个候选值——candidate value，类似于中间变量，而激活函数我们选择tanh。<br>GRU的核心是有一个Gate，就是上面说的是否更新值的功能，它的公式为<script type="math/tex">\Gamma_u = \sigma(w_{u} * [c^{<t-1>}, x^{<t>}] + b_u)</script>，<script type="math/tex">\Gamma_u</script>的u的意思是update，sigmoid函数的输出范围在0-1之间，所以就完成了类似更新的功能。如果是0就代表不让你更新，如果是1就代表让你更新，这里听起来还有点绕，没关系看下面的表达式。<br>这时开始执行更新步骤：<script type="math/tex">c^{<t>} = \Gamma_u * \tilde{c}^{<t>} + (1 - \Gamma_u) * c^{<t-1>}</script>，这一步可以看出如果<script type="math/tex">\Gamma_u</script>等于1就将<script type="math/tex">c^{<t>}</script>更新为<script type="math/tex">\tilde{c}^{<t>}</script>，如果等于0就相当于不让你更新，结果还是上一个的c，即<script type="math/tex">c^{<t-1>}</script>。<br>将公式写在一起，GRU的工作流程就是：</p>
 <script type="math/tex; mode=display">
@@ -888,7 +893,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
 <p>&emsp;&emsp;当然，这肯定已经有一些算法可以解了，比如在坐标系中计算距离。但是今天我们使用硬 train 一发的方法，即不管三七二十一将它输入到神经网络里面训练。首先制造一些训练数据，然后给 encoder-deocder 训练。<strong>具体的训练步骤为</strong>：输入点的坐标，输出 one-hot 表示 <code>{1,2,3,4,END}</code> 的五维向量，碰到 END 则代表解码完毕。<br>&emsp;&emsp;但结果是网络训练不起来，因为在上述的例子中我们只输入了 4 个点，我们的目的是得到 1-4 个点。但是如果我们的测试数据是输入 400 个点呢？那么我们也只会得到 1-4 个点，因为 <code>{1,2,3,4,END}</code> 是预先定义好的。你可能会想那就多定义一点啊，但是下次我要是输入 4000 个点呢？要是 40000 个点呢？总有你无法预先定义的时候。<br>&emsp;&emsp;所以我们需要 <strong>Pointer Network</strong> 来<strong>动态的改变类别</strong>（具体做法详见下一小节），注意我这里直接说成类别了，我们可以把 decoder 部分看作是多元分类的工作，如输出 4000 个点，就是 4000 元分类。<br>&emsp;&emsp;<strong>上面的例子其实是 Pointer Netwoek 论文中的一个例子，但是对于这个例子来说，使用 Pointer Network 其实没多大意义，因为问题本身有更简单的解法，下面说一下有意义的用途。</strong><br>&emsp;&emsp;Pointer Network 应用于 <strong>Summarization</strong>，<a href="https://www.aclweb.org/anthology/P17-1099" target="_blank" rel="noopener">论文地址</a>。给定一篇文档，让机器做出总结。对于此类问题，我们会碰到很多<strong>生僻的地名、人名</strong>等等字词。我们可以使用 Pointer Network 来解决这个问题。<br>&emsp;&emsp;下图就是做法，整张图的意思就是在做文本摘要的工作，输入一个句子，输出摘要。先不看中间的黄色圆圈 <script type="math/tex">p_{gen}</script>，看看其他部分（红黄两部分）就是很普通的 encoder-decoder。但是对于这个 encoder-decoder 来说，词表中并没有 <em>Aregentina</em> 这个单词。那么我们就可以使用 Pointer Network，这个 <script type="math/tex">p_{gen}</script> 就是概率（具体描述见下一节）。最后结果就是我们将注意力关注到 <em>Aregentina</em> 这个单词。当然对于 encoder-decoder 这部分的工作也是要做的，我们可以将两个结果加起来，从而判断出最终要产生哪个单词，做法详见原论文。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Pointer Network for Summarization.jpg" alt="Pointer Network for Summarization"></p>
 <p>&emsp;&emsp;还可用于 <strong>machine learning</strong>、<strong>chatbot</strong> 等。</p>
 <h2 id="具体做法"><a href="#具体做法" class="headerlink" title="具体做法"></a>具体做法</h2><p>&emsp;&emsp;具体的实现就是像下图一样，首先在输入的序列之前加入一个 END 序列，然后将 decoder 删掉。我们还是使用 Attention 机制计算每个序列的 attention score，但是这次的 score 不再乘上它对应的向量，而是直接当做向量输出，意思就是把所以的 score 做一次 max，最大的就输出 1。而<strong>停止条件就是 END 这个序列的 score 是最大的，即为 1 就停止训练。</strong><br>&emsp;&emsp;这样的做法乍一看好像无法理解，我解释一下。由于 encoder 是对序列的长度不敏感的，也就是说如果预先定义的类别是 40 维，而我输入 400 个点，那么对于 encoder 来说，它可以增加神经元的数量从而使得 400 个点<strong>正好</strong>全部输入进 encoder。但是对于 decoder 来说，它输出只能是 40 维。<strong>那么 Pointer Network 的做法是将 decoder 删除，把输出的工作也交给 encoder 去做。所以我输入 400 个点，自然也就可以输出 400 维的类别</strong>（这里应该是 401 维，因为还有一个 END 序列）。看下图的 encoder，<script type="math/tex">h^4</script> 的分数是 0.7，所以我们的输出就是 4，当然对于向量来说就是 <script type="math/tex">(0, 0, 0, 0, 1)</script>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Pointer Network的做法.jpg" alt="Pointer Network的做法"></p>
-<a id="more"></a>
+
       
     </div>
 
@@ -1118,9 +1123,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
                     
                       
                     
-                      
-                    
-                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-count">18</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -1128,7 +1131,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
 			  
 			  <!-- 不蒜子/busuanzi -->
 			  <div class="site-state-item site-state-posts">
-			  	<span class="site-state-item-count">125.4k</span>
+			  	<span class="site-state-item-count">127.1k</span>
 			  	<span class="site-state-item-name">总字数</span>
 			  </div>
             </nav>
@@ -1233,7 +1236,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2020</span>
   <span class="with-love" id="animate">
     <i class="fa fa-heart"></i>
   </span>

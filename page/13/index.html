@@ -303,7 +303,7 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">19</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">18</span></a>
 
   </li>
         
@@ -337,6 +337,10 @@ if(pathname == '/flower.html'){
   </li>
 
 
+            
+          
+            
+            
             
           
             
@@ -535,7 +539,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-01-24 19:03:10" itemprop="dateModified" datetime="2019-01-24T19:03:10+08:00">2019-01-24</time>
+                <time title="修改时间：2020-01-05 16:52:21" itemprop="dateModified" datetime="2020-01-05T16:52:21+08:00">2020-01-05</time>
               
             
           </span>
@@ -599,18 +603,6 @@ if(pathname == '/flower.html'){
           <p><strong><em>2019.01.24更新，由于发现了mybatis-plus插件已经实现了我要实现的功能，我自己写的肯定没别人研发的框架写得好，所以此方法已经废弃。</em></strong></p>
 <hr>
 <p>环境介绍一下：由于service层的代码重复太多，于是我想直接把一些重复的代码抽出来。<br>比如说这个方法，它可以实现根据条件查询，框架是mybatis。而注入的mapper是有spring提供的方法获取到的，问题就出在这里了。<br><figure class="highlight monkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">@SuppressWarnings(<span class="string">"unchecked"</span>)</span><br><span class="line">@Override</span><br><span class="line"><span class="keyword">public</span> List&lt;Record&gt; selectByExample(Example example) &#123;</span><br><span class="line">    <span class="class"><span class="keyword">Class</span>&lt;? <span class="keyword">extends</span> <span class="title">Object</span>&gt; <span class="title">mapperClazz</span> = <span class="title">mapper</span>.<span class="title">getClass</span>();</span></span><br><span class="line">    List&lt;Record&gt; res = <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="function"><span class="keyword">Method</span> <span class="title">method</span> =</span> mapperClazz.getDeclaredMethod(<span class="string">"selectByExample"</span>, example.getClass());</span><br><span class="line">        res = (List&lt;Record&gt;) <span class="function"><span class="keyword">method</span>.<span class="title">invoke</span>(</span>mapper, example);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalAccessException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalArgumentException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InvocationTargetException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (NoSuchMethodException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (SecurityException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>这个方法获取到了mapper的类型，即CLass对象。</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SuppressWarnings(<span class="meta-string">"unchecked"</span>)</span></span><br><span class="line"><span class="keyword">public</span> Class&lt;Mapper&gt; getMapperType() &#123;</span><br><span class="line">    ParameterizedType genericSuperclass = (ParameterizedType) <span class="keyword">this</span>.getClass().getGenericSuperclass();</span><br><span class="line">    <span class="keyword">return</span> (Class&lt;Mapper&gt;) genericSuperclass.getActualTypeArguments()[<span class="number">2</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在这里使用了我自定义的SpringContextUtil类获取了mapper这个bean。注意我这里使用了构造器初始化，问题就出在这里。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">BaseServiceImpl</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Class&lt;Mapper&gt; mapperType = getMapperType();</span><br><span class="line">    <span class="keyword">this</span>.mapper = (Mapper) SpringContextUtil.getBean(mapperType);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>getBean()方法就不提供了，可以自行百度。主要是这个类SpringContextUtil。<br>要想使用spring提供的以java代码方法获取bean有5种方式（大致差不多，我是用了第四种）：实现ApplicationContextAware接口。只需要在实现类中定义private static ApplicationContext applicationContext;变量，再设置set方法，即可使用这个对象获取到bean。<br>到这里一切都没问题，可以当启动tomcat时，问题出来了。<br>它报了一个异常，必须初始化applicationContext。我纳闷了，我之前在Controller层注入service对象用的好好的，为什么在shiro的realm中注入就出事了？<br>我看了我的applicationContext.xml文件，我是这么写的：</p>
-<figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;<span class="keyword">import</span> resource=<span class="string">"classpath:springContextConfig.xml"</span> /&gt;</span><br><span class="line">&lt;<span class="keyword">import</span> resource=<span class="string">"classpath:spring/upms-dao.xml"</span> /&gt;</span><br><span class="line">&lt;<span class="keyword">import</span> resource=<span class="string">"classpath:spring/upms-service.xml"</span> /&gt;</span><br><span class="line">&lt;<span class="keyword">import</span> resource=<span class="string">"classpath:spring/upms-tx.xml"</span> /&gt;</span><br><span class="line">&lt;<span class="keyword">import</span> resource=<span class="string">"classpath:shiro/shiro.xml"</span> /&gt;</span><br></pre></td></tr></table></figure>
-<p>然后看了web.xml文件</p>
-<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;context-<span class="built_in">param</span>&gt;</span><br><span class="line">	&lt;<span class="built_in">param</span>-name&gt;contextConfigLocation&lt;/<span class="built_in">param</span>-name&gt;</span><br><span class="line">	&lt;<span class="built_in">param</span>-<span class="built_in">value</span>&gt;classpath:applicationContext.xml&lt;/<span class="built_in">param</span>-<span class="built_in">value</span>&gt;</span><br><span class="line">&lt;/context-<span class="built_in">param</span>&gt;</span><br></pre></td></tr></table></figure>
-<p>好像稍微有点头绪了<br>我在初始化spring上下文的时候，直接初始化了shiro.xml，这没问题。但是在applicationContext.xml中第一行的<code>&lt;import resource=&quot;classpath:springContextConfig.xml&quot; /&gt;</code>里面注册了SPringContextUtil这个工具类。（这个工具类不会一下子注册进去成为bean，它会在spring上下文初始化完毕之后才行）。<br>所以我需要在realm中注册AdminService——-&gt;AdminService继承了BaseServiceImpl——-&gt;BaseServiceImpl在构造器中使用了applicationContext.getBean()。这个步骤在spring上下文初始化还没完成的时候执行，但是你要想使用applicationContext，spring上下文必须初始化完毕，所以冲突了。<br>那我就想直接把shiro.xml托到DispatcherServlet里面初始化就完事了。因为在DispatcherServlet加载的配置文件中，我扫描了Controller层，而在Controller层使用是没问题的（我之前还不懂的时候就这么做的，没报异常）。然后我这么做了，但是又报异常了——-&gt;No Bean Named “shiroFilter”。这不坑爹吗？<br>我先缕一缕，<code>&lt;context-param&gt;</code>最先执行，其次是<code>&lt;filter&gt;</code>，最后是<code>&lt;servlet&gt;</code>（不一定完全正确，但是可以这么理解）。所以说shiro.xml放在DispatcherServlet中不行！因为filter比servlet先执行，它必须要shiro.xml中的bean。所以怎么办？我必须把shiro.xml放在context-param和filter的中间。这根本不可能（起码我做不到）。<br>后来我想到了懒加载（我印象中有听说过这个概念），我一百度还真有。那我应该把懒加载放在哪个bean上呢？我决定放在AdminService上。但是没用，因为Realm这个类不能懒加载，因为它马上就被初始化了。而realm中注入了AdminService，所以即使是懒加载也没屌用。<br>最后终于解决了。<br>既然你要初始化bean，要用构造器，我就把调用applicationContext的代码不放在构造器里。我写了一个initMapper方法。</p>
-<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">initMapper</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Class&lt;Mapper&gt; mapperType = getMapperType();</span><br><span class="line">    <span class="keyword">this</span>.mapper = (Mapper) SpringContextUtil.getBean(mapperType);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>注意@Override注解。<br>那么现在问题就是，怎么调用这个方法。<br>经过度娘之后，终于解决了。贴上类，我就不解释了。附上链接<a href="https://www.cnblogs.com/rollenholt/p/3612440.html" target="_blank" rel="noopener">https://www.cnblogs.com/rollenholt/p/3612440.html</a></p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MapperInit</span> <span class="keyword">implements</span> <span class="title">ApplicationListener</span>&lt;<span class="title">ContextRefreshedEvent</span>&gt; &#123;</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> onApplicationEvent(ContextRefreshedEvent event) &#123;</span><br><span class="line">        <span class="comment">//下面的方法执行就行了，这个方法会执行两次，我们不需要这么做</span></span><br><span class="line">    &#125;</span><br><span class="line">       </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 需要执行的逻辑代码，当spring容器初始化完成后就会执行该方法。</span></span><br><span class="line"><span class="comment">     * 由于加了<span class="doctag">@PostConstruct</span>注解所以这个方法跟上面的onApplicationEvent一样。</span></span><br><span class="line"><span class="comment">     * 但是这个方法只会在root application context环境中执行，不会在 projectName-servlet context中执行</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@SuppressWarnings</span>(<span class="string">"rawtypes"</span>)</span><br><span class="line">    <span class="meta">@PostConstruct</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> initMapper() &#123;</span><br><span class="line">        Map&lt;String, BaseService&gt; beansOfType = SpringContextUtil.getApplicationContext().getBeansOfType(BaseService.<span class="keyword">class</span>);</span><br><span class="line">        <span class="keyword">for</span>(Map.Entry&lt;String, BaseService&gt; <span class="string">entrySet :</span> beansOfType.entrySet()) &#123;</span><br><span class="line">            BaseService service = entrySet.getValue();</span><br><span class="line">            service.initMapper();</span><br><span class="line">            System.out.println(service);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
           <!--noindex-->
           
             <div class="post-button text-center">
@@ -740,7 +732,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-01-24 19:13:39" itemprop="dateModified" datetime="2019-01-24T19:13:39+08:00">2019-01-24</time>
+                <time title="修改时间：2020-01-05 16:48:41" itemprop="dateModified" datetime="2020-01-05T16:48:41+08:00">2020-01-05</time>
               
             
           </span>
@@ -805,7 +797,7 @@ if(pathname == '/flower.html'){
 <li>po:持久化对象，没啥好说的，数据库里一张表对应一个po。</li>
 <li>vo:视图对象，是指某个指定页面的所有数据，注意是<font color="red">所有数据</font>。</li>
 <li>dto:跟vo差不多，甚至可以代替vo，但是二者理论上是不一样的。vo用于数据显示，dto用于数据传输(展示层与业务层之间)。如性别在数据库里用01表示，在传输时dto直接定义Integer，但是在展示时总不能展示0和1，并且男女也有不同称谓(帅哥美女，先生女士等等)，所以需要另建一个vo用于处理这些逻辑。但是如果没有特殊需求，其实vo就是dto，dto是将业务层数据传输出去，在视图层展示时将以数字表示的性别转换为文字。如果客户端没有要求，那么不传输出数字，直接写上男女也没问题，如果确是有要求，在业务层就不能传出文字，而只能传出数字了。</li>
-<li>do:无法里给<br>以上出自:<a href="https://www.cnblogs.com/qixuejia/p/4390086.html" target="_blank" rel="noopener">博客园博主</a><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/e3592ba9de284f128b9183a2434ae018.jpg" alt="领域模型" title="领域模型">
+<li>do:无法里给
           <!--noindex-->
           
             <div class="post-button text-center">
@@ -935,7 +927,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-03-28 17:19:47" itemprop="dateModified" datetime="2019-03-28T17:19:47+08:00">2019-03-28</time>
+                <time title="修改时间：2020-01-05 16:49:58" itemprop="dateModified" datetime="2020-01-05T16:49:58+08:00">2020-01-05</time>
               
             
           </span>
@@ -1001,18 +993,7 @@ if(pathname == '/flower.html'){
 <li>string.replace(//, “”)<br>第一个参数是正则，表达式在//两个之间写，第二个参数是需要替换成什么。</li>
 <li>string.substr()<br>用法和一样</li>
 <li>new Date(date).toLocaleString()<br>将毫秒数转成本地的时间，如中国：2017/9/4 下午9:42:41</li>
-<li>(a/b).toFixed(2)<br>相除保留两位小数，如700/100等于7.00。要不然就是只等于7（java里整数相除只得到整数部分）</li>
-</ol>
-<h3 id="Jquery"><a href="#Jquery" class="headerlink" title="Jquery"></a>Jquery</h3><ol>
-<li>$(“#id”).attr()<br>为一个节点添加属性，一个属性:attr(“name”, “file”)。多个属性:attr({“name”:”file”, “type”,”button”})</li>
-<li>$(“#id”).remove()<br>移除节点</li>
-<li>$(“#id”).removeAttr(“”)<br>移除一个节点的属性</li>
-<li>$(“#id”).children(“:first”)<br>一个节点的子节点</li>
-<li>$(“#id”).offset()<br>一个节点离网页顶部的top值和left值，不是离浏览器的top值和left值（以整个网页的高度做计算）。<br>$(“#id”).offset().top代表节点的top值，left值同理。</li>
-<li>$(“body,html”).animate({<br> scrollTop:scroll_offset.top //让body的scrollTop等于pos的top，就实现了滚动<br>},0);<br>滚动监听</li>
-<li>window.location.search<br>获得当前url，如：<a href="http://localhost:8080/contextpath/index.html" target="_blank" rel="noopener">http://localhost:8080/contextpath/index.html</a></li>
-<li>$.parseJSON(string)<br>将一个字符串转为json对象，但是不要在用ajax的时候，data:$.parseJSON(string)这样用，我搞了2个小时，没查出错，原来是这里错了。<br>string json = ‘{“comment”:”abcdrf”,”name”:”xiaowang”}’;<br>我在用$.ajax()的时候，把data赋值$.parseJSON(json)，出错了！！！data:json。后台接受的很成功。<br>但是后台传来一个json字符串，用这个方法转成json对象，可以直接通过.取值挺方便的。</li>
-<li>new FormData().append()<br>使用 FormData对象获取到form中的数据后，可以继续append自己想要添加的数据。
+<li>(a/b).toFixed(2)<br>相除保留两位小数，如700/100等于7.00。要不然就是只等于7（java里整数相除只得到整数部分）
           <!--noindex-->
           
             <div class="post-button text-center">
@@ -1144,7 +1125,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-04-12 16:28:05" itemprop="dateModified" datetime="2019-04-12T16:28:05+08:00">2019-04-12</time>
+                <time title="修改时间：2020-01-05 16:49:08" itemprop="dateModified" datetime="2020-01-05T16:49:08+08:00">2020-01-05</time>
               
             
           </span>
@@ -1202,26 +1183,7 @@ if(pathname == '/flower.html'){
 <figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">String</span> s1 = <span class="keyword">new</span> <span class="keyword">String</span>(<span class="string">"张三"</span>);</span><br><span class="line"><span class="keyword">String</span> s2 = <span class="keyword">new</span> <span class="keyword">String</span>(<span class="string">"张三"</span>);</span><br><span class="line"><span class="keyword">String</span> s3 = <span class="string">"张三"</span>;</span><br><span class="line"><span class="keyword">String</span> s4 = <span class="string">"张三"</span>;</span><br></pre></td></tr></table></figure>
 <p>我们都知道<code>String s3 = &quot;张三&quot;;</code>这句代码的”张三”字符串位 于常量池中，而s3==s4这种明显就是小儿科，true！<br>我们来解析一下<code>String s3 = &quot;张三&quot;;</code>这句代码。</p>
 <ol>
-<li><p>首先s3进入栈中，”张三”进入常量池中，”张三”返回一个地址，s3拿到这个地址，所以我们就可以拿着这个地址做一些事情。这应该都很熟悉了，那么问题来了：“String s1 = new String(“张三”);”这句代码是怎么执行的？</p>
-</li>
-<li><p>首先我们要知道一个定义：成员变量和局部变量。<br>s3是一个局部变量，当然是相对来说，比如说上面的4句代码都位于一个方法中，那么s3是一个局部变量。</p>
-</li>
-<li><p>接下来我们解析<code>String s1 = new String(&quot;张三&quot;);</code>这句代码。<br>s1还是一个局部变量所以进入栈中，new String会在堆中创建一个String实例对象（OK很简单），那么这个<br>“张三”怎么办？注意了！String对象是如何存储字符串的？实际上就是一个char数组（同时也解释了一个中文可以用一个char来存储），所以”张三”在String中实际上是这样的：value[0]=’张’，value[1]=”三”。<br>这个value是一个char数组，而它优势String的成员变量也就是说，value这个变量不会进入栈，而是跟着String在堆内存中（实际上不是，我先打个比喻）。<br>String对象的构造器还没完！它还会初始化一个hash码，这个是String自己初始化的，不用你来控制，所以hash码这个变量也是跟着String进入堆中。</p>
-</li>
-</ol>
-<p>现在我们来缕一缕———-&gt;String在堆中开辟一个空间，这个空间里有value数组，hash变量（其他的我就不说了，我上面也说过了，实际上value并不在String中）。</p>
-<p>知道上面的一切之后，就可以分析了。</p>
-<p>是不是”张三”这种形式的写法，字符串就进入了常量池？比如：<code>String s1 = &quot;张三&quot;;String s1 = new String(&quot;张三&quot;);StringBuilder s3 = new StringBuilder(&quot;张三&quot;);StringBuffer s4 = new StringBuffer(&quot;张三&quot;);</code></p>
-<p>其实我们有办法做到，观察是否进入了。<br>但是之前先考虑，<code>String s1 = new String(&quot;张三&quot;);</code>和<code>String s3 = &quot;张三&quot;;</code>这两个”张三”是同一个字符串吗？<br>其实看我上面的某些描述，可能也推测出来了，这两个”张三”就是同一个（指同一个地址）。下面讲如何做到观察是否为同一个。</p>
-<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">String <span class="built_in">s1</span> = new String(<span class="string">"abc"</span>)<span class="comment">;</span></span><br><span class="line">String <span class="built_in">s2</span> = new String(<span class="string">"abc"</span>)<span class="comment">;</span></span><br><span class="line">Class&lt;?&gt; clazz1 = <span class="built_in">s1</span>.getClass()<span class="comment">;</span></span><br><span class="line">Class&lt;?&gt; clazz2 = <span class="built_in">s2</span>.getClass()<span class="comment">;</span></span><br><span class="line">Field declaredField1 = clazz1.getDeclaredField(<span class="string">"value"</span>)<span class="comment">;</span></span><br><span class="line">Field declaredField2 = clazz2.getDeclaredField(<span class="string">"value"</span>)<span class="comment">;</span></span><br><span class="line">declaredField1.setAccessible(true)<span class="comment">;</span></span><br><span class="line">declaredField2.setAccessible(true)<span class="comment">;</span></span><br><span class="line">System.out.println(declaredField1.get(<span class="built_in">s1</span>) == declaredField2.get(<span class="built_in">s2</span>))<span class="comment">;</span></span><br><span class="line">System.out.println(declaredField1.get(<span class="built_in">s1</span>))<span class="comment">;</span></span><br><span class="line">System.out.println(declaredField2.get(<span class="built_in">s2</span>))<span class="comment">;</span></span><br></pre></td></tr></table></figure>
-<p>上面的代码结果如何，显然已经解释的很清楚了。</p>
-<p>解</p>
-<p>首先”张三”实际上是一个char数组，而它是String的成员变量，所以它硬该在堆内存中，但是事实是在常量池。<br>常量池：看名字就知道是存常量的。<br>在网络上的熏陶，我们知道String name = “李四”；”李四”在常量池，所以name是一个常量（无语ing，别被带偏了，我在今天之前也是这么认为的）。<br>被final修饰的才是常量。现在你们大概猜出什么了。去看String的源码吧，看看value这个成员变量的前面是用什么修饰的！！！自己去看才会记忆深刻，我就不贴源码了。</p>
-<p>还没完<br>是不是”张三”这种形式的写法，字符串就进入了常量池？<br>我之前问了这个问题。答：不是。<br>StringBuilder name1 = new StringBuilder(“张三”);<br>String name2 = “张三”;<br>这时候又不一样了。<br>这两个”张三”不是同一个（也就是说地址不一样）。话不多说上代码。</p>
-<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">String <span class="built_in">s1</span> = new String(<span class="string">"abc"</span>)<span class="comment">;</span></span><br><span class="line">StringBuilder <span class="built_in">s2</span> = new StringBuilder(<span class="string">"abc"</span>)<span class="comment">;</span></span><br><span class="line">Class&lt;?&gt; clazz1 = <span class="built_in">s1</span>.getClass()<span class="comment">;</span></span><br><span class="line">Class&lt;?&gt; clazz2 = <span class="built_in">s2</span>.getClass()<span class="comment">;</span></span><br><span class="line">clazz2 = clazz2.getSuperclass()<span class="comment">;</span></span><br><span class="line">Field declaredField1 = clazz1.getDeclaredField(<span class="string">"value"</span>)<span class="comment">;</span></span><br><span class="line">Field declaredField2 = clazz2.getDeclaredField(<span class="string">"value"</span>)<span class="comment">;</span></span><br><span class="line">declaredField1.setAccessible(true)<span class="comment">;</span></span><br><span class="line">declaredField2.setAccessible(true)<span class="comment">;</span></span><br><span class="line">System.out.println(declaredField1.get(<span class="built_in">s1</span>) == declaredField2.get(<span class="built_in">s2</span>))<span class="comment">;</span></span><br><span class="line">System.out.println(declaredField1.get(<span class="built_in">s1</span>))<span class="comment">;</span></span><br><span class="line">System.out.println(declaredField2.get(<span class="built_in">s2</span>))<span class="comment">;</span></span><br></pre></td></tr></table></figure>
-<p>上面的结果有没有出乎意料？地址打印出来都不一样。你们也猜到了什么吧。<br>去看StringBuilder的源码吧。StringBuffer同理。<br>注：StringBuilder中没有value，但是它的父类AbstractStringBuilder有，去看看value前面是什么修饰的。</p>
-<hr>
-<p>2018.9.6更新<br>java1.7之后貌似有很大变化。上面的理论可能不太适用</p>
+<li>首先s3进入栈中，”张三”进入常量池中，”张三”返回一个地址，s3拿到这个地址，所以我们就可以拿着这个地址做一些事情。这应该都很熟悉了，那么问题来了：“String s1 = new String(“张三”);”这句代码是怎么执行的？
           <!--noindex-->
           
             <div class="post-button text-center">
@@ -1233,7 +1195,7 @@ if(pathname == '/flower.html'){
           <!--/noindex-->
         
       
-    </div>
+    </li></ol></div>
 
     
 
@@ -1544,7 +1506,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-04-08 22:17:48" itemprop="dateModified" datetime="2019-04-08T22:17:48+08:00">2019-04-08</time>
+                <time title="修改时间：2020-01-05 16:48:46" itemprop="dateModified" datetime="2020-01-05T16:48:46+08:00">2020-01-05</time>
               
             
           </span>
@@ -1606,12 +1568,7 @@ if(pathname == '/flower.html'){
 <ol>
 <li>抽象方法必须为public或者protected，缺省情况下为public</li>
 <li>抽象类不能被用来创建对象</li>
-<li>如果继承一个抽象类则必须实现它的抽象方法，如果不实现则必须将这个方法也加上abstract。</li>
-</ol>
-<ul>
-<li>接口<br>在软件工程中，接口泛指供别人调用的方法或者函数。它是对行为的抽象。<br>接口可以含有变量和方法，但是它们都会被自动加上public static final关键字，如果没有加上，系统会自动添加。<br>一个类可以实现多个接口。<br>接口中不能含有静态代码块以及静态方法，而抽象类可以有静态代码块和静态方法；</li>
-<li>区别<br>抽象类是“是不是”的关系，定义一个animal类，再定义一个Dog类，animals extends Dog，是一种“是不是”的关系，即狗是不是动物。<br>接口是“有没有”的关系，定义一个interface Eat，实现它，Dog implements Eat，即Dog类实现Eat接口，狗有没有吃这种功能。<br>具体内容引自 <a href="http://www.cnblogs.com/dolphin0520/p/3811437.html" target="_blank" rel="noopener">http://www.cnblogs.com/dolphin0520/p/3811437.html</a><br>这篇只是为了帮助自己理解二者的区别。</li>
-</ul>
+<li>如果继承一个抽象类则必须实现它的抽象方法，如果不实现则必须将这个方法也加上abstract。
           <!--noindex-->
           
             <div class="post-button text-center">
@@ -1623,7 +1580,7 @@ if(pathname == '/flower.html'){
           <!--/noindex-->
         
       
-    </div>
+    </li></ol></div>
 
     
 
@@ -1743,7 +1700,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-04-12 16:27:58" itemprop="dateModified" datetime="2019-04-12T16:27:58+08:00">2019-04-12</time>
+                <time title="修改时间：2020-01-05 16:49:25" itemprop="dateModified" datetime="2020-01-05T16:49:25+08:00">2020-01-05</time>
               
             
           </span>
@@ -1799,8 +1756,7 @@ if(pathname == '/flower.html'){
         
           <p><code>Integer a = new Integer(1000);</code><br>在jdk5.0之后走了自动装箱功能<br><code>Integer a = 1000;</code>即与上面的等式相同。<br>在编译阶段，编译器帮助我们改进代码，将<code>Integer a = new Integer(1000);</code><br>自动改为<code>Integer a = 1000;</code></p>
 <p><code>int c = new Integer(1500);</code>进行自动拆箱。<br>编译器将上述代码自动改为<code>int c = new Integer(1500).intValue();</code></p>
-<p>但是在–128到127之间的数依然会当做基本数据类型处理。</p>
-<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Integer <span class="built_in">a1</span>=<span class="number">100</span><span class="comment">;</span></span><br><span class="line">Integer <span class="built_in">a2</span>=<span class="number">100</span><span class="comment">;</span></span><br></pre></td></tr></table></figure>
+<p>但是在–128到127之间的数依然会当做基本数据类型处理。<br><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Integer <span class="built_in">a1</span>=<span class="number">100</span><span class="comment">;</span></span><br><span class="line">Integer <span class="built_in">a2</span>=<span class="number">100</span><span class="comment">;</span></span><br></pre></td></tr></table></figure></p>
 <p>a1==a2返回的照理说应该是false，但是在处理时，它只是基本数据类型，所以返回true。<br>
           <!--noindex-->
           
@@ -2121,7 +2077,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-04-08 22:17:45" itemprop="dateModified" datetime="2019-04-08T22:17:45+08:00">2019-04-08</time>
+                <time title="修改时间：2020-01-05 16:49:02" itemprop="dateModified" datetime="2020-01-05T16:49:02+08:00">2020-01-05</time>
               
             
           </span>
@@ -2177,9 +2133,7 @@ if(pathname == '/flower.html'){
         
           <p>比如</p>
 <figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">String</span> s1=<span class="keyword">new</span> <span class="keyword">String</span>(<span class="string">"abc"</span>);</span><br><span class="line"><span class="keyword">String</span> s2=<span class="keyword">new</span> <span class="keyword">String</span>(<span class="string">"abc"</span>);</span><br></pre></td></tr></table></figure>
-<p>s1==s2返回的是faluse，因为s1指向的是String类的value数组，而s2指向的是另一个String类的value数组，对象不同。<br>而s1.equals(s2)返回true。因为eauals比较的是内容，即value数组。</p>
-<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">String </span><span class="built_in">s3</span>=<span class="string">"abc"</span><span class="comment">;</span></span><br><span class="line"><span class="keyword">String </span><span class="built_in">s4</span>=<span class="string">"abc"</span><span class="comment">;</span></span><br></pre></td></tr></table></figure>
-<p>这个初始化的，s3==s4和s3.equals(s4)返回的都是true，因为s3和s4指向的都是方法区的常量池<br>
+<p>s1==s2返回的是faluse，因为s1指向的是String类的value数组，而s2指向的是另一个String类的value数组，对象不同。<br>而s1.equals(s2)返回true。因为eauals比较的是内容，即value数组。<br>
           <!--noindex-->
           
             <div class="post-button text-center">
@@ -2311,7 +2265,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-04-08 22:15:16" itemprop="dateModified" datetime="2019-04-08T22:15:16+08:00">2019-04-08</time>
+                <time title="修改时间：2020-01-05 16:48:25" itemprop="dateModified" datetime="2020-01-05T16:48:25+08:00">2020-01-05</time>
               
             
           </span>
@@ -2365,8 +2319,7 @@ if(pathname == '/flower.html'){
 
       
         
-          <p>String类是不可变字符序列。<br>比如<code>String s=&quot;abc&quot;;</code><br>原理是将字符串”abc”存入value数组，而value数组是final，所以value数组是不能改变的，但是String产生的s对象，s这个指针是可变的。<br>局部变量s在栈中产生，指向在堆(方法区的常量池)中的”abc”,然后如果想在字符串后面添加字符，则会诞生一个新的字符串(比如”abcd”)，然后将s指针指向”abcd”。<br>而<code>String s=new String(&quot;abc&quot;);</code><br>同理s产生在栈中，字符串”abc”产生在堆(方法区的常量池)中，但是s不直接指向”abc”。<br>new String在堆中产生一个对象，由常量池中的”abc”对它进行初始化，而s对象指向的是new String这个对象。<br>s指向String，String指向”abc”。</p>
-<p>总结:new String()比String多创建了一个对象，浪费内存。<br>用<code>String s=new String()</code>创建了在栈中的s对象以及String类对象。<br>用String s仅仅创建了s对象<br>
+          <p>String类是不可变字符序列。<br>比如<code>String s=&quot;abc&quot;;</code><br>原理是将字符串”abc”存入value数组，而value数组是final，所以value数组是不能改变的，但是String产生的s对象，s这个指针是可变的。<br>局部变量s在栈中产生，指向在堆(方法区的常量池)中的”abc”,然后如果想在字符串后面添加字符，则会诞生一个新的字符串(比如”abcd”)，然后将s指针指向”abcd”。<br>而<code>String s=new String(&quot;abc&quot;);</code><br>同理s产生在栈中，字符串”abc”产生在堆(方法区的常量池)中，但是s不直接指向”abc”。<br>new String在堆中产生一个对象，由常量池中的”abc”对它进行初始化，而s对象指向的是new String这个对象。<br>s指向String，String指向”abc”。<br>
           <!--noindex-->
           
             <div class="post-button text-center">
@@ -2574,9 +2527,7 @@ if(pathname == '/flower.html'){
                     
                       
                     
-                      
-                    
-                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-count">18</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -2584,7 +2535,7 @@ if(pathname == '/flower.html'){
 			  
 			  <!-- 不蒜子/busuanzi -->
 			  <div class="site-state-item site-state-posts">
-			  	<span class="site-state-item-count">125.4k</span>
+			  	<span class="site-state-item-count">127.1k</span>
 			  	<span class="site-state-item-name">总字数</span>
 			  </div>
             </nav>
@@ -2672,7 +2623,7 @@ if(pathname == '/flower.html'){
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2020</span>
   <span class="with-love" id="animate">
     <i class="fa fa-heart"></i>
   </span>

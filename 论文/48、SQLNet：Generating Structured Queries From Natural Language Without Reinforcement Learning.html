@@ -114,7 +114,7 @@
 <meta property="og:site_name" content="博客">
 <meta property="og:description" content="论文概要&amp;emsp;&amp;emsp;主要描述一下该论文 column attention。 Sequence-to-set&amp;emsp;&amp;emsp;直观地说，where 子句中出现的列名是所有列名的子集。因此，我们可以仅仅预测子集中的列名，而不是生成列名序列（博主注：他的意思可能是，不要将 sql 语句中 “select Column A, Column B, Column C…” 的 “Column">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-11-04T07:45:43.868Z">
+<meta property="og:updated_time" content="2020-01-05T08:15:34.702Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="论文笔记：SQLNet: Generating Structured Queries From Natural Language Without Reinforcement Learning">
 <meta name="twitter:description" content="论文概要&amp;emsp;&amp;emsp;主要描述一下该论文 column attention。 Sequence-to-set&amp;emsp;&amp;emsp;直观地说，where 子句中出现的列名是所有列名的子集。因此，我们可以仅仅预测子集中的列名，而不是生成列名序列（博主注：他的意思可能是，不要将 sql 语句中 “select Column A, Column B, Column C…” 的 “Column">
@@ -303,7 +303,7 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">19</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">18</span></a>
 
   </li>
         
@@ -337,6 +337,10 @@ if(pathname == '/flower.html'){
   </li>
 
 
+            
+          
+            
+            
             
           
             
@@ -533,7 +537,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-11-04 15:45:43" itemprop="dateModified" datetime="2019-11-04T15:45:43+08:00">2019-11-04</time>
+                <time title="修改时间：2020-01-05 16:15:34" itemprop="dateModified" datetime="2020-01-05T16:15:34+08:00">2020-01-05</time>
               
             
           </span>
@@ -603,7 +607,7 @@ if(pathname == '/flower.html'){
         <h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;主要描述一下该论文 column attention。</p>
 <h1 id="Sequence-to-set"><a href="#Sequence-to-set" class="headerlink" title="Sequence-to-set"></a>Sequence-to-set</h1><p>&emsp;&emsp;直观地说，<strong>where 子句</strong>中出现的列名是<strong>所有列名</strong>的子集。因此，我们可以仅仅预测子集中的列名，而不是生成列名序列（<strong>博主注</strong>：他的意思可能是，不要将 sql 语句中 “select Column A, Column B, Column C…” 的 “Column A, Column B, Column C…” 当做<strong>生成序列</strong>的任务，而是将其当做 slot filling）。我们把这个想法称为 <em>sequence-to-set</em> 的预测。<br>&emsp;&emsp;尤其是我们计算 <script type="math/tex">P_{wherecol}(col|Q)</script>，其中 col 是列名，q 是自然语言问题。为此，将计算 <script type="math/tex">P_{wherecol}(col|Q)</script> 表达为</p>
 <script type="math/tex; mode=display">
-    P_{wherecol}(col|Q) = \sigma(u^T_c E_{col} + u^T_q E_Q)</script><p>&emsp;&emsp;其中 <script type="math/tex">\sigma</script> 是 sigmoid 函数，<script type="math/tex">E_{col}</script> 和 <script type="math/tex">E_Q</script> 分别是 column name 和自然语言问题的嵌入， <script type="math/tex">u_c</script> 和 <script type="math/tex">u_q</script> 是两个可训练的列向量。。。（<em>后面还有一大段话省略了，主要看 column attention</em>）</p>
+    P_{wherecol}(col|Q) = \sigma(u^T_c E_{col} + u^T_q E_Q)</script><p>&emsp;&emsp;其中 <script type="math/tex">\sigma</script> 是 sigmoid 函数，<script type="math/tex">E_{col}</script> 和 <script type="math/tex">E_Q</script> 分别是 column name 和自然语言问题的嵌入， <script type="math/tex">u_c</script> 和 <script type="math/tex">u_q</script> 是两个可训练的列向量。。。（<em>后面还有一大段话省略了，主要看 column attention</em>）<br><a id="more"></a></p>
 <h1 id="Column-attention"><a href="#Column-attention" class="headerlink" title="Column attention"></a>Column attention</h1><p>&emsp;&emsp;上一节的 <script type="math/tex">P_{wherecol}(col|Q)</script> 的计算公式在使用 <script type="math/tex">E_Q</script> 上有一个问题，因为只计算了自然语言语句的隐藏状态，它也许不能记住在预测<strong>特定</strong>列名时有用的<strong>特定</strong>信息。。。（后面举了个例子）<br>&emsp;&emsp;为了融入这一直觉，我们设计了 column attention 机制去计算 <script type="math/tex">E_{Q|col}</script> 来代替 <script type="math/tex">E_Q</script>。假定 <script type="math/tex">H_Q</script> 是 dxL 的矩阵，L 代表自然语言问题的长度。<script type="math/tex">H_Q</script> 的第 i 列代表问题中对应的第 i 个 token 的 LSTM 的隐藏状态输出。<br>&emsp;&emsp;我们对<strong>问题中的每一个 token</strong> 都计算 attention weight w，w 是 L 维的列向量（博主注：此处应该指的是在计算一个 token 的情况下，论文中未详细指明，仅为猜测）。计算公式如下：</p>
 <script type="math/tex; mode=display">
 \begin{aligned}
@@ -615,7 +619,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
 <script type="math/tex; mode=display">
     P_{wherecol}(col|Q) = \sigma(u^T_c E_{col} + u^T_q E_{Q|col})</script><p>&emsp;&emsp;（下面的略）</p>
 <h1 id="博主注"><a href="#博主注" class="headerlink" title="博主注"></a>博主注</h1><p>&emsp;&emsp;论文中似乎没有很明确地说明 column 的 embedding 是如何训练的。但是这一环很重要，因为这篇论文是关于 wikiSQL 数据集，训练 seq2sql 的比较前的论文，也就是说后面的论文有一些就是使用这篇论文的方法。所以这一点没搞懂，导致也看不懂其他的论文。</p>
-<a id="more"></a>
+
       
     </div>
 
@@ -661,7 +665,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/论文/49、Improved-Representation-Learning-for-Question-Answer-Matching.html" rel="prev" title="论文笔记：Improved Representation Learning for Question Answer Matching">
+              <a href="/论文/49. Improved Representation Learning for Question Answer Matching.html" rel="prev" title="论文笔记：Improved Representation Learning for Question Answer Matching">
                 论文笔记：Improved Representation Learning for Question Answer Matching <i class="fa fa-chevron-right"></i>
               </a>
             
@@ -845,9 +849,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
                     
                       
                     
-                      
-                    
-                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-count">18</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -855,7 +857,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
 			  
 			  <!-- 不蒜子/busuanzi -->
 			  <div class="site-state-item site-state-posts">
-			  	<span class="site-state-item-count">125.4k</span>
+			  	<span class="site-state-item-count">127.1k</span>
 			  	<span class="site-state-item-name">总字数</span>
 			  </div>
             </nav>
@@ -960,7 +962,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2020</span>
   <span class="with-love" id="animate">
     <i class="fa fa-heart"></i>
   </span>

@@ -131,7 +131,7 @@
 <meta property="og:image" content="https://jalammar.github.io/images/t/transformer_resideual_layer_norm_3.png">
 <meta property="og:image" content="https://jalammar.github.io/images/t/transformer_decoding_1.gif">
 <meta property="og:image" content="https://jalammar.github.io/images/t/transformer_decoding_2.gif">
-<meta property="og:updated_time" content="2019-12-01T05:36:04.786Z">
+<meta property="og:updated_time" content="2020-01-05T08:21:08.769Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="深度学习算法（四）：Transformer">
 <meta name="twitter:description" content="Transformer位置信息&amp;emsp;&amp;emsp;引用自放弃幻想，全面拥抱Transformer：自然语言处理三大特征抽取器（CNN/RNN/TF）比较  &amp;emsp;&amp;emsp;NLP 句子中单词之间的相对位置是包含很多信息的，上面提过，RNN 因为结构就是线性序列的，所以天然会将位置信息编码进模型；而CNN的卷积层其实也是保留了位置相对信息的，所以什么也不做问题也不大。但是对于 Trans">
@@ -321,7 +321,7 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">19</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">18</span></a>
 
   </li>
         
@@ -355,6 +355,10 @@ if(pathname == '/flower.html'){
   </li>
 
 
+            
+          
+            
+            
             
           
             
@@ -579,7 +583,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-12-01 13:36:04" itemprop="dateModified" datetime="2019-12-01T13:36:04+08:00">2019-12-01</time>
+                <time title="修改时间：2020-01-05 16:21:08" itemprop="dateModified" datetime="2020-01-05T16:21:08+08:00">2020-01-05</time>
               
             
           </span>
@@ -650,7 +654,7 @@ if(pathname == '/flower.html'){
 <blockquote>
 <p>&emsp;&emsp;NLP 句子中单词之间的相对位置是包含很多信息的，上面提过，RNN 因为结构就是线性序列的，所以天然会将位置信息编码进模型；而CNN的卷积层其实也是保留了位置相对信息的，所以什么也不做问题也不大。但是对于 Transformer 来说，为了能够保留输入句子单词之间的相对位置信息，必须要做点什么。为啥它必须要做点什么呢？因为输入的第一层网络是 Muli-head self attention 层，我们知道，Self attention 会让当前输入单词和句子中任意单词发生关系，然后集成到一个 embedding 向量里，但是当所有信息到了 embedding 后，位置信息并没有被编码进去。所以，Transformer 不像 RNN 或 CNN，必须明确的在输入端将 Positon 信息编码，Transformer 是用<strong>位置函数</strong>来进行位置编码的，而 Bert 等模型则给每个单词一个 <strong>Position embedding</strong>。将单词 embedding 和单词对应的 position embedding 加起来形成单词的输入 embedding，类似上文讲的 ConvS2S 的做法。</p>
 </blockquote>
-<h1 id="encoder"><a href="#encoder" class="headerlink" title="encoder"></a>encoder</h1><p>&emsp;&emsp;从<a href="https://zhuanlan.zhihu.com/p/59629215" target="_blank" rel="noopener">文章</a>做的总结，此文为另一篇英文文章的翻译版，英文原文地址为 <a href="https://jalammar.github.io/illustrated-transformer/" target="_blank" rel="noopener">The Illustrated Transformer</a>。此外另一篇<a href="https://zhuanlan.zhihu.com/p/54356280" target="_blank" rel="noopener">文章</a>也做了翻译。<br>&emsp;&emsp;Transformer 不同于 RNN，它的输入是独立计算的，输入序列的某个时间步并不依赖其它的时间步。也就是说它可以<strong>并行运算</strong>。</p>
+<h1 id="encoder"><a href="#encoder" class="headerlink" title="encoder"></a>encoder</h1><p>&emsp;&emsp;从<a href="https://zhuanlan.zhihu.com/p/59629215" target="_blank" rel="noopener">文章</a>做的总结，此文为另一篇英文文章的翻译版，英文原文地址为 <a href="https://jalammar.github.io/illustrated-transformer/" target="_blank" rel="noopener">The Illustrated Transformer</a>。此外另一篇<a href="https://zhuanlan.zhihu.com/p/54356280" target="_blank" rel="noopener">文章</a>也做了翻译。<br>&emsp;&emsp;Transformer 不同于 RNN，它的输入是独立计算的，输入序列的某个时间步并不依赖其它的时间步。也就是说它可以<strong>并行运算</strong>。<br><a id="more"></a></p>
 <h2 id="Positional-Encoding"><a href="#Positional-Encoding" class="headerlink" title="Positional Encoding"></a>Positional Encoding</h2><p>&emsp;&emsp;在第一节中讲到，Transformer 天然地不具有句子的<strong>位置</strong>属性，所以我们需要使用一种办法让它拥有句子的位置属性。<br>&emsp;&emsp;为解决这个问题，Transformer 为每个输入的词嵌入增加了一个向量。<br><img src="https://jalammar.github.io/images/t/transformer_positional_encoding_vectors.png" alt="To give the model a sense of the order of the words, we add positional encoding vectors -- the values of which follow a specific pattern."></p>
 <p>&emsp;&emsp;如果假定词嵌入维度为4，那真实的位置编码如下：<br><img src="https://jalammar.github.io/images/t/transformer_positional_encoding_example.png" alt="A real example of positional encoding with a toy embedding size of 4"></p>
 <p>&emsp;&emsp;位置编码的生成方法在原论文的 section 3.5 中有描述。你可以在 <a href="https://github.com/tensorflow/tensor2tensor/blob/23bd23b9830059fbc349381b70d9429b5c40a139/tensor2tensor/layers/common_attention.py" target="_blank" rel="noopener">get_timing_signal_1d()</a> 函数中看到用于生成位置编码的代码。这并不是生成位置编码的唯一方式。然而，它的优点在于可以扩展到看不见的序列长度（eg. 如果要翻译的句子的长度远长于训练集中最长的句子）。</p>
@@ -698,7 +702,7 @@ if(pathname == '/flower.html'){
 <li><a href="https://www.jianshu.com/p/405bc8d041e0" target="_blank" rel="noopener">The Transformer</a></li>
 </ul>
 <p>&emsp;&emsp;<strong>对于 padding mask</strong>：在 encoder 中的每次 scaled dot-product 都要做一次 sequence mask。由于我们要让序列的长度相等以便做向量化操作，所以必不可少地需要对输入序列进行<strong>截断</strong>或<strong>补零</strong>操作。所以 sequence mask 的<strong>主要目的</strong>是使得我们的 self-attention 不要过多的关注向量中的 0。<strong>具体操作是</strong>：将序列中补零位置的值置为 -INF，使得序列经过 scaled dot-product 后的 softmax 层时，对应位置会得到<strong>概率 0</strong>。<br>&emsp;&emsp;<strong>对于 sequence mask</strong>：使得 decoder 无法看见未来的信息，decoder 的 attention 只能关注解码单词之前的输出单词，而不能依赖后面未解码出来的单词。</p>
-<h1 id="Beam-Search"><a href="#Beam-Search" class="headerlink" title="Beam Search"></a>Beam Search</h1><p>&emsp;&emsp;在最后的 softmax 层直接输出了概率最大的位置的单词，这叫做<strong>贪婪解码——greedy decoding</strong>。<br>&emsp;&emsp;另一种更合理的解码方式叫做 <strong>Beam Search</strong>。<br><a id="more"></a></p>
+<h1 id="Beam-Search"><a href="#Beam-Search" class="headerlink" title="Beam Search"></a>Beam Search</h1><p>&emsp;&emsp;在最后的 softmax 层直接输出了概率最大的位置的单词，这叫做<strong>贪婪解码——greedy decoding</strong>。<br>&emsp;&emsp;另一种更合理的解码方式叫做 <strong>Beam Search</strong>。</p>
 
       
     </div>
@@ -931,9 +935,7 @@ if(pathname == '/flower.html'){
                     
                       
                     
-                      
-                    
-                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-count">18</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -941,7 +943,7 @@ if(pathname == '/flower.html'){
 			  
 			  <!-- 不蒜子/busuanzi -->
 			  <div class="site-state-item site-state-posts">
-			  	<span class="site-state-item-count">125.4k</span>
+			  	<span class="site-state-item-count">127.1k</span>
 			  	<span class="site-state-item-name">总字数</span>
 			  </div>
             </nav>
@@ -1046,7 +1048,7 @@ if(pathname == '/flower.html'){
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2020</span>
   <span class="with-love" id="animate">
     <i class="fa fa-heart"></i>
   </span>

@@ -303,7 +303,7 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">19</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">18</span></a>
 
   </li>
         
@@ -337,6 +337,10 @@ if(pathname == '/flower.html'){
   </li>
 
 
+            
+          
+            
+            
             
           
             
@@ -469,6 +473,216 @@ if(pathname == '/flower.html'){
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/论文/30、Complex Sequential Question Answering：Towards Learning to Converse Over Linked Question Answer Pairs with a Knowledge Graph.html">
+
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+				
+				
+	
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/论文/30、Complex Sequential Question Answering：Towards Learning to Converse Over Linked Question Answer Pairs with a Knowledge Graph.html" class="post-title-link" itemprop="url">论文笔记：Complex Sequential Question Answering: Towards Learning to Converse Over Linked Question Answer Pairs with a Knowledge Graph</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-12 09:17:39" itemprop="dateCreated datePublished" datetime="2019-07-12T09:17:39+08:00">2019-07-12</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-01-05 16:25:39" itemprop="dateModified" datetime="2020-01-05T16:25:39+08:00">2020-01-05</time>
+              
+            
+          </span>
+
+          
+
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/" itemprop="url" rel="index"><span itemprop="name">assorted</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <div class="note warning">
+            <p>&emsp;&emsp;<a href="https://www.aaai.org/ocs/index.php/AAAI/AAAI18/paper/view/17181/15750" target="_blank" rel="noopener">论文地址</a>。<br>&emsp;&emsp;<strong>凉了。读完论文，发现论文中的实验是使用 python2 写的，而且由于没有 VPN 无法下载实验附带的数据，训练数据有 17G，我都不想下了。</strong></p>
+          </div>
+<h1 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h1><p>&emsp;&emsp;人机对话时，人们通常会提出许多问题，其中大部分都可以通过大规模的 KG 回答。为此，我们提出了 Comples Sequential QA（CSQA） 任务，它由以下两种任组成：</p>
+<ol>
+<li>在拥有百万个实体的 KG 上进行复杂的推理从而回答事实性问题；</li>
+<li>通过一系列连贯的链接问答对去学习交谈。</li>
+</ol>
+<p>&emsp;&emsp;接着还让工作人员创建了一个数据集，包括总共 1.6M 轮的 200k 的对话数据。我们还要求数据集含有<strong>逻辑推理</strong>（logical），<strong>定量推理</strong>（quantitative）以及<strong>比较推理</strong>（comparative ）的能力（此三种能力下面有详解）。因此这就迫使我们的模型要做到：</p>
+<ol>
+<li>解析复杂的自然语言问题；</li>
+<li>使用对话上下文解析表达中的<strong>共指</strong>（coreferences ）、<strong>省略</strong>（ellipsis ）问题；</li>
+<li>要求理清<strong>含糊不清</strong>（ambiguous ）的问题；</li>
+<li>检索相关的 KG 的子图去回答这些问题。</li>
+</ol>
+<p>&emsp;&emsp;说明：</p>
+<ul>
+<li><strong>共指问题</strong>（coreferences）：就是说一个代词指向多个对象，机器人无法理解具体指向哪个</li>
+<li><strong>省略问题</strong>（ellipsis）：表达没问题，但是表达中省略了一部分信息，需要人自己去上文中推测</li>
+<li><strong>含糊不清的问题</strong>（ambiguous）：（与 1 类似，请看 1）
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/论文/30、Complex Sequential Question Answering：Towards Learning to Converse Over Linked Question Answer Pairs with a Knowledge Graph.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </li></ul></div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yan624.github.io/zcy/机器学习算法（八）：Adaboost.html">
 
 
@@ -537,7 +751,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-07-11 09:32:09" itemprop="dateModified" datetime="2019-07-11T09:32:09+08:00">2019-07-11</time>
+                <time title="修改时间：2020-01-05 16:26:00" itemprop="dateModified" datetime="2020-01-05T16:26:00+08:00">2020-01-05</time>
               
             
           </span>
@@ -599,8 +813,7 @@ if(pathname == '/flower.html'){
       
         
           <h1 id="组合"><a href="#组合" class="headerlink" title="组合"></a>组合</h1><p>&emsp;&emsp;分类算法有很多，比如逻辑回归、kNN 算法、决策树、朴素贝叶斯算法、支持向量机等，它们各有优缺点。我们自然可以<strong>将不同的分类器组合起来</strong>，而这种组合结果则被称为<strong>集成方法</strong>（ensemble method）或者元算法（meta-algorithm）。使用形式多种多样，可以是不同算法的集成，还可以是相同算法不同配置的集成，也可以自行发挥。</p>
-<h1 id="bagging"><a href="#bagging" class="headerlink" title="bagging"></a>bagging</h1><p>&emsp;&emsp;自举汇聚法（bootstrap aggregating），也称为 bagging 方法。是从原始数据集选择 S 次后得到 S 个新数据集的一种技术。新数据集与原数据集的大小相等。<br>&emsp;&emsp;在 S 个数据集建好之后，将某个学习算法分别作用域每个数据集就得到了 S 个分类器。使用这 S 个分类器进行分类，然后将结果中最多的类别作为最后的分类结果。<br>&emsp;&emsp;当然还有一些更先进的 bagging 方法，比如随机森林（random forest）。</p>
-<h1 id="boosting"><a href="#boosting" class="headerlink" title="boosting"></a>boosting</h1><p>&emsp;&emsp;boosting 方法拥有多个版本，这里只关注其中一个最流行的版本 AdaBoost。</p>
+<h1 id="bagging"><a href="#bagging" class="headerlink" title="bagging"></a>bagging</h1><p>&emsp;&emsp;自举汇聚法（bootstrap aggregating），也称为 bagging 方法。是从原始数据集选择 S 次后得到 S 个新数据集的一种技术。新数据集与原数据集的大小相等。<br>&emsp;&emsp;在 S 个数据集建好之后，将某个学习算法分别作用域每个数据集就得到了 S 个分类器。使用这 S 个分类器进行分类，然后将结果中最多的类别作为最后的分类结果。<br>&emsp;&emsp;当然还有一些更先进的 bagging 方法，比如随机森林（random forest）。<br>
           <!--noindex-->
           
             <div class="post-button text-center">
@@ -612,7 +825,7 @@ if(pathname == '/flower.html'){
           <!--/noindex-->
         
       
-    </div>
+    </p></div>
 
     
 
@@ -732,7 +945,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-08-13 16:22:50" itemprop="dateModified" datetime="2019-08-13T16:22:50+08:00">2019-08-13</time>
+                <time title="修改时间：2020-01-05 16:26:12" itemprop="dateModified" datetime="2020-01-05T16:26:12+08:00">2020-01-05</time>
               
             
           </span>
@@ -795,12 +1008,7 @@ if(pathname == '/flower.html'){
         
           <h1 id="词嵌入模型"><a href="#词嵌入模型" class="headerlink" title="词嵌入模型"></a>词嵌入模型</h1><p>&emsp;&emsp;以前在训练语言模型的时候使用one-hot编码，现在使用的是word embedding。但是这样理解其实稍微有点问题，因为如果这样理解，就难以解释embedding层是用来干嘛的了。<br>&emsp;&emsp;正解：<br>&emsp;&emsp;<strong>其实现在使用的还是one-hot</strong>，在keras框架中输入的就是one-hot编码。我以前一直是上面的那种理解，所以我一直不懂为什么要输入one-hot，而不直接输入word embedding。众所周知，one-hot编码乘上词嵌入矩阵可以得到词向量，这步操作看起来有点像查表。但其实这里用到了<strong>预训练</strong>。<br>&emsp;&emsp;词嵌入矩阵是预先训练好的，其实就是一个权重矩阵，而我们做的就是初始化了输入层的权重矩阵，只不过以前是随机初始化，而现在是直接初始化为词嵌入矩阵。embedding层只用了一步就获得了词的特征，但以前需要训练。所以我们算是使用了预训练的方法，直接获得了embedding层，但是相比于cv领域，目前我们还无法初始化高层的权重。<br>&emsp;&emsp;<strong>总结一下就是词嵌入矩阵是input层到embedding层的权重矩阵。</strong></p>
 <ul>
-<li><strong>缺陷</strong><br>多义词问题无法解决，所以导致word embedding一直效果不好。<br>以下引用自<a href="https://zhuanlan.zhihu.com/p/49271699" target="_blank" rel="noopener">专栏</a><br>Word Embedding本质上是个静态的方式，所谓静态指的是训练好之后每个单词的表达就固定住了，以后使用的时候，不论新句子上下文单词是什么，这个单词的Word Embedding不会跟着上下文场景的变化而改变，所以对于比如Bank这个词，它事先学好的Word Embedding中混合了几种语义 ，在应用中来了个新句子，即使从上下文中（比如句子包含money等词）明显可以看出它代表的是“银行”的含义，但是对应的Word Embedding内容也不会变，它还是混合了多种语义。这是为何说它是静态的，这也是问题所在。</li>
-</ul>
-<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p><a href="https://blog.csdn.net/itplus/article/details/37969519" target="_blank" rel="noopener">word2vec 数学原理目录</a><br><a href="https://www.cnblogs.com/peghoty/p/3857839.html" target="_blank" rel="noopener">word2vec 数学原理</a><br><a href="http://www.hankcs.com/nlp/word2vec.html" target="_blank" rel="noopener">word2vec原理推导与代码分析</a></p>
-<h1 id="训练词向量得到的-accuracy"><a href="#训练词向量得到的-accuracy" class="headerlink" title="训练词向量得到的 accuracy"></a>训练词向量得到的 accuracy</h1><p>word2vec 的 accuracy 貌似没卵用。我反正用 keras 搭的 CBOW 模型，accuracy 极低，只有 1%不到。<br><a href="https://www.zhihu.com/question/271782463" target="_blank" rel="noopener">参考</a>  </p>
-<h1 id="自己训练-word2vec-还是直接用别人的"><a href="#自己训练-word2vec-还是直接用别人的" class="headerlink" title="自己训练 word2vec 还是直接用别人的"></a>自己训练 word2vec 还是直接用别人的</h1><p><a href="https://bbs.csdn.net/topics/392144812?list=4625705" target="_blank" rel="noopener">参考</a><br>可能还是自己训练 word2vec 比较好，用别人的 word2vec 不太行。</p>
-<h1 id="CBOW"><a href="#CBOW" class="headerlink" title="CBOW"></a>CBOW</h1>
+<li><strong>缺陷</strong><br>多义词问题无法解决，所以导致word embedding一直效果不好。<br>以下引用自<a href="https://zhuanlan.zhihu.com/p/49271699" target="_blank" rel="noopener">专栏</a><br>Word Embedding本质上是个静态的方式，所谓静态指的是训练好之后每个单词的表达就固定住了，以后使用的时候，不论新句子上下文单词是什么，这个单词的Word Embedding不会跟着上下文场景的变化而改变，所以对于比如Bank这个词，它事先学好的Word Embedding中混合了几种语义 ，在应用中来了个新句子，即使从上下文中（比如句子包含money等词）明显可以看出它代表的是“银行”的含义，但是对应的Word Embedding内容也不会变，它还是混合了多种语义。这是为何说它是静态的，这也是问题所在。
           <!--noindex-->
           
             <div class="post-button text-center">
@@ -812,7 +1020,7 @@ if(pathname == '/flower.html'){
           <!--/noindex-->
         
       
-    </div>
+    </li></ul></div>
 
     
 
@@ -928,7 +1136,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-09-05 21:49:17" itemprop="dateModified" datetime="2019-09-05T21:49:17+08:00">2019-09-05</time>
+                <time title="修改时间：2020-01-05 16:26:33" itemprop="dateModified" datetime="2020-01-05T16:26:33+08:00">2020-01-05</time>
               
             
           </span>
@@ -1013,43 +1221,7 @@ if(pathname == '/flower.html'){
 </tbody>
 </table>
 </div>
-<h1 id="Softmax-Loss"><a href="#Softmax-Loss" class="headerlink" title="Softmax Loss"></a>Softmax Loss</h1><p>&emsp;&emsp;Softmax Loss 是由 softmax 和 cross entropy loss 组合而成，在 pytorch，caffe，tensorflow 等开源框架的实现中，直接将二者合并在一层。如在 pytorch 中不需要再输出层加上 softmax 层用于分类，直接使用 cross entropy loss 即可。</p>
-<h1 id="各类代价函数"><a href="#各类代价函数" class="headerlink" title="各类代价函数"></a>各类代价函数</h1><p><a href="https://blog.csdn.net/cqfdcw/article/details/78173839" target="_blank" rel="noopener">方差、协方差、标准差、均方差、均方根值、均方误差、均方根误差</a><br><a href="https://www.cnblogs.com/shujuxiong/p/9339916.html" target="_blank" rel="noopener">L1正则和L2正则的比较分析详解</a></p>
-<h1 id="各类距离公式"><a href="#各类距离公式" class="headerlink" title="各类距离公式"></a>各类距离公式</h1><p><a href="https://blog.csdn.net/guojingjuan/article/details/50396254" target="_blank" rel="noopener">python 各类距离公式实现</a></p>
-<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><div class="table-container">
-<table>
-<thead>
-<tr>
-<th>名称</th>
-<th>英文</th>
-<th>公式</th>
-<th>别称</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>残差平方和 SSE</td>
-<td>Sum of Squares for Error</td>
-<td>SSE = <script type="math/tex">\sum^m_{i=1}(y_i - \hat{y}_i)^2</script></td>
-<td>剩余平方和 RSS</td>
-</tr>
-<tr>
-<td>回归平方和 SSR</td>
-<td>Sum of Squares for Regression</td>
-<td>SSR = <script type="math/tex">\sum^m_{i=1}(\hat{y}_i - \bar{y})^2</script></td>
-<td>解释平方和 ESS</td>
-</tr>
-<tr>
-<td>总离差平方和 SST</td>
-<td>Sum of Squares for Total</td>
-<td>SST = <script type="math/tex">\sum^m_{i=1}(y_i - \bar{y})^2</script></td>
-<td>总离差平方和 TSS</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>三者之间的关系是 SST = SSR + SSE</p>
-<script type="math/tex; mode=display">R^2 = \frac{SSR}{SST} = 1 - \frac{SSE}{SST}</script>
+<h1 id="Softmax-Loss"><a href="#Softmax-Loss" class="headerlink" title="Softmax Loss"></a>Softmax Loss</h1><p>&emsp;&emsp;Softmax Loss 是由 softmax 和 cross entropy loss 组合而成，在 pytorch，caffe，tensorflow 等开源框架的实现中，直接将二者合并在一层。如在 pytorch 中不需要再输出层加上 softmax 层用于分类，直接使用 cross entropy loss 即可。<br>
           <!--noindex-->
           
             <div class="post-button text-center">
@@ -1061,7 +1233,7 @@ if(pathname == '/flower.html'){
           <!--/noindex-->
         
       
-    </div>
+    </p></div>
 
     
 
@@ -1160,12 +1332,24 @@ if(pathname == '/flower.html'){
                 
               
 
-              <time title="创建时间：2019-07-09 15:46:47 / 修改时间：16:49:42" itemprop="dateCreated datePublished" datetime="2019-07-09T15:46:47+08:00">2019-07-09</time>
+              <time title="创建时间：2019-07-09 15:46:47" itemprop="dateCreated datePublished" datetime="2019-07-09T15:46:47+08:00">2019-07-09</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-01-05 16:26:57" itemprop="dateModified" datetime="2020-01-05T16:26:57+08:00">2020-01-05</time>
               
             
           </span>
@@ -1227,16 +1411,7 @@ if(pathname == '/flower.html'){
       
         
           <h1 id="管理代码"><a href="#管理代码" class="headerlink" title="管理代码"></a>管理代码</h1><p>&emsp;&emsp;最近一直用 next 主题，也在里面加入了许多自定义代码，但是怕以后更新把我的代码覆盖掉。所以打算把代码集中处理一下。<br>&emsp;&emsp;next 主题下的 layout 文件夹存放了大部分布局代码。下面是next主题的 layout 文件夹目录。<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">layout</span><br><span class="line">  ├─_custom</span><br><span class="line">  │  ├─head.swig</span><br><span class="line">  │  ├─<span class="selector-tag">header</span>.swig</span><br><span class="line">  │  └─sidebar.swig</span><br><span class="line">  ├─_macro</span><br><span class="line">  │  ├─menu</span><br><span class="line">  │  └─sidebar.swig</span><br><span class="line">  ├─_partials</span><br><span class="line">  │  ├─head</span><br><span class="line">  │  ├─header</span><br><span class="line">  │  ├─page</span><br><span class="line">  │  ├─post</span><br><span class="line">  │  ├─search</span><br><span class="line">  │  └─share</span><br><span class="line">  ├─_scripts</span><br><span class="line">  └─_third-party</span><br></pre></td></tr></table></figure></p>
-<p>&emsp;&emsp;其中需要注意的是 <strong>_custom</strong> 文件夹，因为我们要把自定义文件放在这里，其次我们还要注意下 <strong>_partials</strong> 文件夹，里面存放的都是主要的布局代码。由于我们经常会遇到要添加 css、js 文件的需求，所以有必要认识一下 <strong>_partials</strong> 文件夹下的 <strong>head</strong> 和 <strong>header</strong> 文件夹，其中 head 文件夹代表存放一些申明性质的代码，如果我说<code>&lt;head&gt;&lt;/head&gt;</code>这个标签大家应该就都懂了，而 header 文件夹存放的则是网页的头部信息布局，同理<code>&lt;header&gt;&lt;/header&gt;</code>标签就是指网页布局中的头部。<br>&emsp;&emsp;打开 <strong>_custom</strong> 文件夹会发现里面一共有三个文件，分别是：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">_custom</span><br><span class="line">  ├─head.swig</span><br><span class="line">  ├─<span class="selector-tag">header</span>.swig</span><br><span class="line">  ├─siderbar.swig</span><br></pre></td></tr></table></figure></p>
-<p>&emsp;&emsp;这三部分是网页中最重要的三部分，这些文件里面全是空白的，也就是可以供用户自定义。而且这些文件已经在代码中加载了，如果你写上了代码，不需要手动调用，程序会自动调用。程序具体在哪引用了就不说了，太过复杂，有兴趣可以自己去找。<br>&emsp;&emsp;有了这三个自定义文件已经可以解决绝大部分的问题了。</p>
-<ul>
-<li>如果你想要增加一些 css、js 文件，你可以把代码放入 head.swig，你可能会想我想要在不同的网页加载不同的脚本文件怎么办？其实没关系，你完全可以加入 if 判断语句加载；</li>
-<li>如果你想改变 header 的布局或其他属性，可以在 header.swig 中加入代码，；</li>
-<li>如果你想改变 siderbar 的布局或其他属性，可以在 siderbar.swig 中加入代码。<em>sidebar 的主要代码在 _macro 文件夹中的 siderbar.swig 中</em>。</li>
-<li>如果想要在网页的任意位置增加代码，可以自己创建一份文件，如：my_scripts.swig，然后在想要引用的地方使用代码<code>[% include &#39;_custom/my_scripts.swig&#39; %}</code></li>
-</ul>
-<h1 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h1><p>假如你自己写代码，代码中使用了 next 中已存在的变量，比如 post 变量中具有文章的大部分属性。那么你是无法在自定义的 swig 文件中使用该变量的，你必须手动地将此变量传入进 swig 文件。例如：<br>定义文件<code>note-tips.swig</code>，使用了 post 变量。在引用此文件时，要加上一点代码：<br><figure class="highlight twig"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> foo = &#123;post: post&#125; %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="keyword">include</span></span> '../_custom/note-tips.swig' with foo %&#125;</span><span class="xml"></span></span><br></pre></td></tr></table></figure></p>
-<p>可能会有点奇怪，为什么不直接写<code>with post</code>？我也不知道为什么，我试过了，只有这样才行。with 的意思是带上这个变量一起传到 swig 模版里。<br>
+<p>&emsp;&emsp;其中需要注意的是 <strong>_custom</strong> 文件夹，因为我们要把自定义文件放在这里，其次我们还要注意下 <strong>_partials</strong> 文件夹，里面存放的都是主要的布局代码。由于我们经常会遇到要添加 css、js 文件的需求，所以有必要认识一下 <strong>_partials</strong> 文件夹下的 <strong>head</strong> 和 <strong>header</strong> 文件夹，其中 head 文件夹代表存放一些申明性质的代码，如果我说<code>&lt;head&gt;&lt;/head&gt;</code>这个标签大家应该就都懂了，而 header 文件夹存放的则是网页的头部信息布局，同理<code>&lt;header&gt;&lt;/header&gt;</code>标签就是指网页布局中的头部。<br>&emsp;&emsp;打开 <strong>_custom</strong> 文件夹会发现里面一共有三个文件，分别是：<br>
           <!--noindex-->
           
             <div class="post-button text-center">
@@ -1746,7 +1921,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-08-31 21:22:57" itemprop="dateModified" datetime="2019-08-31T21:22:57+08:00">2019-08-31</time>
+                <time title="修改时间：2020-01-05 16:27:22" itemprop="dateModified" datetime="2020-01-05T16:27:22+08:00">2020-01-05</time>
               
             
           </span>
@@ -1807,8 +1982,7 @@ if(pathname == '/flower.html'){
 
       
         
-          <h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://mp.weixin.qq.com/s?__biz=MzI2NjkyNDQ3Mw==&amp;mid=2247486979&amp;idx=2&amp;sn=2d95556630820c853f2ca9b2855dd60a&amp;chksm=ea87f6d5ddf07fc3cc8477d3a0cd5142e9191d91ff3161847524c37539b372b306a8f9b700a8&amp;scene=21#wechat_redirect" target="_blank" rel="noopener">某篇解析</a>；<a href="http://tongtianta.site/paper/11795" target="_blank" rel="noopener">某篇解析</a><br>&emsp;&emsp;<a href="https://arxiv.org/pdf/1809.00773.pdf" target="_blank" rel="noopener">论文地址</a>。<br>&emsp;&emsp;本文提出一种神经语义分析方法——Sequence-to-Action，将语义分析当做一个端到端的<strong>语义图生成</strong>的过程。我们同时使用了最近语义分析两个有前途的方向，<strong>首先</strong>我们的模型使用了一个语义图来表示一个句子的含义，该语义图与知识库紧密相关（博主注：<strong>即可以将语义图看作是知识库的一个子图</strong>）。<strong>其次</strong>，利用神经网络强大的表示学习和预测能力，提出一种 RNN 模型，能够有效的将句子映射到动作序列，从而生成语义图（博主注：<strong>此动作序列就是指生成语义图的动作，将这些动作看作是一个序列</strong>）。实验表明该方法在 OVERNIGHT 数据集上展现了一流的性能，在 GEO 以及 ATIS 数据集上得到了有一定竞争力的性能。<br>&emsp;&emsp;语义分析旨在<strong>将自然语言句子映射为逻辑形式</strong>（Zelle andMooney, 1996; Zettlemoyer and Collins, 2005;Wong and Mooney, 2007; Lu et al., 2008;Kwiatkowski et al., 2013）。例如“Which states border Texas?”将会被映射为 <em>answer (A, (state (A),nextto (A, stateid ( texas ))))</em>。<br>&emsp;&emsp;语义分析器需要两个函数，一个处理结构预测，另一个处理语义基础。传统的语义解析器通常基于复合语法，如 CCG（Zettlemoyer and Collins, <a href="https://arxiv.org/pdf/1207.1420" target="_blank" rel="noopener">2005</a>, <a href="https://www.aclweb.org/anthology/D07-1071" target="_blank" rel="noopener">2007</a>），DCS（<a href="https://www.aclweb.org/anthology/P11-1060" target="_blank" rel="noopener">Liang et al., 2011</a>）等。不幸的是，设计语法和学习精确的词汇仍是一个挑战，特别是在开放域。而且设计有效的特性往往很困难，它的学习过程也不是端到端的。为了解决上述问题，本文提出了两种有前途的研究方向：<strong>基于语义图</strong>的方法和<strong>基于 seq2seq</strong> 方法。<br>&emsp;&emsp;基于语义图的方法(Reddy et al.,2014, 2016; Bast and Haussmann, 2015; Yih et al.,2015)将句子的含义表示为语义图（即知识库的子图，参考图 1 中的例子）并<strong>将语义分析视为语义图匹配/生成过程</strong>。<strong>与逻辑形式相比，语义图与知识库有着紧密的关系</strong>(Yih et al., 2015), ，与句法结构有许多共性（Reddy et al.,2014）。基于语义图的句法分析的主要挑战是如何有效地构造句子的语义图，目前语义图是通过与模式匹配（Bast and Haussmann, 2015），从依赖树转换（Reddy et al., 2014, 2016），或者通过 staged heuristic search algorithm（Yih et al.,2015）构建的。这些方法都是基于人工设计的构造过程，它们很难处理开放/复杂的情况。<br>&emsp;&emsp;近年来，得益于 RNN 模型有较强的表示能力和预测能力，其在 Seq2Seq 模型上取得了成功，比如机器翻译。许多 Seq2Seq 模型也用于语义分析（Xiaoet al., 2016; Dong and Lapata, 2016; Jia and Liang, 2016），不需要高质量的词典、人工构建的语法和特性。这些模型通过端到端的训练，利用注意力机制（Bahdanauet al., 2014; Luong et al., 2015）学习句子和逻辑形式之间的软对齐。<br>&emsp;&emsp;本文提出了一种新的神经语义分析框架——Sequence-to-Action。它可以同时利用语义图表示的优点和 seq2seq 模型强大的预测能力。具体来说，我们将语义分析建模为一个端到端的语义图生成过程。例如，在图 1 中，我们的模型将通过生成一系列变量[add variable:a，addtype:state，…]来解析“which states border Texas”这句话。为了实现上述目标，我们首先设计了一个动作集，对语义图的生成过程进行编码（包括节点动作：add variable,add entity,add type，边动作：add edg 以及操作动作：argmin,argmax,count,sum 等）然后我们设计了一个 RNN 模型，该模型可以生成一个动作序列来构造句子的语义图。最后，我们在解码过程中合并结构和语义约束来进一步增强解析。</p>
-<h1 id="论文内容介绍"><a href="#论文内容介绍" class="headerlink" title="论文内容介绍"></a>论文内容介绍</h1>
+          <h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://mp.weixin.qq.com/s?__biz=MzI2NjkyNDQ3Mw==&amp;mid=2247486979&amp;idx=2&amp;sn=2d95556630820c853f2ca9b2855dd60a&amp;chksm=ea87f6d5ddf07fc3cc8477d3a0cd5142e9191d91ff3161847524c37539b372b306a8f9b700a8&amp;scene=21#wechat_redirect" target="_blank" rel="noopener">某篇解析</a>；<a href="http://tongtianta.site/paper/11795" target="_blank" rel="noopener">某篇解析</a><br>&emsp;&emsp;<a href="https://arxiv.org/pdf/1809.00773.pdf" target="_blank" rel="noopener">论文地址</a>。<br>&emsp;&emsp;本文提出一种神经语义分析方法——Sequence-to-Action，将语义分析当做一个端到端的<strong>语义图生成</strong>的过程。我们同时使用了最近语义分析两个有前途的方向，<strong>首先</strong>我们的模型使用了一个语义图来表示一个句子的含义，该语义图与知识库紧密相关（博主注：<strong>即可以将语义图看作是知识库的一个子图</strong>）。<strong>其次</strong>，利用神经网络强大的表示学习和预测能力，提出一种 RNN 模型，能够有效的将句子映射到动作序列，从而生成语义图（博主注：<strong>此动作序列就是指生成语义图的动作，将这些动作看作是一个序列</strong>）。实验表明该方法在 OVERNIGHT 数据集上展现了一流的性能，在 GEO 以及 ATIS 数据集上得到了有一定竞争力的性能。<br>&emsp;&emsp;语义分析旨在<strong>将自然语言句子映射为逻辑形式</strong>（Zelle andMooney, 1996; Zettlemoyer and Collins, 2005;Wong and Mooney, 2007; Lu et al., 2008;Kwiatkowski et al., 2013）。例如“Which states border Texas?”将会被映射为 <em>answer (A, (state (A),nextto (A, stateid ( texas ))))</em>。<br>&emsp;&emsp;语义分析器需要两个函数，一个处理结构预测，另一个处理语义基础。传统的语义解析器通常基于复合语法，如 CCG（Zettlemoyer and Collins, <a href="https://arxiv.org/pdf/1207.1420" target="_blank" rel="noopener">2005</a>, <a href="https://www.aclweb.org/anthology/D07-1071" target="_blank" rel="noopener">2007</a>），DCS（<a href="https://www.aclweb.org/anthology/P11-1060" target="_blank" rel="noopener">Liang et al., 2011</a>）等。不幸的是，设计语法和学习精确的词汇仍是一个挑战，特别是在开放域。而且设计有效的特性往往很困难，它的学习过程也不是端到端的。为了解决上述问题，本文提出了两种有前途的研究方向：<strong>基于语义图</strong>的方法和<strong>基于 seq2seq</strong> 方法。<br>
           <!--noindex-->
           
             <div class="post-button text-center">
@@ -1820,7 +1994,7 @@ if(pathname == '/flower.html'){
           <!--/noindex-->
         
       
-    </div>
+    </p></div>
 
     
 
@@ -1938,7 +2112,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-11-24 15:36:41" itemprop="dateModified" datetime="2019-11-24T15:36:41+08:00">2019-11-24</time>
+                <time title="修改时间：2020-01-05 16:17:58" itemprop="dateModified" datetime="2020-01-05T16:17:58+08:00">2020-01-05</time>
               
             
           </span>
@@ -2003,61 +2177,7 @@ if(pathname == '/flower.html'){
             <p>&emsp;&emsp;<a href="https://arxiv.org/pdf/1601.01280.pdf" target="_blank" rel="noopener">论文地址</a>，发表于 2016 年。</p>
           </div>
 <p>&emsp;&emsp;语义分析的目的是将自然语言映射到机器可解释的有意义表示。传统的方法依赖于高质量的词汇、人工构建的模板以及特定领域或特定表示的语言特征，本文提出了一种注意力增强的 encoder-decoder 通用模型。将输入的话表示为向量形式，并通过调节输出序列或者树生成逻辑形式（总结来说，就是<strong>将话语转为逻辑形式</strong>，详情请看图 1）。<br>&emsp;&emsp;下图将一句话转为了逻辑形式，不同于以前的方法，它是通过神经网络生成的，而以前的方法依赖于手写的规则。图片取自 <a href="https://www.aclweb.org/anthology/W00-1317" title="Automated construction ofdatabase interfaces: Intergrating statistical and rela-tional learning for semantic parsing" target="_blank" rel="noopener">Tang and Mooney200</a>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language to Logical Form with Neural Attention/语句转为逻辑形式.jpg" alt="语句转为逻辑形式"></p>
-<p>&emsp;&emsp;基于 RNN 的 encoder-decoder 已成功应用于各种 NLP 任务，图 1 中使用了 LSTM，我们的做法是提出了两个变体模型。<strong>第一个模型</strong>将语义解析视为普通的序列转换任务，<strong>第二个模型</strong>配备了层次树解码器，该解码器明确地捕获逻辑形式的组合结构。我们还引入了<strong>注意力机制</strong>，并提出一个识别步骤来<strong>识别很少提到的实体</strong>和<strong>数字</strong>。<br>&emsp;&emsp;对<strong>四个数据集</strong>的实验结果表明，我们的方法在不使用人工设计特征的情况下具有竞争力，并且易于迁移。<br>&emsp;&emsp;我们的工作综合了两种标准研究，即<strong>语义分析</strong>和 <strong>encoder-decoder 架构的神经网络</strong>。</p>
-<h1 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h1><p>&emsp;&emsp;学习语义解析器的问题引起了广泛的关注，可以追溯到 Woods（1973年）。。。。</p>
-<h1 id="任务定义"><a href="#任务定义" class="headerlink" title="任务定义"></a>任务定义</h1><p>&emsp;&emsp;我们的目标是学习一个模型，将<u><strong>自然语言输入 <script type="math/tex">q = x_1 \dots x_{|q|}</script></strong></u> 映射为其含义的<u><strong>逻辑形式（logical form）表示 <script type="math/tex">a = y_1 \dots y_{|a|}</script></strong></u>。条件概率被分解为：</p>
-<script type="math/tex; mode=display">
-\begin{align}
-    p(a|q) & = \prod^{|a|}_{t=1} p(y_t|y_{<t},q) \tag 1\\
-    y_{<t} & = y_1 \dots y_{t-1}
-\end{align}</script><p>&emsp;&emsp;我们的模型包含一个编码器和一个解码器，编码器负责将输入的自然语言 q 编码成向量，解码器负责生成 <script type="math/tex">y_1 \dots y_{|a|}</script>。下面将仔细描述。</p>
-<h2 id="Seq2Seq"><a href="#Seq2Seq" class="headerlink" title="Seq2Seq"></a>Seq2Seq</h2><p>&emsp;&emsp;对于普通的 Seq2Seq 任务，使用 LSTM 来计算，如下图所示。<script type="math/tex">h^l_t</script> 代表第 l 层的第 t 个时间步的隐藏层，公式为：</p>
-<script type="math/tex; mode=display">
-\begin{align}
-    h^l_t = \text{LSTM}(h^l_{t-1},h^{l-1}_t) \tag 2
-\end{align}</script><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language to Logical Form with Neural Attention/Seq2Seq.jpg" alt="Seq2Seq"><br>&emsp;&emsp;在实验中，遵循 <a href="https://arxiv.org/pdf/1409.2329.pdf" title="RECURRENT NEURAL NETWORK REGULARIZATION" target="_blank" rel="noopener">Zaremba et al. 2015</a> 提出的架构。不过，使用其他类型的门控激活函数也是可以的（例如<a href="https://arxiv.org/pdf/1406.1078.pdf" title="Learning phrase representations using RNN encoder-decoder for statistical machine translation" target="_blank" rel="noopener">Cho et al. 2014</a>）。<strong>对于 encoder</strong>，<script type="math/tex">h^0_t = W_qe(x_t)</script>（注：此公式是第 0 层的运算步骤，即输入层）是 RNN 中输入的词向量，<script type="math/tex">W_q \in \mathbb{R}^{n \times |V_q|}</script> 代表输入层的权重值矩阵，e(·) 代表对应 token 的索引。<strong>对于 decoder</strong>，<script type="math/tex">h^0_t = W_ae(y_{t-1})</script> 代表前一个预测词的词向量，其中 <script type="math/tex">W_a \in \mathbb{R}^{n \times |V_a|}</script>。接下来，最后的 LSTM <script type="math/tex">h^L_t</script> 被用于预测 <script type="math/tex">t</script>-th 输出 token，计算公式为：</p>
-<script type="math/tex; mode=display">
-\begin{align}
-    p(y_t|y_t,q) = softmax(W_oh^L_t)^T e(y_t) \tag 3
-\end{align}</script><p>&emsp;&emsp;<strong>该公式用于预测每一个 token</strong>。另外补充一点，增加了 “start-of-sequence” <code>&lt;s&gt;</code> 和 “end-of-sequence” <code>&lt;/s&gt;</code>。<br>&emsp;&emsp;该模型总的来说，就是 LSTM 的计算方法，也没什么好说的。</p>
-<h2 id="Seq2Tree"><a href="#Seq2Tree" class="headerlink" title="Seq2Tree"></a>Seq2Tree</h2><p>&emsp;&emsp;Seq2Seq 模型有一个<strong>缺点</strong>就是它<strong>忽略了逻辑形式的层次结构</strong>。所以，要改良的话，它需要记住各种辅助信息（比如括号对），以此生成格式良好的输出。如下图 3 所示，是一个层次树 decoder：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language to Logical Form with Neural Attention/Seq2Tree模型.jpg" alt="Seq2Tree模型"></p>
-<p>&emsp;&emsp;Seq2Tree 与 Seq2Seq 的编码器类似，不同的是解码器。Seq2Tree 以自上而下的方式生成逻辑，为了定义树结构，我们定义了一个表示子树的 “nonterminal” <code>&lt;n&gt;</code> 标记。如图 3 所示，将<strong><em>逻辑形式 “lambda $0 e (and (&gt;(departure_time $0) 1600:ti) (from $0 dallas:ci))”</em></strong>预处理为树，方法是<strong>用 nonterminal 替换括号对之间的标记</strong>（token）。<strong>特殊记号 <code>&lt;s&gt;</code> 和 <code>&lt;(&gt;</code> 分别表示序列和 nonterminal 序列的开头</strong>（由于缺少空间，图3中省略了），<strong>记号 <code>&lt;/s&gt;</code> 代表序列结束</strong>。具体步骤是：</p>
-<ol>
-<li>编码输入值 q；</li>
-<li>层次树解码器使用 RNN 在逻辑形式 a（在<strong>任务定义</strong>中已经说明了 q 和 a 的含义）的对应部分的子树中生成 tokens（注意这里的 token 带了 s）；</li>
-<li>如果预测的 token 为 <code>&lt;n&gt;</code>，则通过调节 nonterminal 的隐藏向量来解码序列。（博主注：举个例子理解一下：看图 3 的第一层，先是使用 encoder 进行编码，接着开始对逻辑形式进行解码，逻辑形式就是上面的斜体部分。接下来预测到了 token<code>&lt;n&gt;</code> 于是调用 nonterminal 的隐藏向量来进行解码，即生成一棵子树。以此类推，碰到 toekn <code>&lt;n&gt;</code> 就开始解码）</li>
-<li>与 Seq2Seq 解码器不同，当前的隐藏状态不仅仅取决于上一个时间步，为了更好地利用 parent nonterminal 的信息，我们引入了一个 parent-feeding 的连接，其中 parent nonterminal 的隐藏向量与输入连接（concatenated）并喂入 LSTM。</li>
-</ol>
-<p>&emsp;&emsp;再举个例子帮助理解一下，如图 4 所示。逻辑形式为 <strong><em>A B (C)</em></strong>，其中 <script type="math/tex">y_1 \dots y_6</script> 代表不同的时间步，<strong><em>(C)</em></strong> 对应子树。解码一共有<strong>两个步骤</strong>：一旦输入值 q 被编码，首先在深度为 1 处生成 <script type="math/tex">y_1 \dots y_4</script>，直到 token <code>&lt;/s&gt;</code> 被预测到；接下来通过调节 nonterminal <script type="math/tex">t_3</script> 的隐藏向量来生成 <script type="math/tex">y_5, y_6</script>，<script type="math/tex">p(a|q)</script> 的概率是这<strong>两个序列解码步骤</strong>的乘积：</p>
-<script type="math/tex; mode=display">
-p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)</script><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language to Logical Form with Neural Attention/一个简单的Seq2Tree的例子.jpg" alt="一个简单的Seq2Tree的例子"></p>
-<h2 id="Attention-机制"><a href="#Attention-机制" class="headerlink" title="Attention 机制"></a>Attention 机制</h2><p>&emsp;&emsp;<strong><em>Attention 的原理</em></strong>。</p>
-<h2 id="训练模型"><a href="#训练模型" class="headerlink" title="训练模型"></a>训练模型</h2><p>&emsp;&emsp;我们的目标是<strong>最大化</strong>由自然语言语句作为输入时产生的逻辑形式的可能性，所以目标函数为：</p>
-<script type="math/tex; mode=display">
-\text{minimize} - \sum_{(q,a) \in D} logp(a|q)</script><p>&emsp;&emsp;其中 <script type="math/tex">D</script> 是所有自然语言逻辑形式训练对的集合，<script type="math/tex">p(a|q)</script> 按式（1）计算。采用 <strong>RMSProp</strong> 算法解决了这一非凸优化问题。此外，使用 <strong>Dropout</strong> 进行正则化。</p>
-<h2 id="推论"><a href="#推论" class="headerlink" title="推论"></a>推论</h2><p>&emsp;&emsp;暂时略。</p>
-<h2 id="参数识别"><a href="#参数识别" class="headerlink" title="参数识别"></a>参数识别</h2><p>&emsp;&emsp;大多数的语义分析数据集都是为问答开发的。在经典的系统中，问题被映射乘逻辑形式，并在知识库中获取答案。由于问答任务的性质，许多自然语言的语句都包含实体或数字，它们通常被解析为逻辑形式的参数。其中不可避免地会有一些罕见或者根本不会出现在数据集中的实体或数字（对于小规模数据集尤其如此）。传统的序列编码器只是简单地用一个特殊的位置单词符号替换稀有单词（<a href="https://arxiv.org/pdf/1410.8206.pdf" title="Addressing the Rare Word Problem in Neural Machine Translation" target="_blank" rel="noopener">Luong et al. 2015a</a>; <a href="https://arxiv.org/pdf/1412.2007.pdf" title="On Using Very Large Target Vocabulary for Neural Machine Translation" target="_blank" rel="noopener">Jean et al. 2015</a>），这对语义分析是有害的。<br>&emsp;&emsp;为此开发了一个简单的参数识别程序。具体来说就是在输入的问题中标识实体和数字，并用它们的<strong>类型</strong>和<strong>唯一 id</strong> 替换它们。例如，将训练样本“<em>jobs with a salary of 40000</em>”及其逻辑形式“job(ANS), salary_greater_than(ANS,40000, year)”预处理为“jobs with a salary of <em><script type="math/tex">num_0</script></em>”和“job(ANS), salary_greater_than(<em>ANS</em>,<em><script type="math/tex">num_0</script></em>,<em>year</em>)”。一旦解码完毕，后处理步骤就会将所有标记 <script type="math/tex">type_i</script> 恢复到它们以前的实体或数字。</p>
-<h1 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h1><p>&emsp;&emsp;我们将我们的方法在四个数据集上分别与以前的多个系统进行比较，下面将描述这些数据集。代码可在此处获得<a href="https://github.com/donglixp/lang2logic" target="_blank" rel="noopener">https://github.com/donglixp/lang2logic</a>（lua 版，官方），<a href="https://github.com/Alex-Fabbri/lang2logic-PyTorch" target="_blank" rel="noopener">https://github.com/Alex-Fabbri/lang2logic-PyTorch</a>（python 版，非官方）。</p>
-<h2 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h2><p>&emsp;&emsp;<strong>JOBS</strong>    工作<br>&emsp;&emsp;<strong>GEO</strong>        Geoquery data<br>&emsp;&emsp;<strong>ATIS</strong>    Airline Travel Information System（航空旅行信息系统）<br>&emsp;&emsp;<strong>IFTTT</strong>    if this then that（<a href="https://ifttt.com/" target="_blank" rel="noopener">地址</a> <a href="https://baike.baidu.com/item/ifttt/8378533" target="_blank" rel="noopener">百度百科介绍</a>），<a href="https://www.aclweb.org/anthology/P15-1085" target="_blank" rel="noopener">Quirk et al.2015</a> 从 IFTTT 网站提取大量的 if-this-then-that 来创建此数据库<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language to Logical Form with Neural Attention/数据集介绍.jpg" alt="数据集介绍"></p>
-<h2 id="设置"><a href="#设置" class="headerlink" title="设置"></a>设置</h2><p>&emsp;&emsp;自然语言语句是小写的，并且使用基于维基百科的常见拼写错误列表来纠正拼写错误。使用 NLTK 来限制词汇（[Bird et al.2009] Natural Language Processing with Python. O’Reilly Media.），对于 IFTTT 过滤了在训练集中出现少于五次的 token，channels 和 functions。对于其他数据集，过滤了在训练集中至少两次没有出现的输入词，但保留了逻辑形式中的所有 token。并且使用了<strong>参数识别</strong>，当然也可以使用更复杂的办法。<br>&emsp;&emsp;超参数在 JOBS 和 GEO 上使用了交叉验证，使用了 ATIS 和 IFTTT 作为标准开发集（就是验证集，不同的叫法而已 development/validation）。</p>
-<ul>
-<li><strong>RMSProp</strong>：batch size = 20；parameter = 0.95；</li>
-<li><strong>梯度修剪</strong>为 5 以缓解梯度爆炸（<a href="http://proceedings.mlr.press/v28/pascanu13.pdf" target="_blank" rel="noopener">Pascanu et al.2013</a>）；</li>
-<li><strong>参数</strong>从均匀分布 <script type="math/tex">U(-0.08, 0.08)</script> 中随机初始化；</li>
-<li>两层 <strong>LSTM</strong> 用于 IFTTT，单层 LSTM 用于其他数据集；</li>
-<li><strong>dropout</strong> <script type="math/tex">\in</script> {0.2,0.3,0.4,0.5}；</li>
-<li>隐藏向量和词嵌入<strong>维度</strong>从 {150, 200, 250} 选择；</li>
-<li><strong>early stopping</strong>；</li>
-<li>输入句子在进入编码器之前被反转（<a href="http://papers.nips.cc/paper/5346-sequence-to-sequence-learning-with-neural-networks.pdf" target="_blank" rel="noopener">Sutskever et al.2014</a>）；</li>
-<li><strong>贪婪搜索</strong>生成逻辑形式；</li>
-<li><strong>softmax</strong> 用于分类。</li>
-</ul>
-<h2 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h2><p>&emsp;&emsp;Attention 机制可以提高性能，对于小数据集<strong>参数识别</strong>至关重要。</p>
-<h2 id="错误分析"><a href="#错误分析" class="headerlink" title="错误分析"></a>错误分析</h2><h1 id="数据格式"><a href="#数据格式" class="headerlink" title="数据格式"></a>数据格式</h1><p>&emsp;&emsp;<a href="http://www.cs.columbia.edu/~mcollins/papers/uai05.pdf" title="Learning to Map Sentences to Logical Form: Structured Classification with Probabilistic Categorial Grammars" target="_blank" rel="noopener">论文</a>使用 Logical Form 对基准数据集做实验，数据集包括 Geo880 和 Jobs640，论文中使用的是 Logical Form 的其中一种表示——<strong>PCCG</strong>，它是 CCG 的改进版。他们将数据集分割为训练集和测试集，Language to Logical Form with Neural Attention 沿用了此分割方式（比如说将 GEO 分割为 680 个训练样本，200 个测试样本），并且采用此论文的思想，即：将自然语言映射为 Logical Form。<br>&emsp;&emsp;虽然 PCCG 的 Logical Form 效果不错，但是作者没有使用他，而是使用了 <a href="https://www.aclweb.org/anthology/D11-1140" target="_blank" rel="noopener">lambda-caculus</a>。<strong>作者将 Geo880 等数据集改写为了 lambda-calculus 的形式</strong>。<em>在<a href="https://github.com/yuxuan1995liu/Semantic-Parsing-Data-Pre-Processing" target="_blank" rel="noopener">此处</a>可找到全部数据，但是这里面的格式不是 lambda-calculus。我有点搞不懂他提供的数据到底是什么意思</em>。<strong>19.09.16 补充</strong>：经过多方查找，终于找到了 geo880 最初的<a href="https://link_springer.gg363.site/content/pdf/10.1007/3-540-44795-4_40.pdf" title="Using Multiple Clause Constructors in Inductive Logic Programming for Semantic Parsing" target="_blank" rel="noopener">论文</a>，在<a href="https://www.cs.utexas.edu/~ml/publications/year/2001" target="_blank" rel="noopener">此处</a>找到的。GEO880 最初版本并不是 lambda calculus。<br>&emsp;&emsp;作者将数据改写为 lambda-calcullus 形式是我估计的。因为全文找不到数据的来源，格式转换的说明也找不到。只是在 Section 4.1 Datasets 中说到：</p>
-<blockquote>
-<p>&emsp;&emsp;<strong>GEO 有 880 个示例，将其分割为 680 个训练样本以及 200 个测试样本（Zettlemoyer and Collins, 2005）， 我们使用了基于 lambda-calculus 的具有相同含义的表示</strong>。</p>
-</blockquote>
-<p>&emsp;&emsp;所以我推测作者应该是将原本的 PCCG 表示的 GEO 改成了 lambda-calculus 表示。<br>&emsp;&emsp;<a href="https://arxiv.org/pdf/1805.04793" title="Coarse-to-Fine Decoding for Neural Semantic Parsing" target="_blank" rel="noopener">论文</a>是作者对 Language to Logical Form with Neural Attention 的改进版。<br>
+<p>&emsp;&emsp;基于 RNN 的 encoder-decoder 已成功应用于各种 NLP 任务，图 1 中使用了 LSTM，我们的做法是提出了两个变体模型。<strong>第一个模型</strong>将语义解析视为普通的序列转换任务，<strong>第二个模型</strong>配备了层次树解码器，该解码器明确地捕获逻辑形式的组合结构。我们还引入了<strong>注意力机制</strong>，并提出一个识别步骤来<strong>识别很少提到的实体</strong>和<strong>数字</strong>。<br>&emsp;&emsp;对<strong>四个数据集</strong>的实验结果表明，我们的方法在不使用人工设计特征的情况下具有竞争力，并且易于迁移。<br>&emsp;&emsp;我们的工作综合了两种标准研究，即<strong>语义分析</strong>和 <strong>encoder-decoder 架构的神经网络</strong>。<br>
           <!--noindex-->
           
             <div class="post-button text-center">
@@ -2121,7 +2241,7 @@ p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)</script><p><img src="h
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/论文/5、Large scale Simple Question Answering with Memory Network.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/论文/5、Large-scale Simple Question Answering with Memory Network.html">
 
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -2145,7 +2265,7 @@ p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)</script><p><img src="h
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/论文/5、Large scale Simple Question Answering with Memory Network.html" class="post-title-link" itemprop="url">论文笔记：Large-scale Simple Question Answering with Memory Network</a>
+                <a href="/论文/5、Large-scale Simple Question Answering with Memory Network.html" class="post-title-link" itemprop="url">论文笔记：Large-scale Simple Question Answering with Memory Network</a>
               
             
           </h1>
@@ -2187,7 +2307,7 @@ p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)</script><p><img src="h
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-10-23 17:19:03" itemprop="dateModified" datetime="2019-10-23T17:19:03+08:00">2019-10-23</time>
+                <time title="修改时间：2020-01-05 16:27:52" itemprop="dateModified" datetime="2020-01-05T16:27:52+08:00">2020-01-05</time>
               
             
           </span>
@@ -2253,40 +2373,11 @@ p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)</script><p><img src="h
 <li>其一，为了<strong>研究现有系统</strong>以及<strong>通过多任务学习在不同数据源上同时训练</strong>成为可能，我们收集了第一个基于知识库的大规模的问答数据集，称为 SimpleQuestions。包含了人类编写和 Freebase facts 相关的超过 10 万个问题，另外现有的基准数据集 WebQuestions 包含的问题少于 6 千个，这些问题是使用 google suggest api 自动创建的。</li>
 <li>其二，提出了一种基于词嵌入的问答系统，在 Memory Networks (MemNNs)（<a href="https://arxiv.org/pdf/1410.3916.pdf" target="_blank" rel="noopener">Weston et al., 2015</a>;<a href="https://papers.nips.cc/paper/5846-end-to-end-memory-networks.pdf" target="_blank" rel="noopener">Sukhbaatar et al., 2015</a>） 框架下开发而成。</li>
 </ul>
-<p>&emsp;&emsp;虽然我们的模型与之前的 QA 嵌入模型（<a href="https://arxiv.org/pdf/1406.3676.pdf" target="_blank" rel="noopener">Bordes et al., 2014a</a>;<a href="https://arxiv.org/pdf/1404.4326.pdf" target="_blank" rel="noopener">Bordes et al., 2014b</a>）相似，但使用 MemNNs 的框架为未来工作中更复杂的推理方案提供了思路，因为 MemNNs 在复杂的推理问答任务上表现了很好的性能（<a href="https://arxiv.org/pdf/1410.3916.pdf" target="_blank" rel="noopener">Weston et al., 2015</a>）。</p>
-<h1 id="论文内容介绍"><a href="#论文内容介绍" class="headerlink" title="论文内容介绍"></a>论文内容介绍</h1><ol>
-<li>Sections 3, 4：介绍了基于词嵌入的问答系统；</li>
-<li>Section 5：相关工作；</li>
-<li>Section 6：实验结果。</li>
-</ol>
-<h1 id="Memory-Network-for-Simple-QA"><a href="#Memory-Network-for-Simple-QA" class="headerlink" title="Memory Network for Simple QA"></a>Memory Network for Simple QA</h1><p>&emsp;&emsp;Memory network 由一个 memory（一个索引对象数组）和一个神经网络组成。神经网络由 Input map(I), Generalization(G), Output map(O) and Response(R) 构成。其工作流如下所示：</p>
-<ol>
-<li>Storing Freebase：第一阶段。解析 Freebase（可以是 FB2M 或 FB5M，取决于配置）并且将它存进 memory。它使用 Input module 去预处理数据；</li>
-<li>Training：第二阶段。训练 MemNN 去回答问题。此处使用 Input, Output and Response modules，训练主要关注核心 Output module 嵌入模型的参数；</li>
-<li>Connecting Reverb：第三阶段。将来自 Reverb 的 new facts 添加到 memory 中。这是在训练完毕后进行的，为了测试 MemNNs 在不需要重新训练的情况下处理 new facts 的能力。它使用 Input module 去预处理 Reverb facts 并且使用 Generalization module 将它们和已经被存储的 facts 连接。</li>
-</ol>
-<h2 id="Input-module"><a href="#Input-module" class="headerlink" title="Input module"></a>Input module</h2><p>&emsp;&emsp;此组件预处理 3 种类型的数据，它们会被输入进神经网络：</p>
-<ol>
-<li>Freebase facts：用于填充 memory；</li>
-<li>questions：系统需要回答的问题；</li>
-<li>Reverb facts：在 workflow 第二阶段中，我们用它扩展 memory。</li>
-</ol>
-<h3 id="preprocessing-Freebase"><a href="#preprocessing-Freebase" class="headerlink" title="preprocessing Freebase"></a>preprocessing Freebase</h3><p>&emsp;&emsp;Freebase 数据最初存储原子 facts，包括将单个实体作为主语或者宾语，再在它们之间加上一个联系（即谓语）。<strong>但是这样的存储需要从两个方面与 QA 任务适应</strong>。</p>
-<ol>
-<li>为了回答不止有一个答案的问题，我们将 fact 重新定义为一个三元组，其包含 subject，relationship 以及通过 relationship 连接至 subject 的一组 objetcs 。这个分组过程将 atomic facts 转为 grouped facts，以下将其简单的称为 facts。Table 2 显示了这样分组可以减少 facts 的数量。</li>
-<li></li>
-</ol>
-<h3 id="Preprocessing-Freebase-facts"><a href="#Preprocessing-Freebase-facts" class="headerlink" title="Preprocessing Freebase facts"></a>Preprocessing Freebase facts</h3><p>&emsp;&emsp;</p>
-<h3 id="Preprocessing-questions"><a href="#Preprocessing-questions" class="headerlink" title="Preprocessing questions"></a>Preprocessing questions</h3><h3 id="Preprocessing-Reverb-facts"><a href="#Preprocessing-Reverb-facts" class="headerlink" title="Preprocessing Reverb facts"></a>Preprocessing Reverb facts</h3><h2 id="Generalization-module"><a href="#Generalization-module" class="headerlink" title="Generalization module"></a>Generalization module</h2><p>&emsp;&emsp;此模块负责将新的元素增加到 memory 中。在我们的例子中，memory 具有一个 multigraph 结构，其中每个节点都是 Freebase 的一个实体，multigraph 中被标记的 arcs 是 Freebase 中的 relationships：预处理之后，所有 Freebase 的 facts 都使用此结构存储。<br>&emsp;&emsp;<br>&emsp;&emsp;为了将 Reverb 的 subject 和 object 链接到 Freebase 实体，我们使用 precomputed entity links (<a href="https://www.aclweb.org/anthology/W12-3016.pdf" target="_blank" rel="noopener">Lin et al., 2012</a>)。。。。</p>
-<h2 id="Output-module"><a href="#Output-module" class="headerlink" title="Output module"></a>Output module</h2><p>&emsp;&emsp;Output 模块通过给定 input ，在 memory 中执行查表（lookup）操作，返回该问题的 supporting facts。在我们的 simple QA 例子中，此模块只返回一个 supporting fact。为了避免为所有存储的 facts 评分（即为了避免时间代价太大），我们先执行一步<em>近似实体链接</em>（proximate entity linking），以生成一个小的候选 facts 集合。最后， supporting fact 指的是与嵌入模型中的问题最相似的候选 fact。</p>
-<h3 id="Candidate-generation"><a href="#Candidate-generation" class="headerlink" title="Candidate generation"></a>Candidate generation</h3><p>&emsp;&emsp;略。</p>
-<h3 id="Scoring"><a href="#Scoring" class="headerlink" title="Scoring"></a>Scoring</h3><p>&emsp;&emsp;略。</p>
-<h2 id="Response-module"><a href="#Response-module" class="headerlink" title="Response module"></a>Response module</h2><p>&emsp;&emsp;在 memory network 中，Response 模块对 Output 模块的结果进行后处理操作，以计算预期的答案。在我们的例子中，它返回被挑选出来的 supporting fact 的对象集（博主注：这个对象集我猜测是 KG 中的三元组）。<br>&emsp;&emsp;注：不必纠结 Response 模块的具体功能，可以自己定制，必然在<a href="https://zhuanlan.zhihu.com/p/29590286" target="_blank" rel="noopener">记忆网络之Memory Networks</a>中写到最初的 memory network 的 response 模块只是简单地将向量转成单词。</p>
-<h1 id="推荐阅读"><a href="#推荐阅读" class="headerlink" title="推荐阅读"></a>推荐阅读</h1><p>&emsp;&emsp;<a href="https://blog.csdn.net/liuchonge/article/details/78128238" target="_blank" rel="noopener">记忆网络之open-domain QA 应用</a>，csdn 的一篇博客，也对此论文的训练方法做了总结。</p>
+<p>&emsp;&emsp;虽然我们的模型与之前的 QA 嵌入模型（<a href="https://arxiv.org/pdf/1406.3676.pdf" target="_blank" rel="noopener">Bordes et al., 2014a</a>;<a href="https://arxiv.org/pdf/1404.4326.pdf" target="_blank" rel="noopener">Bordes et al., 2014b</a>）相似，但使用 MemNNs 的框架为未来工作中更复杂的推理方案提供了思路，因为 MemNNs 在复杂的推理问答任务上表现了很好的性能（<a href="https://arxiv.org/pdf/1410.3916.pdf" target="_blank" rel="noopener">Weston et al., 2015</a>）。<br>
           <!--noindex-->
           
             <div class="post-button text-center">
-              <a class="btn" href="/论文/5、Large scale Simple Question Answering with Memory Network.html#more" rel="contents">
+              <a class="btn" href="/论文/5、Large-scale Simple Question Answering with Memory Network.html#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -2294,237 +2385,7 @@ p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)</script><p><img src="h
           <!--/noindex-->
         
       
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/论文/24、An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge.html">
-
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-				
-				
-	
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/论文/24、An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge.html" class="post-title-link" itemprop="url">论文笔记：An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-07-06 16:52:07" itemprop="dateCreated datePublished" datetime="2019-07-06T16:52:07+08:00">2019-07-06</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-08-30 22:53:27" itemprop="dateModified" datetime="2019-08-30T22:53:27+08:00">2019-08-30</time>
-              
-            
-          </span>
-
-          
-
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/" itemprop="url" rel="index"><span itemprop="name">assorted</span></a></span>
-
-                
-                
-                  ，
-                
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><div class="note info">
-            <p>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/P17-1021" target="_blank" rel="noopener">论文地址</a>，发表于 2017 年。</p>
-          </div>
-<p>&emsp;&emsp;随着知识库数量的增加，人们越来越希望寻找到一些有效的方法来获取这些资源。现在有几种专门为<strong>查询 KBs</strong> 设计的<strong>语言</strong>：SPARQL（<a href="https://www.w3.org/TR/2008/REC-rdf-sparql-query-20080115/" target="_blank" rel="noopener">rudhommeaux and Seaborne, 2008</a>）。但要使用这些语言，用户不仅需要熟悉它们，还要了解 KBs 的体系结构。相比之下，<strong>以自然语言为查询语言</strong>的 KB-QA 是一种更友好的方案，近年来已成为研究热点。这项任务<strong>以前</strong>有两个主流的研究方向：</p>
-<ol>
-<li>基于语义解析（semantic parsing-base, SP-based）</li>
-<li>基于信息检索（information  retrieval-based, IR-based）</li>
-</ol>
-<p>&emsp;&emsp;<strong>现在</strong>随着神经网络方法的发展，基于神经网络的 KB-QA 已经取得了令人瞩目的成果。其中至关重要的步骤就是计算<strong>问题和候选答案</strong>之间的相似性分数，这一步骤的<strong>关键一点</strong>就是学习它们的表示。然而以往的研究更注重<strong>答案的学习表示</strong>。例如，<a href="https://arxiv.org/pdf/1406.3676.pdf" target="_blank" rel="noopener">Bordes et al. 2014a</a> 考虑候选答案子图的重要性，<a href="https://www.aclweb.org/anthology/P15-1026" target="_blank" rel="noopener">Dong et al. 2015</a>利用上下文和答案的类型。无论如何，<strong>问题的表示</strong>终究还是表达不全。现有的方法 <a href="https://arxiv.org/pdf/1406.3676.pdf" target="_blank" rel="noopener">Bordes et al., 2014a,</a> <a href="https://arxiv.org/pdf/1404.4326.pdf" target="_blank" rel="noopener">b</a> 使用 bag-of-word 模型将问题表示为一个向量，但是这样<strong>问题与答案的关联性</strong>还是被忽视了。我们认为一个问题应该根据回答时不同的侧重面来表示（注：<em>其实就是想用注意力机制</em>，回答的侧重面可以是答案实体本身、答案类型、答案上下文等）。<br>&emsp;&emsp;因此本文提出了一个端到端的神经网络模型，通过 <strong>cross-attention</strong> 机制，根据不同的候选答案动态地表示问题及对应的分数。此外还利用了 KB 中的全部知识，旨在将 KB 中丰富的知识集成到答案中，以此缓解 out-of-vocabulary(<strong>OOV</strong>) 的问题，从而帮助 cross-attention 更精确地表示问题。最后实验结果表明了该方法确实有效。<br>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/P15-1026" title="Question Answering over Freebase wit hMulti-Column Convolutional Neural Networks" target="_blank" rel="noopener">论文</a>（<a href="https://yan624.github.io/论文/23、Question Answering over Freebase with Multi-Column Convolutional Neural Networks.html">论文笔记地址</a>）中的方法很有启发性，但是由于简单地选择三个独立的 CNN ，因此过于机械化。所以我们使用了基于 cross-attention 的神经网络模型。<br>&emsp;&emsp;模型架构如下，步骤与之前的论文的步骤类似。<strong>1)</strong>先找到问题的主题（main entity/topic entity）；<strong>2)</strong>然后在知识库中找到主题相连的节点作为候选答案，<strong>3)</strong>最后送入 score layer 进行评分，排序分数选出分数最高的候选答案作为正确答案。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge/MCCNN总览.jpg" alt="MCCNN总览"></p>
-<p>&emsp;&emsp;为了方便描述，我们将任何一种基本元素称为资源（resource），无论是实体还是关系。比如 (/m/0f8l9c,location.country.capital,/m/05qtj) 的描述是法国的首都是巴黎，其中的 <em>/m/0f8l9c</em> 和 <em>/m/05qtj</em> 分别代表法国和巴黎，<em>location.country.capital</em> 是一种关系。</p>
-<h1 id="我们的方法"><a href="#我们的方法" class="headerlink" title="我们的方法"></a>我们的方法</h1><h2 id="候选者生成"><a href="#候选者生成" class="headerlink" title="候选者生成"></a>候选者生成</h2><p>&emsp;&emsp;略，我已经写过无数遍了。使用 Freebase API 构建的。</p>
-<h2 id="The-Neural-Cross-Attention-Model"><a href="#The-Neural-Cross-Attention-Model" class="headerlink" title="The Neural Cross-Attention Model"></a>The Neural Cross-Attention Model</h2><p>&emsp;&emsp;下图是模型的架构：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge/MCCNN架构.jpg" alt="MCCNN架构"></p>
-<ul>
-<li>问题表示（图 2 中左侧部分显示了处理步骤）<ol>
-<li>使用向量表示问题中的每个单词，这跟其他 NLP 任务差不多，不过它是随机初始化的词嵌入矩阵 <script type="math/tex">E_w \in \mathbb{R}^{d \text{x} v_w}</script>，然后取出对应单词的词向量。d 代表词向量的维度，<script type="math/tex">v_w</script> 代表词表的大小。</li>
-<li>将词向量送入 LSTM，值得注意的是我们没有使用单向 LSTM，因为这样一个单词表示只会捕获到之前的单词的信息而不会包含之后的单词。为此我们使用了双向 LSTM 外加 Bahdanau（<a href="https://arxiv.org/pdf/1409.0473.pdf" title="Neural machine translation by jointly learning to align and translate" target="_blank" rel="noopener">Bahdanau, 2014</a>） attention 的处理；</li>
-<li>这样就会获得两个表示 <script type="math/tex">(\overrightarrow{h_1}, \overrightarrow{h_2}, \dots, \overrightarrow{h_n})</script> 以及 <script type="math/tex">(\overleftarrow{h_1}, \overleftarrow{h_2}, \dots, \overleftarrow{h_n})</script>，然后将两个表示拼接起来组成 [<script type="math/tex">\overrightarrow{h_i};\overleftarrow{h_i}</script>]，正反向 LSTM 单元的大小都是 <script type="math/tex">\frac{d}{2}</script>。</li>
-</ol>
-</li>
-<li>回答的不同侧面表示（图 2 中右侧下方部分）<ol>
-<li>直接使用 KB 的嵌入矩阵 <script type="math/tex">E_k \in \mathbb{R}^{d \text{x} v_k}</script>，其中 <script type="math/tex">v_k</script> 代表知识库中资源的大小，该嵌入矩阵随机初始化并在训练时学习表示，使用全局信息对表示的进一步提高将在 3.3 节 Combining Global Knowledge（原论文）描述。具体来说我们使用回答的四个方面：问答实体 <script type="math/tex">a_e</script>，回答关系 <script type="math/tex">a_r</script>，回答类型 <script type="math/tex">a_t</script>，回答上下文 <script type="math/tex">a_c</script>。它们的嵌入被分别表示为 <script type="math/tex">e_e</script>, <script type="math/tex">e_r</script>, <script type="math/tex">e_t</script>, <script type="math/tex">e_c</script>；</li>
-<li>值得注意的是问答上下文由多个 KB 资源组成，我们将它们定义为 (<script type="math/tex">c_1, c_2, \dots, c_m</script>)，首先获得它们的嵌入 (<script type="math/tex">e_{c_1}, e_{c_2}, \dots, e_{c_m}</script>)，然后计算它们的平均值 <script type="math/tex">e_c = \frac{1}{m} \sum^m_{i=1} e_{c_i}</script></li>
-</ol>
-</li>
-<li>Cross-Attention model（图 2 中右侧上方部分以及最上方部分），详见 3.2.3 Cross-Attention model</li>
-</ul>
-<h2 id="Combining-Global-Knowledge"><a href="#Combining-Global-Knowledge" class="headerlink" title="Combining Global Knowledge"></a>Combining Global Knowledge</h2><p>&emsp;&emsp;Combining Global Knowledg，利用TransE得到knowledge embedding。</p>
-<h1 id="模型描述"><a href="#模型描述" class="headerlink" title="模型描述"></a>模型描述</h1><ol>
-<li>使用了 Bahdanau Attention 处理；</li>
-<li>使用了双向 LSTM，会得到两个向量，最后将这两个向量拼接在一起，就是 BiLSTM 这层的最终向量。另外正反的 LSTM 的长度都是 <script type="math/tex">\frac{d}{2}</script>；</li>
-<li>回答通过问答实体 <script type="math/tex">a_e</script>，回答关系 <script type="math/tex">a_r</script>，回答类型 <script type="math/tex">a_t</script>，回答上下文 <script type="math/tex">a_c</script> 四个方面来表示，其中 ac 是所有词向量的平均值。</li>
-</ol>
-<h1 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h1><ol>
-<li><a href="https://arxiv.org/pdf/1404.4326" title="Open question answering with weakly supervised embedding models" target="_blank" rel="noopener">Antoine Bordes 等 2014b</a>；</li>
-<li><a href="https://arxiv.org/pdf/1406.3676" title="Question Answering with Subgraph Embeddings" target="_blank" rel="noopener">Antoine Bordes 等 2014a</a>；</li>
-<li><a href="https://www.aclweb.org/anthology/P14-2105" title="Semantic Parsing for Single-Relation Question Answering" target="_blank" rel="noopener">Yih W 等 2014</a>，实际上是基于语义解析的，但是用了词向量；</li>
-<li><a href="https://www.aclweb.org/anthology/D14-1071" title="Joint relational embeddings for knowledge-based question answering" target="_blank" rel="noopener">Min-Chul Yang 等 2014</a>，实际上是基于语义解析的但是用了词向量；</li>
-<li><a href="https://www.aclweb.org/anthology/P15-1026" title="Question Answering over Freebase with Multi-Column Convolutional Neural Networks" target="_blank" rel="noopener">Dong 等 2015</a>，这篇是跟我们的文章最相近的（使用了 CNN 而非 RNN + Attention）；</li>
-<li><a href="https://www.aclweb.org/anthology/C16-1226" title="Hybrid Question Answering over Knowledge Base and Free Text" target="_blank" rel="noopener">Kun Xu 等 2016b</a>；<a href="https://arxiv.org/pdf/1603.00957.pdf" title="Question Answering on Freebase via Relation Extraction and Textual Evidence" target="_blank" rel="noopener">Xu K 等 2016a</a>。</li>
-</ol>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/论文/24、An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
+    </p></div>
 
     
 
@@ -2720,9 +2581,7 @@ p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)</script><p><img src="h
                     
                       
                     
-                      
-                    
-                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-count">18</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -2730,7 +2589,7 @@ p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)</script><p><img src="h
 			  
 			  <!-- 不蒜子/busuanzi -->
 			  <div class="site-state-item site-state-posts">
-			  	<span class="site-state-item-count">125.4k</span>
+			  	<span class="site-state-item-count">127.1k</span>
 			  	<span class="site-state-item-name">总字数</span>
 			  </div>
             </nav>
@@ -2818,7 +2677,7 @@ p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)</script><p><img src="h
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2020</span>
   <span class="with-love" id="animate">
     <i class="fa fa-heart"></i>
   </span>

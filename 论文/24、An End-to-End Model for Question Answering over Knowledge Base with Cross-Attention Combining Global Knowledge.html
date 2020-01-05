@@ -116,7 +116,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge/MCCNN总览.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge/MCCNN架构.jpg">
-<meta property="og:updated_time" content="2019-08-30T14:53:27.485Z">
+<meta property="og:updated_time" content="2020-01-05T08:28:10.407Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="论文笔记：An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge">
 <meta name="twitter:description" content="论文概要             &amp;emsp;&amp;emsp;论文地址，发表于 2017 年。            &amp;emsp;&amp;emsp;随着知识库数量的增加，人们越来越希望寻找到一些有效的方法来获取这些资源。现在有几种专门为查询 KBs 设计的语言：SPARQL（rudhommeaux and Seaborne, 2008）。但要使用这些语言，用户不仅需要熟悉它们，还要了解 KBs 的体系结构。">
@@ -306,7 +306,7 @@ if(pathname == '/flower.html'){
       
     
 
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">19</span></a>
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">18</span></a>
 
   </li>
         
@@ -340,6 +340,10 @@ if(pathname == '/flower.html'){
   </li>
 
 
+            
+          
+            
+            
             
           
             
@@ -536,7 +540,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-08-30 22:53:27" itemprop="dateModified" datetime="2019-08-30T22:53:27+08:00">2019-08-30</time>
+                <time title="修改时间：2020-01-05 16:28:10" itemprop="dateModified" datetime="2020-01-05T16:28:10+08:00">2020-01-05</time>
               
             
           </span>
@@ -612,7 +616,7 @@ if(pathname == '/flower.html'){
 <li>基于信息检索（information  retrieval-based, IR-based）</li>
 </ol>
 <p>&emsp;&emsp;<strong>现在</strong>随着神经网络方法的发展，基于神经网络的 KB-QA 已经取得了令人瞩目的成果。其中至关重要的步骤就是计算<strong>问题和候选答案</strong>之间的相似性分数，这一步骤的<strong>关键一点</strong>就是学习它们的表示。然而以往的研究更注重<strong>答案的学习表示</strong>。例如，<a href="https://arxiv.org/pdf/1406.3676.pdf" target="_blank" rel="noopener">Bordes et al. 2014a</a> 考虑候选答案子图的重要性，<a href="https://www.aclweb.org/anthology/P15-1026" target="_blank" rel="noopener">Dong et al. 2015</a>利用上下文和答案的类型。无论如何，<strong>问题的表示</strong>终究还是表达不全。现有的方法 <a href="https://arxiv.org/pdf/1406.3676.pdf" target="_blank" rel="noopener">Bordes et al., 2014a,</a> <a href="https://arxiv.org/pdf/1404.4326.pdf" target="_blank" rel="noopener">b</a> 使用 bag-of-word 模型将问题表示为一个向量，但是这样<strong>问题与答案的关联性</strong>还是被忽视了。我们认为一个问题应该根据回答时不同的侧重面来表示（注：<em>其实就是想用注意力机制</em>，回答的侧重面可以是答案实体本身、答案类型、答案上下文等）。<br>&emsp;&emsp;因此本文提出了一个端到端的神经网络模型，通过 <strong>cross-attention</strong> 机制，根据不同的候选答案动态地表示问题及对应的分数。此外还利用了 KB 中的全部知识，旨在将 KB 中丰富的知识集成到答案中，以此缓解 out-of-vocabulary(<strong>OOV</strong>) 的问题，从而帮助 cross-attention 更精确地表示问题。最后实验结果表明了该方法确实有效。<br>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/P15-1026" title="Question Answering over Freebase wit hMulti-Column Convolutional Neural Networks" target="_blank" rel="noopener">论文</a>（<a href="https://yan624.github.io/论文/23、Question Answering over Freebase with Multi-Column Convolutional Neural Networks.html">论文笔记地址</a>）中的方法很有启发性，但是由于简单地选择三个独立的 CNN ，因此过于机械化。所以我们使用了基于 cross-attention 的神经网络模型。<br>&emsp;&emsp;模型架构如下，步骤与之前的论文的步骤类似。<strong>1)</strong>先找到问题的主题（main entity/topic entity）；<strong>2)</strong>然后在知识库中找到主题相连的节点作为候选答案，<strong>3)</strong>最后送入 score layer 进行评分，排序分数选出分数最高的候选答案作为正确答案。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge/MCCNN总览.jpg" alt="MCCNN总览"></p>
-<p>&emsp;&emsp;为了方便描述，我们将任何一种基本元素称为资源（resource），无论是实体还是关系。比如 (/m/0f8l9c,location.country.capital,/m/05qtj) 的描述是法国的首都是巴黎，其中的 <em>/m/0f8l9c</em> 和 <em>/m/05qtj</em> 分别代表法国和巴黎，<em>location.country.capital</em> 是一种关系。</p>
+<p>&emsp;&emsp;为了方便描述，我们将任何一种基本元素称为资源（resource），无论是实体还是关系。比如 (/m/0f8l9c,location.country.capital,/m/05qtj) 的描述是法国的首都是巴黎，其中的 <em>/m/0f8l9c</em> 和 <em>/m/05qtj</em> 分别代表法国和巴黎，<em>location.country.capital</em> 是一种关系。<br><a id="more"></a></p>
 <h1 id="我们的方法"><a href="#我们的方法" class="headerlink" title="我们的方法"></a>我们的方法</h1><h2 id="候选者生成"><a href="#候选者生成" class="headerlink" title="候选者生成"></a>候选者生成</h2><p>&emsp;&emsp;略，我已经写过无数遍了。使用 Freebase API 构建的。</p>
 <h2 id="The-Neural-Cross-Attention-Model"><a href="#The-Neural-Cross-Attention-Model" class="headerlink" title="The Neural Cross-Attention Model"></a>The Neural Cross-Attention Model</h2><p>&emsp;&emsp;下图是模型的架构：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge/MCCNN架构.jpg" alt="MCCNN架构"></p>
 <ul>
@@ -643,7 +647,7 @@ if(pathname == '/flower.html'){
 <li><a href="https://www.aclweb.org/anthology/P15-1026" title="Question Answering over Freebase with Multi-Column Convolutional Neural Networks" target="_blank" rel="noopener">Dong 等 2015</a>，这篇是跟我们的文章最相近的（使用了 CNN 而非 RNN + Attention）；</li>
 <li><a href="https://www.aclweb.org/anthology/C16-1226" title="Hybrid Question Answering over Knowledge Base and Free Text" target="_blank" rel="noopener">Kun Xu 等 2016b</a>；<a href="https://arxiv.org/pdf/1603.00957.pdf" title="Question Answering on Freebase via Relation Extraction and Textual Evidence" target="_blank" rel="noopener">Xu K 等 2016a</a>。</li>
 </ol>
-<a id="more"></a>
+
       
     </div>
 
@@ -689,7 +693,7 @@ if(pathname == '/flower.html'){
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/论文/5、Large scale Simple Question Answering with Memory Network.html" rel="prev" title="论文笔记：Large-scale Simple Question Answering with Memory Network">
+              <a href="/论文/5、Large-scale Simple Question Answering with Memory Network.html" rel="prev" title="论文笔记：Large-scale Simple Question Answering with Memory Network">
                 论文笔记：Large-scale Simple Question Answering with Memory Network <i class="fa fa-chevron-right"></i>
               </a>
             
@@ -873,9 +877,7 @@ if(pathname == '/flower.html'){
                     
                       
                     
-                      
-                    
-                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-count">18</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
@@ -883,7 +885,7 @@ if(pathname == '/flower.html'){
 			  
 			  <!-- 不蒜子/busuanzi -->
 			  <div class="site-state-item site-state-posts">
-			  	<span class="site-state-item-count">125.4k</span>
+			  	<span class="site-state-item-count">127.1k</span>
 			  	<span class="site-state-item-name">总字数</span>
 			  </div>
             </nav>
@@ -988,7 +990,7 @@ if(pathname == '/flower.html'){
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2020</span>
   <span class="with-love" id="animate">
     <i class="fa fa-heart"></i>
   </span>
