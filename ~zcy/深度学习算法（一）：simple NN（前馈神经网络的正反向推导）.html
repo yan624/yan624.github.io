@@ -117,7 +117,7 @@
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg">
-<meta property="og:updated_time" content="2020-01-05T08:32:35.640Z">
+<meta property="og:updated_time" content="2020-01-14T09:09:05.896Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="深度学习算法（一）：simple NN（前馈神经网络的正反向推导）">
 <meta name="twitter:description" content="本文的公式不存在次方的说法，所以看见上标，不要想成是次方。对于权重的表示问题，请看博客，但是由于是以前的学习笔记，不保证完全正确。如果想了解为什么梯度下降要对w和b求导，可以看这篇。建议边看边写，否则思维跟不上。            前言参考文章以如下神经网络架构为例。参考文章中使用了一个2 2 2的神经网络架构，但是现实中神经网络架构不会这么整整齐齐。所以还是使用了略">
@@ -541,7 +541,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2020-01-05 16:32:35" itemprop="dateModified" datetime="2020-01-05T16:32:35+08:00">2020-01-05</time>
+                <time title="修改时间：2020-01-14 17:09:05" itemprop="dateModified" datetime="2020-01-14T17:09:05+08:00">2020-01-14</time>
               
             
           </span>
@@ -609,7 +609,7 @@ if(pathname == '/flower.html'){
 
       
         <div class="note info">
-            <p>本文的公式不存在次方的说法，所以看见上标，不要想成是次方。<br>对于权重的表示问题，请看<a href="https://yan624.github.io/学习笔记/《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题.html">博客</a>，但是由于是以前的学习笔记，不保证完全正确。<br>如果想了解为什么梯度下降要对w和b求导，可以看<a href="https://yan624.github.io/学习笔记/梯度下降算法的推导.html">这篇</a>。<br><strong>建议边看边写，否则思维跟不上。</strong></p>
+            <p>本文的公式不存在次方的说法，所以看见上标，不要想成是次方。<br>对于权重的表示问题，请看<a href="https://yan624.github.io/~学习笔记/《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题.html">博客</a>，但是由于是以前的学习笔记，不保证完全正确。<br>如果想了解为什么梯度下降要对w和b求导，可以看<a href="https://yan624.github.io/~学习笔记/梯度下降算法的推导.html">这篇</a>。<br><strong>建议边看边写，否则思维跟不上。</strong></p>
           </div>
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>参考<a href="https://www.cnblogs.com/charlotte77/p/5629865.html" target="_blank" rel="noopener">文章</a><br>以如下神经网络架构为例。参考<a href="https://www.cnblogs.com/charlotte77/p/5629865.html" target="_blank" rel="noopener">文章</a>中使用了一个2 2 2的神经网络架构，但是现实中神经网络架构不会这么整整齐齐。所以还是使用了略复杂的架构，此外原文中未对bias（偏差）更新。另外原文也没有实现向量化后的计算。虽然在后面的代码写了，但是由于代码太长了，有一种代码我给出来了，你们自己去看的感觉。说实话没多少注释，都没看的欲望(╬￣皿￣)。然后她所使用的符号让我不太习惯，因为看吴恩达以及李宏毅老师使用的符号都是<script type="math/tex">w^l_{ji}\ a^l_i</script>等等，所以自己重新推导一遍，并且使用了数学公式，而不是截图，更好看一点。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版"><br>解释一下最下面的神经元，这个神经元初始化为1，也就是意味着1 * b = b。输入值为1，一个偏差乘1还是偏差本身。<br><a id="more"></a></p>
 <h2 id="关于函数选用"><a href="#关于函数选用" class="headerlink" title="关于函数选用"></a>关于函数选用</h2><p>本文所有激活函数选择sigmoid函数，代价函数选择binary_crossentropy。</p>
@@ -665,7 +665,7 @@ a^2_2 = \sigma{(z^2_2)}\\</script><h3 id="计算代价"><a href="#计算代价" 
             <p>说是说反向传播，实际上整个流程就是在<strong><a href="https://baike.baidu.com/item/链式法则/3314017?fr=aladdin" target="_blank" rel="noopener">链式求导</a></strong>。如果把这点想通了，整个神经网络的难点就只在向量化上了。一定要理解为什么整个流程只是在做链式求导的问题，在这里我并不是随便一提。</p>
           </div>
 <p>为了便于查找，把之前的图再放这。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版"></p>
-<h2 id="首先更新输出层的权重值（W）以及偏差值（b）"><a href="#首先更新输出层的权重值（W）以及偏差值（b）" class="headerlink" title="首先更新输出层的权重值（W）以及偏差值（b）"></a>首先更新输出层的权重值（W）以及偏差值（b）</h2><p>梯度下降公式大家应该都知道：<script type="math/tex">W = W - \alpha * grad</script>。其中的grad实际上就是W的导数，<a href="https://yan624.github.io/学习笔记/梯度下降算法的推导.html">参考</a>。<br>可以对照上图观察，<strong>输出层</strong>的权重值分别为:</p>
+<h2 id="首先更新输出层的权重值（W）以及偏差值（b）"><a href="#首先更新输出层的权重值（W）以及偏差值（b）" class="headerlink" title="首先更新输出层的权重值（W）以及偏差值（b）"></a>首先更新输出层的权重值（W）以及偏差值（b）</h2><p>梯度下降公式大家应该都知道：<script type="math/tex">W = W - \alpha * grad</script>。其中的grad实际上就是W的导数，<a href="https://yan624.github.io/~学习笔记/梯度下降算法的推导.html">参考</a>。<br>可以对照上图观察，<strong>输出层</strong>的权重值分别为:</p>
 <script type="math/tex; mode=display">
 \begin{pmatrix}
     w^2_{11}&w^2_{12}&w^2_{13}\\

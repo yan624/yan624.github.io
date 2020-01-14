@@ -27,7 +27,7 @@
     <title>分析PyDial toolkit各个包的功能</title>
     <url>/project/%E5%88%86%E6%9E%90PyDial%20toolkit%E5%90%84%E4%B8%AA%E5%8C%85%E7%9A%84%E5%8A%9F%E8%83%BD.html</url>
     <content><![CDATA[<div class="note warning">
-            <p>&emsp;&emsp;此篇基于 <a href="https://yan624.github.io/论文/55. PyDial：A Multi-domain Statistical Dialogue System Toolkit.html">PyDial：A Multi-domain Statistical Dialogue System Toolkit 论文笔记</a> 和 <a href="https://yan624.github.io/论文/54. A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management.html">A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management 论文笔记</a></p>
+            <p>&emsp;&emsp;此篇基于 <a href="https://yan624.github.io/~论文/55. PyDial：A Multi-domain Statistical Dialogue System Toolkit.html">PyDial：A Multi-domain Statistical Dialogue System Toolkit 论文笔记</a> 和 <a href="https://yan624.github.io/~论文/54. A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management.html">A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management 论文笔记</a></p>
           </div>
 <h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><p>&emsp;&emsp;按照如下顺序分析，此外 PyDial 的官方文档在<a href="http://www.camdial.org/pydial/Docs/" target="_blank" rel="noopener">此处</a>。<br><figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">PyDial</span><br><span class="line">├─belieftracking</span><br><span class="line">├─cedm</span><br><span class="line">├─config</span><br><span class="line">├─curiosity</span><br><span class="line">├─Docs</span><br><span class="line">├─evaluation</span><br><span class="line">├─ontology</span><br><span class="line">├─policy</span><br><span class="line">├─resources</span><br><span class="line">├─scripts</span><br><span class="line">├─semanticbelieftracking</span><br><span class="line">├─semi</span><br><span class="line">├─semo</span><br><span class="line">├─tasks</span><br><span class="line">├─tests</span><br><span class="line">├─topictracking</span><br><span class="line">├─Tutorials</span><br><span class="line">├─usersimulator</span><br><span class="line">├─utils</span><br><span class="line">├─__init__.py</span><br><span class="line">├─Agent.py</span><br><span class="line">├─conf.py</span><br><span class="line">├─DialogueServer.py</span><br><span class="line">├─pydial.py</span><br><span class="line">├─Simulate.py</span><br><span class="line">└─Texthub.py</span><br></pre></td></tr></table></figure></p>
 <a id="more"></a>
@@ -36,7 +36,7 @@
             <p>&emsp;&emsp;我并没有介绍全，其他的配置文件待补充。</p>
           </div>
 <p>&emsp;&emsp;一堆配置文件。PyDial 的文档并没有明确地在某个文档中指出 config 文件夹的用法，只介绍了某一个模块的配置文件该如何配置。但是这样写得太杂了，不易理解，接下来写下自己的理解。<br>&emsp;&emsp;Tut 代表 Tutorials，bcm 代表 Bayesian committee machine，gp 代表 Gaussian Process，hdc 代表 Handcrafted。在官方的教程中经常会看到类似 Tut-gp-CamRestaurants.cfg 的配置文件，这些其实是用于教程的配置文件。<br>&emsp;&emsp;PyDial 的基准环境在 config/pydial_benchmarks 下，由 <a href="https://arxiv.xilesou.top/pdf/1711.11023.pdf" target="_blank" rel="noopener">此篇论文</a> 引进。其中一共有 6 个环境，每个环境下又有三个领域。环境：不同的环境拥有不同的训练参数，领域：不同的领域拥有不同场景，如剑桥餐厅、笔记本电脑和洛杉矶餐厅。</p>
-<h1 id="policy"><a href="#policy" class="headerlink" title="policy"></a>policy</h1><p>&emsp;&emsp;policy 是 Agent 中的一部分。不懂看 <a href="https://yan624.github.io/论文/55. PyDial：A Multi-domain Statistical Dialogue System Toolkit.html">PyDial：A Multi-domain Statistical Dialogue System Toolkit 论文笔记</a> 中的 <strong>2.1 总体系统结构</strong>。<br>&emsp;&emsp;policy 包中包含许多 policy 实现，它们都是历年论文的实现。我估计论文 <strong>《A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management》</strong> 使用这些 policy 实现从而提供了 6 个基准测试环境。</p>
+<h1 id="policy"><a href="#policy" class="headerlink" title="policy"></a>policy</h1><p>&emsp;&emsp;policy 是 Agent 中的一部分。不懂看 <a href="https://yan624.github.io/~论文/55. PyDial：A Multi-domain Statistical Dialogue System Toolkit.html">PyDial：A Multi-domain Statistical Dialogue System Toolkit 论文笔记</a> 中的 <strong>2.1 总体系统结构</strong>。<br>&emsp;&emsp;policy 包中包含许多 policy 实现，它们都是历年论文的实现。我估计论文 <strong>《A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management》</strong> 使用这些 policy 实现从而提供了 6 个基准测试环境。</p>
 <h1 id="semi"><a href="#semi" class="headerlink" title="semi"></a>semi</h1><p>&emsp;&emsp;semi 全名 Semantic input parser。所有的领域都有一个基于规则的 semantic decoder，但是 CamRestaurants 领域有一个基于统计的 decoder，在该包下可以发现一个 <code>SVMSemi.py</code> 文件，所以实际上是基于 SVM 的。</p>
 <h1 id="semo"><a href="#semo" class="headerlink" title="semo"></a>semo</h1><p>&emsp;&emsp;semo 全名 Semantic Output。为大多数领域提供了基于模版的语言生成，但是为 CamRestaurants 提供了一个基于 LSTM 的生成器。</p>
 <h1 id="topictracking"><a href="#topictracking" class="headerlink" title="topictracking"></a>topictracking</h1><p>&emsp;&emsp;用于在多领域下追踪主题。</p>
@@ -47,10 +47,94 @@
       </categories>
   </entry>
   <entry>
+    <title>论文笔记：A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management</title>
+    <url>/~%E8%AE%BA%E6%96%87/54.%20A%20Benchmarking%20Environment%20for%20Reinforcement%20Learning%20Based%20Task%20Oriented%20Dialogue%20Management.html</url>
+    <content><![CDATA[<div class="note info">
+            <p>&emsp;&emsp;<a href="https://arxiv.xilesou.top/pdf/1711.11023.pdf" target="_blank" rel="noopener">论文地址</a>，论文作者 Casanueva I 等，发表于 2017 年。<br>&emsp;&emsp;此论文基于 PyDial，所以可能需要先看 <a href="https://yan624.github.io/~论文/55. PyDial：A Multi-domain Statistical Dialogue System Toolkit.html">这篇</a>博文。</p>
+          </div>
+<h1 id="本文出现的名词"><a href="#本文出现的名词" class="headerlink" title="本文出现的名词"></a>本文出现的名词</h1><ul>
+<li>自动语音识别——Automatic Speech Recognition, ASR</li>
+<li>自然语言理解——Natural Language Understanding, NLU</li>
+<li>基于开放域聊天的系统（open-domain chat-based systems）：涉及一般性话题的非目标驱动对话</li>
+<li>面向任务的对话系统（task-oriented dialogue systems）：将其做成一个小型电子设备附有非常吸引人的界面，旨在通过自然语言帮助用户实现特定目标。</li>
+<li>语音对话系统——Spoken Dialogue Systems, SDS</li>
+<li>对话管理——Dialogue Management, DM：belief state tracking and policy<ol>
+<li>state tracking</li>
+<li>策略模型</li>
+</ol>
+</li>
+<li>自然语言生成——Natural Language Generation, NLG</li>
+<li>语音合成——speech synthesis</li>
+<li>本体（ontology）：本体是系统数据库的结构化表示，定义了 requestable slots, informable slots and database entries（即用户可以与之交互的实体类型及其属性）</li>
+<li>强化学习——Reinforcement Learning, RL</li>
+<li>试错过程（trial-and-error process）</li>
+<li>高斯过程——Gaussian Process, GP</li>
+<li>策略梯度（policy gradients）</li>
+<li>Q-learning</li>
+<li>通用口语对话测试平台（common testbed for spoken dialogue）</li>
+<li>基准测试环境（benchmarking environments）</li>
+<li>对话状态跟踪挑战——Dialogue State Tracking Challenges, DSTC</li>
+<li>马尔科夫决策过程（MDP）</li>
+</ul>
+<h1 id="论文摘要翻译"><a href="#论文摘要翻译" class="headerlink" title="论文摘要翻译"></a>论文摘要翻译</h1><p>&emsp;&emsp;对话助理正迅速成为不可或缺的日常助手。<br><a id="more"></a></p>
+<h1 id="1-引言"><a href="#1-引言" class="headerlink" title="1 引言"></a>1 引言</h1><p>&emsp;&emsp;近年来，随着自动语音识别（<strong>Automatic Speech Recognition</strong>, <strong>ASR</strong>）、自然语言理解（<strong>Natural Language Understanding</strong>, <strong>NLU</strong>）和机器学习技术的发展，对话系统受到了学术界和工业界的广泛关注。两个方向已经被深入研究：基于开放域聊天的系统（<strong>open-domain chat-based systems</strong>）和面向任务的对话系统（<strong>task-oriented dialogue systems</strong>）。前者涉及一般性话题的非目标驱动对话。后者将它做成一个小型电子设备附有非常吸引人的界面，其旨在通过自然语言帮助用户实现特定的目标。<br>&emsp;&emsp;<strong>在<u>语音驱动</u>的场景下</strong>，语音对话系统（ <strong>Spoken Dialogue Systems</strong>, <strong>SDS</strong>）通常基于模块化架构（图1），由输入处理模块（<strong>ASR</strong> 和 <strong>NLU</strong> 模块）、对话管理（<strong>Dialogue Management</strong>, <strong>DM</strong>）模块（belief state tracking and policy）和输出处理模块（自然语言生成（<strong>Natural Language Generation</strong>, <strong>NLG</strong>）和语音合成（<strong>speech synthesis</strong>））组成。<strong>SDS</strong> 的领域由本体（<strong>ontology</strong>）定义，本体是系统数据库的结构化表示，定义了 <strong>requestable slots</strong>, <strong>informable slots</strong> and <strong>database entries</strong>（即用户可以与之交互的实体类型及其属性）。这种架构中的对话流程的一部分在附录 A 中的图 2 进行解释。<br><div class="note primary">
+            <p>&emsp;&emsp;图中并没有画出 DM，所以 DM 是什么？</p>
+          </div></p>
+<p>&emsp;&emsp;<strong>DM</strong> 模块是 <strong>SDS</strong> 的核心部分，控制对话的会话流程。<strong>传统的方法大多是基于手工构建的决策树</strong>（对应于 PyDial 论文中的描述，<em>PyDial 包含用于所有领域的基于规则的 semantic decoder……</em>），这覆盖所有可能的对话结果。然而，这种方法不能扩展到更大的领域，也无法适应因 ASR 或 NLU 的误差而引起的噪声输入。因此，人们提出了<strong>数据驱动的方法来自动学习策略</strong>，这无论是从对<em>话语料库中</em>学习或者直接从<em>与人类用户的交互中</em>学习都可以。<br><div class="note primary">
+            <p>&emsp;&emsp;那么到底是哪一种方法呢？下面介绍一种尚有缺陷的方法。</p>
+          </div></p>
+<p>&emsp;&emsp;<strong>监督学习</strong>可用于学习对话策略，<strong>训练策略模型</strong>以“模拟”训练语料库中观察到的响应。然而，这种方法有几个缺点。</p>
+<ol>
+<li>在口语对话场景中，不能保证训练语料库代表最佳行为。如果不考虑<em>采取某个行动会对未来对话进程造成影响</em>，就可能会导致次优行为。</li>
+<li>此外，<strong>由于对话状态空间较大，训练数据集可能缺乏足够的覆盖范围</strong>。</li>
+</ol>
+<div class="note primary">
+            <p>&emsp;&emsp;那么如何解决这些缺点呢？使用强化学习。</p>
+          </div>
+<p>&emsp;&emsp;为了解决上述问题，该任务经常被归结为规划（控制）问题，使用<strong>强化学习</strong>（<strong>Reinforcement Learning</strong>, <strong>RL</strong>）解决。在这个框架中，系统通过一个由 <em>potentially delayed reward signal</em> 控制的试错过程（<em>trial-and-error process</em>）来学习。因此，<strong>DM</strong> 模块学习计划行动以最大化最终结果。基于高斯过程（<strong>Gaussian Process</strong>, <strong>GP</strong>）的 RL 和 deep RL 等方法的最新进展导致了数据驱动对话建模的重大突破（<em>significant progress</em>），这表明策略梯度（<strong>policy gradients</strong>）和 <strong>Q-learning</strong> 等通用算法可以在具有挑战性的对话场景中取得良好的性能。<br><div class="note primary">
+            <p>&emsp;&emsp;那么在对话领域是否可行呢？下一段说明了原因，<strong>动机与相关工作</strong>一节进行了进一步的解释。</p>
+          </div></p>
+<p>&emsp;&emsp;然而，与其他 RL 领域相比，通用口语对话测试平台（<em>common testbed for spoken dialogue</em>）的缺乏使得比较不同的算法变得困难。最近的 RL 进展很大程度上受到基准测试环境（<strong>benchmarking environments</strong>）的发布的影响，<strong>基准测试环境允许对在类似条件下运行的不同 RL 算法进行公平的比较</strong>。<br><div class="note success">
+            <p>&emsp;&emsp;就是说其他 RL 领域取得进展很大程度上取决于基准测试环境的发布，但是在对话领域，目前并没有这种基准测试环境。<br>&emsp;&emsp;<strong>而本篇论文的实验产物其实就是开发了这样一个环境</strong>。</p>
+          </div></p>
+<p>&emsp;&emsp;本着同样的精神，基于最近发布的 <strong><a href="https://www.aclweb.org/anthology/P17-4013/" target="_blank" rel="noopener">PyDial</a></strong> 多领域 <strong>SDS</strong> 工具包，<strong>本文旨在为开发和评估对话模型提供一套测试平台环境</strong>。为了解释不同场景的巨大变化性，这些环境跨越了 <em>different size domains, different user behaviours and different input channel performance</em>。为了提供一些基线，对一组最具代表性的 DM 强化学习算法进行了评估。基准测试（<strong>benchmark</strong>）和环境实现是在线的，允许开发、实施和评估新的算法和任务。</p>
+<h1 id="2-动机与相关工作"><a href="#2-动机与相关工作" class="headerlink" title="2 动机与相关工作"></a>2 动机与相关工作</h1><p>&emsp;&emsp;在过去的十年中，一些强化学习算法被应用到对话策略优化的任务中。然而，由于缺乏一个通用的基准环境，这些算法的评估结果很难进行比较。此外，它们通常只在少数环境中进行评估，因此很难评估它们推广到不同环境的潜力。<br>&emsp;&emsp;在其他领域，如视频游戏（<em>video game playing</em>）和持续控制（<em>continuous control</em>），公共基准环境的发布对该领域的研究起到了极大的推动作用，实现了诸如人类水平的游戏操作或在围棋游戏中击败世界冠军等成就。<br><div class="note info">
+            <p>&emsp;&emsp;以下指出对话领域<strong>没有通用的试验台的原因</strong>，以及指出<strong>前些年</strong>部分团队/公司<strong>提出的解决方案有些许瑕疵</strong>。</p>
+          </div></p>
+<p>&emsp;&emsp;回溯历史，对话策略优化任务没有一个通用的试验台，这有几个原因。</p>
+<ol>
+<li>……</li>
+</ol>
+<p>&emsp;&emsp;为了解决这些问题，提出了模拟用户和模拟输入处理信道。这些模型近似<strong>真实用户的行为</strong>和<strong>由 ASR 或 NLU 误差引入的输入信道噪声</strong>。然而，<strong>处理模块的开发需要创建一个模拟对话环境，这需要付出巨大的努力</strong>。尽管一些模拟环境是公开可用的，但它们覆盖的对话领域非常小，而且它们之间缺乏一致性，因此无法进行大规模测试。<br><div class="note success">
+            <blockquote><p>处理模块的开发需要创建一个模拟对话环境，这需要付出巨大的努力</p></blockquote><p>&emsp;&emsp;上段话的意思是在做科研时，如果我们致力于研究对话系统的处理模块（如研究语义解析），那么我们还需要一个对话环境以此模拟现实场景（因为只有在现实存在的场景下进行语义解析才有意义）。但是问题是当我们做处理模块时，我们一般都是只专精于该领域，所以我们无法提供一个模拟环境。一般来说我们都会去找一个第三方的模拟环境。但是这样就会造成一个问题。如果有很多团队都在做处理模块的研究，而使用的模拟环境又不是统一的，那么不同团队做出的不同模型就无法进行对比。所以我们需要一个统一的平台。</p>
+          </div></p>
+<p>&emsp;&emsp;对话任务需要一个共同的试验台，这在对话界是一个众所周知的问题，诸如对话状态跟踪挑战（<strong>Dialogue State Tracking Challenges</strong>, <strong>DSTC</strong>）1 至 5 等倡议是最突出的问题。由于有一个明确的评估标准，这些挑战是可能的。最近，BABI 对话任务和 DSTC6（更名为 dialogue Systems Technology Challenge）旨在为基于端到端文本的对话管理创建一个测试平台。然而，这些任务要么集中在端到端的有监督学习，要么集中在基于 RL 的问答任务中，其中奖励信号（<em>reward signal</em>）在时间上仅延迟几步。</p>
+<h1 id="3-强化学习的对话管理"><a href="#3-强化学习的对话管理" class="headerlink" title="3 强化学习的对话管理"></a>3 强化学习的对话管理</h1><p>&emsp;&emsp;讲解 RL 算法，略。</p>
+<h2 id="3-3-Pydial"><a href="#3-3-Pydial" class="headerlink" title="3.3 Pydial"></a>3.3 Pydial</h2><p>&emsp;&emsp;PyDial 是一个开源的统计语音对话系统工具包，它提供了图 1 所示的所有对话系统模块的域无关实现，同样也有模拟用户和模拟错误模型的功能（<em>as well as simulated users and simulated error models</em>）。因此，该工具包有希望在相同条件下，创建一组基准环境来比较不同 RL 算法。<strong>PyDial 的主要关注的是面向任务的对话，即根据一些约束条件用户必定找到其匹配的实体</strong>。例如，系统需要向用户提供满足特定需求的笔记本电脑（商店中有的）的描述。<strong><font color="#f07c82">本工作中，PyDial 被用于定义不同的环境，当然 PyDial 的论文中提供了指定这些环境的配置文件</font></strong>。<br><div class="note warning">
+            <p>&emsp;&emsp;正如本文最前部分的 alert 中所述。关于 PyDial 可以看<a href="https://yan624.github.io/~论文/55. PyDial：A Multi-domain Statistical Dialogue System Toolkit.html">这篇</a>博文</p>
+          </div></p>
+<h1 id="4-基准测试任务"><a href="#4-基准测试任务" class="headerlink" title="4 基准测试任务"></a>4 基准测试任务</h1><p>&emsp;&emsp;基于 RL 的 DM 研究通常只在单个或非常小的一组环境中进行评估。这样的测试并没有揭示出算法对不同设置的泛化能力，并且可能容易对特定情况过度拟合。为了测试算法在不同环境中的能力，我们定义了一组任务，它们通过许多维度横跨了广泛的环境，环境的多种维度如下所示：</p>
+<ul>
+<li>Domain：</li>
+<li>Input error：</li>
+<li>User model：</li>
+<li>Masking mechanism：</li>
+</ul>
+<h1 id="5-实验设置"><a href="#5-实验设置" class="headerlink" title="5 实验设置"></a>5 实验设置</h1><h1 id="6-结果与讨论"><a href="#6-结果与讨论" class="headerlink" title="6 结果与讨论"></a>6 结果与讨论</h1><p>&emsp;&emsp;</p>
+]]></content>
+      <categories>
+        <category>assorted</category>
+        <category>paper</category>
+      </categories>
+      <tags>
+        <tag>论文笔记</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>论文笔记：PyDial: A Multi-domain Statistical Dialogue System Toolkit</title>
     <url>/~%E8%AE%BA%E6%96%87/55.%20PyDial%EF%BC%9AA%20Multi-domain%20Statistical%20Dialogue%20System%20Toolkit.html</url>
     <content><![CDATA[<div class="note info">
-            <p>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/P17-4013/" target="_blank" rel="noopener">论文地址</a>，论文作者 S Ultes 等，发表于 2017 年。<br>&emsp;&emsp;此文中出现了许多专业名词，可在参考 <a href="https://yan624.github.io/论文/54. A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management.html">此处</a> 加以理解。</p>
+            <p>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/P17-4013/" target="_blank" rel="noopener">论文地址</a>，论文作者 S Ultes 等，发表于 2017 年。<br>&emsp;&emsp;此文中出现了许多专业名词，可在参考 <a href="https://yan624.github.io/~论文/54. A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management.html">此处</a> 加以理解。</p>
           </div>
 <h1 id="摘要翻译"><a href="#摘要翻译" class="headerlink" title="摘要翻译"></a>摘要翻译</h1><p>&emsp;&emsp;统计口语对话系统（<em>Statistical Spoken Dialogue Systems, Statistical SDS, 统计 SDS</em>）已经存在多年了。然而，访问这些系统一直很困难，因为仍然没有公开的端到端系统实现。为了缓解这个问题，我们提出了 PyDial，一个开源的端到端统计语音对话系统工具包，它为<strong>所有对话系统模块</strong>提供<strong>统计方法</strong>的实现。此外，它还被扩展为提供多领域会话功能。它提供了各自对话系统模块的简单配置、易扩展性和域无关（<em>domain-independent</em>）的实现。该工具包可在 Apache2.0 许可下下载。</p>
 <h1 id="1-引言"><a href="#1-引言" class="headerlink" title="1 引言"></a>1 引言</h1><p>&emsp;&emsp;针对机器去设计语音接口（凭此人机交互）是多年来的研究热点。这些语音对话系统（SDSs）通常<strong>基于模块化的架构</strong>，该结构包括<strong>语音识别</strong>（<em>speech recognition</em>）和<strong>语义解码</strong>（<em>semantic decoding</em>）的<strong>输入处理模块</strong>（<em>input processing modules</em>）、<strong>信念跟踪</strong>（<em>belief tracking</em>）和<strong>策略</strong>（<em>policy</em>）的<strong>对话管理模块</strong>（<em>dialogue management modules</em>）、<strong>语言生成</strong>（<em>language generation</em>）和<strong>语音合成</strong>（<em>speech synthesis</em>）的<strong>输出处理模块</strong>（<em>output processing modules</em>）（见图 1）。<br><div class="note success">
@@ -123,90 +207,6 @@
       </tags>
   </entry>
   <entry>
-    <title>论文笔记：A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management</title>
-    <url>/~%E8%AE%BA%E6%96%87/54.%20A%20Benchmarking%20Environment%20for%20Reinforcement%20Learning%20Based%20Task%20Oriented%20Dialogue%20Management.html</url>
-    <content><![CDATA[<div class="note info">
-            <p>&emsp;&emsp;<a href="https://arxiv.xilesou.top/pdf/1711.11023.pdf" target="_blank" rel="noopener">论文地址</a>，论文作者 Casanueva I 等，发表于 2017 年。<br>&emsp;&emsp;此论文基于 PyDial，所以可能需要先看 <a href="https://yan624.github.io/论文/55. PyDial：A Multi-domain Statistical Dialogue System Toolkit.html">这篇</a>博文。</p>
-          </div>
-<h1 id="本文出现的名词"><a href="#本文出现的名词" class="headerlink" title="本文出现的名词"></a>本文出现的名词</h1><ul>
-<li>自动语音识别——Automatic Speech Recognition, ASR</li>
-<li>自然语言理解——Natural Language Understanding, NLU</li>
-<li>基于开放域聊天的系统（open-domain chat-based systems）：涉及一般性话题的非目标驱动对话</li>
-<li>面向任务的对话系统（task-oriented dialogue systems）：将其做成一个小型电子设备附有非常吸引人的界面，旨在通过自然语言帮助用户实现特定目标。</li>
-<li>语音对话系统——Spoken Dialogue Systems, SDS</li>
-<li>对话管理——Dialogue Management, DM：belief state tracking and policy<ol>
-<li>state tracking</li>
-<li>策略模型</li>
-</ol>
-</li>
-<li>自然语言生成——Natural Language Generation, NLG</li>
-<li>语音合成——speech synthesis</li>
-<li>本体（ontology）：本体是系统数据库的结构化表示，定义了 requestable slots, informable slots and database entries（即用户可以与之交互的实体类型及其属性）</li>
-<li>强化学习——Reinforcement Learning, RL</li>
-<li>试错过程（trial-and-error process）</li>
-<li>高斯过程——Gaussian Process, GP</li>
-<li>策略梯度（policy gradients）</li>
-<li>Q-learning</li>
-<li>通用口语对话测试平台（common testbed for spoken dialogue）</li>
-<li>基准测试环境（benchmarking environments）</li>
-<li>对话状态跟踪挑战——Dialogue State Tracking Challenges, DSTC</li>
-<li>马尔科夫决策过程（MDP）</li>
-</ul>
-<h1 id="论文摘要翻译"><a href="#论文摘要翻译" class="headerlink" title="论文摘要翻译"></a>论文摘要翻译</h1><p>&emsp;&emsp;对话助理正迅速成为不可或缺的日常助手。<br><a id="more"></a></p>
-<h1 id="1-引言"><a href="#1-引言" class="headerlink" title="1 引言"></a>1 引言</h1><p>&emsp;&emsp;近年来，随着自动语音识别（<strong>Automatic Speech Recognition</strong>, <strong>ASR</strong>）、自然语言理解（<strong>Natural Language Understanding</strong>, <strong>NLU</strong>）和机器学习技术的发展，对话系统受到了学术界和工业界的广泛关注。两个方向已经被深入研究：基于开放域聊天的系统（<strong>open-domain chat-based systems</strong>）和面向任务的对话系统（<strong>task-oriented dialogue systems</strong>）。前者涉及一般性话题的非目标驱动对话。后者将它做成一个小型电子设备附有非常吸引人的界面，其旨在通过自然语言帮助用户实现特定的目标。<br>&emsp;&emsp;<strong>在<u>语音驱动</u>的场景下</strong>，语音对话系统（ <strong>Spoken Dialogue Systems</strong>, <strong>SDS</strong>）通常基于模块化架构（图1），由输入处理模块（<strong>ASR</strong> 和 <strong>NLU</strong> 模块）、对话管理（<strong>Dialogue Management</strong>, <strong>DM</strong>）模块（belief state tracking and policy）和输出处理模块（自然语言生成（<strong>Natural Language Generation</strong>, <strong>NLG</strong>）和语音合成（<strong>speech synthesis</strong>））组成。<strong>SDS</strong> 的领域由本体（<strong>ontology</strong>）定义，本体是系统数据库的结构化表示，定义了 <strong>requestable slots</strong>, <strong>informable slots</strong> and <strong>database entries</strong>（即用户可以与之交互的实体类型及其属性）。这种架构中的对话流程的一部分在附录 A 中的图 2 进行解释。<br><div class="note primary">
-            <p>&emsp;&emsp;图中并没有画出 DM，所以 DM 是什么？</p>
-          </div></p>
-<p>&emsp;&emsp;<strong>DM</strong> 模块是 <strong>SDS</strong> 的核心部分，控制对话的会话流程。<strong>传统的方法大多是基于手工构建的决策树</strong>（对应于 PyDial 论文中的描述，<em>PyDial 包含用于所有领域的基于规则的 semantic decoder……</em>），这覆盖所有可能的对话结果。然而，这种方法不能扩展到更大的领域，也无法适应因 ASR 或 NLU 的误差而引起的噪声输入。因此，人们提出了<strong>数据驱动的方法来自动学习策略</strong>，这无论是从对<em>话语料库中</em>学习或者直接从<em>与人类用户的交互中</em>学习都可以。<br><div class="note primary">
-            <p>&emsp;&emsp;那么到底是哪一种方法呢？下面介绍一种尚有缺陷的方法。</p>
-          </div></p>
-<p>&emsp;&emsp;<strong>监督学习</strong>可用于学习对话策略，<strong>训练策略模型</strong>以“模拟”训练语料库中观察到的响应。然而，这种方法有几个缺点。</p>
-<ol>
-<li>在口语对话场景中，不能保证训练语料库代表最佳行为。如果不考虑<em>采取某个行动会对未来对话进程造成影响</em>，就可能会导致次优行为。</li>
-<li>此外，<strong>由于对话状态空间较大，训练数据集可能缺乏足够的覆盖范围</strong>。</li>
-</ol>
-<div class="note primary">
-            <p>&emsp;&emsp;那么如何解决这些缺点呢？使用强化学习。</p>
-          </div>
-<p>&emsp;&emsp;为了解决上述问题，该任务经常被归结为规划（控制）问题，使用<strong>强化学习</strong>（<strong>Reinforcement Learning</strong>, <strong>RL</strong>）解决。在这个框架中，系统通过一个由 <em>potentially delayed reward signal</em> 控制的试错过程（<em>trial-and-error process</em>）来学习。因此，<strong>DM</strong> 模块学习计划行动以最大化最终结果。基于高斯过程（<strong>Gaussian Process</strong>, <strong>GP</strong>）的 RL 和 deep RL 等方法的最新进展导致了数据驱动对话建模的重大突破（<em>significant progress</em>），这表明策略梯度（<strong>policy gradients</strong>）和 <strong>Q-learning</strong> 等通用算法可以在具有挑战性的对话场景中取得良好的性能。<br><div class="note primary">
-            <p>&emsp;&emsp;那么在对话领域是否可行呢？下一段说明了原因，<strong>动机与相关工作</strong>一节进行了进一步的解释。</p>
-          </div></p>
-<p>&emsp;&emsp;然而，与其他 RL 领域相比，通用口语对话测试平台（<em>common testbed for spoken dialogue</em>）的缺乏使得比较不同的算法变得困难。最近的 RL 进展很大程度上受到基准测试环境（<strong>benchmarking environments</strong>）的发布的影响，<strong>基准测试环境允许对在类似条件下运行的不同 RL 算法进行公平的比较</strong>。<br><div class="note success">
-            <p>&emsp;&emsp;就是说其他 RL 领域取得进展很大程度上取决于基准测试环境的发布，但是在对话领域，目前并没有这种基准测试环境。<br>&emsp;&emsp;<strong>而本篇论文的实验产物其实就是开发了这样一个环境</strong>。</p>
-          </div></p>
-<p>&emsp;&emsp;本着同样的精神，基于最近发布的 <strong><a href="https://www.aclweb.org/anthology/P17-4013/" target="_blank" rel="noopener">PyDial</a></strong> 多领域 <strong>SDS</strong> 工具包，<strong>本文旨在为开发和评估对话模型提供一套测试平台环境</strong>。为了解释不同场景的巨大变化性，这些环境跨越了 <em>different size domains, different user behaviours and different input channel performance</em>。为了提供一些基线，对一组最具代表性的 DM 强化学习算法进行了评估。基准测试（<strong>benchmark</strong>）和环境实现是在线的，允许开发、实施和评估新的算法和任务。</p>
-<h1 id="2-动机与相关工作"><a href="#2-动机与相关工作" class="headerlink" title="2 动机与相关工作"></a>2 动机与相关工作</h1><p>&emsp;&emsp;在过去的十年中，一些强化学习算法被应用到对话策略优化的任务中。然而，由于缺乏一个通用的基准环境，这些算法的评估结果很难进行比较。此外，它们通常只在少数环境中进行评估，因此很难评估它们推广到不同环境的潜力。<br>&emsp;&emsp;在其他领域，如视频游戏（<em>video game playing</em>）和持续控制（<em>continuous control</em>），公共基准环境的发布对该领域的研究起到了极大的推动作用，实现了诸如人类水平的游戏操作或在围棋游戏中击败世界冠军等成就。<br><div class="note info">
-            <p>&emsp;&emsp;以下指出对话领域<strong>没有通用的试验台的原因</strong>，以及指出<strong>前些年</strong>部分团队/公司<strong>提出的解决方案有些许瑕疵</strong>。</p>
-          </div></p>
-<p>&emsp;&emsp;回溯历史，对话策略优化任务没有一个通用的试验台，这有几个原因。</p>
-<ol>
-<li>……</li>
-</ol>
-<p>&emsp;&emsp;为了解决这些问题，提出了模拟用户和模拟输入处理信道。这些模型近似<strong>真实用户的行为</strong>和<strong>由 ASR 或 NLU 误差引入的输入信道噪声</strong>。然而，<strong>处理模块的开发需要创建一个模拟对话环境，这需要付出巨大的努力</strong>。尽管一些模拟环境是公开可用的，但它们覆盖的对话领域非常小，而且它们之间缺乏一致性，因此无法进行大规模测试。<br><div class="note success">
-            <blockquote><p>处理模块的开发需要创建一个模拟对话环境，这需要付出巨大的努力</p></blockquote><p>&emsp;&emsp;上段话的意思是在做科研时，如果我们致力于研究对话系统的处理模块（如研究语义解析），那么我们还需要一个对话环境以此模拟现实场景（因为只有在现实存在的场景下进行语义解析才有意义）。但是问题是当我们做处理模块时，我们一般都是只专精于该领域，所以我们无法提供一个模拟环境。一般来说我们都会去找一个第三方的模拟环境。但是这样就会造成一个问题。如果有很多团队都在做处理模块的研究，而使用的模拟环境又不是统一的，那么不同团队做出的不同模型就无法进行对比。所以我们需要一个统一的平台。</p>
-          </div></p>
-<p>&emsp;&emsp;对话任务需要一个共同的试验台，这在对话界是一个众所周知的问题，诸如对话状态跟踪挑战（<strong>Dialogue State Tracking Challenges</strong>, <strong>DSTC</strong>）1 至 5 等倡议是最突出的问题。由于有一个明确的评估标准，这些挑战是可能的。最近，BABI 对话任务和 DSTC6（更名为 dialogue Systems Technology Challenge）旨在为基于端到端文本的对话管理创建一个测试平台。然而，这些任务要么集中在端到端的有监督学习，要么集中在基于 RL 的问答任务中，其中奖励信号（<em>reward signal</em>）在时间上仅延迟几步。</p>
-<h1 id="3-强化学习的对话管理"><a href="#3-强化学习的对话管理" class="headerlink" title="3 强化学习的对话管理"></a>3 强化学习的对话管理</h1><p>&emsp;&emsp;讲解 RL 算法，略。</p>
-<h2 id="3-3-Pydial"><a href="#3-3-Pydial" class="headerlink" title="3.3 Pydial"></a>3.3 Pydial</h2><p>&emsp;&emsp;PyDial 是一个开源的统计语音对话系统工具包，它提供了图 1 所示的所有对话系统模块的域无关实现，同样也有模拟用户和模拟错误模型的功能（<em>as well as simulated users and simulated error models</em>）。因此，该工具包有希望在相同条件下，创建一组基准环境来比较不同 RL 算法。<strong>PyDial 的主要关注的是面向任务的对话，即根据一些约束条件用户必定找到其匹配的实体</strong>。例如，系统需要向用户提供满足特定需求的笔记本电脑（商店中有的）的描述。<strong><font color="#f07c82">本工作中，PyDial 被用于定义不同的环境，当然 PyDial 的论文中提供了指定这些环境的配置文件</font></strong>。<br><div class="note warning">
-            <p>&emsp;&emsp;正如本文最前部分的 alert 中所述。关于 PyDial 可以看<a href="https://yan624.github.io/论文/55. PyDial：A Multi-domain Statistical Dialogue System Toolkit.html">这篇</a>博文</p>
-          </div></p>
-<h1 id="4-基准测试任务"><a href="#4-基准测试任务" class="headerlink" title="4 基准测试任务"></a>4 基准测试任务</h1><p>&emsp;&emsp;基于 RL 的 DM 研究通常只在单个或非常小的一组环境中进行评估。这样的测试并没有揭示出算法对不同设置的泛化能力，并且可能容易对特定情况过度拟合。为了测试算法在不同环境中的能力，我们定义了一组任务，它们通过许多维度横跨了广泛的环境，环境的多种维度如下所示：</p>
-<ul>
-<li>Domain：</li>
-<li>Input error：</li>
-<li>User model：</li>
-<li>Masking mechanism：</li>
-</ul>
-<h1 id="5-实验设置"><a href="#5-实验设置" class="headerlink" title="5 实验设置"></a>5 实验设置</h1><h1 id="6-结果与讨论"><a href="#6-结果与讨论" class="headerlink" title="6 结果与讨论"></a>6 结果与讨论</h1><p>&emsp;&emsp;</p>
-]]></content>
-      <categories>
-        <category>assorted</category>
-        <category>paper</category>
-      </categories>
-      <tags>
-        <tag>论文笔记</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>2019年度文章总结</title>
     <url>/timeline/2019%E5%B9%B4%E5%BA%A6%E6%96%87%E7%AB%A0%E6%80%BB%E7%BB%93.html</url>
     <content><![CDATA[<div class="note info">
@@ -217,57 +217,57 @@
 <li><a href="https://yan624.github.io/categories/algorithm/">数据结构与算法学习</a></li>
 <li><a href="https://yan624.github.io/categories/assorted/conference/">参加的会议</a></li>
 <li>学习路线<ol>
-<li><a href="https://yan624.github.io/学习笔记/《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题.html">《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题</a><div class="note success">
+<li><a href="https://yan624.github.io/~学习笔记/《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题.html">《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题</a><div class="note success">
             <p>由于神经网络中参数太多，而有些参数的表现形式太过复杂， 比如文中权重 <script type="math/tex">w^l_{ji}</script> 有太多上标下标，所以写了一篇文章记录一下。</p>
           </div></li>
-<li><a href="https://yan624.github.io/学习笔记/梯度下降算法的推导.html">梯度下降算法的推导</a></li>
-<li><a href="https://yan624.github.io/zcy/对神经网络整体的理解.html">对神经网络整体的理解</a><div class="note success">
+<li><a href="https://yan624.github.io/~学习笔记/梯度下降算法的推导.html">梯度下降算法的推导</a></li>
+<li><a href="https://yan624.github.io/~zcy/对神经网络整体的理解.html">对神经网络整体的理解</a><div class="note success">
             <p>通常学习深度学习从一个最简单的神经网络开始，但是由于对深度学习时0基础，所以需要同时学习大量算法以及其原理，比如梯度下降，Momentum，Adam，RMSprop，adagrad等等算法。所以写了一篇文章记录一下大部分的算法以及原理。</p>
           </div>
 <a id="more"></a></li>
-<li><a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html">吴恩达李宏毅综合学习笔记：RNN入门</a><div class="note success">
+<li><a href="https://yan624.github.io/~学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html">吴恩达李宏毅综合学习笔记：RNN入门</a><div class="note success">
             <p>学习完神经网络之后，可以学习其他的神经网络模型。由于本人初步决定学习nlp，所以基本没有看CNN，直接学了RNN。本文就是学习RNN的记录，包括了许多算法。</p>
           </div></li>
-<li><a href="https://yan624.github.io/学习笔记/吴恩达深度学习学习笔记：自然语言处理与词嵌入.html">吴恩达深度学习学习笔记：自然语言处理与词嵌入</a><div class="note success">
+<li><a href="https://yan624.github.io/~学习笔记/吴恩达深度学习学习笔记：自然语言处理与词嵌入.html">吴恩达深度学习学习笔记：自然语言处理与词嵌入</a><div class="note success">
             <p>学习完RNN之后，就可以学习 NLP 的概念了，这里面讲得虽然还是神经网络，但是其实都是 NLP 领域的知识。</p>
           </div></li>
-<li><a href="https://yan624.github.io/学习笔记/深度学习中的一些疑问总结.html">深度学习中的一些疑问总结</a><div class="note success">
+<li><a href="https://yan624.github.io/~学习笔记/深度学习中的一些疑问总结.html">深度学习中的一些疑问总结</a><div class="note success">
             <p>深度学习入门后必然有很多疑问待解答，此篇解决疑问。</p>
           </div></li>
-<li><a href="https://yan624.github.io/zcy/深度学习算法（一）：simple NN（前馈神经网络的正反向推导）.html">深度学习算法（一）：simple NN（前馈神经网络的正反向推导）</a></li>
-<li><a href="https://yan624.github.io/zcy/深度学习算法（二）：simple RNN 推导与理解.html">深度学习算法（二）：simple RNN 推导与理解</a></li>
-<li><a href="https://yan624.github.io/zcy/深度学习算法（三）：RNN 各种机制.html">深度学习算法（三）：RNN 各种机制</a></li>
-<li><a href="https://yan624.github.io/zcy/深度学习算法（四）：Transformer.html">深度学习算法（四）：Transformer</a></li>
-<li><a href="https://yan624.github.io/学习笔记/CS224n学习笔记.html">CS224n学习笔记</a></li>
-<li><a href="https://yan624.github.io/学习笔记/【读书笔记】：《自然语言处理综论》（第二版）.html">【读书笔记】：《自然语言处理综论》（第二版）</a></li>
+<li><a href="https://yan624.github.io/~zcy/深度学习算法（一）：simple NN（前馈神经网络的正反向推导）.html">深度学习算法（一）：simple NN（前馈神经网络的正反向推导）</a></li>
+<li><a href="https://yan624.github.io/~zcy/深度学习算法（二）：simple RNN 推导与理解.html">深度学习算法（二）：simple RNN 推导与理解</a></li>
+<li><a href="https://yan624.github.io/~zcy/深度学习算法（三）：RNN 各种机制.html">深度学习算法（三）：RNN 各种机制</a></li>
+<li><a href="https://yan624.github.io/~zcy/深度学习算法（四）：Transformer.html">深度学习算法（四）：Transformer</a></li>
+<li><a href="https://yan624.github.io/~学习笔记/CS224n学习笔记.html">CS224n学习笔记</a></li>
+<li><a href="https://yan624.github.io/~学习笔记/【读书笔记】：《自然语言处理综论》（第二版）.html">【读书笔记】：《自然语言处理综论》（第二版）</a></li>
 <li><a href="https://yan624.github.io/比赛项目总结/多领域seq2lf.html">多领域seq2lf</a></li>
 </ol>
 </li>
 <li>nlp<ul>
-<li><a href="https://yan624.github.io/zcy/【NLP算法】（一）word2vec.html">【NLP算法】（一）word2vec</a></li>
-<li><a href="https://yan624.github.io/zcy/【NLP算法】（零）NLP基础算法.html">【NLP算法】（零）NLP基础算法</a></li>
-<li><a href="https://yan624.github.io/zcy/【NLP算法】（三）条件随机场CRF.html">【NLP算法】（三）条件随机场CRF</a></li>
-<li><a href="https://yan624.github.io/zcy/【知识图谱】（一）从概念到实战.html">【知识图谱】（一）从概念到实战</a></li>
+<li><a href="https://yan624.github.io/~zcy/【NLP算法】（一）word2vec.html">【NLP算法】（一）word2vec</a></li>
+<li><a href="https://yan624.github.io/~zcy/【NLP算法】（零）NLP基础算法.html">【NLP算法】（零）NLP基础算法</a></li>
+<li><a href="https://yan624.github.io/~zcy/【NLP算法】（三）条件随机场CRF.html">【NLP算法】（三）条件随机场CRF</a></li>
+<li><a href="https://yan624.github.io/~zcy/【知识图谱】（一）从概念到实战.html">【知识图谱】（一）从概念到实战</a></li>
 </ul>
 </li>
 <li>学习笔记<ul>
-<li><a href="https://yan624.github.io/学习笔记/git学习记录.html">git学习记录</a></li>
-<li><a href="https://yan624.github.io/学习笔记/Python爬虫学习记录（一）：正则表达式.html">Python爬虫学习记录（一）：正则表达式</a></li>
-<li><a href="https://yan624.github.io/zcy/特征工程：笔记.html">特征工程：笔记</a></li>
+<li><a href="https://yan624.github.io/~学习笔记/git学习记录.html">git学习记录</a></li>
+<li><a href="https://yan624.github.io/~学习笔记/Python爬虫学习记录（一）：正则表达式.html">Python爬虫学习记录（一）：正则表达式</a></li>
+<li><a href="https://yan624.github.io/~zcy/特征工程：笔记.html">特征工程：笔记</a></li>
 </ul>
 </li>
 <li>机器学习<ul>
-<li><a href="https://yan624.github.io/zcy/代价函数.html">代价函数</a></li>
-<li><a href="https://yan624.github.io/zcy/机器学习算法（一）：线性回归.html">机器学习算法（一）：线性回归</a></li>
-<li><a href="https://yan624.github.io/zcy/机器学习算法（二）：逻辑回归.html">机器学习算法（二）：逻辑回归</a></li>
-<li><a href="https://yan624.github.io/zcy/机器学习算法（三）：决策树.html">机器学习算法（三）：决策树</a></li>
-<li><a href="https://yan624.github.io/zcy/机器学习算法（四）：K均值（K-means）.html">机器学习算法（四）：K均值（K-means）</a></li>
-<li><a href="https://yan624.github.io/学习笔记/机器学习算法（五）：PCA.html">机器学习算法（五）：PCA</a></li>
-<li><a href="https://yan624.github.io/学习笔记/机器学习算法（六）：SVM.html">机器学习算法（六）：SVM</a></li>
-<li><a href="https://yan624.github.io/zcy/机器学习算法（七）：K-NN.html">机器学习算法（七）：K-NN</a></li>
-<li><a href="https://yan624.github.io/zcy/机器学习算法（八）：Adaboost.html">机器学习算法（八）：Adaboost</a></li>
-<li><a href="https://yan624.github.io/zcy/【机器学习算法】半监督学习.html">【机器学习算法】半监督学习</a></li>
-<li><a href="https://yan624.github.io/学习笔记/机器学习的下一步.html">机器学习的下一步</a></li>
+<li><a href="https://yan624.github.io/~zcy/代价函数.html">代价函数</a></li>
+<li><a href="https://yan624.github.io/~zcy/机器学习算法（一）：线性回归.html">机器学习算法（一）：线性回归</a></li>
+<li><a href="https://yan624.github.io/~zcy/机器学习算法（二）：逻辑回归.html">机器学习算法（二）：逻辑回归</a></li>
+<li><a href="https://yan624.github.io/~zcy/机器学习算法（三）：决策树.html">机器学习算法（三）：决策树</a></li>
+<li><a href="https://yan624.github.io/~zcy/机器学习算法（四）：K均值（K-means）.html">机器学习算法（四）：K均值（K-means）</a></li>
+<li><a href="https://yan624.github.io/~学习笔记/机器学习算法（五）：PCA.html">机器学习算法（五）：PCA</a></li>
+<li><a href="https://yan624.github.io/~学习笔记/机器学习算法（六）：SVM.html">机器学习算法（六）：SVM</a></li>
+<li><a href="https://yan624.github.io/~zcy/机器学习算法（七）：K-NN.html">机器学习算法（七）：K-NN</a></li>
+<li><a href="https://yan624.github.io/~zcy/机器学习算法（八）：Adaboost.html">机器学习算法（八）：Adaboost</a></li>
+<li><a href="https://yan624.github.io/~zcy/【机器学习算法】半监督学习.html">【机器学习算法】半监督学习</a></li>
+<li><a href="https://yan624.github.io/~学习笔记/机器学习的下一步.html">机器学习的下一步</a></li>
 </ul>
 </li>
 </ul>
@@ -600,7 +600,7 @@
 <li><a href="https://arxiv.org/pdf/1412.6980.pdf" target="_blank" rel="noopener">Adam: A method for stochastic optimization</a>，作者 Kingma Diederik 等，提出 Adam。</li>
 </ol>
 <h2 id="word-embedding"><a href="#word-embedding" class="headerlink" title="word embedding"></a>word embedding</h2><ol>
-<li><a href="https://arxiv.org/abs/1607.04606" target="_blank" rel="noopener">Enriching Word Vectors with Subword Information</a>，作者 Piotr Bojanowski 和 Edouard Grave，提出了 <strong>fasttext</strong>。<a href="https://github.com/facebookresearch/fastText/" target="_blank" rel="noopener">代码地址</a>，<strong><a href="https://yan624.github.io/论文/50. Enriching Word Vectors with Subword Information.html">论文笔记</a></strong>。应用场景：处理 OOV 词或者低频词。</li>
+<li><a href="https://arxiv.org/abs/1607.04606" target="_blank" rel="noopener">Enriching Word Vectors with Subword Information</a>，作者 Piotr Bojanowski 和 Edouard Grave，提出了 <strong>fasttext</strong>。<a href="https://github.com/facebookresearch/fastText/" target="_blank" rel="noopener">代码地址</a>，<strong><a href="https://yan624.github.io/~论文/50. Enriching Word Vectors with Subword Information.html">论文笔记</a></strong>。应用场景：处理 OOV 词或者低频词。</li>
 </ol>
 <h2 id="nlp任务模型"><a href="#nlp任务模型" class="headerlink" title="nlp任务模型"></a>nlp任务模型</h2><ol>
 <li><a href="https://arxiv.org/pdf/1308.0850.pdf" target="_blank" rel="noopener">Generating sequences with recurrent neural networks</a>，论文作者 Graves Alex，使用 RNN 进行生成序列。</li>
@@ -719,7 +719,7 @@ crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)</script><p>&em
 </ol>
 <h2 id="clip-gradient"><a href="#clip-gradient" class="headerlink" title="clip gradient"></a>clip gradient</h2><p>&emsp;&emsp;<a href="http://proceedings.mlr.press/v28/pascanu13.pdf" target="_blank" rel="noopener">此论文</a>提出了 clip gradient（以下称 clipping）。首先看下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/多领域seq2lf/the error surface is rough.jpg" alt="the error surface is rough"></p>
 <p>&emsp;&emsp;如果只看图，会发现有一个像峭壁一样的东西，它就是罪魁祸首。当我们将一个小球往前移动时，有时候正好迈过峭壁，小球得以正常移动。但是当小球碰到峭壁时，小球就会被反弹回去，导致 loss 发生剧烈变化。<br>&emsp;&emsp;从数学角度来看，那个峭壁就是梯度。<strong>需要注意的是</strong>，由于 z 轴标注的 total loss，所以第一印象感觉峭壁代表 total loss，但是<strong>峭壁代表的是梯度，而不是 total loss</strong>。根据参数更新公式 <script type="math/tex">w -= \alpha * \Delta w</script>，其中 <script type="math/tex">\Delta w</script> 代表 w 的梯度，所以 w 的更新方向其实与梯度直接相关。<strong>当 w 不幸到达某个值时，遇到梯度极大的情况，那么不管梯度是正还是负，都会将 w 更新到一个相对很大的值，从而 loss 值也会跟着改变。注：这里其实也与 learning rate 有关，因为原本的梯度都很小，所以我们初始设置的 lr 都很大。突然梯度增大，而 lr 没有适应，一个大的梯度乘上一个大的 lr，那就更大了</strong>。<br>&emsp;&emsp;<strong>解决办法</strong>是：当 gradient 大于某个 threshold 时，就不让它大于 threshold（视频中说作者的代码中将 threshold 设置为 15，但是这个 threshold 应该是具体情况具体分析）。<br><div class="note warning">
-            <p>&emsp;&emsp;Q：那么是什么导致了出现梯度猛增的现象呢？（ps：梯度消失也会出现）<br>&emsp;&emsp;A：首先不是 sigmoid 的锅。sigmoid 函数会出现 gradient vanishing（梯度消失）的问题，按理说换成 ReLU 就能解决了。但是将 RNN 的激活函数换成 ReLU 并没有解决问题，所以跟激活函数没什么关系。<em><a href="https://yan624.github.io/zcy/对神经网络整体的理解.html#缺陷">sigmoid 的缺陷</a>这一章说明了 sigmoid 具有梯度消失的缺陷</em>。<br>&emsp;&emsp;我们只需要小小地改变一个参数，然后观察 output 的变化，就能测出这个参数的 gradient 的大小。现在假设激活函数是 y = w * x，序列长度为 1000，并且第一个 timestep 的输入为 1，其他的 timestep 皆为 0，则<script type="math/tex">1^{1000} = 1</script>，而 <script type="math/tex">1.01^{1000} \approx 20000</script>。我们可能会想到去减小 learning rate 从而减小梯度，但是 <script type="math/tex">0.99^{1000} \approx 0</script>，你又要调大 learning rate，导致 lr 调起来很麻烦，所以调不调 lr 并没有什么区别。而这里就分别出现了梯度消失和梯度爆炸。这是由于 RNN 是序列模型，它需要处理一连串的序列。前一个的输出是后一个输入，类似于蝴蝶效应，一个很小的值，经过多个函数也能被放的很大。<br>&emsp;&emsp;那么为什么可以通过观察一个参数的变化从而观察 gradient 的变化呢？很简单，例如 y = w * x，用上面的例子，第 1000 个输出会是 <script type="math/tex">y_{1000} = w^{1000} * x</script>，对 w 求导得 <script type="math/tex">\Delta w = 1000 w^{999} x</script>，由于 <script type="math/tex">w^{999}</script> 比 <script type="math/tex">w^{1000}</script> 消不了多少，所以 gradient 很大。<br>&emsp;&emsp;经过上面的例子我们就知道了问题出现的原因。当然一般情况下不会像上面序列长度有 1000 那么离谱。现在设序列长度就 40，当我们遇到一个较大的值时，依旧会出现梯度爆炸的问题。<br>&emsp;&emsp;解决办法：LSTM，clipping 等。<strong>注意：LSTM 只解决了 gradient vanishing 的问题，没有解决 gradient explode。详见下面的《LSTM 解决了 RNN 的什么问题》章节</strong>。同理 clipping 也只能解决 gradient explode 的问题，因为它能将梯度限制在一个点上（<strong>这是博主的思考，视频中并没有给出此结论</strong>）。那么我们可以结合 LSTM 和 clipping。<br>&emsp;&emsp;根据上面的例子得出，在 RNN 中，即使参数在很小一个范围内，梯度的变化也会很大。<br>&emsp;&emsp;最后还有一个问题，就是上面的例子是用 y = w * x 的例子，但是实际上，激活函数是用的 sigmoid, tanh 等，所以每个神经元的输出都永远在 [-1, 1] 中间。那么怎么会造成上面的例子中的情况呢？其实上面的例子只是一个比喻，当然当激活函数为 ReLU 时确实适用。真正的原因是反向传播时做的链式求导，它导致了梯度的连乘。详细推导见 <a href="https://yan624.github.io/zcy/深度学习算法（二）：simple RNN 推导与理解.html#simple-RNN-的缺陷">simple RNN 的缺陷</a> 蓝色提示框。</p>
+            <p>&emsp;&emsp;Q：那么是什么导致了出现梯度猛增的现象呢？（ps：梯度消失也会出现）<br>&emsp;&emsp;A：首先不是 sigmoid 的锅。sigmoid 函数会出现 gradient vanishing（梯度消失）的问题，按理说换成 ReLU 就能解决了。但是将 RNN 的激活函数换成 ReLU 并没有解决问题，所以跟激活函数没什么关系。<em><a href="https://yan624.github.io/~zcy/对神经网络整体的理解.html#缺陷">sigmoid 的缺陷</a>这一章说明了 sigmoid 具有梯度消失的缺陷</em>。<br>&emsp;&emsp;我们只需要小小地改变一个参数，然后观察 output 的变化，就能测出这个参数的 gradient 的大小。现在假设激活函数是 y = w * x，序列长度为 1000，并且第一个 timestep 的输入为 1，其他的 timestep 皆为 0，则<script type="math/tex">1^{1000} = 1</script>，而 <script type="math/tex">1.01^{1000} \approx 20000</script>。我们可能会想到去减小 learning rate 从而减小梯度，但是 <script type="math/tex">0.99^{1000} \approx 0</script>，你又要调大 learning rate，导致 lr 调起来很麻烦，所以调不调 lr 并没有什么区别。而这里就分别出现了梯度消失和梯度爆炸。这是由于 RNN 是序列模型，它需要处理一连串的序列。前一个的输出是后一个输入，类似于蝴蝶效应，一个很小的值，经过多个函数也能被放的很大。<br>&emsp;&emsp;那么为什么可以通过观察一个参数的变化从而观察 gradient 的变化呢？很简单，例如 y = w * x，用上面的例子，第 1000 个输出会是 <script type="math/tex">y_{1000} = w^{1000} * x</script>，对 w 求导得 <script type="math/tex">\Delta w = 1000 w^{999} x</script>，由于 <script type="math/tex">w^{999}</script> 比 <script type="math/tex">w^{1000}</script> 消不了多少，所以 gradient 很大。<br>&emsp;&emsp;经过上面的例子我们就知道了问题出现的原因。当然一般情况下不会像上面序列长度有 1000 那么离谱。现在设序列长度就 40，当我们遇到一个较大的值时，依旧会出现梯度爆炸的问题。<br>&emsp;&emsp;解决办法：LSTM，clipping 等。<strong>注意：LSTM 只解决了 gradient vanishing 的问题，没有解决 gradient explode。详见下面的《LSTM 解决了 RNN 的什么问题》章节</strong>。同理 clipping 也只能解决 gradient explode 的问题，因为它能将梯度限制在一个点上（<strong>这是博主的思考，视频中并没有给出此结论</strong>）。那么我们可以结合 LSTM 和 clipping。<br>&emsp;&emsp;根据上面的例子得出，在 RNN 中，即使参数在很小一个范围内，梯度的变化也会很大。<br>&emsp;&emsp;最后还有一个问题，就是上面的例子是用 y = w * x 的例子，但是实际上，激活函数是用的 sigmoid, tanh 等，所以每个神经元的输出都永远在 [-1, 1] 中间。那么怎么会造成上面的例子中的情况呢？其实上面的例子只是一个比喻，当然当激活函数为 ReLU 时确实适用。真正的原因是反向传播时做的链式求导，它导致了梯度的连乘。详细推导见 <a href="https://yan624.github.io/~zcy/深度学习算法（二）：simple RNN 推导与理解.html#simple-RNN-的缺陷">simple RNN 的缺陷</a> 蓝色提示框。</p>
           </div></p>
 <p>&emsp;&emsp;参考资料：</p>
 <ol>
@@ -749,7 +749,7 @@ LSTM: memory_{new} = a * input + b * memory \\</script><p>&emsp;&emsp;cell() 代
 <li>memory 本质是在记忆之前所有的 input。</li>
 </ol>
 <p>&emsp;&emsp;其实 forget gate 还是有几率清空 memory 的，那么为什么不直接取消 forget gate 呢？你不是要充分利用 input 吗？实际上在 LSTM 的第一个版本是没有 forget gate 的，它是后来才加上去的。甚至现在的说法是在训练 LSTM 时，不要给 forget gate 太大的权重，要让它大部分时间都是开着的，即大部分时间都不要清空 memory。如果以后训练 LSTM 时，觉得过拟合严重，可以使用 GRU，GRU 只有两个 gate（无 output gate）。（<em>引用<a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">教学视频</a> 22:50 的话</em>）。 </p>
-<h3 id="梯度消失"><a href="#梯度消失" class="headerlink" title="梯度消失"></a>梯度消失</h3><p>&emsp;&emsp;<strong>第二</strong>，反向传播时出现的问题，以下 Q 为问题，A 为解释。<br>&emsp;&emsp;引子：如《clip gradient》一章黄框中所说，RNN 很容易出现峭壁和平原。<strong>LSTM 只解决了 gradient vanishing 的问题</strong>，没有解决 gradient explode。LSTM 使得 error surface 不那么崎岖，<strong>消除了训练时的一些平坦的地方</strong>。虽然梯度在有些地方依然崎岖，但是不会有太平坦的地方。<strong>所以在训练时可以放心的将 lr 调小</strong>，不需要担心会出现平坦的地方，导致训练过慢。<br>&emsp;&emsp;如果公司问为什么把 RNN 换成 LSTM？<del>回答 LSTM 比较潮、因为 LSTM 比较复杂。</del>回答 LSTM 可以处理 gradient vanishing 的问题。具体解释如下：<br>&emsp;&emsp;<strong>Q</strong>：为什么 LSTM 可以解决 gradient vanishing 的问题？（解决梯度消失也可以说成避免 gradient 特别小（消除平原））<br>&emsp;&emsp;<strong>A</strong>：在 RNN 中利用 memory 的方式是一种复合函数的结构，所以在反向传播时，需要链式求导，梯度与梯度相乘容易造成<strong>梯度消失</strong>和<strong>梯度爆炸</strong>。关于 RNN 反向传播的求导结果可以参考 <a href="https://yan624.github.io/zcy/深度学习算法（二）：simple RNN 推导与理解.html#simple-RNN-的缺陷">simple RNN 的缺陷</a> 蓝色提示框。<br>&emsp;&emsp;虽然这样的求导大致已经可以解释了梯度消失的问题，但是如果仔细想想就会发现盲点。在此之前，我想先说明 RNN 家族的反向传播路径与其他的神经网络不同，它的 loss 值是每一个 timestep 的真实值 y 与输出值 的 loss 之和。<a href="https://mooc.study.163.com/learn/2001280005?tid=2001391038&amp;_trace_c_p_k2_=72573d316c3441869416d70899cdf382#/learn/content?type=detail&amp;id=2001770031" target="_blank" rel="noopener">此视频</a> 大致讲明白了这个总 loss 值到底是由哪些 loss 相加得到的。<br>&emsp;&emsp;知道了上面的前提条件，就可以很简单的理解接下来的内容了。<strong>参考资料 1 大致解释了这一问题</strong>，这一段可能比较绕，<strong>简单来说就是后面的 timestep（比如下图中 <script type="math/tex">loss_4</script>）在反向传播时，求 <script type="math/tex">\Delta W</script> 会出现梯度消失（注意 RNN 每个 timestep 的 W 都是一样），这是因为在求梯度时，函数已经复合了好几层</strong>。而对 <script type="math/tex">loss_1</script> 求 W 的导数时，由于它本身就在序列的前面，函数还没有复合，所以 <script type="math/tex">\Delta W</script> 的导数还没梯度消失。<strong>最后在计算总的 loss 时，是将各个阶段的梯度加起来</strong>，即使后面的 loss 会得到一个很小的的梯度 <script type="math/tex">\Delta W</script>，但由于 <script type="math/tex">loss_1</script> 的原因，并不会发生梯度消失。<br>&emsp;&emsp;但是事实上是会发生的，那么梯度消失从何而来呢？是因为后面的 loss 在求梯度时，导致前面输入值的梯度很小，从而产生了<strong>信息丢失</strong>。信息丢失就是 RNN 的梯度消失。有一点需要考虑，RNN 在反向传播时，是需要传播到输入值 x 的，即词向量。在计算 <script type="math/tex">loss_4</script> 时，RNN 中 W 的梯度肯定是很小的，但是在更新 <script type="math/tex">x_4</script> 时，这里的梯度 <script type="math/tex">\Delta W</script> 还不是很小，所以信息无问题。但是当反向传播到 <script type="math/tex">x_1</script> 时，梯度已经很小了，由于小梯度导致 <script type="math/tex">x_1</script> 无法得到很好的更新，于是产生了信息丢失。<script type="math/tex">loss_3</script> 以及 <script type="math/tex">loss_2</script> 以此类推，不过对于 <script type="math/tex">loss_1</script> 并无问题，因为它没有复合函数。<br>&emsp;&emsp;注：<strong>上两段，还参考了参考资料 3，个人认为参考资料 1 中内容并不是很完整</strong>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/多领域seq2lf/total loss.jpg" alt="total loss"></p>
+<h3 id="梯度消失"><a href="#梯度消失" class="headerlink" title="梯度消失"></a>梯度消失</h3><p>&emsp;&emsp;<strong>第二</strong>，反向传播时出现的问题，以下 Q 为问题，A 为解释。<br>&emsp;&emsp;引子：如《clip gradient》一章黄框中所说，RNN 很容易出现峭壁和平原。<strong>LSTM 只解决了 gradient vanishing 的问题</strong>，没有解决 gradient explode。LSTM 使得 error surface 不那么崎岖，<strong>消除了训练时的一些平坦的地方</strong>。虽然梯度在有些地方依然崎岖，但是不会有太平坦的地方。<strong>所以在训练时可以放心的将 lr 调小</strong>，不需要担心会出现平坦的地方，导致训练过慢。<br>&emsp;&emsp;如果公司问为什么把 RNN 换成 LSTM？<del>回答 LSTM 比较潮、因为 LSTM 比较复杂。</del>回答 LSTM 可以处理 gradient vanishing 的问题。具体解释如下：<br>&emsp;&emsp;<strong>Q</strong>：为什么 LSTM 可以解决 gradient vanishing 的问题？（解决梯度消失也可以说成避免 gradient 特别小（消除平原））<br>&emsp;&emsp;<strong>A</strong>：在 RNN 中利用 memory 的方式是一种复合函数的结构，所以在反向传播时，需要链式求导，梯度与梯度相乘容易造成<strong>梯度消失</strong>和<strong>梯度爆炸</strong>。关于 RNN 反向传播的求导结果可以参考 <a href="https://yan624.github.io/~zcy/深度学习算法（二）：simple RNN 推导与理解.html#simple-RNN-的缺陷">simple RNN 的缺陷</a> 蓝色提示框。<br>&emsp;&emsp;虽然这样的求导大致已经可以解释了梯度消失的问题，但是如果仔细想想就会发现盲点。在此之前，我想先说明 RNN 家族的反向传播路径与其他的神经网络不同，它的 loss 值是每一个 timestep 的真实值 y 与输出值 的 loss 之和。<a href="https://mooc.study.163.com/learn/2001280005?tid=2001391038&amp;_trace_c_p_k2_=72573d316c3441869416d70899cdf382#/learn/content?type=detail&amp;id=2001770031" target="_blank" rel="noopener">此视频</a> 大致讲明白了这个总 loss 值到底是由哪些 loss 相加得到的。<br>&emsp;&emsp;知道了上面的前提条件，就可以很简单的理解接下来的内容了。<strong>参考资料 1 大致解释了这一问题</strong>，这一段可能比较绕，<strong>简单来说就是后面的 timestep（比如下图中 <script type="math/tex">loss_4</script>）在反向传播时，求 <script type="math/tex">\Delta W</script> 会出现梯度消失（注意 RNN 每个 timestep 的 W 都是一样），这是因为在求梯度时，函数已经复合了好几层</strong>。而对 <script type="math/tex">loss_1</script> 求 W 的导数时，由于它本身就在序列的前面，函数还没有复合，所以 <script type="math/tex">\Delta W</script> 的导数还没梯度消失。<strong>最后在计算总的 loss 时，是将各个阶段的梯度加起来</strong>，即使后面的 loss 会得到一个很小的的梯度 <script type="math/tex">\Delta W</script>，但由于 <script type="math/tex">loss_1</script> 的原因，并不会发生梯度消失。<br>&emsp;&emsp;但是事实上是会发生的，那么梯度消失从何而来呢？是因为后面的 loss 在求梯度时，导致前面输入值的梯度很小，从而产生了<strong>信息丢失</strong>。信息丢失就是 RNN 的梯度消失。有一点需要考虑，RNN 在反向传播时，是需要传播到输入值 x 的，即词向量。在计算 <script type="math/tex">loss_4</script> 时，RNN 中 W 的梯度肯定是很小的，但是在更新 <script type="math/tex">x_4</script> 时，这里的梯度 <script type="math/tex">\Delta W</script> 还不是很小，所以信息无问题。但是当反向传播到 <script type="math/tex">x_1</script> 时，梯度已经很小了，由于小梯度导致 <script type="math/tex">x_1</script> 无法得到很好的更新，于是产生了信息丢失。<script type="math/tex">loss_3</script> 以及 <script type="math/tex">loss_2</script> 以此类推，不过对于 <script type="math/tex">loss_1</script> 并无问题，因为它没有复合函数。<br>&emsp;&emsp;注：<strong>上两段，还参考了参考资料 3，个人认为参考资料 1 中内容并不是很完整</strong>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/多领域seq2lf/total loss.jpg" alt="total loss"></p>
 <p>&emsp;&emsp;以上的参考资料：</p>
 <ol>
 <li><a href="https://www.zhihu.com/question/34878706/answer/665429718" target="_blank" rel="noopener">LSTM如何来避免梯度弥散和梯度爆炸？</a></li>
@@ -757,7 +757,7 @@ LSTM: memory_{new} = a * input + b * memory \\</script><p>&emsp;&emsp;cell() 代
 <li><a href="https://www.bilibili.com/video/av41393758?p=8" target="_blank" rel="noopener">RNN 和语言模式</a>，19.50 开始</li>
 </ol>
 <p>&emsp;&emsp;而在 LSTM 中，是使用加和的计算方式（博主注：<strong>由于我没有计算过，所以我也不是很肯定</strong>），所以大致解决了梯度消失的问题。注意我没有说解决了梯度爆炸的问题。<br><div class="note success">
-            <p>&emsp;&emsp;LSTM 的模型以及参数名参考<a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">此处</a>。</p><script type="math/tex; mode=display">\begin{aligned}    LSTM: z_i & = [a_{i - 1}; x_i] \\    memory_{new} & = g(z_i) * input(z_i) + memory * forget(z_i) \\    a_i & = h(g(z_i) * input(z_i) + memory * forget(z_i)) * output(z_i) \\\end{aligned}</script><p>&emsp;&emsp;对 LSTM 的求导结果很复杂，就不写了（实际上算得我自己都乱了）。。。它的复杂结构使得它不会出现一个数被连乘，导致极小。<strong>注意 LSTM 并没有解决梯度爆炸的问题。可以结合 clipping 训练 LSTM</strong>。<br>参考资料：</p><ol><li><a href="https://zhuanlan.zhihu.com/p/28749444" target="_blank" rel="noopener">LSTM如何解决梯度消失问题</a></li><li><a href="https://zhuanlan.zhihu.com/p/36101196" target="_blank" rel="noopener">漫谈LSTM系列的梯度问题</a></li><li><a href="https://www.zhihu.com/question/34878706/answer/192444888" target="_blank" rel="noopener">LSTM如何来避免梯度弥散和梯度爆炸？</a></li><li><a href="https://zhuanlan.zhihu.com/p/83496936" target="_blank" rel="noopener">人人都能看懂的LSTM介绍及反向传播算法推导（非常详细）</a></li></ol>
+            <p>&emsp;&emsp;LSTM 的模型以及参数名参考<a href="https://yan624.github.io/~学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">此处</a>。</p><script type="math/tex; mode=display">\begin{aligned}    LSTM: z_i & = [a_{i - 1}; x_i] \\    memory_{new} & = g(z_i) * input(z_i) + memory * forget(z_i) \\    a_i & = h(g(z_i) * input(z_i) + memory * forget(z_i)) * output(z_i) \\\end{aligned}</script><p>&emsp;&emsp;对 LSTM 的求导结果很复杂，就不写了（实际上算得我自己都乱了）。。。它的复杂结构使得它不会出现一个数被连乘，导致极小。<strong>注意 LSTM 并没有解决梯度爆炸的问题。可以结合 clipping 训练 LSTM</strong>。<br>参考资料：</p><ol><li><a href="https://zhuanlan.zhihu.com/p/28749444" target="_blank" rel="noopener">LSTM如何解决梯度消失问题</a></li><li><a href="https://zhuanlan.zhihu.com/p/36101196" target="_blank" rel="noopener">漫谈LSTM系列的梯度问题</a></li><li><a href="https://www.zhihu.com/question/34878706/answer/192444888" target="_blank" rel="noopener">LSTM如何来避免梯度弥散和梯度爆炸？</a></li><li><a href="https://zhuanlan.zhihu.com/p/83496936" target="_blank" rel="noopener">人人都能看懂的LSTM介绍及反向传播算法推导（非常详细）</a></li></ol>
           </div></p>
 <p>&emsp;&emsp;其他一些思考：LSTM 虽然可以永久的记住以前的 input 信息，但是 memory 说白了就是一个权重矩阵，不可能无限制的记住任何信息。所以可以对 memory 进行一些魔改，比如 memory network 将 memory 修改成用数组存储。<br>&emsp;&emsp;那么问题来了，GRU 解决了什么问题呢？为什么过拟合严重，可以使用 GRU？详见下一章。</p>
 <h3 id="其他解决梯度消失的办法"><a href="#其他解决梯度消失的办法" class="headerlink" title="其他解决梯度消失的办法"></a>其他解决梯度消失的办法</h3><ol>
@@ -775,9 +775,9 @@ LSTM: memory_{new} = a * input + b * memory \\</script><p>&emsp;&emsp;cell() 代
 </ol>
 <h2 id="attention"><a href="#attention" class="headerlink" title="attention"></a>attention</h2><p>&emsp;&emsp;本人的笔记</p>
 <ol>
-<li><a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#Attention">吴恩达李宏毅综合学习笔记：RNN入门</a></li>
-<li><a href="http://localhost:4000/学习笔记/CS224n学习笔记.html#attention" target="_blank" rel="noopener">CS224n学习笔记</a></li>
-<li><strong><a href="http://localhost:4000/zcy/深度学习算法（三）：RNN 各种机制.html#Attention" target="_blank" rel="noopener">RNN 各种机制</a></strong></li>
+<li><a href="https://yan624.github.io/~学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#Attention">吴恩达李宏毅综合学习笔记：RNN入门</a></li>
+<li><a href="https://yan624.github.io/~学习笔记/CS224n学习笔记.html#attention">CS224n学习笔记</a></li>
+<li><strong><a href="https://yan624.github.io/~zcy/深度学习算法（三）：RNN 各种机制.html#Attention">RNN 各种机制</a></strong></li>
 </ol>
 <p>&emsp;&emsp;参考资料：</p>
 <ol>
@@ -2164,7 +2164,7 @@ p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)</script><p><img src="h
 <li>基于语义解析（semantic parsing-base, SP-based）</li>
 <li>基于信息检索（information  retrieval-based, IR-based）</li>
 </ol>
-<p>&emsp;&emsp;<strong>现在</strong>随着神经网络方法的发展，基于神经网络的 KB-QA 已经取得了令人瞩目的成果。其中至关重要的步骤就是计算<strong>问题和候选答案</strong>之间的相似性分数，这一步骤的<strong>关键一点</strong>就是学习它们的表示。然而以往的研究更注重<strong>答案的学习表示</strong>。例如，<a href="https://arxiv.org/pdf/1406.3676.pdf" target="_blank" rel="noopener">Bordes et al. 2014a</a> 考虑候选答案子图的重要性，<a href="https://www.aclweb.org/anthology/P15-1026" target="_blank" rel="noopener">Dong et al. 2015</a>利用上下文和答案的类型。无论如何，<strong>问题的表示</strong>终究还是表达不全。现有的方法 <a href="https://arxiv.org/pdf/1406.3676.pdf" target="_blank" rel="noopener">Bordes et al., 2014a,</a> <a href="https://arxiv.org/pdf/1404.4326.pdf" target="_blank" rel="noopener">b</a> 使用 bag-of-word 模型将问题表示为一个向量，但是这样<strong>问题与答案的关联性</strong>还是被忽视了。我们认为一个问题应该根据回答时不同的侧重面来表示（注：<em>其实就是想用注意力机制</em>，回答的侧重面可以是答案实体本身、答案类型、答案上下文等）。<br>&emsp;&emsp;因此本文提出了一个端到端的神经网络模型，通过 <strong>cross-attention</strong> 机制，根据不同的候选答案动态地表示问题及对应的分数。此外还利用了 KB 中的全部知识，旨在将 KB 中丰富的知识集成到答案中，以此缓解 out-of-vocabulary(<strong>OOV</strong>) 的问题，从而帮助 cross-attention 更精确地表示问题。最后实验结果表明了该方法确实有效。<br>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/P15-1026" title="Question Answering over Freebase wit hMulti-Column Convolutional Neural Networks" target="_blank" rel="noopener">论文</a>（<a href="https://yan624.github.io/论文/23、Question Answering over Freebase with Multi-Column Convolutional Neural Networks.html">论文笔记地址</a>）中的方法很有启发性，但是由于简单地选择三个独立的 CNN ，因此过于机械化。所以我们使用了基于 cross-attention 的神经网络模型。<br>&emsp;&emsp;模型架构如下，步骤与之前的论文的步骤类似。<strong>1)</strong>先找到问题的主题（main entity/topic entity）；<strong>2)</strong>然后在知识库中找到主题相连的节点作为候选答案，<strong>3)</strong>最后送入 score layer 进行评分，排序分数选出分数最高的候选答案作为正确答案。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge/MCCNN总览.jpg" alt="MCCNN总览"></p>
+<p>&emsp;&emsp;<strong>现在</strong>随着神经网络方法的发展，基于神经网络的 KB-QA 已经取得了令人瞩目的成果。其中至关重要的步骤就是计算<strong>问题和候选答案</strong>之间的相似性分数，这一步骤的<strong>关键一点</strong>就是学习它们的表示。然而以往的研究更注重<strong>答案的学习表示</strong>。例如，<a href="https://arxiv.org/pdf/1406.3676.pdf" target="_blank" rel="noopener">Bordes et al. 2014a</a> 考虑候选答案子图的重要性，<a href="https://www.aclweb.org/anthology/P15-1026" target="_blank" rel="noopener">Dong et al. 2015</a>利用上下文和答案的类型。无论如何，<strong>问题的表示</strong>终究还是表达不全。现有的方法 <a href="https://arxiv.org/pdf/1406.3676.pdf" target="_blank" rel="noopener">Bordes et al., 2014a,</a> <a href="https://arxiv.org/pdf/1404.4326.pdf" target="_blank" rel="noopener">b</a> 使用 bag-of-word 模型将问题表示为一个向量，但是这样<strong>问题与答案的关联性</strong>还是被忽视了。我们认为一个问题应该根据回答时不同的侧重面来表示（注：<em>其实就是想用注意力机制</em>，回答的侧重面可以是答案实体本身、答案类型、答案上下文等）。<br>&emsp;&emsp;因此本文提出了一个端到端的神经网络模型，通过 <strong>cross-attention</strong> 机制，根据不同的候选答案动态地表示问题及对应的分数。此外还利用了 KB 中的全部知识，旨在将 KB 中丰富的知识集成到答案中，以此缓解 out-of-vocabulary(<strong>OOV</strong>) 的问题，从而帮助 cross-attention 更精确地表示问题。最后实验结果表明了该方法确实有效。<br>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/P15-1026" title="Question Answering over Freebase wit hMulti-Column Convolutional Neural Networks" target="_blank" rel="noopener">论文</a>（<a href="https://yan624.github.io/~论文/23、Question Answering over Freebase with Multi-Column Convolutional Neural Networks.html">论文笔记地址</a>）中的方法很有启发性，但是由于简单地选择三个独立的 CNN ，因此过于机械化。所以我们使用了基于 cross-attention 的神经网络模型。<br>&emsp;&emsp;模型架构如下，步骤与之前的论文的步骤类似。<strong>1)</strong>先找到问题的主题（main entity/topic entity）；<strong>2)</strong>然后在知识库中找到主题相连的节点作为候选答案，<strong>3)</strong>最后送入 score layer 进行评分，排序分数选出分数最高的候选答案作为正确答案。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge/MCCNN总览.jpg" alt="MCCNN总览"></p>
 <p>&emsp;&emsp;为了方便描述，我们将任何一种基本元素称为资源（resource），无论是实体还是关系。比如 (/m/0f8l9c,location.country.capital,/m/05qtj) 的描述是法国的首都是巴黎，其中的 <em>/m/0f8l9c</em> 和 <em>/m/05qtj</em> 分别代表法国和巴黎，<em>location.country.capital</em> 是一种关系。<br><a id="more"></a></p>
 <h1 id="我们的方法"><a href="#我们的方法" class="headerlink" title="我们的方法"></a>我们的方法</h1><h2 id="候选者生成"><a href="#候选者生成" class="headerlink" title="候选者生成"></a>候选者生成</h2><p>&emsp;&emsp;略，我已经写过无数遍了。使用 Freebase API 构建的。</p>
 <h2 id="The-Neural-Cross-Attention-Model"><a href="#The-Neural-Cross-Attention-Model" class="headerlink" title="The Neural Cross-Attention Model"></a>The Neural Cross-Attention Model</h2><p>&emsp;&emsp;下图是模型的架构：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge/MCCNN架构.jpg" alt="MCCNN架构"></p>
@@ -2216,7 +2216,7 @@ p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)</script><p><img src="h
 <h1 id="处理步骤"><a href="#处理步骤" class="headerlink" title="处理步骤"></a>处理步骤</h1><p>&emsp;&emsp;给定一个自然语言问题 <script type="math/tex">q = w_1 \dots w_n</script>，从 FreeBase 中检索相应的实体和属性，然后将它们作为候选答案 <script type="math/tex">C_q</script>。比如，问题 <em>when did Avatar release in UK</em> （阿凡达在英国的发行时间）的答案是 <em>2009-12-17</em>。需要注意的是对于该问题也许有一系列的正确答案。以下数据将被使用到：<strong>WebQuestions</strong>，<strong>FreeBase</strong>，<strong>WikiAnswers</strong>。<br>&emsp;&emsp;MCCNN 概览如图 1 所示：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Question Answering over Freebase with Multi-Column Convolutional Neural Networks/MCCNN概览.jpg" alt="MCCNN概览"><br><a id="more"></a></p>
 <p>&emsp;&emsp;比如说，对于问题 whendid Avatar release in UK，从 FreeBase 中查询 <strong>Avatar</strong>（可以称为 <strong>main entity</strong> 或者 <strong>topic entity</strong>） 的<strong>相连节点</strong>（related nodes），这些相连节点被认为是候选答案（<script type="math/tex">C_q</script>）。然后对于每个候选答案 a，模型将会预测一个分数 S(q,a) 以判断 a 是否为正确答案。<br>&emsp;&emsp;对于问题的三个侧面的向量表示分别以 <script type="math/tex">f_1(q)</script> <script type="math/tex">f_2(q)</script> <script type="math/tex">f_3(q)</script> 表示，同理答案的三个侧面分别以 <script type="math/tex">g_1(a)</script> <script type="math/tex">g_2(a)</script> <script type="math/tex">g_3(a)</script> 表示。<script type="math/tex">f_i(q)</script> 和 <script type="math/tex">g_i(a)</script>拥有相同的维度。使用这些问答的表示，我们可以计算问答对 (q,a) 的分数。具体来说，评分函数 S(q,a) 定义为（如图 1 所示，评分层计算分数并将其加起来）：</p>
 <script type="math/tex; mode=display">
-S(q,a) = \underbrace{f_1(q)^Tg_1(a)}_{\text{answer path}} + \underbrace{f_2(q)^Tg_2(a)}_{\text{answer context}} + \underbrace{f_3(q)^Tg_3(a)}_{\text{answer type}}</script><h2 id="候选者生成"><a href="#候选者生成" class="headerlink" title="候选者生成"></a>候选者生成</h2><p>&emsp;&emsp;训练神经网络的<strong>第一步是</strong>从 FreeBase 中为问题检索候选答案。用户提出的问题应该包含一个<strong>可识别</strong>的实体，该实体与知识库相连。我们使用 <strong>Freebase Search API</strong>（<a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.538.7139&amp;rep=rep1&amp;type=pdf" title="Freebase: a collaboratively created graph database for structuringhuman knowledge" target="_blank" rel="noopener">Bollacker et al., 2008)</a>） 查询问题中的命名体。如果没有任何命名体，则查询名词短语，我们使用调用 API 返回的列表中的第一个实体。这个实体解决办法也被 <a href="https://www.aclweb.org/anthology/P14-1090" title="Information Extraction over Structured Data: Question Answering with Freebase" target="_blank" rel="noopener">Yao and Van Durme, 2014)</a> 使用，还可以研发更好的办法，但不是本论文的关注点。<strong>最后关联实体的所有 2-hops（应该是周围的意思，我没有查到是什么意思，但是在<a href="https://yan624.github.io/论文/20、Open Question Answering with Weakly supervised Embedding Models.html#论文总结">博客笔记</a>中有所总结） 节点被认为是候选答案</strong>。并把问题 q 的候选答案集合称为 <script type="math/tex">C_q</script>。</p>
+S(q,a) = \underbrace{f_1(q)^Tg_1(a)}_{\text{answer path}} + \underbrace{f_2(q)^Tg_2(a)}_{\text{answer context}} + \underbrace{f_3(q)^Tg_3(a)}_{\text{answer type}}</script><h2 id="候选者生成"><a href="#候选者生成" class="headerlink" title="候选者生成"></a>候选者生成</h2><p>&emsp;&emsp;训练神经网络的<strong>第一步是</strong>从 FreeBase 中为问题检索候选答案。用户提出的问题应该包含一个<strong>可识别</strong>的实体，该实体与知识库相连。我们使用 <strong>Freebase Search API</strong>（<a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.538.7139&amp;rep=rep1&amp;type=pdf" title="Freebase: a collaboratively created graph database for structuringhuman knowledge" target="_blank" rel="noopener">Bollacker et al., 2008)</a>） 查询问题中的命名体。如果没有任何命名体，则查询名词短语，我们使用调用 API 返回的列表中的第一个实体。这个实体解决办法也被 <a href="https://www.aclweb.org/anthology/P14-1090" title="Information Extraction over Structured Data: Question Answering with Freebase" target="_blank" rel="noopener">Yao and Van Durme, 2014)</a> 使用，还可以研发更好的办法，但不是本论文的关注点。<strong>最后关联实体的所有 2-hops（应该是周围的意思，我没有查到是什么意思，但是在<a href="https://yan624.github.io/~论文/20、Open Question Answering with Weakly supervised Embedding Models.html#论文总结">博客笔记</a>中有所总结） 节点被认为是候选答案</strong>。并把问题 q 的候选答案集合称为 <script type="math/tex">C_q</script>。</p>
 <h2 id="MCCNNs-for-Question-Understanding"><a href="#MCCNNs-for-Question-Understanding" class="headerlink" title="MCCNNs for Question Understanding"></a>MCCNNs for Question Understanding</h2><p>&emsp;&emsp;MCCNNs 使用多列（<strong>列</strong>指的是图 1 中左侧那三片）卷积网络从字嵌入中学习不同方面。使用 <a href="http://www.jmlr.org/papers/volume12/collobert11a/collobert11a.pdf" title="Natural Language Processing (Almost) from Scratch" target="_blank" rel="noopener">Collobert R 等 2011</a> 的方法解决语言长度不一的问题。具体的做法可参考原论文 <strong>4.2 MCCNNs for Question Understanding</strong>。</p>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>&emsp;&emsp;未来的探索方向：</p>
 <ol>
@@ -2236,7 +2236,7 @@ S(q,a) = \underbrace{f_1(q)^Tg_1(a)}_{\text{answer path}} + \underbrace{f_2(q)^T
   <entry>
     <title>论文笔记：Joint Relational Embeddings for Knowledge-based Question Answering</title>
     <url>/~%E8%AE%BA%E6%96%87/22%E3%80%81Joint%20Relational%20Embeddings%20for%20Knowledge%20based%20Question%20Answering.html</url>
-    <content><![CDATA[<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/D14-1071" target="_blank" rel="noopener">论文地址</a>，发表于 2014 年。<br>&emsp;&emsp;将自然语言（natural language，NL）问题转换为对应的逻辑形式（logical form，LF）是基于知识库问答（KB-QA）任务的核心任务，转换问题也被称作语义分析。<del>在 KB-QA 任务领域，与以往（Mooney, 2007; Liang et al., 2011;Cai and Yates, 2013; Fader et al., 2013; Berant etal., 2013; Bao et al., 2014）<u>基于词汇化短语（lexicalized phrases）和逻辑谓语（logical predicates）之间的映射作为词汇触发器（lexical trigger）来执行语义分析中的转换任务</u>不同（其中 Fader 2013 提出的论文在<a href="https://yan624.github.io/论文/20、Open Question Answering with Weakly supervised Embedding Models.html">论文笔记1</a>和<a href="https://yan624.github.io/论文/21、Question Answering with Subgraph Embeddings.html">论文笔记2</a>中具有提及，ctrl f 之后搜索 <em>Paraphrase-Driven Learning for Open Question Answering</em> 或者 <em>Fader</em> 即可找到对应位置）</del>，本论文进一步提出了一种<strong>将 NL 问题映射到 LFs 中</strong>的新的<strong>嵌入式</strong>方法，其利用<strong>词汇表达</strong>与 <strong>KB 中的属性</strong>在隐含空间中的语义关联来实现。实验表明，在两个公开的 QA 数据集上，该方法优于其他三种 KB-QA 的基线方法。<br>&emsp;&emsp;先前工作必须处理以下两种限制：</p>
+    <content><![CDATA[<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/D14-1071" target="_blank" rel="noopener">论文地址</a>，发表于 2014 年。<br>&emsp;&emsp;将自然语言（natural language，NL）问题转换为对应的逻辑形式（logical form，LF）是基于知识库问答（KB-QA）任务的核心任务，转换问题也被称作语义分析。<del>在 KB-QA 任务领域，与以往（Mooney, 2007; Liang et al., 2011;Cai and Yates, 2013; Fader et al., 2013; Berant etal., 2013; Bao et al., 2014）<u>基于词汇化短语（lexicalized phrases）和逻辑谓语（logical predicates）之间的映射作为词汇触发器（lexical trigger）来执行语义分析中的转换任务</u>不同（其中 Fader 2013 提出的论文在<a href="https://yan624.github.io/~论文/20、Open Question Answering with Weakly supervised Embedding Models.html">论文笔记1</a>和<a href="https://yan624.github.io/~论文/21、Question Answering with Subgraph Embeddings.html">论文笔记2</a>中具有提及，ctrl f 之后搜索 <em>Paraphrase-Driven Learning for Open Question Answering</em> 或者 <em>Fader</em> 即可找到对应位置）</del>，本论文进一步提出了一种<strong>将 NL 问题映射到 LFs 中</strong>的新的<strong>嵌入式</strong>方法，其利用<strong>词汇表达</strong>与 <strong>KB 中的属性</strong>在隐含空间中的语义关联来实现。实验表明，在两个公开的 QA 数据集上，该方法优于其他三种 KB-QA 的基线方法。<br>&emsp;&emsp;先前工作必须处理以下两种限制：</p>
 <ol>
 <li>由于逻辑谓语的含义通常具有不同的自然语言表达（natural language expression，NLE）形式，因此从谓语提取的词汇触发器可能有时会受到大小限制；</li>
 <li>由于命名体识别（named entity recognition，NER）组件检测到的实体将用于与逻辑谓语一起组成逻辑形式，因此它们的类型也应该与谓语一致。然而，现有的 KB-QA 系统使用的 NER 组件大都独立于 NLE 到谓语的映射步骤。<a id="more"></a>
@@ -2255,7 +2255,7 @@ S(q,a) = \underbrace{f_1(q)^Tg_1(a)}_{\text{answer path}} + \underbrace{f_2(q)^T
   <entry>
     <title>论文笔记：Question Answering with Subgraph Embeddings</title>
     <url>/~%E8%AE%BA%E6%96%87/21%E3%80%81Question%20Answering%20with%20Subgraph%20Embeddings.html</url>
-    <content><![CDATA[<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://arxiv.org/pdf/1406.3676" target="_blank" rel="noopener">论文地址</a>，发表于 2014 年。<br>&emsp;&emsp;本文的作者在同年发表了另一篇论文，将上一篇论文称为 A，此论文称为 B，对于 A 论文我也做了<a href="https://yan624.github.io/论文/20、Open Question Answering with Weakly supervised Embedding Models.html">论文笔记</a>，本论文是上一篇论文的改进版。A 只是对简单问题进行研究，B 研究如何改进模型并回答更复杂的问题。<br>&emsp;&emsp;开放域问答中的一流技术大致可以分为两大类：1)基于信息检索；2)基于语义解析。<strong>信息检索</strong>系统首先通过 KBs 的搜索 API（转换方式估计是手写模版，论文中未细说） <strong>将问题转换为有效的查询语句</strong>（比如 neo4j 数据库的 CQL）以此检索到大量的候选答案，然后再仔细地识别准确的答案（<a href="https://www.sciencedirect.com/science/article/pii/S0020025511003860" title="A survey on question answering technology from an information retrieval perspective" target="_blank" rel="noopener">Kolomiyets O 等 2011</a>，<a href="https://www2012.universite-lyon.fr/proceedings/proceedings/p639.pdf" title="Template-based Question Answering over RDF Data" target="_blank" rel="noopener">Unger C 等 2012</a>，<a href="https://www.aclweb.org/anthology/P14-1090" title="Information Extraction over Structured Data: Question Answering with Freebase" target="_blank" rel="noopener">Yao X 等 2014</a>）。<strong>语义解析</strong>旨在通过语义分析系统正确<strong>解释</strong>问题的含义，<strong>解释步骤</strong>的做法是把问题转换为数据库查询语句（这里的查询语句应该是逻辑形式，比如<strong>组合范畴法</strong>），以此查询到正确的答案。尽管这两种方法有能力去处理大规模知识库，但是需要专家手动的创建词汇、语法以及 KB 协议才能有所成效。且<strong>没有通用性</strong>，<strong>无法方便地扩展到</strong>具有其他模式、更广泛词汇或英语以外语言的<strong>新数据库</strong>。<br>&emsp;&emsp;相反，<a href="https://www.aclweb.org/anthology/P13-1158" target="_blank" rel="noopener">Paraphrase-Driven Learning for Open Question Answering</a> 提出了一个几乎不需要人工注释的开放域 QA 框架，虽然这是一种有趣的方法，但是它被其他方法超越了。即第二段提到的论文 A。<br>&emsp;&emsp;相比于论文 A，作者作出了以下几点<strong>改进</strong>：1）对于候选答案，考虑更多更长的路径（之前只考虑了 main entity 周围的节点）；2）对候选答案进行更有意义的表示：答案的表示包含问答路径以及周围的子图。</p>
+    <content><![CDATA[<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://arxiv.org/pdf/1406.3676" target="_blank" rel="noopener">论文地址</a>，发表于 2014 年。<br>&emsp;&emsp;本文的作者在同年发表了另一篇论文，将上一篇论文称为 A，此论文称为 B，对于 A 论文我也做了<a href="https://yan624.github.io/~论文/20、Open Question Answering with Weakly supervised Embedding Models.html">论文笔记</a>，本论文是上一篇论文的改进版。A 只是对简单问题进行研究，B 研究如何改进模型并回答更复杂的问题。<br>&emsp;&emsp;开放域问答中的一流技术大致可以分为两大类：1)基于信息检索；2)基于语义解析。<strong>信息检索</strong>系统首先通过 KBs 的搜索 API（转换方式估计是手写模版，论文中未细说） <strong>将问题转换为有效的查询语句</strong>（比如 neo4j 数据库的 CQL）以此检索到大量的候选答案，然后再仔细地识别准确的答案（<a href="https://www.sciencedirect.com/science/article/pii/S0020025511003860" title="A survey on question answering technology from an information retrieval perspective" target="_blank" rel="noopener">Kolomiyets O 等 2011</a>，<a href="https://www2012.universite-lyon.fr/proceedings/proceedings/p639.pdf" title="Template-based Question Answering over RDF Data" target="_blank" rel="noopener">Unger C 等 2012</a>，<a href="https://www.aclweb.org/anthology/P14-1090" title="Information Extraction over Structured Data: Question Answering with Freebase" target="_blank" rel="noopener">Yao X 等 2014</a>）。<strong>语义解析</strong>旨在通过语义分析系统正确<strong>解释</strong>问题的含义，<strong>解释步骤</strong>的做法是把问题转换为数据库查询语句（这里的查询语句应该是逻辑形式，比如<strong>组合范畴法</strong>），以此查询到正确的答案。尽管这两种方法有能力去处理大规模知识库，但是需要专家手动的创建词汇、语法以及 KB 协议才能有所成效。且<strong>没有通用性</strong>，<strong>无法方便地扩展到</strong>具有其他模式、更广泛词汇或英语以外语言的<strong>新数据库</strong>。<br>&emsp;&emsp;相反，<a href="https://www.aclweb.org/anthology/P13-1158" target="_blank" rel="noopener">Paraphrase-Driven Learning for Open Question Answering</a> 提出了一个几乎不需要人工注释的开放域 QA 框架，虽然这是一种有趣的方法，但是它被其他方法超越了。即第二段提到的论文 A。<br>&emsp;&emsp;相比于论文 A，作者作出了以下几点<strong>改进</strong>：1）对于候选答案，考虑更多更长的路径（之前只考虑了 main entity 周围的节点）；2）对候选答案进行更有意义的表示：答案的表示包含问答路径以及周围的子图。</p>
 <h1 id="任务定义"><a href="#任务定义" class="headerlink" title="任务定义"></a>任务定义</h1><p>&emsp;&emsp;假设所有潜在的答案都是 KB 中的实体，当 KB 中不存在该实体时，可以使用一些方法解决（论文中具体没说，只是说了一种极简单的方式：<em>When this entity is not given, plain string matching is used to perform entity resolution</em>）。<br><a id="more"></a><br>&emsp;&emsp;此外 N 代表词典的大小，其中 <script type="math/tex">N = N_W + N_S</script>，<script type="math/tex">N_W</script> 代表词嵌入的大小，<script type="math/tex">N_S</script> 代表实体和关系的数量。</p>
 <h1 id="改进：考虑多维度的信息"><a href="#改进：考虑多维度的信息" class="headerlink" title="改进：考虑多维度的信息"></a>改进：考虑多维度的信息</h1><p>&emsp;&emsp;以下描述一个候选答案的特征表示，论文将以三个角度进行表示：</p>
 <ol>
@@ -2319,7 +2319,7 @@ S(q,t) = f(q)^Tg(t)</script><p>&emsp;&emsp;<strong>其中 f(·) 将问题中的�
 <h1 id="论文总结"><a href="#论文总结" class="headerlink" title="论文总结"></a>论文总结</h1><p>&emsp;&emsp;通读论文之后还是有点搞不清论文是怎么训练的，后来看了一下 CCF ADL100 刘康老师的 PPT ，感觉有点理解了，以下是训练步骤：</p>
 <ol>
 <li>输入自然语言表达的问题，比如：姚明的老婆的是哪里人？</li>
-<li>使用 entity linking（论文中貌似没有这步，我在看 PPT 时也是一知半解，好在前几天我刚好在一篇论文中看到了这个 entity linking！<a href="https://yan624.github.io/论文/19、Semantic Parsing via Staged Query Graph Generation：Question Answering with Knowledge Base.html#链接主题实体">博客地址</a>，entity linking 源于<a href="https://arxiv.org/pdf/1609.08075.pdf" target="_blank" rel="noopener">Yang and Chang, 2015</a>）找到 main entity，main entity 周围的 entity 均是候选 entity。如下图，姚明是 main entity，姚明周围的实体都算作候选 entity，比如叶莉、火箭队、上海等。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Open Question Answering with Weakly supervised Embedding Models/姚明的老婆是谁的知识图谱的子图.jpg" alt="姚明的老婆是谁的知识图谱的子图"></li>
+<li>使用 entity linking（论文中貌似没有这步，我在看 PPT 时也是一知半解，好在前几天我刚好在一篇论文中看到了这个 entity linking！<a href="https://yan624.github.io/~论文/19、Semantic Parsing via Staged Query Graph Generation：Question Answering with Knowledge Base.html#链接主题实体">博客地址</a>，entity linking 源于<a href="https://arxiv.org/pdf/1609.08075.pdf" target="_blank" rel="noopener">Yang and Chang, 2015</a>）找到 main entity，main entity 周围的 entity 均是候选 entity。如下图，姚明是 main entity，姚明周围的实体都算作候选 entity，比如叶莉、火箭队、上海等。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Open Question Answering with Weakly supervised Embedding Models/姚明的老婆是谁的知识图谱的子图.jpg" alt="姚明的老婆是谁的知识图谱的子图"></li>
 <li>计算问题和候选 entity 的相似度，其中问题由词向量表示，候选 entity 是一个三元组的形式，难以直接用词向量表示，方法是将三元组中的三个对象分别用词向量表示，然后将三个词向量相加。这样就得到了问题的词向量和 entity 的词向量，点乘获得相似度。</li>
 <li>由于候选 entity 不一定只有一个，所以可以获得多个相似度。进行排序即可获得最相似的候选 entity。</li>
 </ol>
@@ -2646,7 +2646,7 @@ c1(no)->e2(left)->st</textarea><textarea id="flowchart-0-options" style="display
   <entry>
     <title>深度学习算法（三）：RNN 各种机制</title>
     <url>/~zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9ARNN%20%E5%90%84%E7%A7%8D%E6%9C%BA%E5%88%B6.html</url>
-    <content><![CDATA[<h1 id="GRU"><a href="#GRU" class="headerlink" title="GRU"></a>GRU</h1><h1 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h1><p>&emsp;&emsp;该<a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">博客</a>中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。<br>&emsp;&emsp;下图是吴恩达深度学习第五周作业中的图片，是一个 LSTM 单元。<strong>与李宏毅老师做的图有略微不同，并且在下图中将 input gate 称为了 update gate，并且在李宏毅老师所提供的图片中，g(z) 是由 sigmoid 函数计算出来的，而这里是由 tanh 计算出来的，即下图 update gate 旁边的函数</strong>。另外在李宏毅老师提供的图片中，为了简便，并没有使用上个时间步的激活值。</p>
+    <content><![CDATA[<h1 id="GRU"><a href="#GRU" class="headerlink" title="GRU"></a>GRU</h1><h1 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h1><p>&emsp;&emsp;该<a href="https://yan624.github.io/~学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">博客</a>中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。<br>&emsp;&emsp;下图是吴恩达深度学习第五周作业中的图片，是一个 LSTM 单元。<strong>与李宏毅老师做的图有略微不同，并且在下图中将 input gate 称为了 update gate，并且在李宏毅老师所提供的图片中，g(z) 是由 sigmoid 函数计算出来的，而这里是由 tanh 计算出来的，即下图 update gate 旁边的函数</strong>。另外在李宏毅老师提供的图片中，为了简便，并没有使用上个时间步的激活值。</p>
 <ol>
 <li>首先是<strong>输入的问题</strong>。一般来说一个 LSTM 的输入是前一<strong>个</strong> LSTM 的输出值 <script type="math/tex">a</script> 以及输入值 <script type="math/tex">x</script>（对于第 2 层的 LSTM 的 输入值就是前一<strong>层</strong>的输出值）。但是众所周知，<strong>LSTM 每个门的输入肯定只有一个向量，<script type="math/tex">a</script> 和 <script type="math/tex">x</script> 是两个向量，那么如何处理呢？</strong> <strong>1)</strong>在下图中使用了 <script type="math/tex">[a^{<t-1>},x^{<t>}]</script> 进行向量拼接。<strong>2)</strong>在我看的代码中直接使用了加法进行相加，代码<a href="https://github.com/Alex-Fabbri/lang2logic-PyTorch/blob/master/seq2seq/atis/lstm/main.py" target="_blank" rel="noopener">在这</a>，但是代码量太大了，随便看看就行了。二者的差别无非是向量的维度。</li>
 <li>之前说过 update gate 就是 input gate，它的输出 <script type="math/tex">\Gamma^{<t>}_u</script> 实际上也是一个向量，而 <script type="math/tex">\tilde{c^{<t>}}</script> 就是输入向量。<script type="math/tex">\Gamma^{<t>}_u</script> 的意思就是限制 <script type="math/tex">\tilde{c^{<t>}}</script> 的信息进入 memory，试想 <script type="math/tex">\Gamma^{<t>}_u</script> 的输出值范围为 (0, 1)，这不就是在说 <script type="math/tex">\Gamma^{<t>}_u</script> 将 <script type="math/tex">\tilde{c^{<t>}}</script> 的每个元素都按其比例进行调整？就类似于将 <script type="math/tex">\tilde{c^{<t>}}</script> 中的信息丢失一部分。如果 <script type="math/tex">\tilde{c^{<t>}}</script> 的输出全是 1，就代表 <script type="math/tex">\tilde{c^{<t>}}</script> 中的信息我全都要。如果 <script type="math/tex">\tilde{c^{<t>}}</script> 的输出全是 0，就代表 <script type="math/tex">\tilde{c^{<t>}}</script> 中的信息我全都不要。</li>
@@ -2660,9 +2660,9 @@ c1(no)->e2(left)->st</textarea><textarea id="flowchart-0-options" style="display
 <h1 id="Seq2Seq"><a href="#Seq2Seq" class="headerlink" title="Seq2Seq"></a>Seq2Seq</h1><div class="note info">
             <p>&emsp;&emsp;对于 Sequence2Sequence 模型，其实很好写代码。Seq2Seq 模型是使用了某个神经细胞作为它的核心。你可以使用 simple-RNN、GRU、LSTM 甚至是 Transformer。而这些构件其实框架都已经实现过了，直接调用代码即可。真正的难点在于理解 Seq2Seq 模型的概念，而这个概念实际上是很简单就能理解的。</p><ul><li>Encoder：<br>无非是对<strong>前一个单元激活值</strong>以及当前的输入值进行一系列的处理（如何处理完全取决于自己，可以相加也可以拼接），然后将处理后的向量当做 encoder 的输入。</li><li>Decoder：<br>与 Encoder 类似，无非是将<strong>前一个单元激活值</strong>替换成 <strong>Encoder 的输出值</strong>（当然这里也是取决于自己，<strong>不一定非要是 Encoder 的输出值</strong>，模型千变万化，全凭自己做主），其他步骤类似。</li><li>Generator：<br>输出层就是一个简单的变换层。对于二元分类你可以接一个 Sigmoid 函数；对于多元分类你可以接一个 Softmax 函数。你也可以自定义其他的函数，比如 log_softmax。nn.LSTM 默认实现了 Softmax</li></ul>
           </div>
-<p>&emsp;&emsp;该<a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#seq2seq">博文</a>也可供参考。以前想过 encoder-decoder 如何实现，以为很复杂。现在自己实现了一下，实际上就是很简单的代码，<a href="https://github.com/yan624/machine_learning_algorithms/blob/master/dl/seq2seq.py" target="_blank" rel="noopener">代码地址</a>。<br>&emsp;&emsp;由于 seq2seq 有两个输入。对于 encoder 输入包含隐藏状态 a 以及 输入值 x。对于 decoder 输入包含隐藏状态 a 和 encoder 的输出。这实际上跟 LSTM 差不多，如果 seq2seq 的神经元使用 LSTM 的话，实际上就一模一样了。我只使用了简单的加法，将两个输入合并。当然也可以使用其他方法，比如拼接。其他的方法可以自行发挥。<br>&emsp;&emsp;另外对于 seq2seq 学习，已经不需要每个输入的长度都相等了，可以在句子的最后加入一个结束符，如<code>&lt;EOS&gt;</code>，以此判断输入是否结束。但是这样做如何进行向量化呢？暂时未知，待补充。</p>
-<h1 id="Attention"><a href="#Attention" class="headerlink" title="Attention"></a>Attention</h1><p>&emsp;&emsp;<a href="https://www.zhihu.com/question/68482809/answer/264632289" target="_blank" rel="noopener">参考文章</a>；<a href="https://www.cnblogs.com/robert-dlut/p/5952032.html" target="_blank" rel="noopener">Attention历史</a><br>&emsp;&emsp;实际上九几年的时候在CV领域已经有这概念了。RNN 领域第一篇文章《Recurrent Models of Visual Attention》。<br>&emsp;&emsp;<a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#Attention">博客</a>中有写到如何计算 Attention。</p>
-<h2 id="Memory-Network"><a href="#Memory-Network" class="headerlink" title="Memory Network"></a>Memory Network</h2><p>&emsp;&emsp;<a href="https://papers.nips.cc/paper/5846-end-to-end-memory-networks.pdf" target="_blank" rel="noopener">论文地址</a><br>&emsp;&emsp;<a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#Memory-Network">博客</a>有记一些基础的东西。</p>
+<p>&emsp;&emsp;该<a href="https://yan624.github.io/~学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#seq2seq">博文</a>也可供参考。以前想过 encoder-decoder 如何实现，以为很复杂。现在自己实现了一下，实际上就是很简单的代码，<a href="https://github.com/yan624/machine_learning_algorithms/blob/master/dl/seq2seq.py" target="_blank" rel="noopener">代码地址</a>。<br>&emsp;&emsp;由于 seq2seq 有两个输入。对于 encoder 输入包含隐藏状态 a 以及 输入值 x。对于 decoder 输入包含隐藏状态 a 和 encoder 的输出。这实际上跟 LSTM 差不多，如果 seq2seq 的神经元使用 LSTM 的话，实际上就一模一样了。我只使用了简单的加法，将两个输入合并。当然也可以使用其他方法，比如拼接。其他的方法可以自行发挥。<br>&emsp;&emsp;另外对于 seq2seq 学习，已经不需要每个输入的长度都相等了，可以在句子的最后加入一个结束符，如<code>&lt;EOS&gt;</code>，以此判断输入是否结束。但是这样做如何进行向量化呢？暂时未知，待补充。</p>
+<h1 id="Attention"><a href="#Attention" class="headerlink" title="Attention"></a>Attention</h1><p>&emsp;&emsp;<a href="https://www.zhihu.com/question/68482809/answer/264632289" target="_blank" rel="noopener">参考文章</a>；<a href="https://www.cnblogs.com/robert-dlut/p/5952032.html" target="_blank" rel="noopener">Attention历史</a><br>&emsp;&emsp;实际上九几年的时候在CV领域已经有这概念了。RNN 领域第一篇文章《Recurrent Models of Visual Attention》。<br>&emsp;&emsp;<a href="https://yan624.github.io/~学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#Attention">博客</a>中有写到如何计算 Attention。</p>
+<h2 id="Memory-Network"><a href="#Memory-Network" class="headerlink" title="Memory Network"></a>Memory Network</h2><p>&emsp;&emsp;<a href="https://papers.nips.cc/paper/5846-end-to-end-memory-networks.pdf" target="_blank" rel="noopener">论文地址</a><br>&emsp;&emsp;<a href="https://yan624.github.io/~学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#Memory-Network">博客</a>有记一些基础的东西。</p>
 <!-- more -->]]></content>
       <categories>
         <category>AI</category>
@@ -2766,7 +2766,7 @@ W_{ax} x^{<t>} + W_{aa} a^{<t-1>} =
 \}</script><p>&emsp;&emsp;实际上上式很容易就可以发现是一个递归形式的表达式，所以可以写为以下的形式，其中 k 代表第几个激活值，也可以理解为第几个时间步。</p>
 <script type="math/tex; mode=display">
 \frac{\partial{a^k}}{\partial{W_{aa}}} = S_k * (1 - S_k) * (a^{k - 1} + W_{aa} * \frac{\partial{a^{k - 1}}}{W_{aa}})</script><h1 id="simple-RNN-的缺陷"><a href="#simple-RNN-的缺陷" class="headerlink" title="simple-RNN 的缺陷"></a>simple-RNN 的缺陷</h1><p>&emsp;&emsp;RNN一个最大的缺陷就是梯度消失与梯度爆炸问题，由于这一缺陷，使得RNN在长文本中难以训练，这才诞生了LSTM及各种变体，来源于<a href="https://zhuanlan.zhihu.com/p/44163528" target="_blank" rel="noopener">专栏</a>。梯度消失的原因：参考<a href="https://zhuanlan.zhihu.com/p/28687529" target="_blank" rel="noopener">专栏</a>。<br>&emsp;&emsp;个人的解释如下：<br>&emsp;&emsp;在 RNN 中利用 memory 的方式是一种复合函数的结构，所以在反向传播时，需要链式求导，即 <script type="math/tex">f(g(x)) = f'(g(x))·g'(x)</script>，梯度与梯度相乘容易造成<strong>梯度消失</strong>和<strong>梯度爆炸</strong>。而在 LSTM 中，是使用加和的计算方式，所以大致解决了梯度消失的问题。<br><div class="note info">
-            <p>&emsp;&emsp;在 RNN 中，求导得到的表达式为连乘，而 sigmoid 的输出值在 [0-1] 之间，造成了梯度消失。当然也会造成梯度爆炸，因为激活函数不一定非是 sigmoid，换成 ReLU 输出值就会大于 1 了。<br>&emsp;&emsp;接下来我带入数字来讲解一遍，<strong>具体公式详见上一节，下面只讲求导后的函数</strong>。我们先把公式拿过来，并设 <script type="math/tex">a^3 = 0.2</script>, <script type="math/tex">a^2 = 0.1</script>, <script type="math/tex">a^1 = 0.05</script>, <script type="math/tex">w_{aa} = 0.07</script>。并且<strong>易得</strong> <script type="math/tex">S^1 = a^1</script>, <script type="math/tex">S^2 = a^2</script>, <script type="math/tex">S^3 = a^3</script>（易得部分都不懂的，建议看看上面的《反向传播（BPTT）》就明白了。</p><script type="math/tex; mode=display">\frac{\partial{a^3}}{\partial{W_{aa}}} = S_3 * (1 - S_3) * \{    a^2 + W_{aa} * \underbrace{        S_2 * (1 - S_2)[            a^1 + W_{aa} * \underbrace{                S_1 * (1 - S_1) * \frac{\partial{a^0}}{\partial{W_{aa}}}            }_{\frac{\partial{a^1}}{\partial{W_{aa}}}}        ]    }_{\frac{\partial{a^2}}{\partial{W_{aa}}}}\}</script><p>&emsp;&emsp;则</p><script type="math/tex; mode=display">\frac{\partial{a^3}}{\partial{W_{aa}}} = a^3 * (1 - a^3) * \{a^2 + W_{aa} * a^2 * (1 - a^2) * [a^1 + 0]\}</script><p>&emsp;&emsp;首先需要明白一点，对于 RNN 来说，激活值 a 就是 memory。我们将设置的值带入得到 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.0160504</script>。可以发现梯度很小，而这仅仅是在序列长度为 3 的情况下。那么假设我们修改值，将 <script type="math/tex">w_{aa}</script> 改为 0.7，则 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.016504</script>，将 <script type="math/tex">w_{aa}</script> 改为 7，则 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.02104</script>。我们发现即使 <script type="math/tex">w_{aa}</script> 的变化很大，梯度值的变化效果也不是明显。也就是说对于 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}}</script>，<script type="math/tex">W_{aa}</script> 这个值不是很重要，在计算梯度时，可以忽略。<br>&emsp;&emsp;综上所述，我们发现 W 几乎无法阻止梯度越变越小。而剩下的值全都是 [0-1] 范围内的激活值 a，所以就产生了梯度消失——gradient vanishing。<br>&emsp;&emsp;反之，如果 a 是大于 1 的值，就造成了梯度爆炸。<br>&emsp;&emsp;然而梯度消失的真正原因并不完全是这个，详见 <a href="http://localhost:4000/比赛项目总结/flayai竞赛：今日头条新闻分类.html#LSTM-解决了-RNN-的什么问题" target="_blank" rel="noopener">LSTM 解决了 RNN 的什么问题</a> 的第二点。</p>
+            <p>&emsp;&emsp;在 RNN 中，求导得到的表达式为连乘，而 sigmoid 的输出值在 [0-1] 之间，造成了梯度消失。当然也会造成梯度爆炸，因为激活函数不一定非是 sigmoid，换成 ReLU 输出值就会大于 1 了。<br>&emsp;&emsp;接下来我带入数字来讲解一遍，<strong>具体公式详见上一节，下面只讲求导后的函数</strong>。我们先把公式拿过来，并设 <script type="math/tex">a^3 = 0.2</script>, <script type="math/tex">a^2 = 0.1</script>, <script type="math/tex">a^1 = 0.05</script>, <script type="math/tex">w_{aa} = 0.07</script>。并且<strong>易得</strong> <script type="math/tex">S^1 = a^1</script>, <script type="math/tex">S^2 = a^2</script>, <script type="math/tex">S^3 = a^3</script>（易得部分都不懂的，建议看看上面的《反向传播（BPTT）》就明白了。</p><script type="math/tex; mode=display">\frac{\partial{a^3}}{\partial{W_{aa}}} = S_3 * (1 - S_3) * \{    a^2 + W_{aa} * \underbrace{        S_2 * (1 - S_2)[            a^1 + W_{aa} * \underbrace{                S_1 * (1 - S_1) * \frac{\partial{a^0}}{\partial{W_{aa}}}            }_{\frac{\partial{a^1}}{\partial{W_{aa}}}}        ]    }_{\frac{\partial{a^2}}{\partial{W_{aa}}}}\}</script><p>&emsp;&emsp;则</p><script type="math/tex; mode=display">\frac{\partial{a^3}}{\partial{W_{aa}}} = a^3 * (1 - a^3) * \{a^2 + W_{aa} * a^2 * (1 - a^2) * [a^1 + 0]\}</script><p>&emsp;&emsp;首先需要明白一点，对于 RNN 来说，激活值 a 就是 memory。我们将设置的值带入得到 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.0160504</script>。可以发现梯度很小，而这仅仅是在序列长度为 3 的情况下。那么假设我们修改值，将 <script type="math/tex">w_{aa}</script> 改为 0.7，则 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.016504</script>，将 <script type="math/tex">w_{aa}</script> 改为 7，则 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.02104</script>。我们发现即使 <script type="math/tex">w_{aa}</script> 的变化很大，梯度值的变化效果也不是明显。也就是说对于 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}}</script>，<script type="math/tex">W_{aa}</script> 这个值不是很重要，在计算梯度时，可以忽略。<br>&emsp;&emsp;综上所述，我们发现 W 几乎无法阻止梯度越变越小。而剩下的值全都是 [0-1] 范围内的激活值 a，所以就产生了梯度消失——gradient vanishing。<br>&emsp;&emsp;反之，如果 a 是大于 1 的值，就造成了梯度爆炸。<br>&emsp;&emsp;然而梯度消失的真正原因并不完全是这个，详见 <a href="https://yan624.github.io/比赛项目总结/flayai竞赛：今日头条新闻分类.html#LSTM-解决了-RNN-的什么问题">LSTM 解决了 RNN 的什么问题</a> 的第二点。</p>
           </div></p>
 <p>&emsp;&emsp;RNN 的 loss 是每个 timestep 上的 loss 的加和，下图显示了这种情况下是如何求导的。不过有时候 RNN 的 loss 也就最后一个 tiemstep 会有一个 loss，比如分类任务。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple RNN 推导与理解/vanishing gradient problem details.jpg" alt="vanishing gradient problem details"></p>
 <p>&emsp;&emsp;参考资料：</p>
@@ -2927,7 +2927,7 @@ v_a tanh(W_a [h_t;\bar{h}_s])
     <title>深度学习算法（一）：simple NN（前馈神经网络的正反向推导）</title>
     <url>/~zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9Asimple%20NN%EF%BC%88%E5%89%8D%E9%A6%88%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E6%AD%A3%E5%8F%8D%E5%90%91%E6%8E%A8%E5%AF%BC%EF%BC%89.html</url>
     <content><![CDATA[<div class="note info">
-            <p>本文的公式不存在次方的说法，所以看见上标，不要想成是次方。<br>对于权重的表示问题，请看<a href="https://yan624.github.io/学习笔记/《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题.html">博客</a>，但是由于是以前的学习笔记，不保证完全正确。<br>如果想了解为什么梯度下降要对w和b求导，可以看<a href="https://yan624.github.io/学习笔记/梯度下降算法的推导.html">这篇</a>。<br><strong>建议边看边写，否则思维跟不上。</strong></p>
+            <p>本文的公式不存在次方的说法，所以看见上标，不要想成是次方。<br>对于权重的表示问题，请看<a href="https://yan624.github.io/~学习笔记/《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题.html">博客</a>，但是由于是以前的学习笔记，不保证完全正确。<br>如果想了解为什么梯度下降要对w和b求导，可以看<a href="https://yan624.github.io/~学习笔记/梯度下降算法的推导.html">这篇</a>。<br><strong>建议边看边写，否则思维跟不上。</strong></p>
           </div>
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>参考<a href="https://www.cnblogs.com/charlotte77/p/5629865.html" target="_blank" rel="noopener">文章</a><br>以如下神经网络架构为例。参考<a href="https://www.cnblogs.com/charlotte77/p/5629865.html" target="_blank" rel="noopener">文章</a>中使用了一个2 2 2的神经网络架构，但是现实中神经网络架构不会这么整整齐齐。所以还是使用了略复杂的架构，此外原文中未对bias（偏差）更新。另外原文也没有实现向量化后的计算。虽然在后面的代码写了，但是由于代码太长了，有一种代码我给出来了，你们自己去看的感觉。说实话没多少注释，都没看的欲望(╬￣皿￣)。然后她所使用的符号让我不太习惯，因为看吴恩达以及李宏毅老师使用的符号都是<script type="math/tex">w^l_{ji}\ a^l_i</script>等等，所以自己重新推导一遍，并且使用了数学公式，而不是截图，更好看一点。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版"><br>解释一下最下面的神经元，这个神经元初始化为1，也就是意味着1 * b = b。输入值为1，一个偏差乘1还是偏差本身。<br><a id="more"></a></p>
 <h2 id="关于函数选用"><a href="#关于函数选用" class="headerlink" title="关于函数选用"></a>关于函数选用</h2><p>本文所有激活函数选择sigmoid函数，代价函数选择binary_crossentropy。</p>
@@ -2983,7 +2983,7 @@ a^2_2 = \sigma{(z^2_2)}\\</script><h3 id="计算代价"><a href="#计算代价" 
             <p>说是说反向传播，实际上整个流程就是在<strong><a href="https://baike.baidu.com/item/链式法则/3314017?fr=aladdin" target="_blank" rel="noopener">链式求导</a></strong>。如果把这点想通了，整个神经网络的难点就只在向量化上了。一定要理解为什么整个流程只是在做链式求导的问题，在这里我并不是随便一提。</p>
           </div>
 <p>为了便于查找，把之前的图再放这。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版"></p>
-<h2 id="首先更新输出层的权重值（W）以及偏差值（b）"><a href="#首先更新输出层的权重值（W）以及偏差值（b）" class="headerlink" title="首先更新输出层的权重值（W）以及偏差值（b）"></a>首先更新输出层的权重值（W）以及偏差值（b）</h2><p>梯度下降公式大家应该都知道：<script type="math/tex">W = W - \alpha * grad</script>。其中的grad实际上就是W的导数，<a href="https://yan624.github.io/学习笔记/梯度下降算法的推导.html">参考</a>。<br>可以对照上图观察，<strong>输出层</strong>的权重值分别为:</p>
+<h2 id="首先更新输出层的权重值（W）以及偏差值（b）"><a href="#首先更新输出层的权重值（W）以及偏差值（b）" class="headerlink" title="首先更新输出层的权重值（W）以及偏差值（b）"></a>首先更新输出层的权重值（W）以及偏差值（b）</h2><p>梯度下降公式大家应该都知道：<script type="math/tex">W = W - \alpha * grad</script>。其中的grad实际上就是W的导数，<a href="https://yan624.github.io/~学习笔记/梯度下降算法的推导.html">参考</a>。<br>可以对照上图观察，<strong>输出层</strong>的权重值分别为:</p>
 <script type="math/tex; mode=display">
 \begin{pmatrix}
     w^2_{11}&w^2_{12}&w^2_{13}\\
@@ -3372,7 +3372,7 @@ v  = -\frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}\\</script><p>之所以要�
   <entry>
     <title>吴恩达深度学习学习笔记：自然语言处理与词嵌入</title>
     <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9A%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86%E4%B8%8E%E8%AF%8D%E5%B5%8C%E5%85%A5.html</url>
-    <content><![CDATA[<h1 id="字母表示"><a href="#字母表示" class="headerlink" title="字母表示"></a>字母表示</h1><p>我们一直使用<a href="https://yan624.github.io/学习笔记/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型.html#one hot编码">one hot编码</a>，这在之前已经记过笔记。这种表示方法的最大缺点是将每个词孤立起来，并且泛化能力不强。由于每个向量的内积都是0，所以它们之间的距离都是一样的。比如</p>
+    <content><![CDATA[<h1 id="字母表示"><a href="#字母表示" class="headerlink" title="字母表示"></a>字母表示</h1><p>我们一直使用<a href="https://yan624.github.io/~学习笔记/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型.html#one hot编码">one hot编码</a>，这在之前已经记过笔记。这种表示方法的最大缺点是将每个词孤立起来，并且泛化能力不强。由于每个向量的内积都是0，所以它们之间的距离都是一样的。比如</p>
 <ol>
 <li>I want a glass of orange juice.</li>
 <li>I want a glass of apple <em>_</em>.<br>这两个句子是很常见的句子，所以自然而然的想到划线处应该是juice。但是由于one hot编码，程序并不知道orange和apple之间的关系，也就猜不出来。</li>
@@ -3459,7 +3459,7 @@ v  = -\frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}\\</script><p>之所以要�
 <tr>
 <td>15~20</td>
 <td>李宏毅深度学习</td>
-<td>计算图、语言模型中的深度学习、几个有用的网络架构。到原视频的 p12 结束，由于后续部分涉及到了 GAN 等其他模型，所以不在此处做笔记，详见<a href="https://yan624.github.io/zcy/对神经网络整体的理解.html">对神经网络整体的理解</a>博文中靠后的几节</td>
+<td>计算图、语言模型中的深度学习、几个有用的网络架构。到原视频的 p12 结束，由于后续部分涉及到了 GAN 等其他模型，所以不在此处做笔记，详见<a href="https://yan624.github.io/~zcy/对神经网络整体的理解.html">对神经网络整体的理解</a>博文中靠后的几节</td>
 </tr>
 </tbody>
 </table>
@@ -3569,7 +3569,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
 <hr>
 <p>李宏毅深度学习</p>
 <hr>
-<h1 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h1><p>此系列视频还有两个Review视频，分别为第一个视频：Basic Structures for Deep Learning Models(Part 1)， 第二个视频：Basic Structures for Deep Learning Models(Part 2)。<br>个人认为Review视频不需要看，而且这两个视频时间贼长，加起来得有两个多小时。没必要浪费时间，即使你根本没学过Review中的知识点也不用去看。他的Review里不会讲很深，基本上就过过场，就算有很深的东西也完全不影响继续往下学。1P时长80分钟，说实话如果自己属于小白阶段，去看那么长的视频是挺打击人的兴趣的，如果是大佬或者已经入门的人当然看得津津有味了。<br><a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#字母表示-1">此文</a>记录了李宏毅机器学习视频中讲解的RNN的笔记。</p>
+<h1 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h1><p>此系列视频还有两个Review视频，分别为第一个视频：Basic Structures for Deep Learning Models(Part 1)， 第二个视频：Basic Structures for Deep Learning Models(Part 2)。<br>个人认为Review视频不需要看，而且这两个视频时间贼长，加起来得有两个多小时。没必要浪费时间，即使你根本没学过Review中的知识点也不用去看。他的Review里不会讲很深，基本上就过过场，就算有很深的东西也完全不影响继续往下学。1P时长80分钟，说实话如果自己属于小白阶段，去看那么长的视频是挺打击人的兴趣的，如果是大佬或者已经入门的人当然看得津津有味了。<br><a href="https://yan624.github.io/~学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#字母表示-1">此文</a>记录了李宏毅机器学习视频中讲解的RNN的笔记。</p>
 <h1 id="Computational-Graph-amp-Backpropagation"><a href="#Computational-Graph-amp-Backpropagation" class="headerlink" title="Computational Graph &amp; Backpropagation"></a>Computational Graph &amp; Backpropagation</h1><div class="note danger">
             <p>2019年6月7号更新：关于计算图这章，现在才发现原来很重要，因为这是完成<strong>自动求导</strong>的关键。学了 pytorch 之后才发现的。</p>
           </div>
@@ -3627,7 +3627,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
     h & = [h^1, h^2, h^3, h^4] \\
     s & = h^T z \\
     c^0 & = h^t s \\
-\end{align}</script><p>&emsp;&emsp;attention score 的计算公式可以由自己设计，下图使用的是 <script type="math/tex">h^T W z</script>，有兴趣的话，<a href="https://yan624.github.io/学习笔记/CS224n学习笔记.html#attention">这里</a>介绍了三个。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Attention机制.jpg" alt="Attention机制"></p>
+\end{align}</script><p>&emsp;&emsp;attention score 的计算公式可以由自己设计，下图使用的是 <script type="math/tex">h^T W z</script>，有兴趣的话，<a href="https://yan624.github.io/~学习笔记/CS224n学习笔记.html#attention">这里</a>介绍了三个。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Attention机制.jpg" alt="Attention机制"></p>
 <p>&emsp;&emsp;然后获得 <script type="math/tex">a^1_0 a^2_0 a^3_0 a^4_0</script>，之后将它们输入 softmax 层（有实验发现其实不经过 softmax 层也可以，甚至效果更好），最后将所有 a 分别乘上它们对应的向量并且相加，得到一个向量 <script type="math/tex">c^0</script>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Attention机制计算score.jpg" alt="Attention机制计算score"></p>
 <p>&emsp;&emsp;使用 Attention 机制计算完毕后，将向量 <script type="math/tex">c^0</script> 输入进 decoder 即可，接下来的计算都是以此类推。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Attention机制计算完毕后输入到decoder.jpg" alt="Attention机制计算完毕后输入到decoder"></p>
 <h3 id="Attention应用到Speach-Recognition"><a href="#Attention应用到Speach-Recognition" class="headerlink" title="Attention应用到Speach Recognition"></a>Attention应用到Speach Recognition</h3><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/Attention for Speach Recognition.jpg" alt="Attention for Speach Recognition"></p>
@@ -3790,7 +3790,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
     <title>对神经网络整体的理解</title>
     <url>/~zcy/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3.html</url>
     <content><![CDATA[<div class="note info">
-            <p>本文疑问的总结地址<a href="https://yan624.github.io/学习笔记/深度学习中的一些疑问总结.html">在这</a></p>
+            <p>本文疑问的总结地址<a href="https://yan624.github.io/~学习笔记/深度学习中的一些疑问总结.html">在这</a></p>
           </div>
 <h1 id="大纲"><a href="#大纲" class="headerlink" title="大纲"></a>大纲</h1><div class="table-container">
 <table>
@@ -4371,7 +4371,7 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} & \underbrace{y^{
             <p>但是这里可能会有点奇怪。因为二元分类的代价函数是<script type="math/tex">cost(\hat{y}, y) = - \sum^n_{j=1} (y_j * log(\hat{y_j}) + (1 - y_j) * log(\hat{1-y_j}))</script>。怎么多元分类的表达式那么短？</p>
           </div></p>
 <h1 id="选择深度学习框架"><a href="#选择深度学习框架" class="headerlink" title="选择深度学习框架"></a>选择深度学习框架</h1><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6%E9%80%89%E6%8B%A9.jpg" alt="深度学习框架选择"></p>
-<h1 id="序列模型——RNN"><a href="#序列模型——RNN" class="headerlink" title="序列模型——RNN"></a>序列模型——RNN</h1><p>&emsp;&emsp;<a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html">传送门</a></p>
+<h1 id="序列模型——RNN"><a href="#序列模型——RNN" class="headerlink" title="序列模型——RNN"></a>序列模型——RNN</h1><p>&emsp;&emsp;<a href="https://yan624.github.io/~学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html">传送门</a></p>
 ]]></content>
       <categories>
         <category>AI</category>
@@ -5166,9 +5166,9 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
       </tags>
   </entry>
   <entry>
-    <title>（三）搭建springcloud：整合mybatis-plus</title>
-    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E4%B8%89%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E6%95%B4%E5%90%88mybatis-plus.html</url>
-    <content><![CDATA[<p>由于一直使用mybatis的example，无法忍受着过长的代码，所以转向了mybatis-plus，配置过于简单，就不演示了。<br>参考官网<a href="http://mp.baomidou.com/#/install" target="_blank" rel="noopener">http://mp.baomidou.com/#/install</a><br>如果看不懂，可以看mybatis-plus提供的整合springboot例子<br>网址：<a href="https://gitee.com/baomidou/mybatisplus-spring-boot" target="_blank" rel="noopener">https://gitee.com/baomidou/mybatisplus-spring-boot</a><br><a id="more"></a><br>如果还看不懂，尼玛别整合了。（手动狗头）<br>提示：<br>Service可以继承mybatis-plus提供的ServiceImpl类<br>mapper层可以继承BaseMapper，这样如果有些mapper比较简单完全可以省去mapper.xml<br>IService可以继承IService</p>
+    <title>（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</title>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E5%9B%9B%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9Aeclipse%E8%BF%81%E7%A7%BB%E5%88%B0idea%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%88maven-install%E5%91%BD%E4%BB%A4%E5%87%BA%E9%94%99%EF%BC%89.html</url>
+    <content><![CDATA[<p>在使用maven的install命令时出现java.lang.ArrayIndexOutOfBoundsException: 10640<br>试了三个小时，一直以为idea有问题，最后没想到是maven版本的问题，我的是3.5.0，只要改成3.5.2以上就可以了（我改成3.5.4）<br>真的奇怪之前在eclipse上用一直好好地<br><a id="more"></a></p>
 <h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><p><a href="https://yan624.github.io/（零）搭建springcloud：创建项目.html">（零）搭建springcloud：创建项目</a><br><a href="https://yan624.github.io/（一）搭建springcloud：springboot整合thymeleaf.html">（一）搭建springcloud：springboot整合thymeleaf</a><br><a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a><br><a href="https://yan624.github.io/（三）搭建springcloud：整合mybatis-plus.html">（三）搭建springcloud：整合mybatis-plus</a><br><a href="https://yan624.github.io/（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）.html">（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</a><br><a href="https://yan624.github.io/（五）搭建springcloud：在idea启动springboot项目.html">（五）搭建springcloud：在idea启动springboot项目</a><br><a href="https://yan624.github.io/（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）.html">（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</a><br><a href="https://yan624.github.io/（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器.html">（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</a><br><a href="https://yan624.github.io/（八）搭建springcloud：修改静态文件，如html，js后立即生效.html">（八）搭建springcloud：修改静态文件，如html，js后立即生效</a><br><a href="https://yan624.github.io/（九）搭建springcloud：在linux上运行springboot项目.html">（九）搭建springcloud：在linux上运行springboot项目</a><br><a href="https://yan624.github.io/（十）搭建springcloud：记录项目运行的日志.html">（十）搭建springcloud：记录项目运行的日志</a></p>
 <!-- more -->]]></content>
       <categories>
@@ -5182,9 +5182,9 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
       </tags>
   </entry>
   <entry>
-    <title>（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</title>
-    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E5%9B%9B%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9Aeclipse%E8%BF%81%E7%A7%BB%E5%88%B0idea%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%88maven-install%E5%91%BD%E4%BB%A4%E5%87%BA%E9%94%99%EF%BC%89.html</url>
-    <content><![CDATA[<p>在使用maven的install命令时出现java.lang.ArrayIndexOutOfBoundsException: 10640<br>试了三个小时，一直以为idea有问题，最后没想到是maven版本的问题，我的是3.5.0，只要改成3.5.2以上就可以了（我改成3.5.4）<br>真的奇怪之前在eclipse上用一直好好地<br><a id="more"></a></p>
+    <title>（三）搭建springcloud：整合mybatis-plus</title>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E4%B8%89%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E6%95%B4%E5%90%88mybatis-plus.html</url>
+    <content><![CDATA[<p>由于一直使用mybatis的example，无法忍受着过长的代码，所以转向了mybatis-plus，配置过于简单，就不演示了。<br>参考官网<a href="http://mp.baomidou.com/#/install" target="_blank" rel="noopener">http://mp.baomidou.com/#/install</a><br>如果看不懂，可以看mybatis-plus提供的整合springboot例子<br>网址：<a href="https://gitee.com/baomidou/mybatisplus-spring-boot" target="_blank" rel="noopener">https://gitee.com/baomidou/mybatisplus-spring-boot</a><br><a id="more"></a><br>如果还看不懂，尼玛别整合了。（手动狗头）<br>提示：<br>Service可以继承mybatis-plus提供的ServiceImpl类<br>mapper层可以继承BaseMapper，这样如果有些mapper比较简单完全可以省去mapper.xml<br>IService可以继承IService</p>
 <h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><p><a href="https://yan624.github.io/（零）搭建springcloud：创建项目.html">（零）搭建springcloud：创建项目</a><br><a href="https://yan624.github.io/（一）搭建springcloud：springboot整合thymeleaf.html">（一）搭建springcloud：springboot整合thymeleaf</a><br><a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a><br><a href="https://yan624.github.io/（三）搭建springcloud：整合mybatis-plus.html">（三）搭建springcloud：整合mybatis-plus</a><br><a href="https://yan624.github.io/（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）.html">（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</a><br><a href="https://yan624.github.io/（五）搭建springcloud：在idea启动springboot项目.html">（五）搭建springcloud：在idea启动springboot项目</a><br><a href="https://yan624.github.io/（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）.html">（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</a><br><a href="https://yan624.github.io/（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器.html">（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</a><br><a href="https://yan624.github.io/（八）搭建springcloud：修改静态文件，如html，js后立即生效.html">（八）搭建springcloud：修改静态文件，如html，js后立即生效</a><br><a href="https://yan624.github.io/（九）搭建springcloud：在linux上运行springboot项目.html">（九）搭建springcloud：在linux上运行springboot项目</a><br><a href="https://yan624.github.io/（十）搭建springcloud：记录项目运行的日志.html">（十）搭建springcloud：记录项目运行的日志</a></p>
 <!-- more -->]]></content>
       <categories>
