@@ -114,7 +114,7 @@
 <meta property="og:site_name" content="博客">
 <meta property="og:description" content="&amp;emsp;&amp;emsp;此篇基于 PyDial：A Multi-domain Statistical Dialogue System Toolkit 论文笔记 和 A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management 论文笔记">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-01-14T09:08:11.980Z">
+<meta property="og:updated_time" content="2020-01-14T09:38:13.663Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="分析PyDial toolkit各个包的功能">
 <meta name="twitter:description" content="&amp;emsp;&amp;emsp;此篇基于 PyDial：A Multi-domain Statistical Dialogue System Toolkit 论文笔记 和 A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management 论文笔记">
@@ -518,7 +518,7 @@ if(pathname == '/flower.html'){
                 
               
 
-              <time title="创建时间：2020-01-14 12:08:22 / 修改时间：17:08:11" itemprop="dateCreated datePublished" datetime="2020-01-14T12:08:22+08:00">2020-01-14</time>
+              <time title="创建时间：2020-01-14 12:08:22 / 修改时间：17:38:13" itemprop="dateCreated datePublished" datetime="2020-01-14T12:08:22+08:00">2020-01-14</time>
             
 
             
@@ -584,7 +584,7 @@ if(pathname == '/flower.html'){
 
       
         <div class="note warning">
-            <p>&emsp;&emsp;此篇基于 <a href="https://yan624.github.io/~论文/55. PyDial：A Multi-domain Statistical Dialogue System Toolkit.html">PyDial：A Multi-domain Statistical Dialogue System Toolkit 论文笔记</a> 和 <a href="https://yan624.github.io/~论文/54. A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management.html">A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management 论文笔记</a></p>
+            <p>&emsp;&emsp;此篇基于 <a href="https://yan624.github.io/·论文/55. PyDial：A Multi-domain Statistical Dialogue System Toolkit.html">PyDial：A Multi-domain Statistical Dialogue System Toolkit 论文笔记</a> 和 <a href="https://yan624.github.io/·论文/54. A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management.html">A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management 论文笔记</a></p>
           </div>
 <h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><p>&emsp;&emsp;按照如下顺序分析，此外 PyDial 的官方文档在<a href="http://www.camdial.org/pydial/Docs/" target="_blank" rel="noopener">此处</a>。<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">PyDial</span><br><span class="line">├─belieftracking</span><br><span class="line">├─cedm</span><br><span class="line">├─config</span><br><span class="line">├─curiosity</span><br><span class="line">├─Docs</span><br><span class="line">├─evaluation</span><br><span class="line">├─ontology</span><br><span class="line">├─policy</span><br><span class="line">├─resources</span><br><span class="line">├─scripts</span><br><span class="line">├─semanticbelieftracking</span><br><span class="line">├─semi</span><br><span class="line">├─semo</span><br><span class="line">├─tasks</span><br><span class="line">├─tests</span><br><span class="line">├─topictracking</span><br><span class="line">├─Tutorials</span><br><span class="line">├─usersimulator</span><br><span class="line">├─utils</span><br><span class="line">├─__init__.py</span><br><span class="line">├─Agent.py</span><br><span class="line">├─conf.py</span><br><span class="line">├─DialogueServer.py</span><br><span class="line">├─pydial.py</span><br><span class="line">├─Simulate.py</span><br><span class="line">└─Texthub.py</span><br></pre></td></tr></table></figure></p>
 <a id="more"></a>
@@ -593,7 +593,7 @@ if(pathname == '/flower.html'){
             <p>&emsp;&emsp;我并没有介绍全，其他的配置文件待补充。</p>
           </div>
 <p>&emsp;&emsp;一堆配置文件。PyDial 的文档并没有明确地在某个文档中指出 config 文件夹的用法，只介绍了某一个模块的配置文件该如何配置。但是这样写得太杂了，不易理解，接下来写下自己的理解。<br>&emsp;&emsp;Tut 代表 Tutorials，bcm 代表 Bayesian committee machine，gp 代表 Gaussian Process，hdc 代表 Handcrafted。在官方的教程中经常会看到类似 Tut-gp-CamRestaurants.cfg 的配置文件，这些其实是用于教程的配置文件。<br>&emsp;&emsp;PyDial 的基准环境在 config/pydial_benchmarks 下，由 <a href="https://arxiv.xilesou.top/pdf/1711.11023.pdf" target="_blank" rel="noopener">此篇论文</a> 引进。其中一共有 6 个环境，每个环境下又有三个领域。环境：不同的环境拥有不同的训练参数，领域：不同的领域拥有不同场景，如剑桥餐厅、笔记本电脑和洛杉矶餐厅。</p>
-<h1 id="policy"><a href="#policy" class="headerlink" title="policy"></a>policy</h1><p>&emsp;&emsp;policy 是 Agent 中的一部分。不懂看 <a href="https://yan624.github.io/~论文/55. PyDial：A Multi-domain Statistical Dialogue System Toolkit.html">PyDial：A Multi-domain Statistical Dialogue System Toolkit 论文笔记</a> 中的 <strong>2.1 总体系统结构</strong>。<br>&emsp;&emsp;policy 包中包含许多 policy 实现，它们都是历年论文的实现。我估计论文 <strong>《A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management》</strong> 使用这些 policy 实现从而提供了 6 个基准测试环境。</p>
+<h1 id="policy"><a href="#policy" class="headerlink" title="policy"></a>policy</h1><p>&emsp;&emsp;policy 是 Agent 中的一部分。不懂看 <a href="https://yan624.github.io/·论文/55. PyDial：A Multi-domain Statistical Dialogue System Toolkit.html">PyDial：A Multi-domain Statistical Dialogue System Toolkit 论文笔记</a> 中的 <strong>2.1 总体系统结构</strong>。<br>&emsp;&emsp;policy 包中包含许多 policy 实现，它们都是历年论文的实现。我估计论文 <strong>《A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management》</strong> 使用这些 policy 实现从而提供了 6 个基准测试环境。</p>
 <h1 id="semi"><a href="#semi" class="headerlink" title="semi"></a>semi</h1><p>&emsp;&emsp;semi 全名 Semantic input parser。所有的领域都有一个基于规则的 semantic decoder，但是 CamRestaurants 领域有一个基于统计的 decoder，在该包下可以发现一个 <code>SVMSemi.py</code> 文件，所以实际上是基于 SVM 的。</p>
 <h1 id="semo"><a href="#semo" class="headerlink" title="semo"></a>semo</h1><p>&emsp;&emsp;semo 全名 Semantic Output。为大多数领域提供了基于模版的语言生成，但是为 CamRestaurants 提供了一个基于 LSTM 的生成器。</p>
 <h1 id="topictracking"><a href="#topictracking" class="headerlink" title="topictracking"></a>topictracking</h1><p>&emsp;&emsp;用于在多领域下追踪主题。</p>
@@ -628,7 +628,7 @@ if(pathname == '/flower.html'){
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/~论文/54. A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management.html" rel="next" title="论文笔记：A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management">
+              <a href="/·论文/54. A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management.html" rel="next" title="论文笔记：A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management">
                 <i class="fa fa-chevron-left"></i> 论文笔记：A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management
               </a>
             

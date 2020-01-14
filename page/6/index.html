@@ -673,7 +673,7 @@ if(pathname == '/flower.html'){
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/~zcy/深度学习算法（三）：RNN 各种机制.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·zcy/深度学习算法（三）：RNN 各种机制.html">
 
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -699,7 +699,7 @@ if(pathname == '/flower.html'){
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/~zcy/深度学习算法（三）：RNN 各种机制.html" class="post-title-link" itemprop="url">深度学习算法（三）：RNN 各种机制</a>
+                <a href="/·zcy/深度学习算法（三）：RNN 各种机制.html" class="post-title-link" itemprop="url">深度学习算法（三）：RNN 各种机制</a>
               
             
           </h1>
@@ -741,7 +741,7 @@ if(pathname == '/flower.html'){
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2020-01-14 17:09:05" itemprop="dateModified" datetime="2020-01-14T17:09:05+08:00">2020-01-14</time>
+                <time title="修改时间：2020-01-14 17:38:40" itemprop="dateModified" datetime="2020-01-14T17:38:40+08:00">2020-01-14</time>
               
             
           </span>
@@ -802,7 +802,7 @@ if(pathname == '/flower.html'){
 
       
         
-          <h1 id="GRU"><a href="#GRU" class="headerlink" title="GRU"></a>GRU</h1><h1 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h1><p>&emsp;&emsp;该<a href="https://yan624.github.io/~学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">博客</a>中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。<br>&emsp;&emsp;下图是吴恩达深度学习第五周作业中的图片，是一个 LSTM 单元。<strong>与李宏毅老师做的图有略微不同，并且在下图中将 input gate 称为了 update gate，并且在李宏毅老师所提供的图片中，g(z) 是由 sigmoid 函数计算出来的，而这里是由 tanh 计算出来的，即下图 update gate 旁边的函数</strong>。另外在李宏毅老师提供的图片中，为了简便，并没有使用上个时间步的激活值。</p>
+          <h1 id="GRU"><a href="#GRU" class="headerlink" title="GRU"></a>GRU</h1><h1 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h1><p>&emsp;&emsp;该<a href="https://yan624.github.io/·学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">博客</a>中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。<br>&emsp;&emsp;下图是吴恩达深度学习第五周作业中的图片，是一个 LSTM 单元。<strong>与李宏毅老师做的图有略微不同，并且在下图中将 input gate 称为了 update gate，并且在李宏毅老师所提供的图片中，g(z) 是由 sigmoid 函数计算出来的，而这里是由 tanh 计算出来的，即下图 update gate 旁边的函数</strong>。另外在李宏毅老师提供的图片中，为了简便，并没有使用上个时间步的激活值。</p>
 <ol>
 <li>首先是<strong>输入的问题</strong>。一般来说一个 LSTM 的输入是前一<strong>个</strong> LSTM 的输出值 <script type="math/tex">a</script> 以及输入值 <script type="math/tex">x</script>（对于第 2 层的 LSTM 的 输入值就是前一<strong>层</strong>的输出值）。但是众所周知，<strong>LSTM 每个门的输入肯定只有一个向量，<script type="math/tex">a</script> 和 <script type="math/tex">x</script> 是两个向量，那么如何处理呢？</strong> <strong>1)</strong>在下图中使用了 <script type="math/tex">[a^{<t-1>},x^{<t>}]</script> 进行向量拼接。<strong>2)</strong>在我看的代码中直接使用了加法进行相加，代码<a href="https://github.com/Alex-Fabbri/lang2logic-PyTorch/blob/master/seq2seq/atis/lstm/main.py" target="_blank" rel="noopener">在这</a>，但是代码量太大了，随便看看就行了。二者的差别无非是向量的维度。</li>
 <li>之前说过 update gate 就是 input gate，它的输出 <script type="math/tex">\Gamma^{<t>}_u</script> 实际上也是一个向量，而 <script type="math/tex">\tilde{c^{<t>}}</script> 就是输入向量。<script type="math/tex">\Gamma^{<t>}_u</script> 的意思就是限制 <script type="math/tex">\tilde{c^{<t>}}</script> 的信息进入 memory，试想 <script type="math/tex">\Gamma^{<t>}_u</script> 的输出值范围为 (0, 1)，这不就是在说 <script type="math/tex">\Gamma^{<t>}_u</script> 将 <script type="math/tex">\tilde{c^{<t>}}</script> 的每个元素都按其比例进行调整？就类似于将 <script type="math/tex">\tilde{c^{<t>}}</script> 中的信息丢失一部分。如果 <script type="math/tex">\tilde{c^{<t>}}</script> 的输出全是 1，就代表 <script type="math/tex">\tilde{c^{<t>}}</script> 中的信息我全都要。如果 <script type="math/tex">\tilde{c^{<t>}}</script> 的输出全是 0，就代表 <script type="math/tex">\tilde{c^{<t>}}</script> 中的信息我全都不要。</li>
@@ -810,7 +810,7 @@ if(pathname == '/flower.html'){
           <!--noindex-->
           
             <div class="post-button text-center">
-              <a class="btn" href="/~zcy/深度学习算法（三）：RNN 各种机制.html#more" rel="contents">
+              <a class="btn" href="/·zcy/深度学习算法（三）：RNN 各种机制.html#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -870,7 +870,7 @@ if(pathname == '/flower.html'){
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/~zcy/深度学习算法（二）：simple RNN 推导与理解.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·zcy/深度学习算法（二）：simple RNN 推导与理解.html">
 
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -896,7 +896,7 @@ if(pathname == '/flower.html'){
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/~zcy/深度学习算法（二）：simple RNN 推导与理解.html" class="post-title-link" itemprop="url">深度学习算法（二）：simple RNN 推导与理解</a>
+                <a href="/·zcy/深度学习算法（二）：simple RNN 推导与理解.html" class="post-title-link" itemprop="url">深度学习算法（二）：simple RNN 推导与理解</a>
               
             
           </h1>
@@ -1005,7 +1005,7 @@ if(pathname == '/flower.html'){
           <!--noindex-->
           
             <div class="post-button text-center">
-              <a class="btn" href="/~zcy/深度学习算法（二）：simple RNN 推导与理解.html#more" rel="contents">
+              <a class="btn" href="/·zcy/深度学习算法（二）：simple RNN 推导与理解.html#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1065,7 +1065,7 @@ if(pathname == '/flower.html'){
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/~学习笔记/CS224n学习笔记.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·学习笔记/CS224n学习笔记.html">
 
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1089,7 +1089,7 @@ if(pathname == '/flower.html'){
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/~学习笔记/CS224n学习笔记.html" class="post-title-link" itemprop="url">CS224n学习笔记</a>
+                <a href="/·学习笔记/CS224n学习笔记.html" class="post-title-link" itemprop="url">CS224n学习笔记</a>
               
             
           </h1>
@@ -1205,7 +1205,7 @@ J = 1 - p(w_{-t}|w_t), \quad  \text{-t 代表 t 周围的单词}</script><p>&ems
           <!--noindex-->
           
             <div class="post-button text-center">
-              <a class="btn" href="/~学习笔记/CS224n学习笔记.html#more" rel="contents">
+              <a class="btn" href="/·学习笔记/CS224n学习笔记.html#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1265,7 +1265,7 @@ J = 1 - p(w_{-t}|w_t), \quad  \text{-t 代表 t 周围的单词}</script><p>&ems
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/~zcy/深度学习算法（一）：simple NN（前馈神经网络的正反向推导）.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·zcy/深度学习算法（一）：simple NN（前馈神经网络的正反向推导）.html">
 
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1289,7 +1289,7 @@ J = 1 - p(w_{-t}|w_t), \quad  \text{-t 代表 t 周围的单词}</script><p>&ems
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/~zcy/深度学习算法（一）：simple NN（前馈神经网络的正反向推导）.html" class="post-title-link" itemprop="url">深度学习算法（一）：simple NN（前馈神经网络的正反向推导）</a>
+                <a href="/·zcy/深度学习算法（一）：simple NN（前馈神经网络的正反向推导）.html" class="post-title-link" itemprop="url">深度学习算法（一）：simple NN（前馈神经网络的正反向推导）</a>
               
             
           </h1>
@@ -1331,7 +1331,7 @@ J = 1 - p(w_{-t}|w_t), \quad  \text{-t 代表 t 周围的单词}</script><p>&ems
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2020-01-14 17:09:05" itemprop="dateModified" datetime="2020-01-14T17:09:05+08:00">2020-01-14</time>
+                <time title="修改时间：2020-01-14 17:38:40" itemprop="dateModified" datetime="2020-01-14T17:38:40+08:00">2020-01-14</time>
               
             
           </span>
@@ -1393,13 +1393,13 @@ J = 1 - p(w_{-t}|w_t), \quad  \text{-t 代表 t 周围的单词}</script><p>&ems
       
         
           <div class="note info">
-            <p>本文的公式不存在次方的说法，所以看见上标，不要想成是次方。<br>对于权重的表示问题，请看<a href="https://yan624.github.io/~学习笔记/《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题.html">博客</a>，但是由于是以前的学习笔记，不保证完全正确。<br>如果想了解为什么梯度下降要对w和b求导，可以看<a href="https://yan624.github.io/~学习笔记/梯度下降算法的推导.html">这篇</a>。<br><strong>建议边看边写，否则思维跟不上。</strong></p>
+            <p>本文的公式不存在次方的说法，所以看见上标，不要想成是次方。<br>对于权重的表示问题，请看<a href="https://yan624.github.io/·学习笔记/《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题.html">博客</a>，但是由于是以前的学习笔记，不保证完全正确。<br>如果想了解为什么梯度下降要对w和b求导，可以看<a href="https://yan624.github.io/·学习笔记/梯度下降算法的推导.html">这篇</a>。<br><strong>建议边看边写，否则思维跟不上。</strong></p>
           </div>
 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>参考<a href="https://www.cnblogs.com/charlotte77/p/5629865.html" target="_blank" rel="noopener">文章</a><br>以如下神经网络架构为例。参考<a href="https://www.cnblogs.com/charlotte77/p/5629865.html" target="_blank" rel="noopener">文章</a>中使用了一个2 2 2的神经网络架构，但是现实中神经网络架构不会这么整整齐齐。所以还是使用了略复杂的架构，此外原文中未对bias（偏差）更新。另外原文也没有实现向量化后的计算。虽然在后面的代码写了，但是由于代码太长了，有一种代码我给出来了，你们自己去看的感觉。说实话没多少注释，都没看的欲望(╬￣皿￣)。然后她所使用的符号让我不太习惯，因为看吴恩达以及李宏毅老师使用的符号都是<script type="math/tex">w^l_{ji}\ a^l_i</script>等等，所以自己重新推导一遍，并且使用了数学公式，而不是截图，更好看一点。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版"><br>解释一下最下面的神经元，这个神经元初始化为1，也就是意味着1 * b = b。输入值为1，一个偏差乘1还是偏差本身。<br>
           <!--noindex-->
           
             <div class="post-button text-center">
-              <a class="btn" href="/~zcy/深度学习算法（一）：simple NN（前馈神经网络的正反向推导）.html#more" rel="contents">
+              <a class="btn" href="/·zcy/深度学习算法（一）：simple NN（前馈神经网络的正反向推导）.html#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1649,7 +1649,7 @@ J = 1 - p(w_{-t}|w_t), \quad  \text{-t 代表 t 周围的单词}</script><p>&ems
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/~学习笔记/梯度下降算法的推导.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·学习笔记/梯度下降算法的推导.html">
 
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1673,7 +1673,7 @@ J = 1 - p(w_{-t}|w_t), \quad  \text{-t 代表 t 周围的单词}</script><p>&ems
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/~学习笔记/梯度下降算法的推导.html" class="post-title-link" itemprop="url">梯度下降算法的推导</a>
+                <a href="/·学习笔记/梯度下降算法的推导.html" class="post-title-link" itemprop="url">梯度下降算法的推导</a>
               
             
           </h1>
@@ -1782,7 +1782,7 @@ J = 1 - p(w_{-t}|w_t), \quad  \text{-t 代表 t 周围的单词}</script><p>&ems
           <!--noindex-->
           
             <div class="post-button text-center">
-              <a class="btn" href="/~学习笔记/梯度下降算法的推导.html#more" rel="contents">
+              <a class="btn" href="/·学习笔记/梯度下降算法的推导.html#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1842,7 +1842,7 @@ J = 1 - p(w_{-t}|w_t), \quad  \text{-t 代表 t 周围的单词}</script><p>&ems
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/~学习笔记/深度学习中的一些疑问总结.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·学习笔记/深度学习中的一些疑问总结.html">
 
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1866,7 +1866,7 @@ J = 1 - p(w_{-t}|w_t), \quad  \text{-t 代表 t 周围的单词}</script><p>&ems
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/~学习笔记/深度学习中的一些疑问总结.html" class="post-title-link" itemprop="url">深度学习中的一些疑问总结</a>
+                <a href="/·学习笔记/深度学习中的一些疑问总结.html" class="post-title-link" itemprop="url">深度学习中的一些疑问总结</a>
               
             
           </h1>
@@ -1986,7 +1986,7 @@ J = 1 - p(w_{-t}|w_t), \quad  \text{-t 代表 t 周围的单词}</script><p>&ems
           <!--noindex-->
           
             <div class="post-button text-center">
-              <a class="btn" href="/~学习笔记/深度学习中的一些疑问总结.html#more" rel="contents">
+              <a class="btn" href="/·学习笔记/深度学习中的一些疑问总结.html#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -2046,7 +2046,7 @@ J = 1 - p(w_{-t}|w_t), \quad  \text{-t 代表 t 周围的单词}</script><p>&ems
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/~学习笔记/练习Keras RNN的代码.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·学习笔记/练习Keras RNN的代码.html">
 
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -2070,7 +2070,7 @@ J = 1 - p(w_{-t}|w_t), \quad  \text{-t 代表 t 周围的单词}</script><p>&ems
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/~学习笔记/练习Keras RNN的代码.html" class="post-title-link" itemprop="url">练习Keras RNN的代码</a>
+                <a href="/·学习笔记/练习Keras RNN的代码.html" class="post-title-link" itemprop="url">练习Keras RNN的代码</a>
               
             
           </h1>
@@ -2179,7 +2179,7 @@ J = 1 - p(w_{-t}|w_t), \quad  \text{-t 代表 t 周围的单词}</script><p>&ems
           <!--noindex-->
           
             <div class="post-button text-center">
-              <a class="btn" href="/~学习笔记/练习Keras RNN的代码.html#more" rel="contents">
+              <a class="btn" href="/·学习笔记/练习Keras RNN的代码.html#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
