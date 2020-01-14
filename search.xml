@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>tips</title>
-    <url>/tips.html</url>
-    <content><![CDATA[<blockquote>
-<p><strong>提示：先按住ctrl再点击超链接可以在新窗口打开</strong></p>
-</blockquote>
-<a id="more"></a>]]></content>
-  </entry>
-  <entry>
     <title>一些快捷键</title>
     <url>/assorted/%E4%B8%80%E4%BA%9B%E5%BF%AB%E6%8D%B7%E9%94%AE.html</url>
     <content><![CDATA[<p>最近老是用到win10的快捷键，但是用过之后过几天就忘了，所以记录下。<br>还有有谁知道怎么用快捷键打开高级系统设置，设置环境变量老是要打开这个，烦得很。</p>
@@ -29,6 +21,189 @@
       </categories>
       <tags>
         <tag>快捷键</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>分析PyDial toolkit各个包的功能</title>
+    <url>/project/%E5%88%86%E6%9E%90PyDial%20toolkit%E5%90%84%E4%B8%AA%E5%8C%85%E7%9A%84%E5%8A%9F%E8%83%BD.html</url>
+    <content><![CDATA[<div class="note warning">
+            <p>&emsp;&emsp;此篇基于 <a href="https://yan624.github.io/论文/55. PyDial：A Multi-domain Statistical Dialogue System Toolkit.html">PyDial：A Multi-domain Statistical Dialogue System Toolkit 论文笔记</a> 和 <a href="https://yan624.github.io/论文/54. A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management.html">A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management 论文笔记</a></p>
+          </div>
+<h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><p>&emsp;&emsp;按照如下顺序分析，此外 PyDial 的官方文档在<a href="http://www.camdial.org/pydial/Docs/" target="_blank" rel="noopener">此处</a>。<br><figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">PyDial</span><br><span class="line">├─belieftracking</span><br><span class="line">├─cedm</span><br><span class="line">├─config</span><br><span class="line">├─curiosity</span><br><span class="line">├─Docs</span><br><span class="line">├─evaluation</span><br><span class="line">├─ontology</span><br><span class="line">├─policy</span><br><span class="line">├─resources</span><br><span class="line">├─scripts</span><br><span class="line">├─semanticbelieftracking</span><br><span class="line">├─semi</span><br><span class="line">├─semo</span><br><span class="line">├─tasks</span><br><span class="line">├─tests</span><br><span class="line">├─topictracking</span><br><span class="line">├─Tutorials</span><br><span class="line">├─usersimulator</span><br><span class="line">├─utils</span><br><span class="line">├─__init__.py</span><br><span class="line">├─Agent.py</span><br><span class="line">├─conf.py</span><br><span class="line">├─DialogueServer.py</span><br><span class="line">├─pydial.py</span><br><span class="line">├─Simulate.py</span><br><span class="line">└─Texthub.py</span><br></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<h1 id="cedm"><a href="#cedm" class="headerlink" title="cedm"></a>cedm</h1><p>&emsp;&emsp;cedm 的全称是 The Conversational Entity Dialogue Model，是一个新颖的对话模型，旨在<strong>解决传统</strong>的单个/多个领域对话<strong>模型在</strong>对复杂对话结构（如关系，relations）<strong>建模能力上的限制</strong>。详见 <a href="https://arxiv.xilesou.top/abs/1901.01466" target="_blank" rel="noopener">Ultes et al., 2019.1</a>。<br>&emsp;&emsp;请注意，已被设计出来的 CEDM 原型实现，在某种程度上，是在尽可能地利用 PyDial 的结构和实现。因此，在实现上有一些限制，将在未来的版本中解决。<br>&emsp;&emsp;CEDM 默认是关闭的，使用方法详见文档。</p>
+<h1 id="config"><a href="#config" class="headerlink" title="config"></a>config</h1><div class="note warning">
+            <p>&emsp;&emsp;我并没有介绍全，其他的配置文件待补充。</p>
+          </div>
+<p>&emsp;&emsp;一堆配置文件。PyDial 的文档并没有明确地在某个文档中指出 config 文件夹的用法，只介绍了某一个模块的配置文件该如何配置。但是这样写得太杂了，不易理解，接下来写下自己的理解。<br>&emsp;&emsp;Tut 代表 Tutorials，bcm 代表 Bayesian committee machine，gp 代表 Gaussian Process，hdc 代表 Handcrafted。在官方的教程中经常会看到类似 Tut-gp-CamRestaurants.cfg 的配置文件，这些其实是用于教程的配置文件。<br>&emsp;&emsp;PyDial 的基准环境在 config/pydial_benchmarks 下，由 <a href="https://arxiv.xilesou.top/pdf/1711.11023.pdf" target="_blank" rel="noopener">此篇论文</a> 引进。其中一共有 6 个环境，每个环境下又有三个领域。环境：不同的环境拥有不同的训练参数，领域：不同的领域拥有不同场景，如剑桥餐厅、笔记本电脑和洛杉矶餐厅。</p>
+<h1 id="policy"><a href="#policy" class="headerlink" title="policy"></a>policy</h1><p>&emsp;&emsp;policy 是 Agent 中的一部分。不懂看 <a href="https://yan624.github.io/论文/55. PyDial：A Multi-domain Statistical Dialogue System Toolkit.html">PyDial：A Multi-domain Statistical Dialogue System Toolkit 论文笔记</a> 中的 <strong>2.1 总体系统结构</strong>。<br>&emsp;&emsp;policy 包中包含许多 policy 实现，它们都是历年论文的实现。我估计论文 <strong>《A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management》</strong> 使用这些 policy 实现从而提供了 6 个基准测试环境。</p>
+<h1 id="semi"><a href="#semi" class="headerlink" title="semi"></a>semi</h1><p>&emsp;&emsp;semi 全名 Semantic input parser。所有的领域都有一个基于规则的 semantic decoder，但是 CamRestaurants 领域有一个基于统计的 decoder，在该包下可以发现一个 <code>SVMSemi.py</code> 文件，所以实际上是基于 SVM 的。</p>
+<h1 id="semo"><a href="#semo" class="headerlink" title="semo"></a>semo</h1><p>&emsp;&emsp;semo 全名 Semantic Output。为大多数领域提供了基于模版的语言生成，但是为 CamRestaurants 提供了一个基于 LSTM 的生成器。</p>
+<h1 id="topictracking"><a href="#topictracking" class="headerlink" title="topictracking"></a>topictracking</h1><p>&emsp;&emsp;用于在多领域下追踪主题。</p>
+<h1 id="usersimulator"><a href="#usersimulator" class="headerlink" title="usersimulator"></a>usersimulator</h1><p>&emsp;&emsp;对话模拟。</p>
+]]></content>
+      <categories>
+        <category>project</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>论文笔记：PyDial: A Multi-domain Statistical Dialogue System Toolkit</title>
+    <url>/~%E8%AE%BA%E6%96%87/55.%20PyDial%EF%BC%9AA%20Multi-domain%20Statistical%20Dialogue%20System%20Toolkit.html</url>
+    <content><![CDATA[<div class="note info">
+            <p>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/P17-4013/" target="_blank" rel="noopener">论文地址</a>，论文作者 S Ultes 等，发表于 2017 年。<br>&emsp;&emsp;此文中出现了许多专业名词，可在参考 <a href="https://yan624.github.io/论文/54. A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management.html">此处</a> 加以理解。</p>
+          </div>
+<h1 id="摘要翻译"><a href="#摘要翻译" class="headerlink" title="摘要翻译"></a>摘要翻译</h1><p>&emsp;&emsp;统计口语对话系统（<em>Statistical Spoken Dialogue Systems, Statistical SDS, 统计 SDS</em>）已经存在多年了。然而，访问这些系统一直很困难，因为仍然没有公开的端到端系统实现。为了缓解这个问题，我们提出了 PyDial，一个开源的端到端统计语音对话系统工具包，它为<strong>所有对话系统模块</strong>提供<strong>统计方法</strong>的实现。此外，它还被扩展为提供多领域会话功能。它提供了各自对话系统模块的简单配置、易扩展性和域无关（<em>domain-independent</em>）的实现。该工具包可在 Apache2.0 许可下下载。</p>
+<h1 id="1-引言"><a href="#1-引言" class="headerlink" title="1 引言"></a>1 引言</h1><p>&emsp;&emsp;针对机器去设计语音接口（凭此人机交互）是多年来的研究热点。这些语音对话系统（SDSs）通常<strong>基于模块化的架构</strong>，该结构包括<strong>语音识别</strong>（<em>speech recognition</em>）和<strong>语义解码</strong>（<em>semantic decoding</em>）的<strong>输入处理模块</strong>（<em>input processing modules</em>）、<strong>信念跟踪</strong>（<em>belief tracking</em>）和<strong>策略</strong>（<em>policy</em>）的<strong>对话管理模块</strong>（<em>dialogue management modules</em>）、<strong>语言生成</strong>（<em>language generation</em>）和<strong>语音合成</strong>（<em>speech synthesis</em>）的<strong>输出处理模块</strong>（<em>output processing modules</em>）（见图 1）。<br><div class="note success">
+            <p>&emsp;&emsp;以上介绍了 SDS 的架构。下一段介绍了一些 SDS 中不同组件的统计方法示例。</p>
+          </div></p>
+<p>&emsp;&emsp;统计 SDS 是一个语音接口，其中所有 SDS 模块都基于统计模型（从数据中学习）（与人工规则相比）。对话系统中<strong>不同组件的统计方法</strong>例子可以在以下中找到：</p>
+<ul>
+<li>……（若干论文），详见原论文 Introduction 第二段。<a id="more"></a>
+</li>
+</ul>
+<p>&emsp;&emsp;尽管对统计 SDS 的研究非常丰富，但是仍然没有通用的平台和开放的工具包。其他工具包实现通常集中在单个模块上（例如：<em>略，详见论文</em>）。提供专门针对统计对话系统（<em>statistical dialogue systems</em>）的工具包将使新进入该领域的人员能够更容易地参与进来，结果更容易比较，研究人员能够专注于他们的特定研究问题，而不是重新实现算法（例如，评估（<em>v.</em>）交互功能中的理解或生成组件的性能）。<br>&emsp;&emsp;因此，为了促进研究，以及使人们更容易参与统计口语对话系统的研究，我们提出了一个多领域统计口语对话系统工具包 <strong>PyDial</strong>。PyDial 是用 Python 实现的，剑桥对话系统团队（<em>Cambridge Dialogue Systems Group</em>）正在积极使用它。<br><div class="note default">
+            <p>&emsp;&emsp;那么什么是 PyDial 呢？</p>
+          </div></p>
+<p>&emsp;&emsp;PyDial 支持多领域应用程序，在这些应用程序中，对话可能涉及多个不同的主题。这引入了许多新的研究课题，包括广义信念跟踪（<em>generalised belief tracking</em>）（论文略），<em>rapid policy adaptation and parallel learning</em> 和自然语言生成（<em>natural language generation</em>）。<br>&emsp;&emsp;论文的余下部分安排如下：</p>
+<ol>
+<li>第 2 节介绍了 PyDial 的总体结构，并将 SDS 体系结构扩展到多个领域和 PyDial 的主要应用规范上；</li>
+<li>第 3 节包含各个对话系统模块的实现细节；</li>
+<li>第 4 节列出了可用的领域，其中有两个领域用于第5节中的示例交互；</li>
+<li>第 6 节总结了该工具包的主要贡献。</li>
+</ol>
+<h1 id="2-PyDial-架构"><a href="#2-PyDial-架构" class="headerlink" title="2 PyDial 架构"></a>2 PyDial 架构</h1><p>&emsp;&emsp;本节介绍 PyDial 的结构及其与环境的接口方式。随后，描述了在单个领域上功能的扩展，以允许在多个领域上进行对话。最后，我们讨论了 PyDial 设计的三个关键原则。</p>
+<h2 id="2-1-总体系统结构"><a href="#2-1-总体系统结构" class="headerlink" title="2.1 总体系统结构"></a>2.1 总体系统结构</h2><p>&emsp;&emsp;PyDial 的总体架构如图 2 所示。其中主要组件被称为 <strong>Agent</strong>，它位于系统的核心。它封装了所有对话系统模块，以实现基于文本的交互，即输入和输出（相对于口语）。对话系统模块依赖于由一个<strong>本体</strong>（<strong>Ontology</strong>）定义的领域规范。为了与环境交互（<strong>博主注</strong>：这里的“与环境交互”应该指的是机器与外部环境交互，如机器与餐厅环境交互、与旅游环境交互、与服装商场进行交互等），PyDial 提供了三个接口：<strong>Dialogue Server</strong>【允许语音型交互】、<strong>Texthub</strong>【允许输入型交互】和 <strong>User Simulation system</strong>。交互的性能由<strong>评估</strong>（<strong>Evaluation</strong>）组件监视。</p>
+<ul>
+<li>Agent：负责对话交互，因此内部的架构类似于图 1 中的内容。……。<strong>Agent</strong> 还维护 dialogue sessions，即确保每个输入都<u>发送到</u>（<em>is routed to</em>）正确的对话。因此，<strong>可以通过实例化多个 agents 来支持多个对话</strong>。<ol>
+<li>semantic parser：将文本输入转化为一个语义表征</li>
+<li>belief tracker：负责维护一个被称为 <strong>belief state</strong> 的对话状态表征（<em>dialogue state representation</em>）</li>
+<li>policy：将 <strong>belief state</strong> 映射到适合的 <strong>system dialogue act</strong></li>
+<li>semantic output：将 <strong>system dialogue act</strong> 转化为文本表示</li>
+<li>topic tracker：对于多域功能，需要 <strong>topic tracker</strong>，其功能将在第 2.2 节中解释</li>
+</ol>
+</li>
+<li>User Simulation：支持在语义层面进行对话模拟，即不使用任何语义解析器或语言生成。这是一种广泛应用于训练和评估基于强化学习算法的技术，因为它避免了昂贵的数据收集练习（<em>data collection exercises</em>）和用户试验（<em>user trials</em>）。它当然只提供了一个近似的真实用户行为，所以通过模拟获得的结果应该谨慎看待！</li>
+<li>与环境交互：为了使 Agent 能够与其环境进行通信，PyDial 提供了两种模式：语音和文本<ul>
+<li>Texthub：只需将 Agent 连接到终端</li>
+<li>Dialogue Server：要启用基于语音的对话，<strong>Dialogue Server</strong> 允许连接到外部语音客户端。此客户端负责使用 ASR 将输入语音信号映射到文本，并使用语音合成将输出文本映射到语音（<em>text to speech</em>, <strong>TTS</strong>）。语音客户端通过 HTTP 交换 JSON 消息连接到对话服务器。请注意，语音客户端不是 PyDial 的一部分。基于云的 ASR 和 TTS 服务可以从 <a href="https://cloud.google.com/speech" target="_blank" rel="noopener">Google</a>、<a href="https://www.microsoft.com/cognitive-services/en-us/speech-api" target="_blank" rel="noopener">Microsoft</a>或 <a href="http://www.ibm.com/watson/developercloud/speech-to-text.html" target="_blank" rel="noopener">IBM</a>等提供商处获得。PyDial 目前连接到 DialPort（Zhao等人，2016），其允许基于语音的交互。</li>
+</ul>
+</li>
+<li>Ontology：除了 <strong>Agent</strong> 和接口组件之外，还有 <strong>Ontology</strong>，Ontology 封装了对话域规范以及对后端数据库（例如，一组餐厅及它们的属性）的访问。它被建模为一个全局对象，大多数对话系统模块和用户模拟器使用它来获取有关用户 <em>actions,  slots, slot values, and system actions</em> 的相关信息。</li>
+<li>Evaluation：用于计算对话的评估度量，例如 <strong>Task Success</strong>。对于基于强化学习的对话模块，评估组件还负责提供 <em>reward</em></li>
+</ul>
+<h2 id="2-2-多领域对话系统架构"><a href="#2-2-多领域对话系统架构" class="headerlink" title="2.2 多领域对话系统架构"></a>2.2 多领域对话系统架构</h2><p>&emsp;&emsp;Agent -&gt; <strong>topic tracker</strong></p>
+<h2 id="2-3-主要原则"><a href="#2-3-主要原则" class="headerlink" title="2.3 主要原则"></a>2.3 主要原则</h2><p>&emsp;&emsp;为了使 PyDial 能够轻松地应用于新问题，PyDial 体系结构的设计支持三个关键原则：</p>
+<ul>
+<li>Domain Independence</li>
+<li>Easy Configurability</li>
+<li>Extensibility</li>
+</ul>
+<h1 id="3-实现"><a href="#3-实现" class="headerlink" title="3 实现"></a>3 实现</h1><p>&emsp;&emsp;PyDial 工具包是一个不断开发的研究系统。可从Apache2.0许可下的<a href="http://pydial.org" target="_blank" rel="noopener">网站</a>免费下载。在最初的版本中可以使用以下各种系统模块的实现，不过，到时候会有更多的实现。</p>
+<ul>
+<li>Semantic Decoder</li>
+<li>Belief Tracker</li>
+<li>Policy</li>
+<li>Language Generator</li>
+<li>Topic Tracker</li>
+<li>Evaluation</li>
+<li>User Simulation</li>
+</ul>
+<h1 id="4-一些领域"><a href="#4-一些领域" class="headerlink" title="4 一些领域"></a>4 一些领域</h1><p>&emsp;&emsp;<strong>PyDial 的主要关注的是面向任务的对话，即根据一些约束条件用户必定找到其匹配的实体</strong>。找到实体后，用户可以请求其他信息。为应付这些场景，PyDial 预先加载了总共十个不同复杂度的领域：</p>
+<ul>
+<li>略</li>
+</ul>
+<p>&emsp;&emsp;如前所述，所有 <strong>policy</strong> 实现以及 <strong>belief tracker</strong> 和 <strong>user simulator</strong> 的实现都独立于领域之外。因此，在<strong>所有领域</strong>都可以进行交互的模拟。此外，<strong>semantic decoder</strong> 和 <strong>language generator</strong> 在某种程度上依赖于特定领域的实现。PyDial 包含用于<strong>所有领域</strong>的基于规则的 <strong>semantic decoder</strong> 和一个用于 <strong>CamRestaurants</strong> 的统计解码器（<em>statistical decoder</em>）。此外，PyDial 还为<strong>大多数领域</strong>提供了基于模板的语言生成，并为 <strong>CamRestaurants</strong> 提供了基于 LSTM 的生成器。因此，在 CamRestaurants 领域，实现统计对话完全有可能。</p>
+]]></content>
+      <categories>
+        <category>assorted</category>
+        <category>paper</category>
+      </categories>
+      <tags>
+        <tag>论文笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>论文笔记：A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management</title>
+    <url>/~%E8%AE%BA%E6%96%87/54.%20A%20Benchmarking%20Environment%20for%20Reinforcement%20Learning%20Based%20Task%20Oriented%20Dialogue%20Management.html</url>
+    <content><![CDATA[<div class="note info">
+            <p>&emsp;&emsp;<a href="https://arxiv.xilesou.top/pdf/1711.11023.pdf" target="_blank" rel="noopener">论文地址</a>，论文作者 Casanueva I 等，发表于 2017 年。<br>&emsp;&emsp;此论文基于 PyDial，所以可能需要先看 <a href="https://yan624.github.io/论文/55. PyDial：A Multi-domain Statistical Dialogue System Toolkit.html">这篇</a>博文。</p>
+          </div>
+<h1 id="本文出现的名词"><a href="#本文出现的名词" class="headerlink" title="本文出现的名词"></a>本文出现的名词</h1><ul>
+<li>自动语音识别——Automatic Speech Recognition, ASR</li>
+<li>自然语言理解——Natural Language Understanding, NLU</li>
+<li>基于开放域聊天的系统（open-domain chat-based systems）：涉及一般性话题的非目标驱动对话</li>
+<li>面向任务的对话系统（task-oriented dialogue systems）：将其做成一个小型电子设备附有非常吸引人的界面，旨在通过自然语言帮助用户实现特定目标。</li>
+<li>语音对话系统——Spoken Dialogue Systems, SDS</li>
+<li>对话管理——Dialogue Management, DM：belief state tracking and policy<ol>
+<li>state tracking</li>
+<li>策略模型</li>
+</ol>
+</li>
+<li>自然语言生成——Natural Language Generation, NLG</li>
+<li>语音合成——speech synthesis</li>
+<li>本体（ontology）：本体是系统数据库的结构化表示，定义了 requestable slots, informable slots and database entries（即用户可以与之交互的实体类型及其属性）</li>
+<li>强化学习——Reinforcement Learning, RL</li>
+<li>试错过程（trial-and-error process）</li>
+<li>高斯过程——Gaussian Process, GP</li>
+<li>策略梯度（policy gradients）</li>
+<li>Q-learning</li>
+<li>通用口语对话测试平台（common testbed for spoken dialogue）</li>
+<li>基准测试环境（benchmarking environments）</li>
+<li>对话状态跟踪挑战——Dialogue State Tracking Challenges, DSTC</li>
+<li>马尔科夫决策过程（MDP）</li>
+</ul>
+<h1 id="论文摘要翻译"><a href="#论文摘要翻译" class="headerlink" title="论文摘要翻译"></a>论文摘要翻译</h1><p>&emsp;&emsp;对话助理正迅速成为不可或缺的日常助手。<br><a id="more"></a></p>
+<h1 id="1-引言"><a href="#1-引言" class="headerlink" title="1 引言"></a>1 引言</h1><p>&emsp;&emsp;近年来，随着自动语音识别（<strong>Automatic Speech Recognition</strong>, <strong>ASR</strong>）、自然语言理解（<strong>Natural Language Understanding</strong>, <strong>NLU</strong>）和机器学习技术的发展，对话系统受到了学术界和工业界的广泛关注。两个方向已经被深入研究：基于开放域聊天的系统（<strong>open-domain chat-based systems</strong>）和面向任务的对话系统（<strong>task-oriented dialogue systems</strong>）。前者涉及一般性话题的非目标驱动对话。后者将它做成一个小型电子设备附有非常吸引人的界面，其旨在通过自然语言帮助用户实现特定的目标。<br>&emsp;&emsp;<strong>在<u>语音驱动</u>的场景下</strong>，语音对话系统（ <strong>Spoken Dialogue Systems</strong>, <strong>SDS</strong>）通常基于模块化架构（图1），由输入处理模块（<strong>ASR</strong> 和 <strong>NLU</strong> 模块）、对话管理（<strong>Dialogue Management</strong>, <strong>DM</strong>）模块（belief state tracking and policy）和输出处理模块（自然语言生成（<strong>Natural Language Generation</strong>, <strong>NLG</strong>）和语音合成（<strong>speech synthesis</strong>））组成。<strong>SDS</strong> 的领域由本体（<strong>ontology</strong>）定义，本体是系统数据库的结构化表示，定义了 <strong>requestable slots</strong>, <strong>informable slots</strong> and <strong>database entries</strong>（即用户可以与之交互的实体类型及其属性）。这种架构中的对话流程的一部分在附录 A 中的图 2 进行解释。<br><div class="note primary">
+            <p>&emsp;&emsp;图中并没有画出 DM，所以 DM 是什么？</p>
+          </div></p>
+<p>&emsp;&emsp;<strong>DM</strong> 模块是 <strong>SDS</strong> 的核心部分，控制对话的会话流程。<strong>传统的方法大多是基于手工构建的决策树</strong>（对应于 PyDial 论文中的描述，<em>PyDial 包含用于所有领域的基于规则的 semantic decoder……</em>），这覆盖所有可能的对话结果。然而，这种方法不能扩展到更大的领域，也无法适应因 ASR 或 NLU 的误差而引起的噪声输入。因此，人们提出了<strong>数据驱动的方法来自动学习策略</strong>，这无论是从对<em>话语料库中</em>学习或者直接从<em>与人类用户的交互中</em>学习都可以。<br><div class="note primary">
+            <p>&emsp;&emsp;那么到底是哪一种方法呢？下面介绍一种尚有缺陷的方法。</p>
+          </div></p>
+<p>&emsp;&emsp;<strong>监督学习</strong>可用于学习对话策略，<strong>训练策略模型</strong>以“模拟”训练语料库中观察到的响应。然而，这种方法有几个缺点。</p>
+<ol>
+<li>在口语对话场景中，不能保证训练语料库代表最佳行为。如果不考虑<em>采取某个行动会对未来对话进程造成影响</em>，就可能会导致次优行为。</li>
+<li>此外，<strong>由于对话状态空间较大，训练数据集可能缺乏足够的覆盖范围</strong>。</li>
+</ol>
+<div class="note primary">
+            <p>&emsp;&emsp;那么如何解决这些缺点呢？使用强化学习。</p>
+          </div>
+<p>&emsp;&emsp;为了解决上述问题，该任务经常被归结为规划（控制）问题，使用<strong>强化学习</strong>（<strong>Reinforcement Learning</strong>, <strong>RL</strong>）解决。在这个框架中，系统通过一个由 <em>potentially delayed reward signal</em> 控制的试错过程（<em>trial-and-error process</em>）来学习。因此，<strong>DM</strong> 模块学习计划行动以最大化最终结果。基于高斯过程（<strong>Gaussian Process</strong>, <strong>GP</strong>）的 RL 和 deep RL 等方法的最新进展导致了数据驱动对话建模的重大突破（<em>significant progress</em>），这表明策略梯度（<strong>policy gradients</strong>）和 <strong>Q-learning</strong> 等通用算法可以在具有挑战性的对话场景中取得良好的性能。<br><div class="note primary">
+            <p>&emsp;&emsp;那么在对话领域是否可行呢？下一段说明了原因，<strong>动机与相关工作</strong>一节进行了进一步的解释。</p>
+          </div></p>
+<p>&emsp;&emsp;然而，与其他 RL 领域相比，通用口语对话测试平台（<em>common testbed for spoken dialogue</em>）的缺乏使得比较不同的算法变得困难。最近的 RL 进展很大程度上受到基准测试环境（<strong>benchmarking environments</strong>）的发布的影响，<strong>基准测试环境允许对在类似条件下运行的不同 RL 算法进行公平的比较</strong>。<br><div class="note success">
+            <p>&emsp;&emsp;就是说其他 RL 领域取得进展很大程度上取决于基准测试环境的发布，但是在对话领域，目前并没有这种基准测试环境。<br>&emsp;&emsp;<strong>而本篇论文的实验产物其实就是开发了这样一个环境</strong>。</p>
+          </div></p>
+<p>&emsp;&emsp;本着同样的精神，基于最近发布的 <strong><a href="https://www.aclweb.org/anthology/P17-4013/" target="_blank" rel="noopener">PyDial</a></strong> 多领域 <strong>SDS</strong> 工具包，<strong>本文旨在为开发和评估对话模型提供一套测试平台环境</strong>。为了解释不同场景的巨大变化性，这些环境跨越了 <em>different size domains, different user behaviours and different input channel performance</em>。为了提供一些基线，对一组最具代表性的 DM 强化学习算法进行了评估。基准测试（<strong>benchmark</strong>）和环境实现是在线的，允许开发、实施和评估新的算法和任务。</p>
+<h1 id="2-动机与相关工作"><a href="#2-动机与相关工作" class="headerlink" title="2 动机与相关工作"></a>2 动机与相关工作</h1><p>&emsp;&emsp;在过去的十年中，一些强化学习算法被应用到对话策略优化的任务中。然而，由于缺乏一个通用的基准环境，这些算法的评估结果很难进行比较。此外，它们通常只在少数环境中进行评估，因此很难评估它们推广到不同环境的潜力。<br>&emsp;&emsp;在其他领域，如视频游戏（<em>video game playing</em>）和持续控制（<em>continuous control</em>），公共基准环境的发布对该领域的研究起到了极大的推动作用，实现了诸如人类水平的游戏操作或在围棋游戏中击败世界冠军等成就。<br><div class="note info">
+            <p>&emsp;&emsp;以下指出对话领域<strong>没有通用的试验台的原因</strong>，以及指出<strong>前些年</strong>部分团队/公司<strong>提出的解决方案有些许瑕疵</strong>。</p>
+          </div></p>
+<p>&emsp;&emsp;回溯历史，对话策略优化任务没有一个通用的试验台，这有几个原因。</p>
+<ol>
+<li>……</li>
+</ol>
+<p>&emsp;&emsp;为了解决这些问题，提出了模拟用户和模拟输入处理信道。这些模型近似<strong>真实用户的行为</strong>和<strong>由 ASR 或 NLU 误差引入的输入信道噪声</strong>。然而，<strong>处理模块的开发需要创建一个模拟对话环境，这需要付出巨大的努力</strong>。尽管一些模拟环境是公开可用的，但它们覆盖的对话领域非常小，而且它们之间缺乏一致性，因此无法进行大规模测试。<br><div class="note success">
+            <blockquote><p>处理模块的开发需要创建一个模拟对话环境，这需要付出巨大的努力</p></blockquote><p>&emsp;&emsp;上段话的意思是在做科研时，如果我们致力于研究对话系统的处理模块（如研究语义解析），那么我们还需要一个对话环境以此模拟现实场景（因为只有在现实存在的场景下进行语义解析才有意义）。但是问题是当我们做处理模块时，我们一般都是只专精于该领域，所以我们无法提供一个模拟环境。一般来说我们都会去找一个第三方的模拟环境。但是这样就会造成一个问题。如果有很多团队都在做处理模块的研究，而使用的模拟环境又不是统一的，那么不同团队做出的不同模型就无法进行对比。所以我们需要一个统一的平台。</p>
+          </div></p>
+<p>&emsp;&emsp;对话任务需要一个共同的试验台，这在对话界是一个众所周知的问题，诸如对话状态跟踪挑战（<strong>Dialogue State Tracking Challenges</strong>, <strong>DSTC</strong>）1 至 5 等倡议是最突出的问题。由于有一个明确的评估标准，这些挑战是可能的。最近，BABI 对话任务和 DSTC6（更名为 dialogue Systems Technology Challenge）旨在为基于端到端文本的对话管理创建一个测试平台。然而，这些任务要么集中在端到端的有监督学习，要么集中在基于 RL 的问答任务中，其中奖励信号（<em>reward signal</em>）在时间上仅延迟几步。</p>
+<h1 id="3-强化学习的对话管理"><a href="#3-强化学习的对话管理" class="headerlink" title="3 强化学习的对话管理"></a>3 强化学习的对话管理</h1><p>&emsp;&emsp;讲解 RL 算法，略。</p>
+<h2 id="3-3-Pydial"><a href="#3-3-Pydial" class="headerlink" title="3.3 Pydial"></a>3.3 Pydial</h2><p>&emsp;&emsp;PyDial 是一个开源的统计语音对话系统工具包，它提供了图 1 所示的所有对话系统模块的域无关实现，同样也有模拟用户和模拟错误模型的功能（<em>as well as simulated users and simulated error models</em>）。因此，该工具包有希望在相同条件下，创建一组基准环境来比较不同 RL 算法。<strong>PyDial 的主要关注的是面向任务的对话，即根据一些约束条件用户必定找到其匹配的实体</strong>。例如，系统需要向用户提供满足特定需求的笔记本电脑（商店中有的）的描述。<strong><font color="#f07c82">本工作中，PyDial 被用于定义不同的环境，当然 PyDial 的论文中提供了指定这些环境的配置文件</font></strong>。<br><div class="note warning">
+            <p>&emsp;&emsp;正如本文最前部分的 alert 中所述。关于 PyDial 可以看<a href="https://yan624.github.io/论文/55. PyDial：A Multi-domain Statistical Dialogue System Toolkit.html">这篇</a>博文</p>
+          </div></p>
+<h1 id="4-基准测试任务"><a href="#4-基准测试任务" class="headerlink" title="4 基准测试任务"></a>4 基准测试任务</h1><p>&emsp;&emsp;基于 RL 的 DM 研究通常只在单个或非常小的一组环境中进行评估。这样的测试并没有揭示出算法对不同设置的泛化能力，并且可能容易对特定情况过度拟合。为了测试算法在不同环境中的能力，我们定义了一组任务，它们通过许多维度横跨了广泛的环境，环境的多种维度如下所示：</p>
+<ul>
+<li>Domain：</li>
+<li>Input error：</li>
+<li>User model：</li>
+<li>Masking mechanism：</li>
+</ul>
+<h1 id="5-实验设置"><a href="#5-实验设置" class="headerlink" title="5 实验设置"></a>5 实验设置</h1><h1 id="6-结果与讨论"><a href="#6-结果与讨论" class="headerlink" title="6 结果与讨论"></a>6 结果与讨论</h1><p>&emsp;&emsp;</p>
+]]></content>
+      <categories>
+        <category>assorted</category>
+        <category>paper</category>
+      </categories>
+      <tags>
+        <tag>论文笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -121,11 +296,11 @@
   </entry>
   <entry>
     <title>论文笔记：Neural Machine Translation of Rare Words with Subword Units</title>
-    <url>/%E8%AE%BA%E6%96%87/53.%20Neural%20Machine%20Translation%20of%20Rare%20Words%20with%20Subword%20Units.html</url>
+    <url>/~%E8%AE%BA%E6%96%87/53.%20Neural%20Machine%20Translation%20of%20Rare%20Words%20with%20Subword%20Units.html</url>
     <content><![CDATA[<div class="note info">
             <p>&emsp;&emsp;<a href="https://arxiv.org/abs/1508.07909" target="_blank" rel="noopener">论文地址</a>，论文作者 Rico Sennrich 等，发表于 2015 年。<br>&emsp;&emsp;注：本文解决的是机器翻译问题。</p>
           </div>
-<h1 id="论文简介（博主概括）"><a href="#论文简介（博主概括）" class="headerlink" title="论文简介（博主概括）"></a>论文简介（博主概括）</h1><p>&emsp;&emsp;神经机器翻译（NMT）模型通常使用固定的词表，但是翻译是一个开放词表的问题。以前的工作是 <strong>backing off to a dictionary</strong> 来解决 OOV 词的翻译问题。本文介绍了一种新的方法，即 <strong>BPE</strong>。这是<strong>基于这样一种直觉：不同的<a href="http://www.bing.com/dict/word%20classes" target="_blank" rel="noopener">词类</a>（word classes）可以通过使用比该词更小的单元进行翻译，例如姓名（通过字符复制或音译）、复合词（通过构词翻译）以及同源词和外来词（通过语音和形态转换）。</strong><br>&emsp;&emsp;本文讨论了不同的分词技巧的实用性，包括简单的 <strong>character n-gram</strong> 模型（fasttext 就是用的这个）和基于 <strong>BPE</strong> 压缩算法模型。最终实验证明在 WMT 15 英-&gt;德和英-&gt;法 翻译任务上， subword 模型（character n-gram 和 BPE）比 back-off dictionary 各自提高了 1.1 和 1.3 BELU 分数。<br><div class="note warning">
+<h1 id="论文摘要翻译"><a href="#论文摘要翻译" class="headerlink" title="论文摘要翻译"></a>论文摘要翻译</h1><p>&emsp;&emsp;神经机器翻译（NMT）模型通常使用固定的词表，但是翻译是一个开放词表的问题。以前的工作是 <strong>backing off to a dictionary</strong> 来解决 OOV 词的翻译问题。本文介绍了一种新的方法，即 <strong>BPE</strong>。这是<strong>基于这样一种直觉：不同的<a href="http://www.bing.com/dict/word%20classes" target="_blank" rel="noopener">词类</a>（word classes）可以通过使用比该词更小的单元进行翻译，例如姓名（通过字符复制或音译）、复合词（通过构词翻译）以及同源词和外来词（通过语音和形态转换）。</strong><br>&emsp;&emsp;本文讨论了不同的分词技巧的实用性，包括简单的 <strong>character n-gram</strong> 模型（fasttext 就是用的这个）和基于 <strong>BPE</strong> 压缩算法模型。最终实验证明在 WMT 15 英-&gt;德和英-&gt;法 翻译任务上， subword 模型（character n-gram 和 BPE）比 back-off dictionary 各自提高了 1.1 和 1.3 BELU 分数。<br><div class="note warning">
             <p>&emsp;&emsp;接下来的 <strong>Introduction</strong> 和 <strong>Neural Machine Translation</strong> 章节暂且略过。</p>
           </div></p>
 <a id="more"></a>
@@ -168,7 +343,7 @@
   </entry>
   <entry>
     <title>论文笔记：A Sketch-Based System for Semantic Parsing</title>
-    <url>/%E8%AE%BA%E6%96%87/52.%20A%20Sketch-Based%20System%20for%20Semantic%20Parsing.html</url>
+    <url>/~%E8%AE%BA%E6%96%87/52.%20A%20Sketch-Based%20System%20for%20Semantic%20Parsing.html</url>
     <content><![CDATA[<div class="note info">
             <p>&emsp;&emsp;<a href="https://arxiv.xilesou.top/pdf/1909.00574.pdf" target="_blank" rel="noopener">论文地址</a>，论文作者 Zechang Li 等，发表于 2019 年 9 月。</p>
           </div>
@@ -184,7 +359,7 @@
   </entry>
   <entry>
     <title>论文笔记：A Transformer-based Semantic Parser for NLPCC-2019 Shared Task 2</title>
-    <url>/%E8%AE%BA%E6%96%87/51.%20A%20Transformer-based%20Semantic%20Parser%20for%20NLPCC-2019%20Shared%20Task%202.html</url>
+    <url>/~%E8%AE%BA%E6%96%87/51.%20A%20Transformer-based%20Semantic%20Parser%20for%20NLPCC-2019%20Shared%20Task%202.html</url>
     <content><![CDATA[<div class="note info">
             <p>&emsp;&emsp;<a href="http://tcci.ccf.org.cn/conference/2019/papers/EV15.pdf" target="_blank" rel="noopener">论文地址</a>，论文作者 D Ge 等，发表于 2019 年。</p>
           </div>
@@ -325,7 +500,7 @@
   </entry>
   <entry>
     <title>论文笔记：Enriching Word Vectors with Subword Information</title>
-    <url>/%E8%AE%BA%E6%96%87/50.%20Enriching%20Word%20Vectors%20with%20Subword%20Information.html</url>
+    <url>/~%E8%AE%BA%E6%96%87/50.%20Enriching%20Word%20Vectors%20with%20Subword%20Information.html</url>
     <content><![CDATA[<div class="note info">
             <p>&emsp;&emsp;<a href="https://arxiv.org/abs/1607.04606.pdf" target="_blank" rel="noopener">论文地址</a>，作者 Piotr Bojanowski et al.，发表于 2016 年。</p>
           </div>
@@ -445,7 +620,7 @@
   </entry>
   <entry>
     <title>特征工程：笔记</title>
-    <url>/zcy/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B%EF%BC%9A%E7%AC%94%E8%AE%B0.html</url>
+    <url>/~zcy/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B%EF%BC%9A%E7%AC%94%E8%AE%B0.html</url>
     <content><![CDATA[<h1 id="《特征工程入门与实践》"><a href="#《特征工程入门与实践》" class="headerlink" title="《特征工程入门与实践》"></a>《特征工程入门与实践》</h1><h1 id="3、特征增强：清洗数据"><a href="#3、特征增强：清洗数据" class="headerlink" title="3、特征增强：清洗数据"></a>3、特征增强：清洗数据</h1><h2 id="填充缺失值"><a href="#填充缺失值" class="headerlink" title="填充缺失值"></a>填充缺失值</h2><p>&emsp;&emsp;通常数据集会因为各种原因有所缺失。必须尽可能地了解数据集，以便找到使用<strong>其他符号填充的</strong>确实数据。<strong>公开数据集的文档</strong>里面有可能会提到缺失数据的问题。<br>&emsp;&emsp;如果没有文档，缺失值的常见填充方法有：</p>
 <ul>
 <li>0（数值型）</li>
@@ -500,7 +675,7 @@
   </entry>
   <entry>
     <title>多领域seq2lf</title>
-    <url>/%E6%AF%94%E8%B5%9B%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/%E5%A4%9A%E9%A2%86%E5%9F%9Fseq2lf.html</url>
+    <url>/project/%E5%A4%9A%E9%A2%86%E5%9F%9Fseq2lf.html</url>
     <content><![CDATA[<h1 id="总结写在前"><a href="#总结写在前" class="headerlink" title="总结写在前"></a>总结写在前</h1><h2 id="pytorch踩坑"><a href="#pytorch踩坑" class="headerlink" title="pytorch踩坑"></a>pytorch踩坑</h2><ol>
 <li><code>tensor.view()</code> 相当于numpy中resize（）的功能，但是用法可能不太一样。</li>
 <li>关于 nn.LSTM 的用法：如果不想手动初始化隐藏状态，而是想让 pytorch 帮你初始化，那么就只需要填入输入值即可。举个例子，下面的代码输入向量所对应的自然语句是 [‘how are you’, ‘i’m fine’]。<br>其中输入值 x 的形状为 (seq_len, batch_size, input_size)，比如上面的例子就是 (3, 2, 300)，代表序列长度为 3（因为上面的两句话的最大长度为 3），批量大小为 2，词向量维度为 300。注意一点：<strong>pytorch 会根据你输入的序列长度</strong>（输入的张量必须是一样长的，参差不齐的张量无法输入，当然了，你也无法创建出这样的张量）<strong>自动帮你做时间步上的计算，比如你输入的序列长度为 20，那么它会自动在神经网络的第一层计算 20 次，再返回结果给你。</strong>如果看不懂这里是什么意思，说明你不会 LSTM。可以再看看 LSTM 是怎么计算的。<figure class="highlight verilog"><table><tr><td class="code"><pre><span class="line"><span class="keyword">cell</span> = nn<span class="variable">.LSTM</span>(input_size, hidden_size, num_layers)</span><br><span class="line"><span class="keyword">output</span>, (a, m) = <span class="keyword">cell</span>(x)</span><br></pre></td></tr></table></figure>
@@ -631,7 +806,7 @@ LSTM: memory_{new} = a * input + b * memory \\</script><p>&emsp;&emsp;cell() 代
   </entry>
   <entry>
     <title>论文笔记：Improved Representation Learning for Question Answer Matching</title>
-    <url>/%E8%AE%BA%E6%96%87/49.%20Improved%20Representation%20Learning%20for%20Question%20Answer%20Matching.html</url>
+    <url>/~%E8%AE%BA%E6%96%87/49.%20Improved%20Representation%20Learning%20for%20Question%20Answer%20Matching.html</url>
     <content><![CDATA[<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;自从短文级别（passage-level）的问答匹配需要有效的表征以捕获问题与答案之间复杂的语义关联开始，它就成为一个巨大的挑战。本文我们提出一系列的深度学习模型去解决如何选择短文答案。<br>&emsp;&emsp;将短文答案与符合语义关系的问题相匹配，不同于之前的大多数工作，即只使用一个深度学习结构。我们开发了一个混合模型去处理文本，其中用到了 CNN 和 RNN，结合了两种结构提取语言信息的优点。<br>&emsp;&emsp;此外，还开发了简单而有效的注意力机制。在两个数据集 InsuranceQA and TREC-QA 上显示此模型超出基线。<br><a id="more"></a></p>
 <h1 id="导读"><a href="#导读" class="headerlink" title="导读"></a>导读</h1><p>&emsp;&emsp;短文级别的答案选择是 QA 系统的重要组成部分之一。它的定义如下所示：给定一个问题和一群候选短文，挑选出包含候选答案的短文。<br>&emsp;&emsp;一个回答优于另一个回答取决于多种因素。尤其是不同于其他 NLP 对匹配任务，问题与答案之间语言上的相似度对我们的任务既可能有用也可能没用，这取决于问题。此外，虽然一个好的回答必须与问题相关联，但是它们之间没有共通的词汇单元。<br>&emsp;&emsp;因此，与基于深度学习的方法相比，这些挑战使得手工制作的特征变得不那么理想。此外，它们还要求我们的系统学习如何区分有用的片段和不相关的片段，其中更关注前者。</p>
 <h1 id="approach"><a href="#approach" class="headerlink" title="approach"></a>approach</h1><p>&emsp;&emsp;作者开发一个模型，同时使用到了 CNN 和 RNN，并且还加上 attention 机制。</p>
@@ -657,7 +832,7 @@ LSTM: memory_{new} = a * input + b * memory \\</script><p>&emsp;&emsp;cell() 代
   </entry>
   <entry>
     <title>论文笔记：SQLNet: Generating Structured Queries From Natural Language Without Reinforcement Learning</title>
-    <url>/%E8%AE%BA%E6%96%87/48%E3%80%81SQLNet%EF%BC%9AGenerating%20Structured%20Queries%20From%20Natural%20Language%20Without%20Reinforcement%20Learning.html</url>
+    <url>/~%E8%AE%BA%E6%96%87/48%E3%80%81SQLNet%EF%BC%9AGenerating%20Structured%20Queries%20From%20Natural%20Language%20Without%20Reinforcement%20Learning.html</url>
     <content><![CDATA[<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;主要描述一下该论文 column attention。</p>
 <h1 id="Sequence-to-set"><a href="#Sequence-to-set" class="headerlink" title="Sequence-to-set"></a>Sequence-to-set</h1><p>&emsp;&emsp;直观地说，<strong>where 子句</strong>中出现的列名是<strong>所有列名</strong>的子集。因此，我们可以仅仅预测子集中的列名，而不是生成列名序列（<strong>博主注</strong>：他的意思可能是，不要将 sql 语句中 “select Column A, Column B, Column C…” 的 “Column A, Column B, Column C…” 当做<strong>生成序列</strong>的任务，而是将其当做 slot filling）。我们把这个想法称为 <em>sequence-to-set</em> 的预测。<br>&emsp;&emsp;尤其是我们计算 <script type="math/tex">P_{wherecol}(col|Q)</script>，其中 col 是列名，q 是自然语言问题。为此，将计算 <script type="math/tex">P_{wherecol}(col|Q)</script> 表达为</p>
 <script type="math/tex; mode=display">
@@ -684,7 +859,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
   </entry>
   <entry>
     <title>【读书笔记】：《自然语言处理综论》（第二版）</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%EF%BC%9A%E3%80%8A%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86%E7%BB%BC%E8%AE%BA%E3%80%8B%EF%BC%88%E7%AC%AC%E4%BA%8C%E7%89%88%EF%BC%89.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E3%80%90%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E3%80%91%EF%BC%9A%E3%80%8A%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86%E7%BB%BC%E8%AE%BA%E3%80%8B%EF%BC%88%E7%AC%AC%E4%BA%8C%E7%89%88%EF%BC%89.html</url>
     <content><![CDATA[<h1 id="正则表达式与自动机"><a href="#正则表达式与自动机" class="headerlink" title="正则表达式与自动机"></a>正则表达式与自动机</h1><h2 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h2><p>&emsp;&emsp;正则表达式首先由 Kleene（1956）研制的。</p>
 <h1 id="N元语法"><a href="#N元语法" class="headerlink" title="N元语法"></a>N元语法</h1><p>&emsp;&emsp;猜测哪一个单词最可能跟在下面的句子片段后面。“Please turn your homework…”。其中最可能的单词是“in”，或者是“over”，但不可能是“the”。<br>&emsp;&emsp;我们把这种<strong>猜测单词</strong>的问题采用诸如 N 元语法模型（N-gram model）这样的概率模型来形式化地加以描述。N 元语法模型根据前面出现的 N - 1 个单词猜测下面一个单词。一个 N 元语法是包含 N 个单词的序列：2 元语法一般称为 bigram，如 please turn，turn your，your homework；3 元语法一般称为 trigram，如 please turn your，turn your homework。这种单词序列的概率模型又称为<strong>语言模型</strong>（Language Models，ML）。<br>&emsp;&emsp;</p>
 <a id="more"></a>]]></content>
@@ -695,7 +870,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
   </entry>
   <entry>
     <title>论文笔记：TypeSQL: Knowledge-based Type-Aware Neural Text-to-SQL Generation</title>
-    <url>/%E8%AE%BA%E6%96%87/38%E3%80%81TypeSQL%EF%BC%9AKnowledge-based%20Type-Aware%20Neural%20Text-to-SQL%20Generation.html</url>
+    <url>/~%E8%AE%BA%E6%96%87/38%E3%80%81TypeSQL%EF%BC%9AKnowledge-based%20Type-Aware%20Neural%20Text-to-SQL%20Generation.html</url>
     <content><![CDATA[<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><div class="note info">
             <p>&emsp;&emsp;<a href="https://arxiv.gg363.site/pdf/1804.09769.pdf" target="_blank" rel="noopener">论文地址</a>，发表于 2018 年。</p><ul><li>所用数据集<ul><li>WikiSQL</li></ul></li></ul>
           </div>
@@ -736,7 +911,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
   </entry>
   <entry>
     <title>论文笔记：Neural Semantic Parsing over Multiple Knowledge-bases</title>
-    <url>/%E8%AE%BA%E6%96%87/39%E3%80%81Neural%20semantic%20parsing%20over%20multiple%20knowledge-bases.html</url>
+    <url>/~%E8%AE%BA%E6%96%87/39%E3%80%81Neural%20semantic%20parsing%20over%20multiple%20knowledge-bases.html</url>
     <content><![CDATA[<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><div class="note info">
             <p>&emsp;&emsp;<a href="https://arxiv.gg363.site/pdf/1702.01569.pdf" target="_blank" rel="noopener">论文地址</a>，发表于 2017 年。</p>
           </div>
@@ -761,7 +936,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
   </entry>
   <entry>
     <title>论文笔记：Neural network-based question answering over knowledge graphs on word and character level</title>
-    <url>/%E8%AE%BA%E6%96%87/36%E3%80%81Neural%20network-based%20question%20answering%20over%20knowledge%20graphs%20on%20word%20and%20character%20level.html</url>
+    <url>/~%E8%AE%BA%E6%96%87/36%E3%80%81Neural%20network-based%20question%20answering%20over%20knowledge%20graphs%20on%20word%20and%20character%20level.html</url>
     <content><![CDATA[<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><div class="note info">
             <p>&emsp;&emsp;<a href="https://www.researchgate.net/publication/315769814_Neural_Network-based_Question_Answering_over_Knowledge_Graphs_on_Word_and_Character_Level" target="_blank" rel="noopener">论文地址</a>，发表于 2017 年。</p>
           </div>
@@ -778,7 +953,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
   </entry>
   <entry>
     <title>【NLP算法】（三）条件随机场CRF</title>
-    <url>/zcy/%E3%80%90NLP%E7%AE%97%E6%B3%95%E3%80%91%EF%BC%88%E4%B8%89%EF%BC%89%E6%9D%A1%E4%BB%B6%E9%9A%8F%E6%9C%BA%E5%9C%BACRF.html</url>
+    <url>/~zcy/%E3%80%90NLP%E7%AE%97%E6%B3%95%E3%80%91%EF%BC%88%E4%B8%89%EF%BC%89%E6%9D%A1%E4%BB%B6%E9%9A%8F%E6%9C%BA%E5%9C%BACRF.html</url>
     <content><![CDATA[<p>&emsp;&emsp;<a href="https://zhuanlan.zhihu.com/p/44042528" target="_blank" rel="noopener">一篇不错的 CRF 入门文章</a>，但是后面求所有路径的分数的算法，说得有点模糊，推荐看<a href="https://www.bilibili.com/video/av52626653/?p=4" target="_blank" rel="noopener">HMM与CRF隐形马尔可夫链与条件随机场</a>，虽然这个视频播放量不高，但足以看懂 CRF 最后的那个算法。<br>&emsp;&emsp;<a href="https://zhuanlan.zhihu.com/p/27338210" target="_blank" rel="noopener">Bi-LSTM-CRF for Sequence Labeling</a><br>&emsp;&emsp;<a href="https://blog.csdn.net/cuihuijun1hao/article/details/79405740" target="_blank" rel="noopener">Pytorch Bi-LSTM + CRF 代码详解</a></p>
 <h1 id="马尔科夫链——Markov-Chain"><a href="#马尔科夫链——Markov-Chain" class="headerlink" title="马尔科夫链——Markov Chain"></a>马尔科夫链——Markov Chain</h1><p>&emsp;&emsp;有时也称为显马尔科夫模型（observed Markov model）。<br>&emsp;&emsp;是一个随机过程模型，它表述了一系列可能的事件，在这个系列当中每一个事件的概率仅依赖于前一个事件。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/【NLP算法】（三）条件随机场CRF/马尔科夫链.jpg" alt="马尔科夫链"><br><a id="more"></a></p>
 <h1 id="隐马尔科夫模型——HMM"><a href="#隐马尔科夫模型——HMM" class="headerlink" title="隐马尔科夫模型——HMM"></a>隐马尔科夫模型——HMM</h1><h2 id="概率模型"><a href="#概率模型" class="headerlink" title="概率模型"></a>概率模型</h2><p>&emsp;&emsp;概率模型就是将学习任务归结于计算变量的概率分布的模型。<br>&emsp;&emsp;在生活中，我们经常会根据一些已经观察到的现象来推测和估计未知的东西——这种需求，恰恰是概率模型的推断（Inference）行为所作的事情。<br>&emsp;&emsp;推断的本质是：利用可观测变量来预测未知变量的条件分布。<br>&emsp;&emsp;概率模型可以分为两类：生成模型（generative model）和判别模型（discriminative model）。<br>&emsp;&emsp;我们将可观测变量的集合命名为 O，我们感兴趣的未知变量的集合命名为 Y。<br>&emsp;&emsp;生成模型学习出来的是 O 与 Y 的联合概率分布 P(O,Y)，而判别模型学习的是条件概率分布 P(Y|O)。<br>&emsp;&emsp;例如朴素贝叶斯模型就是生成模型，而逻辑回归就是判别模型。</p>
@@ -790,12 +965,11 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
       </categories>
       <tags>
         <tag>系列</tag>
-        <tag>zcy</tag>
       </tags>
   </entry>
   <entry>
     <title>论文笔记：Seq2sql: Generating structured queries from natural language using reinforcement learning</title>
-    <url>/%E8%AE%BA%E6%96%87/35%E3%80%81Seq2sql%EF%BC%9AGenerating%20structured%20queries%20from%20natural%20language%20using.html</url>
+    <url>/~%E8%AE%BA%E6%96%87/35%E3%80%81Seq2sql%EF%BC%9AGenerating%20structured%20queries%20from%20natural%20language%20using.html</url>
     <content><![CDATA[<div class="note info">
             <p>&emsp;&emsp;<a href="https://arxiv.org/pdf/1709.00103.pdf" target="_blank" rel="noopener">论文地址</a>，发表于 2017 年。<br>&emsp;&emsp;这篇论文发布了 wikisql 数据集，同时提出了 seq2sql 任务。</p>
           </div>
@@ -819,7 +993,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
   </entry>
   <entry>
     <title>论文复现：Language to Logical Form with Neural Attention</title>
-    <url>/%E8%AE%BA%E6%96%87%E5%A4%8D%E7%8E%B0/%E8%AE%BA%E6%96%87%E5%A4%8D%E7%8E%B0%EF%BC%9ALanguage%20to%20Logical%20Form%20with%20Neural%20Attention.html</url>
+    <url>/~%E8%AE%BA%E6%96%87%E5%A4%8D%E7%8E%B0/%E8%AE%BA%E6%96%87%E5%A4%8D%E7%8E%B0%EF%BC%9ALanguage%20to%20Logical%20Form%20with%20Neural%20Attention.html</url>
     <content><![CDATA[<h1 id="论文介绍"><a href="#论文介绍" class="headerlink" title="论文介绍"></a>论文介绍</h1><p>&emsp;&emsp;论文的地址<a href="https://arxiv.org/pdf/1601.01280.pdf" target="_blank" rel="noopener">在此</a>，作者使用了 Lua 语言实现，代码地址<a href="https://github.com/donglixp/lang2logic" target="_blank" rel="noopener">在这</a>，然而我不会 Lua 语言，于是找了找是否有 Python 的实现版本。还真有，Python 版本代码地址<a href="https://github.com/Alex-Fabbri/lang2logic-PyTorch" target="_blank" rel="noopener">在这</a>。<br>&emsp;&emsp;但是 Python 版本的代码<strong>篇幅太长</strong>，且<strong>几乎没有注释</strong>，于是我将其重写了一遍，一些工具类是直接复制别人的，但是核心代码我改写了一下，并添加了一些注释。<br><div class="note info">
             <p>&emsp;&emsp;我将里面的数据获取模块移除了。</p>
           </div><br><a id="more"></a></p>
@@ -851,7 +1025,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
   </entry>
   <entry>
     <title>机器学习的下一步</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E4%B8%8B%E4%B8%80%E6%AD%A5.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E4%B8%8B%E4%B8%80%E6%AD%A5.html</url>
     <content><![CDATA[<ul>
 <li>机器学习能不能知道“我不知道”<br>机器学习的 classifier 可以判断一张图片是不是猫，但是能不能判断出“我不知道这是什么”？这项技术叫做 <strong>Anomaly Detection</strong>。</li>
 <li>机器说出为什么“我知道”<ul>
@@ -895,7 +1069,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
   </entry>
   <entry>
     <title>【机器学习算法】半监督学习</title>
-    <url>/zcy/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E3%80%91%E5%8D%8A%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0.html</url>
+    <url>/~zcy/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E3%80%91%E5%8D%8A%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0.html</url>
     <content><![CDATA[<h1 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h1><p>&emsp;&emsp;半监督学习就是在已有的带标签的数据之后，还有一组不带标签的数据。一般来说，在做无监督学习时，unlabeled data 远大于 labeled data。<br>&emsp;&emsp;半监督学习一般分为两种：</p>
 <ul>
 <li>Transductive learning：unlabeled data 就是你的 testing sdata</li>
@@ -915,12 +1089,11 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
       </categories>
       <tags>
         <tag>系列</tag>
-        <tag>zcy</tag>
       </tags>
   </entry>
   <entry>
     <title>论文笔记：Coarse-to-Fine Decoding for Neural Semantic Parsing</title>
-    <url>/%E8%AE%BA%E6%96%87/34%E3%80%81Coarse-to-Fine%20Decoding%20for%20Neural%20Semantic%20Parsing.html</url>
+    <url>/~%E8%AE%BA%E6%96%87/34%E3%80%81Coarse-to-Fine%20Decoding%20for%20Neural%20Semantic%20Parsing.html</url>
     <content><![CDATA[<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;提出一个结构感知的神经架构，将语义解析过程分解为如下两个步骤：给定一个输入语句，1）首先生成它含义的粗略草图（a rough sketch of its meaning），其中低级信息<strong>被掩盖</strong>（如<strong>变量名和参数</strong>）。2）然后考虑输入本身和草图来填充丢失的细节。<br>&emsp;&emsp;RNN 在多种 NLP 任务中的成功应用对 seq2seq 的语义解析产生了强大的冲击力，如<a href="https://arxiv.org/pdf/1606.03622.pdf" title="Data recombination for neural semantic parsing" target="_blank" rel="noopener">Jia and Liang, 2016</a>; Dong and Lapata, 2016; <a href="https://arxiv.org/pdf/1603.06744.pdf" title="Latent predictor networks for code generation" target="_blank" rel="noopener">Ling et al., 2016</a>。<br>&emsp;&emsp;我们认为，这种方法至少有三个优点。首先，分解步骤<strong>将高级语义信息与低级语义信息分离开来</strong>，使译码器能够在不同的粒度级别对语义进行建模。其次，模型可以明确地为具有相同草图（即基本含义）的示例共享粗糙结构的知识，即使它们的实际含义表示不同（例如，由于不同的细节）。第三，在生成草图后，解码器知道语句的基本含义是什么，<strong>模型可以将其作为全局上下文来改进对最终细节的预测</strong>。<br>&emsp;&emsp;使用如下数据集：</p>
 <ol>
 <li>GEO</li>
@@ -946,7 +1119,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
   </entry>
   <entry>
     <title>深度学习算法（四）：Transformer</title>
-    <url>/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E5%9B%9B%EF%BC%89%EF%BC%9ATransformer.html</url>
+    <url>/~zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E5%9B%9B%EF%BC%89%EF%BC%9ATransformer.html</url>
     <content><![CDATA[<h1 id="Transformer位置信息"><a href="#Transformer位置信息" class="headerlink" title="Transformer位置信息"></a>Transformer位置信息</h1><p>&emsp;&emsp;引用自<a href="https://zhuanlan.zhihu.com/p/54743941" target="_blank" rel="noopener">放弃幻想，全面拥抱Transformer：自然语言处理三大特征抽取器（CNN/RNN/TF）比较</a></p>
 <blockquote>
 <p>&emsp;&emsp;NLP 句子中单词之间的相对位置是包含很多信息的，上面提过，RNN 因为结构就是线性序列的，所以天然会将位置信息编码进模型；而CNN的卷积层其实也是保留了位置相对信息的，所以什么也不做问题也不大。但是对于 Transformer 来说，为了能够保留输入句子单词之间的相对位置信息，必须要做点什么。为啥它必须要做点什么呢？因为输入的第一层网络是 Muli-head self attention 层，我们知道，Self attention 会让当前输入单词和句子中任意单词发生关系，然后集成到一个 embedding 向量里，但是当所有信息到了 embedding 后，位置信息并没有被编码进去。所以，Transformer 不像 RNN 或 CNN，必须明确的在输入端将 Positon 信息编码，Transformer 是用<strong>位置函数</strong>来进行位置编码的，而 Bert 等模型则给每个单词一个 <strong>Position embedding</strong>。将单词 embedding 和单词对应的 position embedding 加起来形成单词的输入 embedding，类似上文讲的 ConvS2S 的做法。</p>
@@ -1012,7 +1185,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
   </entry>
   <entry>
     <title>【NLP算法】（零）NLP基础算法</title>
-    <url>/zcy/%E3%80%90NLP%E7%AE%97%E6%B3%95%E3%80%91%EF%BC%88%E9%9B%B6%EF%BC%89NLP%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95.html</url>
+    <url>/~zcy/%E3%80%90NLP%E7%AE%97%E6%B3%95%E3%80%91%EF%BC%88%E9%9B%B6%EF%BC%89NLP%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95.html</url>
     <content><![CDATA[<h1 id="one-hot"><a href="#one-hot" class="headerlink" title="one hot"></a>one hot</h1><h1 id="N-gram-算法"><a href="#N-gram-算法" class="headerlink" title="N-gram 算法"></a>N-gram 算法</h1><p>&emsp;&emsp;<a href="https://blog.csdn.net/baimafujinji/article/details/51281816" target="_blank" rel="noopener">参考文章</a></p>
 <ul>
 <li><strong>基本算法</strong><br>有句子：老王吃过了吗？<br>该句子可表示为 <script type="math/tex">S = w_1w_2w_3w_4w_5w_6</script><br>那么该句子的概率为 p(S)=p(w1w2w3w4w5w6) = <script type="math/tex">\prod</script>p(wt|w1w2…wt-1) = p(w1)p(w2|w1)p(w3|w1w2)…<br>由于该算法太复杂，所以就产生了其他的算法。马尔科夫模型，该模型认为，一个词的出现仅仅依赖于它前面出现的几个词。可理解为是n-gram。</li>
@@ -1033,12 +1206,11 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
       </categories>
       <tags>
         <tag>系列</tag>
-        <tag>zcy</tag>
       </tags>
   </entry>
   <entry>
     <title>【知识图谱】（一）从概念到实战</title>
-    <url>/zcy/%E3%80%90%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E3%80%91%EF%BC%88%E4%B8%80%EF%BC%89%E4%BB%8E%E6%A6%82%E5%BF%B5%E5%88%B0%E5%AE%9E%E6%88%98.html</url>
+    <url>/~zcy/%E3%80%90%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E3%80%91%EF%BC%88%E4%B8%80%EF%BC%89%E4%BB%8E%E6%A6%82%E5%BF%B5%E5%88%B0%E5%AE%9E%E6%88%98.html</url>
     <content><![CDATA[<h1 id="知识图谱描述"><a href="#知识图谱描述" class="headerlink" title="知识图谱描述"></a>知识图谱描述</h1><p>&emsp;&emsp;知识图谱是一种新型的<strong>数据库</strong>，是一种基于图的数据结构。每个节点表示现实世界中存在的“实体”，每条边为实体与实体之间的“关系”。以下为知识图谱的几点作用：</p>
 <ul>
 <li>从“关系”分析问题</li>
@@ -1632,7 +1804,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
   </entry>
   <entry>
     <title>论文笔记：Complex Sequential Question Answering: Towards Learning to Converse Over Linked Question Answer Pairs with a Knowledge Graph</title>
-    <url>/%E8%AE%BA%E6%96%87/30%E3%80%81Complex%20Sequential%20Question%20Answering%EF%BC%9ATowards%20Learning%20to%20Converse%20Over%20Linked%20Question%20Answer%20Pairs%20with%20a%20Knowledge%20Graph.html</url>
+    <url>/~%E8%AE%BA%E6%96%87/30%E3%80%81Complex%20Sequential%20Question%20Answering%EF%BC%9ATowards%20Learning%20to%20Converse%20Over%20Linked%20Question%20Answer%20Pairs%20with%20a%20Knowledge%20Graph.html</url>
     <content><![CDATA[<div class="note warning">
             <p>&emsp;&emsp;<a href="https://www.aaai.org/ocs/index.php/AAAI/AAAI18/paper/view/17181/15750" target="_blank" rel="noopener">论文地址</a>。<br>&emsp;&emsp;<strong>凉了。读完论文，发现论文中的实验是使用 python2 写的，而且由于没有 VPN 无法下载实验附带的数据，训练数据有 17G，我都不想下了。</strong></p>
           </div>
@@ -1707,7 +1879,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
   </entry>
   <entry>
     <title>机器学习算法（八）：Adaboost</title>
-    <url>/zcy/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E5%85%AB%EF%BC%89%EF%BC%9AAdaboost.html</url>
+    <url>/~zcy/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E5%85%AB%EF%BC%89%EF%BC%9AAdaboost.html</url>
     <content><![CDATA[<h1 id="组合"><a href="#组合" class="headerlink" title="组合"></a>组合</h1><p>&emsp;&emsp;分类算法有很多，比如逻辑回归、kNN 算法、决策树、朴素贝叶斯算法、支持向量机等，它们各有优缺点。我们自然可以<strong>将不同的分类器组合起来</strong>，而这种组合结果则被称为<strong>集成方法</strong>（ensemble method）或者元算法（meta-algorithm）。使用形式多种多样，可以是不同算法的集成，还可以是相同算法不同配置的集成，也可以自行发挥。</p>
 <h1 id="bagging"><a href="#bagging" class="headerlink" title="bagging"></a>bagging</h1><p>&emsp;&emsp;自举汇聚法（bootstrap aggregating），也称为 bagging 方法。是从原始数据集选择 S 次后得到 S 个新数据集的一种技术。新数据集与原数据集的大小相等。<br>&emsp;&emsp;在 S 个数据集建好之后，将某个学习算法分别作用域每个数据集就得到了 S 个分类器。使用这 S 个分类器进行分类，然后将结果中最多的类别作为最后的分类结果。<br>&emsp;&emsp;当然还有一些更先进的 bagging 方法，比如随机森林（random forest）。<br><a id="more"></a></p>
 <h1 id="boosting"><a href="#boosting" class="headerlink" title="boosting"></a>boosting</h1><p>&emsp;&emsp;boosting 方法拥有多个版本，这里只关注其中一个最流行的版本 AdaBoost。</p>
@@ -1723,7 +1895,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
   </entry>
   <entry>
     <title>【NLP算法】（一）word2vec</title>
-    <url>/zcy/%E3%80%90NLP%E7%AE%97%E6%B3%95%E3%80%91%EF%BC%88%E4%B8%80%EF%BC%89word2vec.html</url>
+    <url>/~zcy/%E3%80%90NLP%E7%AE%97%E6%B3%95%E3%80%91%EF%BC%88%E4%B8%80%EF%BC%89word2vec.html</url>
     <content><![CDATA[<h1 id="词嵌入模型"><a href="#词嵌入模型" class="headerlink" title="词嵌入模型"></a>词嵌入模型</h1><p>&emsp;&emsp;以前在训练语言模型的时候使用one-hot编码，现在使用的是word embedding。但是这样理解其实稍微有点问题，因为如果这样理解，就难以解释embedding层是用来干嘛的了。<br>&emsp;&emsp;正解：<br>&emsp;&emsp;<strong>其实现在使用的还是one-hot</strong>，在keras框架中输入的就是one-hot编码。我以前一直是上面的那种理解，所以我一直不懂为什么要输入one-hot，而不直接输入word embedding。众所周知，one-hot编码乘上词嵌入矩阵可以得到词向量，这步操作看起来有点像查表。但其实这里用到了<strong>预训练</strong>。<br>&emsp;&emsp;词嵌入矩阵是预先训练好的，其实就是一个权重矩阵，而我们做的就是初始化了输入层的权重矩阵，只不过以前是随机初始化，而现在是直接初始化为词嵌入矩阵。embedding层只用了一步就获得了词的特征，但以前需要训练。所以我们算是使用了预训练的方法，直接获得了embedding层，但是相比于cv领域，目前我们还无法初始化高层的权重。<br>&emsp;&emsp;<strong>总结一下就是词嵌入矩阵是input层到embedding层的权重矩阵。</strong></p>
 <ul>
 <li><strong>缺陷</strong><br>多义词问题无法解决，所以导致word embedding一直效果不好。<br>以下引用自<a href="https://zhuanlan.zhihu.com/p/49271699" target="_blank" rel="noopener">专栏</a><br>Word Embedding本质上是个静态的方式，所谓静态指的是训练好之后每个单词的表达就固定住了，以后使用的时候，不论新句子上下文单词是什么，这个单词的Word Embedding不会跟着上下文场景的变化而改变，所以对于比如Bank这个词，它事先学好的Word Embedding中混合了几种语义 ，在应用中来了个新句子，即使从上下文中（比如句子包含money等词）明显可以看出它代表的是“银行”的含义，但是对应的Word Embedding内容也不会变，它还是混合了多种语义。这是为何说它是静态的，这也是问题所在。<a id="more"></a>
@@ -1739,12 +1911,11 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
       </categories>
       <tags>
         <tag>系列</tag>
-        <tag>zcy</tag>
       </tags>
   </entry>
   <entry>
     <title>代价函数</title>
-    <url>/zcy/%E4%BB%A3%E4%BB%B7%E5%87%BD%E6%95%B0.html</url>
+    <url>/~zcy/%E4%BB%A3%E4%BB%B7%E5%87%BD%E6%95%B0.html</url>
     <content><![CDATA[<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><div class="table-container">
 <table>
 <thead>
@@ -1833,7 +2004,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
   </entry>
   <entry>
     <title>Neural Enquire: Learning to Query Tables in Natural Language</title>
-    <url>/%E8%AE%BA%E6%96%87/29%E3%80%81Neural%20Enquirer%EF%BC%9ALearning%20to%20Query%20Tables%20in%20Natural%20Language.html</url>
+    <url>/~%E8%AE%BA%E6%96%87/29%E3%80%81Neural%20Enquirer%EF%BC%9ALearning%20to%20Query%20Tables%20in%20Natural%20Language.html</url>
     <content><![CDATA[<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;我们提出使用一种神经网络结构结合知识库来回答自然语言（NL）问题。与之前端到端的语义解析器不同，NEURAL ENQUIRER 是完全“神经化”的：它提供查询和 KB 表的分布式表示，并通过一系列可微的操作执行查询。该模型可以通过 end-to-end 和 step-by-step 的监督进行梯度下降训练。在训练期间，查询和 KB 表的表示将与查询执逻辑（query execution logic）一起进行优化。实验表明，该模型可以学习对结构丰富的 KB 表执行复杂的 NL 查询。</p>
 <h1 id="论文内容介绍"><a href="#论文内容介绍" class="headerlink" title="论文内容介绍"></a>论文内容介绍</h1><a id="more"></a>]]></content>
       <categories>
@@ -1843,7 +2014,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
   </entry>
   <entry>
     <title>Neural Symbolic Machines: Learning Semantic Parsers on Freebase with Weak Supervision</title>
-    <url>/%E8%AE%BA%E6%96%87/28%E3%80%81Neural%20Symbolic%20Machines%EF%BC%9ALearning%20Semantic%20Parsers%20on%20Freebase%20with%20Weak%20Supervision.html</url>
+    <url>/~%E8%AE%BA%E6%96%87/28%E3%80%81Neural%20Symbolic%20Machines%EF%BC%9ALearning%20Semantic%20Parsers%20on%20Freebase%20with%20Weak%20Supervision.html</url>
     <content><![CDATA[<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>本文介绍了一种神经符号机（Neural Symbolic Machine, NSM）</p>
 <h1 id="论文内容介绍"><a href="#论文内容介绍" class="headerlink" title="论文内容介绍"></a>论文内容介绍</h1><a id="more"></a>]]></content>
       <categories>
@@ -1853,7 +2024,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
   </entry>
   <entry>
     <title>论文笔记：Sequence-to-Action: End-to-End Semantic Graph Generation for Semantic Parsing</title>
-    <url>/%E8%AE%BA%E6%96%87/27%E3%80%81Sequence-to-Action%EF%BC%9AEnd-to-End%20Semantic%20Graph%20Generation%20for%20Semantic%20Parsing.html</url>
+    <url>/~%E8%AE%BA%E6%96%87/27%E3%80%81Sequence-to-Action%EF%BC%9AEnd-to-End%20Semantic%20Graph%20Generation%20for%20Semantic%20Parsing.html</url>
     <content><![CDATA[<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://mp.weixin.qq.com/s?__biz=MzI2NjkyNDQ3Mw==&amp;mid=2247486979&amp;idx=2&amp;sn=2d95556630820c853f2ca9b2855dd60a&amp;chksm=ea87f6d5ddf07fc3cc8477d3a0cd5142e9191d91ff3161847524c37539b372b306a8f9b700a8&amp;scene=21#wechat_redirect" target="_blank" rel="noopener">某篇解析</a>；<a href="http://tongtianta.site/paper/11795" target="_blank" rel="noopener">某篇解析</a><br>&emsp;&emsp;<a href="https://arxiv.org/pdf/1809.00773.pdf" target="_blank" rel="noopener">论文地址</a>。<br>&emsp;&emsp;本文提出一种神经语义分析方法——Sequence-to-Action，将语义分析当做一个端到端的<strong>语义图生成</strong>的过程。我们同时使用了最近语义分析两个有前途的方向，<strong>首先</strong>我们的模型使用了一个语义图来表示一个句子的含义，该语义图与知识库紧密相关（博主注：<strong>即可以将语义图看作是知识库的一个子图</strong>）。<strong>其次</strong>，利用神经网络强大的表示学习和预测能力，提出一种 RNN 模型，能够有效的将句子映射到动作序列，从而生成语义图（博主注：<strong>此动作序列就是指生成语义图的动作，将这些动作看作是一个序列</strong>）。实验表明该方法在 OVERNIGHT 数据集上展现了一流的性能，在 GEO 以及 ATIS 数据集上得到了有一定竞争力的性能。<br>&emsp;&emsp;语义分析旨在<strong>将自然语言句子映射为逻辑形式</strong>（Zelle andMooney, 1996; Zettlemoyer and Collins, 2005;Wong and Mooney, 2007; Lu et al., 2008;Kwiatkowski et al., 2013）。例如“Which states border Texas?”将会被映射为 <em>answer (A, (state (A),nextto (A, stateid ( texas ))))</em>。<br>&emsp;&emsp;语义分析器需要两个函数，一个处理结构预测，另一个处理语义基础。传统的语义解析器通常基于复合语法，如 CCG（Zettlemoyer and Collins, <a href="https://arxiv.org/pdf/1207.1420" target="_blank" rel="noopener">2005</a>, <a href="https://www.aclweb.org/anthology/D07-1071" target="_blank" rel="noopener">2007</a>），DCS（<a href="https://www.aclweb.org/anthology/P11-1060" target="_blank" rel="noopener">Liang et al., 2011</a>）等。不幸的是，设计语法和学习精确的词汇仍是一个挑战，特别是在开放域。而且设计有效的特性往往很困难，它的学习过程也不是端到端的。为了解决上述问题，本文提出了两种有前途的研究方向：<strong>基于语义图</strong>的方法和<strong>基于 seq2seq</strong> 方法。<br><a id="more"></a><br>&emsp;&emsp;基于语义图的方法(Reddy et al.,2014, 2016; Bast and Haussmann, 2015; Yih et al.,2015)将句子的含义表示为语义图（即知识库的子图，参考图 1 中的例子）并<strong>将语义分析视为语义图匹配/生成过程</strong>。<strong>与逻辑形式相比，语义图与知识库有着紧密的关系</strong>(Yih et al., 2015), ，与句法结构有许多共性（Reddy et al.,2014）。基于语义图的句法分析的主要挑战是如何有效地构造句子的语义图，目前语义图是通过与模式匹配（Bast and Haussmann, 2015），从依赖树转换（Reddy et al., 2014, 2016），或者通过 staged heuristic search algorithm（Yih et al.,2015）构建的。这些方法都是基于人工设计的构造过程，它们很难处理开放/复杂的情况。<br>&emsp;&emsp;近年来，得益于 RNN 模型有较强的表示能力和预测能力，其在 Seq2Seq 模型上取得了成功，比如机器翻译。许多 Seq2Seq 模型也用于语义分析（Xiaoet al., 2016; Dong and Lapata, 2016; Jia and Liang, 2016），不需要高质量的词典、人工构建的语法和特性。这些模型通过端到端的训练，利用注意力机制（Bahdanauet al., 2014; Luong et al., 2015）学习句子和逻辑形式之间的软对齐。<br>&emsp;&emsp;本文提出了一种新的神经语义分析框架——Sequence-to-Action。它可以同时利用语义图表示的优点和 seq2seq 模型强大的预测能力。具体来说，我们将语义分析建模为一个端到端的语义图生成过程。例如，在图 1 中，我们的模型将通过生成一系列变量[add variable:a，addtype:state，…]来解析“which states border Texas”这句话。为了实现上述目标，我们首先设计了一个动作集，对语义图的生成过程进行编码（包括节点动作：add variable,add entity,add type，边动作：add edg 以及操作动作：argmin,argmax,count,sum 等）然后我们设计了一个 RNN 模型，该模型可以生成一个动作序列来构造句子的语义图。最后，我们在解码过程中合并结构和语义约束来进一步增强解析。</p>
 <h1 id="论文内容介绍"><a href="#论文内容介绍" class="headerlink" title="论文内容介绍"></a>论文内容介绍</h1>]]></content>
       <categories>
@@ -1866,7 +2037,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
   </entry>
   <entry>
     <title>论文笔记：Language to Logical Form with Neural Attention</title>
-    <url>/%E8%AE%BA%E6%96%87/26%E3%80%81Language%20to%20Logical%20Form%20with%20Neural%20Attention.html</url>
+    <url>/~%E8%AE%BA%E6%96%87/26%E3%80%81Language%20to%20Logical%20Form%20with%20Neural%20Attention.html</url>
     <content><![CDATA[<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><div class="note info">
             <p>&emsp;&emsp;<a href="https://arxiv.org/pdf/1601.01280.pdf" target="_blank" rel="noopener">论文地址</a>，发表于 2016 年。</p>
           </div>
@@ -1937,7 +2108,7 @@ p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)</script><p><img src="h
   </entry>
   <entry>
     <title>论文笔记：Large-scale Simple Question Answering with Memory Network</title>
-    <url>/%E8%AE%BA%E6%96%87/5%E3%80%81Large-scale%20Simple%20Question%20Answering%20with%20Memory%20Network.html</url>
+    <url>/~%E8%AE%BA%E6%96%87/5%E3%80%81Large-scale%20Simple%20Question%20Answering%20with%20Memory%20Network.html</url>
     <content><![CDATA[<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://arxiv.org/pdf/1506.02075v1.pdf" target="_blank" rel="noopener">论文地址</a>，发表于 2015 年。<br>&emsp;&emsp;开放域问答系统的目的是在不受域限制的情况下，为用自然语言表达的问题提供准确的答案。问答系统有很长的历史，它们搜索文本文档或在网络上提取答案（see e.g.(Voorhees and Tice, 2000; Dumais et al., 2002)）。最近在公开的大型知识库（KBS）方面也取得了进展，如 Freebase 知识库。然而，尽管最近大家都在关注设计一个具有推理能力的系统，它可以检索并使用 KB 中的<strong>多重事实</strong>进行问答。但是其实只涉及 <strong>KB 中单个事实的简单问答</strong>都还没被解决，本论文中将其称为 Simple Question Answering。<br>&emsp;&emsp;KBQA 现存的方法：1）将 question 转为结构化的 KB 查询语句（Berant et al. 2013）；或者 2）学习将 question 以及 facts 嵌入到低维向量空间中，然后在这些向量中通过计算相似度检索答案（<a href="https://arxiv.org/pdf/1406.3676.pdf" target="_blank" rel="noopener">Bordes et al., 2014a</a>）。<br>&emsp;&emsp;本文贡献有二：</p>
 <ul>
 <li>其一，为了<strong>研究现有系统</strong>以及<strong>通过多任务学习在不同数据源上同时训练</strong>成为可能，我们收集了第一个基于知识库的大规模的问答数据集，称为 SimpleQuestions。包含了人类编写和 Freebase facts 相关的超过 10 万个问题，另外现有的基准数据集 WebQuestions 包含的问题少于 6 千个，这些问题是使用 google suggest api 自动创建的。</li>
@@ -1984,7 +2155,7 @@ p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)</script><p><img src="h
   </entry>
   <entry>
     <title>论文笔记：An End-to-End Model for Question Answering over Knowledge Base with Cross-Attention Combining Global Knowledge</title>
-    <url>/%E8%AE%BA%E6%96%87/24%E3%80%81An%20End-to-End%20Model%20for%20Question%20Answering%20over%20Knowledge%20Base%20with%20Cross-Attention%20Combining%20Global%20Knowledge.html</url>
+    <url>/~%E8%AE%BA%E6%96%87/24%E3%80%81An%20End-to-End%20Model%20for%20Question%20Answering%20over%20Knowledge%20Base%20with%20Cross-Attention%20Combining%20Global%20Knowledge.html</url>
     <content><![CDATA[<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><div class="note info">
             <p>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/P17-1021" target="_blank" rel="noopener">论文地址</a>，发表于 2017 年。</p>
           </div>
@@ -2036,7 +2207,7 @@ p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)</script><p><img src="h
   </entry>
   <entry>
     <title>论文笔记：Question Answering over Freebase with Multi-Column Convolutional Neural Networks</title>
-    <url>/%E8%AE%BA%E6%96%87/23%E3%80%81Question%20Answering%20over%20Freebase%20with%20Multi-Column%20Convolutional%20Neural%20Networks.html</url>
+    <url>/~%E8%AE%BA%E6%96%87/23%E3%80%81Question%20Answering%20over%20Freebase%20with%20Multi-Column%20Convolutional%20Neural%20Networks.html</url>
     <content><![CDATA[<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/P15-1026" target="_blank" rel="noopener">论文地址</a>，发表于 2015 年。<br>&emsp;&emsp;大多数现有的系统通常依靠人工制作的特性和规则来进行<em>问题理解</em>以及<em>答案排序</em>。此外，一些方法（<a href="https://arxiv.org/pdf/1406.3676.pdf" title="Question Answering with Subgraph Embeddings" target="_blank" rel="noopener">Bordes et al., 2014a</a>; <a href="https://arxiv.org/pdf/1404.4326.pdf" title="Open Question Answering with Weakly Supervised Embedding Models" target="_blank" rel="noopener">Bordeset al., 2014b</a>）使用问题的词嵌入的总和来表示问题，但是这忽略了<strong>词序信息</strong>，无法处理复杂问题，例如 who killed A 和 who A killed 两个问题的表示是一样的。本文介绍了 multi-column convolutional neural networks (MCCNNs)，从三个方面（<strong>回答路径（Answer Type），回答上下文（Answer Context），回答类型（Answer Path）</strong>）理解问题。使用 Freebase 作为知识库，在 WebQuestions 数据集上进行了广泛的实验。最终表明，此方法拥有更好的性能。<br>&emsp;&emsp;神经网络训练步骤：</p>
 <ol>
 <li>MCCNNs 从输入的问题中使用不同 column networks 去提取<strong>回答路径，回答上下文，回答类型</strong>。跟 Bordes 的论文一样，该论文知识库（本文就是 FreeBase）中的实体和关系也由向量表示。</li>
@@ -2064,7 +2235,7 @@ S(q,a) = \underbrace{f_1(q)^Tg_1(a)}_{\text{answer path}} + \underbrace{f_2(q)^T
   </entry>
   <entry>
     <title>论文笔记：Joint Relational Embeddings for Knowledge-based Question Answering</title>
-    <url>/%E8%AE%BA%E6%96%87/22%E3%80%81Joint%20Relational%20Embeddings%20for%20Knowledge%20based%20Question%20Answering.html</url>
+    <url>/~%E8%AE%BA%E6%96%87/22%E3%80%81Joint%20Relational%20Embeddings%20for%20Knowledge%20based%20Question%20Answering.html</url>
     <content><![CDATA[<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/D14-1071" target="_blank" rel="noopener">论文地址</a>，发表于 2014 年。<br>&emsp;&emsp;将自然语言（natural language，NL）问题转换为对应的逻辑形式（logical form，LF）是基于知识库问答（KB-QA）任务的核心任务，转换问题也被称作语义分析。<del>在 KB-QA 任务领域，与以往（Mooney, 2007; Liang et al., 2011;Cai and Yates, 2013; Fader et al., 2013; Berant etal., 2013; Bao et al., 2014）<u>基于词汇化短语（lexicalized phrases）和逻辑谓语（logical predicates）之间的映射作为词汇触发器（lexical trigger）来执行语义分析中的转换任务</u>不同（其中 Fader 2013 提出的论文在<a href="https://yan624.github.io/论文/20、Open Question Answering with Weakly supervised Embedding Models.html">论文笔记1</a>和<a href="https://yan624.github.io/论文/21、Question Answering with Subgraph Embeddings.html">论文笔记2</a>中具有提及，ctrl f 之后搜索 <em>Paraphrase-Driven Learning for Open Question Answering</em> 或者 <em>Fader</em> 即可找到对应位置）</del>，本论文进一步提出了一种<strong>将 NL 问题映射到 LFs 中</strong>的新的<strong>嵌入式</strong>方法，其利用<strong>词汇表达</strong>与 <strong>KB 中的属性</strong>在隐含空间中的语义关联来实现。实验表明，在两个公开的 QA 数据集上，该方法优于其他三种 KB-QA 的基线方法。<br>&emsp;&emsp;先前工作必须处理以下两种限制：</p>
 <ol>
 <li>由于逻辑谓语的含义通常具有不同的自然语言表达（natural language expression，NLE）形式，因此从谓语提取的词汇触发器可能有时会受到大小限制；</li>
@@ -2083,7 +2254,7 @@ S(q,a) = \underbrace{f_1(q)^Tg_1(a)}_{\text{answer path}} + \underbrace{f_2(q)^T
   </entry>
   <entry>
     <title>论文笔记：Question Answering with Subgraph Embeddings</title>
-    <url>/%E8%AE%BA%E6%96%87/21%E3%80%81Question%20Answering%20with%20Subgraph%20Embeddings.html</url>
+    <url>/~%E8%AE%BA%E6%96%87/21%E3%80%81Question%20Answering%20with%20Subgraph%20Embeddings.html</url>
     <content><![CDATA[<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://arxiv.org/pdf/1406.3676" target="_blank" rel="noopener">论文地址</a>，发表于 2014 年。<br>&emsp;&emsp;本文的作者在同年发表了另一篇论文，将上一篇论文称为 A，此论文称为 B，对于 A 论文我也做了<a href="https://yan624.github.io/论文/20、Open Question Answering with Weakly supervised Embedding Models.html">论文笔记</a>，本论文是上一篇论文的改进版。A 只是对简单问题进行研究，B 研究如何改进模型并回答更复杂的问题。<br>&emsp;&emsp;开放域问答中的一流技术大致可以分为两大类：1)基于信息检索；2)基于语义解析。<strong>信息检索</strong>系统首先通过 KBs 的搜索 API（转换方式估计是手写模版，论文中未细说） <strong>将问题转换为有效的查询语句</strong>（比如 neo4j 数据库的 CQL）以此检索到大量的候选答案，然后再仔细地识别准确的答案（<a href="https://www.sciencedirect.com/science/article/pii/S0020025511003860" title="A survey on question answering technology from an information retrieval perspective" target="_blank" rel="noopener">Kolomiyets O 等 2011</a>，<a href="https://www2012.universite-lyon.fr/proceedings/proceedings/p639.pdf" title="Template-based Question Answering over RDF Data" target="_blank" rel="noopener">Unger C 等 2012</a>，<a href="https://www.aclweb.org/anthology/P14-1090" title="Information Extraction over Structured Data: Question Answering with Freebase" target="_blank" rel="noopener">Yao X 等 2014</a>）。<strong>语义解析</strong>旨在通过语义分析系统正确<strong>解释</strong>问题的含义，<strong>解释步骤</strong>的做法是把问题转换为数据库查询语句（这里的查询语句应该是逻辑形式，比如<strong>组合范畴法</strong>），以此查询到正确的答案。尽管这两种方法有能力去处理大规模知识库，但是需要专家手动的创建词汇、语法以及 KB 协议才能有所成效。且<strong>没有通用性</strong>，<strong>无法方便地扩展到</strong>具有其他模式、更广泛词汇或英语以外语言的<strong>新数据库</strong>。<br>&emsp;&emsp;相反，<a href="https://www.aclweb.org/anthology/P13-1158" target="_blank" rel="noopener">Paraphrase-Driven Learning for Open Question Answering</a> 提出了一个几乎不需要人工注释的开放域 QA 框架，虽然这是一种有趣的方法，但是它被其他方法超越了。即第二段提到的论文 A。<br>&emsp;&emsp;相比于论文 A，作者作出了以下几点<strong>改进</strong>：1）对于候选答案，考虑更多更长的路径（之前只考虑了 main entity 周围的节点）；2）对候选答案进行更有意义的表示：答案的表示包含问答路径以及周围的子图。</p>
 <h1 id="任务定义"><a href="#任务定义" class="headerlink" title="任务定义"></a>任务定义</h1><p>&emsp;&emsp;假设所有潜在的答案都是 KB 中的实体，当 KB 中不存在该实体时，可以使用一些方法解决（论文中具体没说，只是说了一种极简单的方式：<em>When this entity is not given, plain string matching is used to perform entity resolution</em>）。<br><a id="more"></a><br>&emsp;&emsp;此外 N 代表词典的大小，其中 <script type="math/tex">N = N_W + N_S</script>，<script type="math/tex">N_W</script> 代表词嵌入的大小，<script type="math/tex">N_S</script> 代表实体和关系的数量。</p>
 <h1 id="改进：考虑多维度的信息"><a href="#改进：考虑多维度的信息" class="headerlink" title="改进：考虑多维度的信息"></a>改进：考虑多维度的信息</h1><p>&emsp;&emsp;以下描述一个候选答案的特征表示，论文将以三个角度进行表示：</p>
@@ -2105,7 +2276,7 @@ S(q,a) = \underbrace{f_1(q)^Tg_1(a)}_{\text{answer path}} + \underbrace{f_2(q)^T
   </entry>
   <entry>
     <title>论文笔记：Open Question Answering with Weakly supervised Embedding Models</title>
-    <url>/%E8%AE%BA%E6%96%87/20%E3%80%81Open%20Question%20Answering%20with%20Weakly%20supervised%20Embedding%20Models.html</url>
+    <url>/~%E8%AE%BA%E6%96%87/20%E3%80%81Open%20Question%20Answering%20with%20Weakly%20supervised%20Embedding%20Models.html</url>
     <content><![CDATA[<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://arxiv.org/pdf/1404.4326" target="_blank" rel="noopener">论文地址</a>，论文发表于 2014 年。<br>&emsp;&emsp;建立一个能够回答任何问题的计算机是人工智能的一个长期目标。这一领域一个重要的发展时大规模知识库的建立，如 <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.538.7139&amp;rep=rep1&amp;type=pdf" target="_blank" rel="noopener">Freebase</a> 和 <a href="https://content.iospress.com/download/semantic-web/sw134?id=semantic-web%2Fsw134" target="_blank" rel="noopener">DBPedia</a>，它们存储了大量的通用信息。它们由三元组的形式构成一个数据库，通过各种关系和格式连接成实体对。那么回答问题被定义为<strong>给定一个用自然语言表达的查询语句</strong>（一个查询语句的例子：中国的首都在哪？）<strong>从知识库中检索正确的实体或实体集的任务</strong>。<br>&emsp;&emsp;最近，通过将问题映射为<strong>逻辑形式</strong>或者类似<strong>数据库查询</strong>的方法取得了富有希望的进展。虽然这种方法可能有效，但是缺点是要采用大量的人为标记的数据或者需要工作人员定义词汇表和语法。<br>&emsp;&emsp;本文采用一种激进的学习方式，将问题映射为向量（无法人为解释）的特征表示。并且将重点放在回答一些基于比较宽泛的主题的简单事实性问题。这项任务的难点来自词汇的多样性，而不是句法的复杂性。<br>&emsp;&emsp;该方法采用随机梯度下降，然后使用 fine-tuning 进行训练。经验表明该模型能够捕获一些有意义的信号，且这是唯一一种能够在弱标记数据上训练的方法。</p>
 <h1 id="论文内容介绍"><a href="#论文内容介绍" class="headerlink" title="论文内容介绍"></a>论文内容介绍</h1><ol>
 <li>Section 2：讨论了之前的工作；</li>
@@ -2166,7 +2337,7 @@ S(q,t) = f(q)^Tg(t)</script><p>&emsp;&emsp;<strong>其中 f(·) 将问题中的�
   </entry>
   <entry>
     <title>论文笔记：Semantic Parsing via Staged Query Graph Generation Question Answering with Knowledge Base</title>
-    <url>/%E8%AE%BA%E6%96%87/19%E3%80%81Semantic%20Parsing%20via%20Staged%20Query%20Graph%20Generation%EF%BC%9AQuestion%20Answering%20with%20Knowledge%20Base.html</url>
+    <url>/~%E8%AE%BA%E6%96%87/19%E3%80%81Semantic%20Parsing%20via%20Staged%20Query%20Graph%20Generation%EF%BC%9AQuestion%20Answering%20with%20Knowledge%20Base.html</url>
     <content><![CDATA[<h1 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h1><p>&emsp;&emsp;此论文为 2015 年的论文。<br>&emsp;&emsp;本文会出现一个名为<strong>谓语序列（predicate sequence）</strong>的名词，论文中没有详细说明。但是估计就是：一个实体至另一个实体的有向路径上的所有谓语的连接形式。如下文第一张图 Family Guy-&gt;cvt1-&gt;Mila Kunis 的谓语序列就是 cast-actor。</p>
 <h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/ACL15-STAGG.pdf" target="_blank" rel="noopener">论文地址</a><br>&emsp;&emsp;节选自摘要部分：</p>
 <blockquote>
@@ -2256,7 +2427,7 @@ S(q,t) = f(q)^Tg(t)</script><p>&emsp;&emsp;<strong>其中 f(·) 将问题中的�
   </entry>
   <entry>
     <title>机器学习算法（七）：K-NN</title>
-    <url>/zcy/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%83%EF%BC%89%EF%BC%9AK-NN.html</url>
+    <url>/~zcy/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%83%EF%BC%89%EF%BC%9AK-NN.html</url>
     <content><![CDATA[<h1 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h1><blockquote>
 <p>K-NN 算法采用测量不同特征值之间的距离的方法进行分类。<br>工作原理：<br>存在一个<strong>样本数据集</strong>，也称作训练样本集，并且样本集中每个数据都存在标签。输入<strong>没有标签的新数据</strong>后，将<strong>新数据</strong>的每个特征与<strong>样本集</strong>中的数据对应特征进行比较，然后算法提取样本集中特征最相似的数据（最邻近）的分类<strong>标签</strong>。一般来说，只选择样本数据集中前 k 个最相似的数据，这就是 k-NN 算法中 k 的出处，通常 k 是不大于 20 的整数。<br>最后选择在 k 个最相似的数据中出现次数最多的分类，作为新数据的分类。</p>
 </blockquote>
@@ -2474,7 +2645,7 @@ c1(no)->e2(left)->st</textarea><textarea id="flowchart-0-options" style="display
   </entry>
   <entry>
     <title>深度学习算法（三）：RNN 各种机制</title>
-    <url>/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9ARNN%20%E5%90%84%E7%A7%8D%E6%9C%BA%E5%88%B6.html</url>
+    <url>/~zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9ARNN%20%E5%90%84%E7%A7%8D%E6%9C%BA%E5%88%B6.html</url>
     <content><![CDATA[<h1 id="GRU"><a href="#GRU" class="headerlink" title="GRU"></a>GRU</h1><h1 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h1><p>&emsp;&emsp;该<a href="https://yan624.github.io/学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">博客</a>中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。<br>&emsp;&emsp;下图是吴恩达深度学习第五周作业中的图片，是一个 LSTM 单元。<strong>与李宏毅老师做的图有略微不同，并且在下图中将 input gate 称为了 update gate，并且在李宏毅老师所提供的图片中，g(z) 是由 sigmoid 函数计算出来的，而这里是由 tanh 计算出来的，即下图 update gate 旁边的函数</strong>。另外在李宏毅老师提供的图片中，为了简便，并没有使用上个时间步的激活值。</p>
 <ol>
 <li>首先是<strong>输入的问题</strong>。一般来说一个 LSTM 的输入是前一<strong>个</strong> LSTM 的输出值 <script type="math/tex">a</script> 以及输入值 <script type="math/tex">x</script>（对于第 2 层的 LSTM 的 输入值就是前一<strong>层</strong>的输出值）。但是众所周知，<strong>LSTM 每个门的输入肯定只有一个向量，<script type="math/tex">a</script> 和 <script type="math/tex">x</script> 是两个向量，那么如何处理呢？</strong> <strong>1)</strong>在下图中使用了 <script type="math/tex">[a^{<t-1>},x^{<t>}]</script> 进行向量拼接。<strong>2)</strong>在我看的代码中直接使用了加法进行相加，代码<a href="https://github.com/Alex-Fabbri/lang2logic-PyTorch/blob/master/seq2seq/atis/lstm/main.py" target="_blank" rel="noopener">在这</a>，但是代码量太大了，随便看看就行了。二者的差别无非是向量的维度。</li>
@@ -2504,7 +2675,7 @@ c1(no)->e2(left)->st</textarea><textarea id="flowchart-0-options" style="display
   </entry>
   <entry>
     <title>深度学习算法（二）：simple RNN 推导与理解</title>
-    <url>/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%BA%8C%EF%BC%89%EF%BC%9Asimple%20RNN%20%E6%8E%A8%E5%AF%BC%E4%B8%8E%E7%90%86%E8%A7%A3.html</url>
+    <url>/~zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%BA%8C%EF%BC%89%EF%BC%9Asimple%20RNN%20%E6%8E%A8%E5%AF%BC%E4%B8%8E%E7%90%86%E8%A7%A3.html</url>
     <content><![CDATA[<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p><a href="https://github.com/yan624/machine_learning_algorithms/tree/master/simple_recurrent_neural_network" target="_blank" rel="noopener">github地址</a><br>simple RNN只实现了正向传播，反向传播没有实现。是因为simple RNN有梯度消失的问题，索性直接不写了。下一节直接写LSTM。</p>
 <h1 id="simple-RNN和simple-NN的对比"><a href="#simple-RNN和simple-NN的对比" class="headerlink" title="simple RNN和simple NN的对比"></a>simple RNN和simple NN的对比</h1><p>本来觉得simple RNN挺简单的，只不过是simple NN的扩展，区别无非是将simple NN的神经元换成一个RNN cell。但是实际上没那么简单，特别是加上将数据向量化后计算。感觉简直和simple NN是两种架构。</p>
 <h2 id="input"><a href="#input" class="headerlink" title="input"></a>input</h2><p>下图是一个simple NN的架构，其中的一层也叫做全连接层。所以也叫做前馈神经网络。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple RNN 推导与理解/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版"><br>网络中输入的x是一个纯数字，而不是向量。如果输入的是向量，就代表一次输入了多条样本。总的来说，一条样本向量化为：<br><a id="more"></a></p>
@@ -2617,7 +2788,7 @@ W_{ax} x^{<t>} + W_{aa} a^{<t-1>} =
   </entry>
   <entry>
     <title>CS224n学习笔记</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/CS224n%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/CS224n%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.html</url>
     <content><![CDATA[<div class="note info">
             <p>&emsp;&emsp;本笔记记录的内容来源于 <a href="https://www.bilibili.com/video/av41393758" target="_blank" rel="noopener">b站——CS224n 斯坦福深度自然语言处理课</a>。<br>&emsp;&emsp;之后我补充了18 章之后的内容，其来源为<a href="https://www.bilibili.com/video/av46216519" target="_blank" rel="noopener">b站——(2019)斯坦福CS224n深度学习自然语言处理课程 by Chris Manning</a></p>
           </div>
@@ -2754,7 +2925,7 @@ v_a tanh(W_a [h_t;\bar{h}_s])
   </entry>
   <entry>
     <title>深度学习算法（一）：simple NN（前馈神经网络的正反向推导）</title>
-    <url>/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9Asimple%20NN%EF%BC%88%E5%89%8D%E9%A6%88%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E6%AD%A3%E5%8F%8D%E5%90%91%E6%8E%A8%E5%AF%BC%EF%BC%89.html</url>
+    <url>/~zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9Asimple%20NN%EF%BC%88%E5%89%8D%E9%A6%88%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E6%AD%A3%E5%8F%8D%E5%90%91%E6%8E%A8%E5%AF%BC%EF%BC%89.html</url>
     <content><![CDATA[<div class="note info">
             <p>本文的公式不存在次方的说法，所以看见上标，不要想成是次方。<br>对于权重的表示问题，请看<a href="https://yan624.github.io/学习笔记/《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题.html">博客</a>，但是由于是以前的学习笔记，不保证完全正确。<br>如果想了解为什么梯度下降要对w和b求导，可以看<a href="https://yan624.github.io/学习笔记/梯度下降算法的推导.html">这篇</a>。<br><strong>建议边看边写，否则思维跟不上。</strong></p>
           </div>
@@ -3037,7 +3208,7 @@ w^2_{21} & w^2_{22} & w^2_{23}\\
   </entry>
   <entry>
     <title>梯度下降算法的推导</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E7%AE%97%E6%B3%95%E7%9A%84%E6%8E%A8%E5%AF%BC.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E7%AE%97%E6%B3%95%E7%9A%84%E6%8E%A8%E5%AF%BC.html</url>
     <content><![CDATA[<p>梯度下降算法大家都知道，公式是<script type="math/tex">\theta = \theta - \alpha * J'(\theta)</script>，其中J是代价函数。但是这个算法具体是怎么来的，可能不太清楚。<br>本文参考<br><a href="https://mp.weixin.qq.com/s/k26Fm0GL3fdVA9VbQIVAuQ" target="_blank" rel="noopener">微信公众号</a><br><a href="https://baike.baidu.com/item/梯度/13014729" target="_blank" rel="noopener">百度百科</a><br>由于没有专业的制图工具，所以只能手画了。。。</p>
 <h1 id="梯度下降问题"><a href="#梯度下降问题" class="headerlink" title="梯度下降问题"></a>梯度下降问题</h1><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/梯度下降算法的推导/梯度下降草图.jpg" alt="梯度下降草图"><br>由图中可以观察到，我们将参数初始化到A点，我们的目标是将点移动到最小值点（或者极小值点）。那么问题就是如何移动了。<br>先给出梯度下降公式：<script type="math/tex">\theta = \theta - \alpha * J'(\theta)</script>，J是代价函数，这个公式应该不陌生。</p>
 <h1 id="一阶泰勒展开式"><a href="#一阶泰勒展开式" class="headerlink" title="一阶泰勒展开式"></a>一阶泰勒展开式</h1><p>如果学过高数，应该知道<strong>一阶泰勒展开式</strong>的公式是：<script type="math/tex">f(x) = f(x_0) + (x - x_0) * f'(x_0) + R_n(x)</script>，其中<script type="math/tex">R_n(x)</script>是泰勒公式的余项，可以理解为一个无穷小量。既然是无穷小量那么便可以省略不写，但是即使是无穷小，其实等式的左右边还是有点差距的，所以将等式修改为<strong>约等于号</strong>。<br><a id="more"></a></p>
@@ -3082,7 +3253,7 @@ v  = -\frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}\\</script><p>之所以要�
   </entry>
   <entry>
     <title>深度学习中的一些疑问总结</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E4%B8%80%E4%BA%9B%E7%96%91%E9%97%AE%E6%80%BB%E7%BB%93.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E4%B8%80%E4%BA%9B%E7%96%91%E9%97%AE%E6%80%BB%E7%BB%93.html</url>
     <content><![CDATA[<h1 id="为什么需要非线性激活函数"><a href="#为什么需要非线性激活函数" class="headerlink" title="为什么需要非线性激活函数"></a>为什么需要非线性激活函数</h1><div class="note primary">
             <p>为什么<script type="math/tex">w*x+b=z</script>之后，需要使用一个激活函数<script type="math/tex">a = \sigma(z)</script>？不能不加这个激活函数吗？权重值乘上输入值加上偏差之后直接输出就行了，何必再带入激活函数中？</p>
           </div>
@@ -3156,7 +3327,7 @@ v  = -\frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}\\</script><p>之所以要�
   </entry>
   <entry>
     <title>练习Keras RNN的代码</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E7%BB%83%E4%B9%A0Keras%20RNN%E7%9A%84%E4%BB%A3%E7%A0%81.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E7%BB%83%E4%B9%A0Keras%20RNN%E7%9A%84%E4%BB%A3%E7%A0%81.html</url>
     <content><![CDATA[<h1 id="《Python深度学习》第6章预测imdb的影评"><a href="#《Python深度学习》第6章预测imdb的影评" class="headerlink" title="《Python深度学习》第6章预测imdb的影评"></a>《Python深度学习》第6章预测imdb的影评</h1><p><a href="https://github.com/yan624/deep-learning-notes/tree/master/RNN_learning/imdb_predication" target="_blank" rel="noopener">imdb影评代码</a></p>
 <h1 id="第五课第二周作业：Emojify"><a href="#第五课第二周作业：Emojify" class="headerlink" title="第五课第二周作业：Emojify"></a>第五课第二周作业：Emojify</h1><p>本文实现吴恩达深度学习第五课第二周的Emojify作业。目的是了解一个小型nlp系统的构建流程。<br>首先需要导入以下模块。由于在Jupyter中打开的ipynb文件全是英文，所以本文的大部分标题也用英文，方便ctrl F。<br>Emojifier-V1略。</p>
 <h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>加了很多注释，但是代码的顺序我做了很大的改动。下面博客里面的代码，是作业里面的代码，基本没改几个字。<br><a href="https://github.com/yan624/deep-learning-notes/tree/master/RNN_learning/emojify" target="_blank" rel="noopener">emojify_V2代码</a><br><a id="more"></a></p>
@@ -3200,7 +3371,7 @@ v  = -\frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}\\</script><p>之所以要�
   </entry>
   <entry>
     <title>吴恩达深度学习学习笔记：自然语言处理与词嵌入</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9A%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86%E4%B8%8E%E8%AF%8D%E5%B5%8C%E5%85%A5.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9A%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86%E4%B8%8E%E8%AF%8D%E5%B5%8C%E5%85%A5.html</url>
     <content><![CDATA[<h1 id="字母表示"><a href="#字母表示" class="headerlink" title="字母表示"></a>字母表示</h1><p>我们一直使用<a href="https://yan624.github.io/学习笔记/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型.html#one hot编码">one hot编码</a>，这在之前已经记过笔记。这种表示方法的最大缺点是将每个词孤立起来，并且泛化能力不强。由于每个向量的内积都是0，所以它们之间的距离都是一样的。比如</p>
 <ol>
 <li>I want a glass of orange juice.</li>
@@ -3264,7 +3435,7 @@ v  = -\frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}\\</script><p>之所以要�
   </entry>
   <entry>
     <title>吴恩达李宏毅综合学习笔记：RNN入门</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%BB%BC%E5%90%88%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%85%A5%E9%97%A8.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%9D%8E%E5%AE%8F%E6%AF%85%E7%BB%BC%E5%90%88%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9ARNN%E5%85%A5%E9%97%A8.html</url>
     <content><![CDATA[<h1 id="大纲"><a href="#大纲" class="headerlink" title="大纲"></a>大纲</h1><div class="table-container">
 <table>
 <thead>
@@ -3489,7 +3660,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
   </entry>
   <entry>
     <title>git学习记录</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/git%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/git%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95.html</url>
     <content><![CDATA[<p>本文是在学习<a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000" target="_blank" rel="noopener">该教程</a>时/后做的笔记。<br>我现在用git基本都是用<a href="https://desktop.github.com/" target="_blank" rel="noopener">Github Desktop</a>，前面的是下载地址。用起来方便又快捷。事实上我也不会用git的命令o(<em>￣︶￣</em>)o所以今天稍微学一下。</p>
 <h1 id="git-init"><a href="#git-init" class="headerlink" title="git init"></a>git init</h1><p>切换到想要创建仓库的文件夹，执行命令<code>git init</code>就会在该文件夹下创建一个.git的文件夹，这个文件夹是隐藏的。</p>
 <h1 id="git-add-git-commit"><a href="#git-add-git-commit" class="headerlink" title="git add/git commit"></a>git add/git commit</h1><p>使用命令<code>git add whatever.txt</code>将文件添加到仓库。使用命令<code>git commit -m &quot;wrote a file&quot;</code>将文件提交到仓库，-m后面的是描述这份文件你改了什么。其实就是相当于desktop的一个按钮，按一下就把全部有改动文件都提交了。<br>这样就完成了提交一份文件。这里就会有疑问了，为什么设计成先add再commit？直接commit不就行了？因为commit可以提交多份文件，你可以使用add命令一份一份地添加文件，再使用commit一次性提交到仓库。<br>该命令指示推送到本地仓库，并非远程仓库。<br><a id="more"></a></p>
@@ -3617,7 +3788,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
   </entry>
   <entry>
     <title>对神经网络整体的理解</title>
-    <url>/zcy/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3.html</url>
+    <url>/~zcy/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3.html</url>
     <content><![CDATA[<div class="note info">
             <p>本文疑问的总结地址<a href="https://yan624.github.io/学习笔记/深度学习中的一些疑问总结.html">在这</a></p>
           </div>
@@ -4240,7 +4411,7 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} & \underbrace{y^{
   </entry>
   <entry>
     <title>《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E3%80%8A%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B8%8E%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E3%80%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9A%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95%E4%B8%ADweight%E7%9A%84%E8%A1%A8%E7%A4%BA%E9%97%AE%E9%A2%98.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E3%80%8A%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B8%8E%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E3%80%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9A%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95%E4%B8%ADweight%E7%9A%84%E8%A1%A8%E7%A4%BA%E9%97%AE%E9%A2%98.html</url>
     <content><![CDATA[<p><a href="https://tigerneil.gitbooks.io/neural-networks-and-deep-learning-zh/content/chapter2.html" target="_blank" rel="noopener">本文中文章节地址</a><br><a href="http://neuralnetworksanddeeplearning.com/chap2.html" target="_blank" rel="noopener">本文英文章节地址</a></p>
 <h3 id="神经网络中一些符号的定义"><a href="#神经网络中一些符号的定义" class="headerlink" title="神经网络中一些符号的定义"></a>神经网络中一些符号的定义</h3><p>引用自<a href="https://tigerneil.gitbooks.io/neural-networks-and-deep-learning-zh/content/chapter2.html#%E7%83%AD%E8%BA%AB%EF%BC%9A%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B8%AD%E4%BD%BF%E7%94%A8%E7%9F%A9%E9%98%B5%E5%BF%AB%E9%80%9F%E8%AE%A1%E7%AE%97%E8%BE%93%E5%87%BA%E7%9A%84%E8%A7%82%E7%82%B9" target="_blank" rel="noopener">原文中文翻译</a></p>
 <blockquote>
@@ -4340,7 +4511,7 @@ w^3_{42}\\
   </entry>
   <entry>
     <title>机器学习算法（六）：SVM</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E5%85%AD%EF%BC%89%EF%BC%9ASVM.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E5%85%AD%EF%BC%89%EF%BC%9ASVM.html</url>
     <content><![CDATA[<p>看《机器学习实战》这本书的 SVM 部分，感觉始终无法理解，因为书里把数学公式的推导直接省略了。所以在b站找了视频学习 SVM。<br>本文<a href="https://zhuanlan.zhihu.com/p/24638007" target="_blank" rel="noopener">参考文章</a><br>本文<a href="https://www.bilibili.com/video/av37947862/?p=75" target="_blank" rel="noopener">参考视频</a></p>
 <p>首先分割超平面（separating hyperplane）的函数表达式是<script type="math/tex">w^T * x + b = 0</script>，而它上下两条间隔最远的超平面的表达式分别为</p>
 <script type="math/tex; mode=display">
@@ -4397,7 +4568,7 @@ w^3_{42}\\
   </entry>
   <entry>
     <title>机器学习算法（五）：PCA</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%BA%94%EF%BC%89%EF%BC%9APCA.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%BA%94%EF%BC%89%EF%BC%9APCA.html</url>
     <content><![CDATA[<a id="more"></a>]]></content>
       <categories>
         <category>AI</category>
@@ -4410,7 +4581,7 @@ w^3_{42}\\
   </entry>
   <entry>
     <title>机器学习算法（四）：K均值（K-means）</title>
-    <url>/zcy/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E5%9B%9B%EF%BC%89%EF%BC%9AK%E5%9D%87%E5%80%BC%EF%BC%88K-means%EF%BC%89.html</url>
+    <url>/~zcy/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E5%9B%9B%EF%BC%89%EF%BC%9AK%E5%9D%87%E5%80%BC%EF%BC%88K-means%EF%BC%89.html</url>
     <content><![CDATA[<h3 id="TODO"><a href="#TODO" class="headerlink" title="TODO"></a>TODO</h3><p>K-均值(K-means)算法是无监督算法，也是聚类(clustering)算法。</p>
 <h3 id="算法步骤"><a href="#算法步骤" class="headerlink" title="算法步骤"></a>算法步骤</h3><ol>
 <li>随机初始化几个点作为簇的质心，初始化方式有多种，可以自行选择。已知两种：<ul>
@@ -4516,7 +4687,7 @@ w^3_{42}\\
   </entry>
   <entry>
     <title>机器学习算法（三）：决策树</title>
-    <url>/zcy/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9A%E5%86%B3%E7%AD%96%E6%A0%91.html</url>
+    <url>/~zcy/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9A%E5%86%B3%E7%AD%96%E6%A0%91.html</url>
     <content><![CDATA[<h3 id="TODO"><a href="#TODO" class="headerlink" title="TODO"></a>TODO</h3><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>由于新手不太懂术语，规定行为一条数据，列为一组特征。<br><strong>特征</strong>代表一列数据。如性别、年龄、身高等。<br><strong>分类</strong>代表一个特征中不同的分类。如性别中分类为男女，天气中分类为晴、阴、雨、雪等，收入中分类为贫困、低收入、小康、中高收入者、富人等。</p>
 <h3 id="信息增益"><a href="#信息增益" class="headerlink" title="信息增益"></a>信息增益</h3><p>引用自《机器学习实战》</p>
 <blockquote>
@@ -4555,7 +4726,7 @@ w^3_{42}\\
   </entry>
   <entry>
     <title>机器学习算法（二）：逻辑回归</title>
-    <url>/zcy/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%BA%8C%EF%BC%89%EF%BC%9A%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92.html</url>
+    <url>/~zcy/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%BA%8C%EF%BC%89%EF%BC%9A%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92.html</url>
     <content><![CDATA[<a id="more"></a>]]></content>
       <categories>
         <category>AI</category>
@@ -4568,7 +4739,7 @@ w^3_{42}\\
   </entry>
   <entry>
     <title>机器学习算法（一）：线性回归</title>
-    <url>/zcy/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9A%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92.html</url>
+    <url>/~zcy/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9A%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92.html</url>
     <content><![CDATA[<h1 id="线性回归"><a href="#线性回归" class="headerlink" title="线性回归"></a>线性回归</h1><ul>
 <li>优点：结果易于理解，计算上不复杂。</li>
 <li>缺点：对非线性的数据拟合不好。</li>
@@ -4620,7 +4791,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>Hadoop学习记录（一）：Hadoop集群搭建</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Hadoop%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9AHadoop%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Hadoop%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9AHadoop%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA.html</url>
     <content><![CDATA[<h3 id="使用jps，发现没有namenode"><a href="#使用jps，发现没有namenode" class="headerlink" title="使用jps，发现没有namenode"></a>使用jps，发现没有namenode</h3><p>使用命令<code>/opt/hadoop/sbin/start-all.sh</code>启动hadoop，之后使用jsp，一般来讲会出现如下6个线程<br><figure class="highlight basic"><table><tr><td class="code"><pre><span class="line"><span class="symbol">55598 </span>Jps</span><br><span class="line"><span class="symbol">54490 </span>NameNode</span><br><span class="line"><span class="symbol">54684 </span>DataNode</span><br><span class="line"><span class="symbol">54931 </span>SecondaryNameNode</span><br><span class="line"><span class="symbol">55332 </span>NodeManager</span><br><span class="line"><span class="symbol">38251 </span>ResourceManager</span><br></pre></td></tr></table></figure></p>
 <p>但是我发现我运行后没有出现namenode。仔细观察中断启动时的日志发现，namenode的日志记录在<strong>/opt/hadoop/logs/hadoop-zhangyu-namenode-a2d8c523dd0b.log</strong>中，打开它，发现在最后居然报了异常。由于Hadoop是java写的，异常很好认（我就是学java出身的）。<br><figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">java<span class="selector-class">.io</span><span class="selector-class">.IOException</span>: There appears to be <span class="selector-tag">a</span> gap <span class="keyword">in</span> the edit log.  We expected txid <span class="number">1</span>, but got txid <span class="number">16</span>.</span><br></pre></td></tr></table></figure></p>
 <p>百度之后发现namenode的元数据破坏，需要恢复，具体参考<a href="https://blog.csdn.net/u011478909/article/details/51864071" target="_blank" rel="noopener">某csdn博客</a>。<br>使用<code>hadoop namenode -recover</code>即可恢复。<br><a id="more"></a></p>
@@ -4651,7 +4822,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>Python爬虫学习记录（一）：正则表达式</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Python%E7%88%AC%E8%99%AB%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9A%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Python%E7%88%AC%E8%99%AB%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9A%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F.html</url>
     <content><![CDATA[<h3 id="正则表达式的使用"><a href="#正则表达式的使用" class="headerlink" title="正则表达式的使用"></a>正则表达式的使用</h3><p>正则表达式的匹配规则网上都有，这里不放出来了，毕竟只是记录学习的博文。<br>以下讲几个一直没搞明白的点。</p>
 <h4 id="贪婪与非贪婪"><a href="#贪婪与非贪婪" class="headerlink" title="贪婪与非贪婪"></a>贪婪与非贪婪</h4><p>实现介绍通用匹配，以<code>.*</code>表示。<code>.</code>代表匹配任意字符，<code>*</code>代表匹配0个或多个表达式所以两个连用就代表匹配任意字符。比如字符串<code>&#39;Hello Python and Anaconda&#39;</code>，表达式为<code>&#39;^Hello.*Anaconda$&#39;</code>。代码如下：<br><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">txt = <span class="string">'Hello Python and Anaconda'</span></span><br><span class="line">result = re.match(<span class="string">"^Hello.*Anaconda$"</span>, txt)</span><br><span class="line"><span class="keyword">print</span>(result.<span class="keyword">group</span>())</span><br></pre></td></tr></table></figure></p>
 <p>可以得出我们想要的结果，因为<code>.*</code>代表匹配任意个字符，所以该正则表达式会在<strong><em>Hello</em></strong>之后一直匹配成功，直到遇到<strong><em>Anaconda</em></strong>停止。其中<code>.*</code>其实就是贪婪匹配。但是有时候贪婪匹配会出很大的问题。比如字符串<code>&#39;My tel number is 15012345678&#39;</code>，正则表达式为<code>&#39;^My.*(\d+)$&#39;</code>。具体代码如下：<br><a id="more"></a><br><figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">import re</span><br><span class="line"></span><br><span class="line">txt = <span class="string">'My tel number is 15012345678'</span></span><br><span class="line">result = re.match(<span class="string">"^My.*(\d+)$"</span>, txt)</span><br><span class="line"><span class="function"><span class="title">print</span><span class="params">(result.group()</span></span>)</span><br><span class="line"><span class="function"><span class="title">print</span><span class="params">(result.group(<span class="number">1</span>)</span></span>)</span><br></pre></td></tr></table></figure></p>
@@ -4715,7 +4886,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>李宏毅机器学习2017春学习记录及作业：octave实现</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A02017%E6%98%A5%E4%BD%9C%E4%B8%9A%EF%BC%9Aoctave%E5%AE%9E%E7%8E%B0.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%9D%8E%E5%AE%8F%E6%AF%85%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A02017%E6%98%A5%E4%BD%9C%E4%B8%9A%EF%BC%9Aoctave%E5%AE%9E%E7%8E%B0.html</url>
     <content><![CDATA[<p>所有代码在<a href="https://github.com/yan624/lihongyi-machine-learning-2017-homework" target="_blank" rel="noopener">lihongyi-machine-learning-2017-homework</a>上</p>
 <h3 id="学习情况和做题背景"><a href="#学习情况和做题背景" class="headerlink" title="学习情况和做题背景"></a>学习情况和做题背景</h3><h4 id="学习情况"><a href="#学习情况" class="headerlink" title="学习情况"></a>学习情况</h4><p>先看了<strong>《深度学习》（花书）</strong>这本书，由于我是零基础学习该方向，感觉这本书除了前几章数学方面略看得懂，其他的一脸懵逼。由于本人在学习某一知识之前会预先搜集资料。于是我打开了在知乎收藏的文章，点进了<strong>吴恩达机器学习</strong>网易云课堂。我看了几个算法：线性回归，逻辑回归，神经网络。并且做了线性回归和逻辑回归的练习题。个人感觉吴恩达的视频很适合入门，但是想要仔细理解太难了。我根据吴恩达老师提供的题目，照葫芦画瓢做了一下，做还是做出来了，但是这都是很简单的例子。大都是只有三四个参数，所以感觉只是入门了。<br>这时候我再去看<strong>《深度学习》</strong>这本书，发现有些内容我看得懂了。但是有只是有些而已，往后看还是无法理解。至此，在寒假中我彻底放弃继续看<strong>《深度学习》</strong>。这个时候我又继续搜集资料，我发现了另一个教学视频就是<strong>李宏毅机器学习</strong>，经过自己的查询，最终决定看这个。李宏毅老师讲的略微会难一点，因为他面向的是研究生，这个从他的课程介绍上可以看得出。可以对比一下，</p>
 <ul>
@@ -4807,7 +4978,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>（十）搭建springcloud：记录项目运行的日志</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E5%8D%81%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E8%AE%B0%E5%BD%95%E9%A1%B9%E7%9B%AE%E8%BF%90%E8%A1%8C%E7%9A%84%E6%97%A5%E5%BF%97.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E5%8D%81%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E8%AE%B0%E5%BD%95%E9%A1%B9%E7%9B%AE%E8%BF%90%E8%A1%8C%E7%9A%84%E6%97%A5%E5%BF%97.html</url>
     <content><![CDATA[<p>项目运行避免不了出现错误，这是日志就帮了大忙。<br>springboot提供了一个便捷的方法配置日志。在application.yml中加入以下配置，其中com.yan624代表包名，即这个包下的所有类输出的日志都是error以上级别。<br><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">logging:</span></span><br><span class="line"><span class="attr">  file:</span> <span class="string">upms.log</span></span><br><span class="line"><span class="attr">  level:</span></span><br><span class="line">    <span class="string">com.yan624:</span> <span class="string">error</span></span><br><span class="line"><span class="string">...</span></span><br></pre></td></tr></table></figure></p>
 <p>如果如下配置，就代表项目的所有类输出的日志都是error以上级别<br><a id="more"></a><br><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">logging:</span></span><br><span class="line"><span class="attr">  file:</span> <span class="string">upms.log</span></span><br><span class="line"><span class="attr">  level:</span></span><br><span class="line"><span class="attr">    root:</span> <span class="string">error</span></span><br><span class="line"><span class="string">...</span></span><br></pre></td></tr></table></figure></p>
 <p>但是这样配置无法做出更灵活的操作，比如将info的日志输出到info.log；将warn的日志输出到warn.log；将error的日志输出到error.log。<br>所以可以删除上面的配置，在classpath路径中新建logback.xml文件，里面填入：<br><figure class="highlight dust"><table><tr><td class="code"><pre><span class="line"><span class="xml"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="comment">&lt;!-- 修改一下自己想配置的路径，就一个点代表项目根路径--&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"LOG_PATH"</span> <span class="attr">value</span>=<span class="string">"."</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="comment">&lt;!-- start springboot default configuration of console log pattern --&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="comment">&lt;!-- 彩色日志 --&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="comment">&lt;!-- 彩色日志依赖的渲染类 --&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">conversionRule</span> <span class="attr">conversionWord</span>=<span class="string">"clr"</span> <span class="attr">converterClass</span>=<span class="string">"org.springframework.boot.logging.logback.ColorConverter"</span>/&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">conversionRule</span> <span class="attr">conversionWord</span>=<span class="string">"wex"</span> <span class="attr">converterClass</span>=<span class="string">"org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"</span>/&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">conversionRule</span> <span class="attr">conversionWord</span>=<span class="string">"wEx"</span> <span class="attr">converterClass</span>=<span class="string">"org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"</span>/&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="comment">&lt;!-- 彩色日志格式 --&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"CONSOLE_LOG_PATTERN"</span></span></span></span><br><span class="line"><span class="xml">              value="$</span><span class="template-variable">&#123;CONSOLE_LOG_PATTERN:-%clr(%d&#123;yyyy-MM-dd HH:mm:ss.SSS&#125;</span><span class="xml">)</span><span class="template-variable">&#123;faint&#125;</span><span class="xml"> %clr($</span><span class="template-variable">&#123;LOG_LEVEL_PATTERN:-%5p&#125;</span><span class="xml">) %clr($</span><span class="template-variable">&#123;PID:- &#125;</span><span class="xml">)</span><span class="template-variable">&#123;magenta&#125;</span><span class="xml"> %clr(---)</span><span class="template-variable">&#123;faint&#125;</span><span class="xml"> %clr([%15.15t])</span><span class="template-variable">&#123;faint&#125;</span><span class="xml"> %clr(%-40.40logger</span><span class="template-variable">&#123;39&#125;</span><span class="xml">)</span><span class="template-variable">&#123;cyan&#125;</span><span class="xml"> %clr(:)</span><span class="template-variable">&#123;faint&#125;</span><span class="xml"> %m%n$</span><span class="template-variable">&#123;LOG_EXCEPTION_CONVERSION_WORD:-%wEx&#125;</span><span class="xml">&#125;"/&gt;</span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"FILE_LOG_PATTERN"</span> <span class="attr">value</span>=<span class="string">"%date %-5level [$</span></span></span><span class="template-variable">&#123;HOSTNAME&#125;</span><span class="xml"><span class="tag"><span class="string"> %thread] %caller</span></span></span><span class="template-variable">&#123;1&#125;</span><span class="xml"><span class="tag"><span class="string">%msg%n"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="comment">&lt;!-- 控制台输出 --&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">appender</span> <span class="attr">name</span>=<span class="string">"CONSOLE"</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.ConsoleAppender"</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">encoder</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">Pattern</span>&gt;</span>$</span><span class="template-variable">&#123;CONSOLE_LOG_PATTERN&#125;</span><span class="xml"><span class="tag">&lt;/<span class="name">Pattern</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">charset</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">charset</span>&gt;</span> <span class="comment">&lt;!-- 此处设置字符集 --&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">encoder</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!--此日志appender是为开发使用，只配置最底级别，控制台输出的日志级别是大于或等于此级别的日志信息--&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.classic.filter.ThresholdFilter"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">level</span>&gt;</span>info<span class="tag">&lt;/<span class="name">level</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">filter</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">appender</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="comment">&lt;!-- end springboot default configuration of console log pattern --&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="comment">&lt;!-- 输出自己项目的日志，我比较喜欢将第三方的日志和自己的日志区分开存放，如果没我这样的强迫症可以不配置 --&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">appender</span> <span class="attr">name</span>=<span class="string">"MY_PROJECT_LOG_FILE"</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.RollingFileAppender"</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">file</span>&gt;</span>$</span><span class="template-variable">&#123;LOG_PATH&#125;</span><span class="xml">/my-project.log<span class="tag">&lt;/<span class="name">file</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!--日志文件输出格式--&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">encoder</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>$</span><span class="template-variable">&#123;FILE_LOG_PATTERN&#125;</span><span class="xml"><span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">charset</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">charset</span>&gt;</span> <span class="comment">&lt;!-- 此处设置字符集 --&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">encoder</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">rollingPolicy</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.TimeBasedRollingPolicy"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">fileNamePattern</span>&gt;</span>my-project/my-project-%d</span><span class="template-variable">&#123;yyyy-MM-dd&#125;</span><span class="xml">.%i.log<span class="tag">&lt;/<span class="name">fileNamePattern</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--</span></span></span><br><span class="line"><span class="xml">                除按日志记录之外，还配置了日志文件不能超过20M，若超过20M，日志文件会以索引0开始，</span></span><br><span class="line"><span class="xml">                命名日志文件，例如info/info-2019-01-03.0.log</span></span><br><span class="line"><span class="xml">            --&gt;</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">timeBasedFileNamingAndTriggeringPolicy</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP"</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">maxFileSize</span>&gt;</span>20MB<span class="tag">&lt;/<span class="name">maxFileSize</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">timeBasedFileNamingAndTriggeringPolicy</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--日志文件保留天数--&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--&lt;maxHistory&gt;30&lt;/maxHistory&gt;--&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">rollingPolicy</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!-- 此日志文件只记录info级别的 --&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.classic.filter.LevelFilter"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">level</span>&gt;</span>info<span class="tag">&lt;/<span class="name">level</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">filter</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">appender</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">appender</span> <span class="attr">name</span>=<span class="string">"INFO_FILE"</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.RollingFileAppender"</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">file</span>&gt;</span>$</span><span class="template-variable">&#123;LOG_PATH&#125;</span><span class="xml">/info.log<span class="tag">&lt;/<span class="name">file</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!--日志文件输出格式--&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">encoder</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>$</span><span class="template-variable">&#123;FILE_LOG_PATTERN&#125;</span><span class="xml"><span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">charset</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">charset</span>&gt;</span> <span class="comment">&lt;!-- 此处设置字符集 --&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">encoder</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">rollingPolicy</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.TimeBasedRollingPolicy"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">fileNamePattern</span>&gt;</span>info/info-%d</span><span class="template-variable">&#123;yyyy-MM-dd&#125;</span><span class="xml">.%i.log<span class="tag">&lt;/<span class="name">fileNamePattern</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--</span></span></span><br><span class="line"><span class="xml">                除按日志记录之外，还配置了日志文件不能超过20M，若超过20M，日志文件会以索引0开始，</span></span><br><span class="line"><span class="xml">                命名日志文件，例如info/info-2019-01-03.0.log</span></span><br><span class="line"><span class="xml">            --&gt;</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">timeBasedFileNamingAndTriggeringPolicy</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP"</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">maxFileSize</span>&gt;</span>20MB<span class="tag">&lt;/<span class="name">maxFileSize</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">timeBasedFileNamingAndTriggeringPolicy</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--日志文件保留天数--&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--&lt;maxHistory&gt;30&lt;/maxHistory&gt;--&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">rollingPolicy</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!-- 此日志文件只记录info级别的 --&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.classic.filter.LevelFilter"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">level</span>&gt;</span>info<span class="tag">&lt;/<span class="name">level</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--</span></span></span><br><span class="line"><span class="xml">                以下两个配置代表匹配到日志等级为info则输出，否则拒绝输出。</span></span><br><span class="line"><span class="xml">                如果删除这两行配置，那么这两个配置的默认值为NEUTRAL，意味着从日志等级info开始一层一层向上打印，即info-&gt;warn-&gt;error-&gt;fatal-&gt;off</span></span><br><span class="line"><span class="xml">                再比如上面<span class="tag">&lt;<span class="name">level</span>&gt;</span>配置的是error,那么输出error-&gt;fatal-&gt;off</span></span><br><span class="line"><span class="xml">                如果上面<span class="tag">&lt;<span class="name">level</span>&gt;</span>配置的是off，那么就只输出off等级的日志。</span></span><br><span class="line"><span class="xml">             --&gt;</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">onMatch</span>&gt;</span>ACCEPT<span class="tag">&lt;/<span class="name">onMatch</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">onMismatch</span>&gt;</span>DENY<span class="tag">&lt;/<span class="name">onMismatch</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">filter</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">appender</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">appender</span> <span class="attr">name</span>=<span class="string">"WARN_FILE"</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.RollingFileAppender"</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">file</span>&gt;</span>$</span><span class="template-variable">&#123;LOG_PATH&#125;</span><span class="xml">/warn.log<span class="tag">&lt;/<span class="name">file</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!--日志文件输出格式--&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">encoder</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>$</span><span class="template-variable">&#123;FILE_LOG_PATTERN&#125;</span><span class="xml"><span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">charset</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">charset</span>&gt;</span> <span class="comment">&lt;!-- 此处设置字符集 --&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">encoder</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">rollingPolicy</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.TimeBasedRollingPolicy"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">fileNamePattern</span>&gt;</span>warn/warn-%d</span><span class="template-variable">&#123;yyyy-MM-dd&#125;</span><span class="xml">.%i.log<span class="tag">&lt;/<span class="name">fileNamePattern</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--</span></span></span><br><span class="line"><span class="xml">                除按日志记录之外，还配置了日志文件不能超过20M，若超过20M，日志文件会以索引0开始，</span></span><br><span class="line"><span class="xml">                命名日志文件，例如warn/warn-2019-01-03.0.log</span></span><br><span class="line"><span class="xml">            --&gt;</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">timeBasedFileNamingAndTriggeringPolicy</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP"</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">maxFileSize</span>&gt;</span>20MB<span class="tag">&lt;/<span class="name">maxFileSize</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">timeBasedFileNamingAndTriggeringPolicy</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--日志文件保留天数--&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--&lt;maxHistory&gt;30&lt;/maxHistory&gt;--&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">rollingPolicy</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!-- 此日志文件只记录warn级别的 --&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.classic.filter.LevelFilter"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">level</span>&gt;</span>warn<span class="tag">&lt;/<span class="name">level</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">onMatch</span>&gt;</span>ACCEPT<span class="tag">&lt;/<span class="name">onMatch</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">onMismatch</span>&gt;</span>DENY<span class="tag">&lt;/<span class="name">onMismatch</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">filter</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">appender</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">appender</span> <span class="attr">name</span>=<span class="string">"ERROR_FILE"</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.RollingFileAppender"</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">file</span>&gt;</span>$</span><span class="template-variable">&#123;LOG_PATH&#125;</span><span class="xml">/error.log<span class="tag">&lt;/<span class="name">file</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!--日志文件输出格式--&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">encoder</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>$</span><span class="template-variable">&#123;FILE_LOG_PATTERN&#125;</span><span class="xml"><span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">charset</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">charset</span>&gt;</span> <span class="comment">&lt;!-- 此处设置字符集 --&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">encoder</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">rollingPolicy</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.TimeBasedRollingPolicy"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">fileNamePattern</span>&gt;</span>error/error-%d</span><span class="template-variable">&#123;yyyy-MM-dd&#125;</span><span class="xml">.%i.log<span class="tag">&lt;/<span class="name">fileNamePattern</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--</span></span></span><br><span class="line"><span class="xml">                除按日志记录之外，还配置了日志文件不能超过20M，若超过20M，日志文件会以索引0开始，</span></span><br><span class="line"><span class="xml">                命名日志文件，例如error/error-2019-01-03.0.log</span></span><br><span class="line"><span class="xml">            --&gt;</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">timeBasedFileNamingAndTriggeringPolicy</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP"</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">maxFileSize</span>&gt;</span>20MB<span class="tag">&lt;/<span class="name">maxFileSize</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">timeBasedFileNamingAndTriggeringPolicy</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--日志文件保留天数--&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--&lt;maxHistory&gt;30&lt;/maxHistory&gt;--&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">rollingPolicy</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!-- 此日志文件只记录error级别的 --&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.classic.filter.LevelFilter"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">level</span>&gt;</span>error<span class="tag">&lt;/<span class="name">level</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">onMatch</span>&gt;</span>ACCEPT<span class="tag">&lt;/<span class="name">onMatch</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">onMismatch</span>&gt;</span>DENY<span class="tag">&lt;/<span class="name">onMismatch</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">filter</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">appender</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">springProfile</span> <span class="attr">name</span>=<span class="string">"test"</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!-- 控制台输出info级别以上的日志 --&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">root</span> <span class="attr">level</span>=<span class="string">"info"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">appender-ref</span> <span class="attr">ref</span>=<span class="string">"CONSOLE"</span> /&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">root</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">springProfile</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">springProfile</span> <span class="attr">name</span>=<span class="string">"prod"</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!--这里的name属性代表所属包的名称是以io.github.yan624.messageporter开头的类，会按照这个logger的配置打印日志--&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">logger</span> <span class="attr">name</span>=<span class="string">"io.github.yan624.messageporter"</span> <span class="attr">additivity</span>=<span class="string">"false"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">appender-ref</span> <span class="attr">ref</span>=<span class="string">"MY_PROJECT_LOG_FILE"</span> /&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">logger</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!-- 打印warn，error级别的日志 --&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">root</span> <span class="attr">level</span>=<span class="string">"warn"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">appender-ref</span> <span class="attr">ref</span>=<span class="string">"WARN_FILE"</span> /&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">appender-ref</span> <span class="attr">ref</span>=<span class="string">"ERROR_FILE"</span> /&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">root</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!-- 控制台输出info级别以上的日志 --&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">root</span> <span class="attr">level</span>=<span class="string">"info"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">appender-ref</span> <span class="attr">ref</span>=<span class="string">"CONSOLE"</span> /&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">root</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">springProfile</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span></span><br></pre></td></tr></table></figure></p>
@@ -4827,7 +4998,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>（九）搭建springcloud：在linux上运行springboot项目</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E4%B9%9D%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E5%9C%A8linux%E4%B8%8A%E8%BF%90%E8%A1%8Cspringboot%E9%A1%B9%E7%9B%AE.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E4%B9%9D%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E5%9C%A8linux%E4%B8%8A%E8%BF%90%E8%A1%8Cspringboot%E9%A1%B9%E7%9B%AE.html</url>
     <content><![CDATA[<p>具将本地的jar文件拖到服务器上时发现，jar文件只有3kb。果然使用“java -jar 项目名.jar”命令后，显示<strong>no main manifest attribute, in springboot项目名.jar</strong>。<br>解决办法：在项目中（不是聚合父工程中）添加如下代码</p>
 <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                <span class="comment">&lt;!-- 指定该Main Class为全局的唯一入口 --&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">mainClass</span>&gt;</span>com.yan624.eureka.Eureka_Server7001<span class="tag">&lt;/<span class="name">mainClass</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">layout</span>&gt;</span>JAR<span class="tag">&lt;/<span class="name">layout</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">executions</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">execution</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">goals</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">goal</span>&gt;</span>repackage<span class="tag">&lt;/<span class="name">goal</span>&gt;</span><span class="comment">&lt;!--可以把依赖的包都打包到生成的Jar包中--&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">goals</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">execution</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">executions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <a id="more"></a>
@@ -4874,7 +5045,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>（零）搭建springcloud：创建项目</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E9%9B%B6%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E9%9B%B6%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE.html</url>
     <content><![CDATA[<h3 id="创建springboot项目"><a href="#创建springboot项目" class="headerlink" title="创建springboot项目"></a>创建springboot项目</h3><p>右键父工程选择new-&gt;module，创建一个子项目（packaging为jar）。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/33cb351041724b248d26b86121954e93.png" alt="创建module" title="创建module"></p>
 <p>点击Module之后会出现如下界面，选择spring Initializr(你如果要创建maven项目的话也选这个)，什么都不要干，点击Next。</p>
 <p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/41f65d0615394aefa53946aa6300d5d2.png" alt="创建springboot项目" title="创建springboot项目"></p>
@@ -4907,7 +5078,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>（八）搭建springcloud：修改静态文件，如html，js后立即生效</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E5%85%AB%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E4%BF%AE%E6%94%B9%E9%9D%99%E6%80%81%E6%96%87%E4%BB%B6%EF%BC%8C%E5%A6%82html%EF%BC%8Cjs%E5%90%8E%E7%AB%8B%E5%8D%B3%E7%94%9F%E6%95%88.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E5%85%AB%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E4%BF%AE%E6%94%B9%E9%9D%99%E6%80%81%E6%96%87%E4%BB%B6%EF%BC%8C%E5%A6%82html%EF%BC%8Cjs%E5%90%8E%E7%AB%8B%E5%8D%B3%E7%94%9F%E6%95%88.html</url>
     <content><![CDATA[<ol>
 <li>setting—&gt;Build,Execution,Deployment—&gt;Compiler  找到 build project automatically<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/0e3e14335ea94258adf2616de29ed82d.PNG" alt="idea配置自动构建" title="idea配置自动构建"></li>
 <li>按ctrl+shift+alt+/，选择 Registry<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/1ed4835b01e54c82b6d0023db60873ac.jpg" alt="更改注册" title="更改注册"></li>
@@ -4928,7 +5099,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E4%B8%83%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9Aspringboot%E5%A6%82%E4%BD%95%E5%B0%86%E6%89%80%E4%BE%9D%E8%B5%96%E7%9A%84jar%E5%8C%85%E7%9A%84%E7%B1%BB%E6%94%BE%E5%85%A5spring%E5%AE%B9%E5%99%A8.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E4%B8%83%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9Aspringboot%E5%A6%82%E4%BD%95%E5%B0%86%E6%89%80%E4%BE%9D%E8%B5%96%E7%9A%84jar%E5%8C%85%E7%9A%84%E7%B1%BB%E6%94%BE%E5%85%A5spring%E5%AE%B9%E5%99%A8.html</url>
     <content><![CDATA[<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableEurekaClient</span></span><br><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">Upms8081</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	public <span class="keyword">static</span> <span class="keyword">void</span> main(<span class="built_in">String</span>[] args) &#123;</span><br><span class="line">		<span class="built_in">Object</span>[] objects = <span class="keyword">new</span> <span class="built_in">Object</span>[<span class="number">3</span>];</span><br><span class="line">		objects[<span class="number">0</span>] = Upms8081.<span class="keyword">class</span>;</span><br><span class="line">		objects[<span class="number">1</span>] = UpmsApiAppliction.<span class="keyword">class</span>;</span><br><span class="line">		objects[<span class="number">2</span>] = CommonServiceStarter.<span class="keyword">class</span>;</span><br><span class="line">		SpringApplication.run(objects, args);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>其他的class对象分别是所需要初始化类jar包中的springboot启动类<br><a id="more"></a></p>
 <h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><p><a href="https://yan624.github.io/（零）搭建springcloud：创建项目.html">（零）搭建springcloud：创建项目</a><br><a href="https://yan624.github.io/（一）搭建springcloud：springboot整合thymeleaf.html">（一）搭建springcloud：springboot整合thymeleaf</a><br><a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a><br><a href="https://yan624.github.io/（三）搭建springcloud：整合mybatis-plus.html">（三）搭建springcloud：整合mybatis-plus</a><br><a href="https://yan624.github.io/（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）.html">（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</a><br><a href="https://yan624.github.io/（五）搭建springcloud：在idea启动springboot项目.html">（五）搭建springcloud：在idea启动springboot项目</a><br><a href="https://yan624.github.io/（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）.html">（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</a><br><a href="https://yan624.github.io/（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器.html">（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</a><br><a href="https://yan624.github.io/（八）搭建springcloud：修改静态文件，如html，js后立即生效.html">（八）搭建springcloud：修改静态文件，如html，js后立即生效</a><br><a href="https://yan624.github.io/（九）搭建springcloud：在linux上运行springboot项目.html">（九）搭建springcloud：在linux上运行springboot项目</a><br><a href="https://yan624.github.io/（十）搭建springcloud：记录项目运行的日志.html">（十）搭建springcloud：记录项目运行的日志</a></p>
@@ -4958,7 +5129,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E5%85%AD%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E5%9C%A8idea%E5%90%AF%E5%8A%A8%E9%A1%B9%E7%9B%AE%E5%87%BA%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%88hibernate-validator%E4%B8%8Ejavax-validation%E7%9A%84%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%EF%BC%89.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E5%85%AD%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E5%9C%A8idea%E5%90%AF%E5%8A%A8%E9%A1%B9%E7%9B%AE%E5%87%BA%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%88hibernate-validator%E4%B8%8Ejavax-validation%E7%9A%84%E5%85%BC%E5%AE%B9%E6%80%A7%E9%97%AE%E9%A2%98%EF%BC%89.html</url>
     <content><![CDATA[<p>由于是从eclipse迁移过来，之前的不同ide开发的问题搞了好久终于搞完了，以为终于成功了，然而又出了一大堆问题。<br>项目无法启动，报了一个奇葩的错：</p>
 <blockquote>
 <p>Could not initialize class org.hibernate.validator.internal.engine.Configuration</p>
@@ -4979,7 +5150,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>（五）搭建springcloud：在idea启动springboot项目</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E4%BA%94%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E5%9C%A8idea%E5%90%AF%E5%8A%A8springboot%E9%A1%B9%E7%9B%AE.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E4%BA%94%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E5%9C%A8idea%E5%90%AF%E5%8A%A8springboot%E9%A1%B9%E7%9B%AE.html</url>
     <content><![CDATA[<p>点击idea右上角 edit configuration<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/4803d077b7534b4fbf2f6f5a915db876.png" alt="idea配置启动类" title="idea配置启动类"><br>点击左上角的<font color="green">绿色“+”</font>然后点击maven就会出现右边窗口，注意要起一个name，然后下面的参数这么配置点击ok<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/e3a99aa12a0b4ad7a5544eaf1510cf4d.png" alt="idea配置maven命令" title="idea配置maven命令"><br>然后再到相同位置就会多了一个你起的名称的一个运行配置。点击即可。<br>最后还有最<strong>重要</strong>的一点，需要在你启动的项目的pom.xml文件中加上配置如下（主要是spring-boot-maven-plugin）：<br><a id="more"></a><br><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-surefire-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">skip</span>&gt;</span>true<span class="tag">&lt;/<span class="name">skip</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
 <p><strong>更新：此方式启动，无法进行调试，貌似可以通过配置解决。后来我都不用这个方式启动项目，在图二中不选择maven，选择Spring Boot即可运行正常。</strong></p>
 <h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><p><a href="https://yan624.github.io/（零）搭建springcloud：创建项目.html">（零）搭建springcloud：创建项目</a><br><a href="https://yan624.github.io/（一）搭建springcloud：springboot整合thymeleaf.html">（一）搭建springcloud：springboot整合thymeleaf</a><br><a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a><br><a href="https://yan624.github.io/（三）搭建springcloud：整合mybatis-plus.html">（三）搭建springcloud：整合mybatis-plus</a><br><a href="https://yan624.github.io/（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）.html">（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</a><br><a href="https://yan624.github.io/（五）搭建springcloud：在idea启动springboot项目.html">（五）搭建springcloud：在idea启动springboot项目</a><br><a href="https://yan624.github.io/（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）.html">（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</a><br><a href="https://yan624.github.io/（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器.html">（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</a><br><a href="https://yan624.github.io/（八）搭建springcloud：修改静态文件，如html，js后立即生效.html">（八）搭建springcloud：修改静态文件，如html，js后立即生效</a><br><a href="https://yan624.github.io/（九）搭建springcloud：在linux上运行springboot项目.html">（九）搭建springcloud：在linux上运行springboot项目</a><br><a href="https://yan624.github.io/（十）搭建springcloud：记录项目运行的日志.html">（十）搭建springcloud：记录项目运行的日志</a></p>
@@ -4996,7 +5167,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>（三）搭建springcloud：整合mybatis-plus</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E4%B8%89%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E6%95%B4%E5%90%88mybatis-plus.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E4%B8%89%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E6%95%B4%E5%90%88mybatis-plus.html</url>
     <content><![CDATA[<p>由于一直使用mybatis的example，无法忍受着过长的代码，所以转向了mybatis-plus，配置过于简单，就不演示了。<br>参考官网<a href="http://mp.baomidou.com/#/install" target="_blank" rel="noopener">http://mp.baomidou.com/#/install</a><br>如果看不懂，可以看mybatis-plus提供的整合springboot例子<br>网址：<a href="https://gitee.com/baomidou/mybatisplus-spring-boot" target="_blank" rel="noopener">https://gitee.com/baomidou/mybatisplus-spring-boot</a><br><a id="more"></a><br>如果还看不懂，尼玛别整合了。（手动狗头）<br>提示：<br>Service可以继承mybatis-plus提供的ServiceImpl类<br>mapper层可以继承BaseMapper，这样如果有些mapper比较简单完全可以省去mapper.xml<br>IService可以继承IService</p>
 <h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><p><a href="https://yan624.github.io/（零）搭建springcloud：创建项目.html">（零）搭建springcloud：创建项目</a><br><a href="https://yan624.github.io/（一）搭建springcloud：springboot整合thymeleaf.html">（一）搭建springcloud：springboot整合thymeleaf</a><br><a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a><br><a href="https://yan624.github.io/（三）搭建springcloud：整合mybatis-plus.html">（三）搭建springcloud：整合mybatis-plus</a><br><a href="https://yan624.github.io/（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）.html">（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</a><br><a href="https://yan624.github.io/（五）搭建springcloud：在idea启动springboot项目.html">（五）搭建springcloud：在idea启动springboot项目</a><br><a href="https://yan624.github.io/（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）.html">（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</a><br><a href="https://yan624.github.io/（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器.html">（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</a><br><a href="https://yan624.github.io/（八）搭建springcloud：修改静态文件，如html，js后立即生效.html">（八）搭建springcloud：修改静态文件，如html，js后立即生效</a><br><a href="https://yan624.github.io/（九）搭建springcloud：在linux上运行springboot项目.html">（九）搭建springcloud：在linux上运行springboot项目</a><br><a href="https://yan624.github.io/（十）搭建springcloud：记录项目运行的日志.html">（十）搭建springcloud：记录项目运行的日志</a></p>
 <!-- more -->]]></content>
@@ -5012,7 +5183,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E5%9B%9B%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9Aeclipse%E8%BF%81%E7%A7%BB%E5%88%B0idea%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%88maven-install%E5%91%BD%E4%BB%A4%E5%87%BA%E9%94%99%EF%BC%89.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E5%9B%9B%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9Aeclipse%E8%BF%81%E7%A7%BB%E5%88%B0idea%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%88maven-install%E5%91%BD%E4%BB%A4%E5%87%BA%E9%94%99%EF%BC%89.html</url>
     <content><![CDATA[<p>在使用maven的install命令时出现java.lang.ArrayIndexOutOfBoundsException: 10640<br>试了三个小时，一直以为idea有问题，最后没想到是maven版本的问题，我的是3.5.0，只要改成3.5.2以上就可以了（我改成3.5.4）<br>真的奇怪之前在eclipse上用一直好好地<br><a id="more"></a></p>
 <h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><p><a href="https://yan624.github.io/（零）搭建springcloud：创建项目.html">（零）搭建springcloud：创建项目</a><br><a href="https://yan624.github.io/（一）搭建springcloud：springboot整合thymeleaf.html">（一）搭建springcloud：springboot整合thymeleaf</a><br><a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a><br><a href="https://yan624.github.io/（三）搭建springcloud：整合mybatis-plus.html">（三）搭建springcloud：整合mybatis-plus</a><br><a href="https://yan624.github.io/（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）.html">（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</a><br><a href="https://yan624.github.io/（五）搭建springcloud：在idea启动springboot项目.html">（五）搭建springcloud：在idea启动springboot项目</a><br><a href="https://yan624.github.io/（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）.html">（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</a><br><a href="https://yan624.github.io/（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器.html">（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</a><br><a href="https://yan624.github.io/（八）搭建springcloud：修改静态文件，如html，js后立即生效.html">（八）搭建springcloud：修改静态文件，如html，js后立即生效</a><br><a href="https://yan624.github.io/（九）搭建springcloud：在linux上运行springboot项目.html">（九）搭建springcloud：在linux上运行springboot项目</a><br><a href="https://yan624.github.io/（十）搭建springcloud：记录项目运行的日志.html">（十）搭建springcloud：记录项目运行的日志</a></p>
 <!-- more -->]]></content>
@@ -5028,7 +5199,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>（一）搭建springcloud：springboot整合thymeleaf</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E4%B8%80%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9Aspringboot%E6%95%B4%E5%90%88thymeleaf.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E4%B8%80%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9Aspringboot%E6%95%B4%E5%90%88thymeleaf.html</url>
     <content><![CDATA[<p>thymeleaf的配置类如下，要注意的是它的prefix不是以前的”/WEB-INF/“，而是”classpath:/templates/“。templates文件夹位于resources源文件夹下，该文件夹的名称不是我随便写的，是springboot规定的，用于放置动态文件。类似的还有static用于放置静态文件。<br>其中我分别写了linux（即生产环境）及windows（即开发环境）下的配置，可以根据需要自己删留。（由于一般开发环境为windows，所以我自己偷懒写的加载bean条件，如果开发环境也是linux那么可以直接删掉）其中还可能包含我自己写的工具类，可以直接删去。<br>注：差点忘了，我的thymeleaf是3.0以上的版本，3.0以上的版本变动有些大，如果不是该版本以上，可能无法使用该配置类。springboot默认依赖的版本是2.1.6（貌似），所以需要手动更改，不会的看<a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a><br><a id="more"></a><br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ComponentScan</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThymeleafConfig</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger LOGGER = LoggerFactory.getLogger(ThymeleafConfig.class);</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ThymeleafViewResolver <span class="title">viewResolver</span><span class="params">(SpringTemplateEngine templateEngine)</span></span>&#123;</span><br><span class="line">        ThymeleafViewResolver viewResolver = <span class="keyword">new</span> ThymeleafViewResolver();</span><br><span class="line">        viewResolver.setTemplateEngine(templateEngine);</span><br><span class="line">        viewResolver.setOrder(<span class="number">1</span>);</span><br><span class="line">        viewResolver.setCharacterEncoding(<span class="string">"utf-8"</span>);</span><br><span class="line">        <span class="comment">//不知道这个缓存和下面的模板解析器的缓存是什么关系，但是应该不是同一个意思</span></span><br><span class="line">        <span class="comment">//我在模板解析器设置false，在这行代码之上打印了一下还是true</span></span><br><span class="line">        viewResolver.setCache(<span class="keyword">false</span>);</span><br><span class="line">        viewResolver.setViewNames(<span class="keyword">new</span> String[] &#123;<span class="string">"thymeleaf/*"</span>, <span class="string">".html"</span>, <span class="string">".xhtml"</span>&#125;);</span><br><span class="line">        <span class="keyword">return</span> viewResolver;</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 模板解析器</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Conditional</span>(WindowsCondition.class)</span><br><span class="line">    <span class="meta">@Primary</span><span class="comment">//springboot貌似内置一个模板解析器，所以将这个bean定义为首选</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> SpringResourceTemplateResolver <span class="title">windowsTemplateResolver</span><span class="params">()</span></span>&#123;</span><br><span class="line">        SpringResourceTemplateResolver templateResolver = <span class="keyword">new</span> SpringResourceTemplateResolver();</span><br><span class="line">        templateResolver.setPrefix(<span class="string">"classpath:/templates/"</span>);</span><br><span class="line">        templateResolver.setSuffix(<span class="string">".html"</span>);</span><br><span class="line">        templateResolver.setOrder(<span class="number">1</span>);</span><br><span class="line">        templateResolver.setTemplateMode(TemplateMode.HTML);</span><br><span class="line">        <span class="comment">//不缓存页面，即服务器开启时修改thymeleaf页面会有变化。</span></span><br><span class="line">        templateResolver.setCacheable(<span class="keyword">false</span>);</span><br><span class="line">        LOGGER.info(<span class="keyword">new</span> LogPrintingTemplate()</span><br><span class="line">                .type(<span class="string">"thymeleaf页面缓存禁用(￣▽￣)~*"</span>)</span><br><span class="line">                .print());</span><br><span class="line">        templateResolver.setCharacterEncoding(<span class="string">"utf-8"</span>);</span><br><span class="line">        <span class="keyword">return</span> templateResolver;</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">    <span class="meta">@Conditional</span>(LinuxCondition.class)</span><br><span class="line">    <span class="meta">@Primary</span><span class="comment">//springboot貌似内置一个模板解析器，所以将这个bean定义为首选</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> SpringResourceTemplateResolver <span class="title">linuxTemplateResolver</span><span class="params">()</span></span>&#123;</span><br><span class="line">        SpringResourceTemplateResolver templateResolver = <span class="keyword">new</span> SpringResourceTemplateResolver();</span><br><span class="line">        templateResolver.setPrefix(<span class="string">"classpath:/WEB-INF/"</span>);</span><br><span class="line">        templateResolver.setSuffix(<span class="string">".html"</span>);</span><br><span class="line">        templateResolver.setOrder(<span class="number">1</span>);</span><br><span class="line">        templateResolver.setTemplateMode(TemplateMode.HTML);</span><br><span class="line">        <span class="comment">//缓存页面</span></span><br><span class="line">        templateResolver.setCacheable(<span class="keyword">true</span>);</span><br><span class="line">        LOGGER.info(<span class="keyword">new</span> LogPrintingTemplate()</span><br><span class="line">                .type(<span class="string">"thymeleaf页面缓存开启(￣▽￣)~*"</span>)</span><br><span class="line">                .print());</span><br><span class="line">        templateResolver.setCharacterEncoding(<span class="string">"utf-8"</span>);</span><br><span class="line">        <span class="keyword">return</span> templateResolver;</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 模版引擎</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> SpringTemplateEngine <span class="title">templateEngine</span><span class="params">(ITemplateResolver templateResolver)</span></span>&#123;</span><br><span class="line">        SpringTemplateEngine templateEngine = <span class="keyword">new</span> SpringTemplateEngine();</span><br><span class="line">        templateEngine.setTemplateResolver(templateResolver);</span><br><span class="line">        templateEngine.setEnableSpringELCompiler(<span class="keyword">true</span>);</span><br><span class="line">        <span class="keyword">return</span> templateEngine;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>Conditional里的类如下，linux的类似</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WindowsCondition</span> <span class="keyword">implements</span> <span class="title">Condition</span></span>&#123;</span><br><span class="line">       </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">matches</span><span class="params">(ConditionContext context, AnnotatedTypeMetadata metadata)</span> </span>&#123;</span><br><span class="line">        Environment environment = context.getEnvironment();</span><br><span class="line">        String osName = environment.getProperty(<span class="string">"os.name"</span>);</span><br><span class="line">        <span class="keyword">boolean</span> isWindows = <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">if</span>(osName.toLowerCase().contains(<span class="string">"windows"</span>))   isWindows = <span class="keyword">true</span>;</span><br><span class="line">         </span><br><span class="line">        <span class="keyword">return</span> isWindows;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -5052,7 +5223,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>（二）搭建springcloud：修改thymeleaf版本</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E4%BA%8C%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E4%BF%AE%E6%94%B9thymeleaf%E7%89%88%E6%9C%AC.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E4%BA%8C%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E4%BF%AE%E6%94%B9thymeleaf%E7%89%88%E6%9C%AC.html</url>
     <content><![CDATA[<p>起因：springboot整合thymeleaf默认依赖的版本是3.0以下的版本，而我一直是用的3.0以上的版本，而且貌似3.0以上的版本性能更好，所以果断自己做了版本的更改。但是在更改是有一点问题。</p>
 <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- thymeleaf --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-thymeleaf<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>由于我想排除依赖，所以我在其中排除了thymeleaf-spring4的依赖，但是我发现thymeleaf核心包的版本还是3.0以下，具体解决过程不写了，解决如下：<br>上面的依赖不要删，在下面再添加依赖，父工程中添加版本，可以选择3.0以上的版本（我的是3.0.9）<br><a id="more"></a><br><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.thymeleaf<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>thymeleaf<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
@@ -5148,7 +5319,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>bootstrap-switch常用操作/属性</title>
-    <url>/%E5%89%8D%E7%AB%AF/bootstrap-switch%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C-%E5%B1%9E%E6%80%A7.html</url>
+    <url>/assorted/%E5%89%8D%E7%AB%AF/bootstrap-switch%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C-%E5%B1%9E%E6%80%A7.html</url>
     <content><![CDATA[<h3 id="引入css、js"><a href="#引入css、js" class="headerlink" title="引入css、js"></a>引入css、js</h3><p><a href="http://www.bootcss.com/p/bootstrap-switch/" target="_blank" rel="noopener">bootstrap-switch中文官网</a></p>
 <figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line">&lt;link <span class="attribute">rel</span>=<span class="string">"stylesheet"</span> <span class="attribute">href</span>=<span class="string">"<span class="variable">$&#123;CONTEXT &#125;</span>/css/bootstrap-switch.min.css"</span>&gt;</span><br><span class="line">&lt;script <span class="attribute">src</span>=<span class="string">"<span class="variable">$&#123;CONTEXT &#125;</span>/js/bootstrap/bootstrap-switch.min.js"</span>&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
 <p><strong>注：</strong>貌似还有一个叫做bootstrapSwitch.js的插件，不要引入错了。</p>
@@ -5331,7 +5502,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>shiro角色和权限的用法</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/shiro%E8%A7%92%E8%89%B2%E5%92%8C%E6%9D%83%E9%99%90%E7%9A%84%E7%94%A8%E6%B3%95.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/shiro%E8%A7%92%E8%89%B2%E5%92%8C%E6%9D%83%E9%99%90%E7%9A%84%E7%94%A8%E6%B3%95.html</url>
     <content><![CDATA[<h3 id="shiro通配符的理解"><a href="#shiro通配符的理解" class="headerlink" title="shiro通配符的理解"></a>shiro通配符的理解</h3><p>shiro提供通配符，例如<code>*:*:*</code>的形式<br>意味着：第一部分代表一个域，第二部分代表操作，第三部分代表实例。<br>举个例子，现在有一个权限管理系统，称为<code>:upms</code>，可以写出权限<code>upms:update:coment</code>,这个权限值代表可以在upms这个域中对coment进行update操作。但是也不要思维定死，“域就是一个系统”。<br>再比如说一个权限值<code>upms:update:user</code>,代表可以更新一个用户的信息，这里的域的确是upms，但是并不是所有的用户都用这个域（事实上也不能用）。比如普通的用户也有权限更新自己的信息，那么可以再创建一个权限值比如“user:update:15900000000”,意味着一个用户可以更新15900000000这个账号的信息。</p>
 <h3 id="shiro角色和权限的理解"><a href="#shiro角色和权限的理解" class="headerlink" title="shiro角色和权限的理解"></a>shiro角色和权限的理解</h3><p>之前一直想角色和权限的用法差不多，为什么还要分角色和权限？<br><a id="more"></a><br>然后看了<a href="http://shiro.apache.org/permissions.html" target="_blank" rel="noopener">shiro官网的文档</a>貌似懂了一些。<br>官网说shiro一共有三种权限粒度，分为：资源级别，实例级别，属性级别（ <a href="http://shiro.apache.org/java-authorization-guide.html#levels-of-permission-granularity" target="_blank" rel="noopener">这三种粒度的描述页面</a>）<br>角色可以控制对资源的访问，比如对一个页面的访问。如果程序中已经设置了隐式角色，那么直接使用注解的形式可以很快速的控制这个网页的浏览权限。<br>而权限是对角色更细粒度的划分。比如现在有一个角色名为“admin”，他拥有对系统中所有权限的CRUD操作，现在需要临时给另外一个很普通的用户（比如只是一个user）查看权限的操作（R）。如果没有shiro提供的权限控制，<font color="red">那么只能给这个用户一个临时的“admin”角色，但是这样他的权限就太大了，因为“admin”是可以查看权限，但是他同样可以删除权限。</font></p>
 <p>上述是个人理解。</p>
@@ -5458,7 +5629,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>vo,dto,do,po的理解</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/vo-dto-do-po%E7%9A%84%E7%90%86%E8%A7%A3.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/vo-dto-do-po%E7%9A%84%E7%90%86%E8%A7%A3.html</url>
     <content><![CDATA[<ul>
 <li>po:持久化对象，没啥好说的，数据库里一张表对应一个po。</li>
 <li>vo:视图对象，是指某个指定页面的所有数据，注意是<font color="red">所有数据</font>。</li>
@@ -5477,7 +5648,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>js一些常用的属性和函数</title>
-    <url>/%E5%89%8D%E7%AB%AF/js%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E7%9A%84%E5%B1%9E%E6%80%A7%E5%92%8C%E5%87%BD%E6%95%B0.html</url>
+    <url>/assorted/%E5%89%8D%E7%AB%AF/js%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E7%9A%84%E5%B1%9E%E6%80%A7%E5%92%8C%E5%87%BD%E6%95%B0.html</url>
     <content><![CDATA[<p>由于老是忘记js和jq的函数，这里记一下。</p>
 <h3 id="javascript"><a href="#javascript" class="headerlink" title="javascript"></a>javascript</h3><ol>
 <li>string.replace(//, “”)<br>第一个参数是正则，表达式在//两个之间写，第二个参数是需要替换成什么。</li>
@@ -5508,7 +5679,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>再探String</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%E5%86%8D%E6%8E%A2String.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%E5%86%8D%E6%8E%A2String.html</url>
     <content><![CDATA[<p>估计是最终版了。</p>
 <figure class="highlight arduino"><table><tr><td class="code"><pre><span class="line"><span class="keyword">String</span> s1 = <span class="keyword">new</span> <span class="keyword">String</span>(<span class="string">"张三"</span>);</span><br><span class="line"><span class="keyword">String</span> s2 = <span class="keyword">new</span> <span class="keyword">String</span>(<span class="string">"张三"</span>);</span><br><span class="line"><span class="keyword">String</span> s3 = <span class="string">"张三"</span>;</span><br><span class="line"><span class="keyword">String</span> s4 = <span class="string">"张三"</span>;</span><br></pre></td></tr></table></figure>
 <p>我们都知道<code>String s3 = &quot;张三&quot;;</code>这句代码的”张三”字符串位 于常量池中，而s3==s4这种明显就是小儿科，true！<br>我们来解析一下<code>String s3 = &quot;张三&quot;;</code>这句代码。</p>
@@ -5543,7 +5714,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>解决li标签使用inline-block时产生的4px</title>
-    <url>/%E5%89%8D%E7%AB%AF/%E8%A7%A3%E5%86%B3li%E6%A0%87%E7%AD%BE%E4%BD%BF%E7%94%A8inline-block%E6%97%B6%E4%BA%A7%E7%94%9F%E7%9A%844px.html</url>
+    <url>/assorted/%E5%89%8D%E7%AB%AF/%E8%A7%A3%E5%86%B3li%E6%A0%87%E7%AD%BE%E4%BD%BF%E7%94%A8inline-block%E6%97%B6%E4%BA%A7%E7%94%9F%E7%9A%844px.html</url>
     <content><![CDATA[<p>完美兼容的方法<br>父元素（比如ul）设置font-size:0;<br>使用letter-spacing:-Npx;<br>li标签重新设置字体大小<br>原文出处：解决inline-block出现的间隙<br><a id="more"></a></p>
 ]]></content>
       <categories>
@@ -5556,7 +5727,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>理解接口和抽象类</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%E7%90%86%E8%A7%A3%E6%8E%A5%E5%8F%A3%E5%92%8C%E6%8A%BD%E8%B1%A1%E7%B1%BB.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%E7%90%86%E8%A7%A3%E6%8E%A5%E5%8F%A3%E5%92%8C%E6%8A%BD%E8%B1%A1%E7%B1%BB.html</url>
     <content><![CDATA[<p>这篇只是自学java基础时的个人理解而已。</p>
 <p>初学abstract和interface时会感到很疑惑，明明这两个没有具体实现的方法，为什么还要继承或者实现他们呢？明明可以自己在自己编写的类中写一个方法，而不去继承或实现。现在看来大概是因为一种规范，也是为了让别人更好的看懂，如果自己写方法，自己去用，当然不需要多此一举。如果编写一个Run的接口，让别人去用，别人一看就知道这个接口是用来让某种东西跑起来。</p>
 <ul>
@@ -5582,7 +5753,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>自动装箱和自动拆箱功能</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%E8%87%AA%E5%8A%A8%E8%A3%85%E7%AE%B1%E5%92%8C%E8%87%AA%E5%8A%A8%E6%8B%86%E7%AE%B1%E5%8A%9F%E8%83%BD.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%E8%87%AA%E5%8A%A8%E8%A3%85%E7%AE%B1%E5%92%8C%E8%87%AA%E5%8A%A8%E6%8B%86%E7%AE%B1%E5%8A%9F%E8%83%BD.html</url>
     <content><![CDATA[<p><code>Integer a = new Integer(1000);</code><br>在jdk5.0之后走了自动装箱功能<br><code>Integer a = 1000;</code>即与上面的等式相同。<br>在编译阶段，编译器帮助我们改进代码，将<code>Integer a = new Integer(1000);</code><br>自动改为<code>Integer a = 1000;</code></p>
 <p><code>int c = new Integer(1500);</code>进行自动拆箱。<br>编译器将上述代码自动改为<code>int c = new Integer(1500).intValue();</code></p>
 <p>但是在–128到127之间的数依然会当做基本数据类型处理。<br><figure class="highlight mipsasm"><table><tr><td class="code"><pre><span class="line">Integer <span class="built_in">a1</span>=<span class="number">100</span><span class="comment">;</span></span><br><span class="line">Integer <span class="built_in">a2</span>=<span class="number">100</span><span class="comment">;</span></span><br></pre></td></tr></table></figure></p>
@@ -5598,7 +5769,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>StringBuilder和StringBuffer的区别</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/StringBuilder%E5%92%8CStringBuffer%E7%9A%84%E5%8C%BA%E5%88%AB.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/StringBuilder%E5%92%8CStringBuffer%E7%9A%84%E5%8C%BA%E5%88%AB.html</url>
     <content><![CDATA[<p>StringBuilder线程不安全，效率高。<br>DtringBuffer线程安全，效率低。<br>都是可变字符序列。<br><code>StringBuilder s = new StringBuilder()</code>字符数组长度初始化为16<br><code>StringBuilder s = new StringBuilder(32)</code>字符数组长度初始化为32<br>其中的append方法最终返回this，可以实现方法链，<code>s.append(&quot;ab&quot;).append(&quot;cd&quot;)</code></p>
 <figure class="highlight less"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">StringBuilder</span>(String s)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="selector-tag">super</span>(s.length() + <span class="number">16</span>);</span><br><span class="line">	<span class="selector-tag">append</span>(s);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>StringBuilder类的其中一个构造器，建立一个初始化内容的长度加上16的数组<br>如果传入的一个数组比初始化的大，则会进行数组扩容。<br>新容量 = 旧容量 * 2+2<br><a id="more"></a></p>
@@ -5613,7 +5784,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>区分“==”和equals</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%E5%8C%BA%E5%88%86%E7%AD%89%E5%8F%B7%E2%80%9C==%E2%80%9D%E5%92%8Cequals.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%E5%8C%BA%E5%88%86%E7%AD%89%E5%8F%B7%E2%80%9C==%E2%80%9D%E5%92%8Cequals.html</url>
     <content><![CDATA[<p>比如</p>
 <figure class="highlight arduino"><table><tr><td class="code"><pre><span class="line"><span class="keyword">String</span> s1=<span class="keyword">new</span> <span class="keyword">String</span>(<span class="string">"abc"</span>);</span><br><span class="line"><span class="keyword">String</span> s2=<span class="keyword">new</span> <span class="keyword">String</span>(<span class="string">"abc"</span>);</span><br></pre></td></tr></table></figure>
 <p>s1==s2返回的是faluse，因为s1指向的是String类的value数组，而s2指向的是另一个String类的value数组，对象不同。<br>而s1.equals(s2)返回true。因为eauals比较的是内容，即value数组。<br><a id="more"></a><br><figure class="highlight armasm"><table><tr><td class="code"><pre><span class="line"><span class="keyword">String </span><span class="built_in">s3</span>=<span class="string">"abc"</span><span class="comment">;</span></span><br><span class="line"><span class="keyword">String </span><span class="built_in">s4</span>=<span class="string">"abc"</span><span class="comment">;</span></span><br></pre></td></tr></table></figure></p>
@@ -5629,7 +5800,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
   </entry>
   <entry>
     <title>new String(abc)与String s=abc的区别</title>
-    <url>/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/new-String-abc-%E4%B8%8EString-s-abc%E7%9A%84%E5%8C%BA%E5%88%AB.html</url>
+    <url>/~%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/new-String-abc-%E4%B8%8EString-s-abc%E7%9A%84%E5%8C%BA%E5%88%AB.html</url>
     <content><![CDATA[<p>String类是不可变字符序列。<br>比如<code>String s=&quot;abc&quot;;</code><br>原理是将字符串”abc”存入value数组，而value数组是final，所以value数组是不能改变的，但是String产生的s对象，s这个指针是可变的。<br>局部变量s在栈中产生，指向在堆(方法区的常量池)中的”abc”,然后如果想在字符串后面添加字符，则会诞生一个新的字符串(比如”abcd”)，然后将s指针指向”abcd”。<br>而<code>String s=new String(&quot;abc&quot;);</code><br>同理s产生在栈中，字符串”abc”产生在堆(方法区的常量池)中，但是s不直接指向”abc”。<br>new String在堆中产生一个对象，由常量池中的”abc”对它进行初始化，而s对象指向的是new String这个对象。<br>s指向String，String指向”abc”。<br><a id="more"></a></p>
 <p>总结:new String()比String多创建了一个对象，浪费内存。<br>用<code>String s=new String()</code>创建了在栈中的s对象以及String类对象。<br>用String s仅仅创建了s对象</p>
 ]]></content>

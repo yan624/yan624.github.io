@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/5.10.2/css/all.min.css">
+
+<link rel="stylesheet" href="/css/main.css?v=6.7.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.7.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.7.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.7.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+<!--图片缩放插件样式-->
+<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css">
+
+  <meta name="description" content="写在前面&amp;emsp;&amp;emsp;此论文为 2015 年的论文。&amp;emsp;&amp;emsp;本文会出现一个名为谓语序列（predicate sequence）的名词，论文中没有详细说明。但是估计就是：一个实体至另一个实体的有向路径上的所有谓语的连接形式。如下文第一张图 Family Guy-&amp;gt;cvt1-&amp;gt;Mila Kunis 的谓语序列就是 cast-actor。 论文概要&amp;emsp;&amp;em">
+<meta name="keywords" content="论文笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记：Semantic Parsing via Staged Query Graph Generation Question Answering with Knowledge Base">
+<meta property="og:url" content="http://yan624.github.io/~论文/19、Semantic Parsing via Staged Query Graph Generation：Question Answering with Knowledge Base.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="写在前面&amp;emsp;&amp;emsp;此论文为 2015 年的论文。&amp;emsp;&amp;emsp;本文会出现一个名为谓语序列（predicate sequence）的名词，论文中没有详细说明。但是估计就是：一个实体至另一个实体的有向路径上的所有谓语的连接形式。如下文第一张图 Family Guy-&amp;gt;cvt1-&amp;gt;Mila Kunis 的谓语序列就是 cast-actor。 论文概要&amp;emsp;&amp;em">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic Parsing via Staged Query Graph Generation Question Answering with Knowledge Base/Freebase subgraph of Family Guy.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic Parsing via Staged Query Graph Generation Question Answering with Knowledge Base/Query graph that represents the question “Who first voiced Meg on Family Guy？”.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic Parsing via Staged Query Graph Generation Question Answering with Knowledge Base/Two possible topic entity linking actionsapplied to an empty graph, for question “Who firstvoiced[Meg]on[Family Guy]？”.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic Parsing via Staged Query Graph Generation Question Answering with Knowledge Base/Candidate core inferential chains start from the entity FamilyGuy.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic Parsing via Staged Query Graph Generation Question Answering with Knowledge Base/CNN架构.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic Parsing via Staged Query Graph Generation Question Answering with Knowledge Base/特征举例.jpg">
+<meta property="og:updated_time" content="2020-01-05T08:29:10.002Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="论文笔记：Semantic Parsing via Staged Query Graph Generation Question Answering with Knowledge Base">
+<meta name="twitter:description" content="写在前面&amp;emsp;&amp;emsp;此论文为 2015 年的论文。&amp;emsp;&amp;emsp;本文会出现一个名为谓语序列（predicate sequence）的名词，论文中没有详细说明。但是估计就是：一个实体至另一个实体的有向路径上的所有谓语的连接形式。如下文第一张图 Family Guy-&amp;gt;cvt1-&amp;gt;Mila Kunis 的谓语序列就是 cast-actor。 论文概要&amp;emsp;&amp;em">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic Parsing via Staged Query Graph Generation Question Answering with Knowledge Base/Freebase subgraph of Family Guy.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yan624.github.io/~论文/19、Semantic Parsing via Staged Query Graph Generation：Question Answering with Knowledge Base.html">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>论文笔记：Semantic Parsing via Staged Query Graph Generation Question Answering with Knowledge Base | 博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+	<!--加载flower canvas-->
+<script>
+var pathname = window.location.pathname;
+if(pathname == '/flower.html'){
+	var body =  document.getElementsByTagName('body')[0];
+	var canvas = document.createElement("canvas")
+	canvas.setAttribute('id', 'sakura')
+	// '<canvas id="sakura"></canvas>'
+	body.appendChild(canvas)
+}
+</script>
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">低阶炼金术士</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-常用链接">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/常用链接" rel="section"><i class="menu-item-icon fas fa-fw fa-bookmark"></i> <br>常用链接</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">17</span></a>
+
+  </li>
+        
+        
+        
+          
+            
+            
+            
+              
+              
+
+  
+  
+    
+  
+  <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">23</span></a>
+
+  </li>
+
+
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+        
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">132</span></a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/~论文/19、Semantic Parsing via Staged Query Graph Generation：Question Answering with Knowledge Base.html">
+
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+				
+				
+	
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">论文笔记：Semantic Parsing via Staged Query Graph Generation Question Answering with Knowledge Base
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-03 10:11:46" itemprop="dateCreated datePublished" datetime="2019-07-03T10:11:46+08:00">2019-07-03</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-01-05 16:29:10" itemprop="dateModified" datetime="2020-01-05T16:29:10+08:00">2020-01-05</time>
+              
+            
+          </span>
+
+          
+
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/" itemprop="url" rel="index"><span itemprop="name">assorted</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h1><p>&emsp;&emsp;此论文为 2015 年的论文。<br>&emsp;&emsp;本文会出现一个名为<strong>谓语序列（predicate sequence）</strong>的名词，论文中没有详细说明。但是估计就是：一个实体至另一个实体的有向路径上的所有谓语的连接形式。如下文第一张图 Family Guy-&gt;cvt1-&gt;Mila Kunis 的谓语序列就是 cast-actor。</p>
+<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/ACL15-STAGG.pdf" target="_blank" rel="noopener">论文地址</a><br>&emsp;&emsp;节选自摘要部分：</p>
+<blockquote>
+<p>&emsp;&emsp;论文提出了一个基于知识库问答的新的语义解析（semantic parsing）框架。首先定义一个类似于知识库的<strong>子图（subgraph）</strong>的查询图（query graph），可以直接映射到一个语义的逻辑形式（如<script type="math/tex">\lambda</script>-calculus）。所以<strong>语义分析简化为查询图的生成</strong>，并将其表示为一个阶段性搜索问题。然后通过使用先进的实体链接系统（<a href="https://arxiv.org/pdf/1609.08075.pdf" target="_blank" rel="noopener">Yang and Chang, 2015</a>）以及深度卷积网络来实现问题与谓语序列之间的匹配。在 WEBQUESTIONS 的数据集上，F1 指标达到了 52.5% 的水平，高于以前的方法。</p>
+</blockquote>
+<p>&emsp;&emsp;以下大型知识库已经成为支持开放领域问答的重要资源：</p>
+<ul>
+<li>DBPedia</li>
+<li>Freebase</li>
+</ul>
+<p>&emsp;&emsp;最先进的 KB-QA 方法都是基于<strong>语义解析</strong>的，在语义解析中一个问题或者一种表达被映射到它具有一定意义的表示上（如逻辑形式，具体来说可以是 <script type="math/tex">\lambda</script>-calculus），即将自然语言映射为表达式，然后被翻译为一个 <strong>KB 查询</strong>。最后，只需要执行查询就可以检索问题的答案。<strong>但是大多数<u>传统的</u>语义解析方法在很大程度上都<u>脱离</u>知识库</strong>。由于没有前人的贡献累积，因此 QA 问题面临着一系列的挑战。例如：</p>
+<ul>
+<li>当在逻辑形式中使用与知识库中的谓语不同的谓语时，可能需要用到本体匹配（ontology matching）的问题（Kwiatkowski et al., 2013）。</li>
+<li>即使表示语言与知识库的模式接近，从知识库中的大量词汇表中寻找正确的谓语与语句的描述相关联仍然是一个难题（Berant and Liang, 2014）。<a id="more"></a>
+</li>
+</ul>
+<p>&emsp;&emsp;由（Yao and Van Durme, 2014; Bao etal., 2014）的启发，该论文提出了一个语义解析框架，定义一个查询图可以直接地映射到由 <script type="math/tex">\lambda</script>-calculus 表达的逻辑形式。从语义上来讲，与 <script type="math/tex">\lambda</script>-DCS（Liang, 2013）十分接近。将解析行为分为 3 步：</p>
+<ol>
+<li>定位问题中的主题实体；</li>
+<li>找到回答与主题实体之间的主要关联；</li>
+<li>（通过额外的约束扩大查询图，约束即回答需要附加的额外属性，如最早时间等）或者（答案与其他实体之间的关联）。</li>
+</ol>
+<p>&emsp;&emsp;至此将一个语义解析问题划分成了一系列的子问题。例如 entity linking 和 relation matching。</p>
+<h2 id="文章内容介绍"><a href="#文章内容介绍" class="headerlink" title="文章内容介绍"></a>文章内容介绍</h2><ol>
+<li>Sec. 2: 介绍了图知识库（估计就是知识图谱）的概念和查询图的设计；</li>
+<li>Sec. 3: 介绍了基于搜索方法的查询图生成；</li>
+<li>Sec. 4: 实验结果；</li>
+<li>Sec. 5: 论文中的方法和其他相关工作的比较；</li>
+<li>Sec. 6: 总结。</li>
+</ol>
+<h1 id="Knowledge-Base"><a href="#Knowledge-Base" class="headerlink" title="Knowledge Base"></a>Knowledge Base</h1><p>&emsp;&emsp;论文中的知识库 K 是一个包含主语、谓语、宾语的三元组（e1, p, e2）的集合，其中 e1 和 e2<script type="math/tex">\in</script>E，是一个实体。p<script type="math/tex">\in</script>P，是一个谓语。这种形式的知识库通常称为知识图谱。每一个实体是一个节点，两个相关联的实体由谓语标记的有向边连接，边的方向是从主语实体到宾语实体。如下图就是一个 Freebase 的子图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic Parsing via Staged Query Graph Generation Question Answering with Knowledge Base/Freebase subgraph of Family Guy.jpg" alt="Freebase subgraph of Family Guy"></p>
+<div class="note info">
+            <p>&emsp;&emsp;Freebase 中有一个叫 <a href="https://developers.google.com/freebase/guide/basic_concepts#cvts" target="_blank" rel="noopener">CVT</a>（此链接需要翻墙访问） 的特殊实体类型，它不是一个真正的实体，而是用于收集事件或特殊的关联的多个字段。</p>
+          </div>
+<h1 id="Query-graph"><a href="#Query-graph" class="headerlink" title="Query graph"></a>Query graph</h1><h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>&emsp;&emsp;给定一个知识图谱。执行逻辑形式的查询等价于寻找一个子图，该子图的表现形式可以映射到查询动作。之后解析绑定的变量。<br><div class="note warning">
+            <p>&emsp;&emsp;接下来，以实体这个属性来表示真实世界的实体和 CVT 实体以及日期或高度等属性，这些实体之间的区别对于论文中的方法来说并不重要。</p>
+          </div><br>&emsp;&emsp;就像知识图谱一样，查询图中的相关节点也是通过有向边连接，并用 K 中的谓语标记。查询图由四中类型的节点组成：</p>
+<ol>
+<li>grounded entity：圆角矩形表示。grounded entity 是在知识库 K 中已存的实体。</li>
+<li>existential variable：圆形表示。existential variable 是 un-grounded entity。</li>
+<li>lambda variable：阴影圆形表示。lambda variable 是 un-grounded entity。尤其，该论文表示希望<strong>检索</strong>能够映射到 lambda variable 的所有实体<strong>作为</strong>最终答案。其也被称为<strong>answer 节点</strong>。</li>
+<li>aggregation function：菱形表示。aggregation function 被用于操作特定的实体，该实体通常具有一些数值属性。</li>
+</ol>
+<p>&emsp;&emsp;下图展示了一个查询图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic Parsing via Staged Query Graph Generation Question Answering with Knowledge Base/Query graph that represents the question “Who first voiced Meg on Family Guy？”.jpg" alt="Query graph that represents the question “Who first voiced Meg on Family Guy？”"></p>
+<p>&emsp;&emsp;上图是“谁第一次为 Family Guy 中的 Meg 配音？”的问题。MegGriffin 和 FamilyGuy 由圆角矩形表示，圆圈节点 y 表示应该存在一个实体来描述扮演关系，比如角色、演员和开始饰演此角色的时间。阴影圆圈节点也被称为 <strong>answer 节点</strong>。菱形节点 argmin 限制答案必须是扮演此角色的最早的演员。同样不含聚合函数的<script type="math/tex">\lambda-calculus</script>逻辑形式查询为<script type="math/tex">\lambda x.\exists y.cast(FamilyGuy,y) \Lambda actor(y,x) \Lambda character(y,MegGriffin)</script>。在使用聚合函数之前，对 K 运行此查询图会匹配 LaceyChabert 以及 MilaKunis，请看第一张图。但是只有 LaceyChabert 是正确答案，因为是她最早开始扮演这个角色。<br><div class="note info">
+            <p>查询图的设计灵感来源于（Reddyet al., 2014），但是他的查询图是从问题的 CCG 解析中映射出来的，在映射到子图前还需要进一步的转换。从语义上来说，该论文的查询图更像简单的 <script type="math/tex">\lambda-DCS</script>。</p>
+          </div></p>
+<h2 id="生成"><a href="#生成" class="headerlink" title="生成"></a>生成</h2><p>&emsp;&emsp;<strong>首先</strong>树图（tree graph）的根由一个实体节点组成，称为主题实体（topic entity）。<strong>其次</strong>，只有一个 lambda 变量 x 作为答案节点，从根到 x 有一个定向路径，其中含有 0 个或多个 existential variables。论文中将此路径称为图的核心推理链，因为它描述了答案和主题实体之间的主要关系。这个链除了根节点外只有变量节点。<strong>最后</strong>，可以将 0 个或多个实体或者聚合函数节点附加到每个变量节点，包括 answer 节点。例如，上图 Family Guy 是根，而 Family Guy-&gt;y-&gt;x 是核心推理链，分支 y-&gt;MegGriffin 阐述了角色，而 y-&gt;argmin 限制答案必须是该角色最早的参与者。<br>&emsp;&emsp;定义状态（state）集合<script type="math/tex">S = \{\phi, S_e, S_p, S_c\}</script>，其中每个状态可以是一个空的图（<script type="math/tex">\phi</script>），一个主题实体的单节点图（<script type="math/tex">S_e</script>），一个核心推理链（<script type="math/tex">S_p</script>）或者带有额外约束的更复杂的查询图（<script type="math/tex">S_c</script>）。<br>&emsp;&emsp;定义动作（action）集合<script type="math/tex">A = \{A_e, A_p, A_c, A_a\}</script>，其中<script type="math/tex">A_e</script>选取实体节点，<script type="math/tex">A_p</script>确定核心推理链，<script type="math/tex">A_c</script>和<script type="math/tex">A_a</script>分别约束和聚合节点。<br>&emsp;&emsp;给出一个示例<script type="math/tex">q_{ex}</script> = “Who first voiced Meg of Family Guy?”。</p>
+<h3 id="链接主题实体"><a href="#链接主题实体" class="headerlink" title="链接主题实体"></a>链接主题实体</h3><p>&emsp;&emsp;从初始状态<script type="math/tex">S_0</script>开始，正确的操作是创建一个与给定问题中的主题实体相对应单节点图。例如，<script type="math/tex">q_{ex}</script>中可能的主题实体是 Family Guy 和 MegGriffin，如下图所示。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic Parsing via Staged Query Graph Generation Question Answering with Knowledge Base/Two possible topic entity linking actionsapplied to an empty graph, for question “Who firstvoiced[Meg]on[Family Guy]？”.jpg" alt="Two possible topic entity linking actionsapplied to an empty graph, for question “Who firstvoiced[Meg]on[Family Guy]？”"></p>
+<p>&emsp;&emsp;使用的<strong>实体链接系统</strong>是专为短且有噪声的文本设计的，源于（<a href="https://arxiv.org/pdf/1609.08075.pdf" target="_blank" rel="noopener">Yang and Chang, 2015</a>）。具体不做赘述，详情可参考相关论文。</p>
+<h3 id="确定核心推理链"><a href="#确定核心推理链" class="headerlink" title="确定核心推理链"></a>确定核心推理链</h3><p>&emsp;&emsp;给定与主题实体 e 对应的单节点图的状态 s，扩展该图的正确操作是确定核心推理链，即主题实体和答案之间的关系。下图展示了扩展<script type="math/tex">s_1</script>中的单节点图的三个可能的链。具体做法是，当中间的 existential variable 链接 CVT 时，探索长度为 2 的所有路径，如果没有链接，则探索长度为 1 的路径。<br><div class="note primary">
+            <p>&emsp;&emsp;本节主要描述了如何确定核心推理链，不过上文一段先描述了如何确定候选的核心推理链。具体做法上一段也已经给出，但是由于原论文讲的也有点不清楚，此处加以说明，以下只是推测。</p><ol><li>扩展主题节点 Family Guy 的三个可能的核心推理链，应该是从知识库 K 中入手。请看第一张图，它是知识库 K 中的一张子图。从 Family Guy 中开始可以看到有三条边，两条边上是 cast，一条边上是 writer。由于两条边相同，于是就融为了一条推理链。至于最后一条推理链的谓语是 genre，可能是第一张图的子图中没有标出造成的。总而言之，那三条推理链就是从知识库 K 中获取。</li><li>existential variable 即 y，lambda variable 即 x。可以把知识库 K 中的 CVT 节点看作是 y，答案看作是 x。</li></ol>
+          </div><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic Parsing via Staged Query Graph Generation Question Answering with Knowledge Base/Candidate core inferential chains start from the entity FamilyGuy.jpg" alt="Candidate core inferential chains start from the entity FamilyGuy"></p>
+<p>&emsp;&emsp;这样做的目的是将自然表达映射到正确的谓语序列上。对于问题“Who first voiced Meg on [Family Guy]?”，需要衡量的是在{cast-actor, writer-start, genre}中每个序列（<em>注：这个元组就是上图的三个候选核心推理链上的谓语</em>）正确捕捉 Family Guy 和 Who 之间关系的可能性。因此将这个问题简化为使用神经网络测量语义相似度。</p>
+<h4 id="Deep-Convolutional-Neural-Networks"><a href="#Deep-Convolutional-Neural-Networks" class="headerlink" title="Deep Convolutional Neural Networks"></a>Deep Convolutional Neural Networks</h4><p>&emsp;&emsp;虽然是陈述一个相同的问题，但是以语义等价的方式来重新表达该问题仍旧拥有巨大的多样性。并且还存在自然语言表达与知识库中的谓语不匹配的情况。<strong>为了处理上述两个问题</strong>，论文建议使用 Siamese neural networks（<a href="http://papers.nips.cc/paper/769-signature-verification-using-a-siamese-time-delay-neural-network.pdf" target="_blank" rel="noopener">Bromley et al., 1993</a>）来识别核心推理链（暹（xiān）罗神经网络，也可以叫连体神经网络。看见这个中文就很好理解了。Siamese neural networks 可以进行语义相似度分析，QA 的匹配等操作。详情可以先看看<a href="https://www.jianshu.com/p/92d7f6eaacf5" target="_blank" rel="noopener">这篇</a>博客）。注：由于上图可以得知一个问题可以获得几个候选得到核心推理链，这就是因为语言的多样性造成的，所以需要一个方法来识别一条最核心的推理链。<br>&emsp;&emsp;例如，将一个问题映射到一种<strong>模式</strong>上，方法是将实体替换为通用符号 &lt;e&gt;，然后将其与<strong>候选链</strong>比较。比如问题“who first voiced meg on &lt;e&gt;”和 cast-actor。该模型由两个神经网络组成，一个处理<strong>模式</strong>，一个处理<strong>核心推理链</strong>（这个模型说白了就是 Siamese neural networks）。两个神经网络都映射到 k 维向量作为网络的输出，最后使用距离函数（如余弦相似度）计算语义相似度。<br><div class="note info">
+            <p>&emsp;&emsp;该论文处理<strong>匹配问题</strong>使用了 CNN 模型。你可能会有点疑惑<strong>匹配问题</strong>是什么问题，前面压根就没提到过。是的，论文里也没说过，我只能猜测，这里的 CNN 其实就是上述模型的两个神经网络的具体实现。处理模型和处理核心推理链可能都用了 CNN 模型。另外论文中也没有说如何将核心推理链送入 CNN 中。论文中倒是稍微提了一下如何将问题送入 CNN 中，使用 word hashing 技术（<a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/cikm2013_DSSM_fullversion.pdf" target="_blank" rel="noopener">Huang et al., 2013</a>）。</p>
+          </div><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic Parsing via Staged Query Graph Generation Question Answering with Knowledge Base/CNN架构.jpg" alt="CNN架构"></p>
+<h3 id="增加约束和聚合函数"><a href="#增加约束和聚合函数" class="headerlink" title="增加约束和聚合函数"></a>增加约束和聚合函数</h3><h3 id="训练过程"><a href="#训练过程" class="headerlink" title="训练过程"></a>训练过程</h3><p>&emsp;&emsp;<strong>Topic Entity</strong>：由实体链接系统返回的分数直接作为特征。<br>&emsp;&emsp;<strong>Core Inferential Chain</strong>：使用不同的 CNN 模型的相似度分数来衡量核心推理链的质量，以下为 3 个模型。</p>
+<ul>
+<li><strong>PatChain</strong>：比较模式和谓语序列。</li>
+<li><strong>QuesEP</strong>：将主题实体的名称与谓语序列拼接完成之后，将其与原问题比较。</li>
+<li><strong>ClueWeb</strong>：使用 ClueWeb 语料库的 Freebase 注释训练 ClueWeb 模型</li>
+</ul>
+<p>&emsp;&emsp;<strong>Constraints &amp; Aggregations</strong>：当查询图中有约束节点，使用一些简单的特征来检查问题中是否存在单词可以与约束实体或者属性相关联。相似地，也可以使用一些预定义的关键字，比如“first”、“current”或者“latest”作为 argmin 节点的特征。<br>&emsp;&emsp;<strong>Overall</strong>：回答节点的个数和总节点个数也都作为特征。<br>&emsp;&emsp;比如下图，（1）属于 Topic Entity，（2）（3）（4）属于 Core Inferential Chain，（5）（6）（7）属于 Constraints &amp; Aggregations，（8）（9）属于 Overall：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic Parsing via Staged Query Graph Generation Question Answering with Knowledge Base/特征举例.jpg" alt="特征举例"></p>
+<h1 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h1><p>&emsp;&emsp;使用 WEBQUESTIONS 数据集，评价指标有：precision，recall 和 F1。其中 F1 的平均值作为主要的评价指标。</p>
+<h1 id="其他参考资料"><a href="#其他参考资料" class="headerlink" title="其他参考资料"></a>其他参考资料</h1><p>&emsp;&emsp;在浏览此篇论文时，发现还有其他人也看过这篇论文并且留下了笔记（中文）。<br>&emsp;&emsp;<a href="https://bigquant.com/community/t/topic/121147" target="_blank" rel="noopener">笔记1</a><br>&emsp;&emsp;<a href="https://blog.csdn.net/qq_32782771/article/details/82773048" target="_blank" rel="noopener">笔记2</a><br><!-- more --></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/论文笔记/" rel="tag"># 论文笔记</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/assorted/hexo/在hexo中添加绘制流程图及其他图的功能.html" rel="next" title="在hexo中添加绘制流程图及其他图的功能">
+                <i class="fa fa-chevron-left"></i> 在hexo中添加绘制流程图及其他图的功能
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/~论文/20、Open Question Answering with Weakly supervised Embedding Models.html" rel="prev" title="论文笔记：Open Question Answering with Weakly supervised Embedding Models">
+                论文笔记：Open Question Answering with Weakly supervised Embedding Models <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="朱冲䶮">
+            
+              <p class="site-author-name" itemprop="name">朱冲䶮</p>
+              <p class="site-description motion-element" itemprop="description">记录学习问题，积累做的 leetcode 题目</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">132</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+			  
+			  <!-- 不蒜子/busuanzi -->
+			  <div class="site-state-item site-state-posts">
+			  	<span class="site-state-item-count">132.6k</span>
+			  	<span class="site-state-item-name">总字数</span>
+			  </div>
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:897538633@qq.com" title="E-Mail &rarr; mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/yan624" title="GitHub &rarr; https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#写在前面"><span class="nav-number">1.</span> <span class="nav-text">写在前面</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#论文概要"><span class="nav-number">2.</span> <span class="nav-text">论文概要</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#文章内容介绍"><span class="nav-number">2.1.</span> <span class="nav-text">文章内容介绍</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Knowledge-Base"><span class="nav-number">3.</span> <span class="nav-text">Knowledge Base</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Query-graph"><span class="nav-number">4.</span> <span class="nav-text">Query graph</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#概念"><span class="nav-number">4.1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#生成"><span class="nav-number">4.2.</span> <span class="nav-text">生成</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#链接主题实体"><span class="nav-number">4.2.1.</span> <span class="nav-text">链接主题实体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#确定核心推理链"><span class="nav-number">4.2.2.</span> <span class="nav-text">确定核心推理链</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Deep-Convolutional-Neural-Networks"><span class="nav-number">4.2.2.1.</span> <span class="nav-text">Deep Convolutional Neural Networks</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#增加约束和聚合函数"><span class="nav-number">4.2.3.</span> <span class="nav-text">增加约束和聚合函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#训练过程"><span class="nav-number">4.2.4.</span> <span class="nav-text">训练过程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实验"><span class="nav-number">5.</span> <span class="nav-text">实验</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其他参考资料"><span class="nav-number">6.</span> <span class="nav-text">其他参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v6.7.0</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=6.7.0"></script>
+
+  <script src="/js/src/motion.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=6.7.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=6.7.0"></script>
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
+<script src="/js/src/post-details.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  
+
+
+  
+
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+        // ref: https://github.com/ForbesLindesay/unescape-html
+        var unescapeHtml = function(html) {
+          return String(html)
+            .replace(/&quot;/g, '"')
+            .replace(/&#39;/g, '\'')
+            .replace(/&#x3A;/g, ':')
+            // replace all the other &#x; chars
+            .replace(/&#(\d+);/g, function (m, p) { return String.fromCharCode(p); })
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&amp;/g, '&');
+        };
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                content = unescapeHtml(content);
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+  
+
+  
+  <!-- 自己新增的所有 js 文件 -->
+  <script src="/lib/my-utils.js"></script>
+<!--图片缩放插件-->
+<script src="/lib/zoomify/zoomify.min.js"></script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- 背景插件 -->
+<script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<!-- 背景图片 -->
+<script>
+	function generateBG(count){
+		var bg_prefix = '/images/background/';
+		var bg =new Array();
+		for(var i = 0; i < count; i++){
+			bg[i] = bg_prefix + i + '.jpg';
+		}
+		bg.shuffle();
+		return bg;
+	}
+	$("body").backstretch(generateBG(11), {
+		duration:90000,//1min半一换
+		fade: 1500
+	});
+</script>
+<!-- 图片缩放 -->
+<script>
+$('#content img').zoomify({duration: 500, });
+  $('#content img').on('zoom-in.zoomify', function () {
+    $('#sidebar').css('display', 'none');
+  });
+  $('#content img').on('zoom-out-complete.zoomify', function () {
+    $('#sidebar').css('display', '');
+  });
+</script>
+
+	
+
+</body>
+</html>

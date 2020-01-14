@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/5.10.2/css/all.min.css">
+
+<link rel="stylesheet" href="/css/main.css?v=6.7.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.7.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.7.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.7.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+<!--图片缩放插件样式-->
+<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css">
+
+  <meta name="description" content="论文概要             &amp;emsp;&amp;emsp;论文地址，发表于 2016 年。            &amp;emsp;&amp;emsp;语义分析的目的是将自然语言映射到机器可解释的有意义表示。传统的方法依赖于高质量的词汇、人工构建的模板以及特定领域或特定表示的语言特征，本文提出了一种注意力增强的 encoder-decoder 通用模型。将输入的话表示为向量形式，并通过调节输出序列或者树生成逻辑">
+<meta name="keywords" content="论文笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记：Language to Logical Form with Neural Attention">
+<meta property="og:url" content="http://yan624.github.io/~论文/26、Language to Logical Form with Neural Attention.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="论文概要             &amp;emsp;&amp;emsp;论文地址，发表于 2016 年。            &amp;emsp;&amp;emsp;语义分析的目的是将自然语言映射到机器可解释的有意义表示。传统的方法依赖于高质量的词汇、人工构建的模板以及特定领域或特定表示的语言特征，本文提出了一种注意力增强的 encoder-decoder 通用模型。将输入的话表示为向量形式，并通过调节输出序列或者树生成逻辑">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language to Logical Form with Neural Attention/语句转为逻辑形式.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language to Logical Form with Neural Attention/Seq2Seq.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language to Logical Form with Neural Attention/Seq2Tree模型.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language to Logical Form with Neural Attention/一个简单的Seq2Tree的例子.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language to Logical Form with Neural Attention/数据集介绍.jpg">
+<meta property="og:updated_time" content="2020-01-05T08:17:58.205Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="论文笔记：Language to Logical Form with Neural Attention">
+<meta name="twitter:description" content="论文概要             &amp;emsp;&amp;emsp;论文地址，发表于 2016 年。            &amp;emsp;&amp;emsp;语义分析的目的是将自然语言映射到机器可解释的有意义表示。传统的方法依赖于高质量的词汇、人工构建的模板以及特定领域或特定表示的语言特征，本文提出了一种注意力增强的 encoder-decoder 通用模型。将输入的话表示为向量形式，并通过调节输出序列或者树生成逻辑">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language to Logical Form with Neural Attention/语句转为逻辑形式.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yan624.github.io/~论文/26、Language to Logical Form with Neural Attention.html">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>论文笔记：Language to Logical Form with Neural Attention | 博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+	<!--加载flower canvas-->
+<script>
+var pathname = window.location.pathname;
+if(pathname == '/flower.html'){
+	var body =  document.getElementsByTagName('body')[0];
+	var canvas = document.createElement("canvas")
+	canvas.setAttribute('id', 'sakura')
+	// '<canvas id="sakura"></canvas>'
+	body.appendChild(canvas)
+}
+</script>
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">低阶炼金术士</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-常用链接">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/常用链接" rel="section"><i class="menu-item-icon fas fa-fw fa-bookmark"></i> <br>常用链接</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">17</span></a>
+
+  </li>
+        
+        
+        
+          
+            
+            
+            
+              
+              
+
+  
+  
+    
+  
+  <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">23</span></a>
+
+  </li>
+
+
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+        
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">132</span></a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/~论文/26、Language to Logical Form with Neural Attention.html">
+
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+				
+				
+	
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">论文笔记：Language to Logical Form with Neural Attention
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-08 18:33:15" itemprop="dateCreated datePublished" datetime="2019-07-08T18:33:15+08:00">2019-07-08</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-01-05 16:17:58" itemprop="dateModified" datetime="2020-01-05T16:17:58+08:00">2020-01-05</time>
+              
+            
+          </span>
+
+          
+
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/" itemprop="url" rel="index"><span itemprop="name">assorted</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/assorted/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><div class="note info">
+            <p>&emsp;&emsp;<a href="https://arxiv.org/pdf/1601.01280.pdf" target="_blank" rel="noopener">论文地址</a>，发表于 2016 年。</p>
+          </div>
+<p>&emsp;&emsp;语义分析的目的是将自然语言映射到机器可解释的有意义表示。传统的方法依赖于高质量的词汇、人工构建的模板以及特定领域或特定表示的语言特征，本文提出了一种注意力增强的 encoder-decoder 通用模型。将输入的话表示为向量形式，并通过调节输出序列或者树生成逻辑形式（总结来说，就是<strong>将话语转为逻辑形式</strong>，详情请看图 1）。<br>&emsp;&emsp;下图将一句话转为了逻辑形式，不同于以前的方法，它是通过神经网络生成的，而以前的方法依赖于手写的规则。图片取自 <a href="https://www.aclweb.org/anthology/W00-1317" title="Automated construction ofdatabase interfaces: Intergrating statistical and rela-tional learning for semantic parsing" target="_blank" rel="noopener">Tang and Mooney200</a>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language to Logical Form with Neural Attention/语句转为逻辑形式.jpg" alt="语句转为逻辑形式"></p>
+<p>&emsp;&emsp;基于 RNN 的 encoder-decoder 已成功应用于各种 NLP 任务，图 1 中使用了 LSTM，我们的做法是提出了两个变体模型。<strong>第一个模型</strong>将语义解析视为普通的序列转换任务，<strong>第二个模型</strong>配备了层次树解码器，该解码器明确地捕获逻辑形式的组合结构。我们还引入了<strong>注意力机制</strong>，并提出一个识别步骤来<strong>识别很少提到的实体</strong>和<strong>数字</strong>。<br>&emsp;&emsp;对<strong>四个数据集</strong>的实验结果表明，我们的方法在不使用人工设计特征的情况下具有竞争力，并且易于迁移。<br>&emsp;&emsp;我们的工作综合了两种标准研究，即<strong>语义分析</strong>和 <strong>encoder-decoder 架构的神经网络</strong>。<br><a id="more"></a></p>
+<h1 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h1><p>&emsp;&emsp;学习语义解析器的问题引起了广泛的关注，可以追溯到 Woods（1973年）。。。。</p>
+<h1 id="任务定义"><a href="#任务定义" class="headerlink" title="任务定义"></a>任务定义</h1><p>&emsp;&emsp;我们的目标是学习一个模型，将<u><strong>自然语言输入 <script type="math/tex">q = x_1 \dots x_{|q|}</script></strong></u> 映射为其含义的<u><strong>逻辑形式（logical form）表示 <script type="math/tex">a = y_1 \dots y_{|a|}</script></strong></u>。条件概率被分解为：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+    p(a|q) & = \prod^{|a|}_{t=1} p(y_t|y_{<t},q) \tag 1\\
+    y_{<t} & = y_1 \dots y_{t-1}
+\end{align}</script><p>&emsp;&emsp;我们的模型包含一个编码器和一个解码器，编码器负责将输入的自然语言 q 编码成向量，解码器负责生成 <script type="math/tex">y_1 \dots y_{|a|}</script>。下面将仔细描述。</p>
+<h2 id="Seq2Seq"><a href="#Seq2Seq" class="headerlink" title="Seq2Seq"></a>Seq2Seq</h2><p>&emsp;&emsp;对于普通的 Seq2Seq 任务，使用 LSTM 来计算，如下图所示。<script type="math/tex">h^l_t</script> 代表第 l 层的第 t 个时间步的隐藏层，公式为：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+    h^l_t = \text{LSTM}(h^l_{t-1},h^{l-1}_t) \tag 2
+\end{align}</script><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language to Logical Form with Neural Attention/Seq2Seq.jpg" alt="Seq2Seq"><br>&emsp;&emsp;在实验中，遵循 <a href="https://arxiv.org/pdf/1409.2329.pdf" title="RECURRENT NEURAL NETWORK REGULARIZATION" target="_blank" rel="noopener">Zaremba et al. 2015</a> 提出的架构。不过，使用其他类型的门控激活函数也是可以的（例如<a href="https://arxiv.org/pdf/1406.1078.pdf" title="Learning phrase representations using RNN encoder-decoder for statistical machine translation" target="_blank" rel="noopener">Cho et al. 2014</a>）。<strong>对于 encoder</strong>，<script type="math/tex">h^0_t = W_qe(x_t)</script>（注：此公式是第 0 层的运算步骤，即输入层）是 RNN 中输入的词向量，<script type="math/tex">W_q \in \mathbb{R}^{n \times |V_q|}</script> 代表输入层的权重值矩阵，e(·) 代表对应 token 的索引。<strong>对于 decoder</strong>，<script type="math/tex">h^0_t = W_ae(y_{t-1})</script> 代表前一个预测词的词向量，其中 <script type="math/tex">W_a \in \mathbb{R}^{n \times |V_a|}</script>。接下来，最后的 LSTM <script type="math/tex">h^L_t</script> 被用于预测 <script type="math/tex">t</script>-th 输出 token，计算公式为：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+    p(y_t|y_t,q) = softmax(W_oh^L_t)^T e(y_t) \tag 3
+\end{align}</script><p>&emsp;&emsp;<strong>该公式用于预测每一个 token</strong>。另外补充一点，增加了 “start-of-sequence” <code>&lt;s&gt;</code> 和 “end-of-sequence” <code>&lt;/s&gt;</code>。<br>&emsp;&emsp;该模型总的来说，就是 LSTM 的计算方法，也没什么好说的。</p>
+<h2 id="Seq2Tree"><a href="#Seq2Tree" class="headerlink" title="Seq2Tree"></a>Seq2Tree</h2><p>&emsp;&emsp;Seq2Seq 模型有一个<strong>缺点</strong>就是它<strong>忽略了逻辑形式的层次结构</strong>。所以，要改良的话，它需要记住各种辅助信息（比如括号对），以此生成格式良好的输出。如下图 3 所示，是一个层次树 decoder：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language to Logical Form with Neural Attention/Seq2Tree模型.jpg" alt="Seq2Tree模型"></p>
+<p>&emsp;&emsp;Seq2Tree 与 Seq2Seq 的编码器类似，不同的是解码器。Seq2Tree 以自上而下的方式生成逻辑，为了定义树结构，我们定义了一个表示子树的 “nonterminal” <code>&lt;n&gt;</code> 标记。如图 3 所示，将<strong><em>逻辑形式 “lambda $0 e (and (&gt;(departure_time $0) 1600:ti) (from $0 dallas:ci))”</em></strong>预处理为树，方法是<strong>用 nonterminal 替换括号对之间的标记</strong>（token）。<strong>特殊记号 <code>&lt;s&gt;</code> 和 <code>&lt;(&gt;</code> 分别表示序列和 nonterminal 序列的开头</strong>（由于缺少空间，图3中省略了），<strong>记号 <code>&lt;/s&gt;</code> 代表序列结束</strong>。具体步骤是：</p>
+<ol>
+<li>编码输入值 q；</li>
+<li>层次树解码器使用 RNN 在逻辑形式 a（在<strong>任务定义</strong>中已经说明了 q 和 a 的含义）的对应部分的子树中生成 tokens（注意这里的 token 带了 s）；</li>
+<li>如果预测的 token 为 <code>&lt;n&gt;</code>，则通过调节 nonterminal 的隐藏向量来解码序列。（博主注：举个例子理解一下：看图 3 的第一层，先是使用 encoder 进行编码，接着开始对逻辑形式进行解码，逻辑形式就是上面的斜体部分。接下来预测到了 token<code>&lt;n&gt;</code> 于是调用 nonterminal 的隐藏向量来进行解码，即生成一棵子树。以此类推，碰到 toekn <code>&lt;n&gt;</code> 就开始解码）</li>
+<li>与 Seq2Seq 解码器不同，当前的隐藏状态不仅仅取决于上一个时间步，为了更好地利用 parent nonterminal 的信息，我们引入了一个 parent-feeding 的连接，其中 parent nonterminal 的隐藏向量与输入连接（concatenated）并喂入 LSTM。</li>
+</ol>
+<p>&emsp;&emsp;再举个例子帮助理解一下，如图 4 所示。逻辑形式为 <strong><em>A B (C)</em></strong>，其中 <script type="math/tex">y_1 \dots y_6</script> 代表不同的时间步，<strong><em>(C)</em></strong> 对应子树。解码一共有<strong>两个步骤</strong>：一旦输入值 q 被编码，首先在深度为 1 处生成 <script type="math/tex">y_1 \dots y_4</script>，直到 token <code>&lt;/s&gt;</code> 被预测到；接下来通过调节 nonterminal <script type="math/tex">t_3</script> 的隐藏向量来生成 <script type="math/tex">y_5, y_6</script>，<script type="math/tex">p(a|q)</script> 的概率是这<strong>两个序列解码步骤</strong>的乘积：</p>
+<script type="math/tex; mode=display">
+p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)</script><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language to Logical Form with Neural Attention/一个简单的Seq2Tree的例子.jpg" alt="一个简单的Seq2Tree的例子"></p>
+<h2 id="Attention-机制"><a href="#Attention-机制" class="headerlink" title="Attention 机制"></a>Attention 机制</h2><p>&emsp;&emsp;<strong><em>Attention 的原理</em></strong>。</p>
+<h2 id="训练模型"><a href="#训练模型" class="headerlink" title="训练模型"></a>训练模型</h2><p>&emsp;&emsp;我们的目标是<strong>最大化</strong>由自然语言语句作为输入时产生的逻辑形式的可能性，所以目标函数为：</p>
+<script type="math/tex; mode=display">
+\text{minimize} - \sum_{(q,a) \in D} logp(a|q)</script><p>&emsp;&emsp;其中 <script type="math/tex">D</script> 是所有自然语言逻辑形式训练对的集合，<script type="math/tex">p(a|q)</script> 按式（1）计算。采用 <strong>RMSProp</strong> 算法解决了这一非凸优化问题。此外，使用 <strong>Dropout</strong> 进行正则化。</p>
+<h2 id="推论"><a href="#推论" class="headerlink" title="推论"></a>推论</h2><p>&emsp;&emsp;暂时略。</p>
+<h2 id="参数识别"><a href="#参数识别" class="headerlink" title="参数识别"></a>参数识别</h2><p>&emsp;&emsp;大多数的语义分析数据集都是为问答开发的。在经典的系统中，问题被映射乘逻辑形式，并在知识库中获取答案。由于问答任务的性质，许多自然语言的语句都包含实体或数字，它们通常被解析为逻辑形式的参数。其中不可避免地会有一些罕见或者根本不会出现在数据集中的实体或数字（对于小规模数据集尤其如此）。传统的序列编码器只是简单地用一个特殊的位置单词符号替换稀有单词（<a href="https://arxiv.org/pdf/1410.8206.pdf" title="Addressing the Rare Word Problem in Neural Machine Translation" target="_blank" rel="noopener">Luong et al. 2015a</a>; <a href="https://arxiv.org/pdf/1412.2007.pdf" title="On Using Very Large Target Vocabulary for Neural Machine Translation" target="_blank" rel="noopener">Jean et al. 2015</a>），这对语义分析是有害的。<br>&emsp;&emsp;为此开发了一个简单的参数识别程序。具体来说就是在输入的问题中标识实体和数字，并用它们的<strong>类型</strong>和<strong>唯一 id</strong> 替换它们。例如，将训练样本“<em>jobs with a salary of 40000</em>”及其逻辑形式“job(ANS), salary_greater_than(ANS,40000, year)”预处理为“jobs with a salary of <em><script type="math/tex">num_0</script></em>”和“job(ANS), salary_greater_than(<em>ANS</em>,<em><script type="math/tex">num_0</script></em>,<em>year</em>)”。一旦解码完毕，后处理步骤就会将所有标记 <script type="math/tex">type_i</script> 恢复到它们以前的实体或数字。</p>
+<h1 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h1><p>&emsp;&emsp;我们将我们的方法在四个数据集上分别与以前的多个系统进行比较，下面将描述这些数据集。代码可在此处获得<a href="https://github.com/donglixp/lang2logic" target="_blank" rel="noopener">https://github.com/donglixp/lang2logic</a>（lua 版，官方），<a href="https://github.com/Alex-Fabbri/lang2logic-PyTorch" target="_blank" rel="noopener">https://github.com/Alex-Fabbri/lang2logic-PyTorch</a>（python 版，非官方）。</p>
+<h2 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h2><p>&emsp;&emsp;<strong>JOBS</strong>    工作<br>&emsp;&emsp;<strong>GEO</strong>        Geoquery data<br>&emsp;&emsp;<strong>ATIS</strong>    Airline Travel Information System（航空旅行信息系统）<br>&emsp;&emsp;<strong>IFTTT</strong>    if this then that（<a href="https://ifttt.com/" target="_blank" rel="noopener">地址</a> <a href="https://baike.baidu.com/item/ifttt/8378533" target="_blank" rel="noopener">百度百科介绍</a>），<a href="https://www.aclweb.org/anthology/P15-1085" target="_blank" rel="noopener">Quirk et al.2015</a> 从 IFTTT 网站提取大量的 if-this-then-that 来创建此数据库<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language to Logical Form with Neural Attention/数据集介绍.jpg" alt="数据集介绍"></p>
+<h2 id="设置"><a href="#设置" class="headerlink" title="设置"></a>设置</h2><p>&emsp;&emsp;自然语言语句是小写的，并且使用基于维基百科的常见拼写错误列表来纠正拼写错误。使用 NLTK 来限制词汇（[Bird et al.2009] Natural Language Processing with Python. O’Reilly Media.），对于 IFTTT 过滤了在训练集中出现少于五次的 token，channels 和 functions。对于其他数据集，过滤了在训练集中至少两次没有出现的输入词，但保留了逻辑形式中的所有 token。并且使用了<strong>参数识别</strong>，当然也可以使用更复杂的办法。<br>&emsp;&emsp;超参数在 JOBS 和 GEO 上使用了交叉验证，使用了 ATIS 和 IFTTT 作为标准开发集（就是验证集，不同的叫法而已 development/validation）。</p>
+<ul>
+<li><strong>RMSProp</strong>：batch size = 20；parameter = 0.95；</li>
+<li><strong>梯度修剪</strong>为 5 以缓解梯度爆炸（<a href="http://proceedings.mlr.press/v28/pascanu13.pdf" target="_blank" rel="noopener">Pascanu et al.2013</a>）；</li>
+<li><strong>参数</strong>从均匀分布 <script type="math/tex">U(-0.08, 0.08)</script> 中随机初始化；</li>
+<li>两层 <strong>LSTM</strong> 用于 IFTTT，单层 LSTM 用于其他数据集；</li>
+<li><strong>dropout</strong> <script type="math/tex">\in</script> {0.2,0.3,0.4,0.5}；</li>
+<li>隐藏向量和词嵌入<strong>维度</strong>从 {150, 200, 250} 选择；</li>
+<li><strong>early stopping</strong>；</li>
+<li>输入句子在进入编码器之前被反转（<a href="http://papers.nips.cc/paper/5346-sequence-to-sequence-learning-with-neural-networks.pdf" target="_blank" rel="noopener">Sutskever et al.2014</a>）；</li>
+<li><strong>贪婪搜索</strong>生成逻辑形式；</li>
+<li><strong>softmax</strong> 用于分类。</li>
+</ul>
+<h2 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h2><p>&emsp;&emsp;Attention 机制可以提高性能，对于小数据集<strong>参数识别</strong>至关重要。</p>
+<h2 id="错误分析"><a href="#错误分析" class="headerlink" title="错误分析"></a>错误分析</h2><h1 id="数据格式"><a href="#数据格式" class="headerlink" title="数据格式"></a>数据格式</h1><p>&emsp;&emsp;<a href="http://www.cs.columbia.edu/~mcollins/papers/uai05.pdf" title="Learning to Map Sentences to Logical Form: Structured Classification with Probabilistic Categorial Grammars" target="_blank" rel="noopener">论文</a>使用 Logical Form 对基准数据集做实验，数据集包括 Geo880 和 Jobs640，论文中使用的是 Logical Form 的其中一种表示——<strong>PCCG</strong>，它是 CCG 的改进版。他们将数据集分割为训练集和测试集，Language to Logical Form with Neural Attention 沿用了此分割方式（比如说将 GEO 分割为 680 个训练样本，200 个测试样本），并且采用此论文的思想，即：将自然语言映射为 Logical Form。<br>&emsp;&emsp;虽然 PCCG 的 Logical Form 效果不错，但是作者没有使用他，而是使用了 <a href="https://www.aclweb.org/anthology/D11-1140" target="_blank" rel="noopener">lambda-caculus</a>。<strong>作者将 Geo880 等数据集改写为了 lambda-calculus 的形式</strong>。<em>在<a href="https://github.com/yuxuan1995liu/Semantic-Parsing-Data-Pre-Processing" target="_blank" rel="noopener">此处</a>可找到全部数据，但是这里面的格式不是 lambda-calculus。我有点搞不懂他提供的数据到底是什么意思</em>。<strong>19.09.16 补充</strong>：经过多方查找，终于找到了 geo880 最初的<a href="https://link_springer.gg363.site/content/pdf/10.1007/3-540-44795-4_40.pdf" title="Using Multiple Clause Constructors in Inductive Logic Programming for Semantic Parsing" target="_blank" rel="noopener">论文</a>，在<a href="https://www.cs.utexas.edu/~ml/publications/year/2001" target="_blank" rel="noopener">此处</a>找到的。GEO880 最初版本并不是 lambda calculus。<br>&emsp;&emsp;作者将数据改写为 lambda-calcullus 形式是我估计的。因为全文找不到数据的来源，格式转换的说明也找不到。只是在 Section 4.1 Datasets 中说到：</p>
+<blockquote>
+<p>&emsp;&emsp;<strong>GEO 有 880 个示例，将其分割为 680 个训练样本以及 200 个测试样本（Zettlemoyer and Collins, 2005）， 我们使用了基于 lambda-calculus 的具有相同含义的表示</strong>。</p>
+</blockquote>
+<p>&emsp;&emsp;所以我推测作者应该是将原本的 PCCG 表示的 GEO 改成了 lambda-calculus 表示。<br>&emsp;&emsp;<a href="https://arxiv.org/pdf/1805.04793" title="Coarse-to-Fine Decoding for Neural Semantic Parsing" target="_blank" rel="noopener">论文</a>是作者对 Language to Logical Form with Neural Attention 的改进版。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/论文笔记/" rel="tag"># 论文笔记</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/~论文/5、Large-scale Simple Question Answering with Memory Network.html" rel="next" title="论文笔记：Large-scale Simple Question Answering with Memory Network">
+                <i class="fa fa-chevron-left"></i> 论文笔记：Large-scale Simple Question Answering with Memory Network
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/~论文/27、Sequence-to-Action：End-to-End Semantic Graph Generation for Semantic Parsing.html" rel="prev" title="论文笔记：Sequence-to-Action: End-to-End Semantic Graph Generation for Semantic Parsing">
+                论文笔记：Sequence-to-Action: End-to-End Semantic Graph Generation for Semantic Parsing <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="朱冲䶮">
+            
+              <p class="site-author-name" itemprop="name">朱冲䶮</p>
+              <p class="site-description motion-element" itemprop="description">记录学习问题，积累做的 leetcode 题目</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">132</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+			  
+			  <!-- 不蒜子/busuanzi -->
+			  <div class="site-state-item site-state-posts">
+			  	<span class="site-state-item-count">132.6k</span>
+			  	<span class="site-state-item-name">总字数</span>
+			  </div>
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:897538633@qq.com" title="E-Mail &rarr; mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/yan624" title="GitHub &rarr; https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#论文概要"><span class="nav-number">1.</span> <span class="nav-text">论文概要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#相关工作"><span class="nav-number">2.</span> <span class="nav-text">相关工作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#任务定义"><span class="nav-number">3.</span> <span class="nav-text">任务定义</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Seq2Seq"><span class="nav-number">3.1.</span> <span class="nav-text">Seq2Seq</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Seq2Tree"><span class="nav-number">3.2.</span> <span class="nav-text">Seq2Tree</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Attention-机制"><span class="nav-number">3.3.</span> <span class="nav-text">Attention 机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#训练模型"><span class="nav-number">3.4.</span> <span class="nav-text">训练模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#推论"><span class="nav-number">3.5.</span> <span class="nav-text">推论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参数识别"><span class="nav-number">3.6.</span> <span class="nav-text">参数识别</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实验"><span class="nav-number">4.</span> <span class="nav-text">实验</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据集"><span class="nav-number">4.1.</span> <span class="nav-text">数据集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设置"><span class="nav-number">4.2.</span> <span class="nav-text">设置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结果"><span class="nav-number">4.3.</span> <span class="nav-text">结果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#错误分析"><span class="nav-number">4.4.</span> <span class="nav-text">错误分析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据格式"><span class="nav-number">5.</span> <span class="nav-text">数据格式</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v6.7.0</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=6.7.0"></script>
+
+  <script src="/js/src/motion.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=6.7.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=6.7.0"></script>
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
+<script src="/js/src/post-details.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  
+
+
+  
+
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+        // ref: https://github.com/ForbesLindesay/unescape-html
+        var unescapeHtml = function(html) {
+          return String(html)
+            .replace(/&quot;/g, '"')
+            .replace(/&#39;/g, '\'')
+            .replace(/&#x3A;/g, ':')
+            // replace all the other &#x; chars
+            .replace(/&#(\d+);/g, function (m, p) { return String.fromCharCode(p); })
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&amp;/g, '&');
+        };
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                content = unescapeHtml(content);
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+  
+
+  
+  <!-- 自己新增的所有 js 文件 -->
+  <script src="/lib/my-utils.js"></script>
+<!--图片缩放插件-->
+<script src="/lib/zoomify/zoomify.min.js"></script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- 背景插件 -->
+<script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<!-- 背景图片 -->
+<script>
+	function generateBG(count){
+		var bg_prefix = '/images/background/';
+		var bg =new Array();
+		for(var i = 0; i < count; i++){
+			bg[i] = bg_prefix + i + '.jpg';
+		}
+		bg.shuffle();
+		return bg;
+	}
+	$("body").backstretch(generateBG(11), {
+		duration:90000,//1min半一换
+		fade: 1500
+	});
+</script>
+<!-- 图片缩放 -->
+<script>
+$('#content img').zoomify({duration: 500, });
+  $('#content img').on('zoom-in.zoomify', function () {
+    $('#sidebar').css('display', 'none');
+  });
+  $('#content img').on('zoom-out-complete.zoomify', function () {
+    $('#sidebar').css('display', '');
+  });
+</script>
+
+	
+
+</body>
+</html>

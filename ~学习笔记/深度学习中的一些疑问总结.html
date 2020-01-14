@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/5.10.2/css/all.min.css">
+
+<link rel="stylesheet" href="/css/main.css?v=6.7.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.7.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.7.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.7.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":true},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+<!--图片缩放插件样式-->
+<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css">
+
+  <meta name="description" content="为什么需要非线性激活函数             为什么w*x+b=z之后，需要使用一个激活函数a = \sigma(z)？不能不加这个激活函数吗？权重值乘上输入值加上偏差之后直接输出就行了，何必再带入激活函数中？            由于y=bx+c是线性函数，只不过将输入值乘了一个常量并进行位移而已，所以使用非y=bx+c型的激活函数就算是使用了非线性函数。而在神经元中不加激活函数，实际上就">
+<meta name="keywords" content="学习笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度学习中的一些疑问总结">
+<meta property="og:url" content="http://yan624.github.io/~学习笔记/深度学习中的一些疑问总结.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="为什么需要非线性激活函数             为什么w*x+b=z之后，需要使用一个激活函数a = \sigma(z)？不能不加这个激活函数吗？权重值乘上输入值加上偏差之后直接输出就行了，何必再带入激活函数中？            由于y=bx+c是线性函数，只不过将输入值乘了一个常量并进行位移而已，所以使用非y=bx+c型的激活函数就算是使用了非线性函数。而在神经元中不加激活函数，实际上就">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/隐藏层层数对cost的影响.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/解释why deep的例子.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/模块化后.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/其他领域对为什么要deep的解读.jpg">
+<meta property="og:updated_time" content="2020-01-05T08:37:30.853Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深度学习中的一些疑问总结">
+<meta name="twitter:description" content="为什么需要非线性激活函数             为什么w*x+b=z之后，需要使用一个激活函数a = \sigma(z)？不能不加这个激活函数吗？权重值乘上输入值加上偏差之后直接输出就行了，何必再带入激活函数中？            由于y=bx+c是线性函数，只不过将输入值乘了一个常量并进行位移而已，所以使用非y=bx+c型的激活函数就算是使用了非线性函数。而在神经元中不加激活函数，实际上就">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/隐藏层层数对cost的影响.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yan624.github.io/~学习笔记/深度学习中的一些疑问总结.html">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>深度学习中的一些疑问总结 | 博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+	<!--加载flower canvas-->
+<script>
+var pathname = window.location.pathname;
+if(pathname == '/flower.html'){
+	var body =  document.getElementsByTagName('body')[0];
+	var canvas = document.createElement("canvas")
+	canvas.setAttribute('id', 'sakura')
+	// '<canvas id="sakura"></canvas>'
+	body.appendChild(canvas)
+}
+</script>
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">低阶炼金术士</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-常用链接">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/常用链接" rel="section"><i class="menu-item-icon fas fa-fw fa-bookmark"></i> <br>常用链接</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">17</span></a>
+
+  </li>
+        
+        
+        
+          
+            
+            
+            
+              
+              
+
+  
+  
+    
+  
+  <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">23</span></a>
+
+  </li>
+
+
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+            
+            
+            
+          
+        
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">132</span></a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/~学习笔记/深度学习中的一些疑问总结.html">
+
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+				
+				
+	
+		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
+			<script type="text/javascript" src="/lib/spop/spop.min.js"></script>
+			<!--判断该文章是否为学习笔记-->
+			<script>
+				spop({
+					template: '<h4 class="spop-title">注意</h4><p style="font-size:1.15em">如文章中未弹出此窗，则没什么大问题。</p>此文章仅为博主的学习笔记，并非教学，其中可能含有理论错误。',
+					group: 'tips',
+					position  : 'bottom-center',
+					style: 'success',
+					autoclose: 5500,
+					onOpen: function () {
+						//这里设置灰色背景色
+					},
+					onClose: function() {
+						//这里可以取消背景色
+						spop({
+							template: 'ε = = (づ′▽`)づ',
+							group: 'tips',
+							position  : 'bottom-center',
+							style: 'success',
+							autoclose: 1500
+						});
+					}
+				});
+			</script>
+	
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">深度学习中的一些疑问总结
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-03 13:54:56" itemprop="dateCreated datePublished" datetime="2019-05-03T13:54:56+08:00">2019-05-03</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-01-05 16:37:30" itemprop="dateModified" datetime="2020-01-05T16:37:30+08:00">2020-01-05</time>
+              
+            
+          </span>
+
+          
+
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/dl/" itemprop="url" rel="index"><span itemprop="name">dl</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="为什么需要非线性激活函数"><a href="#为什么需要非线性激活函数" class="headerlink" title="为什么需要非线性激活函数"></a>为什么需要非线性激活函数</h1><div class="note primary">
+            <p>为什么<script type="math/tex">w*x+b=z</script>之后，需要使用一个激活函数<script type="math/tex">a = \sigma(z)</script>？不能不加这个激活函数吗？权重值乘上输入值加上偏差之后直接输出就行了，何必再带入激活函数中？</p>
+          </div>
+<p>由于y=bx+c是线性函数，只不过将输入值乘了一个常量并进行位移而已，所以使用非y=bx+c型的激活函数就算是使用了非线性函数。而在神经元中不加激活函数，实际上就是把激活函数设置成y=x这个函数。<br>那么现在从头再做一次神经网络计算，与上面的区别是这次不加激活函数。</p>
+<script type="math/tex; mode=display">
+\left \{ 
+    \begin{array}{ll}
+        a^1 = w^1 * a^0 + b^1 \qquad这是计算第一层的激活值，现在没有使用激活函数。\\
+        a^2 = w^2 * a^1 + b^2 \qquad这是计算第二次的激活值，也没有使用激活函数。\\
+        a^2 = w^2 * (w^1 * a^0 + b^1) + b^2 \qquad消掉a^1，两式合并之后\\
+        a^2 = w^2 * w^1 * a^0 + w^2 * b^1 + b^2 \qquad合并同类项后\\
+        a^2 = w' * a^0 + b' \qquad由于w和b只是一堆常数，所以将w'代替w^2 * w^1，b'同理
+    \end{array}
+\right.</script><p>通过上面几个式子发现，我们计算了第一层和第二层之后，结果居然还是一个线性的式子，和最初的输入没有什么差别，也就是说你无论叠了几层hidden layer最后输出还是类似<script type="math/tex">a^2 = w' * a^0 + b'</script>的式子，那么深度学习的意义在哪呢？还不如直接把hidden layer去掉。所以重点就是线性的hidden layer没有任何用处，因为两个线性方程的组合结果还是线性方程。<br>只有在一个地方可以使用线性方程，那就是回归问题——线性回归。<br><a id="more"></a></p>
+<h1 id="梯度下降的意义"><a href="#梯度下降的意义" class="headerlink" title="梯度下降的意义"></a>梯度下降的意义</h1><div class="note primary">
+            <p>首先虽然全部的过程已经理清，但是还有几个问题：为什么要对w求导？梯度下降的意义是什么？为什么使用梯度下降就可以解决误差问题？</p>
+          </div>
+<h1 id="dropout背后的原理"><a href="#dropout背后的原理" class="headerlink" title="dropout背后的原理"></a>dropout背后的原理</h1><div class="note primary">
+            <p>dropout背后的原理是什么？</p>
+          </div>
+<p><a href="https://mooc.study.163.com/learn/2001281003?tid=2001391036&amp;_trace_c_p_k2_=1f1aedd0dd9f431da0ce64963f010916#/learn/content?type=detail&amp;id=2001701044" target="_blank" rel="noopener">视频</a></p>
+<h1 id="为什么Mini-batch比普通的梯度下降快？"><a href="#为什么Mini-batch比普通的梯度下降快？" class="headerlink" title="为什么Mini-batch比普通的梯度下降快？"></a>为什么Mini-batch比普通的梯度下降快？</h1><div class="note primary">
+            <p>为什么Mini-batch比普通的梯度下降快？</p>
+          </div>
+<h1 id="指数加权平均的作用"><a href="#指数加权平均的作用" class="headerlink" title="指数加权平均的作用"></a>指数加权平均的作用</h1><div class="note primary">
+            <p>指数加权平均的作用</p>
+          </div>
+<h1 id="为什么要deep"><a href="#为什么要deep" class="headerlink" title="为什么要deep"></a>为什么要deep</h1><div class="note primary">
+            <p>学了有一段时间的深度学习，但是有个问题一直没想明白。那就是将hidden layer叠多层的意义是什么？</p>
+          </div>
+<p>可以观察下图发现，确实越deep代价越小。左边的两列显示了，层数越多代价越小。右边两列显示即使整个神经网络参数类似，但是明显越deep代价越小。同一行代表hidden layer的参数接近。那个size指的是神经网络中的参数。再看最后一行，它显示即使参数暴增到16k，代价也不是很低。图中红框还显示了2层2k的model比1层16k的model好多了。<br>下图是由底下的论文的作者做的实验得出的结论。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/隐藏层层数对cost的影响.jpg" alt="隐藏层层数对cost的影响"><br><strong>那么为什么神经网络越深效果越好呢？</strong><br>这其实归功于modularization——模块化。如下图所示，如果直接写一个model用于将4种人分类，那么可能会出现某类人的数据并不多的情况，比如长发的男生的数据可能并不多。那么分类的准确率可能会不是很高。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/解释why deep的例子.jpg" alt="解释why deep的例子"><br>下图中先将其分类为男女以及长短发，然后再进一步分类。虽然说长发男生的数据比较少，但是男女和长短发的数据有很多，我们可以得到一个很好的模型。之后我们再叠一层用于进一步分类，此时，由于我们已经做了上一步的分类，所以新的一层可以使用上一层的特征。<br>上一层的分类已经把难的事情——辨别男女，辨别长短发等解决了，所以后一层只要使用少量的数据就能进行分类。<br><strong>没有使用模块化</strong>的那个模型，它是用少量的数据硬生生地去识别长发男生。<strong>使用模组化</strong>的模型是先识别男女以及长短发，再通过调用前一步的特征判断。下图4个分类器区别可能只是辨别的方式不同而已，比如权重不同。输入一张图片之后第一层已经可以辨别是男还是女，长发还是短发，然后后一层经过简单的运算就可以确定了。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/模块化后.jpg" alt="模块化后"><br>经过上面的解释，可能已经大致理解是什么意思了。但是真要讲清还有点问题，尤其是模块化怎么做。<br>但是李宏毅老师说模块化其实是神经网络从数据中<strong>自动</strong>学到的。</p>
+<h2 id="更多的例子"><a href="#更多的例子" class="headerlink" title="更多的例子"></a>更多的例子</h2><p>用数电的逻辑门来举例，但是我没怎么学过数电，所以没有理解。<br>另一个比较贴近生活的例子，就是剪窗花。没有人会一瓣花一瓣花的去剪窗花，都是将纸先折好，然后一步剪完。这就是模块化了。</p>
+<p>还有其他领域的人也有过解读，个人理解why deep这个问题可能到现在没有一个官方的回应，可能前辈也是误打误撞才发现deep learning很牛。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/其他领域对为什么要deep的解读.jpg" alt="其他领域对为什么要deep的解读"></p>
+<h2 id="吴恩达老师的解释"><a href="#吴恩达老师的解释" class="headerlink" title="吴恩达老师的解释"></a>吴恩达老师的解释</h2><p><a href="https://mooc.study.163.com/learn/2001281002?tid=2001392029&amp;_trace_c_p_k2_=03442699ea78498a873a1dbe2fcfee40#/learn/content?type=detail&amp;id=2001701022" target="_blank" rel="noopener">该视频</a>也做了解释。</p>
+<h1 id="词向量乘上权重以及做梯度下降有什么意义"><a href="#词向量乘上权重以及做梯度下降有什么意义" class="headerlink" title="词向量乘上权重以及做梯度下降有什么意义"></a>词向量乘上权重以及做梯度下降有什么意义</h1><p><a href="https://mooc.study.163.com/learn/2001280005?tid=2001391038&amp;_trace_c_p_k2_=023fecd41c524f0d9485b18d2d773f53#/learn/content?type=detail&amp;id=2001770038" target="_blank" rel="noopener">本文灵感</a><br>本文疑问：</p>
+<ol>
+<li>词向量在神经网络隐藏层中乘一个权重，这个权重有什么用？</li>
+<li>神经网络训练完成后送入softmax中，这个输出层的权重又有什么用？</li>
+<li>梯度下降到底在算什么东西，在算谁的最小值？</li>
+<li>为什么它可以预测出应该填入juice？</li>
+<li>它怎么预测其他句子？</li>
+</ol>
+<h2 id="准备词向量"><a href="#准备词向量" class="headerlink" title="准备词向量"></a>准备词向量</h2><p>假设有这么一句话：I want a glass of orange ___.<br>要做的是估计划线处应该填入什么词。答案是juice。<br>首先我们需要一个词典——vocabulary，每个单词对应一个索引，这是通用步骤。词表大小为10000。<br>然后将上述的句子，从单词转成索引形式。即：<br>I want a glass of orange —-&gt; 4343 9665 1 3852 6163 6257<br>此外每一个单词都会对应一个词向量，而词表中所有单词的词向量就组合一个词嵌入矩阵。词表以及词向量都是可以找一些预训练的，比如<strong>GloVe</strong>。<br>梳理一遍就是：<br>单词:索引<br>索引:词向量<br>所以可以通过单词间接地获取到词向量。关于索引对应词向量，实际上是里面没有索引的因为一个矩阵它本身就有一个属性表示索引，如第0行就是代表第0个单词，第1行就是代表第一个单词。<br>总而言之，我们通过单词获取索引后，就能通过该索引直接获取词向量。伪代码可以表示为：<br><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">index = vocabulary.get_index('want') <span class="comment"># 索引为9665</span></span><br><span class="line">word_vector = embedding_matrix[index, :] <span class="comment"># 获得词向量</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>对于词嵌入矩阵的行代表词向量，还是列代表词向量不必纠结。</strong>你要乐意可以改成<br><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">word_vector = embedding_matrix[:, index] <span class="comment"># 获得词向量</span></span><br></pre></td></tr></table></figure></p>
+<p>如果使用one hot编码来执行上述代码就是将9665转为one hot编码，即除了9665位置为1，其余位置全为0。然后<script type="math/tex">word\_vector = embedding\_matrix^T * word\_one\_hot</script>。这样也能得到词向量，但是由于one hot编码全是0，算起来速度太慢了。<br>现在有了句子“I want a glass of orange”的所有词向量，接下来要做的是将这些词向量从头到尾拼在一起，接成一个更长的向量，也就是6倍长的向量。原词向量是300维，拼接完成后是1800维。然后将这个向量输入一个神经网络中，最后经过softmax函数进行预测，预测范围是在10000个单词中，看谁的概率大。</p>
+<h2 id="意义"><a href="#意义" class="headerlink" title="意义"></a>意义</h2><p>将词向量送入神经网络中当然还需要梯度下降进行迭代。这里会有很多疑问，</p>
+<ol>
+<li>词向量在神经网络隐藏层中乘一个权重，这个权重有什么用？</li>
+<li>神经网络训练完成后送入softmax中，这个输出层的权重又有什么用？</li>
+<li>梯度下降到底在算什么东西，在算谁的最小值？</li>
+<li>为什么它可以预测出应该填入juice？</li>
+<li>它怎么预测其他句子？</li>
+</ol>
+<p>我进行逐一思考，本文仅为自己的理解。<br>首先其实有一件事很多视频没讲，可能他们认为这是一件很平常的事，所以没讲。<br>上述的这个步骤并不是预测步骤，而是在进行迭代，所以是一个训练步骤。人家之所以说<em>我们可以通过这个神经网络预测出单词为juice</em>，是因为逻辑上是这样的。<br>由于是训练步骤，所以我们有一个很重要的数据，最终结果。最终结果我们是知道的，然而我们初学者在考虑整个流程时，没把最终结果算进去，因为老师说<em>我们可以通过这个神经网络预测出单词为juice</em>，由于是<em>预测</em>，那么结果肯定没有啊。这很合乎逻辑。所以就陷入了一个思维的怪圈，<strong>正确的逻辑是：</strong></p>
+<ol>
+<li>首先我们知道最终结果，所以当第一次迭代时，所有的权重都是随机初始化的，1、2两个问题也就没有意义了。第一次迭代完毕后，结果肯定稀巴烂，所以进行梯度下降。</li>
+<li>这里面我们又会碰到一个问题，就是梯度下降到底在算什么？其实这里的疑问来自我们的潜意识始终将句子当做文字在看，自然而然就意识不到梯度下降在干什么。而其实我们在几步之前就已经将文字转为词向量了。<br>词向量说白了就是一堆浮点型数字，而最终结果juice也是一个词向量，所以实际上就是将一个权重矩阵乘上一个1800维的向量，得到一个输出值（may be 激活值），然后将这个输出值和juice的向量放入代价函数中进行计算，接下来的梯度下降其实就是跟正常的步骤一样。</li>
+<li><strong>梯度下降就是在寻找一个合适的权重矩阵使得权重矩阵乘1800维向量得到的值接近juice的向量。</strong><br>这里在解释第3个问题时，顺便也解释了第1、2个问题。<strong>权重值实际上就是用来使得预测值和实际结果越接近越好</strong></li>
+<li>由于开头就说了我们实际上是知道划线处应该填juice，所以第4个问题压根不需要解答，因为我们本来就知道应该填juice，也没必要预测。之前之所以有这个问题，是因为我们潜意识觉得老师说<em>我们可以通过这个神经网络预测出单词为juice</em>。</li>
+<li>至于第5个问题如何预测其他句子。打个比方，现在预测一个新的句子：I want a glass of apple ___.<br>由于我们知道词嵌入矩阵是由很多单词的词向量组成的。而一个单词词向量其实就是一堆特征组成的，对比两个句子，apple和orange的词向量肯定很接近，因为它们都是水果，它们的特征（水多不多，好不好吃，是不是水果，有没有性别特征，是不是动词等）都类似。<br>而我们之前已经训练了一个神经网络，我们得到了所需要的权重值，我们直接把这个权重值乘上新句子的词向量，那么结果肯定和权重值乘上之前句子的词向量的结果很接近。因为它们之间的区别仅仅是apple和orange的词向量不同，并且apple和orange的词向量其实也并不是完全不同，只是略有不同。所以二者的结果自然也差不多。<br>最后经过softmax函数在10000个单词之中预测，输出的结果必然都是juice。</li>
+</ol>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>这里还会有一个问题，那么如果需要预测的句子单词数不一致怎么办？<br>之前两个例子的句子都是6个单词，预测第7个单词。那要是前面有10个单词，我要预测第11个单词怎么办？<br>其实可以只考虑划线处前几个单词，比如只考虑划线处前4个单词，这样输入的维度就相同了。<br>在本文开头的参考视频里，吴恩达老师讲得很清楚了。由古圣先贤总结，一般来说取前4个单词即可，当然你自己也可以用其他办法。</p>
+<!-- more -->
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/学习笔记/" rel="tag"># 学习笔记</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/~学习笔记/练习Keras RNN的代码.html" rel="next" title="练习Keras RNN的代码">
+                <i class="fa fa-chevron-left"></i> 练习Keras RNN的代码
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/~学习笔记/梯度下降算法的推导.html" rel="prev" title="梯度下降算法的推导">
+                梯度下降算法的推导 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="朱冲䶮">
+            
+              <p class="site-author-name" itemprop="name">朱冲䶮</p>
+              <p class="site-description motion-element" itemprop="description">记录学习问题，积累做的 leetcode 题目</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">132</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+			  
+			  <!-- 不蒜子/busuanzi -->
+			  <div class="site-state-item site-state-posts">
+			  	<span class="site-state-item-count">132.6k</span>
+			  	<span class="site-state-item-name">总字数</span>
+			  </div>
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:897538633@qq.com" title="E-Mail &rarr; mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/yan624" title="GitHub &rarr; https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么需要非线性激活函数"><span class="nav-number">1.</span> <span class="nav-text">为什么需要非线性激活函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#梯度下降的意义"><span class="nav-number">2.</span> <span class="nav-text">梯度下降的意义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#dropout背后的原理"><span class="nav-number">3.</span> <span class="nav-text">dropout背后的原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么Mini-batch比普通的梯度下降快？"><span class="nav-number">4.</span> <span class="nav-text">为什么Mini-batch比普通的梯度下降快？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#指数加权平均的作用"><span class="nav-number">5.</span> <span class="nav-text">指数加权平均的作用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么要deep"><span class="nav-number">6.</span> <span class="nav-text">为什么要deep</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#更多的例子"><span class="nav-number">6.1.</span> <span class="nav-text">更多的例子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#吴恩达老师的解释"><span class="nav-number">6.2.</span> <span class="nav-text">吴恩达老师的解释</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#词向量乘上权重以及做梯度下降有什么意义"><span class="nav-number">7.</span> <span class="nav-text">词向量乘上权重以及做梯度下降有什么意义</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#准备词向量"><span class="nav-number">7.1.</span> <span class="nav-text">准备词向量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#意义"><span class="nav-number">7.2.</span> <span class="nav-text">意义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他"><span class="nav-number">7.3.</span> <span class="nav-text">其他</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v6.7.0</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=6.7.0"></script>
+
+  <script src="/js/src/motion.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=6.7.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=6.7.0"></script>
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
+<script src="/js/src/post-details.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  
+
+
+  
+
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+        // ref: https://github.com/ForbesLindesay/unescape-html
+        var unescapeHtml = function(html) {
+          return String(html)
+            .replace(/&quot;/g, '"')
+            .replace(/&#39;/g, '\'')
+            .replace(/&#x3A;/g, ':')
+            // replace all the other &#x; chars
+            .replace(/&#(\d+);/g, function (m, p) { return String.fromCharCode(p); })
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&amp;/g, '&');
+        };
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                content = unescapeHtml(content);
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+  
+
+  
+  <!-- 自己新增的所有 js 文件 -->
+  <script src="/lib/my-utils.js"></script>
+<!--图片缩放插件-->
+<script src="/lib/zoomify/zoomify.min.js"></script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- 背景插件 -->
+<script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<!-- 背景图片 -->
+<script>
+	function generateBG(count){
+		var bg_prefix = '/images/background/';
+		var bg =new Array();
+		for(var i = 0; i < count; i++){
+			bg[i] = bg_prefix + i + '.jpg';
+		}
+		bg.shuffle();
+		return bg;
+	}
+	$("body").backstretch(generateBG(11), {
+		duration:90000,//1min半一换
+		fade: 1500
+	});
+</script>
+<!-- 图片缩放 -->
+<script>
+$('#content img').zoomify({duration: 500, });
+  $('#content img').on('zoom-in.zoomify', function () {
+    $('#sidebar').css('display', 'none');
+  });
+  $('#content img').on('zoom-out-complete.zoomify', function () {
+    $('#sidebar').css('display', '');
+  });
+</script>
+
+	
+
+</body>
+</html>
