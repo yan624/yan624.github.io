@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/5.10.2/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="第三章 深度学习基础基本概念 神经网络组成？ 神经网络有哪些常用模型结构？ THE NEURAL NETWORK ZOO a mostly complete chart of Neural Network   如何选择深度学习开发平台？ 为什么使用深层表示？              &amp;emsp;&amp;emsp;一些以前看过的资料：吴恩达 2017course 深度学习笔记：对神经网络整体的理解#为什">
+<meta name="keywords" content="学习笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度学习500问笔记">
+<meta property="og:url" content="http://yan624.github.io/·学习笔记/深度学习500问笔记.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="第三章 深度学习基础基本概念 神经网络组成？ 神经网络有哪些常用模型结构？ THE NEURAL NETWORK ZOO a mostly complete chart of Neural Network   如何选择深度学习开发平台？ 为什么使用深层表示？              &amp;emsp;&amp;emsp;一些以前看过的资料：吴恩达 2017course 深度学习笔记：对神经网络整体的理解#为什">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/隐藏层层数对cost的影响.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/解释why deep的例子.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/模块化后.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/其他领域对为什么要deep的解读.jpg">
+<meta property="og:updated_time" content="2020-02-22T05:00:05.445Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深度学习500问笔记">
+<meta name="twitter:description" content="第三章 深度学习基础基本概念 神经网络组成？ 神经网络有哪些常用模型结构？ THE NEURAL NETWORK ZOO a mostly complete chart of Neural Network   如何选择深度学习开发平台？ 为什么使用深层表示？              &amp;emsp;&amp;emsp;一些以前看过的资料：吴恩达 2017course 深度学习笔记：对神经网络整体的理解#为什">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/隐藏层层数对cost的影响.jpg">
+
+<link rel="canonical" href="http://yan624.github.io/·学习笔记/深度学习500问笔记.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+<!--图片缩放插件样式-->
+<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
+
+  <title>深度学习500问笔记 | 博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">低阶炼金术士</p>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i>归档<span class="badge">141</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-常用链接">
+
+    <a href="/常用链接" rel="section"><i class="menu-item-icon fas fa-fw fa-bookmark"></i>常用链接</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i>标签<span class="badge">81</span></a>
+
+  </li>
+        
+            
+  <li class="menu-item menu-item-博客分类">
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i>博客分类</a>
+
+  </li>
+
+
+      
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    
+    	
+    		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
+        <script type="text/javascript" src="/lib/spop/spop.min.js"></script>
+        <!--判断该文章是否为学习笔记-->
+        <script>
+          spop({
+            template: '<h4 class="spop-title">注意</h4>此文章仅为博主的学习笔记，并非教学，其中可能含有理论错误。',
+            group: 'tips',
+            position  : 'bottom-center',
+            style: 'success',
+            autoclose: 5500,
+            onOpen: function () {
+              //这里设置灰色背景色
+            },
+            onClose: function() {
+              //这里可以取消背景色
+              spop({
+                template: 'ε = = (づ′▽`)づ',
+                group: 'tips',
+                position  : 'bottom-center',
+                style: 'success',
+                autoclose: 1500
+              });
+            }
+          });
+        </script>
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·学习笔记/深度学习500问笔记.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深度学习500问笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-02-19 15:43:53" itemprop="dateCreated datePublished" datetime="2020-02-19T15:43:53+08:00">2020-02-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-22 13:00:05" itemprop="dateModified" datetime="2020-02-22T13:00:05+08:00">2020-02-22</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index">
+                    <span itemprop="name">AI</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="第三章-深度学习基础"><a href="#第三章-深度学习基础" class="headerlink" title="第三章 深度学习基础"></a>第三章 深度学习基础</h1><h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><ol>
+<li><strong>神经网络组成？</strong></li>
+<li><strong>神经网络有哪些常用模型结构？</strong><ul>
+<li><a href="https://www.asimovinstitute.org/neural-network-zoo/" target="_blank" rel="noopener">THE NEURAL NETWORK ZOO</a></li>
+<li><a href="https://www.baidu.com/s?ie=UTF-8&amp;wd=a%20mostly%20complete%20chart%20of%20Neural%20Network&amp;" target="_blank" rel="noopener">a mostly complete chart of Neural Network</a></li>
+</ul>
+</li>
+<li><strong>如何选择深度学习开发平台？</strong></li>
+<li><strong>为什么使用深层表示？</strong> <div class="note info">
+            <p>&emsp;&emsp;一些以前看过的资料：</p><ol><li><a href="https://yan624.github.io/·zcy/对神经网络整体的理解.html#为什么使用深度表示——Why-deep-representations">吴恩达 2017course 深度学习笔记：对神经网络整体的理解#为什么使用深度表示——Why-deep-representations</a></li><li><a href="#为什么要deep">#为什么要deep</a></li></ol>
+          </div>
+<ol>
+<li>深度神经网络是一种<strong>特征递进式</strong>的学习算法，<strong>浅层的神经元</strong>直接从输入数据中学习一些低层次的简单特征，例如边缘、纹理等。而<strong>深层的特征</strong>则基于已学习到的浅层特征继续学习更高级的特征，从计算机的角度学习深层的语义信息。<div class="note default">
+            <p>&emsp;&emsp;如这段所说，浅层的神经元可以从数据中提取出一些低层次的特征。对于 CV 来说，首先提取图片的一部分，然后可能还可以继续通过这一部分图片进一步地提取信息。<br>&emsp;&emsp;但是对于 NLP 来说，第一层提取出的特征是低级的，那么第二层该如何从低级的特征中提取出高级的特征？从低级中提取出高级的东西，这逻辑说不通吧。所以我觉得可能可以加一层残差层（residual layer），将原始文本的特征也并入到低级特征中（可以用一个系数来权衡量级）。-&gt;Transformer</p>
+          </div></li>
+<li>深层的网络隐藏单元数量相对较少，隐藏层数目较多，如果浅层的网络想要达到同样的计算结果则需要指数级增长的单元数量才能达到。<a id="more"></a></li>
+</ol>
+</li>
+<li><strong>为什么深层神经网络难以训练？</strong> <div class="note info">
+            <ol><li><a href="https://yan624.github.io/project/多领域seq2lf.html#clip-gradient">多领域seq2lf#clip-gradient</a><br>虽然讲得是 clip gradient，但是结合了以前的笔记同时讲了<strong>梯度爆炸</strong>和<strong>梯度消失</strong>。</li></ol>
+          </div>
+<ol>
+<li>梯度消失<br>梯度消失是指通过隐藏层从后向前看，梯度会变的越来越小，说明前面层的学习会显著慢于后面层的学习，所以学习会卡住，除非梯度变大。<br>梯度消失的原因受到多种因素影响，例如<strong>学习率的大小</strong>，<strong>网络参数的初始化</strong>，<strong>激活函数的边缘效应</strong>等。在深层神经网络中，每一个神经元计算得到的梯度都会传递给前一层，较浅层的神经元接收到的梯度受到之前所有层梯度的影响。如果计算得到的梯度值非常小，随着层数增多，求出的梯度更新信息将会以指数形式衰减，就会发生梯度消失。下图是不同隐含层的学习速率：</li>
+<li>梯度爆炸</li>
+<li>权重矩阵的退化导致模型的有效自由度减少</li>
+</ol>
+</li>
+<li><strong>深度学习和机器学习有什么不同？</strong></li>
+</ol>
+<h2 id="超参数"><a href="#超参数" class="headerlink" title="超参数"></a>超参数</h2><ol>
+<li><strong>什么是超参数？</strong></li>
+<li><strong>如何寻找超参数的最优值？</strong><br> &emsp;&emsp;在使用机器学习算法时，总有一些难调的超参数。例如权重衰减大小，高斯核宽度等等。这些参数需要人为设置，设置的值对结果产生较大影响。常见设置超参数的方法有：<ol>
+<li>猜测和检查：根据经验或直觉，选择参数，一直迭代。</li>
+<li>网格搜索：让计算机尝试在一定范围内均匀分布的一组值。</li>
+<li>随机搜索：让计算机随机挑选一组值。</li>
+<li>贝叶斯优化：使用贝叶斯优化超参数，会遇到贝叶斯优化算法本身就需要很多的参数的困难。</li>
+<li>MITIE方法，好初始猜测的前提下进行局部优化。它使用BOBYQA算法，并有一个精心选择的起始点。由于BOBYQA只寻找最近的局部最优解，所以这个方法是否成功很大程度上取决于是否有一个好的起点。在MITIE的情况下，我们知道一个好的起点，但这不是一个普遍的解决方案，因为通常你不会知道好的起点在哪里。从好的方面来说，这种方法非常适合寻找局部最优解。稍后我会再讨论这一点。</li>
+<li>最新提出的LIPO的全局优化方法。这个方法没有参数，而且经验证比随机搜索方法好。</li>
+</ol>
+</li>
+<li><strong>超参数搜索一般过程？</strong></li>
+</ol>
+<h2 id="激活函数"><a href="#激活函数" class="headerlink" title="激活函数"></a>激活函数</h2><ol>
+<li><p><strong>如何选择激活函数？</strong></p>
+ <div class="note info">
+            <ol><li><a href="http://localhost:4000/·zcy/对神经网络整体的理解.html#※-激活函数" target="_blank" rel="noopener">对神经网络整体的理解#※-激活函数</a></li></ol>
+          </div>
+</li>
+<li><p><strong>为什么Tanh收敛速度比Sigmoid快？</strong><br>&emsp;&emsp;首先看如下两个函数的求导：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+ tanh^{\prime}(x) = & 1-tanh(x)^{2}\in (0,1) \\
+ s^{\prime}(x) = & s(x)*(1-s(x))\in (0,\frac{1}{4}]
+\end{align}</script><p>&emsp;&emsp;由上面两个公式可知tanh(x)梯度消失的问题比sigmoid轻，所以Tanh收敛速度比Sigmoid快。</p>
+<div class="note default">
+            <p>&emsp;&emsp;tanh 梯度消失的问题要轻，自然而然参数更新的速度就要快，所以收敛的速度就要快。</p>
+          </div>
+</li>
+</ol>
+<h2 id="batch-size"><a href="#batch-size" class="headerlink" title="batch size"></a>batch size</h2><h2 id="归一化"><a href="#归一化" class="headerlink" title="归一化"></a>归一化</h2><ol>
+<li><strong>归一化含义？</strong></li>
+<li>为什么要归一化？</li>
+<li>为什么归一化能提高求解最优解速度？</li>
+<li>3D图解未归一化</li>
+<li><strong>归一化有哪些类型？</strong><ul>
+<li>线性归一化</li>
+<li>标准差标准化</li>
+<li>非线性归一化</li>
+</ul>
+</li>
+<li>局部响应归一化作用</li>
+<li>理解局部响应归一化</li>
+<li><strong>什么是批归一化（Batch Normalization）</strong></li>
+<li><strong>批归一化（BN）算法的优点</strong></li>
+<li><strong>批归一化（BN）算法流程</strong></li>
+<li>批归一化和群组归一化比较</li>
+<li><strong>Weight Normalization和Batch Normalization比较</strong></li>
+<li><strong>Batch Normalization在什么时候用比较合适？</strong></li>
+</ol>
+<h2 id="预训练与微调-fine-tuning"><a href="#预训练与微调-fine-tuning" class="headerlink" title="预训练与微调(fine tuning)"></a>预训练与微调(fine tuning)</h2><ol>
+<li><strong>为什么无监督预训练可以帮助深度学习？</strong><ul>
+<li>深度网络存在问题:<ol>
+<li>网络越深，需要的训练样本数越多。若用监督则需大量标注样本，不然小规模样本容易造成过拟合。深层网络特征比较多，会出现的多特征问题主要有多样本问题、规则化问题、特征选择问题。</li>
+<li>多层神经网络参数优化是个高阶非凸优化问题，经常得到收敛较差的局部解；</li>
+<li>梯度扩散问题，BP算法计算出的梯度随着深度向前而显著下降，导致前面网络参数贡献很小，更新速度慢。</li>
+</ol>
+</li>
+<li>解决方法：逐层贪婪训练，无监督预训练（unsupervised pre-training）即训练网络的第一个隐藏层，再训练第二个…最后用这些训练好的网络参数值作为整体网络参数的初始值。经过预训练最终能得到比较好的局部最优解。</li>
+</ul>
+</li>
+<li><strong>什么是模型微调fine tuning</strong></li>
+<li><strong>微调时候网络参数是否更新？</strong></li>
+<li><strong>fine-tuning 模型的三种状态</strong><ol>
+<li>状态一：只预测，不训练。<br>特点：相对快、简单，针对那些已经训练好，现在要实际对未知数据进行标注的项目，非常高效；</li>
+<li>状态二：训练，但只训练最后分类层。<br>特点：fine-tuning的模型最终的分类以及符合要求，现在只是在他们的基础上进行类别降维。</li>
+<li>状态三：完全训练，分类层+之前卷积层都训练<br>特点：跟状态二的差异很小，当然状态三比较耗时和需要训练GPU资源，不过非常适合fine-tuning到自己想要的模型里面，预测精度相比状态二也提高不少。</li>
+</ol>
+</li>
+</ol>
+<h2 id="权重偏差初始化"><a href="#权重偏差初始化" class="headerlink" title="权重偏差初始化"></a>权重偏差初始化</h2><ol>
+<li>全都初始化为 0</li>
+<li>全都初始化为同样的值</li>
+<li>初始化为小的随机数</li>
+<li>用 <script type="math/tex">\frac{1}{\sqrt n}</script> 校准方差</li>
+<li>稀疏初始化(Sparse Initialazation)</li>
+<li>初始化偏差</li>
+</ol>
+<h2 id="学习率"><a href="#学习率" class="headerlink" title="学习率"></a>学习率</h2><ol>
+<li>学习率的作用</li>
+<li><strong>学习率衰减常用参数有哪些</strong></li>
+<li>分段常数衰减</li>
+<li>指数衰减</li>
+<li>自然指数衰减</li>
+<li>多项式衰减</li>
+<li>余弦衰减</li>
+</ol>
+<h2 id="Dropout-系列问题"><a href="#Dropout-系列问题" class="headerlink" title="Dropout 系列问题"></a>Dropout 系列问题</h2><ol>
+<li><strong>为什么要正则化？</strong><br>深度学习可能存在过拟合问题——高方差，有两个解决方法，一个是正则化，另一个是准备更多的数据，这是非常可靠的方法，但你可能无法时时刻刻准备足够多的训练数据或者获取更多数据的成本很高，但正则化通常有助于避免过拟合或减少你的网络误差。  </li>
+<li><strong>为什么正则化有利于预防过拟合？</strong></li>
+<li><strong>理解dropout正则化</strong><br>Dropout可以随机删除网络中的神经单元，它为什么可以通过正则化发挥如此大的作用呢？<br>​    - 直观上理解：不要依赖于任何一个特征，因为该单元的输入可能随时被清除，因此该单元通过这种方式传播下去，并为单元的四个输入增加一点权重，通过传播所有权重，dropout将产生收缩权重的平方范数的效果，和之前讲的L2正则化类似；实施dropout的结果实它会压缩权重，并完成一些预防过拟合的外层正则化；L2对不同权重的衰减是不同的，它取决于激活函数倍增的大小。<ul>
+<li>起平均作用：在不适用 dropout 的条件下，使用 5 个不同的神经网络去训练相同的数据集，那么我们可以使用少数服从多数的方法。比如 3 个神经网络的结果是 b，2 个神经网络的结果是 a，那么结果就是 b。同理，使用 dropout 就相当于训练了不同的神经网络。</li>
+</ul>
+</li>
+<li><strong>dropout率的选择</strong></li>
+<li><strong>dropout有什么缺点？</strong><br>dropout一大缺点就是代价函数J不再被明确定义，每次迭代，都会随机移除一些节点，如果再三检查梯度下降的性能，实际上是很难进行复查的。所以我们失去了调试工具来绘制这样的图片。</li>
+</ol>
+<p>&emsp;&emsp;参考文献：</p>
+<ol>
+<li><a href="https://zhuanlan.zhihu.com/p/38200980" target="_blank" rel="noopener">深度学习中Dropout原理解析</a></li>
+</ol>
+<h1 id="第六章-循环神经网络（RNN）"><a href="#第六章-循环神经网络（RNN）" class="headerlink" title="第六章 循环神经网络（RNN）"></a>第六章 循环神经网络（RNN）</h1><h2 id="为什么需要RNN？"><a href="#为什么需要RNN？" class="headerlink" title="为什么需要RNN？"></a>为什么需要RNN？</h2><h2 id="图解RNN基本结构"><a href="#图解RNN基本结构" class="headerlink" title="图解RNN基本结构"></a>图解RNN基本结构</h2><ol>
+<li>vector-to-sequence：例如，输入图像输出一段话</li>
+<li>sequence-to-vector：例如，输入一段话判断类别</li>
+<li>Encoder-Decoder(seq2seq)：例如机器翻译等</li>
+</ol>
+<h2 id="RNNs典型特点？"><a href="#RNNs典型特点？" class="headerlink" title="RNNs典型特点？"></a>RNNs典型特点？</h2><ol>
+<li>处理序列数据</li>
+<li>当前步的输出与之前步的输出有关，因此被称为循环神经网络</li>
+<li>隐藏层权重共享</li>
+<li><strong>理论上，RNNs能够对任何长度序列数据进行处理。但是在实践中，为了降低复杂度往往假设当前的状态只与之前某几个时刻状态相关。</strong>（这句话是什么意思，基本的 RNN 不都是可以处理任意长的语句？只不过会出现梯度爆炸和梯度消失的问题。）</li>
+</ol>
+<h2 id="CNN和RNN的区别？"><a href="#CNN和RNN的区别？" class="headerlink" title="CNN和RNN的区别？"></a>CNN和RNN的区别？</h2><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>特点描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>相同点</td>
+<td>1、传统神经网络的扩展。<br>2、前向计算产生结果，反向计算模型更新。<br>3、每层神经网络横向可以多个神经元共存,纵向可以有多层神经网络连接。</td>
+</tr>
+<tr>
+<td>不同点</td>
+<td>1、CNN空间扩展，神经元与特征卷积；RNN时间扩展，神经元与多个时间输出计算<br>2、RNN可以用于描述时间上连续状态的输出，有记忆功能，CNN用于静态输出</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="RNNs和FNNs有什么区别？"><a href="#RNNs和FNNs有什么区别？" class="headerlink" title="RNNs和FNNs有什么区别？"></a>RNNs和FNNs有什么区别？</h2><h2 id="RNNs训练和传统ANN训练异同点？"><a href="#RNNs训练和传统ANN训练异同点？" class="headerlink" title="RNNs训练和传统ANN训练异同点？"></a>RNNs训练和传统ANN训练异同点？</h2><h2 id="为什么RNN训练的时候Loss波动很大"><a href="#为什么RNN训练的时候Loss波动很大" class="headerlink" title="为什么RNN训练的时候Loss波动很大"></a>为什么RNN训练的时候Loss波动很大</h2><p>&emsp;&emsp;由于RNN特有的memory会影响后面 time step 的计算，所以梯度时大时小，learning rate没法个性化的调整，导致RNN在train的过程中，Loss会震荡起伏，为了解决RNN的这个问题，在训练的时候，可以设置临界值，当梯度大于某个临界值，直接截断，用这个临界值作为梯度的大小，防止大幅震荡。</p>
+<h2 id="标准RNN前向输出流程"><a href="#标准RNN前向输出流程" class="headerlink" title="标准RNN前向输出流程"></a>标准RNN前向输出流程</h2><h2 id="BPTT算法推导"><a href="#BPTT算法推导" class="headerlink" title="BPTT算法推导"></a>BPTT算法推导</h2><h2 id="RNN中为什么会出现梯度消失？"><a href="#RNN中为什么会出现梯度消失？" class="headerlink" title="RNN中为什么会出现梯度消失？"></a>RNN中为什么会出现梯度消失？</h2><div class="note default">
+            <ol><li><a href="https://yan624.github.io/project/多领域seq2lf.html#clip-gradient">多领域seq2lf#clip-gradient</a><br> 虽然讲得是 clip gradient，但是结合了以前的笔记同时讲了<strong>梯度爆炸</strong>和<strong>梯度消失</strong>。</li></ol>
+          </div>
+<h2 id="如何解决RNN中的梯度消失问题？"><a href="#如何解决RNN中的梯度消失问题？" class="headerlink" title="如何解决RNN中的梯度消失问题？"></a>如何解决RNN中的梯度消失问题？</h2><p>&emsp;&emsp;解决办法是将 sigmoid 函数替换为 tanh。注意，在 CNN 中的首选激活函数是 ReLu，但是对于 RNN 来说，首选是 tanh，因为 ReLu 的右半轴是 <code>y=x</code>，会导致 RNN 的 timestep 越往后输出值越大。</p>
+<h2 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h2><div class="note default">
+            <ol><li><a href="https://yan624.github.io/·学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">吴恩达李宏毅综合学习笔记：RNN入门#长短期记忆——Long-Short-term-Memory-LSTM</a></li><li><a href="https://yan624.github.io/·zcy/深度学习算法（三）：RNN 各种机制.html#LSTM">深度学习算法（三）：RNN 各种机制#LSTM</a></li></ol>
+          </div>
+<h2 id="LSTMs与GRUs的区别"><a href="#LSTMs与GRUs的区别" class="headerlink" title="LSTMs与GRUs的区别"></a>LSTMs与GRUs的区别</h2><h2 id="RNNs在NLP中典型应用？"><a href="#RNNs在NLP中典型应用？" class="headerlink" title="RNNs在NLP中典型应用？"></a>RNNs在NLP中典型应用？</h2><h2 id="常见的RNNs扩展和改进模型"><a href="#常见的RNNs扩展和改进模型" class="headerlink" title="常见的RNNs扩展和改进模型"></a>常见的RNNs扩展和改进模型</h2><ol>
+<li>Simple RNNs(SRNs)</li>
+<li>Bidirectional RNNs</li>
+<li>Deep RNNs</li>
+<li>Echo State Networks（ESNs）</li>
+<li>Gated Recurrent Unit Recurrent Neural Networks</li>
+<li>Bidirectional LSTMs</li>
+<li>Stacked LSTMs</li>
+<li>Clockwork RNNs(CW-RNNs)</li>
+<li>CNN-LSTMs</li>
+</ol>
+<h1 id="第十三章-优化算法"><a href="#第十三章-优化算法" class="headerlink" title="第十三章 优化算法"></a>第十三章 优化算法</h1><h1 id="第十四章-超参数调整"><a href="#第十四章-超参数调整" class="headerlink" title="第十四章 超参数调整"></a>第十四章 超参数调整</h1><h1 id="第十六章-自然语言处理（NLP）"><a href="#第十六章-自然语言处理（NLP）" class="headerlink" title="第十六章 自然语言处理（NLP）"></a>第十六章 自然语言处理（NLP）</h1><h1 id="第十七章-模型压缩及移动端部署"><a href="#第十七章-模型压缩及移动端部署" class="headerlink" title="第十七章 模型压缩及移动端部署"></a>第十七章 模型压缩及移动端部署</h1><h1 id="第十八章-后端架构选型、离线及实时计算"><a href="#第十八章-后端架构选型、离线及实时计算" class="headerlink" title="第十八章 后端架构选型、离线及实时计算"></a>第十八章 后端架构选型、离线及实时计算</h1><h1 id="自己的疑问"><a href="#自己的疑问" class="headerlink" title="自己的疑问"></a>自己的疑问</h1><h2 id="为什么Mini-batch比普通的梯度下降快？"><a href="#为什么Mini-batch比普通的梯度下降快？" class="headerlink" title="为什么Mini-batch比普通的梯度下降快？"></a>为什么Mini-batch比普通的梯度下降快？</h2><h2 id="指数加权平均的作用"><a href="#指数加权平均的作用" class="headerlink" title="指数加权平均的作用"></a>指数加权平均的作用</h2><h2 id="为什么要deep"><a href="#为什么要deep" class="headerlink" title="为什么要deep"></a>为什么要deep</h2><div class="note primary">
+            <p>学了有一段时间的深度学习，但是有个问题一直没想明白。那就是将hidden layer叠多层的意义是什么？</p>
+          </div>
+<p>可以观察下图发现，确实越deep代价越小。左边的两列显示了，层数越多代价越小。右边两列显示即使整个神经网络参数类似，但是明显越deep代价越小。同一行代表hidden layer的参数接近。那个size指的是神经网络中的参数。再看最后一行，它显示即使参数暴增到16k，代价也不是很低。图中红框还显示了2层2k的model比1层16k的model好多了。<br>下图是由底下的论文的作者做的实验得出的结论。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/隐藏层层数对cost的影响.jpg" alt="隐藏层层数对cost的影响"><br><strong>那么为什么神经网络越深效果越好呢？</strong><br>这其实归功于modularization——模块化。如下图所示，如果直接写一个model用于将4种人分类，那么可能会出现某类人的数据并不多的情况，比如长发的男生的数据可能并不多。那么分类的准确率可能会不是很高。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/解释why deep的例子.jpg" alt="解释why deep的例子"><br>下图中先将其分类为男女以及长短发，然后再进一步分类。虽然说长发男生的数据比较少，但是男女和长短发的数据有很多，我们可以得到一个很好的模型。之后我们再叠一层用于进一步分类，此时，由于我们已经做了上一步的分类，所以新的一层可以使用上一层的特征。<br>上一层的分类已经把难的事情——辨别男女，辨别长短发等解决了，所以后一层只要使用少量的数据就能进行分类。<br><strong>没有使用模块化</strong>的那个模型，它是用少量的数据硬生生地去识别长发男生。<strong>使用模组化</strong>的模型是先识别男女以及长短发，再通过调用前一步的特征判断。下图4个分类器区别可能只是辨别的方式不同而已，比如权重不同。输入一张图片之后第一层已经可以辨别是男还是女，长发还是短发，然后后一层经过简单的运算就可以确定了。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/模块化后.jpg" alt="模块化后"><br>经过上面的解释，可能已经大致理解是什么意思了。但是真要讲清还有点问题，尤其是模块化怎么做。<br>但是李宏毅老师说模块化其实是神经网络从数据中<strong>自动</strong>学到的。</p>
+<h3 id="更多的例子"><a href="#更多的例子" class="headerlink" title="更多的例子"></a>更多的例子</h3><p>用数电的逻辑门来举例，但是我没怎么学过数电，所以没有理解。<br>另一个比较贴近生活的例子，就是剪窗花。没有人会一瓣花一瓣花的去剪窗花，都是将纸先折好，然后一步剪完。这就是模块化了。</p>
+<p>还有其他领域的人也有过解读，个人理解why deep这个问题可能到现在没有一个官方的回应，可能前辈也是误打误撞才发现deep learning很牛。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习中的一些疑问总结/其他领域对为什么要deep的解读.jpg" alt="其他领域对为什么要deep的解读"></p>
+<h3 id="吴恩达老师的解释"><a href="#吴恩达老师的解释" class="headerlink" title="吴恩达老师的解释"></a>吴恩达老师的解释</h3><p><a href="https://mooc.study.163.com/learn/2001281002?tid=2001392029&amp;_trace_c_p_k2_=03442699ea78498a873a1dbe2fcfee40#/learn/content?type=detail&amp;id=2001701022" target="_blank" rel="noopener">该视频</a>也做了解释。</p>
+<h2 id="词向量乘上权重以及做梯度下降有什么意义"><a href="#词向量乘上权重以及做梯度下降有什么意义" class="headerlink" title="词向量乘上权重以及做梯度下降有什么意义"></a>词向量乘上权重以及做梯度下降有什么意义</h2><p><a href="https://mooc.study.163.com/learn/2001280005?tid=2001391038&amp;_trace_c_p_k2_=023fecd41c524f0d9485b18d2d773f53#/learn/content?type=detail&amp;id=2001770038" target="_blank" rel="noopener">本文灵感</a><br>本文疑问：</p>
+<ol>
+<li>词向量在神经网络隐藏层中乘一个权重，这个权重有什么用？</li>
+<li>神经网络训练完成后送入softmax中，这个输出层的权重又有什么用？</li>
+<li>梯度下降到底在算什么东西，在算谁的最小值？</li>
+<li>为什么它可以预测出应该填入juice？</li>
+<li>它怎么预测其他句子？</li>
+</ol>
+<h3 id="准备词向量"><a href="#准备词向量" class="headerlink" title="准备词向量"></a>准备词向量</h3><p>假设有这么一句话：I want a glass of orange ___.<br>要做的是估计划线处应该填入什么词。答案是juice。<br>首先我们需要一个词典——vocabulary，每个单词对应一个索引，这是通用步骤。词表大小为10000。<br>然后将上述的句子，从单词转成索引形式。即：<br>I want a glass of orange —-&gt; 4343 9665 1 3852 6163 6257<br>此外每一个单词都会对应一个词向量，而词表中所有单词的词向量就组合一个词嵌入矩阵。词表以及词向量都是可以找一些预训练的，比如<strong>GloVe</strong>。<br>梳理一遍就是：<br>单词:索引<br>索引:词向量<br>所以可以通过单词间接地获取到词向量。关于索引对应词向量，实际上是里面没有索引的因为一个矩阵它本身就有一个属性表示索引，如第0行就是代表第0个单词，第1行就是代表第一个单词。<br>总而言之，我们通过单词获取索引后，就能通过该索引直接获取词向量。伪代码可以表示为：<br><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">index = vocabulary.get_index('want') <span class="comment"># 索引为9665</span></span><br><span class="line">word_vector = embedding_matrix[index, :] <span class="comment"># 获得词向量</span></span><br></pre></td></tr></table></figure></p>
+<p><strong>对于词嵌入矩阵的行代表词向量，还是列代表词向量不必纠结。</strong>你要乐意可以改成<br><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">word_vector = embedding_matrix[:, index] <span class="comment"># 获得词向量</span></span><br></pre></td></tr></table></figure></p>
+<p>如果使用one hot编码来执行上述代码就是将9665转为one hot编码，即除了9665位置为1，其余位置全为0。然后<script type="math/tex">word\_vector = embedding\_matrix^T * word\_one\_hot</script>。这样也能得到词向量，但是由于one hot编码全是0，算起来速度太慢了。<br>现在有了句子“I want a glass of orange”的所有词向量，接下来要做的是将这些词向量从头到尾拼在一起，接成一个更长的向量，也就是6倍长的向量。原词向量是300维，拼接完成后是1800维。然后将这个向量输入一个神经网络中，最后经过softmax函数进行预测，预测范围是在10000个单词中，看谁的概率大。</p>
+<h3 id="意义"><a href="#意义" class="headerlink" title="意义"></a>意义</h3><p>将词向量送入神经网络中当然还需要梯度下降进行迭代。这里会有很多疑问，</p>
+<ol>
+<li>词向量在神经网络隐藏层中乘一个权重，这个权重有什么用？</li>
+<li>神经网络训练完成后送入softmax中，这个输出层的权重又有什么用？</li>
+<li>梯度下降到底在算什么东西，在算谁的最小值？</li>
+<li>为什么它可以预测出应该填入juice？</li>
+<li>它怎么预测其他句子？</li>
+</ol>
+<p>我进行逐一思考，本文仅为自己的理解。<br>首先其实有一件事很多视频没讲，可能他们认为这是一件很平常的事，所以没讲。<br>上述的这个步骤并不是预测步骤，而是在进行迭代，所以是一个训练步骤。人家之所以说<em>我们可以通过这个神经网络预测出单词为juice</em>，是因为逻辑上是这样的。<br>由于是训练步骤，所以我们有一个很重要的数据，最终结果。最终结果我们是知道的，然而我们初学者在考虑整个流程时，没把最终结果算进去，因为老师说<em>我们可以通过这个神经网络预测出单词为juice</em>，由于是<em>预测</em>，那么结果肯定没有啊。这很合乎逻辑。所以就陷入了一个思维的怪圈，<strong>正确的逻辑是：</strong></p>
+<ol>
+<li>首先我们知道最终结果，所以当第一次迭代时，所有的权重都是随机初始化的，1、2两个问题也就没有意义了。第一次迭代完毕后，结果肯定稀巴烂，所以进行梯度下降。</li>
+<li>这里面我们又会碰到一个问题，就是梯度下降到底在算什么？其实这里的疑问来自我们的潜意识始终将句子当做文字在看，自然而然就意识不到梯度下降在干什么。而其实我们在几步之前就已经将文字转为词向量了。<br>词向量说白了就是一堆浮点型数字，而最终结果juice也是一个词向量，所以实际上就是将一个权重矩阵乘上一个1800维的向量，得到一个输出值（may be 激活值），然后将这个输出值和juice的向量放入代价函数中进行计算，接下来的梯度下降其实就是跟正常的步骤一样。</li>
+<li><strong>梯度下降就是在寻找一个合适的权重矩阵使得权重矩阵乘1800维向量得到的值接近juice的向量。</strong><br>这里在解释第3个问题时，顺便也解释了第1、2个问题。<strong>权重值实际上就是用来使得预测值和实际结果越接近越好</strong></li>
+<li>由于开头就说了我们实际上是知道划线处应该填juice，所以第4个问题压根不需要解答，因为我们本来就知道应该填juice，也没必要预测。之前之所以有这个问题，是因为我们潜意识觉得老师说<em>我们可以通过这个神经网络预测出单词为juice</em>。</li>
+<li>至于第5个问题如何预测其他句子。打个比方，现在预测一个新的句子：I want a glass of apple ___.<br>由于我们知道词嵌入矩阵是由很多单词的词向量组成的。而一个单词词向量其实就是一堆特征组成的，对比两个句子，apple和orange的词向量肯定很接近，因为它们都是水果，它们的特征（水多不多，好不好吃，是不是水果，有没有性别特征，是不是动词等）都类似。<br>而我们之前已经训练了一个神经网络，我们得到了所需要的权重值，我们直接把这个权重值乘上新句子的词向量，那么结果肯定和权重值乘上之前句子的词向量的结果很接近。因为它们之间的区别仅仅是apple和orange的词向量不同，并且apple和orange的词向量其实也并不是完全不同，只是略有不同。所以二者的结果自然也差不多。<br>最后经过softmax函数在10000个单词之中预测，输出的结果必然都是juice。</li>
+</ol>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>这里还会有一个问题，那么如果需要预测的句子单词数不一致怎么办？<br>之前两个例子的句子都是6个单词，预测第7个单词。那要是前面有10个单词，我要预测第11个单词怎么办？<br>其实可以只考虑划线处前几个单词，比如只考虑划线处前4个单词，这样输入的维度就相同了。<br>在本文开头的参考视频里，吴恩达老师讲得很清楚了。由古圣先贤总结，一般来说取前4个单词即可，当然你自己也可以用其他办法。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/学习笔记/" rel="tag"># 学习笔记</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/·论文/60. Fully Statistical Neural Belief Tracking.html" rel="prev" title="论文笔记：Fully Statistical Neural Belief Tracking">
+      <i class="fa fa-chevron-left"></i> 论文笔记：Fully Statistical Neural Belief Tracking
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/assorted/hexo/更新hexo-next主题.html" rel="next" title="更新hexo next主题">
+      更新hexo next主题 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第三章-深度学习基础"><span class="nav-number">1.</span> <span class="nav-text">第三章 深度学习基础</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本概念"><span class="nav-number">1.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#超参数"><span class="nav-number">1.2.</span> <span class="nav-text">超参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#激活函数"><span class="nav-number">1.3.</span> <span class="nav-text">激活函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#batch-size"><span class="nav-number">1.4.</span> <span class="nav-text">batch size</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#归一化"><span class="nav-number">1.5.</span> <span class="nav-text">归一化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#预训练与微调-fine-tuning"><span class="nav-number">1.6.</span> <span class="nav-text">预训练与微调(fine tuning)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#权重偏差初始化"><span class="nav-number">1.7.</span> <span class="nav-text">权重偏差初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#学习率"><span class="nav-number">1.8.</span> <span class="nav-text">学习率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dropout-系列问题"><span class="nav-number">1.9.</span> <span class="nav-text">Dropout 系列问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第六章-循环神经网络（RNN）"><span class="nav-number">2.</span> <span class="nav-text">第六章 循环神经网络（RNN）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么需要RNN？"><span class="nav-number">2.1.</span> <span class="nav-text">为什么需要RNN？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#图解RNN基本结构"><span class="nav-number">2.2.</span> <span class="nav-text">图解RNN基本结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RNNs典型特点？"><span class="nav-number">2.3.</span> <span class="nav-text">RNNs典型特点？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CNN和RNN的区别？"><span class="nav-number">2.4.</span> <span class="nav-text">CNN和RNN的区别？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RNNs和FNNs有什么区别？"><span class="nav-number">2.5.</span> <span class="nav-text">RNNs和FNNs有什么区别？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RNNs训练和传统ANN训练异同点？"><span class="nav-number">2.6.</span> <span class="nav-text">RNNs训练和传统ANN训练异同点？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么RNN训练的时候Loss波动很大"><span class="nav-number">2.7.</span> <span class="nav-text">为什么RNN训练的时候Loss波动很大</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#标准RNN前向输出流程"><span class="nav-number">2.8.</span> <span class="nav-text">标准RNN前向输出流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BPTT算法推导"><span class="nav-number">2.9.</span> <span class="nav-text">BPTT算法推导</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RNN中为什么会出现梯度消失？"><span class="nav-number">2.10.</span> <span class="nav-text">RNN中为什么会出现梯度消失？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何解决RNN中的梯度消失问题？"><span class="nav-number">2.11.</span> <span class="nav-text">如何解决RNN中的梯度消失问题？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LSTM"><span class="nav-number">2.12.</span> <span class="nav-text">LSTM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LSTMs与GRUs的区别"><span class="nav-number">2.13.</span> <span class="nav-text">LSTMs与GRUs的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RNNs在NLP中典型应用？"><span class="nav-number">2.14.</span> <span class="nav-text">RNNs在NLP中典型应用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常见的RNNs扩展和改进模型"><span class="nav-number">2.15.</span> <span class="nav-text">常见的RNNs扩展和改进模型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第十三章-优化算法"><span class="nav-number">3.</span> <span class="nav-text">第十三章 优化算法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第十四章-超参数调整"><span class="nav-number">4.</span> <span class="nav-text">第十四章 超参数调整</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第十六章-自然语言处理（NLP）"><span class="nav-number">5.</span> <span class="nav-text">第十六章 自然语言处理（NLP）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第十七章-模型压缩及移动端部署"><span class="nav-number">6.</span> <span class="nav-text">第十七章 模型压缩及移动端部署</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第十八章-后端架构选型、离线及实时计算"><span class="nav-number">7.</span> <span class="nav-text">第十八章 后端架构选型、离线及实时计算</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#自己的疑问"><span class="nav-number">8.</span> <span class="nav-text">自己的疑问</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么Mini-batch比普通的梯度下降快？"><span class="nav-number">8.1.</span> <span class="nav-text">为什么Mini-batch比普通的梯度下降快？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#指数加权平均的作用"><span class="nav-number">8.2.</span> <span class="nav-text">指数加权平均的作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么要deep"><span class="nav-number">8.3.</span> <span class="nav-text">为什么要deep</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#更多的例子"><span class="nav-number">8.3.1.</span> <span class="nav-text">更多的例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#吴恩达老师的解释"><span class="nav-number">8.3.2.</span> <span class="nav-text">吴恩达老师的解释</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#词向量乘上权重以及做梯度下降有什么意义"><span class="nav-number">8.4.</span> <span class="nav-text">词向量乘上权重以及做梯度下降有什么意义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#准备词向量"><span class="nav-number">8.4.1.</span> <span class="nav-text">准备词向量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#意义"><span class="nav-number">8.4.2.</span> <span class="nav-text">意义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他"><span class="nav-number">8.4.3.</span> <span class="nav-text">其他</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">朱冲䶮</p>
+  <div class="site-description" itemprop="description">记录学习问题，积累做的 leetcode 题目</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">141</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">81</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+      <!-- 不蒜子/busuanzi -->
+      <div class="site-state-item site-state-posts">
+      	<span class="site-state-item-count">155.4k</span>
+      	<span class="site-state-item-name">总字数</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-fas fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fa fa-fw fa-fab fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.7.1
+  </div><script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="/lib/my-utils.js"></script>
+<!--图片缩放插件-->
+<script src="/lib/zoomify/zoomify.min.js"></script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- 背景插件 -->
+<script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<!-- 背景图片 -->
+<script>
+	function generateBG(count){
+		var bg_prefix = '/images/background/';
+		var bg =new Array();
+		for(var i = 0; i < count; i++){
+			bg[i] = bg_prefix + i + '.jpg';
+		}
+		bg.shuffle();
+		return bg;
+	}
+	$("body").backstretch(generateBG(11), {
+		duration:90000,//1min半一换
+		fade: 1500
+	});
+</script>
+<!-- 图片缩放 -->
+<script>
+$('#content img').zoomify({duration: 500, });
+  $('#content img').on('zoom-in.zoomify', function () {
+    $('#sidebar').css('display', 'none');
+  });
+  $('#content img').on('zoom-out-complete.zoomify', function () {
+    $('#sidebar').css('display', '');
+  });
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout: 3000,
+        priority: true,
+        ignores: [uri => uri.includes('#'),uri => uri == 'http://yan624.github.io/·学习笔记/深度学习500问笔记.html',]
+      });
+      });
+  </script>
+
+</body>
+</html>

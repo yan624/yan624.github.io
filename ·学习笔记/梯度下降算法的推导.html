@@ -1,142 +1,57 @@
 <!DOCTYPE html>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-<html class="theme-next pisces use-motion" lang="zh-CN">
-<head><meta name="generator" content="Hexo 3.8.0">
+<html lang="zh-CN">
+<head>
   <meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
+<link rel="stylesheet" href="/css/main.css">
 
-
-
-  
-  
-    
-    
-  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
-  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css?v=1.0.2">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
 
 <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/5.10.2/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
 
-<link rel="stylesheet" href="/css/main.css?v=6.7.0">
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
 
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.7.0">
-
-
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.7.0">
-
-
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.7.0">
-
-
-  <link rel="mask-icon" href="/images/logo.svg?v=6.7.0" color="#222">
-
-
-
-
-
-
-
-<script id="hexo.configurations">
-  var NexT = window.NexT || {};
-  var CONFIG = {
-    root: '/',
-    scheme: 'Pisces',
-    version: '6.7.0',
-    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":true},
-    fancybox: false,
-    fastclick: false,
-    lazyload: false,
-    tabs: true,
-    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
-    algolia: {
-      applicationID: '',
-      apiKey: '',
-      indexName: '',
-      hits: {"per_page":10},
-      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
-    }
-  };
-</script>
-
-
-  
-
-
-<!--图片缩放插件样式-->
-<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css">
-
-  <meta name="description" content="梯度下降算法大家都知道，公式是\theta = \theta - \alpha * J&apos;(\theta)，其中J是代价函数。但是这个算法具体是怎么来的，可能不太清楚。本文参考微信公众号百度百科由于没有专业的制图工具，所以只能手画了。。。 梯度下降问题由图中可以观察到，我们将参数初始化到A点，我们的目标是将点移动到最小值点（或者极小值点）。那么问题就是如何移动了。先给出梯度下降公式：\theta =">
+  <meta name="description" content="梯度下降算法大家都知道，公式是\theta = \theta - \alpha * J&apos;(\theta)，其中J是代价函数。但是这个算法具体是怎么来的，可能不太清楚。本文参考微信公众号梯度-百度百科由于没有专业的制图工具，所以只能手画了。。。 梯度下降问题 由图中可以观察到，我们将参数初始化到A点，我们的目标是将点移动到最小值点（或者极小值点）。那么问题就是如何移动了。先给出梯度下降公式：\the">
 <meta name="keywords" content="学习笔记">
 <meta property="og:type" content="article">
 <meta property="og:title" content="梯度下降算法的推导">
 <meta property="og:url" content="http://yan624.github.io/·学习笔记/梯度下降算法的推导.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="梯度下降算法大家都知道，公式是\theta = \theta - \alpha * J&apos;(\theta)，其中J是代价函数。但是这个算法具体是怎么来的，可能不太清楚。本文参考微信公众号百度百科由于没有专业的制图工具，所以只能手画了。。。 梯度下降问题由图中可以观察到，我们将参数初始化到A点，我们的目标是将点移动到最小值点（或者极小值点）。那么问题就是如何移动了。先给出梯度下降公式：\theta =">
+<meta property="og:description" content="梯度下降算法大家都知道，公式是\theta = \theta - \alpha * J&apos;(\theta)，其中J是代价函数。但是这个算法具体是怎么来的，可能不太清楚。本文参考微信公众号梯度-百度百科由于没有专业的制图工具，所以只能手画了。。。 梯度下降问题 由图中可以观察到，我们将参数初始化到A点，我们的目标是将点移动到最小值点（或者极小值点）。那么问题就是如何移动了。先给出梯度下降公式：\the">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/梯度下降算法的推导/梯度下降草图.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/梯度下降算法的推导/泰勒公式线性近似.webp">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/梯度下降算法的推导/向量的乘积.webp">
-<meta property="og:updated_time" content="2020-01-05T08:37:17.924Z">
+<meta property="og:updated_time" content="2020-02-04T15:47:32.163Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="梯度下降算法的推导">
-<meta name="twitter:description" content="梯度下降算法大家都知道，公式是\theta = \theta - \alpha * J&apos;(\theta)，其中J是代价函数。但是这个算法具体是怎么来的，可能不太清楚。本文参考微信公众号百度百科由于没有专业的制图工具，所以只能手画了。。。 梯度下降问题由图中可以观察到，我们将参数初始化到A点，我们的目标是将点移动到最小值点（或者极小值点）。那么问题就是如何移动了。先给出梯度下降公式：\theta =">
+<meta name="twitter:description" content="梯度下降算法大家都知道，公式是\theta = \theta - \alpha * J&apos;(\theta)，其中J是代价函数。但是这个算法具体是怎么来的，可能不太清楚。本文参考微信公众号梯度-百度百科由于没有专业的制图工具，所以只能手画了。。。 梯度下降问题 由图中可以观察到，我们将参数初始化到A点，我们的目标是将点移动到最小值点（或者极小值点）。那么问题就是如何移动了。先给出梯度下降公式：\the">
 <meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/梯度下降算法的推导/梯度下降草图.jpg">
 
+<link rel="canonical" href="http://yan624.github.io/·学习笔记/梯度下降算法的推导.html">
 
 
-
-
-
-  <link rel="canonical" href="http://yan624.github.io/·学习笔记/梯度下降算法的推导.html">
-
-
-
-<script id="page.configurations">
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
+    isHome: false,
+    isPost: true
   };
 </script>
+<!--图片缩放插件样式-->
+<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
 
   <title>梯度下降算法的推导 | 博客</title>
   
@@ -146,15 +61,8 @@
 
 
 
-
-
-
-
-
-
   <noscript>
   <style>
-  .use-motion .motion-element,
   .use-motion .brand,
   .use-motion .menu-item,
   .sidebar-inner,
@@ -163,9 +71,8 @@
   .use-motion .comments,
   .use-motion .post-header,
   .use-motion .post-body,
-  .use-motion .collection-title { opacity: initial; }
+  .use-motion .collection-header { opacity: initial; }
 
-  .use-motion .logo,
   .use-motion .site-title,
   .use-motion .site-subtitle {
     opacity: initial;
@@ -179,451 +86,217 @@
 
 </head>
 
-<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
-	<!--加载flower canvas-->
-<script>
-var pathname = window.location.pathname;
-if(pathname == '/flower.html'){
-	var body =  document.getElementsByTagName('body')[0];
-	var canvas = document.createElement("canvas")
-	canvas.setAttribute('id', 'sakura')
-	// '<canvas id="sakura"></canvas>'
-	body.appendChild(canvas)
-}
-</script>
-  
-  
-    
-  
-
-  <div class="container sidebar-position-left page-post-detail">
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
     <div class="headband"></div>
 
-    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-wrapper">
-  <div class="site-meta">
-    
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
 
-    <div class="custom-logo-site-title">
+  <div class="site-meta">
+
+    <div>
       <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
         <span class="site-title">博客</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
-    
-      
         <p class="site-subtitle">低阶炼金术士</p>
-      
-    
-    
   </div>
 
-  <div class="site-nav-toggle">
-    <button aria-label="切换导航栏">
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-    </button>
-  </div>
+  <div class="site-nav-right"></div>
 </div>
-
 
 
 <nav class="site-nav">
   
-    <ul id="menu" class="menu">
-      
-        
-        
-        
-          
-          <li class="menu-item menu-item-home">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
 
-    
-    
-    
-      
-    
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i>首页</a>
 
-    
-      
-    
+  </li>
+        <li class="menu-item menu-item-archives">
 
-    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i>归档<span class="badge">141</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-常用链接">
+
+    <a href="/常用链接" rel="section"><i class="menu-item-icon fas fa-fw fa-bookmark"></i>常用链接</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i>标签<span class="badge">81</span></a>
 
   </li>
         
-        
-        
-          
-          <li class="menu-item menu-item-about">
-
-    
-    
-    
-      
-    
-
-    
-      
-    
-
-    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
-
-  </li>
-        
-        
-        
-          
-          <li class="menu-item menu-item-常用链接">
-
-    
-    
-    
-      
-    
-
-    
-      
-    
-
-    <a href="/常用链接" rel="section"><i class="menu-item-icon fas fa-fw fa-bookmark"></i> <br>常用链接</a>
-
-  </li>
-        
-        
-        
-          
-          <li class="menu-item menu-item-tags">
-
-    
-    
-    
-      
-    
-
-    
-      
-    
-
-    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">17</span></a>
-
-  </li>
-        
-        
-        
-          
             
-            
-            
-              
-              
+  <li class="menu-item menu-item-博客分类">
 
-  
-  
-    
-  
-  <li class="menu-item menu-item-categories">
-
-    
-    
-    
-      
-    
-
-    
-      
-    
-
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">23</span></a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i>博客分类</a>
 
   </li>
 
 
-            
-          
-            
-            
-            
-          
-            
-            
-            
-          
-            
-            
-            
-          
-            
-            
-            
-          
-            
-            
-            
-          
-            
-            
-            
-          
-            
-            
-            
-          
-            
-            
-            
-          
-            
-            
-            
-          
-        
-        
-        
-        
-          
-          <li class="menu-item menu-item-archives">
-
-    
-    
-    
       
-    
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
 
-    
-      
-    
-
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">132</span></a>
-
-  </li>
-
-      
-      
-        <li class="menu-item menu-item-search">
-          
-            <a href="javascript:;" class="popup-trigger">
-          
-            
-              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
-        </li>
-      
-    </ul>
-  
-
-  
-
-  
-    <div class="site-search">
-      
-  <div class="popup search-popup local-search-popup">
-  <div class="local-search-header clearfix">
-    <span class="search-icon">
-      <i class="fa fa-search"></i>
-    </span>
-    <span class="popup-btn-close">
-      <i class="fa fa-times-circle"></i>
-    </span>
-    <div class="local-search-input-wrapper">
-      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
-    </div>
-  </div>
-  <div id="local-search-result"></div>
-</div>
-
-
-
-    </div>
-  
 </nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
 
+</div>
+<div class="search-pop-overlay"></div>
 
-
-  
-
-
-
+  </div>
 </div>
     </header>
 
     
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
 
 
-    <main id="main" class="main">
+    <main class="main">
       <div class="main-inner">
         <div class="content-wrap">
           
+
+          <div class="content">
             
 
-          
-          <div id="content" class="content">
-            
-
-  <div id="posts" class="posts-expand">
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    
+    	
+    		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
+        <script type="text/javascript" src="/lib/spop/spop.min.js"></script>
+        <!--判断该文章是否为学习笔记-->
+        <script>
+          spop({
+            template: '<h4 class="spop-title">注意</h4>此文章仅为博主的学习笔记，并非教学，其中可能含有理论错误。',
+            group: 'tips',
+            position  : 'bottom-center',
+            style: 'success',
+            autoclose: 5500,
+            onOpen: function () {
+              //这里设置灰色背景色
+            },
+            onClose: function() {
+              //这里可以取消背景色
+              spop({
+                template: 'ε = = (づ′▽`)づ',
+                group: 'tips',
+                position  : 'bottom-center',
+                style: 'success',
+                autoclose: 1500
+              });
+            }
+          });
+        </script>
+    	
     
 
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·学习笔记/梯度下降算法的推导.html">
 
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
       <meta itemprop="name" content="朱冲䶮">
       <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
-      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="博客">
     </span>
-
-    
       <header class="post-header">
-				
-				
-	
-		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
-			<script type="text/javascript" src="/lib/spop/spop.min.js"></script>
-			<!--判断该文章是否为学习笔记-->
-			<script>
-				spop({
-					template: '<h4 class="spop-title">注意</h4><p style="font-size:1.15em">如文章中未弹出此窗，则没什么大问题。</p>此文章仅为博主的学习笔记，并非教学，其中可能含有理论错误。',
-					group: 'tips',
-					position  : 'bottom-center',
-					style: 'success',
-					autoclose: 5500,
-					onOpen: function () {
-						//这里设置灰色背景色
-					},
-					onClose: function() {
-						//这里可以取消背景色
-						spop({
-							template: 'ε = = (づ′▽`)づ',
-							group: 'tips',
-							position  : 'bottom-center',
-							style: 'success',
-							autoclose: 1500
-						});
-					}
-				});
-			</script>
-	
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">梯度下降算法的推导
-
-              
-            
-          </h1>
-        
+        <h1 class="post-title" itemprop="name headline">
+          梯度下降算法的推导
+        </h1>
 
         <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
+            <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-calendar-o"></i>
               </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
+              <span class="post-meta-item-text">发表于</span>
 
               <time title="创建时间：2019-05-10 19:55:24" itemprop="dateCreated datePublished" datetime="2019-05-10T19:55:24+08:00">2019-05-10</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
+            </span>
+              <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2020-01-05 16:37:17" itemprop="dateModified" datetime="2020-01-05T16:37:17+08:00">2020-01-05</time>
-              
-            
-          </span>
-
-          
-
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-04 23:47:32" itemprop="dateModified" datetime="2020-02-04T23:47:32+08:00">2020-02-04</time>
+              </span>
+            <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
               </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a></span>
-
-                
-                
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index">
+                    <span itemprop="name">AI</span>
+                  </a>
+                </span>
                   ，
-                
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/AI/ml/" itemprop="url" rel="index"><span itemprop="name">ml</span></a></span>
-
-                
-                
-              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/ml/" itemprop="url" rel="index">
+                    <span itemprop="name">ml</span>
+                  </a>
+                </span>
             </span>
-          
 
           
-            
-            
-          
-
-          
-          
-
-          
-            <span class="post-meta-divider">|</span>
-            <span class="post-meta-item-icon">
-            <i class="fa fa-eye"></i>
-             阅读次数： 
-            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
             </span>
-          
-
-          
-
-          
 
         </div>
       </header>
-    
 
     
     
@@ -631,21 +304,22 @@ if(pathname == '/flower.html'){
     <div class="post-body" itemprop="articleBody">
 
       
-      
-
-      
-        <p>梯度下降算法大家都知道，公式是<script type="math/tex">\theta = \theta - \alpha * J'(\theta)</script>，其中J是代价函数。但是这个算法具体是怎么来的，可能不太清楚。<br>本文参考<br><a href="https://mp.weixin.qq.com/s/k26Fm0GL3fdVA9VbQIVAuQ" target="_blank" rel="noopener">微信公众号</a><br><a href="https://baike.baidu.com/item/梯度/13014729" target="_blank" rel="noopener">百度百科</a><br>由于没有专业的制图工具，所以只能手画了。。。</p>
-<h1 id="梯度下降问题"><a href="#梯度下降问题" class="headerlink" title="梯度下降问题"></a>梯度下降问题</h1><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/梯度下降算法的推导/梯度下降草图.jpg" alt="梯度下降草图"><br>由图中可以观察到，我们将参数初始化到A点，我们的目标是将点移动到最小值点（或者极小值点）。那么问题就是如何移动了。<br>先给出梯度下降公式：<script type="math/tex">\theta = \theta - \alpha * J'(\theta)</script>，J是代价函数，这个公式应该不陌生。</p>
+        <p>梯度下降算法大家都知道，公式是<script type="math/tex">\theta = \theta - \alpha * J'(\theta)</script>，其中J是代价函数。但是这个算法具体是怎么来的，可能不太清楚。<br>本文参考<br><a href="https://mp.weixin.qq.com/s/k26Fm0GL3fdVA9VbQIVAuQ" target="_blank" rel="noopener">微信公众号</a><br><a href="https://baike.baidu.com/item/梯度/13014729" target="_blank" rel="noopener">梯度-百度百科</a><br>由于没有专业的制图工具，所以只能手画了。。。</p>
+<h1 id="梯度下降问题"><a href="#梯度下降问题" class="headerlink" title="梯度下降问题"></a>梯度下降问题</h1><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/梯度下降算法的推导/梯度下降草图.jpg" alt="梯度下降草图"></p>
+<p>由图中可以观察到，我们将参数初始化到A点，我们的目标是将点移动到最小值点（或者极小值点）。那么问题就是如何移动了。<br>先给出梯度下降公式：<script type="math/tex">\theta = \theta - \alpha * J'(\theta)</script>，J是代价函数，这个公式应该不陌生。</p>
 <h1 id="一阶泰勒展开式"><a href="#一阶泰勒展开式" class="headerlink" title="一阶泰勒展开式"></a>一阶泰勒展开式</h1><p>如果学过高数，应该知道<strong>一阶泰勒展开式</strong>的公式是：<script type="math/tex">f(x) = f(x_0) + (x - x_0) * f'(x_0) + R_n(x)</script>，其中<script type="math/tex">R_n(x)</script>是泰勒公式的余项，可以理解为一个无穷小量。既然是无穷小量那么便可以省略不写，但是即使是无穷小，其实等式的左右边还是有点差距的，所以将等式修改为<strong>约等于号</strong>。<br><a id="more"></a></p>
 <script type="math/tex; mode=display">
 f(x) \approx f(x_0) + (x - x_0) * f'(x_0)</script><p>但是由于我们最小化的代价函数的参数是<script type="math/tex">\theta</script>，所以我们可以将x替换为<script type="math/tex">\theta</script>，即</p>
 <script type="math/tex; mode=display">
-f(\theta) \approx f(\theta_0) + (\theta - \theta_0) * f'(\theta_0)</script><p>如果不知道泰勒公式，可以看下图<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/梯度下降算法的推导/泰勒公式线性近似.webp" alt="泰勒公式线性近似"><br>在点<script type="math/tex">\theta_0</script>处，找一条极短的直线来表示曲线，则直线的斜率为<script type="math/tex">f'(\theta_0)</script>，并且已知<script type="math/tex">\theta_0</script>，那么根据初中数学，可以获得直线公式<script type="math/tex">f(\theta) = f(\theta_0) + (\theta - \theta_0) * f'(\theta_0)</script>（还不懂看这个：<script type="math/tex">y-y_0=k(x-x_0)</script>===&gt;<script type="math/tex">y = y_0 + k(x-x_0)</script>）。<br><div class="note warning">
+f(\theta) \approx f(\theta_0) + (\theta - \theta_0) * f'(\theta_0)</script><p>如果不知道泰勒公式，可以看下图<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/梯度下降算法的推导/泰勒公式线性近似.webp" alt="泰勒公式线性近似"></p>
+<p>在点<script type="math/tex">\theta_0</script>处，找一条极短的直线来表示曲线，则直线的斜率为<script type="math/tex">f'(\theta_0)</script>，并且已知<script type="math/tex">\theta_0</script>，那么根据初中数学，可以获得直线公式<script type="math/tex">f(\theta) = f(\theta_0) + (\theta - \theta_0) * f'(\theta_0)</script>（还不懂看这个：<script type="math/tex">y-y_0=k(x-x_0)</script>===&gt;<script type="math/tex">y = y_0 + k(x-x_0)</script>）。<br><div class="note warning">
             <p>如果仔细看到了上一行的推导，你也许要问：为什么直线斜率是<script type="math/tex">f'(\theta_0)</script>。百度。</p>
-          </div><br><div class="note warning">
+          </div></p>
+<div class="note warning">
             <p>如果对上式没有问题，可能要问为什么这个红线的箭头要向下，不能向上？我有强迫症，我就要让它向上，并且我还要让<script type="math/tex">\theta</script>在<script type="math/tex">\theta_0</script>右边。这个下面会讲，但是现在假定以下的步骤均围绕上图展开。</p>
-          </div><br>至此准备工作完成。</p>
-<h1 id="数学原理"><a href="#数学原理" class="headerlink" title="数学原理"></a>数学原理</h1><p>我们将<script type="math/tex">f(\theta) \approx f(\theta_0) + (\theta - \theta_0) * f'(\theta_0)</script>的<script type="math/tex">\theta - \theta_0</script>用字母<script type="math/tex">\alpha v</script>代替，实际上只用<script type="math/tex">v</script>代替也可以。但是还是使用<script type="math/tex">\alpha v</script>吧。</p>
+          </div>
+<p>至此准备工作完成。</p>
+<h1 id="数学原理"><a href="#数学原理" class="headerlink" title="数学原理"></a>数学原理</h1><p>我们将 <script type="math/tex">f(\theta) \approx f(\theta_0) + (\theta - \theta_0) * f'(\theta_0)</script> 的 <script type="math/tex">\theta - \theta_0</script> 用字母 <script type="math/tex">\alpha v</script> 代替。其中 <script type="math/tex">\alpha</script> 代表步长，v 代表 <script type="math/tex">\theta - \theta_0</script> 的<strong>单位向量</strong>。其实 <script type="math/tex">\alpha v</script> 可以合并成 <script type="math/tex">\alpha</script> 的，但是为了下面的推导更容易说明梯度下降到底在做什么，还是拆开来表示。</p>
 <script type="math/tex; mode=display">
 \theta - \theta_0 = \alpha v</script><p>所以公式被简化为如下形式，并且将导数的表示做一下改变，用<strong>倒三角</strong>表示</p>
 <script type="math/tex; mode=display">
@@ -655,967 +329,197 @@ f(\theta) -  f(\theta_0) \approx \alpha v * \nabla f(\theta_0) < 0</script><p>�
 <script type="math/tex; mode=display">
 \alpha v * \nabla f(\theta_0) < 0</script><p>由于<script type="math/tex">\alpha</script>一般为正值，所以</p>
 <script type="math/tex; mode=display">
-v * \nabla f(\theta_0) < 0</script><p>由于<script type="math/tex">v</script>和<script type="math/tex">\nabla f(\theta_0)</script>实际上都是向量。所以上式就转换为<strong>两个向量相乘在什么时候是小于0的</strong>，并且我们希望<script type="math/tex">f(\theta) - f(\theta_0)</script>越小越好，也就是<script type="math/tex">v * \nabla f(\theta_0)</script>越小越好。那么问题又转化为<strong>两个向量相乘在什么时候是最小的</strong>。<br><div class="note warning">
+v * \nabla f(\theta_0) < 0</script><p>由于<script type="math/tex">v</script>和<script type="math/tex">\nabla f(\theta_0)</script>实际上都是向量。所以上式就转换为<strong>两个向量相乘在什么时候是小于0的</strong>，并且我们希望<script type="math/tex">f(\theta) - f(\theta_0)</script>越小越好（注意这里的<strong>小</strong>指的是小于 0 的尺度上，并非在 0~1 的尺度上），也就是<script type="math/tex">v * \nabla f(\theta_0)</script>越小越好。那么问题又转化为<strong>两个向量相乘在什么时候是最小的</strong>。<br><div class="note warning">
             <p>问题1：为什么<script type="math/tex">v</script>和<script type="math/tex">\nabla f(\theta_0)</script>是向量。<br>由于以上都是使用二维的图来描述，所以无法体现是向量。但是实际上<script type="math/tex">\theta</script>不只有一个。<br>问题2：为什么希望<script type="math/tex">f(\theta) - f(\theta_0)</script>越小越好。<br>因为希望<script type="math/tex">f(\theta)</script>这一步迈远一点。</p>
-          </div><br>以下为向量乘积的三种形式，由初中的知识可以得知，当向量相反时<script type="math/tex">cos(\alpha)</script>为-1，即cos函数的最小值。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/梯度下降算法的推导/向量的乘积.webp" alt="向量的乘积"><br>由于公式可以转为如下，其中<script type="math/tex">\beta</script>是向量夹角</p>
+          </div></p>
+<p>以下为向量乘积的三种形式，由初中的知识可以得知，当向量相反时<script type="math/tex">cos(\alpha)</script>为-1，即cos函数的最小值。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/梯度下降算法的推导/向量的乘积.webp" alt="向量的乘积"></p>
+<p>由于公式可以转为如下，其中<script type="math/tex">\beta</script>是向量夹角</p>
 <script type="math/tex; mode=display">
-|v| * |\nabla f(\theta_0)| * cos(\beta) < 0</script><p>所以当<script type="math/tex">v</script>和<script type="math/tex">\nabla f(\theta_0)</script>正好相反时，<script type="math/tex">cos(\beta) = -1</script>。也就是说当<script type="math/tex">v</script>和<script type="math/tex">\nabla f(\theta_0)</script>反向，<script type="math/tex">v * \nabla f(\theta_0)</script>最小。<br>众所周知，<script type="math/tex">\nabla f(\theta_0)</script>就是梯度，也就是梯度方向。所以只需要<script type="math/tex">v</script>为<script type="math/tex">\nabla f(\theta_0)</script>的反方向即可。所以</p>
+|v| * |\nabla f(\theta_0)| * cos(\beta) < 0</script><p>所以当 <script type="math/tex">v</script> 和 <script type="math/tex">\nabla f(\theta_0)</script> 正好相反时，<script type="math/tex">cos(\beta) = -1</script>。也就是说当 <script type="math/tex">v</script> 和 <script type="math/tex">\nabla f(\theta_0)</script> 反向，<script type="math/tex">v * \nabla f(\theta_0)</script>最小。<br>所以现在的问题就是 v 怎么样才能是梯度方向的反方向？众所周知，<script type="math/tex">\nabla f(\theta_0)</script> 就是梯度，也就是梯度方向。那么在 <script type="math/tex">\nabla f(\theta_0)</script> 加个负号不就是相反方向了？所以</p>
 <script type="math/tex; mode=display">
-v  = -\frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}\\</script><p>之所以要除以<script type="math/tex">\nabla f(\theta_0)</script>的模，是因为<script type="math/tex">v</script>是单位向量。<br><div class="note warning">
-            <p><script type="math/tex">v</script>为什么是单位向量。不太清楚，原博主没说明。</p>
-          </div><br>将<script type="math/tex">v</script>带入到<script type="math/tex">\theta - \theta_0 = \alpha * v</script>中</p>
+v  = -\frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}\\</script><p>之所以要除以 <script type="math/tex">\nabla f(\theta_0)</script> 的模，是因为 <script type="math/tex">v</script> 是单位向量。<br>将 <script type="math/tex">v</script> 带入到 <script type="math/tex">\theta - \theta_0 = \alpha * v</script> 中</p>
 <script type="math/tex; mode=display">
 \theta = \theta_0 - \alpha * \frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}</script><p>一般地，因为<script type="math/tex">|\nabla f(\theta_0)|</script>是标量，可以并入到中，即简化为：</p>
 <script type="math/tex; mode=display">
-\theta = \theta_0 - \alpha *\nabla f(\theta_0)</script>
-      
+\theta = \theta_0 - \alpha *\nabla f(\theta_0)</script><div class="note primary">
+            <p>有点需要说明，我认为 <script type="math/tex">\frac{1}{|\nabla f(\theta_0)|}</script> 不能并入 <script type="math/tex">\alpha</script> 因为 <script type="math/tex">\frac{1}{|\nabla f(\theta_0)|}</script> 是一个变量。它是梯度的模长，但是在执行梯度下降时，每一个 epoch 的梯度都是不一样的。故 <script type="math/tex">\frac{1}{|\nabla f(\theta_0)|}</script> 也在每个 epoch 不中不同，但是学习率 <script type="math/tex">\alpha</script> 却是一个定值，比如 0.01, 0.03, 0.1 等。</p>
+          </div>
+
     </div>
 
     
-
-    
-    
-    
-
-    
-
-    
-      
     
     
 
-    
-
-    <footer class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/学习笔记/" rel="tag"># 学习笔记</a>
-          
-        </div>
-      
-
-      
-      
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/·学习笔记/深度学习中的一些疑问总结.html" rel="next" title="深度学习中的一些疑问总结">
-                <i class="fa fa-chevron-left"></i> 深度学习中的一些疑问总结
-              </a>
-            
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/学习笔记/" rel="tag"># 学习笔记</a>
           </div>
 
-          <span class="post-nav-divider"></span>
+        
 
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/linux/linux非root用户配置环境变量.html" rel="prev" title="linux非root用户配置环境变量">
-                linux非root用户配置环境变量 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
 
-      
-      
-    </footer>
-  </div>
-  
-  
-  
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/·学习笔记/练习Keras RNN的代码.html" rel="prev" title="练习Keras RNN的代码">
+      <i class="fa fa-chevron-left"></i> 练习Keras RNN的代码
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/IT/linux/linux非root用户配置环境变量.html" rel="next" title="linux非root用户配置环境变量">
+      linux非root用户配置环境变量 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
   </article>
-
+  
+  
+  
 
   </div>
 
 
           </div>
           
-
-  
-
-
-
-        </div>
-        
-          
-  
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
-  </div>
-
-  <aside id="sidebar" class="sidebar">
-    
-      <div id="sidebar-dimmer"></div>
-    
-    <div class="sidebar-inner">
-
-      
-
-      
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-overview">
-          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-            
-              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="朱冲䶮">
-            
-              <p class="site-author-name" itemprop="name">朱冲䶮</p>
-              <p class="site-description motion-element" itemprop="description">记录学习问题，积累做的 leetcode 题目</p>
-          </div>
-
-          
-            <nav class="site-state motion-element">
-              
-                <div class="site-state-item site-state-posts">
-                
-                  <a href="/archives/">
-                
-                    <span class="site-state-item-count">132</span>
-                    <span class="site-state-item-name">日志</span>
-                  </a>
-                </div>
-              
-
-              
-                
-                
-                <div class="site-state-item site-state-categories">
-                  <a href="/categories/index.html">
-                    
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                    <span class="site-state-item-count">23</span>
-                    <span class="site-state-item-name">分类</span>
-                  </a>
-                </div>
-              
-
-              
-                
-                
-                <div class="site-state-item site-state-tags">
-                  <a href="/tags/index.html">
-                    
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                    <span class="site-state-item-count">17</span>
-                    <span class="site-state-item-name">标签</span>
-                  </a>
-                </div>
-              
-			  
-			  <!-- 不蒜子/busuanzi -->
-			  <div class="site-state-item site-state-posts">
-			  	<span class="site-state-item-count">132.6k</span>
-			  	<span class="site-state-item-name">总字数</span>
-			  </div>
-            </nav>
-          
-
-          
-
-          
-            <div class="links-of-author motion-element">
-              
-                <span class="links-of-author-item">
-                  
-                  
-                    
-                  
-                  
-                    
-                  
-                  <a href="mailto:897538633@qq.com" title="E-Mail &rarr; mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-fw fa-envelope"></i>E-Mail</a>
-                </span>
-              
-                <span class="links-of-author-item">
-                  
-                  
-                    
-                  
-                  
-                    
-                  
-                  <a href="https://github.com/yan624" title="GitHub &rarr; https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-fw fa-github"></i>GitHub</a>
-                </span>
-              
-            </div>
-          
-
-          
-
-          
-          
-            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
-              <div class="links-of-blogroll-title">
-                <i class="fa  fa-fw fa-link"></i>
-                Links
-              </div>
-              <ul class="links-of-blogroll-list">
-                
-                  <li class="links-of-blogroll-item">
-                    <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
-                  </li>
-                
-                  <li class="links-of-blogroll-item">
-                    <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
-                  </li>
-                
-              </ul>
-            </div>
-          
-
-          
-            
-          
-          
-
-        </div>
-      </div>
-
-      
-      <!--noindex-->
-        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-            
-            
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#梯度下降问题"><span class="nav-number">1.</span> <span class="nav-text">梯度下降问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一阶泰勒展开式"><span class="nav-number">2.</span> <span class="nav-text">一阶泰勒展开式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数学原理"><span class="nav-number">3.</span> <span class="nav-text">数学原理</span></a></li></ol></div>
-            
-
-          </div>
-        </div>
-      <!--/noindex-->
-      
-
-      
-        <div class="back-to-top">
-          <i class="fa fa-arrow-up"></i>
-          
-            <span id="scrollpercent"><span>0</span>%</span>
-          
-        </div>
-      
-
-    </div>
-  </aside>
-
-
-        
-      </div>
-    </main>
-
-    <footer id="footer" class="footer">
-      <div class="footer-inner">
-        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2020</span>
-  <span class="with-love" id="animate">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
-
-  
-
-  
-</div>
-
-
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
-
-
-
-  <span class="post-meta-divider">|</span>
-
-
-
-  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v6.7.0</div>
-
-
-
-
-        
-<div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-  
-    <span class="post-meta-item-icon">
-      <i class="fa fa-user"></i>
-    </span>
-    <span class="site-uv" title="总访客量">
-      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
-    </span>
-  
-
-  
-    <span class="post-meta-divider">|</span>
-  
-
-  
-    <span class="post-meta-item-icon">
-      <i class="fa fa-eye"></i>
-    </span>
-    <span class="site-pv" title="总访问量">
-      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
-    </span>
-  
-</div>
-
-
-
-
-
-
-
-
-
-        
-      </div>
-    </footer>
-
-    
-
-    
-
-    
-
-    
-  </div>
-
-  
 
 <script>
-  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
-    window.Promise = null;
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
   }
 </script>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        </div>
+          
   
-  <script src="/lib/jquery/index.js?v=2.1.3"></script>
-
-  
-  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
-
-  
-  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
-
-
-  
-
-
-  <script src="/js/src/utils.js?v=6.7.0"></script>
-
-  <script src="/js/src/motion.js?v=6.7.0"></script>
-
-
-
-  
-  
-
-
-  <script src="/js/src/affix.js?v=6.7.0"></script>
-
-  <script src="/js/src/schemes/pisces.js?v=6.7.0"></script>
-
-
-
-  
-  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
-<script src="/js/src/post-details.js?v=6.7.0"></script>
-
-
-
-  
-
-
-  <script src="/js/src/bootstrap.js?v=6.7.0"></script>
-
-
-
-  
-
-
-  
-
-
-  
-
-  <script>
-    // Popup Window;
-    var isfetched = false;
-    var isXml = true;
-    // Search DB path;
-    var search_path = "search.xml";
-    if (search_path.length === 0) {
-      search_path = "search.xml";
-    } else if (/json$/i.test(search_path)) {
-      isXml = false;
-    }
-    var path = "/" + search_path;
-    // monitor main search box;
-
-    var onPopupClose = function (e) {
-      $('.popup').hide();
-      $('#local-search-input').val('');
-      $('.search-result-list').remove();
-      $('#no-result').remove();
-      $(".local-search-pop-overlay").remove();
-      $('body').css('overflow', '');
-    }
-
-    function proceedsearch() {
-      $("body")
-        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
-        .css('overflow', 'hidden');
-      $('.search-popup-overlay').click(onPopupClose);
-      $('.popup').toggle();
-      var $localSearchInput = $('#local-search-input');
-      $localSearchInput.attr("autocapitalize", "none");
-      $localSearchInput.attr("autocorrect", "off");
-      $localSearchInput.focus();
-    }
-
-    // search function;
-    var searchFunc = function(path, search_id, content_id) {
-      'use strict';
-
-      // start loading animation
-      $("body")
-        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
-          '<div id="search-loading-icon">' +
-          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
-          '</div>' +
-          '</div>')
-        .css('overflow', 'hidden');
-      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
-
-      
-        // ref: https://github.com/ForbesLindesay/unescape-html
-        var unescapeHtml = function(html) {
-          return String(html)
-            .replace(/&quot;/g, '"')
-            .replace(/&#39;/g, '\'')
-            .replace(/&#x3A;/g, ':')
-            // replace all the other &#x; chars
-            .replace(/&#(\d+);/g, function (m, p) { return String.fromCharCode(p); })
-            .replace(/&lt;/g, '<')
-            .replace(/&gt;/g, '>')
-            .replace(/&amp;/g, '&');
-        };
-      
-
-      $.ajax({
-        url: path,
-        dataType: isXml ? "xml" : "json",
-        async: true,
-        success: function(res) {
-          // get the contents from search data
-          isfetched = true;
-          $('.popup').detach().appendTo('.header-inner');
-          var datas = isXml ? $("entry", res).map(function() {
-            return {
-              title: $("title", this).text(),
-              content: $("content",this).text(),
-              url: $("url" , this).text()
-            };
-          }).get() : res;
-          var input = document.getElementById(search_id);
-          var resultContent = document.getElementById(content_id);
-          var inputEventFunction = function() {
-            var searchText = input.value.trim().toLowerCase();
-            var keywords = searchText.split(/[\s\-]+/);
-            if (keywords.length > 1) {
-              keywords.push(searchText);
-            }
-            var resultItems = [];
-            if (searchText.length > 0) {
-              // perform local searching
-              datas.forEach(function(data) {
-                var isMatch = false;
-                var hitCount = 0;
-                var searchTextCount = 0;
-                var title = data.title.trim();
-                var titleInLowerCase = title.toLowerCase();
-                var content = data.content.trim().replace(/<[^>]+>/g,"");
-                
-                content = unescapeHtml(content);
-                
-                var contentInLowerCase = content.toLowerCase();
-                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
-                var indexOfTitle = [];
-                var indexOfContent = [];
-                // only match articles with not empty titles
-                if(title != '') {
-                  keywords.forEach(function(keyword) {
-                    function getIndexByWord(word, text, caseSensitive) {
-                      var wordLen = word.length;
-                      if (wordLen === 0) {
-                        return [];
-                      }
-                      var startPosition = 0, position = [], index = [];
-                      if (!caseSensitive) {
-                        text = text.toLowerCase();
-                        word = word.toLowerCase();
-                      }
-                      while ((position = text.indexOf(word, startPosition)) > -1) {
-                        index.push({position: position, word: word});
-                        startPosition = position + wordLen;
-                      }
-                      return index;
-                    }
-
-                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
-                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
-                  });
-                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
-                    isMatch = true;
-                    hitCount = indexOfTitle.length + indexOfContent.length;
-                  }
-                }
-
-                // show search results
-
-                if (isMatch) {
-                  // sort index by position of keyword
-
-                  [indexOfTitle, indexOfContent].forEach(function (index) {
-                    index.sort(function (itemLeft, itemRight) {
-                      if (itemRight.position !== itemLeft.position) {
-                        return itemRight.position - itemLeft.position;
-                      } else {
-                        return itemLeft.word.length - itemRight.word.length;
-                      }
-                    });
-                  });
-
-                  // merge hits into slices
-
-                  function mergeIntoSlice(text, start, end, index) {
-                    var item = index[index.length - 1];
-                    var position = item.position;
-                    var word = item.word;
-                    var hits = [];
-                    var searchTextCountInSlice = 0;
-                    while (position + word.length <= end && index.length != 0) {
-                      if (word === searchText) {
-                        searchTextCountInSlice++;
-                      }
-                      hits.push({position: position, length: word.length});
-                      var wordEnd = position + word.length;
-
-                      // move to next position of hit
-
-                      index.pop();
-                      while (index.length != 0) {
-                        item = index[index.length - 1];
-                        position = item.position;
-                        word = item.word;
-                        if (wordEnd > position) {
-                          index.pop();
-                        } else {
-                          break;
-                        }
-                      }
-                    }
-                    searchTextCount += searchTextCountInSlice;
-                    return {
-                      hits: hits,
-                      start: start,
-                      end: end,
-                      searchTextCount: searchTextCountInSlice
-                    };
-                  }
-
-                  var slicesOfTitle = [];
-                  if (indexOfTitle.length != 0) {
-                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
-                  }
-
-                  var slicesOfContent = [];
-                  while (indexOfContent.length != 0) {
-                    var item = indexOfContent[indexOfContent.length - 1];
-                    var position = item.position;
-                    var word = item.word;
-                    // cut out 100 characters
-                    var start = position - 20;
-                    var end = position + 80;
-                    if(start < 0){
-                      start = 0;
-                    }
-                    if (end < position + word.length) {
-                      end = position + word.length;
-                    }
-                    if(end > content.length){
-                      end = content.length;
-                    }
-                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
-                  }
-
-                  // sort slices in content by search text's count and hits' count
-
-                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
-                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
-                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
-                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
-                      return sliceRight.hits.length - sliceLeft.hits.length;
-                    } else {
-                      return sliceLeft.start - sliceRight.start;
-                    }
-                  });
-
-                  // select top N slices in content
-
-                  var upperBound = parseInt('1');
-                  if (upperBound >= 0) {
-                    slicesOfContent = slicesOfContent.slice(0, upperBound);
-                  }
-
-                  // highlight title and content
-
-                  function highlightKeyword(text, slice) {
-                    var result = '';
-                    var prevEnd = slice.start;
-                    slice.hits.forEach(function (hit) {
-                      result += text.substring(prevEnd, hit.position);
-                      var end = hit.position + hit.length;
-                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
-                      prevEnd = end;
-                    });
-                    result += text.substring(prevEnd, slice.end);
-                    return result;
-                  }
-
-                  var resultItem = '';
-
-                  if (slicesOfTitle.length != 0) {
-                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
-                  } else {
-                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
-                  }
-
-                  slicesOfContent.forEach(function (slice) {
-                    resultItem += "<a href='" + articleUrl + "'>" +
-                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
-                      "...</p>" + "</a>";
-                  });
-
-                  resultItem += "</li>";
-                  resultItems.push({
-                    item: resultItem,
-                    searchTextCount: searchTextCount,
-                    hitCount: hitCount,
-                    id: resultItems.length
-                  });
-                }
-              })
-            };
-            if (keywords.length === 1 && keywords[0] === "") {
-              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
-            } else if (resultItems.length === 0) {
-              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
-            } else {
-              resultItems.sort(function (resultLeft, resultRight) {
-                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
-                  return resultRight.searchTextCount - resultLeft.searchTextCount;
-                } else if (resultLeft.hitCount !== resultRight.hitCount) {
-                  return resultRight.hitCount - resultLeft.hitCount;
-                } else {
-                  return resultRight.id - resultLeft.id;
-                }
-              });
-              var searchResultList = '<ul class=\"search-result-list\">';
-              resultItems.forEach(function (result) {
-                searchResultList += result.item;
-              })
-              searchResultList += "</ul>";
-              resultContent.innerHTML = searchResultList;
-            }
-          }
-
-          if ('auto' === 'auto') {
-            input.addEventListener('input', inputEventFunction);
-          } else {
-            $('.search-icon').click(inputEventFunction);
-            input.addEventListener('keypress', function (event) {
-              if (event.keyCode === 13) {
-                inputEventFunction();
-              }
-            });
-          }
-
-          // remove loading animation
-          $(".local-search-pop-overlay").remove();
-          $('body').css('overflow', '');
-
-          proceedsearch();
-        }
-      });
-    }
-
-    // handle and trigger popup window;
-    $('.popup-trigger').click(function(e) {
-      e.stopPropagation();
-      if (isfetched === false) {
-        searchFunc(path, 'local-search-input', 'local-search-result');
-      } else {
-        proceedsearch();
-      };
-    });
-
-    $('.popup-btn-close').click(onPopupClose);
-    $('.popup').click(function(e){
-      e.stopPropagation();
-    });
-    $(document).on('keyup', function (event) {
-      var shouldDismissSearchPopup = event.which === 27 &&
-        $('.search-popup').is(':visible');
-      if (shouldDismissSearchPopup) {
-        onPopupClose();
-      }
-    });
-  </script>
-
-
-
-
-
-  
-
-  
-
-  
-
-  
-
-  
-  
-
-  
-  
-
-  
-
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-  <style>
-    .copy-btn {
-      display: inline-block;
-      padding: 6px 12px;
-      font-size: 13px;
-      font-weight: 700;
-      line-height: 20px;
-      color: #333;
-      white-space: nowrap;
-      vertical-align: middle;
-      cursor: pointer;
-      background-color: #eee;
-      background-image: linear-gradient(#fcfcfc, #eee);
-      border: 1px solid #d5d5d5;
-      border-radius: 3px;
-      user-select: none;
-      outline: 0;
-    }
-
-    .highlight-wrap .copy-btn {
-      transition: opacity .3s ease-in-out;
-      opacity: 0;
-      padding: 2px 6px;
-      position: absolute;
-      right: 4px;
-      top: 8px;
-    }
-
-    .highlight-wrap:hover .copy-btn,
-    .highlight-wrap .copy-btn:focus {
-      opacity: 1
-    }
-
-    .highlight-wrap {
-      position: relative;
-    }
-  </style>
-  <script>
-    $('.highlight').each(function(i, e) {
-      var $wrap = $('<div>').addClass('highlight-wrap');
-      $(e).after($wrap);
-      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
-        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
-          return $(e).text();
-        }).toArray().join('\n');
-        var ta = document.createElement('textarea');
-        var range = document.createRange(); //For Chrome
-        var sel = window.getSelection(); //For Chrome
-        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
-        ta.style.top = yPosition + 'px'; //Prevent page scroll
-        ta.style.position = 'absolute';
-        ta.style.opacity = '0';
-        ta.value = code;
-        ta.textContent = code; //For FireFox
-        ta.contentEditable = true;
-        ta.readOnly = false;
-        document.body.appendChild(ta);
-        range.selectNode(ta);
-        sel.removeAllRanges();
-        sel.addRange(range);
-        ta.setSelectionRange(0, code.length);
-        var result = document.execCommand('copy');
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#梯度下降问题"><span class="nav-number">1.</span> <span class="nav-text">梯度下降问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一阶泰勒展开式"><span class="nav-number">2.</span> <span class="nav-text">一阶泰勒展开式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数学原理"><span class="nav-number">3.</span> <span class="nav-text">数学原理</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">朱冲䶮</p>
+  <div class="site-description" itemprop="description">记录学习问题，积累做的 leetcode 题目</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
         
-          if (result) $(this).text('复制成功');
-          else $(this).text('复制失败');
+          <span class="site-state-item-count">141</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">81</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+      <!-- 不蒜子/busuanzi -->
+      <div class="site-state-item site-state-posts">
+      	<span class="site-state-item-count">155.4k</span>
+      	<span class="site-state-item-name">总字数</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-fas fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fa fa-fw fa-fab fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
         
-        ta.blur(); //For iOS
-        $(this).blur();
-      })).on('mouseleave', function(e) {
-        var $b = $(this).find('.copy-btn');
-        setTimeout(function() {
-          $b.text('复制');
-        }, 300);
-      }).append(e);
-    })
-  </script>
 
-
+<div class="copyright">
   
-
-  
-  <!-- 自己新增的所有 js 文件 -->
-  <script src="/lib/my-utils.js"></script>
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.7.1
+  </div><script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="/lib/my-utils.js"></script>
 <!--图片缩放插件-->
 <script src="/lib/zoomify/zoomify.min.js"></script>
 <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
@@ -1648,7 +552,83 @@ $('#content img').zoomify({duration: 500, });
   });
 </script>
 
-	
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout: 3000,
+        priority: true,
+        ignores: [uri => uri.includes('#'),uri => uri == 'http://yan624.github.io/·学习笔记/梯度下降算法的推导.html',]
+      });
+      });
+  </script>
 
 </body>
 </html>

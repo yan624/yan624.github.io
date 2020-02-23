@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/5.10.2/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="&amp;emsp;&amp;emsp;视频来自 此处，或者 此处。4:56 A word can have multiple senses.11:24 ELMO19:08 BERT49:23 GPT(-2)            ELMO&amp;emsp;&amp;emsp;Embedding from Language Model(ELMO) 可以做到每个 word token 分配不同的 emb">
+<meta name="keywords" content="系列,学习笔记,ELMO,BERT,ERNIE,GPT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度学习算法（五）：预训练模型">
+<meta property="og:url" content="http://yan624.github.io/·zcy/深度学习算法（五）：预训练模型.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;视频来自 此处，或者 此处。4:56 A word can have multiple senses.11:24 ELMO19:08 BERT49:23 GPT(-2)            ELMO&amp;emsp;&amp;emsp;Embedding from Language Model(ELMO) 可以做到每个 word token 分配不同的 emb">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/ELMO示意图.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/我全都要.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/Masked LM.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/Next Sentence Prediction.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 1.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 2.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 3.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 4.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 4-2.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/What does BERT learn.jpg">
+<meta property="og:updated_time" content="2020-02-09T13:18:40.127Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深度学习算法（五）：预训练模型">
+<meta name="twitter:description" content="&amp;emsp;&amp;emsp;视频来自 此处，或者 此处。4:56 A word can have multiple senses.11:24 ELMO19:08 BERT49:23 GPT(-2)            ELMO&amp;emsp;&amp;emsp;Embedding from Language Model(ELMO) 可以做到每个 word token 分配不同的 emb">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/ELMO示意图.jpg">
+
+<link rel="canonical" href="http://yan624.github.io/·zcy/深度学习算法（五）：预训练模型.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+<!--图片缩放插件样式-->
+<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
+
+  <title>深度学习算法（五）：预训练模型 | 博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">低阶炼金术士</p>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i>归档<span class="badge">141</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-常用链接">
+
+    <a href="/常用链接" rel="section"><i class="menu-item-icon fas fa-fw fa-bookmark"></i>常用链接</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i>标签<span class="badge">81</span></a>
+
+  </li>
+        
+            
+  <li class="menu-item menu-item-博客分类">
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i>博客分类</a>
+
+  </li>
+
+
+      
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    
+    	
+    
+    	
+    		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
+        <script type="text/javascript" src="/lib/spop/spop.min.js"></script>
+        <!--判断该文章是否为学习笔记-->
+        <script>
+          spop({
+            template: '<h4 class="spop-title">注意</h4>此文章仅为博主的学习笔记，并非教学，其中可能含有理论错误。',
+            group: 'tips',
+            position  : 'bottom-center',
+            style: 'success',
+            autoclose: 5500,
+            onOpen: function () {
+              //这里设置灰色背景色
+            },
+            onClose: function() {
+              //这里可以取消背景色
+              spop({
+                template: 'ε = = (づ′▽`)づ',
+                group: 'tips',
+                position  : 'bottom-center',
+                style: 'success',
+                autoclose: 1500
+              });
+            }
+          });
+        </script>
+    	
+    
+    	
+    
+    	
+    
+    	
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·zcy/深度学习算法（五）：预训练模型.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深度学习算法（五）：预训练模型
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-01-23 16:55:34" itemprop="dateCreated datePublished" datetime="2020-01-23T16:55:34+08:00">2020-01-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-09 21:18:40" itemprop="dateModified" datetime="2020-02-09T21:18:40+08:00">2020-02-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index">
+                    <span itemprop="name">AI</span>
+                  </a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/dl/" itemprop="url" rel="index">
+                    <span itemprop="name">dl</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="note info">
+            <p>&emsp;&emsp;视频来自 <a href="https://www.bilibili.com/video/av56235038" target="_blank" rel="noopener">此处</a>，或者 <a href="https://www.bilibili.com/video/av46561029?p=61" target="_blank" rel="noopener">此处</a>。</p><ol><li>4:56 A word can have multiple senses.</li><li>11:24 ELMO</li><li>19:08 BERT</li><li>49:23 GPT(-2)</li></ol>
+          </div>
+<h1 id="ELMO"><a href="#ELMO" class="headerlink" title="ELMO"></a>ELMO</h1><p>&emsp;&emsp;Embedding from Language Model(ELMO) 可以做到每个 word token 分配不同的 embedding，它是一个 RNN-based model。如下图所示，在提取“潮水退了”这四个字的词向量时，先使用一个 RNN 捕获信息。首先输入单词的词向量，然后将“退了”的 output 作为新的词向量。如果捕获“臣退了”三个字的特征，由于上下文的单词不同，使用 RNN 之后输出的 output 也不同，所以“退了”拥有不同 embeddng。“高烧退了”同理。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/ELMO示意图.jpg" alt="ELMO示意图"></p>
+<a id="more"></a>
+<p>&emsp;&emsp;但是这样做可能没有捕获到句子的后文的信息，那么只需要再 train 一个反向的 RNN，然后将两个正反向的 embedding 拼起来就得到了单词的词向量。<br>&emsp;&emsp;现在我们 train model 都是 deep 的，那么我们的这个 RNN 也可以是 depp 的。但是当 deep 之后会碰到问题，那就是每一层都有 embedding，我们应该哪一层的 embedding 当做词向量。ELMO 的做法是“我全都要”。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/我全都要.jpg" alt="我全都要.jpg"></p>
+<p>&emsp;&emsp;现在每一层都有一个 contextualized embedding，ELMO 的做法是把所有的 embedding 通通加起来变成一个 embedding。但是不是普通的加法，而是 <script type="math/tex">new embedding = \alpha_1 * embed_1 + \alpha_2 * embed_2</script>，其中的 <script type="math/tex">\alpha</script> 是 learn 出来的。但是 <script type="math/tex">\alpha</script> 在不同的任务下实际上选值也不同，详见视频 16:20 或者看论文。</p>
+<h1 id="BERT"><a href="#BERT" class="headerlink" title="BERT"></a>BERT</h1><p>&emsp;&emsp;Bidirectional Encoder Representations from Transformers(BERT)，BERT 用的是 Transformer 的 encoder。<br>&emsp;&emsp;BERT 实际做的是输入一个句子进去，每个单词都会输出一个 embedding。至于 BERT 内部的架构其实跟 Transformer 的 encoder 是一样的。<br>&emsp;&emsp;BERT 有两种训练方法：</p>
+<ul>
+<li>Masked LM：输入给 BERT 的句子有 15% 的机会随机被置换成一个特殊的 token [MASK]，现在的任务是 BERT 去猜测这些被盖住的地方是哪一个词汇。在预测时，把输出的 embedding 丢到一个 Linear Multi-class classifier，让它预测被 mask 掉的词汇是哪一个。因为这个 classifier 是一个 linear 的，所以它的能力是很弱的。所以如果要成功预测出正确的词汇，那么 BERT 可能要很深，比如要 24/48 层，我们需要 BERT 抽取出一个很好的表征。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/Masked LM.jpg" alt="Masked LM"></li>
+<li>Next Sentence Prediction：比如输入“醒醒吧[SEP]你没有妹妹”，我们需要预测这两句话是否是相接的。另外我们需要在句子的首部加上 token [CLS]，然后将 [CLS] 的 embedding 输入到 Linear Binary Classifier 中去预测两个句子是否相接。但是问题来了，为什么要把 [CLS] 放在句子的开头呢？因为 BERT 的内部是一个 Transformer，所以一个 token 放在句子的开头和末尾影响不大，如果是一个 RNN 结构，那么可能应该放在末尾。<ul>
+<li>[SEP]：是两个句子的界限符号</li>
+<li>[CLS]：输出分类结果的位置<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/Next Sentence Prediction.jpg" alt="Next Sentence Prediction"></li>
+</ul>
+</li>
+</ul>
+<p>&emsp;&emsp;这两个方法是需要同时使用的，这样 BERT 会学得最好。<br>&emsp;&emsp;最后 BERT 也一直被人改进，有许多新版的 BERT 可以分别适用不同的任务，下面的文章介绍了几种新型的 BERT。<br><a href="https://mp.weixin.qq.com/s?__biz=MjM5ODkzMzMwMQ==&amp;mid=2650411744&amp;idx=2&amp;sn=1db39446e4e91299f9ba8c1d4eeb5983&amp;chksm=becd94ba89ba1dac221e2092cb1a12ecb1a5a704b6ae5cebd2649adc1a903355b95567ab484e&amp;mpshare=1&amp;scene=1&amp;srcid=&amp;sharer_sharetime=1572502447054&amp;sharer_shareid=68f8b84d7a46cc216b0afdc45278d6be&amp;key=8a4bbb55c6c79ce6c9104a6cfe5de2a3d1b8fa801c35e22e74b62948f50b6684c3f06195815e8712080977db6cec80fca5adfc95c9bc6fa848b8e68b41df13d8610e8d6c283ee2392b30de5cdae504bb&amp;ascene=1&amp;uin=MTQxMTUzMzk2MA%3D%3D&amp;devicetype=Windows+10&amp;version=62070152&amp;lang=en&amp;pass_ticket=pZijWLQmmCpNBDcjO4cUImTRWv1ZWLG4JENv1zUqjhXnUnShPGofPjjR%2Bkv1cozV" target="_blank" rel="noopener">BERT 的演进和应用</a></p>
+<h2 id="如何使用BERT"><a href="#如何使用BERT" class="headerlink" title="如何使用BERT"></a>如何使用BERT</h2><p>&emsp;&emsp;已经知道了 BERT 的训练方法，那么现在该如何使用呢？可以向 ELMO 一样，把 BERT 当做提取特征的工具，使我们获得词向量。但是 BERT 论文中他不止做了这样的事情，他说可以将 BERT 和你要解的任务一起做训练。<br>&emsp;&emsp;下图介绍了一种例子。如果我们的任务是输入一个句子，输出一个类别，那么我们可以在输入的句子的开头加上一个 [CLS]，然后将 [CLS] 的 embedding 输入到一个 Linear classifier 中就可以预测类别。也就是说我们将 BERT 下下来后，其实只需要定义我们的 classifier，然而调整 classifier 的参数即可，BERT 的参数仅仅需要微调，因为它已经被预训练过了。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 1.jpg" alt="How to use BERT - Case 1"></p>
+<p>&emsp;&emsp;第二种例子是输入一个句子，输出每一个单词的类别，比如说 slot filling。这个跟上一个差不多。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 2.jpg" alt="How to use BERT - Case 2"></p>
+<p>&emsp;&emsp;第三种例子是输入两个句子，输出一个类别，比如说 Natural Language Inference。这个也差不多，就是加了一个 [SEP]。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 3.jpg" alt="How to use BERT - Case 3"></p>
+<p>&emsp;&emsp;第四种例子是 QA 问题，而且是 extraction-based QA(E.g.  SQuAD)。即给 model 一篇文章，然后问它一个问题，期望得到一个答案。但是这里放水了，就是说答案中出现的词汇一定会出现在文章中。具体来说就是输入文章 D 和问题 Q，输出 s 和 e，其中 s 和 e 指的是文章 D 中的某个区间中单词。如果 s 和 e 矛盾，即 s &gt; e，那么回答“此题无解”。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 4.jpg" alt="How to use BERT - Case 4"></p>
+<p>&emsp;&emsp;具体做法：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 4-2.jpg" alt="How to use BERT - Case 4-2"></p>
+<h2 id="BERT学到了什么"><a href="#BERT学到了什么" class="headerlink" title="BERT学到了什么"></a>BERT学到了什么</h2><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/What does BERT learn.jpg" alt="What does BERT learn"></p>
+<h2 id="Multilingual-BERT"><a href="#Multilingual-BERT" class="headerlink" title="Multilingual BERT"></a>Multilingual BERT</h2><h1 id="ERNIE"><a href="#ERNIE" class="headerlink" title="ERNIE"></a>ERNIE</h1><p>&emsp;&emsp;Enhanced Representation through Kownledge Integration(ERNIE)，它是特别为中文设计的。</p>
+<h1 id="GPT"><a href="#GPT" class="headerlink" title="GPT"></a>GPT</h1><p>&emsp;&emsp;Generative Pre-Training(GPT)，GPT 是 transformer 的 decoder。GPT 与 BERT 类似。<br>&emsp;&emsp;56:45 讲了第一个位置的 attention token。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/系列/" rel="tag"># 系列</a>
+              <a href="/tags/学习笔记/" rel="tag"># 学习笔记</a>
+              <a href="/tags/ELMO/" rel="tag"># ELMO</a>
+              <a href="/tags/BERT/" rel="tag"># BERT</a>
+              <a href="/tags/ERNIE/" rel="tag"># ERNIE</a>
+              <a href="/tags/GPT/" rel="tag"># GPT</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/·学习笔记/李宏毅强化学习算法笔记.html" rel="prev" title="李宏毅强化学习算法笔记">
+      <i class="fa fa-chevron-left"></i> 李宏毅强化学习算法笔记
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/·学习笔记/概率论（叶丙成）.html" rel="next" title="概率论（叶丙成）">
+      概率论（叶丙成） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ELMO"><span class="nav-number">1.</span> <span class="nav-text">ELMO</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#BERT"><span class="nav-number">2.</span> <span class="nav-text">BERT</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#如何使用BERT"><span class="nav-number">2.1.</span> <span class="nav-text">如何使用BERT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BERT学到了什么"><span class="nav-number">2.2.</span> <span class="nav-text">BERT学到了什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Multilingual-BERT"><span class="nav-number">2.3.</span> <span class="nav-text">Multilingual BERT</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ERNIE"><span class="nav-number">3.</span> <span class="nav-text">ERNIE</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#GPT"><span class="nav-number">4.</span> <span class="nav-text">GPT</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">朱冲䶮</p>
+  <div class="site-description" itemprop="description">记录学习问题，积累做的 leetcode 题目</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">141</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">81</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+      <!-- 不蒜子/busuanzi -->
+      <div class="site-state-item site-state-posts">
+      	<span class="site-state-item-count">155.4k</span>
+      	<span class="site-state-item-name">总字数</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-fas fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fa fa-fw fa-fab fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.7.1
+  </div><script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="/lib/my-utils.js"></script>
+<!--图片缩放插件-->
+<script src="/lib/zoomify/zoomify.min.js"></script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- 背景插件 -->
+<script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<!-- 背景图片 -->
+<script>
+	function generateBG(count){
+		var bg_prefix = '/images/background/';
+		var bg =new Array();
+		for(var i = 0; i < count; i++){
+			bg[i] = bg_prefix + i + '.jpg';
+		}
+		bg.shuffle();
+		return bg;
+	}
+	$("body").backstretch(generateBG(11), {
+		duration:90000,//1min半一换
+		fade: 1500
+	});
+</script>
+<!-- 图片缩放 -->
+<script>
+$('#content img').zoomify({duration: 500, });
+  $('#content img').on('zoom-in.zoomify', function () {
+    $('#sidebar').css('display', 'none');
+  });
+  $('#content img').on('zoom-out-complete.zoomify', function () {
+    $('#sidebar').css('display', '');
+  });
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout: 3000,
+        priority: true,
+        ignores: [uri => uri.includes('#'),uri => uri == 'http://yan624.github.io/·zcy/深度学习算法（五）：预训练模型.html',]
+      });
+      });
+  </script>
+
+</body>
+</html>
