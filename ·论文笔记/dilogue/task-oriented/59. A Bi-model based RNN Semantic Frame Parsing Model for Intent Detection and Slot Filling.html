@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/5.12.1/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="&amp;emsp;&amp;emsp;论文地址，作者是 Yu Wang et.al.，发表于 2018 年 12 月。            摘要翻译&amp;emsp;&amp;emsp;意图检测和 slot filling 是构建 SLU 的两个主要任务。现在，多个基于深度学习的模型在这些任务上都取得了良好的效果。最有效的算法是基于 seq2seq（or encoder-decoder）的结构，并">
+<meta name="keywords" content="博客，java，javaWeb，NLP，python，机器学习，深度学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A Bi-model based RNN Semantic Frame Parsing Model for Intent Detection and Slot Filling">
+<meta property="og:url" content="http://yan624.github.io/·论文笔记/dilogue/task-oriented/59. A Bi-model based RNN Semantic Frame Parsing Model for Intent Detection and Slot Filling.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;论文地址，作者是 Yu Wang et.al.，发表于 2018 年 12 月。            摘要翻译&amp;emsp;&amp;emsp;意图检测和 slot filling 是构建 SLU 的两个主要任务。现在，多个基于深度学习的模型在这些任务上都取得了良好的效果。最有效的算法是基于 seq2seq（or encoder-decoder）的结构，并">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-27T16:05:04.208Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="A Bi-model based RNN Semantic Frame Parsing Model for Intent Detection and Slot Filling">
+<meta name="twitter:description" content="&amp;emsp;&amp;emsp;论文地址，作者是 Yu Wang et.al.，发表于 2018 年 12 月。            摘要翻译&amp;emsp;&amp;emsp;意图检测和 slot filling 是构建 SLU 的两个主要任务。现在，多个基于深度学习的模型在这些任务上都取得了良好的效果。最有效的算法是基于 seq2seq（or encoder-decoder）的结构，并">
+
+<link rel="canonical" href="http://yan624.github.io/·论文笔记/dilogue/task-oriented/59. A Bi-model based RNN Semantic Frame Parsing Model for Intent Detection and Slot Filling.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+<!--图片缩放插件样式-->
+<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
+
+  <title>A Bi-model based RNN Semantic Frame Parsing Model for Intent Detection and Slot Filling | 博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">低阶炼金术士</p>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">143</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-常用链接">
+
+    <a href="/常用链接" rel="section"><i class="fas fa-fw fa-bookmark"></i>常用链接</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">84</span></a>
+
+  </li>
+        
+            
+  <li class="menu-item menu-item-博客分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>博客分类</a>
+
+  </li>
+
+
+      
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    
+
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·论文笔记/dilogue/task-oriented/59. A Bi-model based RNN Semantic Frame Parsing Model for Intent Detection and Slot Filling.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          A Bi-model based RNN Semantic Frame Parsing Model for Intent Detection and Slot Filling
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-02-16 01:31:40" itemprop="dateCreated datePublished" datetime="2020-02-16T01:31:40+08:00">2020-02-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-28 00:05:04" itemprop="dateModified" datetime="2020-02-28T00:05:04+08:00">2020-02-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/paper/" itemprop="url" rel="index">
+                    <span itemprop="name">paper</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="note info">
+            <p>&emsp;&emsp;<a href="https://arxiv.xilesou.top/pdf/1812.10235.pdf" target="_blank" rel="noopener">论文地址</a>，作者是 Yu Wang et.al.，发表于 2018 年 12 月。</p>
+          </div>
+<h1 id="摘要翻译"><a href="#摘要翻译" class="headerlink" title="摘要翻译"></a>摘要翻译</h1><p>&emsp;&emsp;<strong>意图检测和 slot filling 是构建 SLU 的两个主要任务</strong>。现在，多个基于深度学习的模型在这些任务上都取得了良好的效果。最有效的算法是基于 seq2seq（or encoder-decoder）的结构，并使用单独或联合的模型生成<strong>意图</strong>和<strong>语义标记</strong>（<strong>semantic tags</strong>）。然而，以往的研究大多将意图检测和 slot filling 作为两个独立的平行的任务来处理，或者使用 seq2seq 模型来生成语义标记和意图。这些方法大多采用一个（联合的（joint））神经网络模型（包括 encoder-decoder 结构）对两个任务进行建模，因此可能无法充分利用它们之间的交叉影响。本文设计了一种新的基于 <strong>Bi-model</strong> 的 <strong>RNN 语义框架解析神经网络结构</strong>（<strong>RNN semantic frame parsing network structures</strong>），利用两个有关联的双向 LSTMs（<strong>BLSTM</strong>）来将它们之间的相互影响考虑进去，共同完成意图检测和 slot filling 任务。我们的带 decoder 的 Bi-model 结构在 ATIS 上取得了一流的结果，意图准确率提高了0.5%，slot filling 准确率提高了0.9%。<br><a id="more"></a></p>
+<h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>&emsp;&emsp;过去几十年内，SLU 上的研究进展迅速。</p>
+<ol>
+<li>意图识别做法：regression, SVM, deep NN</li>
+<li>slot filling 做法：CRF, RNN</li>
+</ol>
+<p>&emsp;&emsp;余下章节如下所述：</p>
+<ol>
+<li>第二节：已知的深度学习方法简要概述（意图检测和 slot filling）</li>
+<li>第三节：介绍 Bi-model</li>
+<li>第四节：展示不同数据集上的实验</li>
+</ol>
+<h1 id="Bi-model-RNN-structures-for-joint-semantic-frame-parsing"><a href="#Bi-model-RNN-structures-for-joint-semantic-frame-parsing" class="headerlink" title="Bi-model RNN structures for joint semantic frame parsing"></a>Bi-model RNN structures for joint semantic frame parsing</h1><p>&emsp;&emsp;尽管在这两个任务上使用 seq2seq 获得了成功，但是大多数方法仍旧在每个任务上使用单一的 RNN 模型。他们将意图检测和 slot filling 看作是两个独立的任务。本节，使用 B-model 考虑它俩的关联，从而进一步提高性能。</p>
+<h2 id="Bi-model-RNN-Structures"><a href="#Bi-model-RNN-Structures" class="headerlink" title="Bi-model RNN Structures"></a>Bi-model RNN Structures</h2><p>&emsp;&emsp;两个模型（a)Bi-model structure with a decoder; b)Bi-model structure without a decoder）的图例如图 1 所示。两个结构十分相似，图 1a 包含了一个基于 LSTM 的 decoder，因此除了有一个 encoder state <script type="math/tex">h_t</script> 之外，还有一个额外的 decoder state <script type="math/tex">s_t</script>。<br>&emsp;&emsp;<strong>注意：从多个模型/多模态中使用某些信息以实现更好性能的概念已经被广泛应用于深度学习、系统识别以及最近也有被用在强化学习领域之中。除开使用共用的信息，本论文，我们将引入一个全新的方法（通过分享它们之间的内部 state 信息）以异步地训练多个神经网络。</strong></p>
+<h3 id="Bi-model-structure-with-a-decoder"><a href="#Bi-model-structure-with-a-decoder" class="headerlink" title="Bi-model structure with a decoder"></a>Bi-model structure with a decoder</h3><p>&emsp;&emsp;Bi-model structure with a decoder 如图 1a 所示，架构中有两个互联的 Bi-LSTMs(BLSTMs)，一个用于意图检测，一个用于 slot filling。每个 BLSTM 分别正向和反向地在输入语句序列（<script type="math/tex">x_1, x_2, \cdots, x_n</script>）上读取信息，并且生成两个隐藏状态序列 <script type="math/tex">hf_t</script> 和 <script type="math/tex">hb_t</script>。然后将 <script type="math/tex">hf_t</script> 和 <script type="math/tex">hb_t</script> 拼接成在第 t 个时间步上的最终 BLSTM state <script type="math/tex">h_t = [hf_t, hb_t]</script>。因此我们的双向 LSTM <script type="math/tex">f_i(\cdot)</script> 生成了一个隐藏状态序列 <script type="math/tex">(h^i_1, h^i_2, \cdots, h^i_n)</script>，其中 i=1 对应神经网络的意图检测任务，i = 2 对应 slot filling 任务。<br>&emsp;&emsp;为了进行意图检测，隐藏状态 <script type="math/tex">h^1_t</script> 与 slot filling 任务中 由<script type="math/tex">f_2(\cdot)</script> 产生的 <script type="math/tex">h^2_t</script> 组合在一起，以生成在第 t 个时间步由 <script type="math/tex">g_1(\cdot)</script> 产生的状态 <script type="math/tex">s^1_t</script>：</p>
+<script type="math/tex; mode=display">
+s^1_t = \Phi(s^1_{t-1}, h^1_{n-1}, h^2_{n-1})\\
+y^1_{intent} = \arg\max_{\hat{y}^1_n} P(\hat{y}^1_n | s^1_{n-1}, h^1_{n-1}, h^2_{n-1})</script><p>&emsp;&emsp;其中 <script type="math/tex">\hat{y}^1_n</script> 包含在最后一个时间步 t 的所有意图标签的预测概率。<br>&emsp;&emsp;对于 slot filling 任务类似。<br><div class="note danger">
+            <p>&emsp;&emsp; <script type="math/tex">g_1(\cdot)</script> 和 <script type="math/tex">g_2(\cdot)</script> 实际上就是 <strong>decoder</strong>。</p>
+          </div></p>
+<h3 id="Bi-Model-structure-without-a-decoder"><a href="#Bi-Model-structure-without-a-decoder" class="headerlink" title="Bi-Model structure without a decoder"></a>Bi-Model structure without a decoder</h3><p>&emsp;&emsp;就是没有 <script type="math/tex">g(\cdot)</script> 产生的 s。</p>
+<h3 id="Asynchronous-training"><a href="#Asynchronous-training" class="headerlink" title="Asynchronous training"></a>Asynchronous training</h3>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/project/uber plato v0.2使用注意点（踩坑）.html" rel="prev" title="uber plato v0.2使用注意点（踩坑）">
+      <i class="fa fa-chevron-left"></i> uber plato v0.2使用注意点（踩坑）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/·论文笔记/dilogue/task-oriented/60. Fully Statistical Neural Belief Tracking.html" rel="next" title="Fully Statistical Neural Belief Tracking">
+      Fully Statistical Neural Belief Tracking <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#摘要翻译"><span class="nav-number">1.</span> <span class="nav-text">摘要翻译</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">2.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Bi-model-RNN-structures-for-joint-semantic-frame-parsing"><span class="nav-number">3.</span> <span class="nav-text">Bi-model RNN structures for joint semantic frame parsing</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Bi-model-RNN-Structures"><span class="nav-number">3.1.</span> <span class="nav-text">Bi-model RNN Structures</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Bi-model-structure-with-a-decoder"><span class="nav-number">3.1.1.</span> <span class="nav-text">Bi-model structure with a decoder</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Bi-Model-structure-without-a-decoder"><span class="nav-number">3.1.2.</span> <span class="nav-text">Bi-Model structure without a decoder</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Asynchronous-training"><span class="nav-number">3.1.3.</span> <span class="nav-text">Asynchronous training</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">朱冲䶮</p>
+  <div class="site-description" itemprop="description">记录学习问题，积累做的 leetcode 题目</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">143</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">84</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+      <!-- 不蒜子/busuanzi -->
+      <div class="site-state-item site-state-posts">
+      	<span class="site-state-item-count">159.2k</span>
+      	<span class="site-state-item-name">总字数</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.7.1
+  </div><script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="/lib/my-utils.js"></script>
+<!--图片缩放插件-->
+<script src="/lib/zoomify/zoomify.min.js"></script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- 背景插件 -->
+<script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<!-- 背景图片 -->
+<script>
+	function generateBG(count){
+		var bg_prefix = '/images/background/';
+		var bg =new Array();
+		for(var i = 0; i < count; i++){
+			bg[i] = bg_prefix + i + '.jpg';
+		}
+		bg.shuffle();
+		return bg;
+	}
+	$("body").backstretch(generateBG(11), {
+		duration:90000,//1min半一换
+		fade: 1500
+	});
+</script>
+<!-- 图片缩放 -->
+<script>
+$('#content img').zoomify({duration: 500, });
+  $('#content img').on('zoom-in.zoomify', function () {
+    $('#sidebar').css('display', 'none');
+  });
+  $('#content img').on('zoom-out-complete.zoomify', function () {
+    $('#sidebar').css('display', '');
+  });
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout: 3000,
+        priority: true,
+        ignores: [uri => uri.includes('#'),uri => uri == 'http://yan624.github.io/·论文笔记/dilogue/task-oriented/59. A Bi-model based RNN Semantic Frame Parsing Model for Intent Detection and Slot Filling.html',]
+      });
+      });
+  </script>
+
+</body>
+</html>

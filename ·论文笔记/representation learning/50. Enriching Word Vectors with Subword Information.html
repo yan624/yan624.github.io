@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/5.12.1/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="&amp;emsp;&amp;emsp;论文地址，作者 Piotr Bojanowski et al.，发表于 2016 年。            论文概要&amp;emsp;&amp;emsp;现在流行的模型对单词表征的学习忽视了词法（morphology of word），它们直接给单词分配了不同的向量。这有一定的局限性，尤其对大规模词表并且含有大量稀有单词的语言。本论文提出基于 skipgram">
+<meta name="keywords" content="fasttext">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Enriching Word Vectors with Subword Information">
+<meta property="og:url" content="http://yan624.github.io/·论文笔记/representation learning/50. Enriching Word Vectors with Subword Information.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;论文地址，作者 Piotr Bojanowski et al.，发表于 2016 年。            论文概要&amp;emsp;&amp;emsp;现在流行的模型对单词表征的学习忽视了词法（morphology of word），它们直接给单词分配了不同的向量。这有一定的局限性，尤其对大规模词表并且含有大量稀有单词的语言。本论文提出基于 skipgram">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-27T08:13:08.092Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Enriching Word Vectors with Subword Information">
+<meta name="twitter:description" content="&amp;emsp;&amp;emsp;论文地址，作者 Piotr Bojanowski et al.，发表于 2016 年。            论文概要&amp;emsp;&amp;emsp;现在流行的模型对单词表征的学习忽视了词法（morphology of word），它们直接给单词分配了不同的向量。这有一定的局限性，尤其对大规模词表并且含有大量稀有单词的语言。本论文提出基于 skipgram">
+
+<link rel="canonical" href="http://yan624.github.io/·论文笔记/representation learning/50. Enriching Word Vectors with Subword Information.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+<!--图片缩放插件样式-->
+<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
+
+  <title>Enriching Word Vectors with Subword Information | 博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">低阶炼金术士</p>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">143</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-常用链接">
+
+    <a href="/常用链接" rel="section"><i class="fas fa-fw fa-bookmark"></i>常用链接</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">84</span></a>
+
+  </li>
+        
+            
+  <li class="menu-item menu-item-博客分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>博客分类</a>
+
+  </li>
+
+
+      
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·论文笔记/representation learning/50. Enriching Word Vectors with Subword Information.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Enriching Word Vectors with Subword Information
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-11-30 20:02:03" itemprop="dateCreated datePublished" datetime="2019-11-30T20:02:03+08:00">2019-11-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-27 16:13:08" itemprop="dateModified" datetime="2020-02-27T16:13:08+08:00">2020-02-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/paper/" itemprop="url" rel="index">
+                    <span itemprop="name">paper</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>950</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="note info">
+            <p>&emsp;&emsp;<a href="https://arxiv.org/abs/1607.04606.pdf" target="_blank" rel="noopener">论文地址</a>，作者 Piotr Bojanowski et al.，发表于 2016 年。</p>
+          </div>
+<h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;现在流行的模型对单词表征的学习忽视了词法（morphology of word），它们直接给单词分配了不同的向量。这有一定的局限性，尤其对大规模词表并且含有大量稀有单词的语言。本论文提出基于 <strong>skipgram model</strong> 的方法，每个单词都被表示为一个 <strong>character n-grams</strong>（博主注：注意是 character，不是 word）词袋。每个 character n-grams 有一个向量，而单词由这些表征相加表示（即 e(where) = e(wh) + e(whe) + e(her) + e(ere) + e(re)，e() 表示 character n-grams 对应的向量）。<br>&emsp;&emsp;模型<strong>快</strong>，且可以计算那些不<strong>在训练数据中的单词表征</strong>（OOV 单词）。<br><a id="more"></a></p>
+<h1 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h1><p>&emsp;&emsp;介绍了很多关于词嵌入的工作，可以参考。</p>
+<h2 id="Morphological-word-representations"><a href="#Morphological-word-representations" class="headerlink" title="Morphological word representations"></a>Morphological word representations</h2><h2 id="Character-level-features-for-NLP"><a href="#Character-level-features-for-NLP" class="headerlink" title="Character level features for NLP"></a>Character level features for NLP</h2><h1 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h1><p>&emsp;&emsp;首先提出通用模型，阐述我们如何训练词向量。然后提出 subword 模型，最终描述我们如何处理 character n-grams 的词表。</p>
+<h2 id="通用模型"><a href="#通用模型" class="headerlink" title="通用模型"></a>通用模型</h2><p>&emsp;&emsp;</p>
+<h2 id="Subword模型"><a href="#Subword模型" class="headerlink" title="Subword模型"></a>Subword模型</h2><p>&emsp;&emsp;<strong>对每一个单词赋予一个不同的向量这忽视了单词内在的结构</strong>。为了考虑这一信息，本节提出一个不同的<strong>评分函数</strong>（scoring function） <strong>s</strong>。<br>&emsp;&emsp;<strong>1）</strong>每一个单词 w 都被表示为一个 character n-gram 的词袋。<strong>2）</strong>我们在单词的开始和结尾增加了特殊的边界符号 <code>&lt;</code> 和 <code>&gt;</code>，以便<strong>区分来自其他单词的前缀和后缀</strong>。<strong>3）</strong>我们也将单词 w 本身放入了它的 n-grams 集合，以学习每一个单词（除了 character n-grams）的表征。以单词 <em>where</em> 和 <script type="math/tex">n = 3</script> 为例，它被表示为该 character n-grams：</p>
+<script type="math/tex; mode=display">
+<wh, whe, her, ere, re></script><p>&emsp;&emsp;以及它的特殊序列：</p>
+<script type="math/tex; mode=display">
+<where></script><p>&emsp;&emsp;注意序列 <code>&lt;her&gt;</code> 对应于单词 <em>her</em>。单词 <em>her</em> 不同于来自单词 <em>where</em> 的 trigram <em>her</em>。在实践中，我们提取所有 <script type="math/tex">3 <= n <= 6</script> 的 n-grams（<strong>博主注</strong>：如果我没理解错，是提取了所有的 3~6-grams）。这是一种非常简单的方法，并且可以考虑不同的 n-grams 集合（<strong>博主注</strong>：为什么可以考虑不同的 n-grams？因为一个单词他们提取了所有的 3~6-grams），例如取所有前缀和后缀。<br>&emsp;&emsp;假设给出一个 G 大小 n-grams 词表。给定一个单词 w，将其表示为 <script type="math/tex">G_w \subset \{1, \dots, G\}</script>，其中 n-grams 集合 <script type="math/tex">G_w</script> 会出现在 w 中。我们将一个向量表征 <script type="math/tex">\boldsymbol{z_g}</script> 与每一个 n-gram <script type="math/tex">g</script> 关联。而一个单词由其 n-grams 的向量表征相加表示。因此我们获得评分函数（<strong>博主注</strong>：这应该在计算相似度）：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{
+    s(w,c) = \sum_{g \in G_w} z^T_g v_c
+}</script><p>&emsp;&emsp;这个简单的模型允许<strong>跨单词共享</strong>表征，从而允许学习<strong>稀有单词</strong>可靠的表征。（<strong>博主注</strong>：由于每个单词都被拆分开来，这样一个稀有单词就有很大概率可以由细碎的 n-grams 表示）<br>&emsp;&emsp;<strong>为了限制我们模型的内存需求</strong>，巴拉巴拉，我没看懂什么意思，大致意思是由于 n-grams 诞生的 token 太多了，所以需要使用 hash 的技巧来缩小存储空间。使用一个 token 来查找其对应的索引非常耗时，而使用 hash 算法就快多了。参考了：</p>
+<ul>
+<li><a href="https://www.jiqizhixin.com/articles/2018-06-05-3" target="_blank" rel="noopener">fastText，智慧与美貌并重的文本分类及向量化工具</a></li>
+</ul>
+<h1 id="实验设置"><a href="#实验设置" class="headerlink" title="实验设置"></a>实验设置</h1><ol>
+<li>baseline：几乎所有实验的基线都为 C 实现的 <a href="https://code.google.com/archive/p/word2vec" target="_blank" rel="noopener">word2vec 包</a>，除了论文中的 5.3 节；</li>
+<li>optimization：对前面（<strong>博主注</strong>：通用模型一节中）提出的负对数似然估计，进行 <strong>SGD</strong> 优化。在基线的 skipgram 模型中，我们使用<strong>基于步长的线性衰减</strong>。给定一个包含 T 个单词的训练集，并且在上传递的次数等于 P，则 t 时刻的步长等于 <script type="math/tex">\gamma_0 (1 - \frac{t}{TP})</script>，其中 <script type="math/tex">\gamma_0</script> 是一个固定的参数（<strong>博主注</strong>：<strong>这部分的线性衰减没看懂什么意思</strong>）。我们通过使用 <strong><a href="http://papers.nips.cc/paper/4390-hogwild-a-lock-free-approach-to-parallelizing-stochastic-gradient-descent" target="_blank" rel="noopener">Hogwild</a></strong>（Recht et al., 2011）并行地执行优化，所有线程以异步方式共享参数和更新向量；</li>
+<li>实现细节：</li>
+<li>datasets：</li>
+</ol>
+<h1 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h1><p>&emsp;&emsp;在以下几个方面评估我们的模型：</p>
+<ol>
+<li>Human similarity judgement</li>
+<li>Word analogy tasks</li>
+<li>Comparison with morphological representations：与顶尖模型的比较</li>
+<li>Effect of the size of the training data</li>
+<li>Effect of the size of n-grams</li>
+<li>从我们的模型中获取到的词向量在语言模型任务中的评估</li>
+</ol>
+<h1 id="定性分析"><a href="#定性分析" class="headerlink" title="定性分析"></a>定性分析</h1><p>&emsp;&emsp;</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/fasttext/" rel="tag"># fasttext</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/学习意见.html" rel="prev" title="学习意见">
+      <i class="fa fa-chevron-left"></i> 学习意见
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/·论文笔记/dilogue/QA/KBQA/51. A Transformer-based Semantic Parser for NLPCC-2019 Shared Task 2.html" rel="next" title="A Transformer-based Semantic Parser for NLPCC-2019 Shared Task 2">
+      A Transformer-based Semantic Parser for NLPCC-2019 Shared Task 2 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#论文概要"><span class="nav-number">1.</span> <span class="nav-text">论文概要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#相关工作"><span class="nav-number">2.</span> <span class="nav-text">相关工作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Morphological-word-representations"><span class="nav-number">2.1.</span> <span class="nav-text">Morphological word representations</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Character-level-features-for-NLP"><span class="nav-number">2.2.</span> <span class="nav-text">Character level features for NLP</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模型"><span class="nav-number">3.</span> <span class="nav-text">模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#通用模型"><span class="nav-number">3.1.</span> <span class="nav-text">通用模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Subword模型"><span class="nav-number">3.2.</span> <span class="nav-text">Subword模型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实验设置"><span class="nav-number">4.</span> <span class="nav-text">实验设置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结果"><span class="nav-number">5.</span> <span class="nav-text">结果</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#定性分析"><span class="nav-number">6.</span> <span class="nav-text">定性分析</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">朱冲䶮</p>
+  <div class="site-description" itemprop="description">记录学习问题，积累做的 leetcode 题目</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">143</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">84</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+      <!-- 不蒜子/busuanzi -->
+      <div class="site-state-item site-state-posts">
+      	<span class="site-state-item-count">159.2k</span>
+      	<span class="site-state-item-name">总字数</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.7.1
+  </div><script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="/lib/my-utils.js"></script>
+<!--图片缩放插件-->
+<script src="/lib/zoomify/zoomify.min.js"></script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- 背景插件 -->
+<script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<!-- 背景图片 -->
+<script>
+	function generateBG(count){
+		var bg_prefix = '/images/background/';
+		var bg =new Array();
+		for(var i = 0; i < count; i++){
+			bg[i] = bg_prefix + i + '.jpg';
+		}
+		bg.shuffle();
+		return bg;
+	}
+	$("body").backstretch(generateBG(11), {
+		duration:90000,//1min半一换
+		fade: 1500
+	});
+</script>
+<!-- 图片缩放 -->
+<script>
+$('#content img').zoomify({duration: 500, });
+  $('#content img').on('zoom-in.zoomify', function () {
+    $('#sidebar').css('display', 'none');
+  });
+  $('#content img').on('zoom-out-complete.zoomify', function () {
+    $('#sidebar').css('display', '');
+  });
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout: 3000,
+        priority: true,
+        ignores: [uri => uri.includes('#'),uri => uri == 'http://yan624.github.io/·论文笔记/representation learning/50. Enriching Word Vectors with Subword Information.html',]
+      });
+      });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/5.12.1/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="&amp;emsp;&amp;emsp;论文地址，作者是 Nikola Mrkšić，发表于 2016 年。            摘要&amp;emsp;&amp;emsp;现代口语对话系统的核心组成部分之一是 belief tracker，它可以在对话的每一步估计用户的目标。然而，目前大多数方法难以扩展到更大、更复杂的对话领域。这是由于他们依赖：a）口语理解（Spoken Language Unde">
+<meta name="keywords" content="NBT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Neural Belief Tracker: Data-Driven Dialogue State Tracking">
+<meta property="og:url" content="http://yan624.github.io/·论文笔记/dilogue/task-oriented/57. Neural Belief Tracker：Data-Driven Dialogue State Tracking.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;论文地址，作者是 Nikola Mrkšić，发表于 2016 年。            摘要&amp;emsp;&amp;emsp;现代口语对话系统的核心组成部分之一是 belief tracker，它可以在对话的每一步估计用户的目标。然而，目前大多数方法难以扩展到更大、更复杂的对话领域。这是由于他们依赖：a）口语理解（Spoken Language Unde">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-28T14:17:54.205Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Neural Belief Tracker: Data-Driven Dialogue State Tracking">
+<meta name="twitter:description" content="&amp;emsp;&amp;emsp;论文地址，作者是 Nikola Mrkšić，发表于 2016 年。            摘要&amp;emsp;&amp;emsp;现代口语对话系统的核心组成部分之一是 belief tracker，它可以在对话的每一步估计用户的目标。然而，目前大多数方法难以扩展到更大、更复杂的对话领域。这是由于他们依赖：a）口语理解（Spoken Language Unde">
+
+<link rel="canonical" href="http://yan624.github.io/·论文笔记/dilogue/task-oriented/57. Neural Belief Tracker：Data-Driven Dialogue State Tracking.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+<!--图片缩放插件样式-->
+<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
+
+  <title>Neural Belief Tracker: Data-Driven Dialogue State Tracking | 博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">低阶炼金术士</p>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">143</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-常用链接">
+
+    <a href="/常用链接" rel="section"><i class="fas fa-fw fa-bookmark"></i>常用链接</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">84</span></a>
+
+  </li>
+        
+            
+  <li class="menu-item menu-item-博客分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>博客分类</a>
+
+  </li>
+
+
+      
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·论文笔记/dilogue/task-oriented/57. Neural Belief Tracker：Data-Driven Dialogue State Tracking.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Neural Belief Tracker: Data-Driven Dialogue State Tracking
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-02-09 21:48:38" itemprop="dateCreated datePublished" datetime="2020-02-09T21:48:38+08:00">2020-02-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-28 22:17:54" itemprop="dateModified" datetime="2020-02-28T22:17:54+08:00">2020-02-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/paper/" itemprop="url" rel="index">
+                    <span itemprop="name">paper</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>11 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="note info">
+            <p>&emsp;&emsp;<a href="https://arxiv.org/abs/1606.03777" target="_blank" rel="noopener">论文地址</a>，作者是 Nikola Mrkšić，发表于 2016 年。</p>
+          </div>
+<h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p>&emsp;&emsp;现代口语对话系统的核心组成部分之一是 <strong>belief tracker</strong>，它可以在对话的每一步估计用户的目标。然而，目前大多数方法难以扩展到更大、更复杂的对话领域。这是由于他们依赖：a）口语理解（<strong>Spoken Language Understanding</strong>，<strong>SLU</strong>）模型，需要大量注释的训练数据；或者 b）手工制作的词汇表，用于捕捉用户语言中的一些词语变种。我们提出了一个新的 <strong>Neural Belief Tracking</strong>（<strong>NBT</strong>）框架，通过将模型建立在表征学习（最新进展的表征学习，即以前没有人用词向量去做过 DST）上以此克服了这些问题。NBT 模型对预训练的词向量进行推理，学习将它们组合成用户话语（user utterances）和对话上下文（dialogue context）的分布式表示。我们对两个数据集的评估表明……（你懂得，不翻译了）。<br><a id="more"></a></p>
+<h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>&emsp;&emsp;口语对话系统（<strong>Spoken dialogue systems</strong>, <strong>SDS</strong>）允许用户通过交谈的方式与计算机进行交互。</p>
+<ul>
+<li>基于任务的系统帮助用户实现目标，比如找酒店或者预定航班。SDS 的其中一个模组 <strong>dialogue state tracking</strong> (<strong>DST</strong>) 用于解释用户输入并更新 <strong>belief state</strong>（系统对会话状态的内部表示（Young et al., 2010））。这是下游 <strong>dialogue manager</strong> 用于决定系统下一步应执行操作的 dialogue <strong>states</strong> 的概率分布（Su et al., 2016a,b）；然后 <strong>system action</strong> 由自然语言生成器（<strong>NLG</strong>）描述（Wen et al., 2015a,b; <a href="https://www.aclweb.org/anthology/P15-1044.pdf" target="_blank" rel="noopener">Dušek, Jurcicek, 2015</a>）。</li>
+<li><strong>The Dialogue State Tracking Challenge</strong>（<strong>DSTC</strong>）系列公开任务提供了一个带标记数据集的通用评估框架(Williams et al., 2016)。该框架由 domain <strong>ontology</strong> 支持，ontology 定义一系列 <strong>slots</strong> 和 每个 slot 可采用的 <strong>values</strong>。系统必须跟踪用户表达的搜索约束（<strong>goals</strong> or <strong>informable slots</strong>）以及询问用户对搜索结果（<strong>request</strong>）的问题。这需要考虑每个用户的话语（通过语音识别器的输入）和对话上下文（<strong>dialogue context</strong>）（例如，系统刚刚说了什么）。图 1（<strong>博主注</strong>：我一般在论文笔记中不放图，但这张图可以对 DST 有一个直观的了解，推荐去原论文看一下）中给出了一个例子，DST 模块依赖于识别用户话语中的 ontology items。</li>
+<li>在一个对话回合内，传统统计方法使用一个单独的 SLU 模组去处理词汇多样性的问题。然而，训练这些模型需要大量特定领域的标注。<ul>
+<li>另外，由 Henderson et al. (2014d) 所展示的，<strong>turn-level SLU</strong> 和 <strong>cross-turn DST</strong> 可以合并成单独一个模型以实现更好的  belief tracking 性能。<strong>这样的耦合模型通常依赖于人工构造的语义词典来识别所提到的多样的（词汇上或形态上） ontology items</strong>。图 2 给出了三个 slot-value 对的词典示例。</li>
+</ul>
+</li>
+<li>本文提出了一个新模型——NBT，SLU 和 DST 的组合版</li>
+</ul>
+<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>&emsp;&emsp;略。</p>
+<h2 id="Separate-SLU"><a href="#Separate-SLU" class="headerlink" title="Separate SLU"></a>Separate SLU</h2><p>&emsp;&emsp;传统的 SDS 管道使用 SLU 解码器去探测在 ASR 输出中的 slot-value pair。然后下游 DST 模型将这一信息与上一轮的对话上下文结合，以此更新 belief state。</p>
+<h2 id="Joint-SLU-DST"><a href="#Joint-SLU-DST" class="headerlink" title="Joint SLU/DST"></a>Joint SLU/DST</h2><p>&emsp;&emsp;Joint model 通常依赖一个被称为 delexicalisation 策略，凭此，文本中出现的 slots 和 values 被替换为通用的单词。</p>
+<h1 id="Neural-Belief-Tracker"><a href="#Neural-Belief-Tracker" class="headerlink" title="Neural Belief Tracker"></a>Neural Belief Tracker</h1><p>&emsp;&emsp;NBT 是一个模型。</p>
+<ul>
+<li>功能：在对话过程中，用于检测在给定轮次的情况下的 slot-value 对（即用户的目的）。</li>
+<li>输入：它的输入是用户进行输入之前的 <strong>system dialogue acts</strong>，<strong>user utterance</strong> 以及一个候选 <strong>slot-value pair</strong>。</li>
+<li>例子：模型也许要决定 <em>‘I’m looking for good pizza’</em> 是否表达出了目的 <code>FOOD=ITALIAN</code>。要执行 belief tracking，NBT 模型要迭代所有的候选 slot-value pairs（由本体定义），并且做出决定刚才是否有一个 pair 被用户表达出来了。</li>
+</ul>
+<p>&emsp;&emsp;图 3 呈现了模型中的信息流程。NBT 架构的第一层在给定三个输入的情况下执行表征学习（<strong>representation learning</strong>），产生用户话语（user utterance） <strong>r</strong>，当前候选 slot-value <strong>c</strong> 以及 system dialogue acts <script type="math/tex">t_q, t_s, t_v</script> 的向量表征。然后，学习到的向量表征通过 <strong>context modelling</strong> 和 <strong>semantic decoding</strong> 子模组交互，得到中间 interaction summary 向量 <script type="math/tex">d_r, d_c</script> and d。它们被用作最终 <strong>decision-making</strong> 模组的输入，<strong>该模组决定用户是否表达了由候选 slot-value pair 表示的意图（即二元分类）</strong>。</p>
+<h2 id="Representation-Learning"><a href="#Representation-Learning" class="headerlink" title="Representation Learning"></a>Representation Learning</h2><p>&emsp;&emsp;训练向量表征，以一个向量表示一句话。</p>
+<ul>
+<li>NBT-DNN：用 n-grams(1, 2, 3) 向量之和表示 utterance 向量。</li>
+<li>NBT-CNN：使用 CNN 训练，得到 utterance 向量。</li>
+</ul>
+<h2 id="Semantic-Decoding"><a href="#Semantic-Decoding" class="headerlink" title="Semantic Decoding"></a>Semantic Decoding</h2><div class="note warning">
+            <p>&emsp;&emsp;<strong>博主注</strong>：Semantic Decoding 指的是用户的 utterance 和 一个 slot-value pair 进行计算，最后得到向量 d。然后再与向量 m 进行计算，得到一个二维的向量，以此来断定该 slot-value pair 是否与 utterance 有关。<br>&emsp;&emsp;其次，不管有无关系，再进行下一次的匹配。再次输入用户的 utterance 和下一个 slot-value pair 进行匹配。<br>&emsp;&emsp;以此反复，直到迭代完毕。最后得到想要的多个/一个/零个 slot-value pair。</p>
+          </div>
+<p>&emsp;&emsp;图 3 的 NBT 图示显示了 utterance 表征 <strong>r</strong> 和候选 slot-value pair <strong>c</strong> 直接通过 <strong>semantic decoding</strong> 模组交互。<strong>该组件决定用户是否清晰地表达出与当前候选对匹配的意图（即不考虑对话上下文）</strong>。<br>&emsp;&emsp;这种匹配的例子包括 <code>&#39;I want Thai food&#39;</code> 和 <code>&#39;food=Thai&#39;</code>，或者要求更高的食物，如 <code>a pricey restaurant</code> 和 <code>&#39;price=expensive&#39;</code>。<br>&emsp;&emsp;这是使用高质量的预训练词向量发挥的作用：delexicalisation-based model 可以处理前一个例子，但在后一种情况下是无能为力的，除非人类专家提供了一个语义词典来列出 domain ontology 中的每个值的所有可能的替换。<br>&emsp;&emsp;让候选对的 slot name and value 的向量空间表示 由 <script type="math/tex">c_s</script> 和 <script type="math/tex">c_v</script> 给出（多个单词的 slot name/value 向量相加）。NBT 模型学习将这个元组映射成一个向量 <strong>c</strong>，该向量的维数与 utterance 表征 <strong>r</strong> 相同。然后，这两个表征被强制交互，以学习一个相似性度量标准：</p>
+<script type="math/tex; mode=display">
+c = \sigma(W^s_c(c_s + c_v) + b^s_c) \\
+d = r \otimes c</script><p>&emsp;&emsp;其中 <script type="math/tex">\otimes</script> 代表 <strong>element-wise</strong> 相乘（<strong>Hadamard 乘积</strong>）。点积，看起来像更直观的相似性度量，但是它会把 d 中丰富的特性集减少为单个标量（<strong>博主注</strong>：即向量点积的结果是一个值，而不是向量）。元素乘法允许下游网络通过学习 <strong>r</strong> 和 <strong>c</strong> 中特征集之间的非线性交互，更好地利用其参数。</p>
+<h2 id="Context-Modelling"><a href="#Context-Modelling" class="headerlink" title="Context Modelling"></a>Context Modelling</h2><p>&emsp;&emsp;这个 decoder 还不足以从人机对话的 utterances 中提取意图，为了理解一些查询，belief tracker 必须注意 context，即 <code>the flow of dialogue leading up to the latest user utterance</code>。虽然所有之前的系统和用户的语句都很重要，但是最相关的一句是上一句系统语句，对话系统可以执行以下两个 system acts（除去其他的行为）中的一个：</p>
+<ol>
+<li>System Requests：系统询问用户关于一个特定 slot <script type="math/tex">T_q</script> 的值。如果系统的语句为：<code>&#39;what price range whould you like?&#39;</code>，而用户回答了 <code>any</code>，那么模型必须推断出 <code>price range</code> slot，而不是推断出其他的 slots，比如 <code>area</code> 或者 <code>food</code>。</li>
+<li>System Confirm：系统询问用户以确认一个特定 slot-value pair(<script type="math/tex">T_s, T_v</script>) 是否是他们所需约束的一部分。例如，如果用户对问题 <code>&#39;how about Turkish food?&#39;</code> 回复 <code>&#39;yes&#39;</code>，模型就必须感知到 system act 以准确更新 belief state。</li>
+</ol>
+<p>&emsp;&emsp;如果我们使马尔科夫决策只考虑最后一组 system act，我们就可以将 context modelling 纳入 NBT 中。使 <script type="math/tex">t_q</script> 和 (<script type="math/tex">t_s, t_v</script>) 作为 system request 和 confirm acts 的参数的词向量（如果没有，则为零向量）。该模型计算 system acts、候选对（<script type="math/tex">c_s, c_v</script>）和 utterance  表征 <strong>r</strong> 之间的相似性，衡量标准如下所示：</p>
+<script type="math/tex; mode=display">
+m_r = (c_s \cdot t_q) r \\
+m_c = (c_s \cdot t_s) (c_v \cdot t_v) r</script><p>&emsp;&emsp;其中 <script type="math/tex">\cdot</script> 表示 dot product。计算出的相似度项作为 <strong>gating mechanisms</strong>，<strong>只有当系统询问当前的候选 slot 或  slot-value pair 时，该机制才传递 utterance 表征</strong>。<font color="red"><strong>这种类型的交互对于确认 system act 特别有用：如果系统要求用户确认，用户可能不会提到任何 slot values，而只是肯定或否定。这意味着模型必须考虑 utterance，候选 slot-value pair 和系统提供的 slot value pair 三者之间的交互。如果（且仅当）后两者相同，二元决策才认为用户同意。</strong></font><br><div class="note primary">
+            <ol><li>比如系统询问：“你觉得中餐怎么样？”，用户回复：“可以。”。那么系统的 slot-value 就是 <code>food=chinese</code>，显而易见只有当候选 slot-value 等于 <code>food=chinese</code> 时 <script type="math/tex">(c_s \cdot t_s) (c_v \cdot t_v)</script> 的积才是最大的，所以语句“可以。”得以传入到二元决策层。在此可能有疑惑，电脑怎么知道“可以。”代表同意呢？实际上就是词向量那一套，在不断的训练之中，“可以。”就含有了同意的意思。</li><li>如果系统询问：“你觉得中餐怎么样？”，用户回复：“不行，我要吃意大利菜。”。逻辑是一样的，当候选 slot-value 等于 <code>food=chinese</code> 时，才允许“不行，我要吃西餐。”通过。但是不要忘了用户的语句也要与候选 slot-value 进行计算。虽然 <script type="math/tex">m_c</script> 蕴含了信息，但是 d 却匹配不通过，d 的 slot-value 必须是 <code>food=italian</code>。因此 <code>food=chinese</code> 二元决策输出“否”。</li></ol>
+          </div></p>
+<h3 id="Binary-Decision-Maker"><a href="#Binary-Decision-Maker" class="headerlink" title="Binary Decision Maker"></a>Binary Decision Maker</h3><p>&emsp;&emsp;中间表示通过另一个隐藏层，然后合并。如果 <script type="math/tex">\phi_{dim}(x) = \sigma(Wx+b)</script> 是将输入向量 x 映射到 dim 大小向量的层，则输入到最终的 binary softmax（表决策）表示为：</p>
+<script type="math/tex; mode=display">y = \Phi_2 (\Phi_{100}(d) + \Phi_{100}(m_r) + \Phi_{100}(m_c))</script><h1 id="Belief-State-Update-Mechanism"><a href="#Belief-State-Update-Mechanism" class="headerlink" title="Belief State Update Mechanism"></a>Belief State Update Mechanism</h1><p>&emsp;&emsp;在 SDS 中，belief tracking 模型在 ASR 上进行操作。尽管语音识别有所改外，但是随着对话系统越来越频繁地在 noisy environments 中使用，目前仍有必要使用不完善的 ASR 系统。<br>&emsp;&emsp;本工作，我们定义了一个简单的 rule-based belief state 更新机制，可以应用到 ASR N-best lists 中。对于 dialogue turn <strong>t</strong>，令 <script type="math/tex">sys^{t-1}</script> 表示之前的系统输出（即上一轮对话中，系统说的话），令 <script type="math/tex">h^t</script> 表示后验概率为 <script type="math/tex">p^t_i</script> 的 N 个 ASR 假设 <script type="math/tex">h^t_i</script> 的列表。对于任意一个假设 <script type="math/tex">h^t_i</script>，slot <strong>s</strong> 以及 slot value v <script type="math/tex">\in V_s</script>，NBT 模型估计 <script type="math/tex">\mathbb{P}(s, v | h^t_i, sys^{t-1})</script> 的概率，这是 (s, v) 在给定假设中表示的（turn-level）概率。对此类 N 个假设的预测如下所示进行相加：</p>
+<script type="math/tex; mode=display">\mathbb{P}(s,v | h^t, sys^{t-1}) = \sum^N_{i=1} p^t_i \mathbb{P}(s,v | h^t_i, sys^{t-1})</script><div class="note warning">
+            <p>&emsp;&emsp;按理说，到此步为止，就已经将 (s, v) 的概率计算出来了，即 <script type="math/tex">\mathbb{P}(s,v | h^t, sys^{t-1})</script>。<br>&emsp;&emsp;但是上文中其实一直提到一个概念，即 turn-level。我们需要计算 turn level 的 (s, v) 的概率。所以我们还要继续计算，也就是下面的两步。最终结果为 <script type="math/tex">\mathbb{P}(s,v | h^{1:t},sys^{1:t-1})</script>，意思是使用一个系数 <script type="math/tex">\lambda</script> 将以前 turn-level 的概率都加起来。最后的概率才是 (s, v) 的概率。（虽然我不知道原理是什么，但是看起来有点像指数加权平均。此外该论文其实给出了参考文献，该文献貌似讲述了 turn-level 的概念。）</p>
+          </div>
+<p>&emsp;&emsp;然后，这个 turn-level belief state  estimate 与相加到时间 <code>(t-1)</code> 为止的 (cumulative) belief state 组合，以获得更新过的 belief state  estimate：</p>
+<script type="math/tex; mode=display">\mathbb{P}(s,v | h^{1:t},sys^{1:t-1}) = \lambda \mathbb{P}(s,v | h^t, sys^{t-1}) + (1 - \lambda) \mathbb{P}(s,v | h^{1:t-1}, sys^{1:t-2})</script><p>&emsp;&emsp;<script type="math/tex">\lambda</script> 是决定 turn-level 和 前一轮的 belief state estimate 的相对权重的系数。对于 slot <strong>s</strong>，在 turn <strong>t</strong> 时，它的 detected value 集合由下所示：</p>
+<script type="math/tex; mode=display">
+V^t_s = \{v \in V_s | \mathbb{P}(s,v | h^{1:t},sys^{1:t-1}) \geq 0.5\}</script><div class="note info">
+            <p>&emsp;&emsp;上面的公式应该指的是用 NBT 进行二元分类所得到的所有 (s, v)，再一次经过 Belief State Update Mechanism 后，会产生一个新的概率，如果这个概率大于等于 0.5，那么我们就认为它是与用户输入的话相关的 (s,v)。<br>&emsp;&emsp;比如我们经过 NBT 二元分类得到 {(food, chinese), (food, italian), (pricerange, cheap)}，概率分别为 [0.7, 0.59, 0.67]。而经过 Belief State Update Mechanism 之后，概率变为 [0.8, 0.44, 0.53]。那么我们认为 {(food, chinese), (pricerange, cheap)} 就是我们想要的结果（由于 food=italian 小于 0.5 被剔除了）。</p>
+          </div>
+<p>&emsp;&emsp;对于 informable slots（即 goal-tracking），￥%……&amp;*（&amp;……%￥。对于 requests，<script type="math/tex">V^t_{req}</script> 中的所有 slots 都被视为已被请求。由于 requestable slots 用于模拟 single-turn 用户查询，因此它们在轮次中不需要 belief tracking。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/NBT/" rel="tag"># NBT</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/·论文笔记/dilogue/task-oriented/56. PLATO DIALOGUE SYSTEM：A FLEXIBLE CONVERSATIONAL AI RESEARCH PLATFORM.html" rel="prev" title="论文笔记：PLATO DIALOGUE SYSTEM: A FLEXIBLE CONVERSATIONAL AI RESEARCH PLATFORM">
+      <i class="fa fa-chevron-left"></i> 论文笔记：PLATO DIALOGUE SYSTEM: A FLEXIBLE CONVERSATIONAL AI RESEARCH PLATFORM
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/project/uber plato v0.2使用注意点（踩坑）.html" rel="next" title="uber plato v0.2使用注意点（踩坑）">
+      uber plato v0.2使用注意点（踩坑） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#摘要"><span class="nav-number">1.</span> <span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">2.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#背景"><span class="nav-number">3.</span> <span class="nav-text">背景</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Separate-SLU"><span class="nav-number">3.1.</span> <span class="nav-text">Separate SLU</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Joint-SLU-DST"><span class="nav-number">3.2.</span> <span class="nav-text">Joint SLU/DST</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Neural-Belief-Tracker"><span class="nav-number">4.</span> <span class="nav-text">Neural Belief Tracker</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Representation-Learning"><span class="nav-number">4.1.</span> <span class="nav-text">Representation Learning</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Semantic-Decoding"><span class="nav-number">4.2.</span> <span class="nav-text">Semantic Decoding</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Context-Modelling"><span class="nav-number">4.3.</span> <span class="nav-text">Context Modelling</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Binary-Decision-Maker"><span class="nav-number">4.3.1.</span> <span class="nav-text">Binary Decision Maker</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Belief-State-Update-Mechanism"><span class="nav-number">5.</span> <span class="nav-text">Belief State Update Mechanism</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">朱冲䶮</p>
+  <div class="site-description" itemprop="description">记录学习问题，积累做的 leetcode 题目</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">143</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">84</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+      <!-- 不蒜子/busuanzi -->
+      <div class="site-state-item site-state-posts">
+      	<span class="site-state-item-count">159.2k</span>
+      	<span class="site-state-item-name">总字数</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.7.1
+  </div><script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="/lib/my-utils.js"></script>
+<!--图片缩放插件-->
+<script src="/lib/zoomify/zoomify.min.js"></script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- 背景插件 -->
+<script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<!-- 背景图片 -->
+<script>
+	function generateBG(count){
+		var bg_prefix = '/images/background/';
+		var bg =new Array();
+		for(var i = 0; i < count; i++){
+			bg[i] = bg_prefix + i + '.jpg';
+		}
+		bg.shuffle();
+		return bg;
+	}
+	$("body").backstretch(generateBG(11), {
+		duration:90000,//1min半一换
+		fade: 1500
+	});
+</script>
+<!-- 图片缩放 -->
+<script>
+$('#content img').zoomify({duration: 500, });
+  $('#content img').on('zoom-in.zoomify', function () {
+    $('#sidebar').css('display', 'none');
+  });
+  $('#content img').on('zoom-out-complete.zoomify', function () {
+    $('#sidebar').css('display', '');
+  });
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout: 3000,
+        priority: true,
+        ignores: [uri => uri.includes('#'),uri => uri == 'http://yan624.github.io/·论文笔记/dilogue/task-oriented/57. Neural Belief Tracker：Data-Driven Dialogue State Tracking.html',]
+      });
+      });
+  </script>
+
+</body>
+</html>

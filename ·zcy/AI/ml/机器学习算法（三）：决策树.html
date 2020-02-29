@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/5.12.1/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="TODO定义由于新手不太懂术语，规定行为一条数据，列为一组特征。特征代表一列数据。如性别、年龄、身高等。分类代表一个特征中不同的分类。如性别中分类为男女，天气中分类为晴、阴、雨、雪等，收入中分类为贫困、低收入、小康、中高收入者、富人等。 信息增益引用自《机器学习实战》  划分数据集的大原则：将无需的数据变得更加有序。我们可以使用多种方法划分数据集，但是每种方法都有各自的优缺点。组织杂乱无章数据的一">
+<meta name="keywords" content="学习笔记,机器学习算法,决策树">
+<meta property="og:type" content="article">
+<meta property="og:title" content="机器学习算法（三）：决策树">
+<meta property="og:url" content="http://yan624.github.io/·zcy/AI/ml/机器学习算法（三）：决策树.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="TODO定义由于新手不太懂术语，规定行为一条数据，列为一组特征。特征代表一列数据。如性别、年龄、身高等。分类代表一个特征中不同的分类。如性别中分类为男女，天气中分类为晴、阴、雨、雪等，收入中分类为贫困、低收入、小康、中高收入者、富人等。 信息增益引用自《机器学习实战》  划分数据集的大原则：将无需的数据变得更加有序。我们可以使用多种方法划分数据集，但是每种方法都有各自的优缺点。组织杂乱无章数据的一">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E4%BF%A1%E6%81%AF%E7%86%B5%E7%9A%84%E5%85%AC%E5%BC%8F.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%86%B3%E7%AD%96%E6%A0%91%E6%9E%84%E5%BB%BA%E6%AD%A5%E9%AA%A4%E2%80%94%E2%80%94%E4%B8%BE%E7%9A%84%E4%BE%8B%E5%AD%90%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%86%B3%E7%AD%96%E6%A0%91%E6%9E%84%E5%BB%BA%E6%AD%A5%E9%AA%A4%E2%80%94%E2%80%94%E8%AE%A1%E7%AE%97%E5%8E%9F%E5%A7%8B%E6%95%B0%E6%8D%AE%E7%9A%84%E7%86%B5%E5%80%BC.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%86%B3%E7%AD%96%E6%A0%91%E6%9E%84%E5%BB%BA%E6%AD%A5%E9%AA%A4%E2%80%94%E2%80%94%E8%AE%A1%E7%AE%97%E5%85%B6%E4%BB%96%E7%89%B9%E5%BE%81%E7%9A%84%E7%86%B5%E5%80%BC.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%86%B3%E7%AD%96%E6%A0%91%E6%9E%84%E5%BB%BA%E6%AD%A5%E9%AA%A4%E2%80%94%E2%80%94%E5%85%B6%E4%BB%96%E7%89%B9%E5%BE%81%E4%BB%A5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%86%B3%E7%AD%96%E6%A0%91%E7%AE%80%E5%8D%95%E4%B8%BE%E4%BE%8B%E6%9C%80%E7%BB%88%E7%BB%93%E6%9E%9C%E5%9B%BE.png">
+<meta property="og:updated_time" content="2020-02-09T07:52:26.804Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="机器学习算法（三）：决策树">
+<meta name="twitter:description" content="TODO定义由于新手不太懂术语，规定行为一条数据，列为一组特征。特征代表一列数据。如性别、年龄、身高等。分类代表一个特征中不同的分类。如性别中分类为男女，天气中分类为晴、阴、雨、雪等，收入中分类为贫困、低收入、小康、中高收入者、富人等。 信息增益引用自《机器学习实战》  划分数据集的大原则：将无需的数据变得更加有序。我们可以使用多种方法划分数据集，但是每种方法都有各自的优缺点。组织杂乱无章数据的一">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E4%BF%A1%E6%81%AF%E7%86%B5%E7%9A%84%E5%85%AC%E5%BC%8F.jpg">
+
+<link rel="canonical" href="http://yan624.github.io/·zcy/AI/ml/机器学习算法（三）：决策树.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+<!--图片缩放插件样式-->
+<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
+
+  <title>机器学习算法（三）：决策树 | 博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">低阶炼金术士</p>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">143</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-常用链接">
+
+    <a href="/常用链接" rel="section"><i class="fas fa-fw fa-bookmark"></i>常用链接</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">84</span></a>
+
+  </li>
+        
+            
+  <li class="menu-item menu-item-博客分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>博客分类</a>
+
+  </li>
+
+
+      
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    
+    	
+    		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
+        <script type="text/javascript" src="/lib/spop/spop.min.js"></script>
+        <!--判断该文章是否为学习笔记-->
+        <script>
+          spop({
+            template: '<h4 class="spop-title">注意</h4>此文章仅为博主的学习笔记，并非教学，其中可能含有理论错误。',
+            group: 'tips',
+            position  : 'bottom-center',
+            style: 'success',
+            autoclose: 5500,
+            onOpen: function () {
+              //这里设置灰色背景色
+            },
+            onClose: function() {
+              //这里可以取消背景色
+              spop({
+                template: 'ε = = (づ′▽`)づ',
+                group: 'tips',
+                position  : 'bottom-center',
+                style: 'success',
+                autoclose: 1500
+              });
+            }
+          });
+        </script>
+    	
+    
+    	
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·zcy/AI/ml/机器学习算法（三）：决策树.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          机器学习算法（三）：决策树
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-03-27 23:22:58" itemprop="dateCreated datePublished" datetime="2019-03-27T23:22:58+08:00">2019-03-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-09 15:52:26" itemprop="dateModified" datetime="2020-02-09T15:52:26+08:00">2020-02-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index">
+                    <span itemprop="name">AI</span>
+                  </a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/ml/" itemprop="url" rel="index">
+                    <span itemprop="name">ml</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="TODO"><a href="#TODO" class="headerlink" title="TODO"></a>TODO</h3><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>由于新手不太懂术语，规定行为一条数据，列为一组特征。<br><strong>特征</strong>代表一列数据。如性别、年龄、身高等。<br><strong>分类</strong>代表一个特征中不同的分类。如性别中分类为男女，天气中分类为晴、阴、雨、雪等，收入中分类为贫困、低收入、小康、中高收入者、富人等。</p>
+<h3 id="信息增益"><a href="#信息增益" class="headerlink" title="信息增益"></a>信息增益</h3><p>引用自《机器学习实战》</p>
+<blockquote>
+<p>划分数据集的大原则：将无需的数据变得更加有序。我们可以使用多种方法划分数据集，但是每种方法都有各自的优缺点。组织杂乱无章数据的一种办法就是使用信息论度量信息，信息论是量化处理信息的分支学科。我们可以在划分数据之前或之后使用信息论量化度量信息的内容。<br>在划分数据集之前之后信息发生的变化称为信息增益，知道如何计算信息增益，我们就可以计算每个特征值划分数据集获得的信息增益，获得信息增益最高的特征就是最好的选择。</p>
+</blockquote>
+<p>节选</p>
+<blockquote>
+<p>集合信息的度量方式称为香农熵或者简称为熵，这个名字来源于信息论之父克劳德·香农。</p>
+</blockquote>
+<a id="more"></a>
+<p><strong>下面这一段待修改，在进一步学习后发现有问题</strong></p>
+<p>如果不懂什么是信息增益（information）和熵（entropy）也无所谓，只需要知道熵越大则不确定性越大即可。因为我们需要的是不确定性小的<strong>特征</strong>，所以熵越小越好。试想决策树就是将信息一分为二，是不是最好某一个特征只有两种<strong>分类</strong>，如男、女。这样不确定性是极小的，因为它只能分为男和女。如果某一个特征有多个分类，如鸟类下有多种详细的分类，那么该特征的熵值就会很大，不确定性也很大。想想决策树就是将信息一分为二，我该选哪条线将鸟类一分为二？这是很难想的事情，所以这个特征并不好。以上只是举例，在具体项目中不一定对，并且决策树也不一定是二叉树（此处存疑？）。<br>熵的计算公式如下，其中pi是选择该分类的概率，即有20条数据，其中13条是男性，7条是女性。则男性的pi=13/20，女性的pi=7/20。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E4%BF%A1%E6%81%AF%E7%86%B5%E7%9A%84%E5%85%AC%E5%BC%8F.jpg" alt="信息熵的公式"></p>
+<h3 id="决策树构建步骤"><a href="#决策树构建步骤" class="headerlink" title="决策树构建步骤"></a>决策树构建步骤</h3><p>决策树构建首先需要一个根节点，这是毋庸置疑的，但是根节点也不是一拍脑门就突然有了的。需要使用一些算法，现在一些常用的算法如：ID3(信息增益)、C4.5(信息增益率，解决ID3的问题，考虑自身熵)、CART(使用GINI系数来当做衡量标准，GINI系数和熵的衡量标准类似，但是计算方式不同)等。<br>以下使用<a href="https://baike.baidu.com/item/ID3%E7%AE%97%E6%B3%95/5522381" target="_blank" rel="noopener">ID3算法</a>，<strong>给出如下训练数据</strong>，来源于唐宇迪机器学习视频中的截图。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%86%B3%E7%AD%96%E6%A0%91%E6%9E%84%E5%BB%BA%E6%AD%A5%E9%AA%A4%E2%80%94%E2%80%94%E4%B8%BE%E7%9A%84%E4%BE%8B%E5%AD%90%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE.jpg" alt="例子中的数据"></p>
+<ol>
+<li>首先计算全部数据的熵值，其实就是计算一下给出的数据中的最后一列（最后一列可以当做y）的熵值。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%86%B3%E7%AD%96%E6%A0%91%E6%9E%84%E5%BB%BA%E6%AD%A5%E9%AA%A4%E2%80%94%E2%80%94%E8%AE%A1%E7%AE%97%E5%8E%9F%E5%A7%8B%E6%95%B0%E6%8D%AE%E7%9A%84%E7%86%B5%E5%80%BC.jpg" alt="计算原始数据的熵值"></li>
+<li>计算其他特征的熵值。解释一下什么叫其他特征的熵值：比如 outlook 这个特征值，如果要计算它，首先需要知道 outlook 这个特征值分为 3 类，sunny、overcast 和 rainy，然后计算依次计算这三种类别的熵值。具体步骤是，比如计算 sunny 的熵值，那就将原数据中 outlook 不是 sunny 类别的数据全部删除，然后使用信息熵的公式计算剩余数据的熵值。其他的类别计算方式以此类推。计算完毕之后就得到了三个熵值，然后按照类别在特征中的比例相加即可。<br>&emsp;&emsp;如下图右侧，当天气为 sunny 时去打球的概率为<script type="math/tex">\frac{2}{5}</script>，不去打球的概率为<script type="math/tex">\frac{3}{5}</script>，利用上面的熵值公式计算结果为 0.971。再分别计算 outlook 其他<strong>分类</strong>：overcast 和 rainy 的熵值，此时得到了三个不同分类的熵值，即 sunny为<script type="math/tex">\frac{5}{14}</script>， overcast为<script type="math/tex">\frac{4}{14}</script>。最终 outlook 的熵值即为<script type="math/tex">\frac{5}{14} * 0.971 + \frac{4}{14} * 0 + \frac{5}{14} * 0.971 = 0.693</script>。最后其他特征值也需要分别计算它们的分类的熵值。<br>&emsp;&emsp;<strong>这里可能会出现困惑</strong>，如果每个特征值都有多个分类，那计算量不是特别大？而且这里的分类是文字，计算量较小，如果分类是数字那么分类几乎不会重复，计算量不是突破天际？我在学决策树时出现了这种疑惑，后来发现算法确实是这样的，并没有错。<br>&emsp;&emsp;分类为文字称为<strong>离散值</strong>，分类为数值称为<strong>连续值</strong>。上面说到决策树碰到连续值计算量会非常大，解决办法：<a href="https://www.baidu.com/s?wd=%E5%86%B3%E7%AD%96%E6%A0%91%E8%BF%9E%E7%BB%AD%E5%80%BC%E5%A4%84%E7%90%86" target="_blank" rel="noopener">决策树连续值处理</a><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%86%B3%E7%AD%96%E6%A0%91%E6%9E%84%E5%BB%BA%E6%AD%A5%E9%AA%A4%E2%80%94%E2%80%94%E8%AE%A1%E7%AE%97%E5%85%B6%E4%BB%96%E7%89%B9%E5%BE%81%E7%9A%84%E7%86%B5%E5%80%BC.jpg" alt="计算其他特征的熵值"><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%86%B3%E7%AD%96%E6%A0%91%E6%9E%84%E5%BB%BA%E6%AD%A5%E9%AA%A4%E2%80%94%E2%80%94%E5%85%B6%E4%BB%96%E7%89%B9%E5%BE%81%E4%BB%A5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB.jpg" alt="其他特征以及其分类"></li>
+<li>通过1和2对比，选择出熵值最低的特征，并且熵值需要小于原始数据的基本熵值。<br>&emsp;&emsp;上述123步，均可以直接在choose_best_feature_index(dataset)函数中计算获得，顶多加几个封装过的函数，比如calculate_entropy(dataset)，split_dataset(dataset, axis, value)等。</li>
+<li>删除已作出决策的数据，并将数据再次执行123步操作。<br>&emsp;&emsp;比如经过一轮筛选发现 outlook 为熵值最低的特征，则按照 outlook 的 3 个类别，决策树将会有 3 条分支，节点与节点连接的边上的值分别是 sunny、overcast 和 rainy。<br>&emsp;&emsp;首先按类别 sunny 继续往下决策，比如所有数据中，类别为 sunny 的数据全部为 yes，即想要出去打球，那么决策树递归结束。因为这个算法的目的就是要判断在这些特征下，这一天去打球是否合适，如果 sunny 下的每条数据都是 yes，就代表我们的目的已经达到了，也就没必要继续决策了。接下来假设类别 overcast 与 sunny 相反，那么就将类别是 overcast 的所有数据从原数据集中删去，再重复 123 步。</li>
+<li>构造决策树，决策树可以使用递归算法构建。<br>&emsp;&emsp;新手入门系列，完全可以仅使用python的dict来存储决策树。如：{‘tearRate’: {‘reduced’: ‘no lenses’, ‘normal’: {‘astigmatic’: {‘no’: {‘age’: {‘young’: ‘soft’, ‘pre’: ‘soft’, ‘presbyopic’: {‘prescript’: {‘hyper’: ‘soft’, ‘myope’: ‘no lenses’}}}}, ‘yes’: {‘prescript’: {‘hyper’: {‘age’: {‘young’: ‘hard’, ‘pre’: ‘no lenses’, ‘presbyopic’: ‘no lenses’}}, ‘myope’: ‘hard’}}}}}}</li>
+</ol>
+<h3 id="举一个简单的例子"><a href="#举一个简单的例子" class="headerlink" title="举一个简单的例子"></a>举一个简单的例子</h3><p><a href="https://github.com/yan624/machine_learning_algorithms/tree/master/decision_tree/simple_demo" target="_blank" rel="noopener">这里有一个简单例子</a><br>运行结果：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%86%B3%E7%AD%96%E6%A0%91%E7%AE%80%E5%8D%95%E4%B8%BE%E4%BE%8B%E6%9C%80%E7%BB%88%E7%BB%93%E6%9E%9C%E5%9B%BE.png" alt="决策树简单举例最终结果图"></p>
+<h3 id="其他还未解决的问题"><a href="#其他还未解决的问题" class="headerlink" title="其他还未解决的问题"></a>其他还未解决的问题</h3><ul>
+<li>决策树处理缺失值</li>
+<li>决策树处理连续值</li>
+<li>剪枝的问题<!-- more --></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/学习笔记/" rel="tag"># 学习笔记</a>
+              <a href="/tags/机器学习算法/" rel="tag"># 机器学习算法</a>
+              <a href="/tags/决策树/" rel="tag"># 决策树</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/·zcy/AI/ml/机器学习算法（二）：逻辑回归.html" rel="prev" title="机器学习算法（二）：逻辑回归">
+      <i class="fa fa-chevron-left"></i> 机器学习算法（二）：逻辑回归
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/IT-stuff/linux/linux-Ubuntu安装NVIDIA驱动.html" rel="next" title="linux Ubuntu安装NVIDIA驱动">
+      linux Ubuntu安装NVIDIA驱动 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#TODO"><span class="nav-number">1.</span> <span class="nav-text">TODO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定义"><span class="nav-number">2.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#信息增益"><span class="nav-number">3.</span> <span class="nav-text">信息增益</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#决策树构建步骤"><span class="nav-number">4.</span> <span class="nav-text">决策树构建步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#举一个简单的例子"><span class="nav-number">5.</span> <span class="nav-text">举一个简单的例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他还未解决的问题"><span class="nav-number">6.</span> <span class="nav-text">其他还未解决的问题</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">朱冲䶮</p>
+  <div class="site-description" itemprop="description">记录学习问题，积累做的 leetcode 题目</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">143</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">84</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+      <!-- 不蒜子/busuanzi -->
+      <div class="site-state-item site-state-posts">
+      	<span class="site-state-item-count">159.2k</span>
+      	<span class="site-state-item-name">总字数</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.7.1
+  </div><script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="/lib/my-utils.js"></script>
+<!--图片缩放插件-->
+<script src="/lib/zoomify/zoomify.min.js"></script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- 背景插件 -->
+<script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<!-- 背景图片 -->
+<script>
+	function generateBG(count){
+		var bg_prefix = '/images/background/';
+		var bg =new Array();
+		for(var i = 0; i < count; i++){
+			bg[i] = bg_prefix + i + '.jpg';
+		}
+		bg.shuffle();
+		return bg;
+	}
+	$("body").backstretch(generateBG(11), {
+		duration:90000,//1min半一换
+		fade: 1500
+	});
+</script>
+<!-- 图片缩放 -->
+<script>
+$('#content img').zoomify({duration: 500, });
+  $('#content img').on('zoom-in.zoomify', function () {
+    $('#sidebar').css('display', 'none');
+  });
+  $('#content img').on('zoom-out-complete.zoomify', function () {
+    $('#sidebar').css('display', '');
+  });
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout: 3000,
+        priority: true,
+        ignores: [uri => uri.includes('#'),uri => uri == 'http://yan624.github.io/·zcy/AI/ml/机器学习算法（三）：决策树.html',]
+      });
+      });
+  </script>
+
+</body>
+</html>

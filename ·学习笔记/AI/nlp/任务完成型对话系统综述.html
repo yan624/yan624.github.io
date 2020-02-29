@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/5.12.1/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="任务完成型对话系统">
+<meta name="keywords" content="dialogue system">
+<meta property="og:type" content="article">
+<meta property="og:title" content="任务完成型对话系统论文">
+<meta property="og:url" content="http://yan624.github.io/·学习笔记/AI/nlp/任务完成型对话系统综述.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="任务完成型对话系统">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-28T14:19:43.778Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="任务完成型对话系统论文">
+<meta name="twitter:description" content="任务完成型对话系统">
+
+<link rel="canonical" href="http://yan624.github.io/·学习笔记/AI/nlp/任务完成型对话系统综述.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+<!--图片缩放插件样式-->
+<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
+
+  <title>任务完成型对话系统论文 | 博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">低阶炼金术士</p>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">143</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-常用链接">
+
+    <a href="/常用链接" rel="section"><i class="fas fa-fw fa-bookmark"></i>常用链接</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">84</span></a>
+
+  </li>
+        
+            
+  <li class="menu-item menu-item-博客分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>博客分类</a>
+
+  </li>
+
+
+      
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·学习笔记/AI/nlp/任务完成型对话系统综述.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          任务完成型对话系统论文
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-02-27 00:21:08" itemprop="dateCreated datePublished" datetime="2020-02-27T00:21:08+08:00">2020-02-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-28 22:19:43" itemprop="dateModified" datetime="2020-02-28T22:19:43+08:00">2020-02-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index">
+                    <span itemprop="name">AI</span>
+                  </a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/nlp/" itemprop="url" rel="index">
+                    <span itemprop="name">nlp</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="任务完成型对话系统"><a href="#任务完成型对话系统" class="headerlink" title="任务完成型对话系统"></a>任务完成型对话系统</h1><a id="more"></a>
+<h1 id="SLU"><a href="#SLU" class="headerlink" title="SLU"></a>SLU</h1><p>&emsp;&emsp;口语理解（Speech language Understanding，SLU）共由两个任务组成，即意图检测（Intent detection，ID）/意图识别（Intent Determination，ID）和 slot-filling（SF）。ID 可以视为语句分类任务，SF 可以视为序列标注任务。<br>&emsp;&emsp;以下论文按发表时间（或提交到 arxiv 的时间）排序：</p>
+<h2 id="SLU-1"><a href="#SLU-1" class="headerlink" title="SLU"></a>SLU</h2><p>&emsp;&emsp;实现 SLU 有多种途径，也无法判断优劣，以下为几种方式：</p>
+<ol>
+<li>…</li>
+<li>separate models：使用神经网络<strong>分别</strong>对两个任务进行训练</li>
+<li>joint model：使用一个 joint model 对两个任务进行<strong>联合</strong>训练，即单个 encoder 编码输入语句，decoder 有两个，一个生成意图，另一个进行序列标注。</li>
+</ol>
+<p>&emsp;&emsp;已经有人对比过很多论文（不重复造轮子了）：</p>
+<ol>
+<li><a href="https://blog.csdn.net/black_soil/article/details/90405098" target="_blank" rel="noopener">【综述】对话系统中的口语理解技术</a></li>
+</ol>
+<h3 id="separate-models"><a href="#separate-models" class="headerlink" title="separate models"></a>separate models</h3><ol>
+<li><a href="https://arxiv.xilesou.top/pdf/1812.10235.pdf" target="_blank" rel="noopener">Wang et al., 2018.12: A Bi-model based RNN Semantic Frame Parsing Model for Intent Detection and Slot Filling</a> <span class="label success">Bi- or uni-LSTM</span> <span class="label primary">encoder-decoder</span><div class="note info">
+            <ul><li><a href="https://yan624.github.io/·论文笔记/dilogue/task-oriented/59. A Bi-model based RNN Semantic Frame Parsing Model for Intent Detection and Slot Filling.html">论文笔记</a></li><li>对 ID 和 SF 分别使用了一个模型，但是<strong>共享了两个模型的隐藏状态</strong>。论文中描述到，以前的研究经常把 ID 和 SF 当做两个任务来看，这次这篇论文将这两个任务交互起来当做一个任务看待。但是我认为 joint model 这种做法已经是将两个任务当做一个看了，毕竟它们共享了一个模型提取的信息，只是在解码时使用不同的模型。<ul><li>对于解码而言，论文分别使用了 encoder-decoder 结构和纯粹的 encoder 结构，最后是 encoder-decoder 性能略高。</li></ul></li></ul>
+          </div></li>
+<li><a href="https://speechlab.sjtu.edu.cn/papers/sz128-zhu-icassp17.pdf" target="_blank" rel="noopener">Zhu et al., 2017: ENCODER-DECODER WITH FOCUS-MECHANISM FOR SEQUENCE LABELLING BASED SPOKEN LANGUAGE UNDERSTANDING</a> <span class="label success">Bi- or uni-LSTM</span> <span class="label primary">encoder-decoder</span> <span class="label info">focus mechanism</span><div class="note warning">
+            <ul><li><strong>此论文专注于 SLU 中的 slot-filling 任务</strong></li><li>使用 encoder-decoder 结构，其中 encoder 是 Bi-LSTM，decoder 是 uni-LSTM<ul><li>结合了 attention 机制，发现有局限性<ul><li>序列标注中的输入和输出是对齐的，但是 attention scores 是所有输入单词的总和</li><li>对齐（alignment）可由 attention 学习到，但是在序列标记任务中，很难拟合有限的标注数据（与之不同，机器翻译更容易获得成对数据）。</li></ul></li><li>所以对 encoder-decoder 结构提出了一种新的 <strong>focus</strong> 机制</li></ul></li><li>首先使用 Bi-LSTM 编码，得到 <script type="math/tex">h_i = [\overleftarrow{h_i}, \overrightarrow{h_i}], \, \overleftarrow{h_i} = f_l(\overleftarrow{h_{i+1}}, x_i), \, \overrightarrow{h_i} = f_r(\overrightarrow{h_{i-1}}, x_i)</script></li><li>然后使用 uni-LSTM 进行解码，初始状态 <script type="math/tex">s_0 = \overleftarrow{h_1}</script>，每个时间步都由 uni-LSTM 训练并产生隐藏状态 <script type="math/tex">s_i</script>，同时每个时间步除了输入值（输入值是 label 组成的，即 IOB），还需要输入 Bi-LSTM 对应时间步的隐藏状态 <script type="math/tex">h_i</script>。<ul><li><strong>focus mechanism 实际上就是把对应时间步的隐藏状态 <script type="math/tex">h_i</script> 输入给 decoder</strong>。。。也就是说把 attention 机制稍微改装了一下，当前时间步的 score 是 1，其余时间步是 0。</li><li>decoder 的隐藏状态计算方法是 <script type="math/tex">s_i = f_d(s_{t-1}, y_{t-1}, c_t)</script>，其中 <script type="math/tex">s_{t-1}</script> 代表上一个时间步的隐藏状态，<script type="math/tex">y_{t-1}</script> 代表输入值，<script type="math/tex">c_t</script> 是上下文信息，其实就等于 <script type="math/tex">h_i</script>。</li><li>f 函数均指 LSTM units function</li></ul></li></ul>
+          </div>
+</li>
+</ol>
+<h3 id="joint-model"><a href="#joint-model" class="headerlink" title="joint model"></a>joint model</h3><ol>
+<li><a href="https://pdfs.semanticscholar.org/1f9e/2d6df1eaaf04aebf428d9fa9a9ffc89e373c.pdf" target="_blank" rel="noopener">Zhang and Wang, 2016: A Joint Model of Intent Determination and Slot Filling for Spoken Language Understanding</a> <span class="label success">Bi-GRU</span> <span class="label primary">contextual word embedding</span><div class="note info">
+            <ol><li><strong>Embeddings</strong>：<a href="https://research.google/pubs/pub44628.pdf" target="_blank" rel="noopener">Mesnil et al., 2015</a> 发现使用一个 context word window可以提高 RNN 在 SF 上的性能，所以该论文也这么做。获得词向量 <script type="math/tex">e(w_t)</script> 后，使用 <script type="math/tex">x^d_t = [e(w_{t-d}), \cdots, e(w_t), \cdots, e(w_{t+d})]</script> 重新表示词向量，其中 d 代表窗口半径。为了获得更好的性能，在 <script type="math/tex">x^d_t</script> 中还拼接了单词所对应的命名体词向量，比如“New York”的命名体为“B-city I-City”，即 <script type="math/tex">x^d_t = [e(w_{t-d}), \cdots, e(w_t), \cdots, e(w_{t+d}), e\prime(n_{t-c}), \cdots, e\prime(n_t), \cdots, e\prime(n_{t+c})]</script>，其中 <script type="math/tex">e\prime</script> 代表命名体的词向量，矩阵被随机初始化。<ul><li>小声逼逼，这不是 context word embedding 吗？这论文 2015 年的，比 BERT 之流早了不知道多少。</li></ul></li><li>Recurrent Hidden Layers：使用 Bi-GRU 提取句子信息</li><li>Task Specific Layers：解码层（两个）<ul><li>for SF</li><li>for ID</li></ul></li></ol>
+          </div></li>
+<li><a href="https://arxiv.xilesou.top/pdf/1609.01454.pdf" target="_blank" rel="noopener">Liu and Lane, 2016a: Attention-Based Recurrent Neural Network Models for Joint Intent Detection and Slot Filling</a> <span class="label success">Bi- or uni-LSTM</span> <span class="label primary">encoder-decoder</span> <span class="label info">attention</span><div class="note info">
+            <ul><li>使用 seq2seq + attention 技术</li><li>对于 ID 来说，提高了 0.56%，对于 SF 来说，提高了 0.23%。emmmm，attention 对序列标注可能没多大帮助，可能 seq2seq 模型都是多余的，但是语句分类来说可能有一点点帮助。</li></ul>
+          </div>
+</li>
+</ol>
+<h2 id="SLU-DST"><a href="#SLU-DST" class="headerlink" title="SLU + DST"></a>SLU + DST</h2><ol>
+<li><a href="https://arxiv.org/abs/1606.03777" target="_blank" rel="noopener">Mrkšić N et al., 2016: Neural Belief Tracker: Data-Driven Dialogue State Tracking</a> <span class="label success">NBT-DNN</span> <span class="label info">NBT-CNN</span> <span class="label warning">Semantic Decoding</span> <span class="label primary">Context Modelling</span> <span class="label primary">二元决策</span> <span class="label primary">Belief State Update Mechanism</span><blockquote class="blockquote-center"><p><a href="https://yan624.github.io/·论文笔记/dilogue/task-oriented/57. Neural Belief Tracker：Data-Driven Dialogue State Tracking.html">论文笔记</a></p>
+</blockquote></li>
+<li></li>
+</ol>
+<h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><ol>
+<li><a href="https://zhuanlan.zhihu.com/p/83825070" target="_blank" rel="noopener">认真的聊一聊对话系统（任务型、检索式、生成式对话论文与工具串讲）</a></li>
+<li><a href="https://mp.weixin.qq.com/s/DTcwvTx-JDZJqqOI_FRiIQ" target="_blank" rel="noopener">Awesome Paper List of Dialogue Systems</a></li>
+<li><a href="https://www.cnblogs.com/jiangxinyang/p/10789512.html" target="_blank" rel="noopener">任务型对话（一）—— NLU/SLU（意图识别和槽值填充）</a></li>
+<li>见每章节提供的论文链接</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/dialogue-system/" rel="tag"># dialogue system</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/algorithm/【算法设计题目】回溯法.html" rel="prev" title="【算法设计题目】回溯法">
+      <i class="fa fa-chevron-left"></i> 【算法设计题目】回溯法
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#任务完成型对话系统"><span class="nav-number">1.</span> <span class="nav-text">任务完成型对话系统</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SLU"><span class="nav-number">2.</span> <span class="nav-text">SLU</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#SLU-1"><span class="nav-number">2.1.</span> <span class="nav-text">SLU</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#separate-models"><span class="nav-number">2.1.1.</span> <span class="nav-text">separate models</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#joint-model"><span class="nav-number">2.1.2.</span> <span class="nav-text">joint model</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SLU-DST"><span class="nav-number">2.2.</span> <span class="nav-text">SLU + DST</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考文献"><span class="nav-number">3.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">朱冲䶮</p>
+  <div class="site-description" itemprop="description">记录学习问题，积累做的 leetcode 题目</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">143</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">84</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+      <!-- 不蒜子/busuanzi -->
+      <div class="site-state-item site-state-posts">
+      	<span class="site-state-item-count">159.2k</span>
+      	<span class="site-state-item-name">总字数</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.7.1
+  </div><script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="/lib/my-utils.js"></script>
+<!--图片缩放插件-->
+<script src="/lib/zoomify/zoomify.min.js"></script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- 背景插件 -->
+<script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<!-- 背景图片 -->
+<script>
+	function generateBG(count){
+		var bg_prefix = '/images/background/';
+		var bg =new Array();
+		for(var i = 0; i < count; i++){
+			bg[i] = bg_prefix + i + '.jpg';
+		}
+		bg.shuffle();
+		return bg;
+	}
+	$("body").backstretch(generateBG(11), {
+		duration:90000,//1min半一换
+		fade: 1500
+	});
+</script>
+<!-- 图片缩放 -->
+<script>
+$('#content img').zoomify({duration: 500, });
+  $('#content img').on('zoom-in.zoomify', function () {
+    $('#sidebar').css('display', 'none');
+  });
+  $('#content img').on('zoom-out-complete.zoomify', function () {
+    $('#sidebar').css('display', '');
+  });
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout: 3000,
+        priority: true,
+        ignores: [uri => uri.includes('#'),uri => uri == 'http://yan624.github.io/·学习笔记/AI/nlp/任务完成型对话系统综述.html',]
+      });
+      });
+  </script>
+
+</body>
+</html>

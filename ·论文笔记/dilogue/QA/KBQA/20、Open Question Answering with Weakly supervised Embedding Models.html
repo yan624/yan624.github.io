@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/5.12.1/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="论文概要&amp;emsp;&amp;emsp;论文地址，论文发表于 2014 年。&amp;emsp;&amp;emsp;建立一个能够回答任何问题的计算机是人工智能的一个长期目标。这一领域一个重要的发展时大规模知识库的建立，如 Freebase 和 DBPedia，它们存储了大量的通用信息。它们由三元组的形式构成一个数据库，通过各种关系和格式连接成实体对。那么回答问题被定义为给定一个用自然语言表达的查询语句（一个查询语句的例子">
+<meta name="keywords" content="KBQA,向量建模KBQA">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Open Question Answering with Weakly supervised Embedding Models">
+<meta property="og:url" content="http://yan624.github.io/·论文笔记/dilogue/QA/KBQA/20、Open Question Answering with Weakly supervised Embedding Models.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="论文概要&amp;emsp;&amp;emsp;论文地址，论文发表于 2014 年。&amp;emsp;&amp;emsp;建立一个能够回答任何问题的计算机是人工智能的一个长期目标。这一领域一个重要的发展时大规模知识库的建立，如 Freebase 和 DBPedia，它们存储了大量的通用信息。它们由三元组的形式构成一个数据库，通过各种关系和格式连接成实体对。那么回答问题被定义为给定一个用自然语言表达的查询语句（一个查询语句的例子">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Open Question Answering with Weakly supervised Embedding Models/姚明的老婆是谁的知识图谱的子图.jpg">
+<meta property="og:updated_time" content="2020-02-27T08:13:07.892Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Open Question Answering with Weakly supervised Embedding Models">
+<meta name="twitter:description" content="论文概要&amp;emsp;&amp;emsp;论文地址，论文发表于 2014 年。&amp;emsp;&amp;emsp;建立一个能够回答任何问题的计算机是人工智能的一个长期目标。这一领域一个重要的发展时大规模知识库的建立，如 Freebase 和 DBPedia，它们存储了大量的通用信息。它们由三元组的形式构成一个数据库，通过各种关系和格式连接成实体对。那么回答问题被定义为给定一个用自然语言表达的查询语句（一个查询语句的例子">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Open Question Answering with Weakly supervised Embedding Models/姚明的老婆是谁的知识图谱的子图.jpg">
+
+<link rel="canonical" href="http://yan624.github.io/·论文笔记/dilogue/QA/KBQA/20、Open Question Answering with Weakly supervised Embedding Models.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+<!--图片缩放插件样式-->
+<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
+
+  <title>Open Question Answering with Weakly supervised Embedding Models | 博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">低阶炼金术士</p>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">143</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-常用链接">
+
+    <a href="/常用链接" rel="section"><i class="fas fa-fw fa-bookmark"></i>常用链接</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">84</span></a>
+
+  </li>
+        
+            
+  <li class="menu-item menu-item-博客分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>博客分类</a>
+
+  </li>
+
+
+      
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    
+    	
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·论文笔记/dilogue/QA/KBQA/20、Open Question Answering with Weakly supervised Embedding Models.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Open Question Answering with Weakly supervised Embedding Models
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-07-05 10:54:15" itemprop="dateCreated datePublished" datetime="2019-07-05T10:54:15+08:00">2019-07-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-27 16:13:07" itemprop="dateModified" datetime="2020-02-27T16:13:07+08:00">2020-02-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/paper/" itemprop="url" rel="index">
+                    <span itemprop="name">paper</span>
+                  </a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="论文概要"><a href="#论文概要" class="headerlink" title="论文概要"></a>论文概要</h1><p>&emsp;&emsp;<a href="https://arxiv.org/pdf/1404.4326" target="_blank" rel="noopener">论文地址</a>，论文发表于 2014 年。<br>&emsp;&emsp;建立一个能够回答任何问题的计算机是人工智能的一个长期目标。这一领域一个重要的发展时大规模知识库的建立，如 <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.538.7139&amp;rep=rep1&amp;type=pdf" target="_blank" rel="noopener">Freebase</a> 和 <a href="https://content.iospress.com/download/semantic-web/sw134?id=semantic-web%2Fsw134" target="_blank" rel="noopener">DBPedia</a>，它们存储了大量的通用信息。它们由三元组的形式构成一个数据库，通过各种关系和格式连接成实体对。那么回答问题被定义为<strong>给定一个用自然语言表达的查询语句</strong>（一个查询语句的例子：中国的首都在哪？）<strong>从知识库中检索正确的实体或实体集的任务</strong>。<br>&emsp;&emsp;最近，通过将问题映射为<strong>逻辑形式</strong>或者类似<strong>数据库查询</strong>的方法取得了富有希望的进展。虽然这种方法可能有效，但是缺点是要采用大量的人为标记的数据或者需要工作人员定义词汇表和语法。<br>&emsp;&emsp;本文采用一种激进的学习方式，将问题映射为向量（无法人为解释）的特征表示。并且将重点放在回答一些基于比较宽泛的主题的简单事实性问题。这项任务的难点来自词汇的多样性，而不是句法的复杂性。<br>&emsp;&emsp;该方法采用随机梯度下降，然后使用 fine-tuning 进行训练。经验表明该模型能够捕获一些有意义的信号，且这是唯一一种能够在弱标记数据上训练的方法。</p>
+<h1 id="论文内容介绍"><a href="#论文内容介绍" class="headerlink" title="论文内容介绍"></a>论文内容介绍</h1><ol>
+<li>Section 2：讨论了之前的工作；</li>
+<li>Section 3：介绍了开放域问答的问题；</li>
+<li>Section 4：给出了模型；</li>
+<li>Section 5：实验结果。<a id="more"></a>
+</li>
+</ol>
+<h1 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h1><ol>
+<li>大规模的问答历史悠久，主要由 TREC tracks（<a href="https://arxiv.org/pdf/cs/0110053.pdf" target="_blank" rel="noopener">Voorhees 2000</a>） 发起，这是第一个成功地<strong>将问题转换为查询</strong>的问答系统。将问题转换为查询之后，又<strong>将查询提供给 web 搜索引擎</strong>，然后<strong>从返回的页面或片段中取出答案</strong>（<a href="http://aiweb.cs.washington.edu/research/projects/ai3/mulder/mulder-www10.pdf" target="_blank" rel="noopener">Kwok 2001</a>, <a href="https://www.aaai.org/Papers/Symposia/Spring/2002/SS-02-06/SS02-06-002.pdf" target="_blank" rel="noopener">Banko 2002</a>）。这种方法需要大量的人工操作来处理查询，然后解析和搜索结果。</li>
+<li>大型 KBs 的出现，如 FreeBase 和 DBPedia（论文地址已在第一章给出），改变了上述状况，但是也带来巨大的挑战。语言的多样性以及 KBs 规模的庞大，使得需要通过监督学习来处理大量的<strong>带标签</strong>的数据。最早的方法是基于手写模板的 KBs 开放问答，然而对于日新月异 KBs（增加/删除三元组和实体） 还不够成熟。之后开始尝试使用较少的监督情况下<strong>学习 KBs 和自然语言之间的联系</strong>，但是这项工作实际上在解决<strong>信息提取</strong>的问题（<a href="https://www.aclweb.org/anthology/P09-1113" title="Distant supervision for relation extraction without labeled data" target="_blank" rel="noopener">Mintz M 等 2009</a>，<a href="https://www.aclweb.org/anthology/P11-1055" title="Knowledge-Based Weak Supervision for Information Extractionof Overlapping Relation" target="_blank" rel="noopener">Hoffmann R 等 2011</a>，<a href="https://www.aclweb.org/anthology/D12-1093" title="Reading The Web with Learned Syntactic-Semantic Inference Rules" target="_blank" rel="noopener">Lao N 等 2012</a>，<a href="https://www.aclweb.org/anthology/N13-1008" title="Relation Extraction with Matrix Factorization and Universal Schemas" target="_blank" rel="noopener">Riedel S 等 2013</a>）。以上以及本文未提及到的这些通过直接或者间接的监督机器学习来获得更多表现力的解决办法实际上是为了避开标签数据过多的问题。</li>
+<li>近年来，有一种基于语义解析器（<a href="https://www.aclweb.org/anthology/P13-1042" title="Large-scale Semantic Parsing via Schema Matching and Lexicon Extension" target="_blank" rel="noopener">Cai Q 等 2013</a>，<a href="https://www.aclweb.org/anthology/D13-1160" title="Semantic Parsing on Freebase from Question-Answer Pairs" target="_blank" rel="noopener">Berant J 等 2013</a>，<a href="https://www.aclweb.org/anthology/D13-1161" title="Scaling Semantic Parsers with On-the-fly Ontology Matching" target="_blank" rel="noopener">Kwiatkowski T 等 2013</a>）的新的问答系统被提出，它只具有少量标记数据。但仍需要耗费大量精力去仔细设计词汇，语法和知识库。</li>
+<li>所以本文（2014 年）提出了基于嵌入式的问答模型。据我们所知，这是以前从未尝试过的。</li>
+</ol>
+<h1 id="开放域问答"><a href="#开放域问答" class="headerlink" title="开放域问答"></a>开放域问答</h1><p>&emsp;&emsp;本文使用 <a href="https://www.aclweb.org/anthology/P13-1158" target="_blank" rel="noopener">Fader 2013</a> 的问答框架，并使用了相同的数据。</p>
+<h2 id="任务定义"><a href="#任务定义" class="headerlink" title="任务定义"></a>任务定义</h2><p>&emsp;&emsp;我们将回答问题的任务看作为：给定一个问题 q，对应的答案由 KB 中的三元组 t 给出。这意味着我们的问题由<strong>一组三元组 t</strong> 提供对问题及其答案的解释，例如：</p>
+<blockquote>
+<p>q: What environment does a dodo live in?（渡渡鸟生活在什么样的环境中？）<br>t: (dodo.e, live-in.r, makassar.e)<br>q: What are the symbols for Hannukah?（光明节的象征是什么？）<br>t: (menorah.e, be-for.r, hannukah.e)<br>q: What is a laser used for?（极光可以用来做什么？）<br>t: (hologram.e,be-produce-with.r,laser.e)</p>
+</blockquote>
+<p>&emsp;&emsp;这里每个问题我们只给出一个 t，但是实际上它可以有很多，所以上文说是一组三元组。本文其余部分，<strong>使用 <script type="math/tex">\kappa</script>（读作 kappa） 代表 KB ，使用 <script type="math/tex">\epsilon</script> 代表 KB 中的实体或者关系。问题的词表用 V 表示，<script type="math/tex">n_V</script> <script type="math/tex">n_{\epsilon}</script>分别表示 V 和 <script type="math/tex">\epsilon</script> 的大小</strong>。<br>&emsp;&emsp;我们的模型在于<strong>函数 S(·)</strong>，它可以为 question-answer triple pairs (q,t) 打分。因此，找到问题 q 的 top-ranked 的答案 <script type="math/tex">\hat{t}</script>(q) 直接由以下公式得出：</p>
+<script type="math/tex; mode=display">
+\hat{t}(q) = arg \max_{t' \in \kappa}S(q, t')</script><p>&emsp;&emsp;为了处理多个答案，我们将结果呈现为排完序的列表并对其评分，而不是直接采用最前面的预测结果。<br>&emsp;&emsp;使用评分函数可以直接查询 KB，而不需要在<strong>语义分析系统</strong>中一样为问题定义一个中间的结构化逻辑表示。我们的目标是学习 S(·)，余下将讲述用于训练的数据的创建步骤。</p>
+<h2 id="用于训练的数据"><a href="#用于训练的数据" class="headerlink" title="用于训练的数据"></a>用于训练的数据</h2><div class="note info">
+            <p>待续</p>
+          </div>
+<h1 id="Embedding-based-model"><a href="#Embedding-based-model" class="headerlink" title="Embedding-based model"></a>Embedding-based model</h1><p>&emsp;&emsp;模型使用了词嵌入（2019 年了，应该谁都知道了，不做解释）。</p>
+<h2 id="Question-KB-Triple-Scoring"><a href="#Question-KB-Triple-Scoring" class="headerlink" title="Question-KB Triple Scoring"></a>Question-KB Triple Scoring</h2><p>&emsp;&emsp;我们的框架关注的是函数 S(q,t) 的学习，该函数的目的是对一个<strong>问题 q</strong> 和 一个<strong>来自 <script type="math/tex">\kappa</script> 的三元组 t</strong> 进行打分。该评分方法受到了先前工作 labeling images withwords 的启发（<a href="https://link.springer.com/content/pdf/10.1007/s10994-010-5198-3.pdf" target="_blank" rel="noopener">Weston 2013</a>），我们采用该方法将图片和标签替换成了问题和三元组。直观来讲就是：<br>有点难翻译，故给出原文：</p>
+<blockquote>
+<p>&emsp;&emsp;Intuitively, it consists of projecting questions, treated as a bag of words(and possibly n-grams as well), on the one hand, and triples on the other hand,into a shared embedding space and then computing a similarity measure (the dot  product  in  this  paper)  between  both  projections.<br>&emsp;&emsp;大致意思，将问题和三元组使用词袋模型（也可以是 n-gram 模型）投射到共享的嵌入空间，然后计算二者的相似度（本文使用点积的方式）。</p>
+</blockquote>
+<p>&emsp;&emsp;那么评分函数为:</p>
+<script type="math/tex; mode=display">
+S(q,t) = f(q)^Tg(t)</script><p>&emsp;&emsp;<strong>其中 f(·) 将问题中的单词映射到 <script type="math/tex">\mathbb{R}^{\kappa}</script>，<script type="math/tex">f(q) = V^T \Theta(q)</script>。V 是关于 <script type="math/tex">\mathbb{R}^{n_v \times \kappa}</script> 包含所有词嵌入 v 的矩阵。<script type="math/tex">\Theta(q)</script>是 q（<script type="math/tex">\in \{0,1\}^{n_v}</script>） 的二进制（稀疏）表示。同样，g(·) 将 KB 三元组中的实体和关系映射到 <script type="math/tex">\mathbb{R}^{\kappa}</script>，<script type="math/tex">g(t) = W^T\Psi(t)</script>，W 是关于 <script type="math/tex">\mathbb{R}^{n_e \times \kappa}</script> 包含所有实体和关系的嵌入 w 的矩阵，<script type="math/tex">\Psi(t)</script> 是 t（<script type="math/tex">\in \{0,1\}^{n_e}</script>） 的二进制（稀疏）表示。</strong><br><div class="note info">
+            <p>&emsp;&emsp;注：上一段太长了，解释一下。f(q) 就是词向量，g(t) 就是实体和关系的向量（下一段原文写到 g(t) 是将三元组中的嵌入全部相加）。</p>
+          </div></p>
+<p>&emsp;&emsp;将单词表示为词袋模型似乎有一点局限性，但是由于我们特定的设置，语法都很简单，因此含有的信息十分有限，所以词袋模型应该也能带来不错的性能。当然也有反例，比如 <em>What are cats afraid of ?vs.What are afraid of cats ?</em> 这将会有不同的答案。不过这种情况十分罕见。未来考虑将 parse tree features 或者 semantic role labels 作为输入放入嵌入模型中。<br>&emsp;&emsp;与以前的工作（<a href="https://arxiv.org/pdf/1307.7973" target="_blank" rel="noopener">Weston 2013</a>）不同的是，在我们的模型中，实体出现三元组的不同侧面（左右侧）时，实体并非拥有相同的嵌入。KB 中的关系并不是对称的，所以会出现三元组中左侧和右侧的实体是不同的情况。<strong>由于 g(·) 是将三元组中的所有成分相加，所以每一个实体我们都需要两个嵌入</strong>。<br>&emsp;&emsp;这样就可以很容易地对任何三元组进行评分：</p>
+<script type="math/tex; mode=display">
+\hat{t}(q) = arg \max_{t' \in \kappa}S(q, t') = arg \max_{t' \in \kappa}(f(q)^Tg(t'))</script><p>&emsp;&emsp;接下来花了好几段讲怎么训练。</p>
+<h2 id="Fine-tuning-the-Similarity-between-Embeddings"><a href="#Fine-tuning-the-Similarity-between-Embeddings" class="headerlink" title="Fine-tuning the Similarity between Embeddings"></a>Fine-tuning the Similarity between Embeddings</h2><p>&emsp;&emsp;由于受到数据大小的限制，需要使用微调来改进性能。</p>
+<h1 id="论文总结"><a href="#论文总结" class="headerlink" title="论文总结"></a>论文总结</h1><p>&emsp;&emsp;通读论文之后还是有点搞不清论文是怎么训练的，后来看了一下 CCF ADL100 刘康老师的 PPT ，感觉有点理解了，以下是训练步骤：</p>
+<ol>
+<li>输入自然语言表达的问题，比如：姚明的老婆的是哪里人？</li>
+<li>使用 entity linking（论文中貌似没有这步，我在看 PPT 时也是一知半解，好在前几天我刚好在一篇论文中看到了这个 entity linking！<a href="https://yan624.github.io/·论文笔记/19、Semantic Parsing via Staged Query Graph Generation：Question Answering with Knowledge Base.html#链接主题实体">博客地址</a>，entity linking 源于<a href="https://arxiv.org/pdf/1609.08075.pdf" target="_blank" rel="noopener">Yang and Chang, 2015</a>）找到 main entity，main entity 周围的 entity 均是候选 entity。如下图，姚明是 main entity，姚明周围的实体都算作候选 entity，比如叶莉、火箭队、上海等。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Open Question Answering with Weakly supervised Embedding Models/姚明的老婆是谁的知识图谱的子图.jpg" alt="姚明的老婆是谁的知识图谱的子图"></li>
+<li>计算问题和候选 entity 的相似度，其中问题由词向量表示，候选 entity 是一个三元组的形式，难以直接用词向量表示，方法是将三元组中的三个对象分别用词向量表示，然后将三个词向量相加。这样就得到了问题的词向量和 entity 的词向量，点乘获得相似度。</li>
+<li>由于候选 entity 不一定只有一个，所以可以获得多个相似度。进行排序即可获得最相似的候选 entity。</li>
+</ol>
+<div class="note danger">
+            <p>&emsp;&emsp;以上的训练步骤并不是论文中的训练步骤，只是我为了给自己加深映像写的，具体的训练步骤在原论文第 4 节，具体在 4.1。</p>
+          </div>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/KBQA/" rel="tag"># KBQA</a>
+              <a href="/tags/向量建模KBQA/" rel="tag"># 向量建模KBQA</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/·论文笔记/dilogue/QA/KBQA/19、Semantic Parsing via Staged Query Graph Generation：Question Answering with Knowledge Base.html" rel="prev" title="Semantic Parsing via Staged Query Graph Generation Question Answering with Knowledge Base">
+      <i class="fa fa-chevron-left"></i> Semantic Parsing via Staged Query Graph Generation Question Answering with Knowledge Base
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/·论文笔记/dilogue/QA/KBQA/21、Question Answering with Subgraph Embeddings.html" rel="next" title="Question Answering with Subgraph Embeddings">
+      Question Answering with Subgraph Embeddings <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#论文概要"><span class="nav-number">1.</span> <span class="nav-text">论文概要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#论文内容介绍"><span class="nav-number">2.</span> <span class="nav-text">论文内容介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#相关工作"><span class="nav-number">3.</span> <span class="nav-text">相关工作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#开放域问答"><span class="nav-number">4.</span> <span class="nav-text">开放域问答</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#任务定义"><span class="nav-number">4.1.</span> <span class="nav-text">任务定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用于训练的数据"><span class="nav-number">4.2.</span> <span class="nav-text">用于训练的数据</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Embedding-based-model"><span class="nav-number">5.</span> <span class="nav-text">Embedding-based model</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Question-KB-Triple-Scoring"><span class="nav-number">5.1.</span> <span class="nav-text">Question-KB Triple Scoring</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Fine-tuning-the-Similarity-between-Embeddings"><span class="nav-number">5.2.</span> <span class="nav-text">Fine-tuning the Similarity between Embeddings</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#论文总结"><span class="nav-number">6.</span> <span class="nav-text">论文总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">朱冲䶮</p>
+  <div class="site-description" itemprop="description">记录学习问题，积累做的 leetcode 题目</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">143</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">84</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+      <!-- 不蒜子/busuanzi -->
+      <div class="site-state-item site-state-posts">
+      	<span class="site-state-item-count">159.2k</span>
+      	<span class="site-state-item-name">总字数</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.7.1
+  </div><script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="/lib/my-utils.js"></script>
+<!--图片缩放插件-->
+<script src="/lib/zoomify/zoomify.min.js"></script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- 背景插件 -->
+<script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<!-- 背景图片 -->
+<script>
+	function generateBG(count){
+		var bg_prefix = '/images/background/';
+		var bg =new Array();
+		for(var i = 0; i < count; i++){
+			bg[i] = bg_prefix + i + '.jpg';
+		}
+		bg.shuffle();
+		return bg;
+	}
+	$("body").backstretch(generateBG(11), {
+		duration:90000,//1min半一换
+		fade: 1500
+	});
+</script>
+<!-- 图片缩放 -->
+<script>
+$('#content img').zoomify({duration: 500, });
+  $('#content img').on('zoom-in.zoomify', function () {
+    $('#sidebar').css('display', 'none');
+  });
+  $('#content img').on('zoom-out-complete.zoomify', function () {
+    $('#sidebar').css('display', '');
+  });
+</script>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout: 3000,
+        priority: true,
+        ignores: [uri => uri.includes('#'),uri => uri == 'http://yan624.github.io/·论文笔记/dilogue/QA/KBQA/20、Open Question Answering with Weakly supervised Embedding Models.html',]
+      });
+      });
+  </script>
+
+</body>
+</html>
