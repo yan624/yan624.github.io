@@ -121,7 +121,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">143</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">145</span></a>
 
   </li>
         <li class="menu-item menu-item-about">
@@ -136,7 +136,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">84</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">85</span></a>
 
   </li>
         
@@ -197,6 +197,297 @@
             
 
   <div class="posts-expand">
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/IT-stuff/android/Android开发，使用腾讯云的API请求对象存储中的资源始终失败.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/IT-stuff/android/Android开发，使用腾讯云的API请求对象存储中的资源始终失败.html" class="post-title-link" itemprop="url">Android开发，使用腾讯云的API请求对象存储中的资源始终失败</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-04-17 10:55:07" itemprop="dateCreated datePublished" datetime="2019-04-17T10:55:07+08:00">2019-04-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-23 19:54:38" itemprop="dateModified" datetime="2020-02-23T19:54:38+08:00">2020-02-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/IT-stuff/" itemprop="url" rel="index">
+                    <span itemprop="name">IT-stuff</span>
+                  </a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/IT-stuff/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>536</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ol>
+<li>腾讯云api内部在调用时，把url转义了。我的链接是<a href="http://###.cos.ap-shanghai.myqcloud.com/11111/app_list.txt?abcdefg，它内部给我转义成http://###.cos.ap-shanghai.myqcloud.com/11111/app_list.txt%3Fabcdefg，就是把&quot;?&quot;转义成了&quot;%3F&quot;。总而言之，我使用api一直获取不到资源，然后我在浏览器上试验了一下。发现把%3F改回?就可以访问了，实际上应该不是这样，反正就给我产生了误导。我想尽办法都不能将其转义回来，最后只好放弃。腾讯云api内部肯定自己转义了一下，真的坑爹。" target="_blank" rel="noopener">http://###.cos.ap-shanghai.myqcloud.com/11111/app_list.txt?abcdefg，它内部给我转义成http://###.cos.ap-shanghai.myqcloud.com/11111/app_list.txt%3Fabcdefg，就是把&quot;?&quot;转义成了&quot;%3F&quot;。总而言之，我使用api一直获取不到资源，然后我在浏览器上试验了一下。发现把%3F改回?就可以访问了，实际上应该不是这样，反正就给我产生了误导。我想尽办法都不能将其转义回来，最后只好放弃。腾讯云api内部肯定自己转义了一下，真的坑爹。</a></li>
+<li>尝试自己写代码请求资源，结果发现如果url的协议是https就可以访问到资源了。这可能是android的问题，于是我又使用腾讯的api，配置更改如下：<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CosXmlServiceConfig serviceConfig = <span class="keyword">new</span> <span class="constructor">Builder()</span></span><br><span class="line">				.is<span class="constructor">Https(<span class="params">true</span>)</span></span><br><span class="line">                .set<span class="constructor">Region(<span class="params">region</span>)</span></span><br><span class="line">                .set<span class="constructor">Debuggable(<span class="params">true</span>)</span></span><br><span class="line">                .builder<span class="literal">()</span>;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>将isHttps设为ture，协议就改为了https。可是又报了另一个错：The specified key does not exist.它说我密钥不存在。</p>
+<ol>
+<li>如果使用http协议访问就会说无法解析域名，总之用腾讯云的api无法访问到资源就对了。</li>
+<li>放弃腾讯云的api，自己手写代码去请求资源！</li>
+</ol>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/IT-stuff/android/Android开发，使用腾讯云的API请求对象存储中的资源始终失败.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    
+    	
+    
+    	
+    
+    	
+    
+    	
+    
+    	
+    
+    	
+    
+    	
+    
+    	
+    
+    	
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·zcy/AI/dl/对神经网络整体的理解.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/·zcy/AI/dl/对神经网络整体的理解.html" class="post-title-link" itemprop="url">对神经网络整体的理解</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-04-12 20:12:28" itemprop="dateCreated datePublished" datetime="2019-04-12T20:12:28+08:00">2019-04-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-27 00:37:25" itemprop="dateModified" datetime="2020-02-27T00:37:25+08:00">2020-02-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index">
+                    <span itemprop="name">AI</span>
+                  </a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/dl/" itemprop="url" rel="index">
+                    <span itemprop="name">dl</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>23k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>39 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="note info">
+            <p>本文虽然理了一遍神经网络的知识点，但还是有些地方不明白，文中对此进行了提问。</p>
+          </div>
+<h1 id="大纲"><a href="#大纲" class="headerlink" title="大纲"></a>大纲</h1><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">序号</th>
+<th>描述的内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">2~4</td>
+<td>神经网络和深度学习的发展史。</td>
+</tr>
+<tr>
+<td style="text-align:center">5</td>
+<td>从二元分类开始。</td>
+</tr>
+<tr>
+<td style="text-align:center">6~10</td>
+<td>浅层神经网络的介绍。如神经网络中一些参数代表的意思、激活函数、梯度下降、随机初始化。</td>
+</tr>
+<tr>
+<td style="text-align:center">11~15</td>
+<td>深层神经网络的介绍。正向传播和反向传播中向量化后的计算、参数和超参数、神经网络和大脑的关系。</td>
+</tr>
+<tr>
+<td style="text-align:center">16</td>
+<td>一个Simple NN的例子。</td>
+</tr>
+<tr>
+<td style="text-align:center">17~22</td>
+<td>深度学习的实用性层面。数据切分、偏差与方差、正则化、dropout、其他正则化方法、均值归一化、梯度消失和梯度爆炸、梯度检验。</td>
+</tr>
+<tr>
+<td style="text-align:center">23~25</td>
+<td>一些优化算法。Mini-batch、指数加权平均、Momentum、RMSprop、Adam、Adagrad。</td>
+</tr>
+<tr>
+<td style="text-align:center">26~29</td>
+<td>超参数调试、Batch正则化、激活函数以及一些深度学习框架。</td>
+</tr>
+<tr>
+<td style="text-align:center">30~end</td>
+<td>本文略长，后序的文章请看对应章节的链接。</td>
+</tr>
+</tbody>
+</table>
+</div>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/·zcy/AI/dl/对神经网络整体的理解.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
         
   
   
@@ -1090,222 +1381,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    
-
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/运用文本相似度实现（证券）智能客服的记录.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/运用文本相似度实现（证券）智能客服的记录.html" class="post-title-link" itemprop="url">运用文本相似度实现（证券）智能客服的记录</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-03-30 12:20:02" itemprop="dateCreated datePublished" datetime="2019-03-30T12:20:02+08:00">2019-03-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-12-22 21:53:45" itemprop="dateModified" datetime="2019-12-22T21:53:45+08:00">2019-12-22</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/" itemprop="url" rel="index">
-                    <span itemprop="name">AI</span>
-                  </a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/ml/" itemprop="url" rel="index">
-                    <span itemprop="name">ml</span>
-                  </a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>222</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>数据来源于维基百科。<br>数据来源：<a href="https://dumps.wikimedia.org/zhwiki/20190320/" target="_blank" rel="noopener">维基百科数据</a></p>
-<h3 id="从维基百科提取数据"><a href="#从维基百科提取数据" class="headerlink" title="从维基百科提取数据"></a>从维基百科提取数据</h3><p>不会操作的，具体参考我这篇<a href="https://yan624.github.io/%E4%BD%BF%E7%94%A8WikiExtractor%E5%A4%84%E7%90%86%E7%BB%B4%E5%9F%BA%E7%99%BE%E7%A7%91%E4%B8%8A%E7%9A%84%E6%95%B0%E6%8D%AE%E6%AD%A5%E9%AA%A4-2019%E5%B9%B43%E6%9C%88.html">博客:使用WikiExtractor处理维基百科上的数据步骤-2019年3月</a><br>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/运用文本相似度实现（证券）智能客服的记录.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    
-
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/IT-stuff/linux/linux-Ubuntu安装NVIDIA驱动.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/IT-stuff/linux/linux-Ubuntu安装NVIDIA驱动.html" class="post-title-link" itemprop="url">linux Ubuntu安装NVIDIA驱动</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-03-28 17:23:11" itemprop="dateCreated datePublished" datetime="2019-03-28T17:23:11+08:00">2019-03-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-23 19:54:17" itemprop="dateModified" datetime="2020-02-23T19:54:17+08:00">2020-02-23</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/IT-stuff/" itemprop="url" rel="index">
-                    <span itemprop="name">IT-stuff</span>
-                  </a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/IT-stuff/linux/" itemprop="url" rel="index">
-                    <span itemprop="name">linux</span>
-                  </a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>598</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><a href="https://blog.csdn.net/ghw15221836342/article/details/79571559" target="_blank" rel="noopener">参考文章</a><br>以下步骤基于ubuntu16，下载的文件在Downloads文件夹。</p>
-<ol>
-<li>使用命令<code>lspci |grep -i nvidia</code>，查看显卡型号</li>
-<li>然后去<a href="http://www.nvidia.com/Download/index.aspx?lang=en-us" target="_blank" rel="noopener">官网</a>查找对应显卡版本。</li>
-<li>下载NVIDIA驱动文件，名称类似为NVIDIA-Linux-x86_64-375.20.run。</li>
-<li>卸载已有的驱动。由于我的是新机器，所以卸载步骤未执行。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/IT-stuff/linux/linux-Ubuntu安装NVIDIA驱动.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1378,7 +1453,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">143</span>
+          <span class="site-state-item-count">145</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1390,12 +1465,12 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">84</span>
+        <span class="site-state-item-count">85</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">159.2k</span>
+      	<span class="site-state-item-count">163.7k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
@@ -1477,13 +1552,13 @@
 </script>
 <!-- 图片缩放 -->
 <script>
-$('#content img').zoomify({duration: 500, });
-  $('#content img').on('zoom-in.zoomify', function () {
-    $('#sidebar').css('display', 'none');
-  });
-  $('#content img').on('zoom-out-complete.zoomify', function () {
-    $('#sidebar').css('display', '');
-  });
+$('.content img').zoomify({duration: 500, });
+$('.content img').on('zoom-in.zoomify', function () {
+	$('.sidebar').css('display', 'none');
+});
+$('.content img').on('zoom-out-complete.zoomify', function () {
+	$('.sidebar').css('display', '');
+});
 </script>
 
 

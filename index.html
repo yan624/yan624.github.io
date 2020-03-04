@@ -121,7 +121,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">143</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">145</span></a>
 
   </li>
         <li class="menu-item menu-item-about">
@@ -136,7 +136,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">84</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">85</span></a>
 
   </li>
         
@@ -534,10 +534,8 @@ n = [b_1, b_2, \cdots, b_n] \\</script><p>&emsp;&emsp;设 f(x)，g(x) 是 <scrip
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     
-    	
-    
 
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·学习笔记/AI/nlp/任务完成型对话系统综述.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·论文笔记/dilogue/task-oriented/61. Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -551,7 +549,200 @@ n = [b_1, b_2, \cdots, b_n] \\</script><p>&emsp;&emsp;设 f(x)，g(x) 是 <scrip
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            <a href="/·学习笔记/AI/nlp/任务完成型对话系统综述.html" class="post-title-link" itemprop="url">任务完成型对话系统论文</a>
+            <a href="/·论文笔记/dilogue/task-oriented/61. Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems.html" class="post-title-link" itemprop="url">Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-03-04 12:37:27 / 修改时间：16:06:57" itemprop="dateCreated datePublished" datetime="2020-03-04T12:37:27+08:00">2020-03-04</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/paper/" itemprop="url" rel="index">
+                    <span itemprop="name">paper</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="note info">
+            <p>&emsp;&emsp;<a href="https://arxiv.xilesou.top/pdf/1905.08743.pdf" target="_blank" rel="noopener">论文地址</a>，作者为 Wu, Chien-Sheng et al.，发表于 2019 年。</p>
+          </div>
+<h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>&emsp;&emsp;传统的状态跟踪假设本体已经定义好，所有的 slot-value 均已知，这可以将 DST 简化为分类任务。<strong>但是这种方法有两种缺陷：1）</strong>完整的本体很难提前获得。工业界，数据库通常由 API 支撑，由他人维护，很难枚举所有 slot-value；<strong>2）</strong>即使完整的本体存在，slot-value 的数量也会极其庞大。例如酒店名称和列车出发时间包含大量可能的值。因此许多先前的工作都基于神经分类模型，其在现实场景下并不适用。<br>&emsp;&emsp;最近 <a href="https://arxiv.xilesou.top/pdf/1810.00278.pdf" target="_blank" rel="noopener">Budzianowski et al. (2018)</a> 介绍了多领域对话数据集 MultiWOZ，由于它的混合领域对话，<strong>其在 DST 中引入了新的挑战</strong>。<strong>1）</strong>如图一所示，用户先订了酒店，再询问了风景名胜，最后订了一辆出租车。此例中，DST 模型需要探测 (domain, slot, value) 三元组，这在本体中包含了大量的组合，即 30 对 (domian, slot) 以及总计 4500 个可能的值。<strong>2）</strong>另一挑战是，需要进行多轮映射。<strong>单轮映射指的是从单轮对话中推断出 (domain, slot, value) 的场景，但是多轮映射指的是从多轮对话中推断，这些对话发生在多个领域。</strong>例如图 1 中，atrraction 领域的 (area, centre) pair 中的 area 信息是在 restaurant 领域中被预测出的，且这是在前几轮被提到的内容。<br>&emsp;&emsp;为了解决这些问题，我们强调 DST 模型应该跨领域共享跟踪知识。不同领域中有许多 slot 可以共享它们的值。例如，area slot 可以存在于 restaurant, attraction, and taxi 中。此外 restaurant 领域的 name slot 可以与 taxi  领域的 departure slot 共享值。另外，<strong>为了使 DST 在未知领域跟踪 slot</strong>，跨领域转移知识势在必行。<strong>我们期望 DST 模型可以通过学习跟踪其他领域中的 slot 来学习跟踪 zero-shot 领域中某些相同的 slot。</strong><br>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/·论文笔记/dilogue/task-oriented/61. Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·论文笔记/dilogue/task-oriented/62. Collaborative Multi-Agent Dialogue Model Training Via Reinforcement.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/·论文笔记/dilogue/task-oriented/62. Collaborative Multi-Agent Dialogue Model Training Via Reinforcement.html" class="post-title-link" itemprop="url">Collaborative Multi-Agent Dialogue Model Training Via Reinforcement</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-03-01 13:34:52 / 修改时间：14:52:09" itemprop="dateCreated datePublished" datetime="2020-03-01T13:34:52+08:00">2020-03-01</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/paper/" itemprop="url" rel="index">
+                    <span itemprop="name">paper</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>742</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>&emsp;&emsp;机器学习在对话式代理（conversational agent）上已经取得了巨大的进展，尤其是采用了深度学习之后。然而大多数工作都遭受着缺乏数据的困境，因为为代理（复杂到能够完成有意义对话的代理）设计一个样本有效的学习算法是非常有挑战的。在其他的简化版本之中，<strong>这一挑战导致了只能将代理之间的交互视为单个（多个代理交互更难）代理的学习问题</strong>。<br>&emsp;&emsp;本项工作中，我们将对话交互建模为随机博弈的形式，并训练两个交互式代理，每一个代理都拥有不同的角色，它们能够通过自然语言与对方交互。我们首先对每个代理训练了 NLU 和 NLG 神经网络，然后使用 multi-agent 强化学习技术，即 <a href="https://www.cs.cmu.edu/~mmv/papers/01ijcai-mike.pdf" target="_blank" rel="noopener">Win or Lose Fast Policy Hill Climbing (WoLF-PHC)</a> 算法。以在高度的不确定（源于每个代理的统计 NLU 和 NLG）以及另一个代理的不稳定行为（因为另一个代理同时在学习）面前学习到最优对话策略。<strong>虽然不能完全减少训练 NLU 和 NLG 组件所需的种子数据，但 multi-agent 的设置具有增强它们的效果，允许我们生成原始数据中不存在的对话和行为。</strong><br>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/·论文笔记/dilogue/task-oriented/62. Collaborative Multi-Agent Dialogue Model Training Via Reinforcement.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·学习笔记/AI/nlp/任务完成型对话系统论文调研.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/·学习笔记/AI/nlp/任务完成型对话系统论文调研.html" class="post-title-link" itemprop="url">任务完成型对话系统论文调研</a>
         </h1>
 
         <div class="post-meta">
@@ -568,7 +759,7 @@ n = [b_1, b_2, \cdots, b_n] \\</script><p>&emsp;&emsp;设 f(x)，g(x) 是 <scrip
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-28 22:19:43" itemprop="dateModified" datetime="2020-02-28T22:19:43+08:00">2020-02-28</time>
+                <time title="修改时间：2020-03-04 16:34:37" itemprop="dateModified" datetime="2020-03-04T16:34:37+08:00">2020-03-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -594,14 +785,14 @@ n = [b_1, b_2, \cdots, b_n] \\</script><p>&emsp;&emsp;设 f(x)，g(x) 是 <scrip
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.8k</span>
+              <span>4.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
+              <span>7 分钟</span>
             </span>
 
         </div>
@@ -613,10 +804,10 @@ n = [b_1, b_2, \cdots, b_n] \\</script><p>&emsp;&emsp;设 f(x)，g(x) 是 <scrip
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="任务完成型对话系统"><a href="#任务完成型对话系统" class="headerlink" title="任务完成型对话系统"></a>任务完成型对话系统</h1>
+          <h1 id="任务完成型对话系统"><a href="#任务完成型对话系统" class="headerlink" title="任务完成型对话系统"></a>任务完成型对话系统</h1><p>&emsp;&emsp;各领域的论文可以按下面对应的按钮，找到详细的对比。<br>&emsp;&emsp;<a class="btn" href="#slu论文对比">SLU 论文对比</a><br>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/·学习笔记/AI/nlp/任务完成型对话系统综述.html#more" rel="contents">
+              <a class="btn" href="/·学习笔记/AI/nlp/任务完成型对话系统论文调研.html#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -677,7 +868,7 @@ n = [b_1, b_2, \cdots, b_n] \\</script><p>&emsp;&emsp;设 f(x)，g(x) 是 <scrip
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-26 20:47:33" itemprop="dateModified" datetime="2020-02-26T20:47:33+08:00">2020-02-26</time>
+                <time title="修改时间：2020-03-02 00:44:41" itemprop="dateModified" datetime="2020-03-02T00:44:41+08:00">2020-03-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -697,14 +888,14 @@ n = [b_1, b_2, \cdots, b_n] \\</script><p>&emsp;&emsp;设 f(x)，g(x) 是 <scrip
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>938</span>
+              <span>1.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -722,26 +913,7 @@ n = [b_1, b_2, \cdots, b_n] \\</script><p>&emsp;&emsp;设 f(x)，g(x) 是 <scrip
 <h1 id="回溯法"><a href="#回溯法" class="headerlink" title="回溯法"></a>回溯法</h1><h2 id="算法思想"><a href="#算法思想" class="headerlink" title="算法思想"></a>算法思想</h2><p>&emsp;&emsp;比较全的概念：<a href="https://leetcode-cn.com/tag/backtracking/" target="_blank" rel="noopener">leetcode 回溯法概念</a>。<br>&emsp;&emsp;大白话：世界上有许多只能执行穷举法的问题，并且事实上，这些问题解决办法中不存在除穷尽搜索之外的方法。它一般适用于求存在大量潜在解，但解可拆分为部分的问题。<br>&emsp;&emsp;<strong>回溯法基本特征</strong>：</p>
 <ol>
 <li>节点是用<strong>深度优先搜索</strong>的方法生成的；</li>
-<li>不需要存储整棵搜索树（事实上，连树都没必要存储，只需要记录路径即可）</li>
-</ol>
-<h2 id="例子：三着色问题"><a href="#例子：三着色问题" class="headerlink" title="例子：三着色问题"></a>例子：三着色问题</h2><p>&emsp;&emsp;给定一个无向图 G=(V, E)，需要使用三种颜色之一为 G 的顶点着色，使得没有两个相邻顶点的颜色相同。</p>
-<ol>
-<li>合法：没有两个相邻顶点的颜色相同；</li>
-<li>非法：相邻顶点的颜色相同；</li>
-<li>搜索树：一个 n 个顶点的无向图共有 <code>3^n</code> 种可能的着色，所有可能的着色集合可以用一棵完全三叉树表示，即搜索树；</li>
-<li>部分：如果某时没有两个相邻顶点的颜色相同，但图的着色还未完成，称此时的解为部分解；</li>
-<li>现节点：当前待判断该着色是否合法的节点；</li>
-<li>死节点：当前节点的着色已经是非法的，则称此节点为死节点。</li>
-</ol>
-<h1 id="401-二进制手表"><a href="#401-二进制手表" class="headerlink" title="401. 二进制手表"></a>401. 二进制手表</h1><h2 id="回溯法-1"><a href="#回溯法-1" class="headerlink" title="回溯法"></a>回溯法</h2><p>&emsp;&emsp;分析：</p>
-<ol>
-<li>问题可转化为： 10（4+6） 个电子灯一次实验取出 n 个，取完之后放回，问共有多少种取法？</li>
-<li>显然一次实验中只能取一个电子灯，所以电子灯是不可重复选取的，但是顺序却有关系，这是由于前 4 个电子灯代表小时，后 6 个电子灯代表分钟。所以这是一个排列的问题，共有 <script type="math/tex">\frac{10!}{(10 - k)!}</script> 种。</li>
-<li>此问题的<strong>约束函数</strong>是前 4 个电子灯的二进制表示只能在 0~11 之间，后 6 个电子灯的二进制表示只能在 0~59 之间。<ul>
-<li>并且电子灯亮着的个数要为 n。</li>
-</ul>
-</li>
-</ol>
+<li>不需要存储整棵搜索树（事实上，连树都没必要存储，只需要记录路径即可）
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/algorithm/【算法设计题目】回溯法.html#more" rel="contents">
@@ -1097,215 +1269,6 @@ n = [b_1, b_2, \cdots, b_n] \\</script><p>&emsp;&emsp;设 f(x)，g(x) 是 <scrip
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    
-
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·论文笔记/dilogue/task-oriented/59. A Bi-model based RNN Semantic Frame Parsing Model for Intent Detection and Slot Filling.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/·论文笔记/dilogue/task-oriented/59. A Bi-model based RNN Semantic Frame Parsing Model for Intent Detection and Slot Filling.html" class="post-title-link" itemprop="url">A Bi-model based RNN Semantic Frame Parsing Model for Intent Detection and Slot Filling</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-02-16 01:31:40" itemprop="dateCreated datePublished" datetime="2020-02-16T01:31:40+08:00">2020-02-16</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-28 00:05:04" itemprop="dateModified" datetime="2020-02-28T00:05:04+08:00">2020-02-28</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/paper/" itemprop="url" rel="index">
-                    <span itemprop="name">paper</span>
-                  </a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="note info">
-            <p>&emsp;&emsp;<a href="https://arxiv.xilesou.top/pdf/1812.10235.pdf" target="_blank" rel="noopener">论文地址</a>，作者是 Yu Wang et.al.，发表于 2018 年 12 月。</p>
-          </div>
-<h1 id="摘要翻译"><a href="#摘要翻译" class="headerlink" title="摘要翻译"></a>摘要翻译</h1><p>&emsp;&emsp;<strong>意图检测和 slot filling 是构建 SLU 的两个主要任务</strong>。现在，多个基于深度学习的模型在这些任务上都取得了良好的效果。最有效的算法是基于 seq2seq（or encoder-decoder）的结构，并使用单独或联合的模型生成<strong>意图</strong>和<strong>语义标记</strong>（<strong>semantic tags</strong>）。然而，以往的研究大多将意图检测和 slot filling 作为两个独立的平行的任务来处理，或者使用 seq2seq 模型来生成语义标记和意图。这些方法大多采用一个（联合的（joint））神经网络模型（包括 encoder-decoder 结构）对两个任务进行建模，因此可能无法充分利用它们之间的交叉影响。本文设计了一种新的基于 <strong>Bi-model</strong> 的 <strong>RNN 语义框架解析神经网络结构</strong>（<strong>RNN semantic frame parsing network structures</strong>），利用两个有关联的双向 LSTMs（<strong>BLSTM</strong>）来将它们之间的相互影响考虑进去，共同完成意图检测和 slot filling 任务。我们的带 decoder 的 Bi-model 结构在 ATIS 上取得了一流的结果，意图准确率提高了0.5%，slot filling 准确率提高了0.9%。<br>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/·论文笔记/dilogue/task-oriented/59. A Bi-model based RNN Semantic Frame Parsing Model for Intent Detection and Slot Filling.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    
-    	
-    
-
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/project/uber plato v0.2使用注意点（踩坑）.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/project/uber plato v0.2使用注意点（踩坑）.html" class="post-title-link" itemprop="url">uber plato v0.2使用注意点（踩坑）</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-02-12 17:31:58" itemprop="dateCreated datePublished" datetime="2020-02-12T17:31:58+08:00">2020-02-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-13 22:06:03" itemprop="dateModified" datetime="2020-02-13T22:06:03+08:00">2020-02-13</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/project/" itemprop="url" rel="index">
-                    <span itemprop="name">project</span>
-                  </a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>744</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <ol>
-<li><code>/plato/controller/basic_controller.py</code>, line 415 将 <code>&#39;/&#39;</code> 改成 <code>os.sep</code>，所有的 controller 都要改。否则会出现 <code>ValueError: Configuration file CamRest_text.yaml not found!</code> 的错误，这是因为 windows 电脑的分隔符是 <code>\\</code> 而不是 <code>&#39;/&#39;</code>。</li>
-<li>在运行 LudwigNLU（或自定义的预训练 NLU） 而不是 SlotFillingNLU 的情况下。如果使用 pycharm 运行 plato 而不是命令行，有几点需要注意。<ul>
-<li>在包 <code>applications/cambridge_restaurants</code> 中有一个模块为 <code>cambridge_restaurants_agent.py</code>，它可以供人直接运行（只需稍作更改）。但是这会报错 <code>Plato error! Ludwig nlu: Model directory models/camrest_nlu/sys/experiment_run/model not found</code>，这是因为在 <code>applications/cambridge_restaurants</code> 路径下运行程序，那么项目的根路径就变了 <code>plato/applications/cambridge_restaurants</code> 而不是 <code>plato</code>。所以在加载模型时，模型的路径错了。所以可以在 plato 项目的根路径下新建一个 py 文件，然后把 <code>cambridge_restaurants_agent.py</code> 的代码拷过去。</li>
-</ul>
-</li>
-<li>使用 ludwig 训练 NLU/DST/NLG 时，会出现找不到日志文件夹的错误，因为它没有自动创建 log 文件夹的上一级文件夹。个人认为是框架的 bug，所以在训练的时候应该要加上 <code>--skip_save_log</code> 跳过日志记录。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/project/uber plato v0.2使用注意点（踩坑）.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1378,7 +1341,7 @@ n = [b_1, b_2, \cdots, b_n] \\</script><p>&emsp;&emsp;设 f(x)，g(x) 是 <scrip
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">143</span>
+          <span class="site-state-item-count">145</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1390,12 +1353,12 @@ n = [b_1, b_2, \cdots, b_n] \\</script><p>&emsp;&emsp;设 f(x)，g(x) 是 <scrip
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">84</span>
+        <span class="site-state-item-count">85</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">159.2k</span>
+      	<span class="site-state-item-count">163.7k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
@@ -1477,13 +1440,13 @@ n = [b_1, b_2, \cdots, b_n] \\</script><p>&emsp;&emsp;设 f(x)，g(x) 是 <scrip
 </script>
 <!-- 图片缩放 -->
 <script>
-$('#content img').zoomify({duration: 500, });
-  $('#content img').on('zoom-in.zoomify', function () {
-    $('#sidebar').css('display', 'none');
-  });
-  $('#content img').on('zoom-out-complete.zoomify', function () {
-    $('#sidebar').css('display', '');
-  });
+$('.content img').zoomify({duration: 500, });
+$('.content img').on('zoom-in.zoomify', function () {
+	$('.sidebar').css('display', 'none');
+});
+$('.content img').on('zoom-out-complete.zoomify', function () {
+	$('.sidebar').css('display', '');
+});
 </script>
 
 
