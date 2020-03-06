@@ -121,7 +121,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">145</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">146</span></a>
 
   </li>
         <li class="menu-item menu-item-about">
@@ -197,6 +197,120 @@
             
 
   <div class="posts-expand">
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    
+    	
+    
+    	
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·zcy/AI/dl/深度学习算法（一）：simple NN（前馈神经网络的正反向推导）.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/·zcy/AI/dl/深度学习算法（一）：simple NN（前馈神经网络的正反向推导）.html" class="post-title-link" itemprop="url">深度学习算法（一）：simple NN（前馈神经网络的正反向推导）</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-05-16 19:53:55" itemprop="dateCreated datePublished" datetime="2019-05-16T19:53:55+08:00">2019-05-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-27 00:44:54" itemprop="dateModified" datetime="2020-02-27T00:44:54+08:00">2020-02-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index">
+                    <span itemprop="name">AI</span>
+                  </a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/dl/" itemprop="url" rel="index">
+                    <span itemprop="name">dl</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>13k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>22 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="note info">
+            <p>本文的公式不存在次方的说法，所以看见上标，不要想成是次方。<br>对于权重的表示问题，请看<a href="https://yan624.github.io/·学习笔记/AI/dl/《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题.html">博客</a>，但是由于是以前的学习笔记，不保证完全正确。<br>如果想了解为什么梯度下降要对w和b求导，可以看<a href="https://yan624.github.io/·学习笔记/AI/ml/梯度下降算法的推导.html">这篇</a>。<br><strong>建议边看边写，否则思维跟不上。</strong></p>
+          </div>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>参考<a href="https://www.cnblogs.com/charlotte77/p/5629865.html" target="_blank" rel="noopener">文章</a><br>以如下神经网络架构为例。参考<a href="https://www.cnblogs.com/charlotte77/p/5629865.html" target="_blank" rel="noopener">文章</a>中使用了一个2 2 2的神经网络架构，但是现实中神经网络架构不会这么整整齐齐。所以还是使用了略复杂的架构，此外原文中未对bias（偏差）更新。另外原文也没有实现向量化后的计算。虽然在后面的代码写了，但是由于代码太长了，有一种代码我给出来了，你们自己去看的感觉。说实话没多少注释，都没看的欲望(╬￣皿￣)。然后她所使用的符号让我不太习惯，因为看吴恩达以及李宏毅老师使用的符号都是<script type="math/tex">w^l_{ji}\ a^l_i</script>等等，所以自己重新推导一遍，并且使用了数学公式，而不是截图，更好看一点。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版"><br>解释一下最下面的神经元，这个神经元初始化为1，也就是意味着1 * b = b。输入值为1，一个偏差乘1还是偏差本身。<br>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/·zcy/AI/dl/深度学习算法（一）：simple NN（前馈神经网络的正反向推导）.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
         
   
   
@@ -1205,115 +1319,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    
-
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/assorted/hexo/运用其他的插件，在hexo中添加提示弹窗.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/assorted/hexo/运用其他的插件，在hexo中添加提示弹窗.html" class="post-title-link" itemprop="url">运用其他的插件，在hexo中添加提示弹窗</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-04-18 14:30:17" itemprop="dateCreated datePublished" datetime="2019-04-18T14:30:17+08:00">2019-04-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-01-05 16:39:24" itemprop="dateModified" datetime="2020-01-05T16:39:24+08:00">2020-01-05</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/assorted/" itemprop="url" rel="index">
-                    <span itemprop="name">assorted</span>
-                  </a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/assorted/hexo/" itemprop="url" rel="index">
-                    <span itemprop="name">hexo</span>
-                  </a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>566</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>由于我写了很多学习记录，但是这些都是自己看书或者看视频学来的。万一有错误的地方正好被人看见，他又是新手，误以为我的是对的，这样就不好了。所以准备做一个提示弹窗，在所有的带有“学习笔记”的标签的文章中自动弹出提示。</p>
-<ol>
-<li>下载一个自己喜欢的弹窗插件，可以去<a href="http://www.jq22.com/" target="_blank" rel="noopener">jQuery插件库</a>找。</li>
-<li>将css和js放在next主题下的source文件夹中，如下图<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/hexo/next%E4%B8%BB%E9%A2%98%E7%9B%AE%E5%BD%95.jpg" alt="next主题目录"><br>css文件放入css文件，js文件放入js文件夹。我自己创了一个spop的文件夹，用于单独放置我的弹窗插件。</li>
-<li>打开layout文件夹，进入_macro文件夹，找到post.swig文件。搜索class=”post-block”，这个标签的位置在下图箭头所指的地方：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/hexo/%E5%BC%B9%E7%AA%97%E6%8F%92%E4%BB%B6%E4%BB%A3%E7%A0%81%E5%86%99%E5%85%A5%E7%9A%84%E4%BD%8D%E7%BD%AE.png" alt="弹窗插件代码写入的位置"><br>如果打开了这个文件，找了post-block标签，可以看到标签内部第一行代码为<code>&lt;link itemprop=&quot;mainEntityOfPage&quot; href=&quot;{ config.url }{ url_for(post.path) }&quot;/&gt;</code>。由于hexo渲染问题我将href属性里的值去掉了一对{}。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/assorted/hexo/运用其他的插件，在hexo中添加提示弹窗.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1386,7 +1391,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">145</span>
+          <span class="site-state-item-count">146</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1403,12 +1408,15 @@
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">163.7k</span>
+      	<span class="site-state-item-count">166.3k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
 </div>
   <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu"></i>zhihu</a>
+      </span>
       <span class="links-of-author-item">
         <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-fw fa-envelope"></i>E-Mail</a>
       </span>
