@@ -1805,6 +1805,84 @@ P(a < X \leq b) = & F_X(b) - F_X(a) \\
       </tags>
   </entry>
   <entry>
+    <title>PyDial: A Multi-domain Statistical Dialogue System Toolkit</title>
+    <url>/%C2%B7%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/dilogue/task-oriented/55.%20PyDial%EF%BC%9AA%20Multi-domain%20Statistical%20Dialogue%20System%20Toolkit.html</url>
+    <content><![CDATA[<div class="note info">
+            <p>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/P17-4013/" target="_blank" rel="noopener">论文地址</a>，论文作者 S Ultes 等，发表于 2017 年。<br>&emsp;&emsp;此文中出现了许多专业名词，可参考 <a href="https://yan624.github.io/·论文笔记/dilogue/task-oriented/54. A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management.html">此处</a> 加以理解。</p>
+          </div>
+<h1 id="摘要翻译"><a href="#摘要翻译" class="headerlink" title="摘要翻译"></a>摘要翻译</h1><p>&emsp;&emsp;统计口语对话系统（<em>Statistical Spoken Dialogue Systems, Statistical SDS, 统计 SDS</em>）已经存在多年了。然而，访问这些系统一直很困难，因为仍然没有公开的端到端系统实现。为了缓解这个问题，我们提出了 PyDial，一个开源的端到端统计语音对话系统工具包，它为<strong>所有对话系统模块</strong>提供<strong>统计方法</strong>的实现。此外，它还被扩展为提供多领域会话功能。它提供了各个对话系统模块的简单配置、易扩展性和域无关（<em>domain-independent</em>）的实现。该工具包可在 Apache2.0 许可下下载。</p>
+<h1 id="1-引言"><a href="#1-引言" class="headerlink" title="1 引言"></a>1 引言</h1><p>&emsp;&emsp;针对机器去设计语音接口（凭此人机交互）是多年来的研究热点。这些语音对话系统（SDSs）通常<strong>基于模块化的架构</strong>，包括<strong>语音识别</strong>（<em>speech recognition</em>）和<strong>语义解码</strong>（<em>semantic decoding</em>）的<strong>输入处理模块</strong>（<em>input processing modules</em>）、<strong>信念跟踪</strong>（<em>belief tracking</em>）和<strong>策略</strong>（<em>policy</em>）的<strong>对话管理模块</strong>（<em>dialogue management modules</em>）、<strong>语言生成</strong>（<em>language generation</em>）和<strong>语音合成</strong>（<em>speech synthesis</em>）的<strong>输出处理模块</strong>（<em>output processing modules</em>）（见图 1）。<br><div class="note success">
+            <p>&emsp;&emsp;以上介绍了 SDS 的架构。下一段介绍了一些 SDS 中不同组件的统计方法示例。</p>
+          </div></p>
+<p>&emsp;&emsp;统计 SDS 是一个语音接口，其中所有 SDS 模块都基于统计模型（从数据中学习）（与人工规则相比）。对话系统中<strong>不同组件的统计方法</strong>例子可以在以下中找到：</p>
+<ul>
+<li>……（若干论文），详见原论文 Introduction 第二段。<a id="more"></a>
+</li>
+</ul>
+<p>&emsp;&emsp;尽管对统计 SDS 的研究非常丰富，但是仍然没有通用的平台和开放的工具包。其他工具包实现通常集中在单个模块上（例如：<em>略，详见论文</em>）。提供专门针对统计对话系统（<em>statistical dialogue systems</em>）的工具包将使新进入该领域的人员能够更容易地参与进来，结果更容易比较，研究人员能够专注于他们的特定研究问题，而不是重新实现算法（例如，评估（<em>v.</em>）交互功能中的理解或生成组件的性能）。<br>&emsp;&emsp;因此，为了促进研究，以及使人们更容易参与统计口语对话系统的研究，我们提出了一个多领域统计口语对话系统工具包 <strong>PyDial</strong>。PyDial 是用 Python 实现的，剑桥对话系统团队（<em>Cambridge Dialogue Systems Group</em>）正在积极使用它。<br><div class="note default">
+            <p>&emsp;&emsp;那么什么是 PyDial 呢？</p>
+          </div></p>
+<p>&emsp;&emsp;PyDial 支持多领域的应用程序，在这些应用程序中，对话可能涉及多个不同的主题。这引入了许多新的研究课题，包括广义信念跟踪（<em>generalised belief tracking</em>）（论文略），<em>rapid policy adaptation and parallel learning</em> 和自然语言生成（<em>natural language generation</em>）。<br>&emsp;&emsp;论文的余下部分安排如下：</p>
+<ol>
+<li>第 2 节介绍了 PyDial 的总体架构（并且将 SDS 架构扩展到多个领域）和 PyDial 的主要应用规范；</li>
+<li>第 3 节包含各个对话系统模块的实现细节；</li>
+<li>第 4 节列出了可用的领域，其中有两个领域用于第5节中的示例交互；</li>
+<li>第 6 节总结了该工具包的主要贡献。</li>
+</ol>
+<h1 id="2-PyDial-架构"><a href="#2-PyDial-架构" class="headerlink" title="2 PyDial 架构"></a>2 PyDial 架构</h1><p>&emsp;&emsp;本节介绍 PyDial 的结构及其与环境的接口方式。随后，描述了在单个领域上功能的扩展，以允许在多个领域上进行对话。最后，我们讨论了 PyDial 设计的三个关键原则。</p>
+<h2 id="2-1-总体系统架构"><a href="#2-1-总体系统架构" class="headerlink" title="2.1 总体系统架构"></a>2.1 总体系统架构</h2><p>&emsp;&emsp;PyDial 的总体架构如图 2 所示。其中主要组件被称为 <strong>Agent</strong>，它位于系统的核心。它封装了所有对话系统模块，以实现基于文本的交互，即输入和输出。对话系统模块依赖于由一个<strong>本体</strong>（<strong>Ontology</strong>）定义的领域规范。为了与环境交互（<strong>博主注</strong>：这里的“与环境交互”应该指的是机器与外部环境交互，如机器与餐厅环境交互、与旅游环境交互、与服装商场进行交互等），PyDial 提供了三个接口：<strong>Dialogue Server</strong>【允许语音型交互】、<strong>Texthub</strong>【允许输入型交互】和 <strong>User Simulation system</strong>。交互的性能由<strong>评估</strong>（<strong>Evaluation</strong>）组件监视。</p>
+<ul>
+<li>Agent：负责对话交互，因此内部的架构类似于图 1 中的内容。<strong>Agent</strong> 还维护 dialogue sessions，即确保每个输入都<u>发送到</u>（<em>is routed to</em>）正确的对话。因此，<strong>可以通过实例化多个 agents 来支持多个对话</strong>。<ol>
+<li>semantic parser：将文本输入转化为一个语义表征</li>
+<li>belief tracker：负责维护一个被称为 <strong>belief state</strong> 的对话状态表征（<em>dialogue state representation</em>）</li>
+<li>policy：将 <strong>belief state</strong> 映射到适合的 <strong>system dialogue act</strong></li>
+<li>semantic output：将 <strong>system dialogue act</strong> 转化为文本表示</li>
+<li>topic tracker：对于多域功能，需要 <strong>topic tracker</strong>，其功能将在第 2.2 节中解释</li>
+</ol>
+</li>
+<li>User Simulation：支持在语义层面进行对话模拟，即不使用任何语义解析器或语言生成。这是一种广泛应用于训练和评估基于强化学习算法的技术，因为它避免了昂贵的数据收集练习（<em>data collection exercises</em>）和用户试验（<em>user trials</em>）。它当然只提供了一个近似的真实用户行为，所以通过模拟获得的结果应该谨慎看待！</li>
+<li>与环境交互：为了使 Agent 能够与其环境进行通信，PyDial 提供了两种模式：语音和文本<ul>
+<li>Texthub：只需将 Agent 连接到终端</li>
+<li>Dialogue Server：要启用基于语音的对话，<strong>Dialogue Server</strong> 允许连接到外部语音客户端。此客户端负责使用 ASR 将输入语音信号映射到文本，并使用语音合成将输出文本映射到语音（<em>text to speech</em>, <strong>TTS</strong>）。语音客户端通过 HTTP 交换 JSON 消息连接到对话服务器。请注意，语音客户端不是 PyDial 的一部分。基于云的 ASR 和 TTS 服务可以从 <a href="https://cloud.google.com/speech" target="_blank" rel="noopener">Google</a>、<a href="https://www.microsoft.com/cognitive-services/en-us/speech-api" target="_blank" rel="noopener">Microsoft</a>或 <a href="http://www.ibm.com/watson/developercloud/speech-to-text.html" target="_blank" rel="noopener">IBM</a>等提供商处获得。PyDial 目前连接到 DialPort（Zhao等人，2016），其允许基于语音的交互。</li>
+</ul>
+</li>
+<li>Ontology：除了 <strong>Agent</strong> 和接口组件之外，还有 <strong>Ontology</strong>，Ontology 封装了对话域规范以及对后端数据库（例如，一组餐厅及它们的属性）的访问。它被建模为一个全局对象，大多数对话系统模块和用户模拟器使用它来获取有关用户 <em>actions,  slots, slot values, and system actions</em> 的相关信息。</li>
+<li>Evaluation：用于计算对话的评估度量（例如 <strong>Task Success</strong>）。对于基于强化学习的对话模块来说，评估组件还负责提供 <em>reward</em></li>
+</ul>
+<h2 id="2-2-多领域对话系统架构"><a href="#2-2-多领域对话系统架构" class="headerlink" title="2.2 多领域对话系统架构"></a>2.2 多领域对话系统架构</h2><p>&emsp;&emsp;Agent -&gt; <strong>topic tracker</strong></p>
+<h2 id="2-3-主要原则"><a href="#2-3-主要原则" class="headerlink" title="2.3 主要原则"></a>2.3 主要原则</h2><p>&emsp;&emsp;为了使 PyDial 能够轻松地应用于新问题，PyDial 体系结构的设计支持三个关键原则：</p>
+<ul>
+<li>Domain Independence</li>
+<li>Easy Configurability</li>
+<li>Extensibility</li>
+</ul>
+<h1 id="3-实现"><a href="#3-实现" class="headerlink" title="3 实现"></a>3 实现</h1><p>&emsp;&emsp;PyDial 工具包是一个不断开发的研究系统。可从Apache2.0许可下的<a href="http://pydial.org" target="_blank" rel="noopener">网站</a>免费下载。在最初的版本中可以使用以下各种系统模块的实现，不过，到时候会有更多的实现。</p>
+<ul>
+<li><strong>Semantic Decoder</strong>：为了对输入语句（或n个最佳语句列表，or n-best-list of sentences）进行语义解码，PyDial 提供了一个基于规则（使用正则表达式）的实现，以及一个基于 SVM 的统计模型，即 the Semantic Tuple Classifier（Mairess et al., 2009）。对于后者，只提供了 CamRestaurants 领域的模型。</li>
+<li><strong>Belief Tracker</strong>：为了跟踪 belief state，可用 <strong>the rule-based focus tracker</strong>（Henderson et al., 2014）。该实现与领域无关。所有特定领域的信息都是从本体中提取的。</li>
+<li><strong>Policy</strong>：负责 policy 的决定执行模块有两种实现方式：<strong>1）</strong>人工制定的策略（应该适用于所有领域）；<strong>2）</strong>Gaussian process (GP) reinforcement learning policy（Gasic and Young, 2014）。对于多领域对话，策略管理器可以像处理所有其他模块一样处理策略。给定每个用户的输入的领域，然后选择相应的领域策略。<br>此外，还可以选择 Gasic et al.(2015b) 提出的 Bayesian committee machine(BCM) 处理程序：<strong>当处理一个领域的 belief state 时，参考其他领域的策略来选择最终的系统操作</strong>。为了实现这一点，belief state 被映射到一个抽象表示，然后允许所有策略访问它。在 PyDial 中，经过训练的策略可以在 committee-based handler 和 standard policy manager handler 之间移动。即在 committee 外部（在单域或多域设置中）接受训练的策略可以在 committee 内部使用，反之亦然。</li>
+<li><strong>Language Generator</strong>：为了将 semantic system action 映射为文本，PyDial 提供了两个实现组件：<strong>1）</strong>对于所有领域来说，提供了一个基于模板（定义规则）的语言生成；<strong>2）</strong>此外 Wen et al. (2015) 提出了基于 LSTM 的语言生成器，里面包含了 CamRestaurants 领域的预训练模型</li>
+<li><strong>Topic Tracker</strong>：PyDial 提供了一个基于关键字的 Topic Tracker 实现。如果 Topic Tracker 已为某些用户输入标识了领域，那么它将继续使用该领域，直到识别了新的领域。<strong>因此，并非每个用户输入都必须包含相关关键字</strong>。如果 Topic Tracker <strong>无法在开始时识别领域</strong>，那么它将创建与用户的 meta-dialogue，直到确定初始领域或达到最大重试次数。</li>
+<li><strong>Evaluation</strong>：为了评估对话，目前已经实现了两个 success-based 模块。（下面的话部分看不懂，索性不翻了—）<blockquote>
+<p>The objective task success evaluator compares the constraints and requests the system identifies with the true values. The latter may either be derived from the user simulator or, in real dialogues, by specifying a predefined task. For real dialogues, a subjective task success evaluator may also be applied which queries the user about the outcome of the dialogue.</p>
+</blockquote>
+</li>
+<li><strong>User Simulation</strong>：模拟用户的实现使用 agenda-based 用户模拟器（Schatzmann et al., 2006）。该模拟器包含 user model 和 error model，从而创建 a n-best-list of user acts 来模拟噪声语音信道。通过使用一组普遍适用的参数，模拟器可以应用于所有领域。领域特定的信息取自本体。</li>
+</ul>
+<h1 id="4-一些领域"><a href="#4-一些领域" class="headerlink" title="4 一些领域"></a>4 一些领域</h1><p>&emsp;&emsp;<strong>PyDial 的主要关注的是面向任务的对话，即根据一些约束条件用户必定找到其匹配的实体</strong>。找到实体后，用户可以请求其他信息。为应付这些场景，PyDial 预先加载了总共十个不同复杂度的领域：</p>
+<ul>
+<li>略</li>
+</ul>
+<p>&emsp;&emsp;如前所述，所有 <strong>policy</strong> 实现以及 <strong>belief tracker</strong> 和 <strong>user simulator</strong> 的实现都独立于领域之外。因此，在<strong>所有领域</strong>都可以进行交互的模拟。此外，<strong>semantic decoder</strong> 和 <strong>language generator</strong> 在某种程度上依赖于特定领域的实现。PyDial 包含用于<strong>所有领域</strong>的基于规则的 <strong>semantic decoder</strong> 和一个用于 <strong>CamRestaurants</strong> 的统计解码器（<em>statistical decoder</em>）。此外，PyDial 还为<strong>大多数领域</strong>提供了基于模板的语言生成，并为 <strong>CamRestaurants</strong> 提供了基于 LSTM 的生成器。因此，在 CamRestaurants 领域，实现统计对话完全有可能。</p>
+]]></content>
+      <categories>
+        <category>paper</category>
+      </categories>
+      <tags>
+        <tag>pydial</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management</title>
     <url>/%C2%B7%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/dilogue/task-oriented/54.%20A%20Benchmarking%20Environment%20for%20Reinforcement%20Learning%20Based%20Task%20Oriented%20Dialogue%20Management.html</url>
     <content><![CDATA[<div class="note info">
@@ -1895,84 +1973,6 @@ P(a < X \leq b) = & F_X(b) - F_X(a) \\
       <tags>
         <tag>pydial</tag>
         <tag>benchmarking environment</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PyDial: A Multi-domain Statistical Dialogue System Toolkit</title>
-    <url>/%C2%B7%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/dilogue/task-oriented/55.%20PyDial%EF%BC%9AA%20Multi-domain%20Statistical%20Dialogue%20System%20Toolkit.html</url>
-    <content><![CDATA[<div class="note info">
-            <p>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/P17-4013/" target="_blank" rel="noopener">论文地址</a>，论文作者 S Ultes 等，发表于 2017 年。<br>&emsp;&emsp;此文中出现了许多专业名词，可参考 <a href="https://yan624.github.io/·论文笔记/dilogue/task-oriented/54. A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management.html">此处</a> 加以理解。</p>
-          </div>
-<h1 id="摘要翻译"><a href="#摘要翻译" class="headerlink" title="摘要翻译"></a>摘要翻译</h1><p>&emsp;&emsp;统计口语对话系统（<em>Statistical Spoken Dialogue Systems, Statistical SDS, 统计 SDS</em>）已经存在多年了。然而，访问这些系统一直很困难，因为仍然没有公开的端到端系统实现。为了缓解这个问题，我们提出了 PyDial，一个开源的端到端统计语音对话系统工具包，它为<strong>所有对话系统模块</strong>提供<strong>统计方法</strong>的实现。此外，它还被扩展为提供多领域会话功能。它提供了各个对话系统模块的简单配置、易扩展性和域无关（<em>domain-independent</em>）的实现。该工具包可在 Apache2.0 许可下下载。</p>
-<h1 id="1-引言"><a href="#1-引言" class="headerlink" title="1 引言"></a>1 引言</h1><p>&emsp;&emsp;针对机器去设计语音接口（凭此人机交互）是多年来的研究热点。这些语音对话系统（SDSs）通常<strong>基于模块化的架构</strong>，包括<strong>语音识别</strong>（<em>speech recognition</em>）和<strong>语义解码</strong>（<em>semantic decoding</em>）的<strong>输入处理模块</strong>（<em>input processing modules</em>）、<strong>信念跟踪</strong>（<em>belief tracking</em>）和<strong>策略</strong>（<em>policy</em>）的<strong>对话管理模块</strong>（<em>dialogue management modules</em>）、<strong>语言生成</strong>（<em>language generation</em>）和<strong>语音合成</strong>（<em>speech synthesis</em>）的<strong>输出处理模块</strong>（<em>output processing modules</em>）（见图 1）。<br><div class="note success">
-            <p>&emsp;&emsp;以上介绍了 SDS 的架构。下一段介绍了一些 SDS 中不同组件的统计方法示例。</p>
-          </div></p>
-<p>&emsp;&emsp;统计 SDS 是一个语音接口，其中所有 SDS 模块都基于统计模型（从数据中学习）（与人工规则相比）。对话系统中<strong>不同组件的统计方法</strong>例子可以在以下中找到：</p>
-<ul>
-<li>……（若干论文），详见原论文 Introduction 第二段。<a id="more"></a>
-</li>
-</ul>
-<p>&emsp;&emsp;尽管对统计 SDS 的研究非常丰富，但是仍然没有通用的平台和开放的工具包。其他工具包实现通常集中在单个模块上（例如：<em>略，详见论文</em>）。提供专门针对统计对话系统（<em>statistical dialogue systems</em>）的工具包将使新进入该领域的人员能够更容易地参与进来，结果更容易比较，研究人员能够专注于他们的特定研究问题，而不是重新实现算法（例如，评估（<em>v.</em>）交互功能中的理解或生成组件的性能）。<br>&emsp;&emsp;因此，为了促进研究，以及使人们更容易参与统计口语对话系统的研究，我们提出了一个多领域统计口语对话系统工具包 <strong>PyDial</strong>。PyDial 是用 Python 实现的，剑桥对话系统团队（<em>Cambridge Dialogue Systems Group</em>）正在积极使用它。<br><div class="note default">
-            <p>&emsp;&emsp;那么什么是 PyDial 呢？</p>
-          </div></p>
-<p>&emsp;&emsp;PyDial 支持多领域的应用程序，在这些应用程序中，对话可能涉及多个不同的主题。这引入了许多新的研究课题，包括广义信念跟踪（<em>generalised belief tracking</em>）（论文略），<em>rapid policy adaptation and parallel learning</em> 和自然语言生成（<em>natural language generation</em>）。<br>&emsp;&emsp;论文的余下部分安排如下：</p>
-<ol>
-<li>第 2 节介绍了 PyDial 的总体架构（并且将 SDS 架构扩展到多个领域）和 PyDial 的主要应用规范；</li>
-<li>第 3 节包含各个对话系统模块的实现细节；</li>
-<li>第 4 节列出了可用的领域，其中有两个领域用于第5节中的示例交互；</li>
-<li>第 6 节总结了该工具包的主要贡献。</li>
-</ol>
-<h1 id="2-PyDial-架构"><a href="#2-PyDial-架构" class="headerlink" title="2 PyDial 架构"></a>2 PyDial 架构</h1><p>&emsp;&emsp;本节介绍 PyDial 的结构及其与环境的接口方式。随后，描述了在单个领域上功能的扩展，以允许在多个领域上进行对话。最后，我们讨论了 PyDial 设计的三个关键原则。</p>
-<h2 id="2-1-总体系统架构"><a href="#2-1-总体系统架构" class="headerlink" title="2.1 总体系统架构"></a>2.1 总体系统架构</h2><p>&emsp;&emsp;PyDial 的总体架构如图 2 所示。其中主要组件被称为 <strong>Agent</strong>，它位于系统的核心。它封装了所有对话系统模块，以实现基于文本的交互，即输入和输出。对话系统模块依赖于由一个<strong>本体</strong>（<strong>Ontology</strong>）定义的领域规范。为了与环境交互（<strong>博主注</strong>：这里的“与环境交互”应该指的是机器与外部环境交互，如机器与餐厅环境交互、与旅游环境交互、与服装商场进行交互等），PyDial 提供了三个接口：<strong>Dialogue Server</strong>【允许语音型交互】、<strong>Texthub</strong>【允许输入型交互】和 <strong>User Simulation system</strong>。交互的性能由<strong>评估</strong>（<strong>Evaluation</strong>）组件监视。</p>
-<ul>
-<li>Agent：负责对话交互，因此内部的架构类似于图 1 中的内容。<strong>Agent</strong> 还维护 dialogue sessions，即确保每个输入都<u>发送到</u>（<em>is routed to</em>）正确的对话。因此，<strong>可以通过实例化多个 agents 来支持多个对话</strong>。<ol>
-<li>semantic parser：将文本输入转化为一个语义表征</li>
-<li>belief tracker：负责维护一个被称为 <strong>belief state</strong> 的对话状态表征（<em>dialogue state representation</em>）</li>
-<li>policy：将 <strong>belief state</strong> 映射到适合的 <strong>system dialogue act</strong></li>
-<li>semantic output：将 <strong>system dialogue act</strong> 转化为文本表示</li>
-<li>topic tracker：对于多域功能，需要 <strong>topic tracker</strong>，其功能将在第 2.2 节中解释</li>
-</ol>
-</li>
-<li>User Simulation：支持在语义层面进行对话模拟，即不使用任何语义解析器或语言生成。这是一种广泛应用于训练和评估基于强化学习算法的技术，因为它避免了昂贵的数据收集练习（<em>data collection exercises</em>）和用户试验（<em>user trials</em>）。它当然只提供了一个近似的真实用户行为，所以通过模拟获得的结果应该谨慎看待！</li>
-<li>与环境交互：为了使 Agent 能够与其环境进行通信，PyDial 提供了两种模式：语音和文本<ul>
-<li>Texthub：只需将 Agent 连接到终端</li>
-<li>Dialogue Server：要启用基于语音的对话，<strong>Dialogue Server</strong> 允许连接到外部语音客户端。此客户端负责使用 ASR 将输入语音信号映射到文本，并使用语音合成将输出文本映射到语音（<em>text to speech</em>, <strong>TTS</strong>）。语音客户端通过 HTTP 交换 JSON 消息连接到对话服务器。请注意，语音客户端不是 PyDial 的一部分。基于云的 ASR 和 TTS 服务可以从 <a href="https://cloud.google.com/speech" target="_blank" rel="noopener">Google</a>、<a href="https://www.microsoft.com/cognitive-services/en-us/speech-api" target="_blank" rel="noopener">Microsoft</a>或 <a href="http://www.ibm.com/watson/developercloud/speech-to-text.html" target="_blank" rel="noopener">IBM</a>等提供商处获得。PyDial 目前连接到 DialPort（Zhao等人，2016），其允许基于语音的交互。</li>
-</ul>
-</li>
-<li>Ontology：除了 <strong>Agent</strong> 和接口组件之外，还有 <strong>Ontology</strong>，Ontology 封装了对话域规范以及对后端数据库（例如，一组餐厅及它们的属性）的访问。它被建模为一个全局对象，大多数对话系统模块和用户模拟器使用它来获取有关用户 <em>actions,  slots, slot values, and system actions</em> 的相关信息。</li>
-<li>Evaluation：用于计算对话的评估度量（例如 <strong>Task Success</strong>）。对于基于强化学习的对话模块来说，评估组件还负责提供 <em>reward</em></li>
-</ul>
-<h2 id="2-2-多领域对话系统架构"><a href="#2-2-多领域对话系统架构" class="headerlink" title="2.2 多领域对话系统架构"></a>2.2 多领域对话系统架构</h2><p>&emsp;&emsp;Agent -&gt; <strong>topic tracker</strong></p>
-<h2 id="2-3-主要原则"><a href="#2-3-主要原则" class="headerlink" title="2.3 主要原则"></a>2.3 主要原则</h2><p>&emsp;&emsp;为了使 PyDial 能够轻松地应用于新问题，PyDial 体系结构的设计支持三个关键原则：</p>
-<ul>
-<li>Domain Independence</li>
-<li>Easy Configurability</li>
-<li>Extensibility</li>
-</ul>
-<h1 id="3-实现"><a href="#3-实现" class="headerlink" title="3 实现"></a>3 实现</h1><p>&emsp;&emsp;PyDial 工具包是一个不断开发的研究系统。可从Apache2.0许可下的<a href="http://pydial.org" target="_blank" rel="noopener">网站</a>免费下载。在最初的版本中可以使用以下各种系统模块的实现，不过，到时候会有更多的实现。</p>
-<ul>
-<li><strong>Semantic Decoder</strong>：为了对输入语句（或n个最佳语句列表，or n-best-list of sentences）进行语义解码，PyDial 提供了一个基于规则（使用正则表达式）的实现，以及一个基于 SVM 的统计模型，即 the Semantic Tuple Classifier（Mairess et al., 2009）。对于后者，只提供了 CamRestaurants 领域的模型。</li>
-<li><strong>Belief Tracker</strong>：为了跟踪 belief state，可用 <strong>the rule-based focus tracker</strong>（Henderson et al., 2014）。该实现与领域无关。所有特定领域的信息都是从本体中提取的。</li>
-<li><strong>Policy</strong>：负责 policy 的决定执行模块有两种实现方式：<strong>1）</strong>人工制定的策略（应该适用于所有领域）；<strong>2）</strong>Gaussian process (GP) reinforcement learning policy（Gasic and Young, 2014）。对于多领域对话，策略管理器可以像处理所有其他模块一样处理策略。给定每个用户的输入的领域，然后选择相应的领域策略。<br>此外，还可以选择 Gasic et al.(2015b) 提出的 Bayesian committee machine(BCM) 处理程序：<strong>当处理一个领域的 belief state 时，参考其他领域的策略来选择最终的系统操作</strong>。为了实现这一点，belief state 被映射到一个抽象表示，然后允许所有策略访问它。在 PyDial 中，经过训练的策略可以在 committee-based handler 和 standard policy manager handler 之间移动。即在 committee 外部（在单域或多域设置中）接受训练的策略可以在 committee 内部使用，反之亦然。</li>
-<li><strong>Language Generator</strong>：为了将 semantic system action 映射为文本，PyDial 提供了两个实现组件：<strong>1）</strong>对于所有领域来说，提供了一个基于模板（定义规则）的语言生成；<strong>2）</strong>此外 Wen et al. (2015) 提出了基于 LSTM 的语言生成器，里面包含了 CamRestaurants 领域的预训练模型</li>
-<li><strong>Topic Tracker</strong>：PyDial 提供了一个基于关键字的 Topic Tracker 实现。如果 Topic Tracker 已为某些用户输入标识了领域，那么它将继续使用该领域，直到识别了新的领域。<strong>因此，并非每个用户输入都必须包含相关关键字</strong>。如果 Topic Tracker <strong>无法在开始时识别领域</strong>，那么它将创建与用户的 meta-dialogue，直到确定初始领域或达到最大重试次数。</li>
-<li><strong>Evaluation</strong>：为了评估对话，目前已经实现了两个 success-based 模块。（下面的话部分看不懂，索性不翻了—）<blockquote>
-<p>The objective task success evaluator compares the constraints and requests the system identifies with the true values. The latter may either be derived from the user simulator or, in real dialogues, by specifying a predefined task. For real dialogues, a subjective task success evaluator may also be applied which queries the user about the outcome of the dialogue.</p>
-</blockquote>
-</li>
-<li><strong>User Simulation</strong>：模拟用户的实现使用 agenda-based 用户模拟器（Schatzmann et al., 2006）。该模拟器包含 user model 和 error model，从而创建 a n-best-list of user acts 来模拟噪声语音信道。通过使用一组普遍适用的参数，模拟器可以应用于所有领域。领域特定的信息取自本体。</li>
-</ul>
-<h1 id="4-一些领域"><a href="#4-一些领域" class="headerlink" title="4 一些领域"></a>4 一些领域</h1><p>&emsp;&emsp;<strong>PyDial 的主要关注的是面向任务的对话，即根据一些约束条件用户必定找到其匹配的实体</strong>。找到实体后，用户可以请求其他信息。为应付这些场景，PyDial 预先加载了总共十个不同复杂度的领域：</p>
-<ul>
-<li>略</li>
-</ul>
-<p>&emsp;&emsp;如前所述，所有 <strong>policy</strong> 实现以及 <strong>belief tracker</strong> 和 <strong>user simulator</strong> 的实现都独立于领域之外。因此，在<strong>所有领域</strong>都可以进行交互的模拟。此外，<strong>semantic decoder</strong> 和 <strong>language generator</strong> 在某种程度上依赖于特定领域的实现。PyDial 包含用于<strong>所有领域</strong>的基于规则的 <strong>semantic decoder</strong> 和一个用于 <strong>CamRestaurants</strong> 的统计解码器（<em>statistical decoder</em>）。此外，PyDial 还为<strong>大多数领域</strong>提供了基于模板的语言生成，并为 <strong>CamRestaurants</strong> 提供了基于 LSTM 的生成器。因此，在 CamRestaurants 领域，实现统计对话完全有可能。</p>
-]]></content>
-      <categories>
-        <category>paper</category>
-      </categories>
-      <tags>
-        <tag>pydial</tag>
       </tags>
   </entry>
   <entry>
@@ -6931,9 +6931,9 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
       </tags>
   </entry>
   <entry>
-    <title>（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</title>
-    <url>/%C2%B7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E5%9B%9B%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9Aeclipse%E8%BF%81%E7%A7%BB%E5%88%B0idea%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%88maven-install%E5%91%BD%E4%BB%A4%E5%87%BA%E9%94%99%EF%BC%89.html</url>
-    <content><![CDATA[<p>在使用maven的install命令时出现java.lang.ArrayIndexOutOfBoundsException: 10640<br>试了三个小时，一直以为idea有问题，最后没想到是maven版本的问题，我的是3.5.0，只要改成3.5.2以上就可以了（我改成3.5.4）<br>真的奇怪之前在eclipse上用一直好好地<br><a id="more"></a></p>
+    <title>（三）搭建springcloud：整合mybatis-plus</title>
+    <url>/%C2%B7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E4%B8%89%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E6%95%B4%E5%90%88mybatis-plus.html</url>
+    <content><![CDATA[<p>由于一直使用mybatis的example，无法忍受着过长的代码，所以转向了mybatis-plus，配置过于简单，就不演示了。<br>参考官网<a href="http://mp.baomidou.com/#/install" target="_blank" rel="noopener">http://mp.baomidou.com/#/install</a><br>如果看不懂，可以看mybatis-plus提供的整合springboot例子<br>网址：<a href="https://gitee.com/baomidou/mybatisplus-spring-boot" target="_blank" rel="noopener">https://gitee.com/baomidou/mybatisplus-spring-boot</a><br><a id="more"></a><br>如果还看不懂，尼玛别整合了。（手动狗头）<br>提示：<br>Service可以继承mybatis-plus提供的ServiceImpl类<br>mapper层可以继承BaseMapper，这样如果有些mapper比较简单完全可以省去mapper.xml<br>IService可以继承IService</p>
 <h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><p><a href="https://yan624.github.io/（零）搭建springcloud：创建项目.html">（零）搭建springcloud：创建项目</a><br><a href="https://yan624.github.io/（一）搭建springcloud：springboot整合thymeleaf.html">（一）搭建springcloud：springboot整合thymeleaf</a><br><a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a><br><a href="https://yan624.github.io/（三）搭建springcloud：整合mybatis-plus.html">（三）搭建springcloud：整合mybatis-plus</a><br><a href="https://yan624.github.io/（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）.html">（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</a><br><a href="https://yan624.github.io/（五）搭建springcloud：在idea启动springboot项目.html">（五）搭建springcloud：在idea启动springboot项目</a><br><a href="https://yan624.github.io/（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）.html">（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</a><br><a href="https://yan624.github.io/（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器.html">（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</a><br><a href="https://yan624.github.io/（八）搭建springcloud：修改静态文件，如html，js后立即生效.html">（八）搭建springcloud：修改静态文件，如html，js后立即生效</a><br><a href="https://yan624.github.io/（九）搭建springcloud：在linux上运行springboot项目.html">（九）搭建springcloud：在linux上运行springboot项目</a><br><a href="https://yan624.github.io/（十）搭建springcloud：记录项目运行的日志.html">（十）搭建springcloud：记录项目运行的日志</a></p>
 <!-- more -->]]></content>
       <categories>
@@ -6947,9 +6947,9 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})</script><p>&emsp;&emsp;这样就构�
       </tags>
   </entry>
   <entry>
-    <title>（三）搭建springcloud：整合mybatis-plus</title>
-    <url>/%C2%B7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E4%B8%89%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9A%E6%95%B4%E5%90%88mybatis-plus.html</url>
-    <content><![CDATA[<p>由于一直使用mybatis的example，无法忍受着过长的代码，所以转向了mybatis-plus，配置过于简单，就不演示了。<br>参考官网<a href="http://mp.baomidou.com/#/install" target="_blank" rel="noopener">http://mp.baomidou.com/#/install</a><br>如果看不懂，可以看mybatis-plus提供的整合springboot例子<br>网址：<a href="https://gitee.com/baomidou/mybatisplus-spring-boot" target="_blank" rel="noopener">https://gitee.com/baomidou/mybatisplus-spring-boot</a><br><a id="more"></a><br>如果还看不懂，尼玛别整合了。（手动狗头）<br>提示：<br>Service可以继承mybatis-plus提供的ServiceImpl类<br>mapper层可以继承BaseMapper，这样如果有些mapper比较简单完全可以省去mapper.xml<br>IService可以继承IService</p>
+    <title>（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</title>
+    <url>/%C2%B7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/java/%EF%BC%88%E5%9B%9B%EF%BC%89%E6%90%AD%E5%BB%BAspringcloud%EF%BC%9Aeclipse%E8%BF%81%E7%A7%BB%E5%88%B0idea%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%88maven-install%E5%91%BD%E4%BB%A4%E5%87%BA%E9%94%99%EF%BC%89.html</url>
+    <content><![CDATA[<p>在使用maven的install命令时出现java.lang.ArrayIndexOutOfBoundsException: 10640<br>试了三个小时，一直以为idea有问题，最后没想到是maven版本的问题，我的是3.5.0，只要改成3.5.2以上就可以了（我改成3.5.4）<br>真的奇怪之前在eclipse上用一直好好地<br><a id="more"></a></p>
 <h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><p><a href="https://yan624.github.io/（零）搭建springcloud：创建项目.html">（零）搭建springcloud：创建项目</a><br><a href="https://yan624.github.io/（一）搭建springcloud：springboot整合thymeleaf.html">（一）搭建springcloud：springboot整合thymeleaf</a><br><a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a><br><a href="https://yan624.github.io/（三）搭建springcloud：整合mybatis-plus.html">（三）搭建springcloud：整合mybatis-plus</a><br><a href="https://yan624.github.io/（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）.html">（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</a><br><a href="https://yan624.github.io/（五）搭建springcloud：在idea启动springboot项目.html">（五）搭建springcloud：在idea启动springboot项目</a><br><a href="https://yan624.github.io/（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）.html">（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</a><br><a href="https://yan624.github.io/（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器.html">（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</a><br><a href="https://yan624.github.io/（八）搭建springcloud：修改静态文件，如html，js后立即生效.html">（八）搭建springcloud：修改静态文件，如html，js后立即生效</a><br><a href="https://yan624.github.io/（九）搭建springcloud：在linux上运行springboot项目.html">（九）搭建springcloud：在linux上运行springboot项目</a><br><a href="https://yan624.github.io/（十）搭建springcloud：记录项目运行的日志.html">（十）搭建springcloud：记录项目运行的日志</a></p>
 <!-- more -->]]></content>
       <categories>
