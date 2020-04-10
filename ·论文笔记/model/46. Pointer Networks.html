@@ -22,24 +22,20 @@
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="梯度下降算法大家都知道，公式是\theta = \theta - \alpha * J&apos;(\theta)，其中J是代价函数。但是这个算法具体是怎么来的，可能不太清楚。本文参考微信公众号梯度-百度百科由于没有专业的制图工具，所以只能手画了。。。 梯度下降问题 由图中可以观察到，我们将参数初始化到A点，我们的目标是将点移动到最小值点（或者极小值点）。那么问题就是如何移动了。先给出梯度下降公式：\the">
-<meta name="keywords" content="学习笔记">
+  <meta name="description" content="&amp;emsp;&amp;emsp;论文地址，作者是 Vinyals et al.，发表于 2015 年。            摘要&amp;emsp;&amp;emsp;提出一个新的神经结构来学习输出序列的条件概率，输出的元素是在输入序列中对应位置的离散标记。由于输出的每一步都与输入的长度有关，但是输入的长度是可变的，所以现有方法 seq2seq 和神经图灵机都无法简单地解决这问题。可变长度序列">
+<meta name="keywords" content="4me,Ptr">
 <meta property="og:type" content="article">
-<meta property="og:title" content="梯度下降算法的推导">
-<meta property="og:url" content="http://yan624.github.io/·学习笔记/AI/ml/梯度下降算法的推导.html">
+<meta property="og:title" content="Pointer Networks">
+<meta property="og:url" content="http://yan624.github.io/·论文笔记/model/46. Pointer Networks.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="梯度下降算法大家都知道，公式是\theta = \theta - \alpha * J&apos;(\theta)，其中J是代价函数。但是这个算法具体是怎么来的，可能不太清楚。本文参考微信公众号梯度-百度百科由于没有专业的制图工具，所以只能手画了。。。 梯度下降问题 由图中可以观察到，我们将参数初始化到A点，我们的目标是将点移动到最小值点（或者极小值点）。那么问题就是如何移动了。先给出梯度下降公式：\the">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;论文地址，作者是 Vinyals et al.，发表于 2015 年。            摘要&amp;emsp;&amp;emsp;提出一个新的神经结构来学习输出序列的条件概率，输出的元素是在输入序列中对应位置的离散标记。由于输出的每一步都与输入的长度有关，但是输入的长度是可变的，所以现有方法 seq2seq 和神经图灵机都无法简单地解决这问题。可变长度序列">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/梯度下降算法的推导/梯度下降草图.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/梯度下降算法的推导/泰勒公式线性近似.webp">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/梯度下降算法的推导/向量的乘积.webp">
-<meta property="og:updated_time" content="2020-03-02T12:00:04.196Z">
+<meta property="og:updated_time" content="2020-04-08T05:09:38.842Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="梯度下降算法的推导">
-<meta name="twitter:description" content="梯度下降算法大家都知道，公式是\theta = \theta - \alpha * J&apos;(\theta)，其中J是代价函数。但是这个算法具体是怎么来的，可能不太清楚。本文参考微信公众号梯度-百度百科由于没有专业的制图工具，所以只能手画了。。。 梯度下降问题 由图中可以观察到，我们将参数初始化到A点，我们的目标是将点移动到最小值点（或者极小值点）。那么问题就是如何移动了。先给出梯度下降公式：\the">
-<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/梯度下降算法的推导/梯度下降草图.jpg">
+<meta name="twitter:title" content="Pointer Networks">
+<meta name="twitter:description" content="&amp;emsp;&amp;emsp;论文地址，作者是 Vinyals et al.，发表于 2015 年。            摘要&amp;emsp;&amp;emsp;提出一个新的神经结构来学习输出序列的条件概率，输出的元素是在输入序列中对应位置的离散标记。由于输出的每一步都与输入的长度有关，但是输入的长度是可变的，所以现有方法 seq2seq 和神经图灵机都无法简单地解决这问题。可变长度序列">
 
-<link rel="canonical" href="http://yan624.github.io/·学习笔记/AI/ml/梯度下降算法的推导.html">
+<link rel="canonical" href="http://yan624.github.io/·论文笔记/model/46. Pointer Networks.html">
 
 
 <script id="page-configurations">
@@ -52,8 +48,9 @@
 </script>
 <!--图片缩放插件样式-->
 <link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
-
-  <title>梯度下降算法的推导 | 博客</title>
+<!--阿里云矢量库样式-->
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_621sfmh583s.css" />
+  <title>Pointer Networks | 博客</title>
   
 
 
@@ -126,7 +123,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">145</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">151</span></a>
 
   </li>
         <li class="menu-item menu-item-about">
@@ -139,9 +136,14 @@
     <a href="/常用链接" rel="section"><i class="fas fa-fw fa-bookmark"></i>常用链接</a>
 
   </li>
+        <li class="menu-item menu-item-时间线">
+
+    <a href="/categories/timeline/" rel="section"><i class="iconfont icon-timeline"></i>时间线</a>
+
+  </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">84</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">94</span></a>
 
   </li>
         
@@ -210,10 +212,15 @@
     	
     		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
         <script type="text/javascript" src="/lib/spop/spop.min.js"></script>
-        <!--判断该文章是否为学习笔记-->
+        <!--判断此文是否为特殊的文章-->
         <script>
+          var templateSentence = '这是条不可能出现的弹窗提示。';
+          if('4me' == '学习笔记')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记，并非教学，其中可能含有理论错误。';
+          else if('4me' == '4me')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
           spop({
-            template: '<h4 class="spop-title">注意</h4>此文章仅为博主的学习笔记，并非教学，其中可能含有理论错误。',
+            template: templateSentence,
             group: 'tips',
             position  : 'bottom-center',
             style: 'success',
@@ -235,8 +242,10 @@
         </script>
     	
     
+    	
+    
 
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·学习笔记/AI/ml/梯度下降算法的推导.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·论文笔记/model/46. Pointer Networks.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -249,7 +258,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          梯度下降算法的推导
+          Pointer Networks
         </h1>
 
         <div class="post-meta">
@@ -259,14 +268,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-05-10 19:55:24" itemprop="dateCreated datePublished" datetime="2019-05-10T19:55:24+08:00">2019-05-10</time>
+              <time title="创建时间：2020-04-07 22:12:00" itemprop="dateCreated datePublished" datetime="2020-04-07T22:12:00+08:00">2020-04-07</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-02 20:00:04" itemprop="dateModified" datetime="2020-03-02T20:00:04+08:00">2020-03-02</time>
+                <time title="修改时间：2020-04-08 13:09:38" itemprop="dateModified" datetime="2020-04-08T13:09:38+08:00">2020-04-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -274,14 +283,8 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/" itemprop="url" rel="index">
-                    <span itemprop="name">AI</span>
-                  </a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/ml/" itemprop="url" rel="index">
-                    <span itemprop="name">ml</span>
+                  <a href="/categories/paper/" itemprop="url" rel="index">
+                    <span itemprop="name">paper</span>
                   </a>
                 </span>
             </span>
@@ -299,14 +302,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.4k</span>
+              <span>1.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -318,46 +321,20 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>梯度下降算法大家都知道，公式是<script type="math/tex">\theta = \theta - \alpha * J'(\theta)</script>，其中J是代价函数。但是这个算法具体是怎么来的，可能不太清楚。<br>本文参考<br><a href="https://mp.weixin.qq.com/s/k26Fm0GL3fdVA9VbQIVAuQ" target="_blank" rel="noopener">微信公众号</a><br><a href="https://baike.baidu.com/item/梯度/13014729" target="_blank" rel="noopener">梯度-百度百科</a><br>由于没有专业的制图工具，所以只能手画了。。。</p>
-<h1 id="梯度下降问题"><a href="#梯度下降问题" class="headerlink" title="梯度下降问题"></a>梯度下降问题</h1><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/梯度下降算法的推导/梯度下降草图.jpg" alt="梯度下降草图"></p>
-<p>由图中可以观察到，我们将参数初始化到A点，我们的目标是将点移动到最小值点（或者极小值点）。那么问题就是如何移动了。<br>先给出梯度下降公式：<script type="math/tex">\theta = \theta - \alpha * J'(\theta)</script>，J是代价函数，这个公式应该不陌生。</p>
-<h1 id="一阶泰勒展开式"><a href="#一阶泰勒展开式" class="headerlink" title="一阶泰勒展开式"></a>一阶泰勒展开式</h1><p>如果学过高数，应该知道<strong>一阶泰勒展开式</strong>的公式是：<script type="math/tex">f(x) = f(x_0) + (x - x_0) * f'(x_0) + R_n(x)</script>，其中<script type="math/tex">R_n(x)</script>是泰勒公式的余项，可以理解为一个无穷小量。既然是无穷小量那么便可以省略不写，但是即使是无穷小，其实等式的左右边还是有点差距的，所以将等式修改为<strong>约等于号</strong>。<br><a id="more"></a></p>
-<script type="math/tex; mode=display">
-f(x) \approx f(x_0) + (x - x_0) * f'(x_0)</script><p>但是由于我们最小化的代价函数的参数是<script type="math/tex">\theta</script>，所以我们可以将x替换为<script type="math/tex">\theta</script>，即</p>
-<script type="math/tex; mode=display">
-f(\theta) \approx f(\theta_0) + (\theta - \theta_0) * f'(\theta_0)</script><p>如果不知道泰勒公式，可以看下图<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/梯度下降算法的推导/泰勒公式线性近似.webp" alt="泰勒公式线性近似"></p>
-<p>在点<script type="math/tex">\theta_0</script>处，找一条极短的直线来表示曲线，则直线的斜率为<script type="math/tex">f'(\theta_0)</script>，并且已知<script type="math/tex">\theta_0</script>，那么根据初中数学，可以获得直线公式<script type="math/tex">f(\theta) = f(\theta_0) + (\theta - \theta_0) * f'(\theta_0)</script>（还不懂看这个：<script type="math/tex">y-y_0=k(x-x_0)</script>===&gt;<script type="math/tex">y = y_0 + k(x-x_0)</script>）。<br><div class="note warning">
-            <p>如果仔细看到了上一行的推导，你也许要问：为什么直线斜率是<script type="math/tex">f'(\theta_0)</script>。百度。</p>
-          </div></p>
-<div class="note warning">
-            <p>如果对上式没有问题，可能要问为什么这个红线的箭头要向下，不能向上？我有强迫症，我就要让它向上，并且我还要让<script type="math/tex">\theta</script>在<script type="math/tex">\theta_0</script>右边。这个下面会讲，但是现在假定以下的步骤均围绕上图展开。</p>
+        <div class="note info">
+            <p>&emsp;&emsp;<a href="https://arxiv.org/pdf/1506.03134.pdf" target="_blank" rel="noopener">论文地址</a>，作者是 Vinyals et al.，发表于 2015 年。</p>
           </div>
-<p>至此准备工作完成。</p>
-<h1 id="数学原理"><a href="#数学原理" class="headerlink" title="数学原理"></a>数学原理</h1><p>我们将 <script type="math/tex">f(\theta) \approx f(\theta_0) + (\theta - \theta_0) * f'(\theta_0)</script> 的 <script type="math/tex">\theta - \theta_0</script> 是一个微小矢量，用字母 <script type="math/tex">\alpha v</script> 代替。其中标量 <script type="math/tex">\alpha</script> 代表步长，<script type="math/tex">\theta - \theta_0</script> 的<strong>单位向量</strong>用 v 表示。其实 <script type="math/tex">\alpha v</script> 可以合并成 <script type="math/tex">\alpha</script> 的，但是为了下面的推导更容易说明梯度下降到底在做什么，还是拆开来表示。</p>
+<h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p>&emsp;&emsp;提出一个新的神经结构来学习输出序列的条件概率，输出的元素是在输入序列中对应位置的离散标记。由于输出的每一步都与输入的长度有关，但是输入的长度是可变的，所以现有方法 seq2seq 和神经图灵机都无法简单地解决这问题。可变长度序列的排序，各种组合优化的问题都输入此类。我们的模型<strong>使用 attention 机制来解决这种输出字典可变大小的问题</strong>。<br><a id="more"></a></p>
+<h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>&emsp;&emsp;RNN 在序列上学习函数已经用了超过 30 年。然而，它们的架构有一定的局限性，<strong>输入和输出只能是固定的</strong>。最近，<strong>引入的 seq2seq 范式移除了这些限制</strong>。Bahdanau et. al. 使用 <strong>attention 机制传播来自输入的额外上下文信息</strong>，以此增强 decoder。<br>&emsp;&emsp;尽管如此，这些方法仍旧需要固定的词典。由于这些限制，我们无法直接地将这些框架应用在输出字典的大小取决于输入序列长度的问题上。本文，我们提出 Pointer Networks（Ptr-Nets），它可以解决三种组合优化问题：<code>computing planar convex hulls, Delaunay triangulations and the symmetric planar Travelling Salesman Problem (TSP)</code>。</p>
+<h1 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h1><p>&emsp;&emsp;先回顾一下 seq2seq model 和 attention 机制，它们是我们工作的基线。</p>
+<h2 id="seq2seq-model"><a href="#seq2seq-model" class="headerlink" title="seq2seq model"></a>seq2seq model</h2><p>&emsp;&emsp;给定一个训练对 <script type="math/tex">(\mathcal{P}, \mathcal{C}^{\mathcal{P}})</script>，seq2seq 模型使用一个带参数的模型（带参数 <script type="math/tex">\theta</script> 的 RNN）计算条件概率 <script type="math/tex">p(\mathcal{C}^{\mathcal{P}} | \mathcal{P}; \theta)</script> 以此估计概率链式法则，即：</p>
+<script type="math/tex; mode=display">p(\mathcal{C}^{\mathcal{P}} | \mathcal{P}; \theta) = \prod^{m(\mathcal{P})}_{i=1} p(\mathcal{C}_i | \mathcal{C}_1, \cdots, \mathcal{C}_{i-1}, \mathcal{P}; \theta) \tag{1}</script><p>&emsp;&emsp;其中 <script type="math/tex">\mathcal{P} = \{P_1, \cdots, P_n\}</script>，<script type="math/tex">\mathcal{C} = \{C_1, \cdots, C_{m(\mathcal{P})}\}</script>。模型参数在训练集上最大化条件概率：</p>
+<script type="math/tex; mode=display">\theta^{\star} = \arg \max_{\theta} \sum_{\mathcal{P}, \mathcal{C^{\mathcal{P}}}} \log p(\mathcal{C}^{\mathcal{P}} | \mathcal{P}; \theta) \tag{2}</script><h2 id="Content-Based-Input-Attention"><a href="#Content-Based-Input-Attention" class="headerlink" title="Content Based Input Attention"></a>Content Based Input Attention</h2><h2 id="Ptr-Net"><a href="#Ptr-Net" class="headerlink" title="Ptr-Net"></a>Ptr-Net</h2><p>&emsp;&emsp;我们现在描述一个非常简化版的 attention 模型，它能使得我们解决上面提到的难题。我们使用 attention 机制建模 <script type="math/tex">p(\mathcal{C}_i | \mathcal{C}_1, \cdots, \mathcal{C}_{i-1}, \mathcal{P})</script>：</p>
 <script type="math/tex; mode=display">
-\theta - \theta_0 = \alpha v</script><p>所以公式被简化为如下形式，并且将导数的表示做一下改变，用<strong>倒三角</strong>表示</p>
-<script type="math/tex; mode=display">
-f(\theta) \approx f(\theta_0) + \alpha v * \nabla f(\theta_0)</script><p>由于我们的目标是使得<script type="math/tex">f(\theta)</script>比<script type="math/tex">f(\theta_0)</script>小，也就是使得<script type="math/tex">f(\theta) - f(\theta_0) < 0</script>。那么将公式转变为</p>
-<script type="math/tex; mode=display">
-f(\theta) -  f(\theta_0) \approx \alpha v * \nabla f(\theta_0) < 0</script><p>省略一部分</p>
-<script type="math/tex; mode=display">
-\alpha v * \nabla f(\theta_0) < 0</script><p>由于<script type="math/tex">\alpha</script>一般为正值，所以</p>
-<script type="math/tex; mode=display">
-v * \nabla f(\theta_0) < 0</script><p>由于<script type="math/tex">v</script>和<script type="math/tex">\nabla f(\theta_0)</script>实际上都是向量。所以上式就转换为<strong>两个向量相乘在什么时候是小于0的</strong>，并且我们希望<script type="math/tex">f(\theta) - f(\theta_0)</script>越小越好（注意这里的<strong>小</strong>指的是小于 0 的尺度上，并非在 0~1 的尺度上），也就是<script type="math/tex">v * \nabla f(\theta_0)</script>越小越好。那么问题又转化为<strong>两个向量相乘在什么时候是最小的</strong>。<br><div class="note warning">
-            <p>问题1：为什么<script type="math/tex">v</script>和<script type="math/tex">\nabla f(\theta_0)</script>是向量。<br>以上都是使用二维的图来描述，但是实际上 <script type="math/tex">\theta</script> 不只有一个，所以是向量而不是一个数。<br>问题2：为什么希望<script type="math/tex">f(\theta) - f(\theta_0)</script>越小越好。<br>因为希望<script type="math/tex">f(\theta)</script>这一步迈远一点。</p>
-          </div></p>
-<p>以下为向量乘积的三种形式，由初中的知识可以得知，当向量相反时<script type="math/tex">cos(\alpha)</script>为-1，即cos函数的最小值。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/梯度下降算法的推导/向量的乘积.webp" alt="向量的乘积"></p>
-<p>由于公式可以转为如下，其中<script type="math/tex">\beta</script>是向量夹角</p>
-<script type="math/tex; mode=display">
-|v| * |\nabla f(\theta_0)| * cos(\beta) < 0</script><p>所以当 <script type="math/tex">v</script> 和 <script type="math/tex">\nabla f(\theta_0)</script> 正好相反时，<script type="math/tex">cos(\beta) = -1</script>。也就是说当 <script type="math/tex">v</script> 和 <script type="math/tex">\nabla f(\theta_0)</script> 反向，<script type="math/tex">v * \nabla f(\theta_0)</script>最小。<br>所以现在的问题就是 v 怎么样才能是梯度方向的反方向？众所周知，<script type="math/tex">\nabla f(\theta_0)</script> 就是梯度，也就是梯度方向。那么在 <script type="math/tex">\nabla f(\theta_0)</script> 加个负号不就是相反方向了？所以</p>
-<script type="math/tex; mode=display">
-v  = -\frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}\\</script><p>之所以要除以 <script type="math/tex">\nabla f(\theta_0)</script> 的模，是因为 <script type="math/tex">v</script> 是单位向量。<br>将 <script type="math/tex">v</script> 带入到 <script type="math/tex">\theta - \theta_0 = \alpha * v</script> 中</p>
-<script type="math/tex; mode=display">
-\theta = \theta_0 - \alpha * \frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}</script><p>一般地，因为<script type="math/tex">|\nabla f(\theta_0)|</script>是标量，可以并入到中，即简化为：</p>
-<script type="math/tex; mode=display">
-\theta = \theta_0 - \alpha *\nabla f(\theta_0)</script><div class="note primary">
-            <p>有点需要说明，我认为 <script type="math/tex">\frac{1}{|\nabla f(\theta_0)|}</script> 不能并入 <script type="math/tex">\alpha</script> 因为 <script type="math/tex">\frac{1}{|\nabla f(\theta_0)|}</script> 是一个变量。它是梯度的模长，但是在执行梯度下降时，每一个 epoch 的梯度都是不一样的。故 <script type="math/tex">\frac{1}{|\nabla f(\theta_0)|}</script> 也在每个 epoch 不中不同，但是学习率 <script type="math/tex">\alpha</script> 却是一个定值，比如 0.01, 0.03, 0.1 等。</p>
-          </div>
+\begin{align}
+    u^i_j & = v^T tanh(W_1 e_j + W_2 d_i) \quad j \in (1, \cdots, n) \\
+    p(\mathcal{C}_i | \mathcal{C}_1, \cdots, \mathcal{C}_{i-1}, \mathcal{P}) & = softmax(u^i)
+\end{align}</script><p>&emsp;&emsp;然后，不同于 attention 机制，<strong>我们不混合编码状态 <script type="math/tex">e_j</script></strong> 以此将信息带到 decoder 中，而是<strong>使用 <script type="math/tex">u^i_j</script> 作为指针，指出输出元素</strong>。<br>&emsp;&emsp;<strong>我们还注意到，我们的方法特别针对输出是离散的并且与输入中的位置相对应的问题。</strong></p>
 
     </div>
 
@@ -367,7 +344,8 @@ v  = -\frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}\\</script><p>之所以要�
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/学习笔记/" rel="tag"># 学习笔记</a>
+              <a href="/tags/4me/" rel="tag"># 4me</a>
+              <a href="/tags/Ptr/" rel="tag"># Ptr</a>
           </div>
 
         
@@ -376,13 +354,10 @@ v  = -\frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}\\</script><p>之所以要�
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/·学习笔记/AI/dl/练习Keras RNN的代码.html" rel="prev" title="练习Keras RNN的代码">
-      <i class="fa fa-chevron-left"></i> 练习Keras RNN的代码
+    <a href="/·zcy/AI/dl/机器学习中的各种优化算法.html" rel="prev" title="机器学习中的各种优化算法">
+      <i class="fa fa-chevron-left"></i> 机器学习中的各种优化算法
     </a></div>
-      <div class="post-nav-item">
-    <a href="/IT-stuff/linux/linux非root用户配置环境变量.html" rel="next" title="linux非root用户配置环境变量">
-      linux非root用户配置环境变量 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -442,7 +417,7 @@ v  = -\frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}\\</script><p>之所以要�
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#梯度下降问题"><span class="nav-number">1.</span> <span class="nav-text">梯度下降问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一阶泰勒展开式"><span class="nav-number">2.</span> <span class="nav-text">一阶泰勒展开式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数学原理"><span class="nav-number">3.</span> <span class="nav-text">数学原理</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#摘要"><span class="nav-number">1.</span> <span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">2.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模型"><span class="nav-number">3.</span> <span class="nav-text">模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#seq2seq-model"><span class="nav-number">3.1.</span> <span class="nav-text">seq2seq model</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Content-Based-Input-Attention"><span class="nav-number">3.2.</span> <span class="nav-text">Content Based Input Attention</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ptr-Net"><span class="nav-number">3.3.</span> <span class="nav-text">Ptr-Net</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -458,7 +433,7 @@ v  = -\frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}\\</script><p>之所以要�
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">145</span>
+          <span class="site-state-item-count">151</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -470,12 +445,12 @@ v  = -\frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}\\</script><p>之所以要�
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">84</span>
+        <span class="site-state-item-count">94</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">162.4k</span>
+      	<span class="site-state-item-count">181k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
@@ -642,7 +617,7 @@ $('.content img').on('zoom-out-complete.zoomify', function () {
       quicklink({
         timeout: 3000,
         priority: true,
-        ignores: [uri => uri.includes('#'),uri => uri == 'http://yan624.github.io/·学习笔记/AI/ml/梯度下降算法的推导.html',]
+        ignores: [uri => uri.includes('#'),uri => uri == 'http://yan624.github.io/·论文笔记/model/46. Pointer Networks.html',]
       });
       });
   </script>
