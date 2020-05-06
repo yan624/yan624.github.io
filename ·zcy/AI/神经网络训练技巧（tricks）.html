@@ -22,22 +22,20 @@
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="马尔科夫链——Markov Chain&amp;emsp;&amp;emsp;有时也称为显马尔科夫模型（observed Markov model）。&amp;emsp;&amp;emsp;是一个随机过程模型，它表述了一系列可能的事件，在这个系列当中每一个事件的概率仅依赖于前一个事件。">
-<meta name="keywords" content="系列,马尔科夫链,HMM,CRF">
+  <meta name="description" content="mask&amp;emsp;&amp;emsp;题外话：对于 Transformer，无论 encoder 还是 decoder 都要做 mask（很多对 Transformer 的总结文章都只提到了 decoder 部分的 Masked Multihead Self-Attention，实际上 encoder 也要做一次）。mask 一共分为两种，Transformer 中 decoder 的 mask 指的是">
+<meta name="keywords" content="博客，java，javaWeb，NLP，python，机器学习，深度学习">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【NLP算法】（三）条件随机场CRF">
-<meta property="og:url" content="http://yan624.github.io/·zcy/AI/nlp/【NLP算法】（三）条件随机场CRF.html">
+<meta property="og:title" content="神经网络训练技巧（tricks）">
+<meta property="og:url" content="http://yan624.github.io/·zcy/AI/神经网络训练技巧（tricks）.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="马尔科夫链——Markov Chain&amp;emsp;&amp;emsp;有时也称为显马尔科夫模型（observed Markov model）。&amp;emsp;&amp;emsp;是一个随机过程模型，它表述了一系列可能的事件，在这个系列当中每一个事件的概率仅依赖于前一个事件。">
+<meta property="og:description" content="mask&amp;emsp;&amp;emsp;题外话：对于 Transformer，无论 encoder 还是 decoder 都要做 mask（很多对 Transformer 的总结文章都只提到了 decoder 部分的 Masked Multihead Self-Attention，实际上 encoder 也要做一次）。mask 一共分为两种，Transformer 中 decoder 的 mask 指的是">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/【NLP算法】（三）条件随机场CRF/马尔科夫链.jpg">
-<meta property="og:updated_time" content="2020-02-09T13:16:41.147Z">
+<meta property="og:updated_time" content="2020-05-05T14:37:03.104Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="【NLP算法】（三）条件随机场CRF">
-<meta name="twitter:description" content="马尔科夫链——Markov Chain&amp;emsp;&amp;emsp;有时也称为显马尔科夫模型（observed Markov model）。&amp;emsp;&amp;emsp;是一个随机过程模型，它表述了一系列可能的事件，在这个系列当中每一个事件的概率仅依赖于前一个事件。">
-<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/【NLP算法】（三）条件随机场CRF/马尔科夫链.jpg">
+<meta name="twitter:title" content="神经网络训练技巧（tricks）">
+<meta name="twitter:description" content="mask&amp;emsp;&amp;emsp;题外话：对于 Transformer，无论 encoder 还是 decoder 都要做 mask（很多对 Transformer 的总结文章都只提到了 decoder 部分的 Masked Multihead Self-Attention，实际上 encoder 也要做一次）。mask 一共分为两种，Transformer 中 decoder 的 mask 指的是">
 
-<link rel="canonical" href="http://yan624.github.io/·zcy/AI/nlp/【NLP算法】（三）条件随机场CRF.html">
+<link rel="canonical" href="http://yan624.github.io/·zcy/AI/神经网络训练技巧（tricks）.html">
 
 
 <script id="page-configurations">
@@ -52,7 +50,8 @@
 <link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
 <!--阿里云矢量库样式-->
 <link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_621sfmh583s.css" />
-  <title>【NLP算法】（三）条件随机场CRF | 博客</title>
+
+  <title>神经网络训练技巧（tricks） | 博客</title>
   
 
 
@@ -108,7 +107,7 @@
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
-        <p class="site-subtitle">低阶炼金术士</p>
+        <p class="site-subtitle">低阶炼金术士<br />虚体训练师</p>
   </div>
 
   <div class="site-nav-right"></div>
@@ -125,7 +124,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">151</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">155</span></a>
 
   </li>
         <li class="menu-item menu-item-about">
@@ -145,7 +144,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">94</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">91</span></a>
 
   </li>
         
@@ -211,16 +210,8 @@
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
     
-    	
-    
-    	
-    
-    	
-    
-    	
-    
 
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·zcy/AI/nlp/【NLP算法】（三）条件随机场CRF.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·zcy/AI/神经网络训练技巧（tricks）.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -233,7 +224,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          【NLP算法】（三）条件随机场CRF
+          神经网络训练技巧（tricks）
         </h1>
 
         <div class="post-meta">
@@ -243,14 +234,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-09-07 17:24:43" itemprop="dateCreated datePublished" datetime="2019-09-07T17:24:43+08:00">2019-09-07</time>
+              <time title="创建时间：2020-04-26 19:55:20" itemprop="dateCreated datePublished" datetime="2020-04-26T19:55:20+08:00">2020-04-26</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-09 21:16:41" itemprop="dateModified" datetime="2020-02-09T21:16:41+08:00">2020-02-09</time>
+                <time title="修改时间：2020-05-05 22:37:03" itemprop="dateModified" datetime="2020-05-05T22:37:03+08:00">2020-05-05</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -260,12 +251,6 @@
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/AI/" itemprop="url" rel="index">
                     <span itemprop="name">AI</span>
-                  </a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/nlp/" itemprop="url" rel="index">
-                    <span itemprop="name">nlp</span>
                   </a>
                 </span>
             </span>
@@ -283,14 +268,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>692</span>
+              <span>3.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>6 分钟</span>
             </span>
 
         </div>
@@ -302,16 +287,39 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="马尔科夫链——Markov-Chain"><a href="#马尔科夫链——Markov-Chain" class="headerlink" title="马尔科夫链——Markov Chain"></a>马尔科夫链——Markov Chain</h1><p>&emsp;&emsp;有时也称为显马尔科夫模型（observed Markov model）。<br>&emsp;&emsp;是一个随机过程模型，它表述了一系列可能的事件，在这个系列当中每一个事件的概率仅依赖于前一个事件。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/【NLP算法】（三）条件随机场CRF/马尔科夫链.jpg" alt="马尔科夫链"><br><a id="more"></a></p>
-<h1 id="隐马尔科夫模型——HMM"><a href="#隐马尔科夫模型——HMM" class="headerlink" title="隐马尔科夫模型——HMM"></a>隐马尔科夫模型——HMM</h1><h2 id="概率模型"><a href="#概率模型" class="headerlink" title="概率模型"></a>概率模型</h2><p>&emsp;&emsp;概率模型就是将学习任务归结于计算变量的概率分布的模型。<br>&emsp;&emsp;在生活中，我们经常会根据一些已经观察到的现象来推测和估计未知的东西——这种需求，恰恰是概率模型的推断（Inference）行为所作的事情。<br>&emsp;&emsp;推断的本质是：利用可观测变量来预测未知变量的条件分布。<br>&emsp;&emsp;概率模型可以分为两类：生成模型（generative model）和判别模型（discriminative model）。<br>&emsp;&emsp;我们将可观测变量的集合命名为 O，我们感兴趣的未知变量的集合命名为 Y。<br>&emsp;&emsp;生成模型学习出来的是 O 与 Y 的联合概率分布 P(O,Y)，而判别模型学习的是条件概率分布 P(Y|O)。<br>&emsp;&emsp;例如朴素贝叶斯模型就是生成模型，而逻辑回归就是判别模型。</p>
-<h1 id="CRF"><a href="#CRF" class="headerlink" title="CRF"></a>CRF</h1><p>&emsp;&emsp;</p>
-<h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><ul>
-<li><a href="https://zhuanlan.zhihu.com/p/44042528" target="_blank" rel="noopener">一篇不错的 CRF 入门文章</a>，但是后面求所有路径的分数的算法，说得有点模糊，推荐看<a href="https://www.bilibili.com/video/av52626653/?p=4" target="_blank" rel="noopener">HMM与CRF隐形马尔可夫链与条件随机场</a>，虽然这个视频播放量不高，但足以看懂 CRF 最后的那个算法。</li>
-<li><a href="https://zhuanlan.zhihu.com/p/27338210" target="_blank" rel="noopener">Bi-LSTM-CRF for Sequence Labeling</a></li>
-<li><a href="https://blog.csdn.net/cuihuijun1hao/article/details/79405740" target="_blank" rel="noopener">Pytorch Bi-LSTM + CRF 代码详解</a></li>
-<li><a href="https://mp.weixin.qq.com/s?__biz=MjM5ODkzMzMwMQ==&amp;mid=2650411744&amp;idx=3&amp;sn=494fb10386f5ac50038a772a611a5332&amp;chksm=becd94ba89ba1dac7efc734661a2a9db8a5ca05125949fb098db3f25235dea80de6c286ef71c&amp;mpshare=1&amp;scene=1&amp;srcid=&amp;sharer_sharetime=1572502435578&amp;sharer_shareid=68f8b84d7a46cc216b0afdc45278d6be&amp;key=5418d699bf014e61a173d7a9169c96f3be502439f456e034c2804919bdfed20c1c70bd250f7c98ddbdc73301145e34b7d3e342d931881416ab32aef3ee84c84e3232eb4b39b4af48117e174d4ed803ad&amp;ascene=1&amp;uin=MTQxMTUzMzk2MA%3D%3D&amp;devicetype=Windows+10&amp;version=62070152&amp;lang=en&amp;pass_ticket=pZijWLQmmCpNBDcjO4cUImTRWv1ZWLG4JENv1zUqjhXnUnShPGofPjjR%2Bkv1cozV" target="_blank" rel="noopener">NLP硬核入门-条件随机场CRF</a></li>
-</ul>
-
+        <h1 id="mask"><a href="#mask" class="headerlink" title="mask"></a>mask</h1><p>&emsp;&emsp;<strong>题外话</strong>：对于 Transformer，无论 encoder 还是 decoder 都要做 mask（很多对 Transformer 的总结文章都只提到了 decoder 部分的 Masked Multihead Self-Attention，实际上 encoder 也要做一次）。mask 一共分为两种，Transformer 中 decoder 的 mask 指的是 <strong>sequence mask</strong>，encoder 中的 mask 指的是 <strong>padding mask</strong>，对于其他网络模型也是类似的道理。可以查阅参考资料 1，2。</p>
+<h2 id="padding-mask"><a href="#padding-mask" class="headerlink" title="padding mask"></a>padding mask</h2><p>&emsp;&emsp;对于 Transformer 来说，在 encoder 中的每次执行 scaled dot-product 后都要做一次 padding mask。由于我们要让序列的长度相等以便做向量化操作，所以必不可少地需要对输入序列进行<strong>截断</strong>或<strong>补零</strong>（即填充 PAD，PAD 不一定非要是 0）操作。所以 padding mask 的<strong>主要目的</strong>是使得 self-attention 不要过多的关注向量中的 PAD 符号。<br>&emsp;&emsp;在进行了解 padding mask 的做法之前，首先简单地了解一下 Transformer 的大致流程：sequence id -&gt; embedding -&gt; multi-head attention(<strong>scaled dot-product</strong> -&gt; softmax -&gt; softmax <script type="math/tex">\times</script> value) -&gt; add &amp; norm -&gt; decoder。而 mask 的<strong>具体操作是</strong>：在执行 scaled dot-product <strong>后</strong>，将序列中补零位置所对应的隐藏状态置为 -INF，使得序列经过 softmax 层时，<strong>该对应位置所计算出的概率为 0</strong>。（<em>mask 操作貌似在 Transformer 中是可选的。</em>）<br>&emsp;&emsp;总得来说，padding mask 是为了神经网络忽略 PAD 的信息。例如，虽然模型可以学习到 PAD 这个填充符是没有意义的，但是<strong>在做 attention 时，PAD 所在的这些位置依然有一些 attention score，而我们要的是 0 score</strong>。所以有必要引入一个 <strong>mask 矩阵</strong>，在做 attention 之前，先把 PAD 所在位置的值置为一个极小值，甚至是无穷小（由于 attention 需要经过 softmax，softmax 需要求 e 的次方，要想 e 的某次方为 0，只能使得值为无穷小才可以，这是一个数学问题）。</p>
+<ol>
+<li><p><strong>对于 Embedding 层来说，符号 PAD 的词向量也是无意义的</strong>，所以也可以将它的所在位置的值（即词向量）置为 0，使得它无意义。也就是说我们需要引入一个 mask 矩阵，它的大小与词表一样，所有位置初始化为 1，但是 PAD 所在的位置置为 0。然后每次在使用词向量时，乘上这个 mask。不过这样略微麻烦，所幸的是 Pytorch 为我们提供了实现。只需要简单地填入 <code>padding_idx</code> 即可，值为 PAD 对应的索引，索引取决于你的项目。可以看到这非常简单，但是这只是让 PAD 这个词向量无意义并且不计算它的梯度而已。在经过复杂的计算之后 PAD 所在位置的值依旧会变为非 0，而对于其他层想要做到使得 PAD 无意义就没那么简单了。</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nn.<span class="constructor">Embedding(<span class="params">vocab_size</span>, <span class="params">embed_dim</span>, <span class="params">padding_idx</span>=PAD_ID)</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>对于 LSTM 等的时序特征提取层</strong>可以使用 <code>torch.nn.utils.rnn.pack_padded_sequence(input, lengths, batch_first=False, enforce_sorted=True)</code> 函数将 embedding 打包。然后将这个打包后的 embedding 输入 LSTM，之后使用 <code>torch.nn.utils.rnn.pad_packed_sequence(sequence, batch_first=False, padding_value=0.0, total_length=None)</code> 函数，将 LSTM 的输出还原。</p>
+</li>
+<li><strong>如果有些层</strong>不像 LSTM 一样只能按照时间步读取，而是<strong>可以批量处理时序数据</strong>，那么可以使用 mask 矩阵。<strong>目前我就知道一个 Transformer 需要用到 mask 矩阵。</strong>你可以通过句子的长度自行创建。</li>
+<li>最后<strong>在计算 loss 时</strong>也需要 padding mask，这可以使用 <code>torch.masked_select(input, mask, out=None)</code> 进行计算。<a id="more"></a>
+</li>
+</ol>
+<h2 id="sequence-mask"><a href="#sequence-mask" class="headerlink" title="sequence mask"></a>sequence mask</h2><p>&emsp;&emsp;使得 decoder 无法看见未来的信息，其 attention 只能关注解码单词之前的单词，而不能依赖后面未解码出来的单词。这是因为在解码时，由于传统一次只预测一个单词的工作方式太低下，所以 Transformer 的作者做了改进。一次直接将 target 序列输入 decoder，这是可行的，loss 函数还是像往常一样计算即可。例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">我**</span><br><span class="line">我是*</span><br><span class="line">我是鱼</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;在传统模型中，在预测玩“我”、“是”之后，需要输入“是”再预测“鱼”。而 Transformer 中，直接输入“<code>&lt;SOS&gt;</code>我是”，再预测“鱼”，其实这两种方式一模一样。同时为了做到输入“<code>&lt;SOS&gt;</code>”预测“我”，输入“<code>&lt;SOS&gt;</code>我”预测“是”等操作，所以需要拷贝多份数据。<br>&emsp;&emsp;说白了这个 sequence mask 矩阵其实就是一个 <script type="math/tex">L \times L</script> 维的矩阵，L 代表一条语句的长度。其内容是，下三角以及对角线全部为 1，代表需要这部分信息。上三角全部为 0，代表这部分信息被掩盖。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a href="https://luozhouyang.github.io/transformer/" target="_blank" rel="noopener">Transformer模型的PyTorch实现</a></li>
+<li><a href="https://www.jianshu.com/p/405bc8d041e0" target="_blank" rel="noopener">The Transformer</a></li>
+<li><a href="https://www.zhihu.com/question/320615749/answer/1080485410" target="_blank" rel="noopener">深度学习中的 mask 到底是什么意思？</a></li>
+<li><a href="https://www.zhihu.com/question/264501322/answer/433784349" target="_blank" rel="noopener">变长序列怎么使用 mini-batch SGD 训练？</a></li>
+<li><a href="https://www.zhihu.com/question/347366108/answer/832932755" target="_blank" rel="noopener">transformer 在解码的时候，用的 k 和 v 的向量来自于编码器的输出还是来自于之前解码输出的值呢？</a></li>
+</ol>
+<h1 id="对于如何融合两个向量的思考"><a href="#对于如何融合两个向量的思考" class="headerlink" title="对于如何融合两个向量的思考"></a>对于如何融合两个向量的思考</h1><p>&emsp;&emsp;在训练神经网络时，有些情况会有两个张量，但是网络的输入只有一个。例如在训练 Bi-LSTM 时，会分别得到正向以及逆向的输出。这两个张量的特征我们都需要利用到，那么该如何融合它们的特征呢？<br>&emsp;&emsp;常用的做法就是<strong>1）直接相加</strong>；<strong>2）或者拼接两个张量</strong>。<strong>个人比较喜欢第二种方法</strong>，因为我自学习神经网络开始，一直将一个向量的各个维度认作一个数据的各个特征。而张量拼接的做法，直观上来看，其实就是<strong>将两个张量的特征合并</strong>。个人认为这更符合我的逻辑。反之，张量相加好像体现不出特征的奇妙之处。<br>&emsp;&emsp;当然这样做也各有优缺点，<strong>张量拼接的方式导致了维度倍增</strong>，而相加的方式还是维持原来的维度。但是张量拼接之后可以接一个前馈神经网络（甚至可以接多层感知机，让网络更深），进行降维。总得来说，张量拼接的方式虽然使得维数倍增，但是现在这个年代，这个维数也可以接受，只要的维数不是高的离谱就行。同时<strong>方法 2 后接一个前馈神经网络</strong>，这又进一步<strong>对两个张量进行了特征提取</strong>，用一句话形容就是“取其精华，去其糟粕”。前馈网络对张量的降维可以理解为删去了无用的特征。<br>&emsp;&emsp;其次，还有另一个做法是先对两个张量做一次线性变换，再相加。这其实和方法二完全一样，观察下式。实际上，<script type="math/tex">W_c b_c</script> 都可以拆成两个折半的矩阵/向量，例如 <script type="math/tex">W_c = \begin{pmatrix}W_{c_1} & W_{c_2} \end{pmatrix}</script>。拆开之后就是 <script type="math/tex">C = f(M) + F(N)</script>，这其实就是先进行线性变换再相加。</p>
+<script type="math/tex; mode=display">
+f(x) = W \cdot x + b \\
+C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{pmatrix} + b_c</script><p>&emsp;&emsp;最后方法 1 和方法 2 其实也是类似的。一般方法二需要接一个线性变换，即 <script type="math/tex">C = f(\begin{pmatrix}M \\ N\end{pmatrix})</script>。而方法一可以公式化为：<script type="math/tex">D = \begin{pmatrix}1 & 1\end{pmatrix} \cdot \begin{pmatrix}M \\ N\end{pmatrix} + 0</script>。说白了就是方法一相比于方法二，权重是 1，偏差是 0。也就是说方法一的做法<strong>没有利用神经网络自动为两个张量分配合适的权重</strong>。</p>
+<h2 id="参考资料-1"><a href="#参考资料-1" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a href="https://www.zhihu.com/question/389912594/answer/1178054600" target="_blank" rel="noopener">神经网络中对需要 concat 的特征进行线性变换然后相加是否好于直接 concat?</a></li>
+<li>以后有机会再补充</li>
+</ol>
+<h1 id="subword技术"><a href="#subword技术" class="headerlink" title="subword技术"></a>subword技术</h1><h2 id="参考资料-2"><a href="#参考资料-2" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a href="https://zhuanlan.zhihu.com/p/86965595" target="_blank" rel="noopener">深入理解 NLP Subword 算法：BPE、WordPiece、ULM</a></li>
+</ol>
+<h1 id="调参的技巧"><a href="#调参的技巧" class="headerlink" title="调参的技巧"></a>调参的技巧</h1><h2 id="参考资料-3"><a href="#参考资料-3" class="headerlink" title="参考资料"></a>参考资料</h2>
     </div>
 
     
@@ -319,12 +327,6 @@
     
 
       <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/系列/" rel="tag"># 系列</a>
-              <a href="/tags/马尔科夫链/" rel="tag"># 马尔科夫链</a>
-              <a href="/tags/HMM/" rel="tag"># HMM</a>
-              <a href="/tags/CRF/" rel="tag"># CRF</a>
-          </div>
 
         
 
@@ -332,12 +334,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/·论文笔记/35、Seq2sql：Generating structured queries from natural language using.html" rel="prev" title="Seq2sql: Generating structured queries from natural language using reinforcement learning">
-      <i class="fa fa-chevron-left"></i> Seq2sql: Generating structured queries from natural language using reinforcement learning
+    <a href="/AI/framework/一些常用的pytorch技巧.html" rel="prev" title="一些常用的pytorch技巧">
+      <i class="fa fa-chevron-left"></i> 一些常用的pytorch技巧
     </a></div>
       <div class="post-nav-item">
-    <a href="/·论文笔记/36、Neural network-based question answering over knowledge graphs on word and character level.html" rel="next" title="Neural network-based question answering over knowledge graphs on word and character level">
-      Neural network-based question answering over knowledge graphs on word and character level <i class="fa fa-chevron-right"></i>
+    <a href="/·zcy/AI/ml/【机器学习算法】无监督学习.html" rel="next" title="【机器学习算法】无监督学习">
+      【机器学习算法】无监督学习 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -398,7 +400,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#马尔科夫链——Markov-Chain"><span class="nav-number">1.</span> <span class="nav-text">马尔科夫链——Markov Chain</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#隐马尔科夫模型——HMM"><span class="nav-number">2.</span> <span class="nav-text">隐马尔科夫模型——HMM</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#概率模型"><span class="nav-number">2.1.</span> <span class="nav-text">概率模型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CRF"><span class="nav-number">3.</span> <span class="nav-text">CRF</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考文献"><span class="nav-number">4.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#mask"><span class="nav-number">1.</span> <span class="nav-text">mask</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#padding-mask"><span class="nav-number">1.1.</span> <span class="nav-text">padding mask</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sequence-mask"><span class="nav-number">1.2.</span> <span class="nav-text">sequence mask</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">1.3.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#对于如何融合两个向量的思考"><span class="nav-number">2.</span> <span class="nav-text">对于如何融合两个向量的思考</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料-1"><span class="nav-number">2.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#subword技术"><span class="nav-number">3.</span> <span class="nav-text">subword技术</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料-2"><span class="nav-number">3.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#调参的技巧"><span class="nav-number">4.</span> <span class="nav-text">调参的技巧</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料-3"><span class="nav-number">4.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -414,24 +416,24 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">151</span>
+          <span class="site-state-item-count">155</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-count">28</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">94</span>
+        <span class="site-state-item-count">91</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">181k</span>
+      	<span class="site-state-item-count">183.2k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
@@ -598,10 +600,12 @@ $('.content img').on('zoom-out-complete.zoomify', function () {
       quicklink({
         timeout: 3000,
         priority: true,
-        ignores: [uri => uri.includes('#'),uri => uri == 'http://yan624.github.io/·zcy/AI/nlp/【NLP算法】（三）条件随机场CRF.html',]
+        ignores: [uri => uri.includes('#'),uri => uri == 'http://yan624.github.io/·zcy/AI/神经网络训练技巧（tricks）.html',]
       });
       });
   </script>
+<!-- calendar widget -->
+
 
 </body>
 </html>

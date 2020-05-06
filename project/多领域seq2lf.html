@@ -22,21 +22,21 @@
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="pytorch zero grad gradient clipping learning rate decay dropout oov RNN/LSTM/GRU 梯度消失/梯度爆炸原因分析 attention batch norm tensorboardX 过拟合/欠拟合            pytorch踩坑 tensor.view() 相当于numpy中resize">
+  <meta name="description" content="pytorch zero grad gradient clipping learning rate decay dropout oov RNN/LSTM/GRU 梯度消失/梯度爆炸原因分析 attention batch norm tensorboardX 过拟合/欠拟合            pytorch踩坑 view() 的用法 pytorch 中 LSTM 的用法">
 <meta name="keywords" content="博客，java，javaWeb，NLP，python，机器学习，深度学习">
 <meta property="og:type" content="article">
 <meta property="og:title" content="多领域seq2lf">
 <meta property="og:url" content="http://yan624.github.io/project/多领域seq2lf.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="pytorch zero grad gradient clipping learning rate decay dropout oov RNN/LSTM/GRU 梯度消失/梯度爆炸原因分析 attention batch norm tensorboardX 过拟合/欠拟合            pytorch踩坑 tensor.view() 相当于numpy中resize">
+<meta property="og:description" content="pytorch zero grad gradient clipping learning rate decay dropout oov RNN/LSTM/GRU 梯度消失/梯度爆炸原因分析 attention batch norm tensorboardX 过拟合/欠拟合            pytorch踩坑 view() 的用法 pytorch 中 LSTM 的用法">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/多领域seq2lf/the error surface is rough.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/多领域seq2lf/total loss.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/多领域seq2lf/train acc很大，gap也很大.svg">
-<meta property="og:updated_time" content="2020-03-28T04:54:28.385Z">
+<meta property="og:updated_time" content="2020-05-04T15:39:09.360Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="多领域seq2lf">
-<meta name="twitter:description" content="pytorch zero grad gradient clipping learning rate decay dropout oov RNN/LSTM/GRU 梯度消失/梯度爆炸原因分析 attention batch norm tensorboardX 过拟合/欠拟合            pytorch踩坑 tensor.view() 相当于numpy中resize">
+<meta name="twitter:description" content="pytorch zero grad gradient clipping learning rate decay dropout oov RNN/LSTM/GRU 梯度消失/梯度爆炸原因分析 attention batch norm tensorboardX 过拟合/欠拟合            pytorch踩坑 view() 的用法 pytorch 中 LSTM 的用法">
 <meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/多领域seq2lf/the error surface is rough.jpg">
 
 <link rel="canonical" href="http://yan624.github.io/project/多领域seq2lf.html">
@@ -54,6 +54,7 @@
 <link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
 <!--阿里云矢量库样式-->
 <link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_621sfmh583s.css" />
+
   <title>多领域seq2lf | 博客</title>
   
 
@@ -110,7 +111,7 @@
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
-        <p class="site-subtitle">低阶炼金术士</p>
+        <p class="site-subtitle">低阶炼金术士<br />虚体训练师</p>
   </div>
 
   <div class="site-nav-right"></div>
@@ -127,7 +128,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">151</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">155</span></a>
 
   </li>
         <li class="menu-item menu-item-about">
@@ -147,7 +148,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">94</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">91</span></a>
 
   </li>
         
@@ -244,7 +245,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-28 12:54:28" itemprop="dateModified" datetime="2020-03-28T12:54:28+08:00">2020-03-28</time>
+                <time title="修改时间：2020-05-04 23:39:09" itemprop="dateModified" datetime="2020-05-04T23:39:09+08:00">2020-05-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -271,14 +272,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>12k</span>
+              <span>9.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>20 分钟</span>
+              <span>15 分钟</span>
             </span>
 
         </div>
@@ -294,39 +295,11 @@
             <p><span class="label info">pytorch</span> <span class="label warning">zero grad</span> <span class="label success">gradient clipping</span> <span class="label primary">learning rate decay</span> <span class="label info">dropout</span> <span class="label danger">oov</span> <span class="label success">RNN/LSTM/GRU</span> <span class="label info">梯度消失/梯度爆炸原因分析</span> <span class="label danger">attention</span> <span class="label warning">batch norm</span> <span class="label info">tensorboardX</span> <span class="label primary">过拟合/欠拟合</span></p>
           </div>
 <h1 id="pytorch踩坑"><a href="#pytorch踩坑" class="headerlink" title="pytorch踩坑"></a>pytorch踩坑</h1><ol>
-<li><code>tensor.view()</code> 相当于numpy中resize（）的功能，但是用法可能不太一样。</li>
-<li>关于 nn.LSTM 的用法：如果不想手动初始化隐藏状态，而是想让 pytorch 帮你初始化，那么就只需要填入输入值即可。举个例子，下面的代码输入向量所对应的自然语句是 [‘how are you’, ‘i’m fine’]。<br>其中输入值 x 的形状为 (seq_len, batch_size, input_size)，比如上面的例子就是 (3, 2, 300)，代表序列长度为 3（因为上面的两句话的最大长度为 3），批量大小为 2，词向量维度为 300。注意一点：<strong>pytorch 会根据你输入的序列长度</strong>（输入的张量必须是一样长的，参差不齐的张量无法输入，当然了，你也无法创建出这样的张量）<strong>自动帮你做时间步上的计算，比如你输入的序列长度为 20，那么它会自动在神经网络的第一层计算 20 次，再返回结果给你。</strong>如果看不懂这里是什么意思，说明你不会 LSTM。可以再看看 LSTM 是怎么计算的。<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cell = nn.<span class="constructor">LSTM(<span class="params">input_size</span>, <span class="params">hidden_size</span>, <span class="params">num_layers</span>)</span></span><br><span class="line">output, (a, m) = cell(x)</span><br></pre></td></tr></table></figure>
-</li>
+<li><a href="https://yan624.github.io/AI/framework/一些常用的pytorch技巧.html#view、reshape和resize">view() 的用法</a></li>
+<li><a href="https://yan624.github.io/AI/framework/一些常用的pytorch技巧.html#LSTM">pytorch 中 LSTM 的用法</a></li>
+<li><a href="https://yan624.github.io/AI/framework/一些常用的pytorch技巧.html#pytorch-loss-function">pytorch loss function</a> </li>
 </ol>
-<h1 id="pytorch-loss-function"><a href="#pytorch-loss-function" class="headerlink" title="pytorch loss function"></a>pytorch loss function</h1><p>&emsp;&emsp;pytorch 的多元分类 loss 有 CrossEntropyLoss 和 NLLLoss。NLLLoss 全称 Negative Log Likelihood Loss，说白了就是求对数概率并取负，我们从函数图像就可以理解。模型输出的概率分布在 0-1 之间，log 函数的 0-1 区间正好全是负数，所以要加上一个负号，让 loss 值为正数。显而易见，概率越接近 1，loss 值越小。接下来描述一下这两个函数。</p>
-<ol>
-<li>CrossEntropyLoss = LogSoftmax + NLLLoss；</li>
-<li>CrossEntropyLoss 中已经附带了 log_softmax 操作，所以如果你想省事，那么直接将输出向量输入 CrossEntropyLoss 即可；</li>
-<li>如果使用 NLLLoss，那么在使用 NLLLoss 之前，还需要经过一层 LogSoftmax。</li>
-</ol>
-<p>&emsp;&emsp;需要注意一点，我感觉网上很多人也没有理解什么是 CrossEntropyLoss，导致很多人都被误导了。首先 nll 的公式如下：</p>
-<script type="math/tex; mode=display">
-nll\_loss = -log(pred)</script><div class="note warning">
-            <p>&emsp;&emsp;nll loss 可以有多种表达方式，我把在网上看到的公式都罗列一下。<br>&emsp;&emsp;以下的公式与 crossentropy 一样。（实际上公式就是一样的，只不过在概念上有点不同，由于输出值 y 是 one hot 形式，为 0 时，就相当于没有加，最后的结果就是上面的公式）</p><script type="math/tex; mode=display">nll\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred)</script><p>&emsp;&emsp;这里的 class 就是指第几个标签，它不是 one hot 表示形式。大家会发现这里少了一个 log 函数，实际上 pred 是使用 log_softmax 函数计算之后的结果。</p><script type="math/tex; mode=display">nll\_loss = -pred[class]</script>
-          </div>
-<p>&emsp;&emsp;CrossEntropyLoss 公式如下：</p>
-<script type="math/tex; mode=display">
-crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i)</script><p>&emsp;&emsp;<del>无法理解的原因之一是，在学机器学习的时候，大家都知道啥是 crossentropy，后来在学多元分类时，开始分 binary_crossentropy 和 crossentropy。这点大家都能理解，但是到看到 NLLLoss 时，就开始懵逼了。</del><br>&emsp;&emsp;<del>由于 CrossEntropyLoss = LogSoftmax + NLLLoss，在 crossentropy 的公式中貌似没有出现 softmax（更没有 log_softmax），所以开始懵了，无法理解其中的 LogSoftmax 是干啥的。</del><br>&emsp;&emsp;首先我要解释一点 CrossEntropyLoss 是 LogSoftmax 和 NLLLoss 两个步骤之和，之前说的“+”号，并非是数学意义上的加号。也就是说，CrossEntropyLoss 就比 NLLLoss 多做了一步 LogSoftmax（<strong>博主注</strong>：<em>个人认为实际上只是多做了一步 softmax，说多做了一步 log_softmax，是因为站在 pytorch 框架的角度</em>）。<br>&emsp;&emsp;其次，对于真实输出值 y 来说，无非就是 0 和 1（注意多元分类也只有 0 和 1），并且根据上述 crossentropy 的公式。实际上公式可以化简为以下所示，其中的 m 代表真实值为 1 的索引。</p>
-<script type="math/tex; mode=display">
-crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)</script><p>&emsp;&emsp;请注意这里的 <script type="math/tex">pred_m</script>。我们都知道在进行分类问题时，我们需要将输出结果置于 0-1 之间，对于二元分类我们使用 sigmoid 函数，对于多元分类我们使用 softmax（到这开始有内味了）。由于分类问题都是要这么做的，所以将 softmax 这个函数放到公式 <script type="math/tex">crossentropy\_loss = -log(pred_m)</script> 中，我们惊奇的发现 crossentropy 函数变成了 log_softmax（最前面的负号暂时不看）。即 crossentropy + softmax = -log_softmax。</p>
-<div class="note warning">
-            <p>&emsp;&emsp;请始终留意，pred 是一个向量通过 softmax/log_softmax 计算之后的值。</p>
-          </div>
-<p>&emsp;&emsp;最后你会发现这样还是不对。<script type="math/tex">nll\_loss = -log(pred)</script>，之前说 CrossEntropyLoss = <strong>LogSoftmax</strong> + NLLLoss，我把 log_softmax 放到 nll 里，变成了 <script type="math/tex">LogSoftmax + NLLLoss = -log(log(pred))</script>，怎么多了一个 log？实际上 nll 的公式应该以 <script type="math/tex">nll\_loss = -pred[class]</script> 为准，你会发现这个公式中没有 log 函数。这样将 logsoftmax 放入 nll loss 中，就正好是 crossentropy 了。<br>&emsp;&emsp;那么你就会问 nll 明明是 Negative Log Liklihood，log 不见了，这不就是名存实亡了？<br>&emsp;&emsp;<strong>这可能是因为 pytorch 想要简化操作，才这么设置的，别的框架可能并不是这样。简而言之，pytorch 框架中，nll loss 的公式是 -pred。crossentropy 的公式是 logsoftmax + nll loss，即 nll(log_softmax(output))</strong><br>&emsp;&emsp;<strong>也就是说，如果神经网络的最后一层输出是 logsoftmax，那么就使用 nll loss（上一段 nll loss 那个 pred 就是通过 log_softmax 的输出值）。如果最后一层只是输出，偷懒不想写 logsoftmax，那么就使用 crossentropy loss（上一段 crossentropy 中的 output 就是一个普通的神经网络输出）。</strong><br>&emsp;&emsp;参考：</p>
-<ol>
-<li><a href="http://blog.leanote.com/post/lee-romantic/crossentry" target="_blank" rel="noopener">CrossEntropyLoss和NLLLoss的理解</a></li>
-<li><a href="https://www.cnblogs.com/ranjiewen/p/10059490.html" target="_blank" rel="noopener">Pytorch之CrossEntropyLoss() 与 NLLLoss() 的区别</a></li>
-<li><a href="https://blog.csdn.net/m0_38133212/article/details/88087206" target="_blank" rel="noopener">CrossEntropyLoss与NLLLoss的总结</a></li>
-<li><a href="https://www.cnblogs.com/marsggbo/p/10401215.html" target="_blank" rel="noopener">Pytorch里的CrossEntropyLoss详解</a><a id="more"></a>
-</li>
-</ol>
-<h2 id="顺便一提KLDivLoss"><a href="#顺便一提KLDivLoss" class="headerlink" title="顺便一提KLDivLoss"></a>顺便一提KLDivLoss</h2><p>&emsp;&emsp;<a href="https://www.cnblogs.com/charlotte77/p/5392052.html" target="_blank" rel="noopener">【原】浅谈KL散度（相对熵）在用户画像中的应用</a><br>&emsp;&emsp;暂时还没用过这个 loss，简单来说，是用来比较两个概率分布之间的信息熵差异，如 AB 两组群体，有对某一商品的总消费分布 P 和群体人数的分布 Q，可以计算 PQ 之间的信息熵差异，从而获得 AB 两组群体对该商品的偏爱程度。</p>
-<h1 id="tricks"><a href="#tricks" class="headerlink" title="tricks"></a>tricks</h1><p>&emsp;&emsp;在将神经网络的参数调整的差不多后，需要应用一些 tricks 使得神经网络获得更好的性能。</p>
+<h1 id="tricks"><a href="#tricks" class="headerlink" title="tricks"></a>tricks</h1><p>&emsp;&emsp;在将神经网络的参数调整的差不多后，需要应用一些 tricks 使得神经网络获得更好的性能。<br><a id="more"></a></p>
 <h2 id="optimizer-zero-grad"><a href="#optimizer-zero-grad" class="headerlink" title="optimizer.zero_grad()"></a>optimizer.zero_grad()</h2><p>&emsp;&emsp;在 pytorch 中，为什么要在每个循环之初调用这个方法？因为 pytorch 把计算的每个梯度都累加起来，并不会每迭代一次就将梯度清零。这样做看起来令人费解，并反常理。但是实际上这样做可以做更多神奇的操作，比如</p>
 <ul>
 <li><a href="https://www.zhihu.com/question/303070254" target="_blank" rel="noopener">https://www.zhihu.com/question/303070254</a></li>
@@ -384,7 +357,7 @@ LSTM: memory_{new} = a * input + b * memory \\</script><p>&emsp;&emsp;cell() 代
 <li><a href="https://www.bilibili.com/video/av41393758?p=8" target="_blank" rel="noopener">RNN 和语言模式</a>，19.50 开始</li>
 </ol>
 <p>&emsp;&emsp;而在 LSTM 中，是使用加和的计算方式（博主注：<strong>由于我没有计算过，所以我也不是很肯定</strong>），所以大致解决了梯度消失的问题。注意我没有说解决了梯度爆炸的问题。<br><div class="note success">
-            <p>&emsp;&emsp;LSTM 的模型以及参数名参考<a href="https://yan624.github.io/·学习笔记/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">此处</a>。</p><script type="math/tex; mode=display">\begin{aligned}    LSTM: z_i & = [a_{i - 1}; x_i] \\    memory_{new} & = g(z_i) * input(z_i) + memory * forget(z_i) \\    a_i & = h(g(z_i) * input(z_i) + memory * forget(z_i)) * output(z_i) \\\end{aligned}</script><p>&emsp;&emsp;对 LSTM 的求导结果很复杂，就不写了（实际上算得我自己都乱了）。。。它的复杂结构使得它不会出现一个数被连乘，导致极小。<strong>注意 LSTM 并没有解决梯度爆炸的问题。可以结合 clipping 训练 LSTM</strong>。<br>参考资料：</p><ol><li><a href="https://zhuanlan.zhihu.com/p/28749444" target="_blank" rel="noopener">LSTM如何解决梯度消失问题</a></li><li><a href="https://zhuanlan.zhihu.com/p/36101196" target="_blank" rel="noopener">漫谈LSTM系列的梯度问题</a></li><li><a href="https://www.zhihu.com/question/34878706/answer/192444888" target="_blank" rel="noopener">LSTM如何来避免梯度弥散和梯度爆炸？</a></li><li><a href="https://zhuanlan.zhihu.com/p/83496936" target="_blank" rel="noopener">人人都能看懂的LSTM介绍及反向传播算法推导（非常详细）</a></li></ol>
+            <p>&emsp;&emsp;LSTM 的模型以及参数名参考<a href="https://yan624.github.io/·学习笔记/AI/dl/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">此处</a>。</p><script type="math/tex; mode=display">\begin{aligned}    LSTM: z_i & = [a_{i - 1}; x_i] \\    memory_{new} & = g(z_i) * input(z_i) + memory * forget(z_i) \\    a_i & = h(g(z_i) * input(z_i) + memory * forget(z_i)) * output(z_i) \\\end{aligned}</script><p>&emsp;&emsp;对 LSTM 的求导结果很复杂，就不写了（实际上算得我自己都乱了）。。。它的复杂结构使得它不会出现一个数被连乘，导致极小。<strong>注意 LSTM 并没有解决梯度爆炸的问题。可以结合 clipping 训练 LSTM</strong>。<br>参考资料：</p><ol><li><a href="https://zhuanlan.zhihu.com/p/28749444" target="_blank" rel="noopener">LSTM如何解决梯度消失问题</a></li><li><a href="https://zhuanlan.zhihu.com/p/36101196" target="_blank" rel="noopener">漫谈LSTM系列的梯度问题</a></li><li><a href="https://www.zhihu.com/question/34878706/answer/192444888" target="_blank" rel="noopener">LSTM如何来避免梯度弥散和梯度爆炸？</a></li><li><a href="https://zhuanlan.zhihu.com/p/83496936" target="_blank" rel="noopener">人人都能看懂的LSTM介绍及反向传播算法推导（非常详细）</a></li></ol>
           </div></p>
 <p>&emsp;&emsp;其他一些思考：LSTM 虽然可以永久的记住以前的 input 信息，但是 memory 说白了就是一个权重矩阵，不可能无限制的记住任何信息。所以可以对 memory 进行一些魔改，比如 memory network 将 memory 修改成用数组存储。<br>&emsp;&emsp;那么问题来了，GRU 解决了什么问题呢？为什么过拟合严重，可以使用 GRU？详见下一章。</p>
 <h2 id="其他解决梯度消失的办法"><a href="#其他解决梯度消失的办法" class="headerlink" title="其他解决梯度消失的办法"></a>其他解决梯度消失的办法</h2><ol>
@@ -549,7 +522,7 @@ LSTM: memory_{new} = a * input + b * memory \\</script><p>&emsp;&emsp;cell() 代
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#pytorch踩坑"><span class="nav-number">1.</span> <span class="nav-text">pytorch踩坑</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pytorch-loss-function"><span class="nav-number">2.</span> <span class="nav-text">pytorch loss function</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#顺便一提KLDivLoss"><span class="nav-number">2.1.</span> <span class="nav-text">顺便一提KLDivLoss</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tricks"><span class="nav-number">3.</span> <span class="nav-text">tricks</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#optimizer-zero-grad"><span class="nav-number">3.1.</span> <span class="nav-text">optimizer.zero_grad()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#clip-gradient"><span class="nav-number">3.2.</span> <span class="nav-text">clip gradient</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#learning-rate-decay"><span class="nav-number">3.3.</span> <span class="nav-text">learning rate decay</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dropout"><span class="nav-number">3.4.</span> <span class="nav-text">Dropout</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#处理OOV"><span class="nav-number">3.5.</span> <span class="nav-text">处理OOV</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LSTM-解决了-RNN-的什么问题"><span class="nav-number">4.</span> <span class="nav-text">LSTM 解决了 RNN 的什么问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#memory机制"><span class="nav-number">4.1.</span> <span class="nav-text">memory机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#梯度消失"><span class="nav-number">4.2.</span> <span class="nav-text">梯度消失</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他解决梯度消失的办法"><span class="nav-number">4.3.</span> <span class="nav-text">其他解决梯度消失的办法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LSTM-为什么没有解决梯度爆炸？"><span class="nav-number">4.4.</span> <span class="nav-text">LSTM 为什么没有解决梯度爆炸？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Batch-Norm"><span class="nav-number">5.</span> <span class="nav-text">Batch Norm</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#可视化训练结果"><span class="nav-number">6.</span> <span class="nav-text">可视化训练结果</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#过拟合-欠拟合"><span class="nav-number">7.</span> <span class="nav-text">过拟合/欠拟合</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#train-acc很大，gap非常大"><span class="nav-number">7.1.</span> <span class="nav-text">train acc很大，gap非常大</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#pytorch踩坑"><span class="nav-number">1.</span> <span class="nav-text">pytorch踩坑</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tricks"><span class="nav-number">2.</span> <span class="nav-text">tricks</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#optimizer-zero-grad"><span class="nav-number">2.1.</span> <span class="nav-text">optimizer.zero_grad()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#clip-gradient"><span class="nav-number">2.2.</span> <span class="nav-text">clip gradient</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#learning-rate-decay"><span class="nav-number">2.3.</span> <span class="nav-text">learning rate decay</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dropout"><span class="nav-number">2.4.</span> <span class="nav-text">Dropout</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#处理OOV"><span class="nav-number">2.5.</span> <span class="nav-text">处理OOV</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LSTM-解决了-RNN-的什么问题"><span class="nav-number">3.</span> <span class="nav-text">LSTM 解决了 RNN 的什么问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#memory机制"><span class="nav-number">3.1.</span> <span class="nav-text">memory机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#梯度消失"><span class="nav-number">3.2.</span> <span class="nav-text">梯度消失</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他解决梯度消失的办法"><span class="nav-number">3.3.</span> <span class="nav-text">其他解决梯度消失的办法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LSTM-为什么没有解决梯度爆炸？"><span class="nav-number">3.4.</span> <span class="nav-text">LSTM 为什么没有解决梯度爆炸？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Batch-Norm"><span class="nav-number">4.</span> <span class="nav-text">Batch Norm</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#可视化训练结果"><span class="nav-number">5.</span> <span class="nav-text">可视化训练结果</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#过拟合-欠拟合"><span class="nav-number">6.</span> <span class="nav-text">过拟合/欠拟合</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#train-acc很大，gap非常大"><span class="nav-number">6.1.</span> <span class="nav-text">train acc很大，gap非常大</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -565,24 +538,24 @@ LSTM: memory_{new} = a * input + b * memory \\</script><p>&emsp;&emsp;cell() 代
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">151</span>
+          <span class="site-state-item-count">155</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-count">28</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">94</span>
+        <span class="site-state-item-count">91</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">181k</span>
+      	<span class="site-state-item-count">183.2k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
@@ -753,6 +726,8 @@ $('.content img').on('zoom-out-complete.zoomify', function () {
       });
       });
   </script>
+<!-- calendar widget -->
+
 
 </body>
 </html>

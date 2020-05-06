@@ -23,35 +23,35 @@
   </script>
 
   <meta name="description" content="Transformer位置信息&amp;emsp;&amp;emsp;引用自放弃幻想，全面拥抱Transformer：自然语言处理三大特征抽取器（CNN/RNN/TF）比较  &amp;emsp;&amp;emsp;NLP 句子中单词之间的相对位置是包含很多信息的，上面提过，RNN 因为结构就是线性序列的，所以天然会将位置信息编码进模型；而CNN的卷积层其实也是保留了位置相对信息的，所以什么也不做问题也不大。但是对于 Trans">
-<meta name="keywords" content="系列,学习笔记,Transformer">
+<meta name="keywords" content="系列,学习笔记,4me,Transformer">
 <meta property="og:type" content="article">
 <meta property="og:title" content="深度学习算法（四）：Transformer">
 <meta property="og:url" content="http://yan624.github.io/·zcy/AI/dl/深度学习算法（四）：Transformer.html">
 <meta property="og:site_name" content="博客">
 <meta property="og:description" content="Transformer位置信息&amp;emsp;&amp;emsp;引用自放弃幻想，全面拥抱Transformer：自然语言处理三大特征抽取器（CNN/RNN/TF）比较  &amp;emsp;&amp;emsp;NLP 句子中单词之间的相对位置是包含很多信息的，上面提过，RNN 因为结构就是线性序列的，所以天然会将位置信息编码进模型；而CNN的卷积层其实也是保留了位置相对信息的，所以什么也不做问题也不大。但是对于 Trans">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_positional_encoding_vectors.png">
-<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_positional_encoding_example.png">
-<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_self_attention_vectors.png">
-<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_self_attention_score.png">
-<meta property="og:image" content="https://jalammar.github.io/images/t/self-attention_softmax.png">
-<meta property="og:image" content="https://jalammar.github.io/images/t/self-attention-output.png">
-<meta property="og:image" content="https://jalammar.github.io/images/t/self-attention-matrix-calculation.png">
-<meta property="og:image" content="https://jalammar.github.io/images/t/self-attention-matrix-calculation-2.png">
-<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_attention_heads_qkv.png">
-<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_attention_heads_z.png">
-<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_attention_heads_weight_matrix_o.png">
-<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_multi-headed_self-attention-recap.png">
-<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_resideual_layer_norm.png">
-<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_resideual_layer_norm_2.png">
-<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_resideual_layer_norm_3.png">
-<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_decoding_1.gif">
-<meta property="og:image" content="https://jalammar.github.io/images/t/transformer_decoding_2.gif">
-<meta property="og:updated_time" content="2020-02-09T07:54:22.674Z">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_positional_encoding_vectors.png">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_positional_encoding_example.png">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_self_attention_vectors.png">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_self_attention_score.png">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/self-attention_softmax.png">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/self-attention-output.png">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/self-attention-matrix-calculation.png">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/self-attention-matrix-calculation-2.png">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_attention_heads_qkv.png">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_attention_heads_z.png">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_attention_heads_weight_matrix_o.png">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_multi-headed_self-attention-recap.png">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_resideual_layer_norm.png">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_resideual_layer_norm_2.png">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_resideual_layer_norm_3.png">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_decoding_1.gif">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_decoding_2.gif">
+<meta property="og:updated_time" content="2020-05-05T14:59:43.094Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="深度学习算法（四）：Transformer">
 <meta name="twitter:description" content="Transformer位置信息&amp;emsp;&amp;emsp;引用自放弃幻想，全面拥抱Transformer：自然语言处理三大特征抽取器（CNN/RNN/TF）比较  &amp;emsp;&amp;emsp;NLP 句子中单词之间的相对位置是包含很多信息的，上面提过，RNN 因为结构就是线性序列的，所以天然会将位置信息编码进模型；而CNN的卷积层其实也是保留了位置相对信息的，所以什么也不做问题也不大。但是对于 Trans">
-<meta name="twitter:image" content="https://jalammar.github.io/images/t/transformer_positional_encoding_vectors.png">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_positional_encoding_vectors.png">
 
 <link rel="canonical" href="http://yan624.github.io/·zcy/AI/dl/深度学习算法（四）：Transformer.html">
 
@@ -68,6 +68,7 @@
 <link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
 <!--阿里云矢量库样式-->
 <link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_621sfmh583s.css" />
+
   <title>深度学习算法（四）：Transformer | 博客</title>
   
 
@@ -124,7 +125,7 @@
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
-        <p class="site-subtitle">低阶炼金术士</p>
+        <p class="site-subtitle">低阶炼金术士<br />虚体训练师</p>
   </div>
 
   <div class="site-nav-right"></div>
@@ -141,7 +142,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">151</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">155</span></a>
 
   </li>
         <li class="menu-item menu-item-about">
@@ -161,7 +162,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">94</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">91</span></a>
 
   </li>
         
@@ -263,6 +264,39 @@
     	
     
     	
+    		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
+        <script type="text/javascript" src="/lib/spop/spop.min.js"></script>
+        <!--判断此文是否为特殊的文章-->
+        <script>
+          var templateSentence = '这是条不可能出现的弹窗提示。';
+          if('4me' == '学习笔记')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记，并非教学，其中可能含有理论错误。';
+          else if('4me' == '4me')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
+          spop({
+            template: templateSentence,
+            group: 'tips',
+            position  : 'bottom-center',
+            style: 'success',
+            autoclose: 5500,
+            onOpen: function () {
+              //这里设置灰色背景色
+            },
+            onClose: function() {
+              //这里可以取消背景色
+              spop({
+                template: 'ε = = (づ′▽`)づ',
+                group: 'tips',
+                position  : 'bottom-center',
+                style: 'success',
+                autoclose: 1500
+              });
+            }
+          });
+        </script>
+    	
+    
+    	
     
 
     <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·zcy/AI/dl/深度学习算法（四）：Transformer.html">
@@ -295,7 +329,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-09 15:54:22" itemprop="dateModified" datetime="2020-02-09T15:54:22+08:00">2020-02-09</time>
+                <time title="修改时间：2020-05-05 22:59:43" itemprop="dateModified" datetime="2020-05-05T22:59:43+08:00">2020-05-05</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -352,10 +386,10 @@
 <p>&emsp;&emsp;NLP 句子中单词之间的相对位置是包含很多信息的，上面提过，RNN 因为结构就是线性序列的，所以天然会将位置信息编码进模型；而CNN的卷积层其实也是保留了位置相对信息的，所以什么也不做问题也不大。但是对于 Transformer 来说，为了能够保留输入句子单词之间的相对位置信息，必须要做点什么。为啥它必须要做点什么呢？因为输入的第一层网络是 Muli-head self attention 层，我们知道，Self attention 会让当前输入单词和句子中任意单词发生关系，然后集成到一个 embedding 向量里，但是当所有信息到了 embedding 后，位置信息并没有被编码进去。所以，Transformer 不像 RNN 或 CNN，必须明确的在输入端将 Positon 信息编码，Transformer 是用<strong>位置函数</strong>来进行位置编码的，而 Bert 等模型则给每个单词一个 <strong>Position embedding</strong>。将单词 embedding 和单词对应的 position embedding 加起来形成单词的输入 embedding，类似上文讲的 ConvS2S 的做法。</p>
 </blockquote>
 <h1 id="encoder"><a href="#encoder" class="headerlink" title="encoder"></a>encoder</h1><p>&emsp;&emsp;从文章<a href="https://zhuanlan.zhihu.com/p/59629215" target="_blank" rel="noopener">《可视化理解Transformer结构》</a>做的总结，此文为另一篇英文文章的翻译版，英文原文地址为 <a href="https://jalammar.github.io/illustrated-transformer/" target="_blank" rel="noopener">The Illustrated Transformer</a>。此外另一篇文章<a href="https://zhuanlan.zhihu.com/p/54356280" target="_blank" rel="noopener">《BERT大火却不懂Transformer？读这一篇就够了》</a>也做了翻译。<br>&emsp;&emsp;Transformer 不同于 RNN，它的输入是独立计算的，输入序列的某个时间步并不依赖其它的时间步。也就是说它可以<strong>并行运算</strong>。<br><a id="more"></a></p>
-<h2 id="Positional-Encoding"><a href="#Positional-Encoding" class="headerlink" title="Positional Encoding"></a>Positional Encoding</h2><p>&emsp;&emsp;在第一节中讲到，Transformer 天然地不具有句子的<strong>位置</strong>属性，所以我们需要使用一种办法让它拥有句子的位置属性。<br>&emsp;&emsp;为解决这个问题，Transformer 为每个输入的词嵌入增加了一个向量。<br><img src="https://jalammar.github.io/images/t/transformer_positional_encoding_vectors.png" alt="To give the model a sense of the order of the words, we add positional encoding vectors -- the values of which follow a specific pattern."></p>
-<p>&emsp;&emsp;如果假定词嵌入维度为4，那真实的位置编码如下：<br><img src="https://jalammar.github.io/images/t/transformer_positional_encoding_example.png" alt="A real example of positional encoding with a toy embedding size of 4"></p>
+<h2 id="Positional-Encoding"><a href="#Positional-Encoding" class="headerlink" title="Positional Encoding"></a>Positional Encoding</h2><p>&emsp;&emsp;在第一节中讲到，Transformer 天然地不具有句子的<strong>位置</strong>属性，所以我们需要使用一种办法让它拥有句子的位置属性。<br>&emsp;&emsp;为解决这个问题，Transformer 为每个输入的词嵌入增加了一个向量。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_positional_encoding_vectors.png" alt="To give the model a sense of the order of the words, we add positional encoding vectors -- the values of which follow a specific pattern."></p>
+<p>&emsp;&emsp;如果假定词嵌入维度为4，那真实的位置编码如下：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_positional_encoding_example.png" alt="A real example of positional encoding with a toy embedding size of 4"></p>
 <p>&emsp;&emsp;位置编码的生成方法在原论文的 section 3.5 中有描述。你可以在 <a href="https://github.com/tensorflow/tensor2tensor/blob/23bd23b9830059fbc349381b70d9429b5c40a139/tensor2tensor/layers/common_attention.py" target="_blank" rel="noopener">get_timing_signal_1d()</a> 函数中看到用于生成位置编码的代码。这并不是生成位置编码的唯一方式。然而，它的优点在于可以扩展到看不见的序列长度（eg. 如果要翻译的句子的长度远长于训练集中最长的句子）。</p>
-<h2 id="self-Attention"><a href="#self-Attention" class="headerlink" title="self-Attention"></a>self-Attention</h2><p>&emsp;&emsp;在 <a href="https://www.bilibili.com/video/av46561029?p=60" target="_blank" rel="noopener">此视频</a>（08:30） 中，x 首先要乘一个权重变成 a。但是<strong>实际上是一样的</strong>，视频中的 x 指的是 one hot，而 a 指的是 embedding。然后将 x 分别乘上三个不同的 transformation 来得到<strong>不同</strong>的 q, k, v。<br><img src="https://jalammar.github.io/images/t/transformer_self_attention_vectors.png" alt="Transformer计算机制"></p>
+<h2 id="self-Attention"><a href="#self-Attention" class="headerlink" title="self-Attention"></a>self-Attention</h2><p>&emsp;&emsp;在 <a href="https://www.bilibili.com/video/av46561029?p=60" target="_blank" rel="noopener">此视频</a>（08:30） 中，x 首先要乘一个权重变成 a。但是<strong>实际上是一样的</strong>，视频中的 x 指的是 one hot，而 a 指的是 embedding。然后将 x 分别乘上三个不同的 transformation 来得到<strong>不同</strong>的 q, k, v。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_self_attention_vectors.png" alt="Transformer计算机制"></p>
 <blockquote>
 <p>注意，这些新创建的向量的维度小于词嵌入向量(embedding vector)。它们（新创建的向量）的维度是 <strong>64</strong>，而词嵌入和编码器的输入输出向量的维度是 <strong>512</strong>。它们不必更小，这是一种架构选择，可以使多头注意力(multiheaded attention)计算不变。 </p>
 </blockquote>
@@ -369,36 +403,32 @@
 </li>
 </ul>
 </li>
-<li>计算得分（score 权重）。这里的分数是通过将 query 向量与我们正在评分的单词的 key 向量做点积来得到。所以如果我们计算位置 #1 处的单词的 self-attention，第一个得分就是就是 <script type="math/tex">q_1</script> 和 <script type="math/tex">k_1</script> 的点积。第二个得分是 <script type="math/tex">q_1</script> 和 <script type="math/tex">k_2</script> 的点积。<br><img src="https://jalammar.github.io/images/t/transformer_self_attention_score.png" alt="计算 score"></li>
-<li>将分数除以8（论文中使用 Key 向量维数的平方根—-64。这可以有更稳定的梯度。实际上还可以有其他可能的值，这里使用默认值）<br><img src="https://jalammar.github.io/images/t/self-attention_softmax.png" alt="计算 score"></li>
-<li>然后经过一个softmax操作后输出结果。Softmax可以将分数归一化，这样使得结果都是正数并且加起来等于1<br><img src="https://jalammar.github.io/images/t/self-attention-output.png" alt></li>
+<li>计算得分（score 权重）。这里的分数是通过将 query 向量与我们正在评分的单词的 key 向量做点积来得到。所以如果我们计算位置 #1 处的单词的 self-attention，第一个得分就是就是 <script type="math/tex">q_1</script> 和 <script type="math/tex">k_1</script> 的点积。第二个得分是 <script type="math/tex">q_1</script> 和 <script type="math/tex">k_2</script> 的点积。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_self_attention_score.png" alt="计算 score"></li>
+<li>将分数除以8（论文中使用 Key 向量维数的平方根—-64。这可以有更稳定的梯度。实际上还可以有其他可能的值，这里使用默认值）<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/self-attention_softmax.png" alt="self-attention softmax"></li>
+<li>然后经过一个softmax操作后输出结果。Softmax可以将分数归一化，这样使得结果都是正数并且加起来等于1<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/self-attention-output.png" alt="self-attention output"></li>
 <li>将每个 value 向量乘以 softmax 得分（准备将他们相加）</li>
 <li>对加权值向量求和，这样就产生了在这个位置的self-attention的输出（对于第一个单词）</li>
 </ol>
-<p>&emsp;&emsp;上述为 self-attention 单个单词的计算步骤，其实它可以并行计算。<br><img src="https://jalammar.github.io/images/t/self-attention-matrix-calculation.png" alt="并行计算第一步"></p>
-<p><img src="https://jalammar.github.io/images/t/self-attention-matrix-calculation-2.png" alt="并行计算第二步"></p>
-<h2 id="multi-headed-attention"><a href="#multi-headed-attention" class="headerlink" title="multi-headed attention"></a>multi-headed attention</h2><p>&emsp;&emsp;看英文名感觉“高大上”，其实很简单。就是将上述的 self-attention 做多次，具体做几次你可以自行选择，Transformer 选择了 8 次。这样就产生了 8 个向量，但是我们训练时其实只要一个向量就够了，所以我们将这 8 个向量<strong>拼接</strong>起来，这样就形成了一个巨长无比的向量。那我们怎么得到我们所需长度的向量呢？很简单，只需要再乘一个权重矩阵就行了。<br><img src="https://jalammar.github.io/images/t/transformer_attention_heads_qkv.png" alt></p>
-<p><img src="https://jalammar.github.io/images/t/transformer_attention_heads_z.png" alt></p>
-<p><img src="https://jalammar.github.io/images/t/transformer_attention_heads_weight_matrix_o.png" alt></p>
-<p>&emsp;&emsp;全过程：<br><img src="https://jalammar.github.io/images/t/transformer_multi-headed_self-attention-recap.png" alt="全过程"></p>
-<h2 id="The-Residuals-与-layer-normalization"><a href="#The-Residuals-与-layer-normalization" class="headerlink" title="The Residuals 与 layer-normalization"></a>The Residuals 与 layer-normalization</h2><p>&emsp;&emsp;残差连接说白了就是跳过一层，输入到下一层（比较直白，不一定对）。<br><img src="https://jalammar.github.io/images/t/transformer_resideual_layer_norm.png" alt></p>
-<p>&emsp;&emsp;layer-normalization，此 <a href="https://www.bilibili.com/video/av56239558" target="_blank" rel="noopener">视频</a> 中（41:00），李宏毅老师说一般情况 layer normalization 会搭配 RNN 使用，而 Transformer 很像 RNN，所以可能是这里使用 layer norm 的理由。<br><img src="https://jalammar.github.io/images/t/transformer_resideual_layer_norm_2.png" alt></p>
-<p>&emsp;&emsp;此步骤在解码层中是类似的操作。将内部件画全，就是如下所示一般（图中的 encoder、decoder 各有两个）：<br><img src="https://jalammar.github.io/images/t/transformer_resideual_layer_norm_3.png" alt></p>
+<p>&emsp;&emsp;上述为 self-attention 单个单词的计算步骤，其实它可以并行计算。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/self-attention-matrix-calculation.png" alt="并行计算第一步"></p>
+<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/self-attention-matrix-calculation-2.png" alt="并行计算第二步"></p>
+<h2 id="multi-headed-attention"><a href="#multi-headed-attention" class="headerlink" title="multi-headed attention"></a>multi-headed attention</h2><p>&emsp;&emsp;看英文名感觉“高大上”，其实很简单。就是将上述的 self-attention 做多次，具体做几次你可以自行选择，Transformer 选择了 8 次。这样就产生了 8 个向量，但是我们训练时其实只要一个向量就够了，所以我们将这 8 个向量<strong>拼接</strong>起来，这样就形成了一个巨长无比的向量。那我们怎么得到我们所需长度的向量呢？很简单，只需要再乘一个权重矩阵就行了。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_attention_heads_qkv.png" alt></p>
+<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_attention_heads_z.png" alt></p>
+<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_attention_heads_weight_matrix_o.png" alt></p>
+<p>&emsp;&emsp;全过程：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_multi-headed_self-attention-recap.png" alt="全过程"></p>
+<h2 id="The-Residuals-与-layer-normalization"><a href="#The-Residuals-与-layer-normalization" class="headerlink" title="The Residuals 与 layer-normalization"></a>The Residuals 与 layer-normalization</h2><p>&emsp;&emsp;残差连接说白了就是跳过一层，输入到下一层（比较直白，不一定对）。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_resideual_layer_norm.png" alt></p>
+<p>&emsp;&emsp;layer-normalization，此 <a href="https://www.bilibili.com/video/av56239558" target="_blank" rel="noopener">视频</a> 中（41:00），李宏毅老师说一般情况 layer normalization 会搭配 RNN 使用，而 Transformer 很像 RNN，所以可能是这里使用 layer norm 的理由。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_resideual_layer_norm_2.png" alt></p>
+<p>&emsp;&emsp;此步骤在解码层中是类似的操作。将内部件画全，就是如下所示一般（图中的 encoder、decoder 各有两个）：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_resideual_layer_norm_3.png" alt></p>
 <p>&emsp;&emsp;在 self_attention 之后要做一次 normalization，此均值归一化步骤的具体算法，详见：</p>
 <ul>
 <li><a href="https://www.cnblogs.com/hellcat/p/9735041.html#_label3_0" target="_blank" rel="noopener">『计算机视觉』各种Normalization层辨析</a> </li>
 <li><a href="https://www.jianshu.com/p/c357c5717a60" target="_blank" rel="noopener">layer normalization 简单总结</a></li>
 </ul>
-<h1 id="decodedr"><a href="#decodedr" class="headerlink" title="decodedr"></a>decodedr</h1><p>&emsp;&emsp;在讲解 decoder 之前，看一张动图，了解一下 Transformer 是如何运作的。首先下图中生成了第一个字母 I。<br><img src="https://jalammar.github.io/images/t/transformer_decoding_1.gif" alt></p>
-<p>&emsp;&emsp;编码器开始处理输入序列，然后将顶部编码器的输出变换为一组注意力向量 <strong>K_{encdec}</strong> 和 <strong>V_{encdec}</strong>，这些将在每个解码器的“encoder-decoder attention” 层使用，这有助于解码器集中注意力在输入序列的合适位置。<br>&emsp;&emsp;解释一下 <strong><script type="math/tex">K_{encdec}</script></strong> 和 <strong><script type="math/tex">V_{encdec}</script></strong> 的具体用法，<strong>在 encoder 中的 self-attention 会使用到 <script type="math/tex">Q_{self-attention}</script>、<script type="math/tex">K_{self-attention}</script>、<script type="math/tex">V_{self-attention}</script> 三个向量，但是它们实际上是输入值 x 的三份拷贝再乘上各自不同的权重矩阵得来。对于 decoder 的 self-attention 与 encoder 的如出一撤，但是对于 encoder-decoder attention 却有点不一样。<script type="math/tex">Q_{encoder-decoder \, attention}</script> 还是 x 的拷贝乘上一个权重矩阵，但是 <script type="math/tex">K_{encoder-decoder \, attention}</script> 和 <script type="math/tex">V_{encoder-decoder \, attention}</script> 分别是 <script type="math/tex">K_{encdec}</script> 和 <script type="math/tex">V_{encdec}</script> 乘上各自的权重矩阵。</strong>以上所有向量所乘的权重矩阵均可以由你自己随机初始化产生。<strong>博主注</strong>：以上 QKV 的用法均分析自 pytorch 官方实现版本的源码。<br>&emsp;&emsp;接着下面的 gif 完成了余下的步骤。Transformer 将之前输出的 I 当做下一个时间步的输入，又走了一遍 decoder。以此循环往复，直到输出一个结束标记 <code>&lt;EOS&gt;</code> 才结束循环。<strong>博主注</strong>：这样一来似乎对于 decoder 来说并不能实现并行运算。<strong>博主注2</strong>：后来发现其实也可以。<br><img src="https://jalammar.github.io/images/t/transformer_decoding_2.gif" alt></p>
-<p>&emsp;&emsp;其中 decoder 中的 self-attention 与 encoder 的 self-attenntion 有所区别，一个就是上上段黑体的内容。另外一个是 decoder 的 self-attention 是 <strong>masked multi-head attention</strong>，而 encoder 的仅仅是 <strong>multi-head attention</strong>。详见下面 <strong>padding mask/sequence mask</strong> 一节。</p>
+<h1 id="decodedr"><a href="#decodedr" class="headerlink" title="decodedr"></a>decodedr</h1><p>&emsp;&emsp;在讲解 decoder 之前，看一张动图，了解一下 Transformer 是如何运作的。首先下图中生成了第一个字母 I。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_decoding_1.gif" alt></p>
+<p>&emsp;&emsp;编码器开始处理输入序列，然后将顶部编码器的输出变换为一组注意力向量 <strong>K_{encdec}</strong> 和 <strong>V_{encdec}</strong>，这些将在每个解码器的“encoder-decoder attention” 层使用，这有助于解码器集中注意力在输入序列的合适位置。<br>&emsp;&emsp;解释一下 <strong><script type="math/tex">K_{encdec}</script></strong> 和 <strong><script type="math/tex">V_{encdec}</script></strong> 的具体用法，<strong>在 encoder 中的 self-attention 会使用到 <script type="math/tex">Q_{self-attention}</script>、<script type="math/tex">K_{self-attention}</script>、<script type="math/tex">V_{self-attention}</script> 三个向量，但是它们实际上是输入值 x 的三份拷贝再乘上各自不同的权重矩阵得来。对于 decoder 的 self-attention 与 encoder 的如出一撤，但是对于 encoder-decoder attention 却有点不一样。<script type="math/tex">Q_{encoder-decoder \, attention}</script> 还是 x 的拷贝乘上一个权重矩阵，但是 <script type="math/tex">K_{encoder-decoder \, attention}</script> 和 <script type="math/tex">V_{encoder-decoder \, attention}</script> 分别是 <script type="math/tex">K_{encdec}</script> 和 <script type="math/tex">V_{encdec}</script> 乘上各自的权重矩阵。</strong>以上所有向量所乘的权重矩阵均可以由你自己随机初始化产生。<strong>博主注</strong>：以上 QKV 的用法均分析自 pytorch 官方实现版本的源码。<br>&emsp;&emsp;接着下面的 gif 完成了余下的步骤。Transformer 将之前输出的 I 当做下一个时间步的输入，又走了一遍 decoder。以此循环往复，直到输出一个结束标记 <code>&lt;EOS&gt;</code> 才结束循环。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_decoding_2.gif" alt></p>
+<p>&emsp;&emsp;其中 decoder 中的 self-attention 与 encoder 的 self-attenntion 有所区别，一个就是上上段黑体的内容。另外一个是 decoder 的 self-attention 是 <strong>masked multi-head attention</strong>，而 encoder 的仅仅是 <strong>multi-head attention</strong>。详见下面 <strong>padding mask/sequence mask</strong> 一节。<br>&emsp;&emsp;<strong>博主注</strong>：这样一来似乎对于 decoder 来说并不能实现并行运算。<strong>博主注 2</strong>：查找资料后，发现是可以的。即如同 encoder 一样，直接将 target 整个序列输入 decoder 中解码。但是这样一来，在做 self-attention 时，提取某个单词的特征时会关注到之后的单词，所以就用到了 sequence mask，这样一来预测的数据其实也倍增了，具体看下面的例子就懂了。不过在模型是实际工作时，由于没有 target 还是只能一次预测一个。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">我**</span><br><span class="line">我是*</span><br><span class="line">我是鱼</span><br></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;原本的数据只是“我是鱼”，但是由于避免预测时关注到后面的信息，所以只能将部分掩盖住。这其实相当于一个单词一个单词的预测，传统模型中，在预测玩“我”之后，需要输入“是”再预测“鱼”。而 Transformer 中，直接输入“<code>&lt;SOS&gt;</code>我是”，再预测“鱼”，其实这两种方式一模一样。同时为了做到输入“<code>&lt;SOS&gt;</code>”预测“我”，输入“<code>&lt;SOS&gt;</code>我”预测“是”等操作，所以需要拷贝多份数据。</p>
 <h1 id="Generator-The-Final-Linear-and-Softmax-Layer"><a href="#Generator-The-Final-Linear-and-Softmax-Layer" class="headerlink" title="Generator:The Final Linear and Softmax Layer"></a>Generator:The Final Linear and Softmax Layer</h1><p>&emsp;&emsp;如何将其转换为一个单词？这就是最后 Softmax 层和线性层的工作了。<br>&emsp;&emsp;线性层是一个简单的全连接神经网络，它将解码器堆叠(decoder stack)产生的向量映射到一个巨大的向量（词汇表的大小，原来的向量大小是词嵌入的大小）中去，这个向量称为 logits 向量。<br>&emsp;&emsp;Softmax 层将这些分数转化为概率(全部为正数，加起来为 1.0)。选择具有最高概率的单元，并将与其相关的单词作为本时间步的输出。</p>
-<h1 id="padding-mask-sequence-mask"><a href="#padding-mask-sequence-mask" class="headerlink" title="padding mask/sequence mask"></a>padding mask/sequence mask</h1><p>&emsp;&emsp;无论 encoder 还是 decoder 都要做 mask（很多对 Transformer 的总结文章都只提到了 decoder 部分的 Masked Multihead Self-Attention，实际上 encoder 也要做一次）。mask 一共分为两种，寻常所见的 decoder 中的 mask 指的是 <strong>sequence mask</strong>，encoder 中的 mask 指的是 <strong>padding mask</strong>。详见：</p>
-<ul>
-<li><a href="https://luozhouyang.github.io/transformer/" target="_blank" rel="noopener">Transformer模型的PyTorch实现</a></li>
-<li><a href="https://www.jianshu.com/p/405bc8d041e0" target="_blank" rel="noopener">The Transformer</a></li>
-</ul>
-<p>&emsp;&emsp;<strong>对于 padding mask</strong>：在 encoder 中的每次 scaled dot-product 都要做一次 sequence mask。由于我们要让序列的长度相等以便做向量化操作，所以必不可少地需要对输入序列进行<strong>截断</strong>或<strong>补零</strong>操作。所以 sequence mask 的<strong>主要目的</strong>是使得我们的 self-attention 不要过多的关注向量中的 0。<strong>具体操作是</strong>：将序列中补零位置的值置为 -INF，使得序列经过 scaled dot-product 后的 softmax 层时，对应位置会得到<strong>概率 0</strong>。<br>&emsp;&emsp;<strong>对于 sequence mask</strong>：使得 decoder 无法看见未来的信息，decoder 的 attention 只能关注解码单词之前的输出单词，而不能依赖后面未解码出来的单词。<strong>博主注</strong>：这个感觉只要在解码的时候按照正常的方式，对一个一个单词进行解码就已经是 masked 的形式了。</p>
+<h1 id="padding-mask-sequence-mask"><a href="#padding-mask-sequence-mask" class="headerlink" title="padding mask/sequence mask"></a>padding mask/sequence mask</h1><p>&emsp;&emsp;padding mask 是为了防止向量中的填充值 PAD 具有意义，在反向传播时，如果不做 padding mask，框架会对 PAD 求导。但是我们其实认为 PAD 是一个没有意义的填充符，所以最好不要对它求梯度。<br>&emsp;&emsp;sequence mask 是为了遮住来自未来的信息，使得 decoder 在解码时，不会依赖未的来信息。</p>
 <h1 id="Beam-Search"><a href="#Beam-Search" class="headerlink" title="Beam Search"></a>Beam Search</h1><p>&emsp;&emsp;在最后的 softmax 层直接输出了概率最大的位置的单词，这叫做<strong>贪婪解码——greedy decoding</strong>。<br>&emsp;&emsp;另一种更合理的解码方式叫做 <strong>Beam Search</strong>。</p>
 <h1 id="最后总结"><a href="#最后总结" class="headerlink" title="最后总结"></a>最后总结</h1><p>&emsp;&emsp;刚才（2020.1.23）在知乎上看到一篇文章，感觉对 RNN 和 Transformer 的区别总结的不错，所以记录下。<br>&emsp;&emsp;RNN 通过把已经处理过的所有单词的表征与当前正在处理的单词的表征结合起来以此来捕捉整句话的含义，而 Transformer 的 self-attention 机制则是将所有相关单词的含义通过 weighted sum 来充当我们当前正在处理的单词的表征。<br>&emsp;&emsp;参考文章（“从宏观视角看自注意力机制”一节）：</p>
 <ul>
@@ -418,6 +448,7 @@
 <li><a href="https://www.jianshu.com/p/c357c5717a60" target="_blank" rel="noopener">layer normalization 简单总结</a></li>
 <li><a href="https://luozhouyang.github.io/transformer/" target="_blank" rel="noopener">Transformer模型的PyTorch实现</a></li>
 <li><a href="https://www.jianshu.com/p/405bc8d041e0" target="_blank" rel="noopener">The Transformer</a></li>
+<li><a href="https://www.zhihu.com/question/347366108/answer/832932755" target="_blank" rel="noopener">transformer 在解码的时候，用的 k 和 v 的向量来自于编码器的输出还是来自于之前解码输出的值呢？</a></li>
 </ol>
 
     </div>
@@ -430,6 +461,7 @@
           <div class="post-tags">
               <a href="/tags/系列/" rel="tag"># 系列</a>
               <a href="/tags/学习笔记/" rel="tag"># 学习笔记</a>
+              <a href="/tags/4me/" rel="tag"># 4me</a>
               <a href="/tags/Transformer/" rel="tag"># Transformer</a>
           </div>
 
@@ -521,24 +553,24 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">151</span>
+          <span class="site-state-item-count">155</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-count">28</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">94</span>
+        <span class="site-state-item-count">91</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">181k</span>
+      	<span class="site-state-item-count">183.2k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
@@ -709,6 +741,8 @@ $('.content img').on('zoom-out-complete.zoomify', function () {
       });
       });
   </script>
+<!-- calendar widget -->
+
 
 </body>
 </html>
