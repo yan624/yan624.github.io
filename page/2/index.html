@@ -123,7 +123,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">155</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">158</span></a>
 
   </li>
         <li class="menu-item menu-item-about">
@@ -143,7 +143,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">91</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">93</span></a>
 
   </li>
         
@@ -204,6 +204,327 @@
             
 
   <div class="posts-expand">
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/AI/framework/一些常用的pytorch技巧.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/AI/framework/一些常用的pytorch技巧.html" class="post-title-link" itemprop="url">一些常用的pytorch技巧</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-24 16:29:42" itemprop="dateCreated datePublished" datetime="2020-04-24T16:29:42+08:00">2020-04-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-27 15:13:36" itemprop="dateModified" datetime="2020-04-27T15:13:36+08:00">2020-04-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index">
+                    <span itemprop="name">AI</span>
+                  </a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/framework/" itemprop="url" rel="index">
+                    <span itemprop="name">framework</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="note warning">
+            <p>&emsp;&emsp;本文只记录框架层面的使用。关于深度学习层面的研究记录在 <a href="https://yan624.github.io/AI/神经网络训练技巧（tricks）.html">神经网络训练技巧（tricks）</a>。</p>
+          </div>
+<h1 id="view、reshape和resize"><a href="#view、reshape和resize" class="headerlink" title="view、reshape和resize_"></a>view、reshape和resize_</h1><p>&emsp;&emsp;<strong>结论写在前面</strong>：张量连续，使用 <code>view()</code>（此为多数情况）；张量不连续，则使用 <code>reshape()</code>。<code>resize_()</code> 最好不要使用。注意，在张量不连续的情况下，非要使用 <code>view()</code> 也可以，但是要先调用 <code>contiguous()</code> 方法，使得张量连续，但是此方法会返回一个新的张量，浪费时间空间。<br>&emsp;&emsp;<strong>共同点</strong>：这些方法都可以改变 pytorch 中 tensor 的形状，但是它们略有不同。</p>
+<ol>
+<li>view()：只能改变连续的（contiguous）张量，且返回的张量与原张量的数据是共享的。在张量不连续的情况下，硬要使用此方法，需要在使用之前使用 <code>tensor.contiguous()</code>。</li>
+<li>reshape()：对张量是否连续无要求，且<strong>可能</strong>返回的原张量的拷贝（这个“可能”是字面意思，开发者指出，你永远无法预先知道返回的张量是否为拷贝版本。参考 <a href="https://stackoverflow.com/questions/49643225/whats-the-difference-between-reshape-and-view-in-pytorch?utm_medium=organic&amp;utm_source=google_rich_qa&amp;utm_campaign=google_rich_qa" target="_blank" rel="noopener">stackoverflow 回答</a>）。</li>
+<li>resize_()：与上述二者有较大差别，此方法可以无视原张量的形状，进行随意变化。如果元素的数量大于原张量的元素数量，那么底层的存储大小会进行调整，即会进行扩容。小于，则存储空间不做变化。参考《<a href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor.resize_" target="_blank" rel="noopener">pytorch 文档</a>》。<div class="note warning">
+            <p>&emsp;&emsp;这是一个底层的方法，大多数情况可以使用 <code>view()</code> 或者 <code>reshape()</code>。想要使用自定义步长改变张量内置的大小，请使用 <code>set_()</code>。总而言之，就是最好不要用这个方法。</p>
+          </div>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/AI/framework/一些常用的pytorch技巧.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    
+
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/IT-stuff/python/科研中用到的python技巧.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/IT-stuff/python/科研中用到的python技巧.html" class="post-title-link" itemprop="url">科研中用到的python技巧</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-04-24 16:22:49 / 修改时间：16:37:15" itemprop="dateCreated datePublished" datetime="2020-04-24T16:22:49+08:00">2020-04-24</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/IT-stuff/" itemprop="url" rel="index">
+                    <span itemprop="name">IT-stuff</span>
+                  </a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/IT-stuff/python/" itemprop="url" rel="index">
+                    <span itemprop="name">python</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>40</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="迭代器"><a href="#迭代器" class="headerlink" title="迭代器"></a>迭代器</h1><p>&emsp;&emsp;<br>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/IT-stuff/python/科研中用到的python技巧.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    
+    	
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·论文笔记/model/46. Pointer Networks.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/·论文笔记/model/46. Pointer Networks.html" class="post-title-link" itemprop="url">Pointer Networks</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-07 22:12:00" itemprop="dateCreated datePublished" datetime="2020-04-07T22:12:00+08:00">2020-04-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-08 13:09:38" itemprop="dateModified" datetime="2020-04-08T13:09:38+08:00">2020-04-08</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/paper/" itemprop="url" rel="index">
+                    <span itemprop="name">paper</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="note info">
+            <p>&emsp;&emsp;<a href="https://arxiv.org/pdf/1506.03134.pdf" target="_blank" rel="noopener">论文地址</a>，作者是 Vinyals et al.，发表于 2015 年。</p>
+          </div>
+<h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p>&emsp;&emsp;提出一个新的神经结构来学习输出序列的条件概率，输出的元素是在输入序列中对应位置的离散标记。由于输出的每一步都与输入的长度有关，但是输入的长度是可变的，所以现有方法 seq2seq 和神经图灵机都无法简单地解决这问题。可变长度序列的排序，各种组合优化的问题都输入此类。我们的模型<strong>使用 attention 机制来解决这种输出字典可变大小的问题</strong>。<br>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/·论文笔记/model/46. Pointer Networks.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
         
   
   
@@ -956,309 +1277,6 @@ OPT(i) =
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    
-
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·论文笔记/dilogue/task-oriented/61. Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/·论文笔记/dilogue/task-oriented/61. Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems.html" class="post-title-link" itemprop="url">Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-03-04 12:37:27" itemprop="dateCreated datePublished" datetime="2020-03-04T12:37:27+08:00">2020-03-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-04-01 21:58:04" itemprop="dateModified" datetime="2020-04-01T21:58:04+08:00">2020-04-01</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/paper/" itemprop="url" rel="index">
-                    <span itemprop="name">paper</span>
-                  </a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="note info">
-            <p>&emsp;&emsp;<a href="https://arxiv.xilesou.top/pdf/1905.08743.pdf" target="_blank" rel="noopener">论文地址</a>，作者为 Wu, Chien-Sheng et al.，发表于 2019 年。</p>
-          </div>
-<h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>&emsp;&emsp;传统的状态跟踪假设本体已经定义好，所有的 slot-value 均已知，这可以将 DST 简化为分类任务。<strong>但是这种方法有两种缺陷：1）</strong>完整的本体很难提前获得。工业界，数据库通常由 API 支撑，由他人维护，很难枚举所有 slot-value；<strong>2）</strong>即使完整的本体存在，slot-value 的数量也会极其庞大。例如酒店名称和列车出发时间包含大量可能的值。因此许多先前的工作都基于神经分类模型，其在现实场景下并不适用。<br>&emsp;&emsp;最近 <a href="https://arxiv.xilesou.top/pdf/1810.00278.pdf" target="_blank" rel="noopener">Budzianowski et al. (2018)</a> 介绍了多领域对话数据集 MultiWOZ，由于它的混合领域对话，<strong>其在 DST 中引入了新的挑战</strong>。<strong>1）</strong>如图一所示，用户先订了酒店，再询问了风景名胜，最后订了一辆出租车。此例中，DST 模型需要探测 (domain, slot, value) 三元组，这在本体中包含了大量的组合，即 30 对 (domian, slot) 以及总计 4500 个可能的值。<strong>2）</strong>另一挑战是，需要进行多轮映射。<strong>单轮映射指的是从单轮对话中推断出 (domain, slot, value) 的场景，但是多轮映射指的是从多轮对话中推断，这些对话发生在多个领域。</strong>例如图 1 中，atrraction 领域的 (area, centre) pair 中的 area 信息是在 restaurant 领域中被预测出的，且这是在前几轮被提到的内容。<br>&emsp;&emsp;为了解决这些问题，我们强调 DST 模型应该跨领域共享跟踪知识。不同领域中有许多 slot 可以共享它们的值。例如，area slot 可以存在于 restaurant, attraction, and taxi 中。此外 restaurant 领域的 name slot 可以与 taxi  领域的 departure slot 共享槽值。另外，<strong>为了使 DST 在未知领域跟踪 slot</strong>，跨领域转移知识势在必行。<strong>我们期望 DST 模型可以通过学习跟踪其他领域中的 slot 来学习跟踪 zero-shot 领域中某些相同的 slot。</strong><br>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/·论文笔记/dilogue/task-oriented/61. Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    
-    	
-    
-
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·论文笔记/dilogue/task-oriented/62. Collaborative Multi-Agent Dialogue Model Training Via Reinforcement.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/·论文笔记/dilogue/task-oriented/62. Collaborative Multi-Agent Dialogue Model Training Via Reinforcement.html" class="post-title-link" itemprop="url">Collaborative Multi-Agent Dialogue Model Training Via Reinforcement</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-03-01 13:34:52 / 修改时间：14:52:09" itemprop="dateCreated datePublished" datetime="2020-03-01T13:34:52+08:00">2020-03-01</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/paper/" itemprop="url" rel="index">
-                    <span itemprop="name">paper</span>
-                  </a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>742</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h1><p>&emsp;&emsp;机器学习在对话式代理（conversational agent）上已经取得了巨大的进展，尤其是采用了深度学习之后。然而大多数工作都遭受着缺乏数据的困境，因为为代理（复杂到能够完成有意义对话的代理）设计一个样本有效的学习算法是非常有挑战的。在其他的简化版本之中，<strong>这一挑战导致了只能将代理之间的交互视为单个（多个代理交互更难）代理的学习问题</strong>。<br>&emsp;&emsp;本项工作中，我们将对话交互建模为随机博弈的形式，并训练两个交互式代理，每一个代理都拥有不同的角色，它们能够通过自然语言与对方交互。我们首先对每个代理训练了 NLU 和 NLG 神经网络，然后使用 multi-agent 强化学习技术，即 <a href="https://www.cs.cmu.edu/~mmv/papers/01ijcai-mike.pdf" target="_blank" rel="noopener">Win or Lose Fast Policy Hill Climbing (WoLF-PHC)</a> 算法。以在高度的不确定（源于每个代理的统计 NLU 和 NLG）以及另一个代理的不稳定行为（因为另一个代理同时在学习）面前学习到最优对话策略。<strong>虽然不能完全减少训练 NLU 和 NLG 组件所需的种子数据，但 multi-agent 的设置具有增强它们的效果，允许我们生成原始数据中不存在的对话和行为。</strong><br>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/·论文笔记/dilogue/task-oriented/62. Collaborative Multi-Agent Dialogue Model Training Via Reinforcement.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    
-    	
-    
-    	
-    
-
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/algorithm/【算法设计题目】回溯法.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/algorithm/【算法设计题目】回溯法.html" class="post-title-link" itemprop="url">【算法设计题目】回溯法</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-02-25 17:10:04" itemprop="dateCreated datePublished" datetime="2020-02-25T17:10:04+08:00">2020-02-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-18 17:05:41" itemprop="dateModified" datetime="2020-03-18T17:05:41+08:00">2020-03-18</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/algorithm/" itemprop="url" rel="index">
-                    <span itemprop="name">algorithm</span>
-                  </a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="算法思想"><a href="#算法思想" class="headerlink" title="算法思想"></a>算法思想</h1><p>&emsp;&emsp;比较全的概念：<a href="https://leetcode-cn.com/tag/backtracking/" target="_blank" rel="noopener">leetcode 回溯法概念</a>。<br>&emsp;&emsp;大白话：世界上有许多只能执行穷举法的问题，并且事实上，这些问题解决办法中不存在除穷尽搜索之外的方法。它一般适用于求存在大量潜在解，但解可拆分为部分的问题。<br>&emsp;&emsp;<strong>回溯法基本特征</strong>：</p>
-<ol>
-<li>节点是用<strong>深度优先搜索</strong>的方法生成的；</li>
-<li>不需要存储整棵搜索树（事实上，连树都没必要存储，只需要记录路径即可）
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/algorithm/【算法设计题目】回溯法.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1331,7 +1349,7 @@ OPT(i) =
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">155</span>
+          <span class="site-state-item-count">158</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1343,12 +1361,12 @@ OPT(i) =
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">91</span>
+        <span class="site-state-item-count">93</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">183.2k</span>
+      	<span class="site-state-item-count">190.2k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>

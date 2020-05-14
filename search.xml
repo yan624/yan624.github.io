@@ -122,16 +122,159 @@ A_{3 \times 1} \odot B_{3 \times 1} = C_{3 \times 1} \\</script><h1 id="张量�
       </categories>
   </entry>
   <entry>
-    <title>情感计算论文笔记（？-2019）</title>
-    <url>/%C2%B7%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/dilogue/task-oriented/%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0%EF%BC%88%EF%BC%9F-2019%EF%BC%89.html</url>
-    <content><![CDATA[<h1 id><a href="#" class="headerlink" title=" "></a> </h1><p>&emsp;&emsp;<br><a id="more"></a></p>
+    <title>EmpTransfo: A Multi-head Transformer Architecture for Creating Empathetic Dialog Systems</title>
+    <url>/%C2%B7%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/dilogue/affective%20computing/66.%20EmpTransfo%EF%BC%9AA%20Multi-head%20Transformer%20Architecture%20for%20Creating%20Empathetic%20Dialog%20Systems.html</url>
+    <content><![CDATA[<div class="note info">
+            <p>&emsp;&emsp;<a href="https://arxiv.org/pdf/2003.02958.pdf" target="_blank" rel="noopener">论文地址</a>，作者为 Zandie et al.，发表于 2020 年。</p>
+          </div>
+<h1 id="摘要以及引言"><a href="#摘要以及引言" class="headerlink" title="摘要以及引言"></a>摘要以及引言</h1><p>&emsp;&emsp;理解情绪并且对此作出回复是对话系统最大的挑战之一。本轮提出 EmpTransfo，一个多头 Transformer 架构，用于创建一个移情对话系统。EmpTransfo 利用用于语言生成的一流预训练模型（例如 OpenAI-GPT），不过可以使用不同的大小。我们展示了利用历史的情绪以及其他的元数据（metadata）可以提高生成对话的质量。我们使用一个具有挑战性的语言语料库进行的实验结果表明，我们提出的方法在 Hit@1 以及 PPL（Perplexity）上优于其他模型。<br>&emsp;&emsp;人类拥有独特的能力，能够使用细微的情绪通过自然语言交流。大多数现存的对话系统关注语言生成以及提高生成语言的质量。尽管它们也很重要，但是移情的能力是进行高质量对话必不可少的一环。<br>&emsp;&emsp;近来，NLP 取得了巨大的成功，但是结合类似情绪（emotion）以及上下文知识仍旧是一个挑战。<br>&emsp;&emsp;尽管用于大多数传统对话系统的语料库通常是大规模的，但是它们缺乏特殊性，不包含情绪，主题，人格等原数据。基于通用语料库训练出来的系统导致对话助手无法理解情绪，缺乏人格并且趋向于产生通用的回复，例如“我不知道”。因此有必要创建一个带有更多上下文信息的数据集。例如 DAILYDIALOG 包含情绪，主题，动作。<br><a id="more"></a></p>
+<h1 id="Related-Work"><a href="#Related-Work" class="headerlink" title="Related Work"></a>Related Work</h1><p>&emsp;&emsp;。</p>
+<h1 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h1><p>&emsp;&emsp;预训练模型 nb。本文使用 GPT。</p>
+<h2 id="Empathetic-Dialog-Generation"><a href="#Empathetic-Dialog-Generation" class="headerlink" title="Empathetic Dialog Generation"></a>Empathetic Dialog Generation</h2><p>&emsp;&emsp;假设在两个代理之间的对话中，每一个代理的每一轮对话都被称为“语句”（utterance）。因此一场对话由一系列的语句组成。一般化为，有 <script type="math/tex">n</script> 条<strong>语句</strong> <script type="math/tex">U = \{u_1, u_2, \cdots, u_n\}</script>，并且对于任何一句语句 <script type="math/tex">i</script> 有 <script type="math/tex">N_i</script> 个<strong>符号</strong>（token），即 <script type="math/tex">U_i = \{t_1, t_2, \cdots, t_{N_i}\}</script>。对于每一条语句，也有一个<strong>情绪</strong>与之对应 <script type="math/tex">E = \{e_1, e_2, \cdots, e_n\}</script>。<span class="label danger">任务定义</span><br>&emsp;&emsp;在我们的数据集中，一个样本是 <script type="math/tex">u_1, u_2, \cdots, u_{T-1}, u_{next}</script>，其中 <script type="math/tex">u_{next}</script> 可以代表下一条真实语句，也可以是来自一组 distractor <script type="math/tex">U'_T</script> 中的一个 distractor。一个 distractor 是来自数据集中的一条随机的语句。同理，如果序列对应的情绪为 <script type="math/tex">\{e_1, e_2, \cdots, e_{T-1}, e_{next}\}</script>，那么 <script type="math/tex">e_{next}</script> 就是下一条语句正确的情绪 <script type="math/tex">e_T</script> 或者来自一组 distractor <script type="math/tex">E'_T</script> 中的一个 distractor。一个 distractor 是来自所有情绪集合中的一个随机情绪。<span class="label warning">实验中数据集的结构</span><br>&emsp;&emsp;我们的模型将序列输入进 Transformer。然后将输出喂入三个前馈神经网络头（three feed-forwad linear heads），负责生成下一个情绪，下一条句子，下一个符号。我们使用 12 层的架构，但是它可以被扩展，或者减小大小。接下来，我们定义这三个不同的头以及它们对应 loss 函数。<span class="label info">模型计算步骤</span></p>
+<h3 id="Language-modeling-head"><a href="#Language-modeling-head" class="headerlink" title="Language modeling head"></a>Language modeling head</h3><p>&emsp;&emsp;语言建模的任务是，给定一个符号序列作为上下文，去预测下一个符号是什么。如果一个符号序列的下一条正确语句是 <script type="math/tex">U_T = \{t_1, t_2, \cdots, t_N\}</script>，下一个符号的条件概率为：</p>
+<script type="math/tex; mode=display">P(t_i | t_1, \cdots, t_{i-1}) = softmax(h * W_1)</script><p>&emsp;&emsp;<script type="math/tex">h</script> 是 Transformer 上一个隐藏层的输出，<script type="math/tex">W_1</script> 是符号嵌入矩阵，是可学习的。loss 函数定义为：</p>
+<script type="math/tex; mode=display">\mathcal{L}(U_T) = - \sum^N_{i=1} logP(t_i | t_1, \cdots, t_{i-1})</script><p>&emsp;&emsp;需要注意的是，语言模型的 loss 不在下一条句子的 distractor <script type="math/tex">U'_T</script> 上训练。</p>
+<h2 id="Next-utterance-prediction-head"><a href="#Next-utterance-prediction-head" class="headerlink" title="Next utterance prediction head"></a>Next utterance prediction head</h2><p>&emsp;&emsp;跟随 BERT（Devlin et al., 2018）的做法，在 next utterance prediction 中，我们尝试训练一个模型以实现在对话中预测下一条语句的功能。模型将学习区分正确语句和来自 distractor 中的语句。更具体来说，我们创建了一个分类器来计算下一条语句的概率：</p>
+<script type="math/tex; mode=display">P_u(a|u_1, u_2, \cdots, u_{T-1}) = softmax(h_1 * W_2)</script><p>&emsp;&emsp;<script type="math/tex">a</script> 被定义为：</p>
+<script type="math/tex; mode=display">
+a = \begin{cases}
+    1 & \text{$u_{next} = u_T$} \\ 
+    0 & \text{$u_{next} \in U'_T$}
+\end{cases}</script><p>&emsp;&emsp;<script type="math/tex">h_1</script> 是来自 Transformer decoder 最后一个符号的隐藏状态，<script type="math/tex">W_2</script> 是权重矩阵，是可学习的。然后 loss 函数被定义为：</p>
+<script type="math/tex; mode=display">\mathcal{L}_2(U_{1:T}) = -logP_u(a|u_1, u_2, \cdots, u_{T-1})</script><p>&emsp;&emsp;<strong>博主注</strong>：<em>预测下一条语句是否正确的公式似乎有错误。因为它的输入仅仅是对话上下文，没有包含 distractor，这如何区分？所以这个公式我觉得应该是 <script type="math/tex">P_u(a|u_1, u_2, \cdots, u_T) = softmax(h_1  W_2)</script></em></p>
+<h2 id="Next-emotion-prediction-head"><a href="#Next-emotion-prediction-head" class="headerlink" title="Next emotion prediction head"></a>Next emotion prediction head</h2><p>&emsp;&emsp;与 Next utterance prediction 类似，模型训练出来后用于区分正确的下一个情绪。<br>&emsp;&emsp;<strong>本实验分别设计了带有和不带有 Next emotion prediction head 作为对比。</strong></p>
+<h2 id="Loss"><a href="#Loss" class="headerlink" title="Loss"></a>Loss</h2><p>&emsp;&emsp;最后的 loss 是上述 3 个任务的 loss 的加和 <script type="math/tex">\mathcal{L}_{total} = c_1 \mathcal{L_1} + c_2 \mathcal{L_2} + c_3 \mathcal{L_3}</script>。<script type="math/tex">c_1, c_2, c_3</script> 在实验时调整。</p>
+<h2 id="Input-Representation"><a href="#Input-Representation" class="headerlink" title="Input Representation"></a>Input Representation</h2><p>&emsp;&emsp;我们使用 DIALYDIALOG 数据集，它的每一句话都有情绪和动作所标注，同时整一场对话由一个主题所标注。表 ？（论文中的数字标错了，其实是表 1）展示了一个对话样本。由 4 句话组成，其中红色并且标注了 d 的语句时 distractor。</p>
 ]]></content>
+      <categories>
+        <category>paper</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Towards Persona-Based Empathetic Conversational Models</title>
+    <url>/%C2%B7%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/dilogue/affective%20computing/65.%20Towards%20Persona-Based%20Empathetic%20Conversational%20Models.html</url>
+    <content><![CDATA[<div class="note info">
+            <p>&emsp;&emsp;<a href="https://arxiv.org/pdf/2004.12316.pdf" target="_blank" rel="noopener">论文地址</a>，作者为 Zhong et al.，发表于 2020 年。</p>
+          </div>
+<h1 id="摘要以及引言"><a href="#摘要以及引言" class="headerlink" title="摘要以及引言"></a>摘要以及引言</h1><p>&emsp;&emsp;移情对话模型已经在很多领域被证明能够提高用户的满意度和改进任务的结果。在心理学上，persona 被证明与 personality 高度关联，进而影响移情（博主注：<em>我实在不知道 persona 和 personality 有什么区别</em>）。此外，经我们的实证分析也认为 persona 在移情对话中扮演者重要的角色。为此，我们提出了一个 persona-based 移情对话的新任务，并<strong><u>首次</u>对 persona 在移情反应上的影响进行了实证研究</strong>。具体而言，我们<strong><u>首次</u>提出了一个用于 persona-based 移情对话的新的大规模多领域数据集 P</strong>ersona-based <strong>E</strong>mpathetic <strong>C</strong>onversion（<strong>PEC</strong>）。然后我们还提出了 <strong>CoBERT</strong>，一个基于 BERT 的高效回复检索模型，在我们的数据集上获得了一流的性能（<strong>博主吐槽</strong>：<em>你们自己首次提出的数据集，当然是一流的</em>）。最后做了总结。值得注意的是我们的结果展示出，<strong>当 CoBERT 在移情对话上训练而不是非移情对话上训练时，persona 能够提高移情回复的效果</strong>。<br>&emsp;&emsp;移情（empathy），严格来讲是情感共情（affective empathy），指的是用合适的情感（emotion）对他人的精神状态做出回应的能力。<br>&emsp;&emsp;当产生移情回应时，大多数现存的研究都没有考虑 persona。XiaoIce 有，但是她的 persona 是不可配置的，因此很难满足各种人类的需求。<br><a id="more"></a></p>
+<h1 id="Related-Work"><a href="#Related-Work" class="headerlink" title="Related Work"></a>Related Work</h1><p>&emsp;&emsp;<strong>Empathetic Conversational Models</strong>：尽管对神经对话模型由越来越多的研究，但是在使对话具有移情的特性上依旧只有很少的关注，直到现在（<strong><em>一堆参考论文</em></strong>），可能是由于移情对话数据的缺少。Rashkin et al.(2019) 提出了首个移情对话数据集 EmpatheticDialogues（ED）。<br>&emsp;&emsp;<strong>Persona-based Conversational Models</strong>：今年，浮现的研究趋势是个性化的对话模型（personalizing conversational models）（<strong><em>一堆参考论文</em></strong>）。<br>&emsp;&emsp;<strong>Retrieval-based Conversational Models</strong>：……</p>
+<h1 id="The-PEC-dataset"><a href="#The-PEC-dataset" class="headerlink" title="The PEC dataset"></a>The PEC dataset</h1><p>&emsp;&emsp;本节介绍采集过程和PEC 数据集的统计。</p>
+<h2 id="Data-Source"><a href="#Data-Source" class="headerlink" title="Data Source"></a>Data Source</h2><p>&emsp;&emsp;我们从两个 reddit 的标签（<em>类似一个吧</em>） happy 和 offmychest（吐槽/吐苦水）收集移情对话。我们选择这两个标签，是因为他们发的内容具有迥异的情绪，并且他们的评论比之随意的对话，明显更有移情效果。</p>
+<h2 id="Conversation-Collection"><a href="#Conversation-Collection" class="headerlink" title="Conversation Collection"></a>Conversation Collection</h2><p>&emsp;&emsp;Reddit 上的讨论是以线程的形式组织的，每个线程有一个帖子以及直接或者间接的评论。每一个线程都是一棵树（tree）的形式。因此，如果给定一个带有 <script type="math/tex">n</script> 个节点的线程，我们可以提取出 <script type="math/tex">n-1</script> 条对话。我们随机地将对话分割为 8:1:1。</p>
+<h2 id="Persona-Collection"><a href="#Persona-Collection" class="headerlink" title="Persona Collection"></a>Persona Collection</h2><p>&emsp;&emsp;略，看不懂。</p>
+<h2 id="Data-Processing"><a href="#Data-Processing" class="headerlink" title="Data Processing"></a>Data Processing</h2><p>&emsp;&emsp;对于每次对话，我们保留最多 6 条最近的轮数。我们过滤对话以确保：<strong>1）</strong>每条帖子在 2-90 个单词；<strong>2）</strong>每条评论在 2-30 个单词（帖子的标题通常长于评论。在 <em>happy</em> 上 87% 的帖子少于 90 个单词，82% 的评论少于 30 个单词。在 <em>offmychest</em> 上 24% 的帖子少于 90 个单词，59% 的评论少于 30 个单词）；<strong>3）</strong>所有的发言者最少有一个 persona 语句；<strong>4）</strong>the last speaker is different from the first speaker in each conversation（<em>看不懂</em>）。</p>
+<h2 id="Data-Annotations"><a href="#Data-Annotations" class="headerlink" title="Data Annotations"></a>Data Annotations</h2><p>&emsp;&emsp;略。</p>
+<h2 id="Comparisions-with-Related-Datasets"><a href="#Comparisions-with-Related-Datasets" class="headerlink" title="Comparisions with Related Datasets"></a>Comparisions with Related Datasets</h2><p>&emsp;&emsp;表 4 呈现了 PEC 和相关数据集的比较情况。</p>
+<h1 id="Our-CoBERT-Model"><a href="#Our-CoBERT-Model" class="headerlink" title="Our CoBERT Model"></a>Our CoBERT Model</h1><p>&emsp;&emsp;本节介绍提出的模型，如图 2 所示。</p>
+<h2 id="任务定义"><a href="#任务定义" class="headerlink" title="任务定义"></a>任务定义</h2><p>&emsp;&emsp;给定对话数据集 <script type="math/tex">\mathcal{D}</script>，由 N 条格式为 <script type="math/tex">(X, P, y)</script> 的对话组成。其中 <script type="math/tex">X = \{X_1, X_2, \cdots, X_{n_X}\}</script> 表示 <script type="math/tex">n_X</script> 条上下文语句，<script type="math/tex">P = \{P_1, P_2, \cdots, P_{n_P}\}</script> 表示回复者的 <script type="math/tex">n_P</script> 条 persona 语句，<script type="math/tex">y</script> 表示 <script type="math/tex">X</script> 的回复。the task of response selectioncan be formulated as learning a function <script type="math/tex">f(X, P, y)</script> that assigns the highest score to the true candidate <script type="math/tex">y</script> and lower scores to negative candidates given <script type="math/tex">X</script> and <script type="math/tex">P</script>。在推理阶段，训练好的模型选择候选列表中分数最高的语句。</p>
+<h2 id="BERT表征"><a href="#BERT表征" class="headerlink" title="BERT表征"></a>BERT表征</h2><p>&emsp;&emsp;在输入 BERT 之前，将所有上下文语句拼接成一个单一的文本语句。由于 persona 语句没有顺序可言，所以我们将随机顺序的 persona 语句拼接起来。在 context，persona 和 response 输入进 BERT encoder 之后，我们获取了他们的向量表征 <script type="math/tex">X \in \mathbb{R}^{m \times d}, P \in \mathbb{R}^{q \times d} and Y \in \mathbb{R}^{n \times d}</script>，<script type="math/tex">d</script> 代表 BERT 的嵌入大小，<script type="math/tex">m, q, n</script> 分别代表 context, persona, response 的序列长度。注意，不同的 segment id 用于区分上下文中 Speaker 和 Respondent 的话语。</p>
+<h2 id="Hop-1-Co-attention"><a href="#Hop-1-Co-attention" class="headerlink" title="Hop-1 Co-attention"></a>Hop-1 Co-attention</h2><p>&emsp;&emsp;给定 <script type="math/tex">X</script> 和 <script type="math/tex">Y</script>，我们使用 co-attention（Lu et al., 2016）来学习 first order mathcing 信息。具体来讲，我们先计算单词之间的类同（word-word affinity）矩阵 <script type="math/tex">A_{XY} \in \mathbb{R}^{m \times n}</script>：</p>
+<script type="math/tex; mode=display">A_{XY} = XY^T</script><p>&emsp;&emsp;然后计算上下文与回复之间的（context-to-response）attention <script type="math/tex">A_{X2Y} \in \mathbb{R}^{m \times n}</script>，回复和上下文之间的（response-to-context）attention <script type="math/tex">A_{Y2X} \in \mathbb{R}^{n \times m}</script>：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+    A_{X2Y} & = softmax(A_{XY}) \\
+    A_{Y2X} & = softmax(A^T_{XY}) \\
+\end{align}</script><p>&emsp;&emsp;softmax 计算第二个维度。最终，我们获得了 attended context 表征 <script type="math/tex">X' = A_{X2Y} Y \in \mathbb{R}^{m \times d}</script> 以及 attended response 表征 <script type="math/tex">Y'_X = A_{Y2X} X \in \mathbb{R}^{n \times d}</script>。<br>&emsp;&emsp;为了聚合 first order matching 信息，并提取 discriminative 特征，我们对 <script type="math/tex">X'</script> 和 <script type="math/tex">Y'_X</script> 沿着序列维度进行 max-pooling，得到 <script type="math/tex">X'_{max} \in \mathbb{R}^d</script> 和 <script type="math/tex">Y'_{X,max} \in \mathbb{R}^d</script>。</p>
+<h2 id="Hop-2-Co-attention"><a href="#Hop-2-Co-attention" class="headerlink" title="Hop-2 Co-attention"></a>Hop-2 Co-attention</h2><h2 id="Loss"><a href="#Loss" class="headerlink" title="Loss"></a>Loss</h2>]]></content>
+      <categories>
+        <category>paper</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>I kown the feeling: Learning to converse with empathy</title>
+    <url>/%C2%B7%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/dilogue/affective%20computing/64.%20I%20kown%20the%20feeling%EF%BC%9ALearning%20to%20converse%20with%20empathy.html</url>
+    <content><![CDATA[<div class="note info">
+            <p>&emsp;&emsp;<a href="https://openreview.net/pdf?id=HyesW2C9YQ" target="_blank" rel="noopener">论文地址</a>，论文作者为 Rashkin et al.，发表于 2018 年。本文发布了一个情绪对话数据集。<br>&emsp;&emsp;我突然发现作者还有<a href="https://arxiv.org/pdf/1811.00207.pdf" target="_blank" rel="noopener">另一篇论文</a>，与这篇几乎一模一样。</p>
+          </div>
+<h1 id="摘要与引言"><a href="#摘要与引言" class="headerlink" title="摘要与引言"></a>摘要与引言</h1><p>&emsp;&emsp;对话代理的一个挑战是识别交谈对象的感受并且相应地做出回应，这一领域难做的原因是缺少合适、公开、可用的情绪（emotion）、对话（dialogue）数据集。本文提出一个新的移情对话生成（empathetic dialogue generation）任务以及一个移情对话数据集。与其他仅在大规模互联网对话数据上训练的模型相比，本实验表明使用我们的数据集的对话模型被认为更具有同情心（empathetic），由人类评测，同时在其他的指标上也有所改进（如 BLEU）。<br><a id="more"></a></p>
+<h1 id="Related-Work"><a href="#Related-Work" class="headerlink" title="Related Work"></a>Related Work</h1><p>&emsp;&emsp;对情绪的良好反应需要全面覆盖人类的表达。现有多种<strong>协议</strong>企图组织出一个情绪谱（spectrum of emotions），包括从来自生物反应的少数<strong>基本情绪</strong>（Ekman, 1992; Plutchik, 1984），到从上下文状态推理出的大规模<strong>细微情绪</strong>（Skerry &amp; Saxe, 2015）。<strong>我们融合多种标注协议的情绪</strong>，有一点需要注意，在对话场景中，仅从一个情景中就能推断出的情绪是很重要的。<br>&emsp;&emsp;分布式表征在当前一流的情绪分类模型中是其核心（一些论文），例如 emojis or hashtags，它们都采集自 twitter 上的公共媒体内容。<strong>SEMEVAL2019 EmoContext</strong> 挑战也是使用对话数据探测三种基本情绪。虽然公开的对话数据具有自发性（而非诱导性）数据的<strong>优点</strong>，但是它还有两个<strong>缺点</strong>：1）<em>总的来说就是人们在公开的平台上总是表达更完美的自己，在私下才会表达更强烈的负面情绪</em>；2）Twitter 通常限制为 140 个字符，这并不适用于一般的对话。本项工作试图产生覆盖情绪更平衡的内容，这更接近我们的终极目标，即培养出一种能够对任何情绪做出反应的对话。<br>&emsp;&emsp;<em>一些相关工作</em></p>
+<h1 id="Taking-about-personal-situations"><a href="#Taking-about-personal-situations" class="headerlink" title="Taking about personal situations"></a>Taking about personal situations</h1><p>&emsp;&emsp;我们考虑一个开放域一对一的对话背景，即两个人在某种情形下交流，一人在谈论另一人身上发生的事。这导致一种给定感觉的体验。<span class="label info">介绍数据集的构成</span></p>
+<h2 id="Emotional-situation-grounding"><a href="#Emotional-situation-grounding" class="headerlink" title="Emotional situation grounding"></a>Emotional situation grounding</h2><p>&emsp;&emsp;每个对话都基于一种<strong>情境（situation）</strong>。在给定情绪标签的情况下，参与者写下这一<strong>情境</strong>。图 2 罗列出了 32 种情绪类别，<strong>该集合的灵感来以前的数据集</strong>（<em>一些论文</em>），我们将它们整合到了一起。</p>
+<h2 id="Speaker-and-Listener"><a href="#Speaker-and-Listener" class="headerlink" title="Speaker and Listener"></a>Speaker and Listener</h2><p>&emsp;&emsp;写下情境描述的人（Speaker）开始一场对话。另一个对话参与者（Listener）通过 Speaker 所说的内容意识到潜在的<strong>情境</strong>，并作出回复。文中的模型是在 Listener 回应 Speaker 的环境下（<strong>博主注</strong>：即 Speaker 的输入已知，需要生成 Listener 的回复）进行测试的。但是该数据集也可以被用于为 Speaker 生成对话。</p>
+<h2 id="采集细节"><a href="#采集细节" class="headerlink" title="采集细节"></a>采集细节</h2><p>&emsp;&emsp;雇佣了 810 名美国工作者。每一对工作者被要求：<strong>1）</strong>分别选择一个情绪词（emtion word）并且描述他们体会到的一个情景（situation）；<strong>2）</strong>分别对每一个情景进行一场对话。</p>
+<h2 id="任务设置"><a href="#任务设置" class="headerlink" title="任务设置"></a>任务设置</h2><p>&emsp;&emsp;任务的第一阶段，要求工作者根据情绪标签用 1-3 句话描述一个情境。平均每个情境描述 19.8 个字。第二阶段，两名工作者互相聊天。每次对话被限制为 4-8 句长（平均每次对话 4.31 句），平均每条语句长 15.2 个字。<br>&emsp;&emsp;并且确保了情绪平衡的覆盖。</p>
+<h2 id="EMPATHETICDIALOGUES-dataset-statistics"><a href="#EMPATHETICDIALOGUES-dataset-statistics" class="headerlink" title="EMPATHETICDIALOGUES dataset statistics"></a>EMPATHETICDIALOGUES dataset statistics</h2><p>&emsp;&emsp;包含 24850 条对话，收集自 810 个不同的参与者，它们将可以通过 ParlAI 在网上公开可用。对话大于被分割为 80% 训练集，10% 验证集，10% 测试集，实际为 19533/2770/2547。<span class="label default">数据集的比例</span></p>
+<h1 id="Empathetic-Dialogue-Generation"><a href="#Empathetic-Dialogue-Generation" class="headerlink" title="Empathetic Dialogue Generation"></a>Empathetic Dialogue Generation</h1><p>&emsp;&emsp;本节描述我们的数据集是怎么能够使得普通的闲聊模型更具同情心（empathetic）的，与其他现存模型不同，它能够生成更具有移情能力的回复。我们让模型扮演 Listener 的角色来训练和评估模型。<strong>在测试阶段，对话模型可以访问对话前一句的句子，但是不能访问情绪词提示（例如“proud”），也不能访问由 Speaker 生成的情境描述</strong>。<strong>博主注</strong>：<em>这可能是因为在真实的场景下，无法获取到用户的情绪，也无法得到情境。此外这是否意味着训练和评估的时候可以访问？</em>给定 <script type="math/tex">n</script> 句之前的对话语句，定义为对话上下文 <script type="math/tex">x</script>，并拼接以及标记成 <script type="math/tex">x_1, \cdots, x_m</script>。然后是生成的目标（target）回复 <script type="math/tex">\bar{y}</script>，我们的模型最大化目标回复的似然估计 <script type="math/tex">p(\bar{y} | x)</script>。我们分别调查了生成和检索（retrieval）的设置。</p>
+<h2 id="基本架构"><a href="#基本架构" class="headerlink" title="基本架构"></a>基本架构</h2><p>&emsp;&emsp;模型基于 Transformer。<br>&emsp;&emsp;<strong>Retrieval</strong>：<br>&emsp;&emsp;<strong>Generation</strong>：Transformer decoder 使用 encoder 的输出去预测一系列单词 <script type="math/tex">y</script>，最小化生成序列 <script type="math/tex">\bar{y}</script> 的负对数似然。在推理阶段，我们使用来自 <a href="https://arxiv.org/pdf/1610.02424.pdf" target="_blank" rel="noopener">Vijayakumar et al. (2016)</a> 的 diverse beam search。<br>&emsp;&emsp;<strong>Training Details</strong>：先使用 17 亿的 Reddit 对话数据进行预训练，使用 Transformer 或者 BERT-base 从头开始训练。<em>具体参数参考论文，不做赘述</em>。Transformer 使用 Fasttext 预训练词向量，BERT 使用 BooksCorpus 和 English Wikipedia 的预训练词向量。然后再使用 EmpatheticDialogues（ED）进行微调。</p>
+<h2 id="利用EmpatheticDialogues训练数据集"><a href="#利用EmpatheticDialogues训练数据集" class="headerlink" title="利用EmpatheticDialogues训练数据集"></a>利用EmpatheticDialogues训练数据集</h2><p>&emsp;&emsp;基于检索的模型依赖候选对象。我们的数据明确地指定需要有同情心，以一对一对话的背景，这意味着不同于用于预训练的 Reddit 对话数据集，这些领域的候选对象也许比通用的对话更适合移情反应。因此，我们的实验直接将 ED 候选对象直接放入在推理时使用的候选池中，而不选择使用 ED 进行微调。<br>&emsp;&emsp;对基于检索的模型和基于生成的模型都进行微调（<strong>博主注</strong>：<em>我脑子乱了，上一段明明说不对基于检索的模型进行微调的</em>）。</p>
+<h1 id="Adding-Information-From-External-Predictor"><a href="#Adding-Information-From-External-Predictor" class="headerlink" title="Adding Information From External Predictor"></a>Adding Information From External Predictor</h1><p>&emsp;&emsp;许多现存的模型已经在监督任务上训练好了，这些模型也许与移情回复有关。例如预测 tweets 的 emoji 标签。这些模型与我们的基础架构的表征结合，也许可以取得收益。</p>
+]]></content>
+      <categories>
+        <category>paper</category>
+      </categories>
+      <tags>
+        <tag>dataset</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>情感计算论文笔记</title>
+    <url>/%C2%B7%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/dilogue/affective%20computing/%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0.html</url>
+    <content><![CDATA[<div class="note info">
+            <p>&emsp;&emsp;目前所记录的论文，只截止到 2020 年。</p>
+          </div>
+<h1 id="Towards-Persona-Based-Empathetic-Conversational-Models"><a href="#Towards-Persona-Based-Empathetic-Conversational-Models" class="headerlink" title="Towards Persona-Based Empathetic Conversational Models"></a>Towards Persona-Based Empathetic Conversational Models</h1><ul>
+<li><a href="https://yan624.github.io/·论文笔记/dilogue/affective computing/65. Towards Persona-Based Empathetic Conversational Models.html">论文笔记</a><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/CoBERT.jpg" alt="CoBERT 结构图"><a id="more"></a>
+</li>
+</ul>
+<h1 id="EmpTransfo-A-Multi-head-Transformer-Architecture-for-Creating-Empathetic-Dialog-Systems"><a href="#EmpTransfo-A-Multi-head-Transformer-Architecture-for-Creating-Empathetic-Dialog-Systems" class="headerlink" title="EmpTransfo: A Multi-head Transformer Architecture for Creating Empathetic Dialog Systems"></a>EmpTransfo: A Multi-head Transformer Architecture for Creating Empathetic Dialog Systems</h1><ul>
+<li><a href="https://yan624.github.io/·论文笔记/dilogue/affective computing/66. EmpTransfo：A Multi-head Transformer Architecture for Creating Empathetic Dialog Systems.html">论文笔记</a><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/EmpTransfo.jpg" alt="EmpTransfo"></li>
+</ul>
+<h1 id="MoEL-Mixture-of-Empathetic-Listeners"><a href="#MoEL-Mixture-of-Empathetic-Listeners" class="headerlink" title="MoEL: Mixture of Empathetic Listeners"></a>MoEL: Mixture of Empathetic Listeners</h1><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/MoLE.jpg" alt="MoLE"></p>
+<ul>
+<li>以前的移情对话系统研究大多数关注的是给定某个情绪，生成一个回复。然而要使得系统具有移情能力，更重要的是需要理解用户的情绪以及合适的回复。本文提出一个 end-to-end 方法，用于对移情对话系统建模，即 Mixture of Empathetic Listeners（<strong>MoEL</strong>）。我们的模型<strong>首次捕获了用户的情绪并且输出一个情绪分布</strong>。<ul>
+<li>目前移情对话回复生成主要有两条线：<strong>1）</strong>多任务方法，联合训练一个模型，预测用户当前的情绪状态以及基于此状态合适的回复；<strong>2）</strong>调节对某一固定情绪的回复生成。</li>
+</ul>
+</li>
+<li><strong>Mixture of Empathetic Listeners</strong>：对话上下文是一组来自 Speaker 和 listener 的交替语句，表示为 <script type="math/tex">\mathcal{C} = \{U_1, S_1, U_2, S_2, \cdots, U_t\}</script>，speaker 每句话的情绪状态表示为 <script type="math/tex">Emo = \{e_1, e_2, \cdots, e_t\}, \, \forall e_i \in \{1, \cdots, n\}</script>。<strong>我们的模型旨在追踪上下文中 speaker 的情绪状态 <script type="math/tex">e_t</script>，并且生成一个移情回复 <script type="math/tex">S_t</script></strong>。总的来说，如图 1 所示，MoEL 由三个组件组成：emtion tracker, emotion-aware listeners and meta listener。<strong>1）</strong>emtion tracker 编码 <script type="math/tex">\mathcal{C}</script> 以及计算用户情绪的分布。<strong>2）</strong>emotion-aware listeners <strong>独立地</strong>关注上述分布并计算它们自己的分布。<strong>3）</strong>最后，meta listener 采用来自 emotion-aware listeners 的加权表征，然后生成最终的语句。<span class="label primary">模型架构</span> <span class="label danger">任务定义和介绍模型计算流程</span><ul>
+<li><strong>Embedding</strong>：定义上下文嵌入为 <script type="math/tex">E^C \in \mathbb{R}^{|V| \times d_{emb}}</script>，回复的嵌入为 <script type="math/tex">E^R \in \mathbb{R}^{|V| \times d_{emb}}</script>。在多轮对话中，模型能够区分不同的轮数是至关重要的。因此我们在输入中加入了对话状态的嵌入，这被用于使 encoder 能够区分 speaker 或者 listener 的语句（Wolf et al., 2019）。此外还加入了位置编码，所以上下文嵌入表示为 <script type="math/tex">E^C(C) = E^W(C) + E^P(C) + E^D(C)</script>。<script type="math/tex">E^W</script> 代表词向量，<script type="math/tex">E^P</script> 代表位置编码，<script type="math/tex">W^D</script> 代表对话状态（<em>对话状态指的是什么，请参考 Wolf et al., 2019</em>）。</li>
+<li><strong>Emotion Tracker</strong>：此模块使用标准的 Transformer。首先拼接所有对话轮数，使用 <script type="math/tex">E^C</script> 将所有符号映射为向量表征。然后开始编码。类似 BERT，为了计算输出张量的加权和，我们在每一个输入序列的开头增加了一个 query 符号 <script type="math/tex">QRY</script>。将 Transformer 的编码器表示为 <script type="math/tex">TRS_{Enc}</script>，那么对应上下文表征如下所示，<script type="math/tex">H \in \mathbb{R}^{L \times d_{model}}</script>，其中 L 是序列长度。<script type="math/tex; mode=display">H = TRS_{Enc}(E^C([QRY; C]))</script>那么我们可以定义符号 <script type="math/tex">QRY</script> 最后的表征为：<script type="math/tex">q = H_0, q \in \mathbb{R}^{d_{model}}</script>，然后它被用于生成情绪的分布。</li>
+<li><strong>Emotion Aware Listeners</strong>：这主要由 <strong>1）</strong>shared listener（学习每个情绪的共享信息）；<strong>2）</strong>n 个独立的 Transformer decoder（学习在给定一个特定的情绪状态下，做出合适的反应）组成。我们定义 listeners 的集合为：<script type="math/tex">L = [TRS^0_{Dec}, \cdots, TRS^n_{Dec}]</script>。每个情绪回复表征为：<script type="math/tex; mode=display">V_i = TRS^i_{Dec}(H, E^R(r_{0:t-1}))</script><script type="math/tex">TRS^i_{Dec}</script> 指的是第 i 个 listener，包括 shared listener。在概念上，我们希望 shared listener 的输出时一个通用表征，可以帮助模型捕获对话上下文。另外，我们希望每个 empathetic listener 学习怎么用一个情绪进行回复。<strong>为了使模型拥有这些行为，我们根据用户情绪分布给不同的 empathetic listener 分配了不同的权重，但是给 shared listener 分配固定权重 1</strong>。（这个权重应该是在最后加权和的时候用的）<ul>
+<li>构建了一个 Key-Value Memory Network（Miller et al., 2016），用于为 listener 分配不同的权重。</li>
+</ul>
+</li>
+<li><strong>Meta Listener</strong>：最后，该组件使用的是另一个 Transformer decoder，它进一步地转换了 listeners 的表征并且生成了最后的回复语句。<strong>直觉是每个 listener 专门针对某种情绪，meta listener 收集多个 listener 的意见，并产生最终的回复。</strong>此模块的公式定义类似。</li>
+</ul>
+</li>
+</ul>
+<h1 id="CAiRE-An-Empathetic-Neural-Chatbot"><a href="#CAiRE-An-Empathetic-Neural-Chatbot" class="headerlink" title="CAiRE: An Empathetic Neural Chatbot"></a>CAiRE: An Empathetic Neural Chatbot</h1><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/CAiRE.jpg" alt="CAiRE"></p>
+<ul>
+<li><strong>Language Model Pre-training</strong>：使用 GPT，在大型文本语料库 BooksCorpus 上进行预训练，可以使得模型能够捕获对话跨度足够大的上下文信息。</li>
+<li><strong>Persona Dialogue Pre-training</strong>：现存的移情对话数据集相对较小，仅在这数据集上进行微调可能会限制模型在闲聊时的所拥有的话题。为了增强 CAiRE 在闲聊时的能力，参照 Wolf et al., 2019 的迁移学习策略，我们先在 PersonaChat 上对模型进行预训练。该预训练步骤给予 CAiRE 一个 persona，因此提高了模型的参与度和一致性。</li>
+<li><strong>Empathetic Dialogue Fine-tuning</strong>：使用 EmpatheticDialogues。在训练的时候给出 speaker 的情绪标签，但是在评估时，不给出。<ul>
+<li><strong>Fine-tuning Detail</strong>：为了完全利用在 PersonaChat 上预训练的效果，我们自定义了 CAiRE 的 persona 语句：<em>“my name is caire”, “i want to help humans to make a better world”, “i am a good friend of humans”</em>（<strong>博主注</strong>：<em>这些语句代表着 CAiRE 的人物定位</em>）。照着 Wolf et al., 2019 的微调协议，我们首先拼接了自定义 persona，对话历史以及回复（distractor）。使用了特殊符号，并且所有的嵌入都是由位置嵌入，词嵌入和对话状态嵌入相加而成。前两个是 Transformer 所需，对话状态嵌入帮助 CAiRE 对对话的体系结构建模，同时用于区分 persona 语句，对话上下文语句和回复。表征输入进 Transformer 后生成上下文表征，我们将最后一个符号定义为 <script type="math/tex">SEN</script>，回复（distractor）之前的符号定义为 <script type="math/tex">EMO</script>。<br>&emsp;&emsp;为了<strong>优化回复预测的目标对象</strong>，在每一个训练步，我们从其他对话中采样出一个 distractor 来对抗真实的回复。然后将 SEN 表征输入一个线性层，区分是否为真实的回复，然后得到 cross-entropy <script type="math/tex">\mathcal{L}_S</script>。<br>&emsp;&emsp;为了<strong>优化回复的语言模型的目标对象</strong>，我们用真实回复的上下文表征去预测下一个回复的符号，然后使用 cross-entropy 计算语言模型的 loss <script type="math/tex">\mathcal{L}_L</script>。<br>&emsp;&emsp;为了<strong>使 CAiRE 探测到对话伙伴的情绪</strong>，我们在训练阶段新增了一个对话情绪探测优化目标。我们将 EMO 作为当前对话状态的摘要，然后将其输入进线性映射层，去预测 32 个情绪的分数。cross-entropy 被用于计算情绪类别的 loss <script type="math/tex">\mathcal{L}_E</script><br>&emsp;&emsp;最终，我们在最后的 loss 函数上进行微调：<script type="math/tex">\mathcal{L} = \alpha \mathcal{L}_L + \mathcal{L}_S + \mathcal{L}_E</script></li>
+</ul>
+</li>
+</ul>
+<h1 id="I-kown-the-feeling-Learning-to-converse-with-empathy"><a href="#I-kown-the-feeling-Learning-to-converse-with-empathy" class="headerlink" title="~I kown the feeling: Learning to converse with empathy"></a>~I kown the feeling: Learning to converse with empathy</h1><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/ED.png" alt="ED"></p>
+<ul>
+<li><a href="https://yan624.github.io/·论文笔记/dilogue/affective computing/64. I kown the feeling：Learning to converse with empathy.html">论文笔记</a></li>
+</ul>
+<h1 id="Towards-Empathetic-Open-domain-Conversation-Models-a-New-Benchmark-and-Dataset"><a href="#Towards-Empathetic-Open-domain-Conversation-Models-a-New-Benchmark-and-Dataset" class="headerlink" title="~Towards Empathetic Open-domain Conversation Models: a New Benchmark and Dataset"></a>~Towards Empathetic Open-domain Conversation Models: a New Benchmark and Dataset</h1><p>&emsp;&emsp;同上一篇论文，它们是一样的。</p>
+<h1 id="Emotional-Chatting-Machine-Emotional-Conversation-Generation-with-Internal-and-External-Memory"><a href="#Emotional-Chatting-Machine-Emotional-Conversation-Generation-with-Internal-and-External-Memory" class="headerlink" title="Emotional Chatting Machine: Emotional Conversation Generation with Internal and External Memory"></a>Emotional Chatting Machine: Emotional Conversation Generation with Internal and External Memory</h1><ul>
+<li><a href="https://yan624.github.io/·论文笔记/dilogue/affective computing/63. Emotional Chatting Machine：Emotional Conversation Generation with Internal and External Memory.html">论文笔记</a><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/ECM.jpg" alt="ECM"></li>
+<li>他们的模型定义为 <script type="math/tex">P(Y|X, e) = \prod^m_{t=1} P(y_t | y_{<t}, X, e)</script>，Y 是回复，X 是用户输入，e 是情绪类别的嵌入（<strong>该论文假定 e 已经预先给定</strong>）。直观来说就是在给定用户输入语句和<strong>待生成回复</strong>的情绪类别（emotion categories）的条件下，生成回复（<em>当然这几乎是不切实际的，因为你无法预先知道机器的回复需要附带什么样的情绪，所以这个类别 <script type="math/tex">e</script> 我该分配什么情绪？《Affective Neural Response Generation》也这么认为</em>）。</li>
+<li>ECM 的工作流程是：<strong>1）</strong>在训练步骤，将语料输入情绪分类器，得到情绪，于是原语料变为 (post, response, emtion) 形式的三元组；<strong>2）</strong>在推理过程中，post 被输入进 ECM 以生成给予不同情绪类别的回复（<strong>博主注</strong>：此文章不可控制生成回复的情绪类别，只能为每一种情绪类别都生成一句合适的回复。比如说现在系统中定义了 5 种情绪类别，现在用户很悲伤，需要机器生成“安慰”的语句。但是 ECM 做不到，它只能遍历所有的情绪类别，然后为每一种类别生成一句回复）。</li>
+<li><strong>Emotion Category Embedding</strong> 提取情绪类别的嵌入。</li>
+<li><strong>Internal Memory</strong> 使用词向量，GRU 隐藏状态和上下文向量的拼接版进行计算。先使用 sigmoid 函数分别计算 read gate 和 write gate 的状态 <script type="math/tex">g^r_t \, g^w_t</script>，然后 <script type="math/tex">g^r_t</script> 使用<strong>对应元素相乘的乘法（element-wise multiplication）</strong>从 Internal Memory <script type="math/tex">M^I_{e,t}</script> 中提取一定量的记忆 <script type="math/tex">M^I_{r,t}</script>（都是玄学，意会就行，不用试图理解），<script type="math/tex">M^I_{r,t}</script> 将与拼接版向量同时被喂入 GRU。最后 GRU 生成的隐藏状态 <script type="math/tex">s_t</script> 通过 <script type="math/tex">g^w_t</script> 提取出一定的记忆 <script type="math/tex">M^I_{e,t+1}</script> 写入 Internal Memory。受到心理学上的启发，情绪化回应是相对短暂的，所以<strong>凭借此 Internal Memory 记录用户交谈过程中的短暂情绪变化</strong>。之前说到该记忆状态 <script type="math/tex">M^I</script> 会与拼接后的向量同时输入进 GRU，这就意味着<strong>该情绪记忆会影响解码过程</strong>。特别地，该记忆模块不同于其他的记忆模块，如 LSTM，当解码过程结束后，<strong>记忆模块中的状态应该衰减至 0</strong>，这代表着情绪被机器完全地表达出来。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/ECM：Internal Memory.jpg" alt="Internal Memory"></li>
+<li><strong>External Memory</strong> 通过 GRU 的隐藏状态 <script type="math/tex">s_t</script> 计算下一个单词概率。单词的概率分布由两部分组成，一是情绪词表的概率分布，二是通用词表的概率分布，二者拼接后通过此拼接的概率分布计算下一个单词的概率。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/ECM：External Memory.jpg" alt="External Memory"></li>
+</ul>
+]]></content>
+      <categories>
+        <category>paper</category>
+      </categories>
+      <tags>
+        <tag>4me</tag>
+        <tag>affective computing</tag>
+      </tags>
   </entry>
   <entry>
     <title>Emotional Chatting Machine: Emotional Conversation Generation with Internal and External Memory</title>
-    <url>/%C2%B7%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/dilogue/empathetic%20computing/63.%20Emotional%20Chatting%20Machine%EF%BC%9AEmotional%20Conversation%20Generation%20with%20Internal%20and%20External%20Memory.html</url>
-    <content><![CDATA[<h1 id="论文概要与引言"><a href="#论文概要与引言" class="headerlink" title="论文概要与引言"></a>论文概要与引言</h1><p>&emsp;&emsp;想要对话系统或者对话助手取得成功，对情绪的感知和表达是一个关键因素。本文提出 <strong>Emotional Chatting Machine</strong>（<strong>ECM</strong>），可产生带有情绪的回复，而不仅仅是合乎情理且语法准确的内容。<br><a id="more"></a></p>
-<h1 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h1><p>&emsp;&emsp;目前在大规模对话生成中并没有工作提出情绪因素，但是有一些可控变量文本生成的研究。</p>
+    <url>/%C2%B7%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/dilogue/affective%20computing/63.%20Emotional%20Chatting%20Machine%EF%BC%9AEmotional%20Conversation%20Generation%20with%20Internal%20and%20External%20Memory.html</url>
+    <content><![CDATA[<div class="note info">
+            <p>&emsp;&emsp;<a href="https://arxiv.org/pdf/1704.01074.pdf" target="_blank" rel="noopener">论文地址</a>，论文作者为 Zhou, Hao, et al.，发表于 2017 年。</p>
+          </div>
+<h1 id="论文概要与引言"><a href="#论文概要与引言" class="headerlink" title="论文概要与引言"></a>论文概要与引言</h1><p>&emsp;&emsp;想要对话系统或者对话助手取得成功，对情绪的感知和表达是一个关键因素。本文提出 <strong>Emotional Chatting Machine</strong>（<strong>ECM</strong>），可产生带有情绪的回复，而不仅仅是合乎情理且语法准确的内容。<br><a id="more"></a></p>
+<h1 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h1><p>&emsp;&emsp;目前在大规模对话生成中并没有工作提出情绪因素，但是有一些可控变量文本生成的研究。例如，基于语言的某一种属性（观点，时态等）生成语句。</p>
 <ol>
 <li>提出一个可以根据语言某些特性来生成语句的生成模型，例如情绪和时态（sentiment and tenses）</li>
 <li>Affect Language Model 可以根据上下文词汇和感情类别（context words and affect categories）生成文本</li>
@@ -142,16 +285,36 @@ A_{3 \times 1} \odot B_{3 \times 1} = C_{3 \times 1} \\</script><h1 id="张量�
 <li>以前的工作高度依赖语言学工具或者自定义的参数，但是我们的模型完全是数据驱动的，不依赖任何人工调整</li>
 <li>以前的工作没有对交互过程中的输入和输出中包含的多种情绪建模，反而使生成的文本简单地延续了上下文中的情绪</li>
 </ol>
-<h1 id="ECM"><a href="#ECM" class="headerlink" title="ECM"></a>ECM</h1><h2 id="背景：编码-解码框架"><a href="#背景：编码-解码框架" class="headerlink" title="背景：编码-解码框架"></a>背景：编码-解码框架</h2><p>&emsp;&emsp;略。</p>
-<h2 id="任务定义和概要"><a href="#任务定义和概要" class="headerlink" title="任务定义和概要"></a>任务定义和概要</h2><p>&emsp;&emsp;此问题定义为：给定一个 <strong>post</strong> <script type="math/tex">X = (x_1, x_2, \cdots, x_n)</script> 以及一个待生成的回复的情绪类别 <script type="math/tex">e</script>，目标是生成一个回复 <script type="math/tex">Y = (y_1, y_2, \cdots, y_m)</script>，它情绪类别 <script type="math/tex">e</script> 相关联。本质上来讲，模型估计概率：<script type="math/tex">P(Y|X, e) = \prod^m_{t=1} P(y_t | y_{<t}, X, e)</script>。情绪类别包括 {Angry, Disgust, Happy, Like, Sad, Other}，继承自一个 <a href="http://tcci.ccf.org.cn/conference/2014/dldoc/evatask1.pdf" target="_blank" rel="noopener">Chinese emotion classification challenge</a> 任务。<br>&emsp;&emsp;在我们的问题陈述中，<strong>我们假定待生成回复的情绪类别已经预先给定</strong>，因为情绪是高度主观的。给定一个 post，一句回复也许有多种情绪合适，这取决于回复者的态度。<br>&emsp;&emsp;因此，由于这种主观的情绪回复，我们选择关注核心问题的解决，即给定一个 post 和一个待回复的情绪类别，生成一句情绪化的回复。注意，有多种方式能够使聊天机器人对一句回复选择一个情绪类别。一种是<strong>给予机器人一种人格或者一些背景知识</strong>；另一种是<strong>使用训练数据从而在给定 post 的情绪的情况下，找到最常见的回复的情绪类别，然后将它作为回复附带的情绪</strong>。此方法由于反应了人们的普遍情绪，所以是合理的。<strong>这将留给未来的工作</strong>。<span class="label info">赋予机器人能够生成带有情绪的回复的能力</span><br>&emsp;&emsp;基于上一节的生成框架，提出了 ECM。<strong>第一</strong>，因为情绪类别是一个对情绪表达的高度抽象，ECM 嵌入情绪类别并且将其词向量喂入 decoder。<strong>第二</strong>，我们假定在解码期间，有一个内在的情绪状态，为了捕获到状态模糊的改变以及为了动态地平衡语法状态和情绪状态之间的权重，ECM 采用一个内部记忆模块（internal memory module）。<strong>第三</strong>，情绪显示的表达是通过外部记忆模块（external memory module）显示地选择一个通用（非情绪）或情绪词汇来建模的。<span class="label primary">ECM的基本介绍</span><br>&emsp;&emsp;ECM 的总览如图 1 所示。在训练步骤，处理过的回复对语料库被喂入一个情绪分类器，然后 ECM 在三元组（posts，responses and emotion）形式的回复的情绪标签上训练。在推理过程，post 被喂入 ECM 以生成基于不同情绪类别的情绪化回复。<span class="label primary">ECM 的流程</span></p>
-<h2 id="Emotion-Category-Embedding"><a href="#Emotion-Category-Embedding" class="headerlink" title="Emotion Category Embedding"></a>Emotion Category Embedding</h2><p>&emsp;&emsp;因为一个情绪类别（例如 Angry，Disgust，Happy）是情绪表达的高度抽象，在回复生成上对情绪建模的最直观的方式是将待生成的回复的情绪类别作为额外输入。每一个情绪标签都是真实数值，一个低维的向量。每对于每一个情绪类别 <script type="math/tex">e</script>，我们都随机初始化为 <script type="math/tex">v_e</script>，然后在训练中学习。情绪嵌入，词嵌入以及上下文向量被喂入 decoder，然后更新 decoder 的状态 <script type="math/tex">s_t</script>：<span class="label primary">训练情绪类别的嵌入</span></p>
+<h1 id="ECM"><a href="#ECM" class="headerlink" title="ECM"></a>ECM</h1><h2 id="背景：encoder-decoder框架"><a href="#背景：encoder-decoder框架" class="headerlink" title="背景：encoder-decoder框架"></a>背景：encoder-decoder框架</h2><p>&emsp;&emsp;略。</p>
+<h2 id="任务定义和概要"><a href="#任务定义和概要" class="headerlink" title="任务定义和概要"></a>任务定义和概要</h2><p>&emsp;&emsp;此问题定义为：给定一个 <strong>post</strong> <script type="math/tex">X = (x_1, x_2, \cdots, x_n)</script> 以及一个<strong>待生成的回复</strong>的情绪类别 <script type="math/tex">e</script>，目标是生成一个回复 <script type="math/tex">Y = (y_1, y_2, \cdots, y_m)</script>，它与情绪类别 <script type="math/tex">e</script> 相关联。本质上来讲，模型估计概率：<script type="math/tex">P(Y|X, e) = \prod^m_{t=1} P(y_t | y_{<t}, X, e)</script>。情绪类别包括 {Angry, Disgust, Happy, Like, Sad, Other}，继承自一个 <a href="http://tcci.ccf.org.cn/conference/2014/dldoc/evatask1.pdf" target="_blank" rel="noopener">Chinese emotion classification challenge</a> 任务。<br>&emsp;&emsp;在我们的问题陈述中，因为情绪是高度主观的，所以<strong>我们假定待生成回复的情绪类别已经预先给定</strong>。给定一个 post，一句回复也许有多种情绪合适，这取决于回复者的态度。与以往的研究相比，psot 和 response 之间情感的灵活交互时一个重要区别。先前工作的做法是生成一个与输入句子相同情绪的回复，情绪无法做到灵活变换。<br>&emsp;&emsp;因此，由于这种主观的情绪回复，我们选择关注核心问题的解决，即给定一个 post 和一个待回复的情绪类别，生成一句情绪化的回复。注意，有多种方式能够使聊天机器人对一句回复选择一个情绪类别。一种是<strong>给予机器人一种人格或者一些背景知识</strong>；另一种是<strong>使用训练数据从而在给定 post 的情绪的情况下，找到最常见的回复的情绪类别，然后将它作为回复附带的情绪</strong>。此方法由于反应了人们的普遍情绪，所以是合理的。<strong>这将留给未来的工作</strong>。<span class="label info">赋予机器人能够生成带有情绪的回复的能力</span><br>&emsp;&emsp;基于上一节的生成框架，提出了 ECM。<strong>第一</strong>，因为情绪类别是一个对情绪表达的高度抽象，ECM 嵌入情绪类别并且将其词向量喂入 decoder。<strong>第二</strong>，我们假定在解码期间，有一个内在的情绪状态，为了捕获到状态模糊的改变以及为了动态地平衡语法状态和情绪状态之间的权重，ECM 采用一个内部记忆模块（internal memory module）。<strong>第三</strong>，情绪显示的表达是通过外部记忆模块（external memory module）显示地选择一个通用（非情绪）或情绪词汇来建模的。<span class="label primary">ECM的基本介绍</span><br>&emsp;&emsp;ECM 的总览如图 1 所示。在<strong>训练步骤</strong>，处理过的回复对语料库被喂入一个情绪分类器，然后 ECM 在三元组（posts，responses and emotion）形式的回复的情绪标签上训练。在<strong>推理过程</strong>，post 被喂入 ECM 以生成基于不同情绪类别的情绪化回复。<span class="label primary">ECM 的流程</span></p>
+<h2 id="Emotion-Category-Embedding"><a href="#Emotion-Category-Embedding" class="headerlink" title="Emotion Category Embedding"></a>Emotion Category Embedding</h2><p>&emsp;&emsp;因为一个情绪类别（例如 Angry，Disgust，Happy）是情绪表达的高度抽象，在回复生成上对情绪建模的最直观的方式是将待生成的回复的情绪类别作为额外输入。每一个情绪标签都是真实数值，一个低维的向量。对于每一个情绪类别 <script type="math/tex">e</script>，我们都随机初始化为 <script type="math/tex">v_e</script>，然后在训练阶段中学习。情绪嵌入，词嵌入以及上下文向量被喂入 decoder，然后更新 decoder 的状态 <script type="math/tex">s_t</script>：<span class="label primary">训练情绪类别的嵌入</span></p>
 <script type="math/tex; mode=display">s_t = GRU(s_{t-1}, [c_t; e(y_{t-1}); v_e])</script><h2 id="Internal-Memory"><a href="#Internal-Memory" class="headerlink" title="Internal Memory"></a>Internal Memory</h2><p>&emsp;&emsp;上一节提出的方法是相对静态的：情绪类别嵌入不会在生成步骤中改变，这个也许牺牲了语句在语法上的准确性，由 <a href="https://arxiv.org/pdf/1704.06851.pdf" target="_blank" rel="noopener">Ghosh et al. 2017</a> 提出。受到心理学上成果的启发，情绪化回应是相对短暂的，是涉及到变化的并且是在情绪化回应中的动态情绪状态，因此我们设计了一个<strong>内部记忆模块去捕获在解码过程中情绪的动态变化</strong>。如下所示，我们模拟了情绪表达的过程：<strong>1）</strong>在解码过程开始之前，每一个类别都有一个内部情绪状态；<strong>2）</strong>每一个时间步，情绪状态都会有一定程度的衰减；<strong>3）</strong>一旦解码步骤完成，情绪状态应该衰减至 0，这意味着情绪被完全地表达出来了。<br>&emsp;&emsp;内部记忆模块的详细过程如图 2 所示。每一个时间步 <script type="math/tex">s</script>，ECM 通过输入（前一个解码出的单词 <script type="math/tex">e(y_{t-1})</script> 的词向量）、前一个解码状态 <script type="math/tex">s_{t-1}</script>和当前上下文向量 <script type="math/tex">c_t</script>，去计算一个 <strong>read gate</strong> <script type="math/tex">g^r_t</script>。<strong>write gate</strong> <script type="math/tex">g^w_t</script> 基于解码状态 <script type="math/tex">s_t</script> 计算。read gate 和 write gate 如下定义：</p>
 <script type="math/tex; mode=display">
 \begin{align}
     g^r_t & = sigmoid(W^r_g [e(y_{t-1}); s_{t-1}; c_t]) \\
     g^w_t & = sigmoid(W^w_g s_t)
-\end{align}</script><p>&emsp;&emsp;……<br>&emsp;&emsp;……<br>&emsp;&emsp;……<br>&emsp;&emsp;……<br>&emsp;&emsp;……</p>
-<h2 id="External-Memory"><a href="#External-Memory" class="headerlink" title="External Memory"></a>External Memory</h2><p>&emsp;&emsp;在内部记忆模块中，内部情绪状态和挑选出的单词之间的相互关系不是很清楚并且不是可直接观测。因为情感的表达和句子中情感词是显而易见的，例如 <em>lovely</em> 和 <em>awesome</em> 与通用词汇（非情感词，例如 <em>person</em>，<em>day</em>）相比携带了强烈的感情，所以我们提出了外部记忆模块，通过对情感词（emotion words）和通用词（generic words）分配不同的生成概率，从而对清晰的情感表达建模。因此模型可以从情感词汇表或者通用词汇表中选择地生成词汇。<br>&emsp;&emsp;带着外部机遇模块的编码器如图 3 所示。<br>&emsp;&emsp;……<br>&emsp;&emsp;……</p>
+\end{align}</script><p>&emsp;&emsp;然后 read 和 write gate 各自被用于读取和写入内部记忆。因此，情绪状态在每个时间步都会根据一定量（通过 <script type="math/tex">g^w_t</script>）被擦除。尤其最后一个时间步，内部情绪状态将会衰减至 0。这一过程将由以下公式定义，其中 <script type="math/tex">otimes</script> 代表矩阵对应元素相乘运算。</p>
+<script type="math/tex; mode=display">
+\begin{align}
+    M^I_{r, t} & = g^r_t \otimes M^I_{r, t} \\
+    M^I_{e, t+1} & = g^w_t \otimes M^I_{e, t} \\
+\end{align}</script><p>&emsp;&emsp;GRU 根据前一个生成的目标词 <script type="math/tex">e(y_{t-1})</script>，前一个解码的隐藏状态 <script type="math/tex">s_{t-1}</script>，上下文向量 <script type="math/tex">c_t</script> 和更新过的情绪状态 <script type="math/tex">M^I_{r,t}</script> 生成状态 <script type="math/tex">s_t</script>，如下所示：</p>
+<script type="math/tex; mode=display">s^t = GRU(s_{t-1}, [c_t; e(y_{t-1}); M^I_{r, t}])</script><p>&emsp;&emsp;然后根据这个状态 <script type="math/tex">s_t</script> 就可以通过 softmax 函数计算出生成单词的分布 <script type="math/tex">o_t</script>。</p>
+<h2 id="External-Memory"><a href="#External-Memory" class="headerlink" title="External Memory"></a>External Memory</h2><p>&emsp;&emsp;在内部记忆模块中，<strong>内部情绪状态和被挑选出的单词之间的相互关系不是很清楚并且不是可直接观测</strong>。因为情感的表达和句子中情感词是显而易见的，例如 <em>lovely</em> 和 <em>awesome</em> 与通用词汇（非情感词，例如 <em>person</em>，<em>day</em>）相比携带了强烈的感情，所以我们提出了外部记忆模块，<strong>通过对情感词（emotion words）和通用词（generic words）分配不同的生成概率，从而对清晰的情感表达建模</strong>。因此模型可以从情感词汇表或者通用词汇表中选择地生成词汇。<br>&emsp;&emsp;带着外部机遇模块的编码器如图 3 所示。给定当前状态 <script type="math/tex">s_t</script>，在情绪词表上计算出 emotion softmax <script type="math/tex">P_e(y_t = w_e)</script> 和 generic softmax <script type="math/tex">P_g(y_t = w_g)</script>，它们分别读取自情绪词表（emotion vocabulary）和通用词表（generic vocabulary）。type selector <script type="math/tex">\alpha_t</script> 控制是否生成情绪或者通用词汇。最终通过两个概率分布的拼接向量计算出下一个单词的概率。该过程可由下公式描述：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+    \alpha_t & = sigmoid((v_u)^T s_t) \\
+    P_g(y_t = w_g) & = softmax(W^o_g s_t) \\
+    P_e(y_t = w_e) & = softmax(W^o_e s_t) \\ 
+    y_t \sim o_t = P(y_t) & = \begin{bmatrix} (1 - \alpha_t) P_g(y_t = w_g) \\ \alpha_t P_e(y_t = w_e) \end{bmatrix} \\
+\end{align}</script><p>&emsp;&emsp;其中 <script type="math/tex">\alpha_t \in [0,1]</script> 是一个标量，用以平衡情绪词 <script type="math/tex">w_e</script> 和通用词 <script type="math/tex">w_g</script> 之间的选择。<em>其他符号望文生义就不说了</em>。</p>
+<h2 id="Loss-Function"><a href="#Loss-Function" class="headerlink" title="Loss Function"></a>Loss Function</h2><p>&emsp;&emsp;loss function 由三部分组成，一个用于内部记忆，强制使得内部记忆状态在最后一个解码步衰减至 0；另一个用于外部记忆，约束情感词或者通用词的选择。定义为：</p>
+<script type="math/tex; mode=display">L(\theta) = -\sum^m_{t=1} p_t log(o_t) - \sum^m_{t=1} q_t log(\alpha_t) + \|M^I_{e,m}\|</script><p>&emsp;&emsp;<script type="math/tex">M^I_{e,m}</script> 是最后一个时间步 m 的内部解码状态， <script type="math/tex">\alpha_t</script> 是选择情绪词还是通用词的概率，<script type="math/tex">q_t \in {1, 2}</script> 是选择情绪词还是通用词的真实值。所以第一项是预测下一个词的 loss，第二项被用于监督情绪词和通用词选择的概率的 loss，第三项被用于确保在解码完成时，内部隐藏状态被全部表达出来。</p>
+<h1 id="数据准备"><a href="#数据准备" class="headerlink" title="数据准备"></a>数据准备</h1><p>&emsp;&emsp;由于没有现成的数据支持 ECM 的训练，所以我们先在 NLPCC 的情绪分类数据集上训练一个情绪分类器（emotion classifier），然后使用这个分类器标注 STC 对话数据集（Shang, Lu, and Li 2015），这样来构建我们自己的数据集。数据准备主要有两步：</p>
+<ol>
+<li>构建情绪分类器：我们在 NLPCC 的数据集上训练了多个模型，然后选择了一个做好的用做自动标注。数据集选择 NLPCC2013 和 NLPCC2014 的情绪分类任务挑战。数据收集自微博，由人工标注成 8 个情绪分类。移除了低频的情绪（Fear（1.5%），Surprise（4.4%））之后，我们还剩 6 个。我们选择了 lexicon-based classifier (Liu 2012)，RNN，LSTM，Bi-LSTM 等模型。实验证明 Bi-LSTM 是最好的。</li>
+<li>标注 STC 数据集的情绪：我们使用 Bi-LSTM 对 STC 进行标注。这样就获得了情绪标签数据集，我们称之为 ESTC。尽管 ESTC 由于自动标注有很多噪声，但是实际上足够训练了（-.-真的吗？）。未来我们将研究分类误差是怎么样影响回复生成的。</li>
+</ol>
 ]]></content>
       <categories>
         <category>paper</category>
@@ -1648,7 +1811,7 @@ V^t_s = \{v \in V_s | \mathbb{P}(s,v | h^{1:t},sys^{1:t-1}) \geq 0.5\}</script><
   </entry>
   <entry>
     <title>概率论（叶丙成）</title>
-    <url>/%C2%B7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%A6%82%E7%8E%87%E8%AE%BA%EF%BC%88%E5%8F%B6%E4%B8%99%E6%88%90%EF%BC%89.html</url>
+    <url>/%C2%B7zcy/subject/PaS/%E6%A6%82%E7%8E%87%E8%AE%BA%EF%BC%88%E5%8F%B6%E4%B8%99%E6%88%90%EF%BC%89.html</url>
     <content><![CDATA[<h1 id="概率概论"><a href="#概率概论" class="headerlink" title="概率概论"></a>概率概论</h1><p>&emsp;&emsp;概率与统计的差异：</p>
 <ul>
 <li>概率<ul>
@@ -2089,10 +2252,34 @@ P(a < X \leq b) = & F_X(b) - F_X(a) \\
 <script type="math/tex; mode=display">f_Z(z) = \frac{1}{\sqrt{2\pi}} e^{-\frac{z^2}{2}}</script><p>&emsp;&emsp;CDF 表示为 <script type="math/tex">\Phi(z) = \int^z_{-\infty} \frac{1}{\sqrt{2\pi}} e^{-\frac{u^2}{2}} du</script>。<script type="math/tex">\Phi(z)</script> 一般专指标准正态分布。<br>&emsp;&emsp;<script type="math/tex">\Phi(z)</script> 性质：</p>
 <script type="math/tex; mode=display">\Phi(-z) = 1 - \Phi(z)</script><p>&emsp;&emsp;任意 <script type="math/tex">\mu</script>，<script type="math/tex">\sigma</script>下的 CDF：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/学习笔记/概率论（叶丙成）/任意mu,sigma下的CDF.jpg" alt="任意mu,sigma下的CDF"></p>
 <h1 id="期望值"><a href="#期望值" class="headerlink" title="期望值"></a>期望值</h1><p>&emsp;&emsp;大数法则：想知道一件事发生的概率？就做很多次实验。当实验接近无穷是，这个比例就会越来越接近实际概率。</p>
-<script type="math/tex; mode=display">P(A) = \lim_{N->\infty} \frac{N_A}{N}</script><p>&emsp;&emsp;期望值：做随机实验时，我们希望能有某种估算</p>
-<ul>
-<li>平均值是比较常用的估算值，但是做实验得出的值，计算出平均值，该平均值依旧是一个<strong>随机变量</strong></li>
+<script type="math/tex; mode=display">P(A) = \lim_{N->\infty} \frac{N_A}{N}</script><p>&emsp;&emsp;期望值的作用：做随机实验时，我们希望能有某种估算。平均值是比较常用的估算值，但是做实验得出的值，计算出平均值之后，该平均值依旧是一个<strong>随机变量</strong>！所幸，当做实验次数接近无穷多次时，这个平均值会收敛到一个常数，我们就可以把它当做这个概率分布的估算值。</p>
+<h2 id="离散变量的期望值"><a href="#离散变量的期望值" class="headerlink" title="离散变量的期望值"></a>离散变量的期望值</h2><p>&emsp;&emsp;例如：现考虑某概率分布，做很多次实验若随机变量的样本空间为 <script type="math/tex">\{1, 2, \cdots, n\}</script>。做实验 <script type="math/tex">n</script> 次，记录各结果出现的次数，分别为 <script type="math/tex">N_1, N_2, \cdots, N_n</script>。假设实验的结果为 <script type="math/tex">3,7,3,5,\cdots,6</script>。<br>&emsp;&emsp;那么平均值的计算方式是：<script type="math/tex">mean = \frac{3+7+3+5+\cdots+6}{N} = \sum^n_{x=1} \frac{x \cdot N_x}{N}</script>。<br>&emsp;&emsp;观察上式，发现它可以使用大数法则：</p>
+<script type="math/tex; mode=display">\lim_{N \to \infty} \frac{N_x}{N} = P_X(x) \Rightarrow \lim_{N \to \infty} mean = \lim_{N \to \infty} \sum^n_{x=1} x \cdot \frac{N_x}{N} = \sum^n_{x=1} x \cdot P_X(x)</script><p>&emsp;&emsp;对离散随机函数而言，我们定义其期望值为：</p>
+<script type="math/tex; mode=display">E[X] = \mu_X = \sum^{\infty}_{x=-\infty} x \cdot P_X(x)</script><p>&emsp;&emsp;对于任一随机变量 X 而言，其任意函数 <script type="math/tex">g(X)</script> 也是随机变量，所以也有期望值。定义为：</p>
+<script type="math/tex; mode=display">E(g(X)) = \sum^{\infty}_{-\infty} g(x) \cdot P_X(x)</script><h3 id="性质"><a href="#性质" class="headerlink" title="性质"></a>性质</h3><script type="math/tex; mode=display">
+\begin{align}
+    E[\alpha g(X)] & = \alpha \cdot E[g(X)] \\
+    E[\alpha g(X) + \beta h(X)] & = \alpha \cdot E[g(X)] + \beta \cdot E[h(X)] \\
+    E[\alpha] & = \alpha
+\end{align}</script><p>&emsp;&emsp;X 的方差（variance）定义为 <script type="math/tex">E[(X - \mu_X)^2] = \sum^{\infty}_{x=-\infty} (x - \mu_x)^2 \cdot P_X(x)</script>。X 减去 X 取期望值的平方再取期望值。</p>
+<h3 id="Variance"><a href="#Variance" class="headerlink" title="Variance"></a>Variance</h3><p>&emsp;&emsp;Variance 通常用符号 <script type="math/tex">\sigma^2_X = E[(X-\mu_X)^2]</script> 表示。它隐含着关于随机变量 X 多“乱”的信息。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/学习笔记/概率论（叶丙成）/通过方差看随机变量是否“乱”.jpg" alt="通过方差看随机变量是否“乱”"><br>&emsp;&emsp;方差开根方就是标准差（standard deviation）：<script type="math/tex">\sigma_X</script><br>&emsp;&emsp;方差的便利算法：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+    \sigma^2_X & = E[(X - \mu_X)^2] \\
+    & = E[X^2 - 2\mu_X \cdot X + \mu^2_X]
+\end{align}</script><h3 id="常见离散分布的期望值及方差"><a href="#常见离散分布的期望值及方差" class="headerlink" title="常见离散分布的期望值及方差"></a>常见离散分布的期望值及方差</h3><ul>
+<li><script type="math/tex; mode=display">X \sim POI(\alpha)</script><ul>
+<li><script type="math/tex; mode=display">\mu_X = \alpha</script></li>
+<li><script type="math/tex; mode=display">\sigma^2_X = \alpha</script></li>
 </ul>
+</li>
+<li><script type="math/tex; mode=display">X \sim UNIF(a, b)</script><ul>
+<li><script type="math/tex; mode=display">\mu_X = \frac{a+b}{2}</script></li>
+<li><script type="math/tex; mode=display">\sigma^2_X = \frac{1}{12}(b-a)(b-a+2)</script></li>
+</ul>
+</li>
+</ul>
+<h2 id="连续变量的期望值"><a href="#连续变量的期望值" class="headerlink" title="连续变量的期望值"></a>连续变量的期望值</h2><p>&emsp;&emsp;</p>
 <h1 id="随机变量的函数-1"><a href="#随机变量的函数-1" class="headerlink" title="随机变量的函数"></a>随机变量的函数</h1><p>&emsp;&emsp;</p>
 <h1 id="条件概率分布及失忆性"><a href="#条件概率分布及失忆性" class="headerlink" title="条件概率分布及失忆性"></a>条件概率分布及失忆性</h1><p>&emsp;&emsp;</p>
 <h1 id="联合概率分布"><a href="#联合概率分布" class="headerlink" title="联合概率分布"></a>联合概率分布</h1><p>&emsp;&emsp;什么是联合分布？</p>
@@ -2108,7 +2295,7 @@ P(a < X \leq b) = & F_X(b) - F_X(a) \\
 <li>同时将多个随机变量的行为一起拿来看，我们可以看出更多以往看不到的资讯！</li>
 </ul>
 <h2 id="联合-PMF"><a href="#联合-PMF" class="headerlink" title="联合 PMF"></a>联合 PMF</h2><p>&emsp;&emsp;<script type="math/tex">p_{X, Y}(x, y) = P(X=x 且 Y=y)</script>。假如看上面的例子的 X，Y 变量，那么 <script type="math/tex">P_{X, Y}(9, 10) = 0</script></p>
-<h3 id="性质"><a href="#性质" class="headerlink" title="性质"></a>性质</h3><ul>
+<h3 id="性质-1"><a href="#性质-1" class="headerlink" title="性质"></a>性质</h3><ul>
 <li><script type="math/tex; mode=display">0 \leq p_{X, Y}(x, y) \leq = 1</script></li>
 <li><script type="math/tex; mode=display">\sum^{\infty}_{x=-\infty} sum^{\infty}_{y=-\infty} p_{X, Y}(x, y) = 1</script></li>
 <li>X，Y 独立。<script type="math/tex; mode=display">
@@ -2125,7 +2312,7 @@ P(a < X \leq b) = & F_X(b) - F_X(a) \\
 </li>
 </ul>
 <h2 id="联合-CDF"><a href="#联合-CDF" class="headerlink" title="联合 CDF"></a>联合 CDF</h2><script type="math/tex; mode=display">F_{X, Y}(x, y) = P(X \leq x 且 Y \leq y) = P(X \leq x, Y \leq y)</script><p>&emsp;&emsp;那么如何算 <script type="math/tex">F_{X, Y}(10, 10) = ?</script>，其实就是<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/学习笔记/概率论（叶丙成）/PMF性质.jpg" alt="PMF性质"></p>
-<h3 id="性质-1"><a href="#性质-1" class="headerlink" title="性质"></a>性质</h3><ul>
+<h3 id="性质-2"><a href="#性质-2" class="headerlink" title="性质"></a>性质</h3><ul>
 <li><script type="math/tex; mode=display">0 \leq F_{X, Y}(x, y) \leq 1</script></li>
 <li>若 <script type="math/tex">x_1 \leq x_2</script> 且 <script type="math/tex">y_1 \leq y_2</script>，则 <script type="math/tex">F_{X, Y}(x_1, y_1) \leq F_{X, Y}(x_2, y_2)</script></li>
 <li><script type="math/tex; mode=display">F_{X, Y}(x, \infty) = P(X \leq x, Y \leq \infty) = P(X \leq x) = F_X(x)</script></li>
@@ -2310,6 +2497,84 @@ P(a < X \leq b) = & F_X(b) - F_X(a) \\
       </tags>
   </entry>
   <entry>
+    <title>PyDial: A Multi-domain Statistical Dialogue System Toolkit</title>
+    <url>/%C2%B7%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/dilogue/task-oriented/55.%20PyDial%EF%BC%9AA%20Multi-domain%20Statistical%20Dialogue%20System%20Toolkit.html</url>
+    <content><![CDATA[<div class="note info">
+            <p>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/P17-4013/" target="_blank" rel="noopener">论文地址</a>，论文作者 S Ultes 等，发表于 2017 年。<br>&emsp;&emsp;此文中出现了许多专业名词，可参考 <a href="https://yan624.github.io/·论文笔记/dilogue/task-oriented/54. A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management.html">此处</a> 加以理解。</p>
+          </div>
+<h1 id="摘要翻译"><a href="#摘要翻译" class="headerlink" title="摘要翻译"></a>摘要翻译</h1><p>&emsp;&emsp;统计口语对话系统（<em>Statistical Spoken Dialogue Systems, Statistical SDS, 统计 SDS</em>）已经存在多年了。然而，访问这些系统一直很困难，因为仍然没有公开的端到端系统实现。为了缓解这个问题，我们提出了 PyDial，一个开源的端到端统计语音对话系统工具包，它为<strong>所有对话系统模块</strong>提供<strong>统计方法</strong>的实现。此外，它还被扩展为提供多领域会话功能。它提供了各个对话系统模块的简单配置、易扩展性和域无关（<em>domain-independent</em>）的实现。该工具包可在 Apache2.0 许可下下载。</p>
+<h1 id="1-引言"><a href="#1-引言" class="headerlink" title="1 引言"></a>1 引言</h1><p>&emsp;&emsp;针对机器去设计语音接口（凭此人机交互）是多年来的研究热点。这些语音对话系统（SDSs）通常<strong>基于模块化的架构</strong>，包括<strong>语音识别</strong>（<em>speech recognition</em>）和<strong>语义解码</strong>（<em>semantic decoding</em>）的<strong>输入处理模块</strong>（<em>input processing modules</em>）、<strong>信念跟踪</strong>（<em>belief tracking</em>）和<strong>策略</strong>（<em>policy</em>）的<strong>对话管理模块</strong>（<em>dialogue management modules</em>）、<strong>语言生成</strong>（<em>language generation</em>）和<strong>语音合成</strong>（<em>speech synthesis</em>）的<strong>输出处理模块</strong>（<em>output processing modules</em>）（见图 1）。<br><div class="note success">
+            <p>&emsp;&emsp;以上介绍了 SDS 的架构。下一段介绍了一些 SDS 中不同组件的统计方法示例。</p>
+          </div></p>
+<p>&emsp;&emsp;统计 SDS 是一个语音接口，其中所有 SDS 模块都基于统计模型（从数据中学习）（与人工规则相比）。对话系统中<strong>不同组件的统计方法</strong>例子可以在以下中找到：</p>
+<ul>
+<li>……（若干论文），详见原论文 Introduction 第二段。<a id="more"></a>
+</li>
+</ul>
+<p>&emsp;&emsp;尽管对统计 SDS 的研究非常丰富，但是仍然没有通用的平台和开放的工具包。其他工具包实现通常集中在单个模块上（例如：<em>略，详见论文</em>）。提供专门针对统计对话系统（<em>statistical dialogue systems</em>）的工具包将使新进入该领域的人员能够更容易地参与进来，结果更容易比较，研究人员能够专注于他们的特定研究问题，而不是重新实现算法（例如，评估（<em>v.</em>）交互功能中的理解或生成组件的性能）。<br>&emsp;&emsp;因此，为了促进研究，以及使人们更容易参与统计口语对话系统的研究，我们提出了一个多领域统计口语对话系统工具包 <strong>PyDial</strong>。PyDial 是用 Python 实现的，剑桥对话系统团队（<em>Cambridge Dialogue Systems Group</em>）正在积极使用它。<br><div class="note default">
+            <p>&emsp;&emsp;那么什么是 PyDial 呢？</p>
+          </div></p>
+<p>&emsp;&emsp;PyDial 支持多领域的应用程序，在这些应用程序中，对话可能涉及多个不同的主题。这引入了许多新的研究课题，包括广义信念跟踪（<em>generalised belief tracking</em>）（论文略），<em>rapid policy adaptation and parallel learning</em> 和自然语言生成（<em>natural language generation</em>）。<br>&emsp;&emsp;论文的余下部分安排如下：</p>
+<ol>
+<li>第 2 节介绍了 PyDial 的总体架构（并且将 SDS 架构扩展到多个领域）和 PyDial 的主要应用规范；</li>
+<li>第 3 节包含各个对话系统模块的实现细节；</li>
+<li>第 4 节列出了可用的领域，其中有两个领域用于第5节中的示例交互；</li>
+<li>第 6 节总结了该工具包的主要贡献。</li>
+</ol>
+<h1 id="2-PyDial-架构"><a href="#2-PyDial-架构" class="headerlink" title="2 PyDial 架构"></a>2 PyDial 架构</h1><p>&emsp;&emsp;本节介绍 PyDial 的结构及其与环境的接口方式。随后，描述了在单个领域上功能的扩展，以允许在多个领域上进行对话。最后，我们讨论了 PyDial 设计的三个关键原则。</p>
+<h2 id="2-1-总体系统架构"><a href="#2-1-总体系统架构" class="headerlink" title="2.1 总体系统架构"></a>2.1 总体系统架构</h2><p>&emsp;&emsp;PyDial 的总体架构如图 2 所示。其中主要组件被称为 <strong>Agent</strong>，它位于系统的核心。它封装了所有对话系统模块，以实现基于文本的交互，即输入和输出。对话系统模块依赖于由一个<strong>本体</strong>（<strong>Ontology</strong>）定义的领域规范。为了与环境交互（<strong>博主注</strong>：这里的“与环境交互”应该指的是机器与外部环境交互，如机器与餐厅环境交互、与旅游环境交互、与服装商场进行交互等），PyDial 提供了三个接口：<strong>Dialogue Server</strong>【允许语音型交互】、<strong>Texthub</strong>【允许输入型交互】和 <strong>User Simulation system</strong>。交互的性能由<strong>评估</strong>（<strong>Evaluation</strong>）组件监视。</p>
+<ul>
+<li>Agent：负责对话交互，因此内部的架构类似于图 1 中的内容。<strong>Agent</strong> 还维护 dialogue sessions，即确保每个输入都<u>发送到</u>（<em>is routed to</em>）正确的对话。因此，<strong>可以通过实例化多个 agents 来支持多个对话</strong>。<ol>
+<li>semantic parser：将文本输入转化为一个语义表征</li>
+<li>belief tracker：负责维护一个被称为 <strong>belief state</strong> 的对话状态表征（<em>dialogue state representation</em>）</li>
+<li>policy：将 <strong>belief state</strong> 映射到适合的 <strong>system dialogue act</strong></li>
+<li>semantic output：将 <strong>system dialogue act</strong> 转化为文本表示</li>
+<li>topic tracker：对于多域功能，需要 <strong>topic tracker</strong>，其功能将在第 2.2 节中解释</li>
+</ol>
+</li>
+<li>User Simulation：支持在语义层面进行对话模拟，即不使用任何语义解析器或语言生成。这是一种广泛应用于训练和评估基于强化学习算法的技术，因为它避免了昂贵的数据收集练习（<em>data collection exercises</em>）和用户试验（<em>user trials</em>）。它当然只提供了一个近似的真实用户行为，所以通过模拟获得的结果应该谨慎看待！</li>
+<li>与环境交互：为了使 Agent 能够与其环境进行通信，PyDial 提供了两种模式：语音和文本<ul>
+<li>Texthub：只需将 Agent 连接到终端</li>
+<li>Dialogue Server：要启用基于语音的对话，<strong>Dialogue Server</strong> 允许连接到外部语音客户端。此客户端负责使用 ASR 将输入语音信号映射到文本，并使用语音合成将输出文本映射到语音（<em>text to speech</em>, <strong>TTS</strong>）。语音客户端通过 HTTP 交换 JSON 消息连接到对话服务器。请注意，语音客户端不是 PyDial 的一部分。基于云的 ASR 和 TTS 服务可以从 <a href="https://cloud.google.com/speech" target="_blank" rel="noopener">Google</a>、<a href="https://www.microsoft.com/cognitive-services/en-us/speech-api" target="_blank" rel="noopener">Microsoft</a>或 <a href="http://www.ibm.com/watson/developercloud/speech-to-text.html" target="_blank" rel="noopener">IBM</a>等提供商处获得。PyDial 目前连接到 DialPort（Zhao等人，2016），其允许基于语音的交互。</li>
+</ul>
+</li>
+<li>Ontology：除了 <strong>Agent</strong> 和接口组件之外，还有 <strong>Ontology</strong>，Ontology 封装了对话域规范以及对后端数据库（例如，一组餐厅及它们的属性）的访问。它被建模为一个全局对象，大多数对话系统模块和用户模拟器使用它来获取有关用户 <em>actions,  slots, slot values, and system actions</em> 的相关信息。</li>
+<li>Evaluation：用于计算对话的评估度量（例如 <strong>Task Success</strong>）。对于基于强化学习的对话模块来说，评估组件还负责提供 <em>reward</em></li>
+</ul>
+<h2 id="2-2-多领域对话系统架构"><a href="#2-2-多领域对话系统架构" class="headerlink" title="2.2 多领域对话系统架构"></a>2.2 多领域对话系统架构</h2><p>&emsp;&emsp;Agent -&gt; <strong>topic tracker</strong></p>
+<h2 id="2-3-主要原则"><a href="#2-3-主要原则" class="headerlink" title="2.3 主要原则"></a>2.3 主要原则</h2><p>&emsp;&emsp;为了使 PyDial 能够轻松地应用于新问题，PyDial 体系结构的设计支持三个关键原则：</p>
+<ul>
+<li>Domain Independence</li>
+<li>Easy Configurability</li>
+<li>Extensibility</li>
+</ul>
+<h1 id="3-实现"><a href="#3-实现" class="headerlink" title="3 实现"></a>3 实现</h1><p>&emsp;&emsp;PyDial 工具包是一个不断开发的研究系统。可从Apache2.0许可下的<a href="http://pydial.org" target="_blank" rel="noopener">网站</a>免费下载。在最初的版本中可以使用以下各种系统模块的实现，不过，到时候会有更多的实现。</p>
+<ul>
+<li><strong>Semantic Decoder</strong>：为了对输入语句（或n个最佳语句列表，or n-best-list of sentences）进行语义解码，PyDial 提供了一个基于规则（使用正则表达式）的实现，以及一个基于 SVM 的统计模型，即 the Semantic Tuple Classifier（Mairess et al., 2009）。对于后者，只提供了 CamRestaurants 领域的模型。</li>
+<li><strong>Belief Tracker</strong>：为了跟踪 belief state，可用 <strong>the rule-based focus tracker</strong>（Henderson et al., 2014）。该实现与领域无关。所有特定领域的信息都是从本体中提取的。</li>
+<li><strong>Policy</strong>：负责 policy 的决定执行模块有两种实现方式：<strong>1）</strong>人工制定的策略（应该适用于所有领域）；<strong>2）</strong>Gaussian process (GP) reinforcement learning policy（Gasic and Young, 2014）。对于多领域对话，策略管理器可以像处理所有其他模块一样处理策略。给定每个用户的输入的领域，然后选择相应的领域策略。<br>此外，还可以选择 Gasic et al.(2015b) 提出的 Bayesian committee machine(BCM) 处理程序：<strong>当处理一个领域的 belief state 时，参考其他领域的策略来选择最终的系统操作</strong>。为了实现这一点，belief state 被映射到一个抽象表示，然后允许所有策略访问它。在 PyDial 中，经过训练的策略可以在 committee-based handler 和 standard policy manager handler 之间移动。即在 committee 外部（在单域或多域设置中）接受训练的策略可以在 committee 内部使用，反之亦然。</li>
+<li><strong>Language Generator</strong>：为了将 semantic system action 映射为文本，PyDial 提供了两个实现组件：<strong>1）</strong>对于所有领域来说，提供了一个基于模板（定义规则）的语言生成；<strong>2）</strong>此外 Wen et al. (2015) 提出了基于 LSTM 的语言生成器，里面包含了 CamRestaurants 领域的预训练模型</li>
+<li><strong>Topic Tracker</strong>：PyDial 提供了一个基于关键字的 Topic Tracker 实现。如果 Topic Tracker 已为某些用户输入标识了领域，那么它将继续使用该领域，直到识别了新的领域。<strong>因此，并非每个用户输入都必须包含相关关键字</strong>。如果 Topic Tracker <strong>无法在开始时识别领域</strong>，那么它将创建与用户的 meta-dialogue，直到确定初始领域或达到最大重试次数。</li>
+<li><strong>Evaluation</strong>：为了评估对话，目前已经实现了两个 success-based 模块。（下面的话部分看不懂，索性不翻了—）<blockquote>
+<p>The objective task success evaluator compares the constraints and requests the system identifies with the true values. The latter may either be derived from the user simulator or, in real dialogues, by specifying a predefined task. For real dialogues, a subjective task success evaluator may also be applied which queries the user about the outcome of the dialogue.</p>
+</blockquote>
+</li>
+<li><strong>User Simulation</strong>：模拟用户的实现使用 agenda-based 用户模拟器（Schatzmann et al., 2006）。该模拟器包含 user model 和 error model，从而创建 a n-best-list of user acts 来模拟噪声语音信道。通过使用一组普遍适用的参数，模拟器可以应用于所有领域。领域特定的信息取自本体。</li>
+</ul>
+<h1 id="4-一些领域"><a href="#4-一些领域" class="headerlink" title="4 一些领域"></a>4 一些领域</h1><p>&emsp;&emsp;<strong>PyDial 的主要关注的是面向任务的对话，即根据一些约束条件用户必定找到其匹配的实体</strong>。找到实体后，用户可以请求其他信息。为应付这些场景，PyDial 预先加载了总共十个不同复杂度的领域：</p>
+<ul>
+<li>略</li>
+</ul>
+<p>&emsp;&emsp;如前所述，所有 <strong>policy</strong> 实现以及 <strong>belief tracker</strong> 和 <strong>user simulator</strong> 的实现都独立于领域之外。因此，在<strong>所有领域</strong>都可以进行交互的模拟。此外，<strong>semantic decoder</strong> 和 <strong>language generator</strong> 在某种程度上依赖于特定领域的实现。PyDial 包含用于<strong>所有领域</strong>的基于规则的 <strong>semantic decoder</strong> 和一个用于 <strong>CamRestaurants</strong> 的统计解码器（<em>statistical decoder</em>）。此外，PyDial 还为<strong>大多数领域</strong>提供了基于模板的语言生成，并为 <strong>CamRestaurants</strong> 提供了基于 LSTM 的生成器。因此，在 CamRestaurants 领域，实现统计对话完全有可能。</p>
+]]></content>
+      <categories>
+        <category>paper</category>
+      </categories>
+      <tags>
+        <tag>pydial</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management</title>
     <url>/%C2%B7%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/dilogue/task-oriented/54.%20A%20Benchmarking%20Environment%20for%20Reinforcement%20Learning%20Based%20Task%20Oriented%20Dialogue%20Management.html</url>
     <content><![CDATA[<div class="note info">
@@ -2400,84 +2665,6 @@ P(a < X \leq b) = & F_X(b) - F_X(a) \\
       <tags>
         <tag>pydial</tag>
         <tag>benchmarking environment</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PyDial: A Multi-domain Statistical Dialogue System Toolkit</title>
-    <url>/%C2%B7%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/dilogue/task-oriented/55.%20PyDial%EF%BC%9AA%20Multi-domain%20Statistical%20Dialogue%20System%20Toolkit.html</url>
-    <content><![CDATA[<div class="note info">
-            <p>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/P17-4013/" target="_blank" rel="noopener">论文地址</a>，论文作者 S Ultes 等，发表于 2017 年。<br>&emsp;&emsp;此文中出现了许多专业名词，可参考 <a href="https://yan624.github.io/·论文笔记/dilogue/task-oriented/54. A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management.html">此处</a> 加以理解。</p>
-          </div>
-<h1 id="摘要翻译"><a href="#摘要翻译" class="headerlink" title="摘要翻译"></a>摘要翻译</h1><p>&emsp;&emsp;统计口语对话系统（<em>Statistical Spoken Dialogue Systems, Statistical SDS, 统计 SDS</em>）已经存在多年了。然而，访问这些系统一直很困难，因为仍然没有公开的端到端系统实现。为了缓解这个问题，我们提出了 PyDial，一个开源的端到端统计语音对话系统工具包，它为<strong>所有对话系统模块</strong>提供<strong>统计方法</strong>的实现。此外，它还被扩展为提供多领域会话功能。它提供了各个对话系统模块的简单配置、易扩展性和域无关（<em>domain-independent</em>）的实现。该工具包可在 Apache2.0 许可下下载。</p>
-<h1 id="1-引言"><a href="#1-引言" class="headerlink" title="1 引言"></a>1 引言</h1><p>&emsp;&emsp;针对机器去设计语音接口（凭此人机交互）是多年来的研究热点。这些语音对话系统（SDSs）通常<strong>基于模块化的架构</strong>，包括<strong>语音识别</strong>（<em>speech recognition</em>）和<strong>语义解码</strong>（<em>semantic decoding</em>）的<strong>输入处理模块</strong>（<em>input processing modules</em>）、<strong>信念跟踪</strong>（<em>belief tracking</em>）和<strong>策略</strong>（<em>policy</em>）的<strong>对话管理模块</strong>（<em>dialogue management modules</em>）、<strong>语言生成</strong>（<em>language generation</em>）和<strong>语音合成</strong>（<em>speech synthesis</em>）的<strong>输出处理模块</strong>（<em>output processing modules</em>）（见图 1）。<br><div class="note success">
-            <p>&emsp;&emsp;以上介绍了 SDS 的架构。下一段介绍了一些 SDS 中不同组件的统计方法示例。</p>
-          </div></p>
-<p>&emsp;&emsp;统计 SDS 是一个语音接口，其中所有 SDS 模块都基于统计模型（从数据中学习）（与人工规则相比）。对话系统中<strong>不同组件的统计方法</strong>例子可以在以下中找到：</p>
-<ul>
-<li>……（若干论文），详见原论文 Introduction 第二段。<a id="more"></a>
-</li>
-</ul>
-<p>&emsp;&emsp;尽管对统计 SDS 的研究非常丰富，但是仍然没有通用的平台和开放的工具包。其他工具包实现通常集中在单个模块上（例如：<em>略，详见论文</em>）。提供专门针对统计对话系统（<em>statistical dialogue systems</em>）的工具包将使新进入该领域的人员能够更容易地参与进来，结果更容易比较，研究人员能够专注于他们的特定研究问题，而不是重新实现算法（例如，评估（<em>v.</em>）交互功能中的理解或生成组件的性能）。<br>&emsp;&emsp;因此，为了促进研究，以及使人们更容易参与统计口语对话系统的研究，我们提出了一个多领域统计口语对话系统工具包 <strong>PyDial</strong>。PyDial 是用 Python 实现的，剑桥对话系统团队（<em>Cambridge Dialogue Systems Group</em>）正在积极使用它。<br><div class="note default">
-            <p>&emsp;&emsp;那么什么是 PyDial 呢？</p>
-          </div></p>
-<p>&emsp;&emsp;PyDial 支持多领域的应用程序，在这些应用程序中，对话可能涉及多个不同的主题。这引入了许多新的研究课题，包括广义信念跟踪（<em>generalised belief tracking</em>）（论文略），<em>rapid policy adaptation and parallel learning</em> 和自然语言生成（<em>natural language generation</em>）。<br>&emsp;&emsp;论文的余下部分安排如下：</p>
-<ol>
-<li>第 2 节介绍了 PyDial 的总体架构（并且将 SDS 架构扩展到多个领域）和 PyDial 的主要应用规范；</li>
-<li>第 3 节包含各个对话系统模块的实现细节；</li>
-<li>第 4 节列出了可用的领域，其中有两个领域用于第5节中的示例交互；</li>
-<li>第 6 节总结了该工具包的主要贡献。</li>
-</ol>
-<h1 id="2-PyDial-架构"><a href="#2-PyDial-架构" class="headerlink" title="2 PyDial 架构"></a>2 PyDial 架构</h1><p>&emsp;&emsp;本节介绍 PyDial 的结构及其与环境的接口方式。随后，描述了在单个领域上功能的扩展，以允许在多个领域上进行对话。最后，我们讨论了 PyDial 设计的三个关键原则。</p>
-<h2 id="2-1-总体系统架构"><a href="#2-1-总体系统架构" class="headerlink" title="2.1 总体系统架构"></a>2.1 总体系统架构</h2><p>&emsp;&emsp;PyDial 的总体架构如图 2 所示。其中主要组件被称为 <strong>Agent</strong>，它位于系统的核心。它封装了所有对话系统模块，以实现基于文本的交互，即输入和输出。对话系统模块依赖于由一个<strong>本体</strong>（<strong>Ontology</strong>）定义的领域规范。为了与环境交互（<strong>博主注</strong>：这里的“与环境交互”应该指的是机器与外部环境交互，如机器与餐厅环境交互、与旅游环境交互、与服装商场进行交互等），PyDial 提供了三个接口：<strong>Dialogue Server</strong>【允许语音型交互】、<strong>Texthub</strong>【允许输入型交互】和 <strong>User Simulation system</strong>。交互的性能由<strong>评估</strong>（<strong>Evaluation</strong>）组件监视。</p>
-<ul>
-<li>Agent：负责对话交互，因此内部的架构类似于图 1 中的内容。<strong>Agent</strong> 还维护 dialogue sessions，即确保每个输入都<u>发送到</u>（<em>is routed to</em>）正确的对话。因此，<strong>可以通过实例化多个 agents 来支持多个对话</strong>。<ol>
-<li>semantic parser：将文本输入转化为一个语义表征</li>
-<li>belief tracker：负责维护一个被称为 <strong>belief state</strong> 的对话状态表征（<em>dialogue state representation</em>）</li>
-<li>policy：将 <strong>belief state</strong> 映射到适合的 <strong>system dialogue act</strong></li>
-<li>semantic output：将 <strong>system dialogue act</strong> 转化为文本表示</li>
-<li>topic tracker：对于多域功能，需要 <strong>topic tracker</strong>，其功能将在第 2.2 节中解释</li>
-</ol>
-</li>
-<li>User Simulation：支持在语义层面进行对话模拟，即不使用任何语义解析器或语言生成。这是一种广泛应用于训练和评估基于强化学习算法的技术，因为它避免了昂贵的数据收集练习（<em>data collection exercises</em>）和用户试验（<em>user trials</em>）。它当然只提供了一个近似的真实用户行为，所以通过模拟获得的结果应该谨慎看待！</li>
-<li>与环境交互：为了使 Agent 能够与其环境进行通信，PyDial 提供了两种模式：语音和文本<ul>
-<li>Texthub：只需将 Agent 连接到终端</li>
-<li>Dialogue Server：要启用基于语音的对话，<strong>Dialogue Server</strong> 允许连接到外部语音客户端。此客户端负责使用 ASR 将输入语音信号映射到文本，并使用语音合成将输出文本映射到语音（<em>text to speech</em>, <strong>TTS</strong>）。语音客户端通过 HTTP 交换 JSON 消息连接到对话服务器。请注意，语音客户端不是 PyDial 的一部分。基于云的 ASR 和 TTS 服务可以从 <a href="https://cloud.google.com/speech" target="_blank" rel="noopener">Google</a>、<a href="https://www.microsoft.com/cognitive-services/en-us/speech-api" target="_blank" rel="noopener">Microsoft</a>或 <a href="http://www.ibm.com/watson/developercloud/speech-to-text.html" target="_blank" rel="noopener">IBM</a>等提供商处获得。PyDial 目前连接到 DialPort（Zhao等人，2016），其允许基于语音的交互。</li>
-</ul>
-</li>
-<li>Ontology：除了 <strong>Agent</strong> 和接口组件之外，还有 <strong>Ontology</strong>，Ontology 封装了对话域规范以及对后端数据库（例如，一组餐厅及它们的属性）的访问。它被建模为一个全局对象，大多数对话系统模块和用户模拟器使用它来获取有关用户 <em>actions,  slots, slot values, and system actions</em> 的相关信息。</li>
-<li>Evaluation：用于计算对话的评估度量（例如 <strong>Task Success</strong>）。对于基于强化学习的对话模块来说，评估组件还负责提供 <em>reward</em></li>
-</ul>
-<h2 id="2-2-多领域对话系统架构"><a href="#2-2-多领域对话系统架构" class="headerlink" title="2.2 多领域对话系统架构"></a>2.2 多领域对话系统架构</h2><p>&emsp;&emsp;Agent -&gt; <strong>topic tracker</strong></p>
-<h2 id="2-3-主要原则"><a href="#2-3-主要原则" class="headerlink" title="2.3 主要原则"></a>2.3 主要原则</h2><p>&emsp;&emsp;为了使 PyDial 能够轻松地应用于新问题，PyDial 体系结构的设计支持三个关键原则：</p>
-<ul>
-<li>Domain Independence</li>
-<li>Easy Configurability</li>
-<li>Extensibility</li>
-</ul>
-<h1 id="3-实现"><a href="#3-实现" class="headerlink" title="3 实现"></a>3 实现</h1><p>&emsp;&emsp;PyDial 工具包是一个不断开发的研究系统。可从Apache2.0许可下的<a href="http://pydial.org" target="_blank" rel="noopener">网站</a>免费下载。在最初的版本中可以使用以下各种系统模块的实现，不过，到时候会有更多的实现。</p>
-<ul>
-<li><strong>Semantic Decoder</strong>：为了对输入语句（或n个最佳语句列表，or n-best-list of sentences）进行语义解码，PyDial 提供了一个基于规则（使用正则表达式）的实现，以及一个基于 SVM 的统计模型，即 the Semantic Tuple Classifier（Mairess et al., 2009）。对于后者，只提供了 CamRestaurants 领域的模型。</li>
-<li><strong>Belief Tracker</strong>：为了跟踪 belief state，可用 <strong>the rule-based focus tracker</strong>（Henderson et al., 2014）。该实现与领域无关。所有特定领域的信息都是从本体中提取的。</li>
-<li><strong>Policy</strong>：负责 policy 的决定执行模块有两种实现方式：<strong>1）</strong>人工制定的策略（应该适用于所有领域）；<strong>2）</strong>Gaussian process (GP) reinforcement learning policy（Gasic and Young, 2014）。对于多领域对话，策略管理器可以像处理所有其他模块一样处理策略。给定每个用户的输入的领域，然后选择相应的领域策略。<br>此外，还可以选择 Gasic et al.(2015b) 提出的 Bayesian committee machine(BCM) 处理程序：<strong>当处理一个领域的 belief state 时，参考其他领域的策略来选择最终的系统操作</strong>。为了实现这一点，belief state 被映射到一个抽象表示，然后允许所有策略访问它。在 PyDial 中，经过训练的策略可以在 committee-based handler 和 standard policy manager handler 之间移动。即在 committee 外部（在单域或多域设置中）接受训练的策略可以在 committee 内部使用，反之亦然。</li>
-<li><strong>Language Generator</strong>：为了将 semantic system action 映射为文本，PyDial 提供了两个实现组件：<strong>1）</strong>对于所有领域来说，提供了一个基于模板（定义规则）的语言生成；<strong>2）</strong>此外 Wen et al. (2015) 提出了基于 LSTM 的语言生成器，里面包含了 CamRestaurants 领域的预训练模型</li>
-<li><strong>Topic Tracker</strong>：PyDial 提供了一个基于关键字的 Topic Tracker 实现。如果 Topic Tracker 已为某些用户输入标识了领域，那么它将继续使用该领域，直到识别了新的领域。<strong>因此，并非每个用户输入都必须包含相关关键字</strong>。如果 Topic Tracker <strong>无法在开始时识别领域</strong>，那么它将创建与用户的 meta-dialogue，直到确定初始领域或达到最大重试次数。</li>
-<li><strong>Evaluation</strong>：为了评估对话，目前已经实现了两个 success-based 模块。（下面的话部分看不懂，索性不翻了—）<blockquote>
-<p>The objective task success evaluator compares the constraints and requests the system identifies with the true values. The latter may either be derived from the user simulator or, in real dialogues, by specifying a predefined task. For real dialogues, a subjective task success evaluator may also be applied which queries the user about the outcome of the dialogue.</p>
-</blockquote>
-</li>
-<li><strong>User Simulation</strong>：模拟用户的实现使用 agenda-based 用户模拟器（Schatzmann et al., 2006）。该模拟器包含 user model 和 error model，从而创建 a n-best-list of user acts 来模拟噪声语音信道。通过使用一组普遍适用的参数，模拟器可以应用于所有领域。领域特定的信息取自本体。</li>
-</ul>
-<h1 id="4-一些领域"><a href="#4-一些领域" class="headerlink" title="4 一些领域"></a>4 一些领域</h1><p>&emsp;&emsp;<strong>PyDial 的主要关注的是面向任务的对话，即根据一些约束条件用户必定找到其匹配的实体</strong>。找到实体后，用户可以请求其他信息。为应付这些场景，PyDial 预先加载了总共十个不同复杂度的领域：</p>
-<ul>
-<li>略</li>
-</ul>
-<p>&emsp;&emsp;如前所述，所有 <strong>policy</strong> 实现以及 <strong>belief tracker</strong> 和 <strong>user simulator</strong> 的实现都独立于领域之外。因此，在<strong>所有领域</strong>都可以进行交互的模拟。此外，<strong>semantic decoder</strong> 和 <strong>language generator</strong> 在某种程度上依赖于特定领域的实现。PyDial 包含用于<strong>所有领域</strong>的基于规则的 <strong>semantic decoder</strong> 和一个用于 <strong>CamRestaurants</strong> 的统计解码器（<em>statistical decoder</em>）。此外，PyDial 还为<strong>大多数领域</strong>提供了基于模板的语言生成，并为 <strong>CamRestaurants</strong> 提供了基于 LSTM 的生成器。因此，在 CamRestaurants 领域，实现统计对话完全有可能。</p>
-]]></content>
-      <categories>
-        <category>paper</category>
-      </categories>
-      <tags>
-        <tag>pydial</tag>
       </tags>
   </entry>
   <entry>
