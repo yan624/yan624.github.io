@@ -32,13 +32,13 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/CoBERT.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/EmpTransfo.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/MoLE.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/CAiRE.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/MoLE.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/ED.png">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/ECM.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/ECM：Internal Memory.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/ECM：External Memory.jpg">
-<meta property="og:updated_time" content="2020-05-14T02:57:44.213Z">
+<meta property="og:updated_time" content="2020-05-16T09:14:59.897Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="情感计算论文笔记">
 <meta name="twitter:description" content="&amp;emsp;&amp;emsp;目前所记录的论文，只截止到 2020 年。            Towards Persona-Based Empathetic Conversational Models 论文笔记">
@@ -133,7 +133,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">158</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">159</span></a>
 
   </li>
         <li class="menu-item menu-item-about">
@@ -285,7 +285,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-05-14 10:57:44" itemprop="dateModified" datetime="2020-05-14T10:57:44+08:00">2020-05-14</time>
+                <time title="修改时间：2020-05-16 17:14:59" itemprop="dateModified" datetime="2020-05-16T17:14:59+08:00">2020-05-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -341,6 +341,15 @@
 <h1 id="EmpTransfo-A-Multi-head-Transformer-Architecture-for-Creating-Empathetic-Dialog-Systems"><a href="#EmpTransfo-A-Multi-head-Transformer-Architecture-for-Creating-Empathetic-Dialog-Systems" class="headerlink" title="EmpTransfo: A Multi-head Transformer Architecture for Creating Empathetic Dialog Systems"></a>EmpTransfo: A Multi-head Transformer Architecture for Creating Empathetic Dialog Systems</h1><ul>
 <li><a href="https://yan624.github.io/·论文笔记/dilogue/affective computing/66. EmpTransfo：A Multi-head Transformer Architecture for Creating Empathetic Dialog Systems.html">论文笔记</a><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/EmpTransfo.jpg" alt="EmpTransfo"></li>
 </ul>
+<h1 id="CAiRE-An-Empathetic-Neural-Chatbot"><a href="#CAiRE-An-Empathetic-Neural-Chatbot" class="headerlink" title="CAiRE: An Empathetic Neural Chatbot"></a>CAiRE: An Empathetic Neural Chatbot</h1><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/CAiRE.jpg" alt="CAiRE"></p>
+<ul>
+<li><strong>Language Model Pre-training</strong>：使用 GPT，在大型文本语料库 BooksCorpus 上进行预训练，可以使得模型能够捕获对话跨度足够大的上下文信息。</li>
+<li><strong>Persona Dialogue Pre-training</strong>：现存的移情对话数据集相对较小，仅在这数据集上进行微调可能会限制模型在闲聊时的所拥有的话题。为了增强 CAiRE 在闲聊时的能力，参照 Wolf et al., 2019 的迁移学习策略，我们先在 PersonaChat 上对模型进行预训练。该预训练步骤给予 CAiRE 一个 persona，因此提高了模型的参与度和一致性。</li>
+<li><strong>Empathetic Dialogue Fine-tuning</strong>：使用 EmpatheticDialogues。在训练的时候给出 speaker 的情绪标签，但是在评估时，不给出。<ul>
+<li><strong>Fine-tuning Detail</strong>：为了完全利用在 PersonaChat 上预训练的效果，我们自定义了 CAiRE 的 persona 语句：<em>“my name is caire”, “i want to help humans to make a better world”, “i am a good friend of humans”</em>（<strong>博主注</strong>：<em>这些语句代表着 CAiRE 的人物定位</em>）。照着 Wolf et al., 2019 的微调协议，我们首先拼接了自定义 persona，对话历史以及回复（distractor）。使用了特殊符号，并且所有的嵌入都是由位置嵌入，词嵌入和对话状态嵌入相加而成。前两个是 Transformer 所需，对话状态嵌入帮助 CAiRE 对对话的体系结构建模，同时用于区分 persona 语句，对话上下文语句和回复。表征输入进 Transformer 后生成上下文表征，我们将最后一个符号定义为 <script type="math/tex">SEN</script>，回复（distractor）之前的符号定义为 <script type="math/tex">EMO</script>。<br>&emsp;&emsp;为了<strong>优化回复预测的目标对象</strong>，在每一个训练步，我们从其他对话中采样出一个 distractor 来对抗真实的回复。然后将 SEN 表征输入一个线性层，区分是否为真实的回复，然后得到 cross-entropy <script type="math/tex">\mathcal{L}_S</script>。<br>&emsp;&emsp;为了<strong>优化回复的语言模型的目标对象</strong>，我们用真实回复的上下文表征去预测下一个回复的符号，然后使用 cross-entropy 计算语言模型的 loss <script type="math/tex">\mathcal{L}_L</script>。<br>&emsp;&emsp;为了<strong>使 CAiRE 探测到对话伙伴的情绪</strong>，我们在训练阶段新增了一个对话情绪探测优化目标。我们将 EMO 作为当前对话状态的摘要，然后将其输入进线性映射层，去预测 32 个情绪的分数。cross-entropy 被用于计算情绪类别的 loss <script type="math/tex">\mathcal{L}_E</script><br>&emsp;&emsp;最终，我们在最后的 loss 函数上进行微调：<script type="math/tex">\mathcal{L} = \alpha \mathcal{L}_L + \mathcal{L}_S + \mathcal{L}_E</script></li>
+</ul>
+</li>
+</ul>
 <h1 id="MoEL-Mixture-of-Empathetic-Listeners"><a href="#MoEL-Mixture-of-Empathetic-Listeners" class="headerlink" title="MoEL: Mixture of Empathetic Listeners"></a>MoEL: Mixture of Empathetic Listeners</h1><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/MoLE.jpg" alt="MoLE"></p>
 <ul>
 <li>以前的移情对话系统研究大多数关注的是给定某个情绪，生成一个回复。然而要使得系统具有移情能力，更重要的是需要理解用户的情绪以及合适的回复。本文提出一个 end-to-end 方法，用于对移情对话系统建模，即 Mixture of Empathetic Listeners（<strong>MoEL</strong>）。我们的模型<strong>首次捕获了用户的情绪并且输出一个情绪分布</strong>。<ul>
@@ -350,20 +359,11 @@
 <li><strong>Mixture of Empathetic Listeners</strong>：对话上下文是一组来自 Speaker 和 listener 的交替语句，表示为 <script type="math/tex">\mathcal{C} = \{U_1, S_1, U_2, S_2, \cdots, U_t\}</script>，speaker 每句话的情绪状态表示为 <script type="math/tex">Emo = \{e_1, e_2, \cdots, e_t\}, \, \forall e_i \in \{1, \cdots, n\}</script>。<strong>我们的模型旨在追踪上下文中 speaker 的情绪状态 <script type="math/tex">e_t</script>，并且生成一个移情回复 <script type="math/tex">S_t</script></strong>。总的来说，如图 1 所示，MoEL 由三个组件组成：emtion tracker, emotion-aware listeners and meta listener。<strong>1）</strong>emtion tracker 编码 <script type="math/tex">\mathcal{C}</script> 以及计算用户情绪的分布。<strong>2）</strong>emotion-aware listeners <strong>独立地</strong>关注上述分布并计算它们自己的分布。<strong>3）</strong>最后，meta listener 采用来自 emotion-aware listeners 的加权表征，然后生成最终的语句。<span class="label primary">模型架构</span> <span class="label danger">任务定义和介绍模型计算流程</span><ul>
 <li><strong>Embedding</strong>：定义上下文嵌入为 <script type="math/tex">E^C \in \mathbb{R}^{|V| \times d_{emb}}</script>，回复的嵌入为 <script type="math/tex">E^R \in \mathbb{R}^{|V| \times d_{emb}}</script>。在多轮对话中，模型能够区分不同的轮数是至关重要的。因此我们在输入中加入了对话状态的嵌入，这被用于使 encoder 能够区分 speaker 或者 listener 的语句（Wolf et al., 2019）。此外还加入了位置编码，所以上下文嵌入表示为 <script type="math/tex">E^C(C) = E^W(C) + E^P(C) + E^D(C)</script>。<script type="math/tex">E^W</script> 代表词向量，<script type="math/tex">E^P</script> 代表位置编码，<script type="math/tex">W^D</script> 代表对话状态（<em>对话状态指的是什么，请参考 Wolf et al., 2019</em>）。</li>
 <li><strong>Emotion Tracker</strong>：此模块使用标准的 Transformer。首先拼接所有对话轮数，使用 <script type="math/tex">E^C</script> 将所有符号映射为向量表征。然后开始编码。类似 BERT，为了计算输出张量的加权和，我们在每一个输入序列的开头增加了一个 query 符号 <script type="math/tex">QRY</script>。将 Transformer 的编码器表示为 <script type="math/tex">TRS_{Enc}</script>，那么对应上下文表征如下所示，<script type="math/tex">H \in \mathbb{R}^{L \times d_{model}}</script>，其中 L 是序列长度。<script type="math/tex; mode=display">H = TRS_{Enc}(E^C([QRY; C]))</script>那么我们可以定义符号 <script type="math/tex">QRY</script> 最后的表征为：<script type="math/tex">q = H_0, q \in \mathbb{R}^{d_{model}}</script>，然后它被用于生成情绪的分布。</li>
-<li><strong>Emotion Aware Listeners</strong>：这主要由 <strong>1）</strong>shared listener（学习每个情绪的共享信息）；<strong>2）</strong>n 个独立的 Transformer decoder（学习在给定一个特定的情绪状态下，做出合适的反应）组成。我们定义 listeners 的集合为：<script type="math/tex">L = [TRS^0_{Dec}, \cdots, TRS^n_{Dec}]</script>。每个情绪回复表征为：<script type="math/tex; mode=display">V_i = TRS^i_{Dec}(H, E^R(r_{0:t-1}))</script><script type="math/tex">TRS^i_{Dec}</script> 指的是第 i 个 listener，包括 shared listener。在概念上，我们希望 shared listener 的输出时一个通用表征，可以帮助模型捕获对话上下文。另外，我们希望每个 empathetic listener 学习怎么用一个情绪进行回复。<strong>为了使模型拥有这些行为，我们根据用户情绪分布给不同的 empathetic listener 分配了不同的权重，但是给 shared listener 分配固定权重 1</strong>。（这个权重应该是在最后加权和的时候用的）<ul>
+<li><strong>Emotion Aware Listeners</strong>：这主要由 <strong>1）</strong>shared listener（学习每个情绪的共享信息）；<strong>2）</strong>n 个独立的 Transformer decoder（学习在给定一个特定的情绪状态下，做出合适的反应）组成。我们定义 listeners 的集合为：<script type="math/tex">L = [TRS^0_{Dec}, \cdots, TRS^n_{Dec}]</script>。每个情绪回复表征为：<script type="math/tex; mode=display">V_i = TRS^i_{Dec}(H, E^R(r_{0:t-1}))</script><script type="math/tex">TRS^i_{Dec}</script> 指的是第 i 个 listener，包括 shared listener。在概念上，我们希望 shared listener 的输出是一个通用表征，可以帮助模型捕获对话上下文。而每个 empathetic listener 的职责是学习怎样用某种情绪进行回复。<strong>为了使模型拥有这些行为，我们根据用户的情绪分布给不同的 empathetic listener 分配了不同的权重，但是给 shared listener 分配固定的权重 1</strong>。（这个权重在最后加权和的时候用）<ul>
 <li>构建了一个 Key-Value Memory Network（Miller et al., 2016），用于为 listener 分配不同的权重。</li>
 </ul>
 </li>
 <li><strong>Meta Listener</strong>：最后，该组件使用的是另一个 Transformer decoder，它进一步地转换了 listeners 的表征并且生成了最后的回复语句。<strong>直觉是每个 listener 专门针对某种情绪，meta listener 收集多个 listener 的意见，并产生最终的回复。</strong>此模块的公式定义类似。</li>
-</ul>
-</li>
-</ul>
-<h1 id="CAiRE-An-Empathetic-Neural-Chatbot"><a href="#CAiRE-An-Empathetic-Neural-Chatbot" class="headerlink" title="CAiRE: An Empathetic Neural Chatbot"></a>CAiRE: An Empathetic Neural Chatbot</h1><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/CAiRE.jpg" alt="CAiRE"></p>
-<ul>
-<li><strong>Language Model Pre-training</strong>：使用 GPT，在大型文本语料库 BooksCorpus 上进行预训练，可以使得模型能够捕获对话跨度足够大的上下文信息。</li>
-<li><strong>Persona Dialogue Pre-training</strong>：现存的移情对话数据集相对较小，仅在这数据集上进行微调可能会限制模型在闲聊时的所拥有的话题。为了增强 CAiRE 在闲聊时的能力，参照 Wolf et al., 2019 的迁移学习策略，我们先在 PersonaChat 上对模型进行预训练。该预训练步骤给予 CAiRE 一个 persona，因此提高了模型的参与度和一致性。</li>
-<li><strong>Empathetic Dialogue Fine-tuning</strong>：使用 EmpatheticDialogues。在训练的时候给出 speaker 的情绪标签，但是在评估时，不给出。<ul>
-<li><strong>Fine-tuning Detail</strong>：为了完全利用在 PersonaChat 上预训练的效果，我们自定义了 CAiRE 的 persona 语句：<em>“my name is caire”, “i want to help humans to make a better world”, “i am a good friend of humans”</em>（<strong>博主注</strong>：<em>这些语句代表着 CAiRE 的人物定位</em>）。照着 Wolf et al., 2019 的微调协议，我们首先拼接了自定义 persona，对话历史以及回复（distractor）。使用了特殊符号，并且所有的嵌入都是由位置嵌入，词嵌入和对话状态嵌入相加而成。前两个是 Transformer 所需，对话状态嵌入帮助 CAiRE 对对话的体系结构建模，同时用于区分 persona 语句，对话上下文语句和回复。表征输入进 Transformer 后生成上下文表征，我们将最后一个符号定义为 <script type="math/tex">SEN</script>，回复（distractor）之前的符号定义为 <script type="math/tex">EMO</script>。<br>&emsp;&emsp;为了<strong>优化回复预测的目标对象</strong>，在每一个训练步，我们从其他对话中采样出一个 distractor 来对抗真实的回复。然后将 SEN 表征输入一个线性层，区分是否为真实的回复，然后得到 cross-entropy <script type="math/tex">\mathcal{L}_S</script>。<br>&emsp;&emsp;为了<strong>优化回复的语言模型的目标对象</strong>，我们用真实回复的上下文表征去预测下一个回复的符号，然后使用 cross-entropy 计算语言模型的 loss <script type="math/tex">\mathcal{L}_L</script>。<br>&emsp;&emsp;为了<strong>使 CAiRE 探测到对话伙伴的情绪</strong>，我们在训练阶段新增了一个对话情绪探测优化目标。我们将 EMO 作为当前对话状态的摘要，然后将其输入进线性映射层，去预测 32 个情绪的分数。cross-entropy 被用于计算情绪类别的 loss <script type="math/tex">\mathcal{L}_E</script><br>&emsp;&emsp;最终，我们在最后的 loss 函数上进行微调：<script type="math/tex">\mathcal{L} = \alpha \mathcal{L}_L + \mathcal{L}_S + \mathcal{L}_E</script></li>
 </ul>
 </li>
 </ul>
@@ -380,7 +380,9 @@
 <li><strong>Internal Memory</strong> 使用词向量，GRU 隐藏状态和上下文向量的拼接版进行计算。先使用 sigmoid 函数分别计算 read gate 和 write gate 的状态 <script type="math/tex">g^r_t \, g^w_t</script>，然后 <script type="math/tex">g^r_t</script> 使用<strong>对应元素相乘的乘法（element-wise multiplication）</strong>从 Internal Memory <script type="math/tex">M^I_{e,t}</script> 中提取一定量的记忆 <script type="math/tex">M^I_{r,t}</script>（都是玄学，意会就行，不用试图理解），<script type="math/tex">M^I_{r,t}</script> 将与拼接版向量同时被喂入 GRU。最后 GRU 生成的隐藏状态 <script type="math/tex">s_t</script> 通过 <script type="math/tex">g^w_t</script> 提取出一定的记忆 <script type="math/tex">M^I_{e,t+1}</script> 写入 Internal Memory。受到心理学上的启发，情绪化回应是相对短暂的，所以<strong>凭借此 Internal Memory 记录用户交谈过程中的短暂情绪变化</strong>。之前说到该记忆状态 <script type="math/tex">M^I</script> 会与拼接后的向量同时输入进 GRU，这就意味着<strong>该情绪记忆会影响解码过程</strong>。特别地，该记忆模块不同于其他的记忆模块，如 LSTM，当解码过程结束后，<strong>记忆模块中的状态应该衰减至 0</strong>，这代表着情绪被机器完全地表达出来。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/ECM：Internal Memory.jpg" alt="Internal Memory"></li>
 <li><strong>External Memory</strong> 通过 GRU 的隐藏状态 <script type="math/tex">s_t</script> 计算下一个单词概率。单词的概率分布由两部分组成，一是情绪词表的概率分布，二是通用词表的概率分布，二者拼接后通过此拼接的概率分布计算下一个单词的概率。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/ECM：External Memory.jpg" alt="External Memory"></li>
 </ul>
-
+<h1 id="TransferTransfo-A-Transfer-Learning-Approach-for-Neural-Network-Based-Conversational-Agents"><a href="#TransferTransfo-A-Transfer-Learning-Approach-for-Neural-Network-Based-Conversational-Agents" class="headerlink" title="TransferTransfo: A Transfer Learning Approach for Neural Network Based Conversational Agents"></a>TransferTransfo: A Transfer Learning Approach for Neural Network Based Conversational Agents</h1><div class="note warning">
+            <p>&emsp;&emsp;此论文不算是情感计算的论文，由于上述有几篇论文用到了这论文的一些方法，所以这里也加进去了。</p>
+          </div>
     </div>
 
     
@@ -465,7 +467,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Towards-Persona-Based-Empathetic-Conversational-Models"><span class="nav-number">1.</span> <span class="nav-text">Towards Persona-Based Empathetic Conversational Models</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#EmpTransfo-A-Multi-head-Transformer-Architecture-for-Creating-Empathetic-Dialog-Systems"><span class="nav-number">2.</span> <span class="nav-text">EmpTransfo: A Multi-head Transformer Architecture for Creating Empathetic Dialog Systems</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MoEL-Mixture-of-Empathetic-Listeners"><span class="nav-number">3.</span> <span class="nav-text">MoEL: Mixture of Empathetic Listeners</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CAiRE-An-Empathetic-Neural-Chatbot"><span class="nav-number">4.</span> <span class="nav-text">CAiRE: An Empathetic Neural Chatbot</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#I-kown-the-feeling-Learning-to-converse-with-empathy"><span class="nav-number">5.</span> <span class="nav-text">~I kown the feeling: Learning to converse with empathy</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Towards-Empathetic-Open-domain-Conversation-Models-a-New-Benchmark-and-Dataset"><span class="nav-number">6.</span> <span class="nav-text">~Towards Empathetic Open-domain Conversation Models: a New Benchmark and Dataset</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Emotional-Chatting-Machine-Emotional-Conversation-Generation-with-Internal-and-External-Memory"><span class="nav-number">7.</span> <span class="nav-text">Emotional Chatting Machine: Emotional Conversation Generation with Internal and External Memory</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Towards-Persona-Based-Empathetic-Conversational-Models"><span class="nav-number">1.</span> <span class="nav-text">Towards Persona-Based Empathetic Conversational Models</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#EmpTransfo-A-Multi-head-Transformer-Architecture-for-Creating-Empathetic-Dialog-Systems"><span class="nav-number">2.</span> <span class="nav-text">EmpTransfo: A Multi-head Transformer Architecture for Creating Empathetic Dialog Systems</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CAiRE-An-Empathetic-Neural-Chatbot"><span class="nav-number">3.</span> <span class="nav-text">CAiRE: An Empathetic Neural Chatbot</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MoEL-Mixture-of-Empathetic-Listeners"><span class="nav-number">4.</span> <span class="nav-text">MoEL: Mixture of Empathetic Listeners</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#I-kown-the-feeling-Learning-to-converse-with-empathy"><span class="nav-number">5.</span> <span class="nav-text">~I kown the feeling: Learning to converse with empathy</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Towards-Empathetic-Open-domain-Conversation-Models-a-New-Benchmark-and-Dataset"><span class="nav-number">6.</span> <span class="nav-text">~Towards Empathetic Open-domain Conversation Models: a New Benchmark and Dataset</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Emotional-Chatting-Machine-Emotional-Conversation-Generation-with-Internal-and-External-Memory"><span class="nav-number">7.</span> <span class="nav-text">Emotional Chatting Machine: Emotional Conversation Generation with Internal and External Memory</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TransferTransfo-A-Transfer-Learning-Approach-for-Neural-Network-Based-Conversational-Agents"><span class="nav-number">8.</span> <span class="nav-text">TransferTransfo: A Transfer Learning Approach for Neural Network Based Conversational Agents</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -481,13 +483,13 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-count">159</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-count">29</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -498,7 +500,7 @@
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">190.2k</span>
+      	<span class="site-state-item-count">194.9k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>

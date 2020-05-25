@@ -22,18 +22,28 @@
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="mask&amp;emsp;&amp;emsp;题外话：对于 Transformer，无论 encoder 还是 decoder 都要做 mask（很多对 Transformer 的总结文章都只提到了 decoder 部分的 Masked Multihead Self-Attention，实际上 encoder 也要做一次）。mask 一共分为两种，Transformer 中 decoder 的 mask 指的是">
+  <meta name="description" content="mask gradient clipping learning rate decay dropout subword tensorboardX 过拟合/欠拟合            mask&amp;emsp;&amp;emsp;题外话：对于 Transformer，无论 encoder 还是 decoder 都要做 mask（很多对 Transformer 的总结文章都只提到了 dec">
 <meta name="keywords" content="博客，java，javaWeb，NLP，python，机器学习，深度学习">
 <meta property="og:type" content="article">
 <meta property="og:title" content="神经网络训练技巧（tricks）">
 <meta property="og:url" content="http://yan624.github.io/·zcy/AI/神经网络训练技巧（tricks）.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="mask&amp;emsp;&amp;emsp;题外话：对于 Transformer，无论 encoder 还是 decoder 都要做 mask（很多对 Transformer 的总结文章都只提到了 decoder 部分的 Masked Multihead Self-Attention，实际上 encoder 也要做一次）。mask 一共分为两种，Transformer 中 decoder 的 mask 指的是">
+<meta property="og:description" content="mask gradient clipping learning rate decay dropout subword tensorboardX 过拟合/欠拟合            mask&amp;emsp;&amp;emsp;题外话：对于 Transformer，无论 encoder 还是 decoder 都要做 mask（很多对 Transformer 的总结文章都只提到了 dec">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-05-05T14:37:03.104Z">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/smooth_loss.svg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/slumping_loss.svg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/scaled_slumping_loss.svg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/增加lr，loss反而下降更慢.svg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/add_more_data.svg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/add more data2.svg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/more_larger_batch_size.svg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/reduce_hidden_size.svg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/多领域seq2lf/train acc很大，gap也很大.svg">
+<meta property="og:updated_time" content="2020-05-25T08:20:36.104Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="神经网络训练技巧（tricks）">
-<meta name="twitter:description" content="mask&amp;emsp;&amp;emsp;题外话：对于 Transformer，无论 encoder 还是 decoder 都要做 mask（很多对 Transformer 的总结文章都只提到了 decoder 部分的 Masked Multihead Self-Attention，实际上 encoder 也要做一次）。mask 一共分为两种，Transformer 中 decoder 的 mask 指的是">
+<meta name="twitter:description" content="mask gradient clipping learning rate decay dropout subword tensorboardX 过拟合/欠拟合            mask&amp;emsp;&amp;emsp;题外话：对于 Transformer，无论 encoder 还是 decoder 都要做 mask（很多对 Transformer 的总结文章都只提到了 dec">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/smooth_loss.svg">
 
 <link rel="canonical" href="http://yan624.github.io/·zcy/AI/神经网络训练技巧（tricks）.html">
 
@@ -124,7 +134,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">158</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">159</span></a>
 
   </li>
         <li class="menu-item menu-item-about">
@@ -241,7 +251,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-05-05 22:37:03" itemprop="dateModified" datetime="2020-05-05T22:37:03+08:00">2020-05-05</time>
+                <time title="修改时间：2020-05-25 16:20:36" itemprop="dateModified" datetime="2020-05-25T16:20:36+08:00">2020-05-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -268,14 +278,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.4k</span>
+              <span>9.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
+              <span>16 分钟</span>
             </span>
 
         </div>
@@ -287,15 +297,20 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="mask"><a href="#mask" class="headerlink" title="mask"></a>mask</h1><p>&emsp;&emsp;<strong>题外话</strong>：对于 Transformer，无论 encoder 还是 decoder 都要做 mask（很多对 Transformer 的总结文章都只提到了 decoder 部分的 Masked Multihead Self-Attention，实际上 encoder 也要做一次）。mask 一共分为两种，Transformer 中 decoder 的 mask 指的是 <strong>sequence mask</strong>，encoder 中的 mask 指的是 <strong>padding mask</strong>，对于其他网络模型也是类似的道理。可以查阅参考资料 1，2。</p>
-<h2 id="padding-mask"><a href="#padding-mask" class="headerlink" title="padding mask"></a>padding mask</h2><p>&emsp;&emsp;对于 Transformer 来说，在 encoder 中的每次执行 scaled dot-product 后都要做一次 padding mask。由于我们要让序列的长度相等以便做向量化操作，所以必不可少地需要对输入序列进行<strong>截断</strong>或<strong>补零</strong>（即填充 PAD，PAD 不一定非要是 0）操作。所以 padding mask 的<strong>主要目的</strong>是使得 self-attention 不要过多的关注向量中的 PAD 符号。<br>&emsp;&emsp;在进行了解 padding mask 的做法之前，首先简单地了解一下 Transformer 的大致流程：sequence id -&gt; embedding -&gt; multi-head attention(<strong>scaled dot-product</strong> -&gt; softmax -&gt; softmax <script type="math/tex">\times</script> value) -&gt; add &amp; norm -&gt; decoder。而 mask 的<strong>具体操作是</strong>：在执行 scaled dot-product <strong>后</strong>，将序列中补零位置所对应的隐藏状态置为 -INF，使得序列经过 softmax 层时，<strong>该对应位置所计算出的概率为 0</strong>。（<em>mask 操作貌似在 Transformer 中是可选的。</em>）<br>&emsp;&emsp;总得来说，padding mask 是为了神经网络忽略 PAD 的信息。例如，虽然模型可以学习到 PAD 这个填充符是没有意义的，但是<strong>在做 attention 时，PAD 所在的这些位置依然有一些 attention score，而我们要的是 0 score</strong>。所以有必要引入一个 <strong>mask 矩阵</strong>，在做 attention 之前，先把 PAD 所在位置的值置为一个极小值，甚至是无穷小（由于 attention 需要经过 softmax，softmax 需要求 e 的次方，要想 e 的某次方为 0，只能使得值为无穷小才可以，这是一个数学问题）。</p>
+        <div class="note default">
+            <p><span class="label warning">mask</span> <span class="label success">gradient clipping</span> <span class="label primary">learning rate decay</span> <span class="label info">dropout</span> <span class="label danger">subword</span> <span class="label info">tensorboardX</span> <span class="label primary">过拟合/欠拟合</span></p>
+          </div>
+<h1 id="mask"><a href="#mask" class="headerlink" title="mask"></a>mask</h1><p>&emsp;&emsp;<strong>题外话</strong>：对于 Transformer，无论 encoder 还是 decoder 都要做 mask（很多对 Transformer 的总结文章都只提到了 decoder 部分的 Masked Multihead Self-Attention，实际上 encoder 也要做一次）。mask 一共分为两种，Transformer 中 decoder 的 mask 指的是 <strong>sequence mask</strong>，encoder 中的 mask 指的是 <strong>padding mask</strong>，对于其他网络模型也是类似的道理。可以查阅参考资料 1，2。</p>
+<h2 id="padding-mask"><a href="#padding-mask" class="headerlink" title="padding mask"></a>padding mask</h2><p>&emsp;&emsp;以 Transformer 为例，在 encoder 中的每次执行 scaled dot-product 后都要做一次 padding mask。由于我们要让序列的长度相等以便做向量化操作，所以必不可少地需要对输入序列进行<strong>截断</strong>或<strong>补零</strong>（即填充 PAD，PAD 不一定非要是 0）操作。所以 padding mask 的<strong>主要目的</strong>是使得 self-attention 不要过多的关注向量中的 PAD 符号。<br>&emsp;&emsp;在进行了解 padding mask 的做法之前，首先简单地了解一下 Transformer 的大致流程：sequence id -&gt; embedding -&gt; multi-head attention(<strong>scaled dot-product</strong> -&gt; softmax -&gt; softmax <script type="math/tex">\times</script> value) -&gt; add &amp; norm -&gt; decoder。而 mask 的<strong>具体操作是</strong>：在执行 scaled dot-product <strong>后</strong>，将序列中补零位置所对应的隐藏状态置为 -INF，使得序列经过 softmax 层时，<strong>该对应位置所计算出的概率为 0</strong>。（<em>mask 操作貌似在 Transformer 中是可选的。</em>）<br>&emsp;&emsp;总得来说，padding mask 是为了神经网络忽略 PAD 的信息。例如，虽然模型可以学习到 PAD 这个填充符是没有意义的，但是<strong>在做 attention 时，PAD 所在的这些位置依然有一些 attention score，而我们要的是 0 score</strong>。所以有必要引入一个 <strong>mask 矩阵</strong>，在做 attention 之前，先把 PAD 所在位置的值置为一个极小值，甚至是无穷小（由于 attention 需要经过 softmax，softmax 需要求 e 的次方，要想 e 的某次方为 0，只能使得值为无穷小才可以，这是一个数学问题）。<br>&emsp;&emsp;以下举一些不是 Transformer 的例子：</p>
 <ol>
 <li><p><strong>对于 Embedding 层来说，符号 PAD 的词向量也是无意义的</strong>，所以也可以将它的所在位置的值（即词向量）置为 0，使得它无意义。也就是说我们需要引入一个 mask 矩阵，它的大小与词表一样，所有位置初始化为 1，但是 PAD 所在的位置置为 0。然后每次在使用词向量时，乘上这个 mask。不过这样略微麻烦，所幸的是 Pytorch 为我们提供了实现。只需要简单地填入 <code>padding_idx</code> 即可，值为 PAD 对应的索引，索引取决于你的项目。可以看到这非常简单，但是这只是让 PAD 这个词向量无意义并且不计算它的梯度而已。在经过复杂的计算之后 PAD 所在位置的值依旧会变为非 0，而对于其他层想要做到使得 PAD 无意义就没那么简单了。</p>
 <figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nn.<span class="constructor">Embedding(<span class="params">vocab_size</span>, <span class="params">embed_dim</span>, <span class="params">padding_idx</span>=PAD_ID)</span></span><br></pre></td></tr></table></figure>
 </li>
-<li><p><strong>对于 LSTM 等的时序特征提取层</strong>可以使用 <code>torch.nn.utils.rnn.pack_padded_sequence(input, lengths, batch_first=False, enforce_sorted=True)</code> 函数将 embedding 打包。然后将这个打包后的 embedding 输入 LSTM，之后使用 <code>torch.nn.utils.rnn.pad_packed_sequence(sequence, batch_first=False, padding_value=0.0, total_length=None)</code> 函数，将 LSTM 的输出还原。</p>
+<li><p><strong>对于 LSTM 等的时序特征提取层</strong>可以使用 <code>torch.nn.utils.rnn.pack_padded_sequence(input, lengths, batch_first=False, enforce_sorted=True)</code> 函数将 embedding 打包。然后将这个打包后的 embedding 输入 LSTM，之后使用 <code>torch.nn.utils.rnn.pad_packed_sequence(sequence, batch_first=False, padding_value=0.0, total_length=None)</code> 函数，将 LSTM 的输出还原。<br>&emsp;&emsp;以以下代码为例，其中第一行代码的 <code>lengths</code> 必须是 pytorch 的 tensor，它代表着你输入序列的长度，比如你输入 [[‘你’, ‘好’, ‘.’], [‘我’, ‘是’, ‘鱼’, ‘.’]]，那么 <code>lengths</code> 就是 <code>torch.Tensor([3, 4])</code>。<code>batch_first</code> 默认是 False，这是因为 LSTM 的输入要求是 (S, N, *)，其中 S 是序列长度，N 是批次大小。<code>batch_first</code> 顾名思义就是输入的序列的第一个维度是否为批次大小，显然为了使得 pytorch 内部兼容，<code>batch_first</code> 默认为 <code>False</code> 是最好的。一般我都懒得对序列进行长度上的排序，所以将 <code>enforce_sorted</code> 设置为 False。</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># lstm padding mask</span><br><span class="line">packed_feature = nn.utils.rnn.pack<span class="constructor">_padded_sequence(<span class="params">embed</span>, <span class="params">lengths</span>, <span class="params">enforce_sorted</span>=False)</span></span><br><span class="line">packed_bi_feature, hx = self.lstm(packed_feature)</span><br><span class="line">bi_feature, lengths_unpacked = nn.utils.rnn.pad<span class="constructor">_packed_sequence(<span class="params">packed_bi_feature</span>)</span></span><br></pre></td></tr></table></figure>
 </li>
-<li><strong>如果有些层</strong>不像 LSTM 一样只能按照时间步读取，而是<strong>可以批量处理时序数据</strong>，那么可以使用 mask 矩阵。<strong>目前我就知道一个 Transformer 需要用到 mask 矩阵。</strong>你可以通过句子的长度自行创建。</li>
+<li><p><strong>如果有些层</strong>不像 LSTM 一样只能按照时间步读取，而是<strong>可以批量处理时序数据</strong>，那么可以使用 mask 矩阵。<strong>目前我就知道一个 Transformer 需要用到 mask 矩阵。</strong>你可以通过句子的长度自行创建。</p>
+</li>
 <li>最后<strong>在计算 loss 时</strong>也需要 padding mask，这可以使用 <code>torch.masked_select(input, mask, out=None)</code> 进行计算。<a id="more"></a>
 </li>
 </ol>
@@ -317,9 +332,110 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
 <li>以后有机会再补充</li>
 </ol>
 <h1 id="subword技术"><a href="#subword技术" class="headerlink" title="subword技术"></a>subword技术</h1><h2 id="参考资料-2"><a href="#参考资料-2" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a href="https://www.zhihu.com/question/329708785" target="_blank" rel="noopener">word2vec缺少单词怎么办？</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/72312668" target="_blank" rel="noopener">香侬读 | 怎样在小数据集下学习OOV词向量？</a></li>
 <li><a href="https://zhuanlan.zhihu.com/p/86965595" target="_blank" rel="noopener">深入理解 NLP Subword 算法：BPE、WordPiece、ULM</a></li>
 </ol>
-<h1 id="调参的技巧"><a href="#调参的技巧" class="headerlink" title="调参的技巧"></a>调参的技巧</h1><h2 id="参考资料-3"><a href="#参考资料-3" class="headerlink" title="参考资料"></a>参考资料</h2>
+<h1 id="调参的步骤以及经验"><a href="#调参的步骤以及经验" class="headerlink" title="调参的步骤以及经验"></a>调参的步骤以及经验</h1><div class="note info">
+            <p>&emsp;&emsp;<a href="https://www.bilibili.com/video/BV1Ux411S7rk?p=13" target="_blank" rel="noopener">李宏毅深度学习</a> 大致地讲解了调参技巧，不过现在都是人尽皆知的方法了。</p>
+          </div>
+<p>&emsp;&emsp;根据本人经历，记录调参的方法。</p>
+<h2 id="最初的超参数"><a href="#最初的超参数" class="headerlink" title="最初的超参数"></a>最初的超参数</h2><p>&emsp;&emsp;首先你需要的使用尽可能大的学习率（learning rate，lr），使得你的模型在训练集上拟合的不错，即 loss 值达到可以接受的程度，并且准确率或者你的其他指标达到不错的水平。<br>&emsp;&emsp;这意味着你的模型本身不是存在很大的问题。<strong>但是</strong>，你的模型在验证集上的结果可能差的离谱！不要紧，接下来开始调整参数。要牢记一点，<strong>超参数的好坏一定要在验证集上做评定，并且最好保证在训练集上的性能不受太大影响</strong>。</p>
+<h2 id="如何处理过拟合"><a href="#如何处理过拟合" class="headerlink" title="如何处理过拟合"></a>如何处理过拟合</h2><p>&emsp;&emsp;参考《过拟合处理》</p>
+<h2 id="loss-值并不能作为判断模型性能的指标"><a href="#loss-值并不能作为判断模型性能的指标" class="headerlink" title="loss 值并不能作为判断模型性能的指标"></a>loss 值并不能作为判断模型性能的指标</h2><p>&emsp;&emsp;有一个让我印象深刻的案例，我发现验证集上的 loss 值很高，但是在验证集上的准确率还不错。我认为<strong>loss 值并不能作为判断模型性能的指标</strong>。<br>&emsp;&emsp;例如我的实验，在训练集上 loss 值的大小收敛到 [0.1, 1]，但是在验证集上 loss 值高达 [25, 50]，所以在最开始我一直认为模型在验证集上的性能肯定极差。现在假设以 acc 作为评分指标，在训练集上可能有 60%+，而在验证集上我猜测连 1% 都没有。由于这种错误的思维，其实我并没有编写计算 acc 的代码，因为我觉得这个模型有问题，所以我懒得耗费时间编这个代码。<br>&emsp;&emsp;最后我受不了了，编写了计算 acc 的代码，发现两个数据集上的性能居然类似，大致分别为 68% 和 48%。下面是基于直觉的分析，假设我们的目标多分类任务，预测 <code>[&#39;我&#39;, &#39;是&#39;, &#39;鱼&#39;]</code>。<br>&emsp;&emsp;由于在训练集上的 loss 值很低，所以自然而然地可以想到它的预测水平要高，假设预测 <code>&#39;我&#39;</code> 的概率为 0.9，那么对应的损失值为 <script type="math/tex">-\log(0.9)</script>（负对数似然）。而在验证集上，假设预测 <code>&#39;我&#39;</code> 的概率为 0.6，那么对应的损失值为 <script type="math/tex">-\log(0.6)</script>。可以看出显然验证集上的损失值要大得多，但是他们的结果是一样的，都预测正确了。注：这里的损失值其实相差还是不大，但是对于语言生成任务来说，损失值是要累加的，假设一句话有 30 个字，那么累加之后，差距就大了。</p>
+<h2 id="关于epoch"><a href="#关于epoch" class="headerlink" title="关于epoch"></a>关于epoch</h2><p>&emsp;&emsp;如果你调试了很多参数之后，模型在<strong>训练集</strong>上的性能没有很大改善，<strong>可以尝试大幅度增加 epoch</strong>。当然你也可以在一开始就使用很大的 epoch。因为有些模型很奇怪，可能 loss 曲线已经很平滑了，但是在某个 epoch 之后，loss 值突然暴跌。例如，下图是训练了一段时间的 loss 值，我卡了四五天，一直以为 loss 不会下降了。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/smooth_loss.svg" alt="smooth loss"></p>
+<p>&emsp;&emsp;但是当你加大 epoch 之后，突然发现它又开始下降了。（注：这两条曲线有点不一样，是因为我略微地调整了代码，但是这已经足够说明问题了。经过我的实验，这里的 loss 值下降与我的代码调整无关）<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/slumping_loss.svg" alt="slumping loss"></p>
+<p>&emsp;&emsp;这可能不太明显，我们把它缩放一下，发现真的又开始下降了。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/scaled_slumping_loss.svg" alt="scaled slumping loss"></p>
+<h2 id="GPU内存不够以及随机采样"><a href="#GPU内存不够以及随机采样" class="headerlink" title="GPU内存不够以及随机采样"></a>GPU内存不够以及随机采样</h2><p>&emsp;&emsp;如果你实验室的机器不好，打算使用随机采样的方法使得在小样本上测试超参数。<strong>那么请记得 train/val/test 的比例一定要与原数据集的比例一样</strong>。数据集一般都是由制作者划分好比例的，比如你得到的数据集 train/val/test 的数据量为 12472/900/900。现在你想只训练 6600 条数据，以此提高找到超参数的效率，那么你必须做到以下几点：<br>&emsp;&emsp;按照比例缩放：<script type="math/tex">\frac{6600}{12472} \approx 0.529</script>，那么你所取得的 val/test 数据集合一定要是 <script type="math/tex">0.529 \times 900 \approx 476</script> 条。简单来说，你从总的训练集中取多少比例，也要到验证集和测试集里按这个比例取。不能“<em>哦，总共就 900 份，我不如都算作验证集吧</em>”，<strong>这样会导致数据的分布极其的不平衡</strong>！试想一下，数据的制作者肯定会尽量使得三份数据集的分布尽可能的接近，并且其中的句子肯定也是长短不一的。结果你从训练集中随机取出 6000 份，导致了这些数据的分布和原来不一样，一个直观的解释就是模型无法捕获长句子的信息，因为你的新训练集和训练集中长句子所占的比例不一样。而你还偏偏用原来那个分布的验证集！<br>&emsp;&emsp;一定要使用随机采样的方法！不要直接使用 python 的切片！否则也会导致你的数据集分布不平衡。使用 python 内置的 <code>random.choice()</code> 可以很简单地实现随机采样。</p>
+<h2 id="加大lr，train-loss不一定更快收敛"><a href="#加大lr，train-loss不一定更快收敛" class="headerlink" title="加大lr，train loss不一定更快收敛"></a>加大lr，train loss不一定更快收敛</h2><p>&emsp;&emsp;我有碰到一个情况，<strong>加大学习率后，训练集上的 loss 反而下降的更慢了！</strong>图片我放在了下面，其中深蓝色的曲线代表着学习率是要大的那个模型。我的猜测是，学习率加大后，在某一个时间段的 epoch 中，模型一直在尝试走到山底，但是由于学习率过大，导致它一直来回振荡。而学习率小点，就正好一脚跨下去了。从图中也可以发现，在一开始，大学习率的模型确实要下降的快点，但是后来被小学习率的模型反超了。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/增加lr，loss反而下降更慢.svg" alt="增加 lr，loss 反而下降更慢"></p>
+<h2 id="关于Adam的一个bug"><a href="#关于Adam的一个bug" class="headerlink" title="关于Adam的一个bug"></a>关于Adam的一个bug</h2><p>&emsp;&emsp; 如果需要对模型使用权重衰减的策略，<strong>在 Pytorch 中不要使用 Adam 算法，有 bug</strong>。听说目前流行的深度学习框架都有 bug。请改用 AdamW 算法。甚至在一开始就可以选择 AdamW，因为 Adam 和 AdamW 是一样的，区别仅仅是在权重衰减步骤上有所不同。</p>
+<h1 id="过拟合处理"><a href="#过拟合处理" class="headerlink" title="过拟合处理"></a>过拟合处理</h1><div class="note warning">
+            <p>&emsp;&emsp;奇怪的事写在前面。<br>&emsp;&emsp;我碰到了一种情况，训练集上拟合的很好（loss 约为 1），但是在验证集上很差（loss 约为 280+）。不断地调整代码以及更换学习率，得到的效果均不明显。<br>&emsp;&emsp;我给出其中一种可能：<strong>两种数据集的分布不一样</strong>。例如我的问题，在给定 10000 条训练集样本和 900 条验证集样本的情况下。由于 NLP 任务句子不等长的特性，所以我选择先将句子排序使得同一批次中的数据等长，注意我没有选择填充 <code>&lt;PAD&gt;</code> 这种方法。<br>&emsp;&emsp;然后<strong>我取了 6600 条训练集样本，在取验证集样本时，由于它的数据量较小，所以我全要了，问题就出在这</strong>。我的训练集样本是取的 [1400: 8000]，所以这个区间内的句子长度比较平均，由于我事先排序的原因，所以极短的句子和极长的句子我都没取到。但是原验证集和原训练集的分布是一样的！所以 900 条验证集中包含了极长的句子和极短的句子，这导致了现在的两个数据集分布不一样了！<strong>解决办法是使用随机采样</strong>。<em>不要排序之后直接切片获得数据，而是应该是先随机采样，再排序</em>。<br>&emsp;&emsp;但是处理完之后结果依旧很烂！现在正在调试学习率。待续，后面补充。</p>
+          </div>
+<p>&emsp;&emsp;当过拟合时，可以考虑以下的方法，过拟合的另一种说法是高方差（high variance）。</p>
+<h2 id="增加数据集的大小"><a href="#增加数据集的大小" class="headerlink" title="增加数据集的大小"></a>增加数据集的大小</h2><p>&emsp;&emsp;如下图所示，紫红色和蓝色曲线是验证集上的 loss。蓝色曲线意味着我从 4400 条数据增加到了 6600 条。明显可以看到过拟合略有缓解。但是训练集上的 loss 增加了，灰色那条线是增加数据量后的训练集 loss。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/add_more_data.svg" alt="增加更多的数据" title="增加更多的数据"></p>
+<p>&emsp;&emsp;下图也是一个例子，相比于上个模型还训练的有问题，这个模型已经训练的还可以了。可以看到红色曲线比蓝色的要平缓一点，因为数据集增加，训练集上的 loss 会相应增加。再看上面的橙色和深蓝色，深蓝色是增加数据量之后的 loss 曲线，略微降低。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/add more data2.svg" alt="增加更多的数据2"></p>
+<h2 id="加大批次大小或减小模型复杂度"><a href="#加大批次大小或减小模型复杂度" class="headerlink" title="加大批次大小或减小模型复杂度"></a>加大批次大小或减小模型复杂度</h2><p>&emsp;&emsp;如下图所示，中间的两条橙色和蓝色曲线是批次大小从 128 增加到 224 的结果。橙色曲线为 val loss，可以看到橙色曲线相比于上面那条蓝色的 val loss，已经略有下降，这代表着过拟合的程度略有降低。而中间的蓝色曲线代表 train loss，相比于下面的灰色 train loss 曲线有些许上升，这代表着模型在训练集上的泛化能力有所下降。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/more_larger_batch_size.svg" alt="加大批次大小"></p>
+<p>&emsp;&emsp;下图为减小隐藏状态的例子，中间的绿色以及红色曲线是隐藏状态从 512 减到 400 的结果，可以看到验证集上的 loss 略有下降（略微的缓解过拟合），训练集上的 loss 略有上升。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/reduce_hidden_size.svg" alt="减小隐藏状态大小"></p>
+<h2 id="learning-rate-decay"><a href="#learning-rate-decay" class="headerlink" title="learning rate decay"></a>learning rate decay</h2><p>&emsp;&emsp;Q：在什么时候需要使用 learning rate decay？<br>&emsp;&emsp;A：网上资源不多，还是自己总结吧。在此实验中，加入 learning rate decay 后，准确率略有提升。</p>
+<h2 id="正则化"><a href="#正则化" class="headerlink" title="正则化"></a>正则化</h2><p>&emsp;&emsp;</p>
+<h2 id="Dropout"><a href="#Dropout" class="headerlink" title="Dropout"></a>Dropout</h2><p>&emsp;&emsp;一般设置为 0.5。在 Pytorch 中代表神经网络中某一层的神经元的输出有 0.5 的概率为 0。其他的深度学习框架不保证一样。<br>&emsp;&emsp;参考资料：</p>
+<ol>
+<li><a href="https://zhuanlan.zhihu.com/p/38200980" target="_blank" rel="noopener">深度学习中Dropout原理解析</a></li>
+</ol>
+<h2 id="label-smoothing"><a href="#label-smoothing" class="headerlink" title="label smoothing"></a>label smoothing</h2><h1 id="过拟合和欠拟合"><a href="#过拟合和欠拟合" class="headerlink" title="过拟合和欠拟合"></a>过拟合和欠拟合</h1><h2 id="train-acc很大，gap非常大"><a href="#train-acc很大，gap非常大" class="headerlink" title="train acc很大，gap非常大"></a>train acc很大，gap非常大</h2><p>&emsp;&emsp;在训练过程中出现了一种情况，train acc 94% 左右，但是 val acc 只有 24% 左右，test acc 也是 24% 左右。很多人认为这是<strong>过拟合</strong>状态，因为模型在训练集上拟合的很好，但在验证集上拟合的不好，这两者之间的 gap 很大。也就是<strong>高方差</strong>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/多领域seq2lf/train acc很大，gap也很大.svg" alt="train acc很大，gap也很大"></p>
+<p>&emsp;&emsp;以下是对此现象的分析：</p>
+<ol>
+<li><p>再增加 <strong>epoch</strong> 已经没用了，因为该模型的参数已经很好的拟合了数据集，使得准确率接近 100%。</p>
+<blockquote class="blockquote-center"><p>说明训练集中的几乎所有信息（不论是对泛化有用的信息还是训练集中的噪声）都全部被模型学习到了。（<a href="https://www.zhihu.com/question/65200055" target="_blank" rel="noopener">来源</a>）</p>
+</blockquote>
+</li>
+<li><p>改变（无论增大还是缩小） rnn 的<strong>隐藏状态</strong>也不会有很大改善了。比如说此文章的模型，我尝试选择隐藏状态大小为 (100, 115, 125, 128)，结果如下所示，可以看到增加减少隐藏状态大小，对 train acc 根本无影响，对 val acc 也只有一点影响：</p>
+<blockquote class="blockquote-center"><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>hidden size</th>
+<th>batch</th>
+<th>train acc</th>
+<th>val acc</th>
+<th>test acc</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>100</td>
+<td>32</td>
+<td>94.42%</td>
+<td>20.74%</td>
+<td>21.28%</td>
+</tr>
+<tr>
+<td>115</td>
+<td>32</td>
+<td>94.42%</td>
+<td>22.80%</td>
+<td>23.72%</td>
+</tr>
+<tr>
+<td>125</td>
+<td>32</td>
+<td>94.42%</td>
+<td>24.95%</td>
+<td>24.78%</td>
+</tr>
+<tr>
+<td>128</td>
+<td>32</td>
+<td>94.42%</td>
+<td>21.20%</td>
+<td>22.58%</td>
+</tr>
+<tr>
+<td>125</td>
+<td>128</td>
+<td>98.47%</td>
+<td>19.13%</td>
+<td>20.37%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</blockquote>
+<div class="note info">
+            <p>&emsp;&emsp;但是我认为这种情况<strong>不算过拟合</strong>（暂时不看 <code>batch=128</code> 那组）。因为过拟合指的是模型在训练集上过度地拟合了数据特征，于是在验证集上出现个比较离群的数据样本，就会得到很差的结果。<br>&emsp;&emsp;如果把训练集拥有的特征集合定义为 A，验证集拥有的特征集合定义为 B，那么 <script type="math/tex">C=A \cap B, D = A \cup B - C</script>，其中 C 代表的是未被神经网络拟合的很小的一部分特征，D 代表的是已经被神经网络拟合的特征（注：这里的拟合并不一定要完全的拟合，在拟合线的附近即可）。神经网络要做的是同时拟合 A 与 B 的所有特征。<br>&emsp;&emsp;但是随着 epoch 的增加，A 中的所有特征肯定被拟合的越来越好，而 B 中有些已经被拟合的特征却越来越远离拟合线，所以导致了 C 中的特征越来越多。（可以通过逻辑回归来先思考，验证集数据原本在拟合线附近，但是增加 epoch 或者增加网络参数等操作导致过拟合，原本在拟合线附近的数据点反而偏离了）<br>&emsp;&emsp;<strong>所以训练集和验证集中的数据的分布应该是这样的：训练集和验证集中有很多数据分布类似（对应即使过拟合 val acc 也不会下降到 0%），但是两个数据集中有些数据只有部分特征的分布是类似的（对应于过拟合），最后两个数据集汇总有一部分数据完全无关联（对应于不管怎么拟合，val acc 始终不可能到 100%）。</strong><br>&emsp;&emsp;话说回来文中的情况，明显训练集和验证集的 acc 到达顶部之后一直处于平稳的状态，增加 epoch 或者增加网络参数都没有使得 acc 增加或下降，这就意味这 C 中的特征没有变化。<br>&emsp;&emsp;<strong>所以这种情况应该是这样的：训练集和验证集中的数据有少量是类似的（对应于 val acc 拥有 20+%），其余大部分，可能有超过 60% 的数据都没有关联（对应于不管怎么训练 val acc 始终只有 20+%），最后有两个数据集中一小部分数据可能有部分特征重叠（对应于随着 epoch 的增加，val acc 有略微的波动）。</strong></p>
+          </div>
+</li>
+</ol>
+<p>&emsp;&emsp;对这种情况，一般出现在利用随机采样快速训练模型，只需要加大数据量就行了。所以以后再用小数据量训练时只需要将参数调整到满意的地步就不需要再继续调整了，直接换大数据量。<br>&emsp;&emsp;最后对于 <code>batch = 128</code> 的那组，train acc 上升了，其他的下降了，有过拟合嫌疑，但是幅度不是很大。</p>
+<h1 id="梯度爆炸"><a href="#梯度爆炸" class="headerlink" title="梯度爆炸"></a>梯度爆炸</h1><h1 id="可视化训练结果"><a href="#可视化训练结果" class="headerlink" title="可视化训练结果"></a>可视化训练结果</h1><p>&emsp;&emsp;以前一直用 matplotlib 来画图，现在用了 tensorboardX 之后，感觉人瞬间就爽了，以下为教程。无法启动看 2，启动后网页无法显示看 3，代码不会写看 1。<br>&emsp;&emsp;参考资料：</p>
+<ol>
+<li><a href="https://tensorboardx.readthedocs.io/en/latest/tutorial.html#what-is-tensorboard-x" target="_blank" rel="noopener">官方文档</a></li>
+<li><a href="https://blog.csdn.net/qq_40605167/article/details/95761885" target="_blank" rel="noopener">tensorboard OSError: [Errno 22] Invalid argument错误处理</a></li>
+<li><a href="https://blog.csdn.net/weixin_44135282/article/details/86156961" target="_blank" rel="noopener">tensorboard生成的网址打不开的解决方法</a></li>
+<li><a href="https://blog.csdn.net/bigbennyguo/article/details/87956434" target="_blank" rel="noopener">详解PyTorch项目使用TensorboardX进行训练可视化</a></li>
+</ol>
+
     </div>
 
     
@@ -400,7 +516,7 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#mask"><span class="nav-number">1.</span> <span class="nav-text">mask</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#padding-mask"><span class="nav-number">1.1.</span> <span class="nav-text">padding mask</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sequence-mask"><span class="nav-number">1.2.</span> <span class="nav-text">sequence mask</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">1.3.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#对于如何融合两个向量的思考"><span class="nav-number">2.</span> <span class="nav-text">对于如何融合两个向量的思考</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料-1"><span class="nav-number">2.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#subword技术"><span class="nav-number">3.</span> <span class="nav-text">subword技术</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料-2"><span class="nav-number">3.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#调参的技巧"><span class="nav-number">4.</span> <span class="nav-text">调参的技巧</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料-3"><span class="nav-number">4.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#mask"><span class="nav-number">1.</span> <span class="nav-text">mask</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#padding-mask"><span class="nav-number">1.1.</span> <span class="nav-text">padding mask</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sequence-mask"><span class="nav-number">1.2.</span> <span class="nav-text">sequence mask</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">1.3.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#对于如何融合两个向量的思考"><span class="nav-number">2.</span> <span class="nav-text">对于如何融合两个向量的思考</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料-1"><span class="nav-number">2.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#subword技术"><span class="nav-number">3.</span> <span class="nav-text">subword技术</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料-2"><span class="nav-number">3.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#调参的步骤以及经验"><span class="nav-number">4.</span> <span class="nav-text">调参的步骤以及经验</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#最初的超参数"><span class="nav-number">4.1.</span> <span class="nav-text">最初的超参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何处理过拟合"><span class="nav-number">4.2.</span> <span class="nav-text">如何处理过拟合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#loss-值并不能作为判断模型性能的指标"><span class="nav-number">4.3.</span> <span class="nav-text">loss 值并不能作为判断模型性能的指标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于epoch"><span class="nav-number">4.4.</span> <span class="nav-text">关于epoch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GPU内存不够以及随机采样"><span class="nav-number">4.5.</span> <span class="nav-text">GPU内存不够以及随机采样</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#加大lr，train-loss不一定更快收敛"><span class="nav-number">4.6.</span> <span class="nav-text">加大lr，train loss不一定更快收敛</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于Adam的一个bug"><span class="nav-number">4.7.</span> <span class="nav-text">关于Adam的一个bug</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#过拟合处理"><span class="nav-number">5.</span> <span class="nav-text">过拟合处理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#增加数据集的大小"><span class="nav-number">5.1.</span> <span class="nav-text">增加数据集的大小</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#加大批次大小或减小模型复杂度"><span class="nav-number">5.2.</span> <span class="nav-text">加大批次大小或减小模型复杂度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#learning-rate-decay"><span class="nav-number">5.3.</span> <span class="nav-text">learning rate decay</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正则化"><span class="nav-number">5.4.</span> <span class="nav-text">正则化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dropout"><span class="nav-number">5.5.</span> <span class="nav-text">Dropout</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#label-smoothing"><span class="nav-number">5.6.</span> <span class="nav-text">label smoothing</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#过拟合和欠拟合"><span class="nav-number">6.</span> <span class="nav-text">过拟合和欠拟合</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#train-acc很大，gap非常大"><span class="nav-number">6.1.</span> <span class="nav-text">train acc很大，gap非常大</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#梯度爆炸"><span class="nav-number">7.</span> <span class="nav-text">梯度爆炸</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#可视化训练结果"><span class="nav-number">8.</span> <span class="nav-text">可视化训练结果</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -416,13 +532,13 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-count">159</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-count">29</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -433,7 +549,7 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">190.2k</span>
+      	<span class="site-state-item-count">194.9k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>

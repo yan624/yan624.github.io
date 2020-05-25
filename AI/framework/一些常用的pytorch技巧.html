@@ -22,18 +22,18 @@
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="&amp;emsp;&amp;emsp;本文只记录框架层面的使用。关于深度学习层面的研究记录在 神经网络训练技巧（tricks）。            view、reshape和resize_&amp;emsp;&amp;emsp;结论写在前面：张量连续，使用 view()（此为多数情况）；张量不连续，则使用 reshape()。resize_() 最好不要使用。注意，在张量不连续的情况下，非要使用">
+  <meta name="description" content="pytorch zero grad 改变tensor形状 矩阵乘法 loss function pytorch nn 操作张量                         &amp;emsp;&amp;emsp;本文只记录框架层面的使用。关于深度学习层面的研究记录在 神经网络训练技巧（tricks）。            view、reshape和resize_&amp;emsp;&amp;ems">
 <meta name="keywords" content="4me">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一些常用的pytorch技巧">
 <meta property="og:url" content="http://yan624.github.io/AI/framework/一些常用的pytorch技巧.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="&amp;emsp;&amp;emsp;本文只记录框架层面的使用。关于深度学习层面的研究记录在 神经网络训练技巧（tricks）。            view、reshape和resize_&amp;emsp;&amp;emsp;结论写在前面：张量连续，使用 view()（此为多数情况）；张量不连续，则使用 reshape()。resize_() 最好不要使用。注意，在张量不连续的情况下，非要使用">
+<meta property="og:description" content="pytorch zero grad 改变tensor形状 矩阵乘法 loss function pytorch nn 操作张量                         &amp;emsp;&amp;emsp;本文只记录框架层面的使用。关于深度学习层面的研究记录在 神经网络训练技巧（tricks）。            view、reshape和resize_&amp;emsp;&amp;ems">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-04-27T07:13:36.540Z">
+<meta property="og:updated_time" content="2020-05-25T08:19:22.139Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一些常用的pytorch技巧">
-<meta name="twitter:description" content="&amp;emsp;&amp;emsp;本文只记录框架层面的使用。关于深度学习层面的研究记录在 神经网络训练技巧（tricks）。            view、reshape和resize_&amp;emsp;&amp;emsp;结论写在前面：张量连续，使用 view()（此为多数情况）；张量不连续，则使用 reshape()。resize_() 最好不要使用。注意，在张量不连续的情况下，非要使用">
+<meta name="twitter:description" content="pytorch zero grad 改变tensor形状 矩阵乘法 loss function pytorch nn 操作张量                         &amp;emsp;&amp;emsp;本文只记录框架层面的使用。关于深度学习层面的研究记录在 神经网络训练技巧（tricks）。            view、reshape和resize_&amp;emsp;&amp;ems">
 
 <link rel="canonical" href="http://yan624.github.io/AI/framework/一些常用的pytorch技巧.html">
 
@@ -124,7 +124,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">158</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">159</span></a>
 
   </li>
         <li class="menu-item menu-item-about">
@@ -274,7 +274,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-04-27 15:13:36" itemprop="dateModified" datetime="2020-04-27T15:13:36+08:00">2020-04-27</time>
+                <time title="修改时间：2020-05-25 16:19:22" itemprop="dateModified" datetime="2020-05-25T16:19:22+08:00">2020-05-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -307,14 +307,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>5.8k</span>
+              <span>6.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>10 分钟</span>
+              <span>11 分钟</span>
             </span>
 
         </div>
@@ -326,7 +326,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <div class="note warning">
+        <div class="note default">
+            <p><span class="label info">pytorch</span> <span class="label warning">zero grad</span> <span class="label success">改变tensor形状</span> <span class="label primary">矩阵乘法</span> <span class="label info">loss function</span> <span class="label danger">pytorch nn</span> <span class="label success">操作张量</span></p>
+          </div>
+<div class="note warning">
             <p>&emsp;&emsp;本文只记录框架层面的使用。关于深度学习层面的研究记录在 <a href="https://yan624.github.io/AI/神经网络训练技巧（tricks）.html">神经网络训练技巧（tricks）</a>。</p>
           </div>
 <h1 id="view、reshape和resize"><a href="#view、reshape和resize" class="headerlink" title="view、reshape和resize_"></a>view、reshape和resize_</h1><p>&emsp;&emsp;<strong>结论写在前面</strong>：张量连续，使用 <code>view()</code>（此为多数情况）；张量不连续，则使用 <code>reshape()</code>。<code>resize_()</code> 最好不要使用。注意，在张量不连续的情况下，非要使用 <code>view()</code> 也可以，但是要先调用 <code>contiguous()</code> 方法，使得张量连续，但是此方法会返回一个新的张量，浪费时间空间。<br>&emsp;&emsp;<strong>共同点</strong>：这些方法都可以改变 pytorch 中 tensor 的形状，但是它们略有不同。</p>
@@ -361,8 +364,7 @@
 <li>如果都是 2 维，则计算二维矩阵相乘；</li>
 <li>如果第一个张量是 1 维，第二个是 2 维，则广播第一个张量，进行二维矩阵相乘计算；</li>
 <li>如果第一个张量是 2 维，第二个是 1 维，则计算矩阵 * 向量；</li>
-<li>如果二者至少都是 1 维，且</li>
-<li>至少一个参数是 N 维（N &gt; 2）。非矩阵的维度将被广播，矩阵维度一般指每个张量的最后一至两位。如 shape=(1, 2, 3, 4) 和 shape=(1, 4, 3)，最后两位是矩阵维度；shape=(1, 2, 3, 4) 和 shape=(4)，第一个张量的最后两位和第二个张量的最后一位就是矩阵维度。</li>
+<li>如果二者至少都是 1 维，且至少一个参数是 N 维（N &gt; 2）。非矩阵的维度将被广播，矩阵维度一般指每个张量的最后一至两位。如 shape=(1, 2, 3, 4) 和 shape=(1, 4, 3)，最后两位是矩阵维度；shape=(1, 2, 3, 4) 和 shape=(4)，第一个张量的最后两位和第二个张量的最后一位就是矩阵维度。</li>
 </ol>
 </li>
 </ol>
@@ -404,6 +406,15 @@ crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)</script><p>&em
 <li><a href="https://www.cnblogs.com/marsggbo/p/10401215.html" target="_blank" rel="noopener">Pytorch里的CrossEntropyLoss详解</a></li>
 </ol>
 <h1 id="pytorch中的神经网络"><a href="#pytorch中的神经网络" class="headerlink" title="pytorch中的神经网络"></a>pytorch中的神经网络</h1><h2 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h2><p>&emsp;&emsp;关于 nn.LSTM 的用法：如果不想手动初始化隐藏状态，而是想让 pytorch 帮你初始化，那么就只需要填入输入值即可。举个例子，下面代码框中的代码所输入的自然语句是 [‘how are you’, ‘i’m fine’]。<br>&emsp;&emsp;其中输入值 x 的形状为 (seq_len, batch_size, input_size)，对应上面的例子就是 (3, 2, 300)，代表序列长度为 3（因为上面的两句话的最大长度为 3），批量大小为 2，词向量维度为 300。需要注意的是：<strong>pytorch 会根据你输入的序列长度</strong>（输入的张量必须是一样长的，参差不齐的张量无法输入，当然了，你也无法创建出这样的张量）<strong>自动地在时间步上做计算，不需要你写一个循环，然后依次输入每一个单词的词向量。</strong><br><figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cell = nn.<span class="constructor">LSTM(<span class="params">input_size</span>, <span class="params">hidden_size</span>, <span class="params">num_layers</span>)</span></span><br><span class="line">output, (a, m) = cell(x)</span><br></pre></td></tr></table></figure></p>
+<h1 id="张量操作"><a href="#张量操作" class="headerlink" title="张量操作"></a>张量操作</h1><h2 id="expand"><a href="#expand" class="headerlink" title="expand()"></a>expand()</h2><p>&emsp;&emsp;<code>expand()</code> 函数按照你想要的大小扩充 tensor，并且<strong>返回一个新的 tensor</strong>。注意它是 tensor 的成员方法，并且你所想要新 tensor 的维度必须与原 tensor 的维度相同。例如，原 tensor.shape=(3, 1)，那么你可以扩大为 (3, 4)，但是你不能扩大为 (3, 1, 1)，当然更不能为 (3, 1, 4)。举个例子：<br><figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">x = torch.Tensor([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>]])</span><br><span class="line"># (<span class="number">3</span>, <span class="number">1</span>)</span><br><span class="line">print(x.shape)</span><br><span class="line">y = x.expand(<span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line"># (<span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line">print(y.shape)</span><br><span class="line"># error</span><br><span class="line">x.expand(<span class="number">3</span>, <span class="number">1</span>, <span class="number">1</span>)</span><br></pre></td></tr></table></figure></p>
+<h1 id="optimizer-zero-grad"><a href="#optimizer-zero-grad" class="headerlink" title="optimizer.zero_grad()"></a>optimizer.zero_grad()</h1><p>&emsp;&emsp;在 pytorch 中，为什么要在每个循环之初调用这个方法？因为 pytorch 把计算的每个梯度都累加起来，并不会每迭代一次就将梯度清零。这样做看起来令人费解，并反常理。但是实际上这样做可以做更多神奇的操作，比如</p>
+<ul>
+<li><a href="https://www.zhihu.com/question/303070254" target="_blank" rel="noopener">https://www.zhihu.com/question/303070254</a></li>
+</ul>
+<p>&emsp;&emsp;还有，试想本来你想运行 batch_size=1024，但是由于电脑太差，只能运行 batch_size=256 的批次数据。那么只需要每循环两次调用一次 zero_grad() 即可。<br>&emsp;&emsp;参考：</p>
+<ol>
+<li><a href="https://blog.csdn.net/u011959041/article/details/102760868" target="_blank" rel="noopener">pytorch中为什么要用 zero_grad() 将梯度清零</a></li>
+</ol>
 
     </div>
 
@@ -488,7 +499,7 @@ crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)</script><p>&em
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#view、reshape和resize"><span class="nav-number">1.</span> <span class="nav-text">view、reshape和resize_</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#不连续的张量的说明"><span class="nav-number">1.1.</span> <span class="nav-text">不连续的张量的说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#contiguous-的解释"><span class="nav-number">1.2.</span> <span class="nav-text">contiguous()的解释</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">1.3.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#矩阵乘法"><span class="nav-number">2.</span> <span class="nav-text">矩阵乘法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#矩阵相乘"><span class="nav-number">2.1.</span> <span class="nav-text">矩阵相乘</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#矩阵对应元素相乘"><span class="nav-number">2.2.</span> <span class="nav-text">矩阵对应元素相乘</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#广播机制"><span class="nav-number">2.3.</span> <span class="nav-text">广播机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料-1"><span class="nav-number">2.4.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pytorch-loss-function"><span class="nav-number">3.</span> <span class="nav-text">pytorch loss function</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#顺便一提KLDivLoss"><span class="nav-number">3.1.</span> <span class="nav-text">顺便一提KLDivLoss</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料-2"><span class="nav-number">3.2.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pytorch中的神经网络"><span class="nav-number">4.</span> <span class="nav-text">pytorch中的神经网络</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#LSTM"><span class="nav-number">4.1.</span> <span class="nav-text">LSTM</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#view、reshape和resize"><span class="nav-number">1.</span> <span class="nav-text">view、reshape和resize_</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#不连续的张量的说明"><span class="nav-number">1.1.</span> <span class="nav-text">不连续的张量的说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#contiguous-的解释"><span class="nav-number">1.2.</span> <span class="nav-text">contiguous()的解释</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">1.3.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#矩阵乘法"><span class="nav-number">2.</span> <span class="nav-text">矩阵乘法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#矩阵相乘"><span class="nav-number">2.1.</span> <span class="nav-text">矩阵相乘</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#矩阵对应元素相乘"><span class="nav-number">2.2.</span> <span class="nav-text">矩阵对应元素相乘</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#广播机制"><span class="nav-number">2.3.</span> <span class="nav-text">广播机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料-1"><span class="nav-number">2.4.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pytorch-loss-function"><span class="nav-number">3.</span> <span class="nav-text">pytorch loss function</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#顺便一提KLDivLoss"><span class="nav-number">3.1.</span> <span class="nav-text">顺便一提KLDivLoss</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料-2"><span class="nav-number">3.2.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pytorch中的神经网络"><span class="nav-number">4.</span> <span class="nav-text">pytorch中的神经网络</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#LSTM"><span class="nav-number">4.1.</span> <span class="nav-text">LSTM</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#张量操作"><span class="nav-number">5.</span> <span class="nav-text">张量操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#expand"><span class="nav-number">5.1.</span> <span class="nav-text">expand()</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#optimizer-zero-grad"><span class="nav-number">6.</span> <span class="nav-text">optimizer.zero_grad()</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -504,13 +515,13 @@ crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)</script><p>&em
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">158</span>
+          <span class="site-state-item-count">159</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-count">29</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -521,7 +532,7 @@ crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)</script><p>&em
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">190.2k</span>
+      	<span class="site-state-item-count">194.9k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>

@@ -46,8 +46,8 @@
           </div></li>
 <li><em><a href="https://yan624.github.io/·学习笔记/AI/nlp/CS224n学习笔记.html">CS224n学习笔记</a></em></li>
 <li><a href="https://yan624.github.io/·学习笔记/AI/nlp/【读书笔记】：《自然语言处理综论》（第二版）.html">【读书笔记】：《自然语言处理综论》（第二版）</a></li>
-<li>【 2019-11-05】<strong><a href="https://yan624.github.io/project/多领域seq2lf.html">多领域seq2lf</a></strong><div class="note danger">
-            <p>虽说此篇文章是我做实验的笔记，但是由于是我第一次做实验。所以我在其中记录了大量的笔记/炼丹技巧/原理分析、遇到的问题/bug。例如：</p><ol><li>pytorch 一些值得注意的地方/tensorboardX 可视化</li><li>clipping 分析</li><li>LSTM 机制分析</li><li>dropout/early stopping/norm 等使用方法与技巧</li><li>梯度爆炸/消失原理分析</li></ol><p><del>所以这篇文章可以说是我一整年的精华所在，里面还引用了这一年中写的其他文章。</del><br>本文已被分割成众多知识点。</p>
+<li>【 2019-11-05】多领域的语义解析实验<div class="note danger">
+            <p><del>虽说此篇文章是我做实验的笔记，但是由于是我第一次做实验。所以我在其中记录了大量的笔记/炼丹技巧/原理分析、遇到的问题/bug。</del><br>本文已被分割成众多知识点。</p>
           </div></li>
 </ol>
 </li>
@@ -122,6 +122,66 @@ A_{3 \times 1} \odot B_{3 \times 1} = C_{3 \times 1} \\</script><h1 id="张量�
       </categories>
   </entry>
   <entry>
+    <title>李宏毅迁移学习视频笔记</title>
+    <url>/%C2%B7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/AI/ml_branch/%E6%9D%8E%E5%AE%8F%E6%AF%85%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E8%A7%86%E9%A2%91%E7%AC%94%E8%AE%B0.html</url>
+    <content><![CDATA[<h1 id="什么是迁移学习"><a href="#什么是迁移学习" class="headerlink" title="什么是迁移学习"></a>什么是迁移学习</h1><p>&emsp;&emsp;现在手上有一些与本实验没有直接关系的数据集，那么能不能使用该数据集来帮助我们做一些事情。<br>&emsp;&emsp;比如说要开发一个图像识别的模型，去识别医学上的图像。这方面的数据集可能很少，但是作为图片本身来说是有很多的。比如猫狗图片也是图片。<br><a id="more"></a></p>
+<h1 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h1><p>&emsp;&emsp;与任务有关的数据被称为 target data，与任务没有直接关系的数据被称为 source data。每种数据都有可能有标签和无标签，所以一共分四种情况。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/学习笔记/李宏毅迁移学习视频笔记/Transfer_Learning_Overview.jpg" alt="Transfer Learning Overview"></p>
+<h2 id="都有标签"><a href="#都有标签" class="headerlink" title="都有标签"></a>都有标签</h2><p>&emsp;&emsp;Target data 和 Source data 都具有标签。<br>&emsp;&emsp;任务定义为：Target data:<script type="math/tex">(x^t, y^t)</script> 和 Source data:<script type="math/tex">(x^s, y^s)</script>。</p>
+<h3 id="Fine-tuning"><a href="#Fine-tuning" class="headerlink" title="Fine-tuning"></a>Fine-tuning</h3><p>&emsp;&emsp;最常见以及最简单的做法是微调。<strong>Fine-tuning 在乎的是在 Target data 上的性能好不好，如果在 Source data 上的性能坏掉就算了。</strong>（25:00）<br>&emsp;&emsp;但是通常 Tartget data 的量是很少的，因为如果量多的话，直接当一般的机器学习方法来做就行了。总而言之，一般 Source data 的量会有很多。此外 Target data 很少，大概只有几个样本一般叫做 <strong>One-shot learning</strong>。<br>&emsp;&emsp;例如，Target data 是音频数据，并且是特定用户的声音，而 Source data 是许多人的声音。这里的处理方式是使用 Source data 来训练一个模型，然后使用 Target data 来微调。<strong>但是这可能会有个问题，当你使用 Target data 继续训练时，整个模型可能会坏掉。</strong><br>&emsp;&emsp;接下里介绍一些可能能够解决的技巧：</p>
+<ul>
+<li>Conservative Training：比如在语音辨识的任务中，使用 Source data 训练一个神经网络，这些数据都随处可见。但是你的 Target data 可能是用户特定的声音，可能只有 5 句、10 句。当然如果直接使用 Target data 训练模型肯定也是不行的，注意这个模型已经是之前使用 Source data 预训练的模型。（<em>李宏毅老师没说为什么。</em>）所以我们在微调的时候，需要加入一些正则化约束。通常我们会加 L1 和 L2，但是在 Consertive Training 中我们会加不同的正则化。总而言之，<strong>我们需要使得两个模型之间的输出时接近的，或者模型参数是接近的</strong>。（<em>具体怎么做，他也没说</em>。）<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/学习笔记/李宏毅迁移学习视频笔记/Conservative_Training.jpg" alt="Conservative Training"></li>
+<li>Layer Transfer： 把模型中某几个 layer 拿出来，直接复制到新的模型中。1）然后使用 Target data 只训练自己定义的那几层 layer（<strong>防止过拟合</strong>）；2）当然如果你有足够多的 Target data，你也可以微调整个模型。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/学习笔记/李宏毅迁移学习视频笔记/Layer_Transfer.jpg" alt="Layer Transfer"><ul>
+<li>那么哪些 layer 应该被 transfer 呢？<ul>
+<li>Speech：通常拷贝最后几层，然后重新训练 input 的那层。因为在语音识别中，人的发音均有不同，而模型的前几层可能与人的发音（浅层信息）有关。后几层可能与特定的人无关（深层信息）。</li>
+<li>Image：通常拷贝前几层，然后重新训练后几层。因为在机器视觉里，前几层可能捕获的是图片的浅层信息，而这些信息每个人看到的几乎都是一样。后面几层可能是深度的信息，每个任务需要的信息可能都是不同的。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Multitask-Learning"><a href="#Multitask-Learning" class="headerlink" title="Multitask Learning"></a>Multitask Learning</h3><p>&emsp;&emsp;Multitask Learning 在乎的是在两个数据集上是否做得都好。<br>&emsp;&emsp;假设现在两个不同任务使用的是同样的 feature 的话（<em>图左</em>）。在叠几层神经网络后，在某一层分成两个任务做。那么这两个任务在前几层是共用特征的。所以在做 Multitask Learning 时，需要确定两个任务是否具有共通性，是否可以共用前几个 layer。<br>&emsp;&emsp;甚至现在有一些更疯狂的做法（<em>图右</em>）。模型的输入都可能没有办法共同学习，但是可以把两个特征输入进同一个模型，然后仅在某几层共享它们的特征。就算 task A 和 B 的输入特征完全不一样，但是只要你觉得在中间某几层有几个共同的地方，你还是可以用 Multitask Learning。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/学习笔记/李宏毅迁移学习视频笔记/Multitask_Learning.jpg" alt="Multitask Learning"></p>
+<p>&emsp;&emsp;Multitask Learning 比较成功的案例是多语言语音识别。</p>
+<h3 id="Progressive-Neural-Network"><a href="#Progressive-Neural-Network" class="headerlink" title="Progressive Neural Network"></a>Progressive Neural Network</h3><p>&emsp;&emsp;</p>
+<h2 id="Source-data有标签"><a href="#Source-data有标签" class="headerlink" title="Source data有标签"></a>Source data有标签</h2><p>&emsp;&emsp;&emsp;&emsp;任务定义为：Source data:<script type="math/tex">(x^s, y^s)</script>，Target data:<script type="math/tex">(x^t)</script>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/学习笔记/李宏毅迁移学习视频笔记/Source_data_with_label.jpg" alt="Source data with label" title="Source data with label"></p>
+<h3 id="Domain-adversarial-training"><a href="#Domain-adversarial-training" class="headerlink" title="Domain-adversarial training"></a>Domain-adversarial training</h3><p>&emsp;&emsp;</p>
+<h3 id="Zero-shot-learning"><a href="#Zero-shot-learning" class="headerlink" title="Zero-shot learning"></a>Zero-shot learning</h3><p>&emsp;&emsp;</p>
+]]></content>
+      <categories>
+        <category>AI</category>
+        <category>ml-branch</category>
+      </categories>
+      <tags>
+        <tag>学习笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CS330：multitask learning and meta learning</title>
+    <url>/%C2%B7%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/AI/ml_branch/CS330%EF%BC%9Amultitask%20learning%20and%20meta%20learning.html</url>
+    <content><![CDATA[<div class="note info">
+            <p>&emsp;&emsp;视频来自    <a href="https://www.bilibili.com/video/BV15t4y127V1" target="_blank" rel="noopener">https://www.bilibili.com/video/BV15t4y127V1</a>。视频于 12:25 正式开始。</p>
+          </div>
+<h1 id="简介和概览"><a href="#简介和概览" class="headerlink" title="简介和概览"></a>简介和概览</h1><p>&emsp;&emsp;本视频从 30:10 开始介绍多任务学习，之前都是在做简单的介绍。<br>&emsp;&emsp;首先如何定义任务（task）？给定数据集 <script type="math/tex">\mathcal{D}</script> 以及损失函数 <script type="math/tex">\mathcal{L}</script>，然后使用它们训练模型 <script type="math/tex">f_{\theta}</script>。<em>这是目前的简单定义，课程后期会更严谨地进行定义。</em><br>&emsp;&emsp;所以不同的任务会根据，1）不同的对象（different objects）比如一个任务是对猫分类，另一个任务是对杯子分类；2）不同的人（different people），对不同的人进行不同的预测；3）不同的目标（different objective）等进行变化。<br><a id="more"></a></p>
+<h2 id="批判性的假设"><a href="#批判性的假设" class="headerlink" title="批判性的假设"></a>批判性的假设</h2><p>&emsp;&emsp;坏消息：<strong>不同的任务需要共享一些结构，如果你做不到这一点，那么你最好还是将它们拆开来，用原始的单任务学习方法。</strong><br>&emsp;&emsp;好消息：<strong>许多任务都可以共享结构，即使它们在表面上看不出来可以共享结构，甚至可以是看起来毫无关联的任务。</strong></p>
+<h2 id="非正式的问题定义"><a href="#非正式的问题定义" class="headerlink" title="非正式的问题定义"></a>非正式的问题定义</h2><p>&emsp;&emsp;多任务学习问题：相比于独立地学习，学习所有的任务可以更快速以及更熟练。<br>&emsp;&emsp;元学习问题：给定先前任务上数据或者经验，在学习一个新任务时会更迅速并且/或者更熟练。<br>&emsp;&emsp;<strong>之后的课程会更形式化地进行定义</strong>。<br>&emsp;&emsp;视频中（38:00）的观点，transfer learning 更像是 multi-task learning 和 meta learning 的结合版。<br>&emsp;&emsp;视频中还有一个观点，<strong>多任务学习难道不是就是一个单任务学习吗</strong>？我们把所有的数据集拼接在一起 <script type="math/tex">\mathcal{D} = \sum \mathcal{D}_i</script>，不就只剩一个数据集了？然后将所有的损失函数求和 <script type="math/tex">\mathcal{L} = \sum \mathcal{L_i}</script>，不就是一个损失函数了？<br>&emsp;&emsp;结论是这是可行的！但是我们可以做得更好。</p>
+<h2 id="为什么要在现在研究多任务学习？"><a href="#为什么要在现在研究多任务学习？" class="headerlink" title="为什么要在现在研究多任务学习？"></a>为什么要在现在研究多任务学习？</h2><p>&emsp;&emsp;事实上 20 多年前就有人在研究了，1997 Caruana 提出了 Multitask Learning。事实上，早在 1992 年，Bengio 就提出了一种类似的思想。</p>
+<h1 id="多任务学习和元学习基础"><a href="#多任务学习和元学习基础" class="headerlink" title="多任务学习和元学习基础"></a>多任务学习和元学习基础</h1><p>&emsp;&emsp;</p>
+<ol>
+<li>Concatenation-based conditioning</li>
+<li>Addive conditioning</li>
+<li>Multi-head architecture</li>
+<li>Multiplicative conditioning</li>
+<li>More complex choice…</li>
+</ol>
+]]></content>
+      <categories>
+        <category>AI</category>
+        <category>ml-branch</category>
+      </categories>
+      <tags>
+        <tag>学习笔记</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>EmpTransfo: A Multi-head Transformer Architecture for Creating Empathetic Dialog Systems</title>
     <url>/%C2%B7%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/dilogue/affective%20computing/66.%20EmpTransfo%EF%BC%9AA%20Multi-head%20Transformer%20Architecture%20for%20Creating%20Empathetic%20Dialog%20Systems.html</url>
     <content><![CDATA[<div class="note info">
@@ -154,7 +214,7 @@ a = \begin{cases}
     <title>Towards Persona-Based Empathetic Conversational Models</title>
     <url>/%C2%B7%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/dilogue/affective%20computing/65.%20Towards%20Persona-Based%20Empathetic%20Conversational%20Models.html</url>
     <content><![CDATA[<div class="note info">
-            <p>&emsp;&emsp;<a href="https://arxiv.org/pdf/2004.12316.pdf" target="_blank" rel="noopener">论文地址</a>，作者为 Zhong et al.，发表于 2020 年。</p>
+            <p>&emsp;&emsp;<a href="https://arxiv.org/pdf/2004.12316.pdf" target="_blank" rel="noopener">论文地址</a>，作者为 Zhong et al.，发表于 2020 年。<br>&emsp;&emsp;这论文现在叫 Endowing Empathetic Dialogue Systems with Personas。</p>
           </div>
 <h1 id="摘要以及引言"><a href="#摘要以及引言" class="headerlink" title="摘要以及引言"></a>摘要以及引言</h1><p>&emsp;&emsp;移情对话模型已经在很多领域被证明能够提高用户的满意度和改进任务的结果。在心理学上，persona 被证明与 personality 高度关联，进而影响移情（博主注：<em>我实在不知道 persona 和 personality 有什么区别</em>）。此外，经我们的实证分析也认为 persona 在移情对话中扮演者重要的角色。为此，我们提出了一个 persona-based 移情对话的新任务，并<strong><u>首次</u>对 persona 在移情反应上的影响进行了实证研究</strong>。具体而言，我们<strong><u>首次</u>提出了一个用于 persona-based 移情对话的新的大规模多领域数据集 P</strong>ersona-based <strong>E</strong>mpathetic <strong>C</strong>onversion（<strong>PEC</strong>）。然后我们还提出了 <strong>CoBERT</strong>，一个基于 BERT 的高效回复检索模型，在我们的数据集上获得了一流的性能（<strong>博主吐槽</strong>：<em>你们自己首次提出的数据集，当然是一流的</em>）。最后做了总结。值得注意的是我们的结果展示出，<strong>当 CoBERT 在移情对话上训练而不是非移情对话上训练时，persona 能够提高移情回复的效果</strong>。<br>&emsp;&emsp;移情（empathy），严格来讲是情感共情（affective empathy），指的是用合适的情感（emotion）对他人的精神状态做出回应的能力。<br>&emsp;&emsp;当产生移情回应时，大多数现存的研究都没有考虑 persona。XiaoIce 有，但是她的 persona 是不可配置的，因此很难满足各种人类的需求。<br><a id="more"></a></p>
 <h1 id="Related-Work"><a href="#Related-Work" class="headerlink" title="Related Work"></a>Related Work</h1><p>&emsp;&emsp;<strong>Empathetic Conversational Models</strong>：尽管对神经对话模型由越来越多的研究，但是在使对话具有移情的特性上依旧只有很少的关注，直到现在（<strong><em>一堆参考论文</em></strong>），可能是由于移情对话数据的缺少。Rashkin et al.(2019) 提出了首个移情对话数据集 EmpatheticDialogues（ED）。<br>&emsp;&emsp;<strong>Persona-based Conversational Models</strong>：今年，浮现的研究趋势是个性化的对话模型（personalizing conversational models）（<strong><em>一堆参考论文</em></strong>）。<br>&emsp;&emsp;<strong>Retrieval-based Conversational Models</strong>：……</p>
@@ -186,7 +246,7 @@ a = \begin{cases}
     <content><![CDATA[<div class="note info">
             <p>&emsp;&emsp;<a href="https://openreview.net/pdf?id=HyesW2C9YQ" target="_blank" rel="noopener">论文地址</a>，论文作者为 Rashkin et al.，发表于 2018 年。本文发布了一个情绪对话数据集。<br>&emsp;&emsp;我突然发现作者还有<a href="https://arxiv.org/pdf/1811.00207.pdf" target="_blank" rel="noopener">另一篇论文</a>，与这篇几乎一模一样。</p>
           </div>
-<h1 id="摘要与引言"><a href="#摘要与引言" class="headerlink" title="摘要与引言"></a>摘要与引言</h1><p>&emsp;&emsp;对话代理的一个挑战是识别交谈对象的感受并且相应地做出回应，这一领域难做的原因是缺少合适、公开、可用的情绪（emotion）、对话（dialogue）数据集。本文提出一个新的移情对话生成（empathetic dialogue generation）任务以及一个移情对话数据集。与其他仅在大规模互联网对话数据上训练的模型相比，本实验表明使用我们的数据集的对话模型被认为更具有同情心（empathetic），由人类评测，同时在其他的指标上也有所改进（如 BLEU）。<br><a id="more"></a></p>
+<h1 id="摘要与引言"><a href="#摘要与引言" class="headerlink" title="摘要与引言"></a>摘要与引言</h1><p>&emsp;&emsp;对话代理的一个挑战是识别交谈对象的感受并且相应地做出回应，这一领域难做的原因是缺少合适、公开、可用的情绪（emotion）、对话（dialogue）数据集。本文提出一个新的移情对话生成（empathetic dialogue generation）任务以及一个移情对话数据集。与其他仅在大规模互联网对话数据上训练的模型相比，本实验表明使用此数据集训练的对话模型，由人类评测后被认为更具有同情心，同时在其他的指标上也有所改进（如 BLEU）。<br><a id="more"></a></p>
 <h1 id="Related-Work"><a href="#Related-Work" class="headerlink" title="Related Work"></a>Related Work</h1><p>&emsp;&emsp;对情绪的良好反应需要全面覆盖人类的表达。现有多种<strong>协议</strong>企图组织出一个情绪谱（spectrum of emotions），包括从来自生物反应的少数<strong>基本情绪</strong>（Ekman, 1992; Plutchik, 1984），到从上下文状态推理出的大规模<strong>细微情绪</strong>（Skerry &amp; Saxe, 2015）。<strong>我们融合多种标注协议的情绪</strong>，有一点需要注意，在对话场景中，仅从一个情景中就能推断出的情绪是很重要的。<br>&emsp;&emsp;分布式表征在当前一流的情绪分类模型中是其核心（一些论文），例如 emojis or hashtags，它们都采集自 twitter 上的公共媒体内容。<strong>SEMEVAL2019 EmoContext</strong> 挑战也是使用对话数据探测三种基本情绪。虽然公开的对话数据具有自发性（而非诱导性）数据的<strong>优点</strong>，但是它还有两个<strong>缺点</strong>：1）<em>总的来说就是人们在公开的平台上总是表达更完美的自己，在私下才会表达更强烈的负面情绪</em>；2）Twitter 通常限制为 140 个字符，这并不适用于一般的对话。本项工作试图产生覆盖情绪更平衡的内容，这更接近我们的终极目标，即培养出一种能够对任何情绪做出反应的对话。<br>&emsp;&emsp;<em>一些相关工作</em></p>
 <h1 id="Taking-about-personal-situations"><a href="#Taking-about-personal-situations" class="headerlink" title="Taking about personal situations"></a>Taking about personal situations</h1><p>&emsp;&emsp;我们考虑一个开放域一对一的对话背景，即两个人在某种情形下交流，一人在谈论另一人身上发生的事。这导致一种给定感觉的体验。<span class="label info">介绍数据集的构成</span></p>
 <h2 id="Emotional-situation-grounding"><a href="#Emotional-situation-grounding" class="headerlink" title="Emotional situation grounding"></a>Emotional situation grounding</h2><p>&emsp;&emsp;每个对话都基于一种<strong>情境（situation）</strong>。在给定情绪标签的情况下，参与者写下这一<strong>情境</strong>。图 2 罗列出了 32 种情绪类别，<strong>该集合的灵感来以前的数据集</strong>（<em>一些论文</em>），我们将它们整合到了一起。</p>
@@ -195,8 +255,8 @@ a = \begin{cases}
 <h2 id="任务设置"><a href="#任务设置" class="headerlink" title="任务设置"></a>任务设置</h2><p>&emsp;&emsp;任务的第一阶段，要求工作者根据情绪标签用 1-3 句话描述一个情境。平均每个情境描述 19.8 个字。第二阶段，两名工作者互相聊天。每次对话被限制为 4-8 句长（平均每次对话 4.31 句），平均每条语句长 15.2 个字。<br>&emsp;&emsp;并且确保了情绪平衡的覆盖。</p>
 <h2 id="EMPATHETICDIALOGUES-dataset-statistics"><a href="#EMPATHETICDIALOGUES-dataset-statistics" class="headerlink" title="EMPATHETICDIALOGUES dataset statistics"></a>EMPATHETICDIALOGUES dataset statistics</h2><p>&emsp;&emsp;包含 24850 条对话，收集自 810 个不同的参与者，它们将可以通过 ParlAI 在网上公开可用。对话大于被分割为 80% 训练集，10% 验证集，10% 测试集，实际为 19533/2770/2547。<span class="label default">数据集的比例</span></p>
 <h1 id="Empathetic-Dialogue-Generation"><a href="#Empathetic-Dialogue-Generation" class="headerlink" title="Empathetic Dialogue Generation"></a>Empathetic Dialogue Generation</h1><p>&emsp;&emsp;本节描述我们的数据集是怎么能够使得普通的闲聊模型更具同情心（empathetic）的，与其他现存模型不同，它能够生成更具有移情能力的回复。我们让模型扮演 Listener 的角色来训练和评估模型。<strong>在测试阶段，对话模型可以访问对话前一句的句子，但是不能访问情绪词提示（例如“proud”），也不能访问由 Speaker 生成的情境描述</strong>。<strong>博主注</strong>：<em>这可能是因为在真实的场景下，无法获取到用户的情绪，也无法得到情境。此外这是否意味着训练和评估的时候可以访问？</em>给定 <script type="math/tex">n</script> 句之前的对话语句，定义为对话上下文 <script type="math/tex">x</script>，并拼接以及标记成 <script type="math/tex">x_1, \cdots, x_m</script>。然后是生成的目标（target）回复 <script type="math/tex">\bar{y}</script>，我们的模型最大化目标回复的似然估计 <script type="math/tex">p(\bar{y} | x)</script>。我们分别调查了生成和检索（retrieval）的设置。</p>
-<h2 id="基本架构"><a href="#基本架构" class="headerlink" title="基本架构"></a>基本架构</h2><p>&emsp;&emsp;模型基于 Transformer。<br>&emsp;&emsp;<strong>Retrieval</strong>：<br>&emsp;&emsp;<strong>Generation</strong>：Transformer decoder 使用 encoder 的输出去预测一系列单词 <script type="math/tex">y</script>，最小化生成序列 <script type="math/tex">\bar{y}</script> 的负对数似然。在推理阶段，我们使用来自 <a href="https://arxiv.org/pdf/1610.02424.pdf" target="_blank" rel="noopener">Vijayakumar et al. (2016)</a> 的 diverse beam search。<br>&emsp;&emsp;<strong>Training Details</strong>：先使用 17 亿的 Reddit 对话数据进行预训练，使用 Transformer 或者 BERT-base 从头开始训练。<em>具体参数参考论文，不做赘述</em>。Transformer 使用 Fasttext 预训练词向量，BERT 使用 BooksCorpus 和 English Wikipedia 的预训练词向量。然后再使用 EmpatheticDialogues（ED）进行微调。</p>
-<h2 id="利用EmpatheticDialogues训练数据集"><a href="#利用EmpatheticDialogues训练数据集" class="headerlink" title="利用EmpatheticDialogues训练数据集"></a>利用EmpatheticDialogues训练数据集</h2><p>&emsp;&emsp;基于检索的模型依赖候选对象。我们的数据明确地指定需要有同情心，以一对一对话的背景，这意味着不同于用于预训练的 Reddit 对话数据集，这些领域的候选对象也许比通用的对话更适合移情反应。因此，我们的实验直接将 ED 候选对象直接放入在推理时使用的候选池中，而不选择使用 ED 进行微调。<br>&emsp;&emsp;对基于检索的模型和基于生成的模型都进行微调（<strong>博主注</strong>：<em>我脑子乱了，上一段明明说不对基于检索的模型进行微调的</em>）。</p>
+<h2 id="基本架构"><a href="#基本架构" class="headerlink" title="基本架构"></a>基本架构</h2><p>&emsp;&emsp;模型基于 Transformer。<br>&emsp;&emsp;<strong>Retrieval</strong>：给定一个候选回复的大型集合 <script type="math/tex">Y</script>，让模型去选择最好的那个 <script type="math/tex">y^*</script>。我们首先在基于 Transformer 的检索架构（<a href="https://arxiv.org/pdf/1804.07754.pdf" title="Learning semantic textual similarity from conversations" target="_blank" rel="noopener">Yang et al., 2018</a>）上做实验。我们也在 BERT 上做了实验。<strong>在训练的时候，我们将来自同一批次的所有语句作为候选回复，批次大小设置为 512，这样可以给模型更多负例。</strong>（BERT 用了 256）。在推理的时候，我们选择了三个候选回复集合，它们收集自：ED 训练集中的所有回复语句 <script type="math/tex">Y^ED</script>；DailyDialog 中的所有语句 <script type="math/tex">Y^DD</script>；一百万条语句  <script type="math/tex">Y^R</script>，它们来自拥有 17 亿条数据的 Reddit 对话数据集。<br>&emsp;&emsp;<strong>Generation</strong>：Transformer decoder 使用 encoder 的输出去预测一系列单词 <script type="math/tex">y</script>，最小化生成序列 <script type="math/tex">\bar{y}</script> 的负对数似然。在推理阶段，我们使用来自 <a href="https://arxiv.org/pdf/1610.02424.pdf" target="_blank" rel="noopener">Vijayakumar et al. (2016)</a> 的 diverse beam search。<br>&emsp;&emsp;<strong>Training Details</strong>：先使用 17 亿的 Reddit 对话数据进行预训练，使用 Transformer 或者 BERT-base 从头开始训练。<em>具体参数参考论文，不做赘述</em>。Transformer 使用 Fasttext 预训练词向量，对于 BERT，使用在 BooksCorpus 和 English Wikipedia 上预训练出来的词向量。</p>
+<h2 id="利用来自ED的训练数据"><a href="#利用来自ED的训练数据" class="headerlink" title="利用来自ED的训练数据"></a>利用来自ED的训练数据</h2><p>&emsp;&emsp;基于检索的模型依赖候选对象。我们的数据明确地指定需要有同情心，以一对一对话的背景，这意味着不同于用于预训练的 Reddit 对话数据集，这些领域的候选对象也许比通用的对话更适合移情反应。<strong>因此，我们的实验直接将 ED 候选对象直接放入在推理时使用的候选池中，而<u>不对 ED 进行微调</u></strong>。<span class="label info">检索模型的候选池还使用了 ED 数据</span><br>&emsp;&emsp;对基于检索的模型和基于生成的模型我还使用微调过的预训练模型，去预测下一条句子，其中对话上下文是前 4 句话的窗口，这是我们数据集中对话的平均长度。在文章中，使用此方法的模型被称为 “File-Tuned” 模型。<strong>除了模型中的预训练步骤，此微调步骤会在所有建构中被一直使用，直到模型收敛</strong>。<span class="label danger">使用 ED 进行微调</span></p>
 <h1 id="Adding-Information-From-External-Predictor"><a href="#Adding-Information-From-External-Predictor" class="headerlink" title="Adding Information From External Predictor"></a>Adding Information From External Predictor</h1><p>&emsp;&emsp;许多现存的模型已经在监督任务上训练好了，这些模型也许与移情回复有关。例如预测 tweets 的 emoji 标签。这些模型与我们的基础架构的表征结合，也许可以取得收益。</p>
 ]]></content>
       <categories>
@@ -219,6 +279,15 @@ a = \begin{cases}
 <h1 id="EmpTransfo-A-Multi-head-Transformer-Architecture-for-Creating-Empathetic-Dialog-Systems"><a href="#EmpTransfo-A-Multi-head-Transformer-Architecture-for-Creating-Empathetic-Dialog-Systems" class="headerlink" title="EmpTransfo: A Multi-head Transformer Architecture for Creating Empathetic Dialog Systems"></a>EmpTransfo: A Multi-head Transformer Architecture for Creating Empathetic Dialog Systems</h1><ul>
 <li><a href="https://yan624.github.io/·论文笔记/dilogue/affective computing/66. EmpTransfo：A Multi-head Transformer Architecture for Creating Empathetic Dialog Systems.html">论文笔记</a><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/EmpTransfo.jpg" alt="EmpTransfo"></li>
 </ul>
+<h1 id="CAiRE-An-Empathetic-Neural-Chatbot"><a href="#CAiRE-An-Empathetic-Neural-Chatbot" class="headerlink" title="CAiRE: An Empathetic Neural Chatbot"></a>CAiRE: An Empathetic Neural Chatbot</h1><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/CAiRE.jpg" alt="CAiRE"></p>
+<ul>
+<li><strong>Language Model Pre-training</strong>：使用 GPT，在大型文本语料库 BooksCorpus 上进行预训练，可以使得模型能够捕获对话跨度足够大的上下文信息。</li>
+<li><strong>Persona Dialogue Pre-training</strong>：现存的移情对话数据集相对较小，仅在这数据集上进行微调可能会限制模型在闲聊时的所拥有的话题。为了增强 CAiRE 在闲聊时的能力，参照 Wolf et al., 2019 的迁移学习策略，我们先在 PersonaChat 上对模型进行预训练。该预训练步骤给予 CAiRE 一个 persona，因此提高了模型的参与度和一致性。</li>
+<li><strong>Empathetic Dialogue Fine-tuning</strong>：使用 EmpatheticDialogues。在训练的时候给出 speaker 的情绪标签，但是在评估时，不给出。<ul>
+<li><strong>Fine-tuning Detail</strong>：为了完全利用在 PersonaChat 上预训练的效果，我们自定义了 CAiRE 的 persona 语句：<em>“my name is caire”, “i want to help humans to make a better world”, “i am a good friend of humans”</em>（<strong>博主注</strong>：<em>这些语句代表着 CAiRE 的人物定位</em>）。照着 Wolf et al., 2019 的微调协议，我们首先拼接了自定义 persona，对话历史以及回复（distractor）。使用了特殊符号，并且所有的嵌入都是由位置嵌入，词嵌入和对话状态嵌入相加而成。前两个是 Transformer 所需，对话状态嵌入帮助 CAiRE 对对话的体系结构建模，同时用于区分 persona 语句，对话上下文语句和回复。表征输入进 Transformer 后生成上下文表征，我们将最后一个符号定义为 <script type="math/tex">SEN</script>，回复（distractor）之前的符号定义为 <script type="math/tex">EMO</script>。<br>&emsp;&emsp;为了<strong>优化回复预测的目标对象</strong>，在每一个训练步，我们从其他对话中采样出一个 distractor 来对抗真实的回复。然后将 SEN 表征输入一个线性层，区分是否为真实的回复，然后得到 cross-entropy <script type="math/tex">\mathcal{L}_S</script>。<br>&emsp;&emsp;为了<strong>优化回复的语言模型的目标对象</strong>，我们用真实回复的上下文表征去预测下一个回复的符号，然后使用 cross-entropy 计算语言模型的 loss <script type="math/tex">\mathcal{L}_L</script>。<br>&emsp;&emsp;为了<strong>使 CAiRE 探测到对话伙伴的情绪</strong>，我们在训练阶段新增了一个对话情绪探测优化目标。我们将 EMO 作为当前对话状态的摘要，然后将其输入进线性映射层，去预测 32 个情绪的分数。cross-entropy 被用于计算情绪类别的 loss <script type="math/tex">\mathcal{L}_E</script><br>&emsp;&emsp;最终，我们在最后的 loss 函数上进行微调：<script type="math/tex">\mathcal{L} = \alpha \mathcal{L}_L + \mathcal{L}_S + \mathcal{L}_E</script></li>
+</ul>
+</li>
+</ul>
 <h1 id="MoEL-Mixture-of-Empathetic-Listeners"><a href="#MoEL-Mixture-of-Empathetic-Listeners" class="headerlink" title="MoEL: Mixture of Empathetic Listeners"></a>MoEL: Mixture of Empathetic Listeners</h1><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/MoLE.jpg" alt="MoLE"></p>
 <ul>
 <li>以前的移情对话系统研究大多数关注的是给定某个情绪，生成一个回复。然而要使得系统具有移情能力，更重要的是需要理解用户的情绪以及合适的回复。本文提出一个 end-to-end 方法，用于对移情对话系统建模，即 Mixture of Empathetic Listeners（<strong>MoEL</strong>）。我们的模型<strong>首次捕获了用户的情绪并且输出一个情绪分布</strong>。<ul>
@@ -228,20 +297,11 @@ a = \begin{cases}
 <li><strong>Mixture of Empathetic Listeners</strong>：对话上下文是一组来自 Speaker 和 listener 的交替语句，表示为 <script type="math/tex">\mathcal{C} = \{U_1, S_1, U_2, S_2, \cdots, U_t\}</script>，speaker 每句话的情绪状态表示为 <script type="math/tex">Emo = \{e_1, e_2, \cdots, e_t\}, \, \forall e_i \in \{1, \cdots, n\}</script>。<strong>我们的模型旨在追踪上下文中 speaker 的情绪状态 <script type="math/tex">e_t</script>，并且生成一个移情回复 <script type="math/tex">S_t</script></strong>。总的来说，如图 1 所示，MoEL 由三个组件组成：emtion tracker, emotion-aware listeners and meta listener。<strong>1）</strong>emtion tracker 编码 <script type="math/tex">\mathcal{C}</script> 以及计算用户情绪的分布。<strong>2）</strong>emotion-aware listeners <strong>独立地</strong>关注上述分布并计算它们自己的分布。<strong>3）</strong>最后，meta listener 采用来自 emotion-aware listeners 的加权表征，然后生成最终的语句。<span class="label primary">模型架构</span> <span class="label danger">任务定义和介绍模型计算流程</span><ul>
 <li><strong>Embedding</strong>：定义上下文嵌入为 <script type="math/tex">E^C \in \mathbb{R}^{|V| \times d_{emb}}</script>，回复的嵌入为 <script type="math/tex">E^R \in \mathbb{R}^{|V| \times d_{emb}}</script>。在多轮对话中，模型能够区分不同的轮数是至关重要的。因此我们在输入中加入了对话状态的嵌入，这被用于使 encoder 能够区分 speaker 或者 listener 的语句（Wolf et al., 2019）。此外还加入了位置编码，所以上下文嵌入表示为 <script type="math/tex">E^C(C) = E^W(C) + E^P(C) + E^D(C)</script>。<script type="math/tex">E^W</script> 代表词向量，<script type="math/tex">E^P</script> 代表位置编码，<script type="math/tex">W^D</script> 代表对话状态（<em>对话状态指的是什么，请参考 Wolf et al., 2019</em>）。</li>
 <li><strong>Emotion Tracker</strong>：此模块使用标准的 Transformer。首先拼接所有对话轮数，使用 <script type="math/tex">E^C</script> 将所有符号映射为向量表征。然后开始编码。类似 BERT，为了计算输出张量的加权和，我们在每一个输入序列的开头增加了一个 query 符号 <script type="math/tex">QRY</script>。将 Transformer 的编码器表示为 <script type="math/tex">TRS_{Enc}</script>，那么对应上下文表征如下所示，<script type="math/tex">H \in \mathbb{R}^{L \times d_{model}}</script>，其中 L 是序列长度。<script type="math/tex; mode=display">H = TRS_{Enc}(E^C([QRY; C]))</script>那么我们可以定义符号 <script type="math/tex">QRY</script> 最后的表征为：<script type="math/tex">q = H_0, q \in \mathbb{R}^{d_{model}}</script>，然后它被用于生成情绪的分布。</li>
-<li><strong>Emotion Aware Listeners</strong>：这主要由 <strong>1）</strong>shared listener（学习每个情绪的共享信息）；<strong>2）</strong>n 个独立的 Transformer decoder（学习在给定一个特定的情绪状态下，做出合适的反应）组成。我们定义 listeners 的集合为：<script type="math/tex">L = [TRS^0_{Dec}, \cdots, TRS^n_{Dec}]</script>。每个情绪回复表征为：<script type="math/tex; mode=display">V_i = TRS^i_{Dec}(H, E^R(r_{0:t-1}))</script><script type="math/tex">TRS^i_{Dec}</script> 指的是第 i 个 listener，包括 shared listener。在概念上，我们希望 shared listener 的输出时一个通用表征，可以帮助模型捕获对话上下文。另外，我们希望每个 empathetic listener 学习怎么用一个情绪进行回复。<strong>为了使模型拥有这些行为，我们根据用户情绪分布给不同的 empathetic listener 分配了不同的权重，但是给 shared listener 分配固定权重 1</strong>。（这个权重应该是在最后加权和的时候用的）<ul>
+<li><strong>Emotion Aware Listeners</strong>：这主要由 <strong>1）</strong>shared listener（学习每个情绪的共享信息）；<strong>2）</strong>n 个独立的 Transformer decoder（学习在给定一个特定的情绪状态下，做出合适的反应）组成。我们定义 listeners 的集合为：<script type="math/tex">L = [TRS^0_{Dec}, \cdots, TRS^n_{Dec}]</script>。每个情绪回复表征为：<script type="math/tex; mode=display">V_i = TRS^i_{Dec}(H, E^R(r_{0:t-1}))</script><script type="math/tex">TRS^i_{Dec}</script> 指的是第 i 个 listener，包括 shared listener。在概念上，我们希望 shared listener 的输出是一个通用表征，可以帮助模型捕获对话上下文。而每个 empathetic listener 的职责是学习怎样用某种情绪进行回复。<strong>为了使模型拥有这些行为，我们根据用户的情绪分布给不同的 empathetic listener 分配了不同的权重，但是给 shared listener 分配固定的权重 1</strong>。（这个权重在最后加权和的时候用）<ul>
 <li>构建了一个 Key-Value Memory Network（Miller et al., 2016），用于为 listener 分配不同的权重。</li>
 </ul>
 </li>
 <li><strong>Meta Listener</strong>：最后，该组件使用的是另一个 Transformer decoder，它进一步地转换了 listeners 的表征并且生成了最后的回复语句。<strong>直觉是每个 listener 专门针对某种情绪，meta listener 收集多个 listener 的意见，并产生最终的回复。</strong>此模块的公式定义类似。</li>
-</ul>
-</li>
-</ul>
-<h1 id="CAiRE-An-Empathetic-Neural-Chatbot"><a href="#CAiRE-An-Empathetic-Neural-Chatbot" class="headerlink" title="CAiRE: An Empathetic Neural Chatbot"></a>CAiRE: An Empathetic Neural Chatbot</h1><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/CAiRE.jpg" alt="CAiRE"></p>
-<ul>
-<li><strong>Language Model Pre-training</strong>：使用 GPT，在大型文本语料库 BooksCorpus 上进行预训练，可以使得模型能够捕获对话跨度足够大的上下文信息。</li>
-<li><strong>Persona Dialogue Pre-training</strong>：现存的移情对话数据集相对较小，仅在这数据集上进行微调可能会限制模型在闲聊时的所拥有的话题。为了增强 CAiRE 在闲聊时的能力，参照 Wolf et al., 2019 的迁移学习策略，我们先在 PersonaChat 上对模型进行预训练。该预训练步骤给予 CAiRE 一个 persona，因此提高了模型的参与度和一致性。</li>
-<li><strong>Empathetic Dialogue Fine-tuning</strong>：使用 EmpatheticDialogues。在训练的时候给出 speaker 的情绪标签，但是在评估时，不给出。<ul>
-<li><strong>Fine-tuning Detail</strong>：为了完全利用在 PersonaChat 上预训练的效果，我们自定义了 CAiRE 的 persona 语句：<em>“my name is caire”, “i want to help humans to make a better world”, “i am a good friend of humans”</em>（<strong>博主注</strong>：<em>这些语句代表着 CAiRE 的人物定位</em>）。照着 Wolf et al., 2019 的微调协议，我们首先拼接了自定义 persona，对话历史以及回复（distractor）。使用了特殊符号，并且所有的嵌入都是由位置嵌入，词嵌入和对话状态嵌入相加而成。前两个是 Transformer 所需，对话状态嵌入帮助 CAiRE 对对话的体系结构建模，同时用于区分 persona 语句，对话上下文语句和回复。表征输入进 Transformer 后生成上下文表征，我们将最后一个符号定义为 <script type="math/tex">SEN</script>，回复（distractor）之前的符号定义为 <script type="math/tex">EMO</script>。<br>&emsp;&emsp;为了<strong>优化回复预测的目标对象</strong>，在每一个训练步，我们从其他对话中采样出一个 distractor 来对抗真实的回复。然后将 SEN 表征输入一个线性层，区分是否为真实的回复，然后得到 cross-entropy <script type="math/tex">\mathcal{L}_S</script>。<br>&emsp;&emsp;为了<strong>优化回复的语言模型的目标对象</strong>，我们用真实回复的上下文表征去预测下一个回复的符号，然后使用 cross-entropy 计算语言模型的 loss <script type="math/tex">\mathcal{L}_L</script>。<br>&emsp;&emsp;为了<strong>使 CAiRE 探测到对话伙伴的情绪</strong>，我们在训练阶段新增了一个对话情绪探测优化目标。我们将 EMO 作为当前对话状态的摘要，然后将其输入进线性映射层，去预测 32 个情绪的分数。cross-entropy 被用于计算情绪类别的 loss <script type="math/tex">\mathcal{L}_E</script><br>&emsp;&emsp;最终，我们在最后的 loss 函数上进行微调：<script type="math/tex">\mathcal{L} = \alpha \mathcal{L}_L + \mathcal{L}_S + \mathcal{L}_E</script></li>
 </ul>
 </li>
 </ul>
@@ -258,7 +318,9 @@ a = \begin{cases}
 <li><strong>Internal Memory</strong> 使用词向量，GRU 隐藏状态和上下文向量的拼接版进行计算。先使用 sigmoid 函数分别计算 read gate 和 write gate 的状态 <script type="math/tex">g^r_t \, g^w_t</script>，然后 <script type="math/tex">g^r_t</script> 使用<strong>对应元素相乘的乘法（element-wise multiplication）</strong>从 Internal Memory <script type="math/tex">M^I_{e,t}</script> 中提取一定量的记忆 <script type="math/tex">M^I_{r,t}</script>（都是玄学，意会就行，不用试图理解），<script type="math/tex">M^I_{r,t}</script> 将与拼接版向量同时被喂入 GRU。最后 GRU 生成的隐藏状态 <script type="math/tex">s_t</script> 通过 <script type="math/tex">g^w_t</script> 提取出一定的记忆 <script type="math/tex">M^I_{e,t+1}</script> 写入 Internal Memory。受到心理学上的启发，情绪化回应是相对短暂的，所以<strong>凭借此 Internal Memory 记录用户交谈过程中的短暂情绪变化</strong>。之前说到该记忆状态 <script type="math/tex">M^I</script> 会与拼接后的向量同时输入进 GRU，这就意味着<strong>该情绪记忆会影响解码过程</strong>。特别地，该记忆模块不同于其他的记忆模块，如 LSTM，当解码过程结束后，<strong>记忆模块中的状态应该衰减至 0</strong>，这代表着情绪被机器完全地表达出来。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/ECM：Internal Memory.jpg" alt="Internal Memory"></li>
 <li><strong>External Memory</strong> 通过 GRU 的隐藏状态 <script type="math/tex">s_t</script> 计算下一个单词概率。单词的概率分布由两部分组成，一是情绪词表的概率分布，二是通用词表的概率分布，二者拼接后通过此拼接的概率分布计算下一个单词的概率。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/ECM：External Memory.jpg" alt="External Memory"></li>
 </ul>
-]]></content>
+<h1 id="TransferTransfo-A-Transfer-Learning-Approach-for-Neural-Network-Based-Conversational-Agents"><a href="#TransferTransfo-A-Transfer-Learning-Approach-for-Neural-Network-Based-Conversational-Agents" class="headerlink" title="TransferTransfo: A Transfer Learning Approach for Neural Network Based Conversational Agents"></a>TransferTransfo: A Transfer Learning Approach for Neural Network Based Conversational Agents</h1><div class="note warning">
+            <p>&emsp;&emsp;此论文不算是情感计算的论文，由于上述有几篇论文用到了这论文的一些方法，所以这里也加进去了。</p>
+          </div>]]></content>
       <categories>
         <category>paper</category>
       </categories>
@@ -344,15 +406,20 @@ a = \begin{cases}
   <entry>
     <title>神经网络训练技巧（tricks）</title>
     <url>/%C2%B7zcy/AI/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E8%AE%AD%E7%BB%83%E6%8A%80%E5%B7%A7%EF%BC%88tricks%EF%BC%89.html</url>
-    <content><![CDATA[<h1 id="mask"><a href="#mask" class="headerlink" title="mask"></a>mask</h1><p>&emsp;&emsp;<strong>题外话</strong>：对于 Transformer，无论 encoder 还是 decoder 都要做 mask（很多对 Transformer 的总结文章都只提到了 decoder 部分的 Masked Multihead Self-Attention，实际上 encoder 也要做一次）。mask 一共分为两种，Transformer 中 decoder 的 mask 指的是 <strong>sequence mask</strong>，encoder 中的 mask 指的是 <strong>padding mask</strong>，对于其他网络模型也是类似的道理。可以查阅参考资料 1，2。</p>
-<h2 id="padding-mask"><a href="#padding-mask" class="headerlink" title="padding mask"></a>padding mask</h2><p>&emsp;&emsp;对于 Transformer 来说，在 encoder 中的每次执行 scaled dot-product 后都要做一次 padding mask。由于我们要让序列的长度相等以便做向量化操作，所以必不可少地需要对输入序列进行<strong>截断</strong>或<strong>补零</strong>（即填充 PAD，PAD 不一定非要是 0）操作。所以 padding mask 的<strong>主要目的</strong>是使得 self-attention 不要过多的关注向量中的 PAD 符号。<br>&emsp;&emsp;在进行了解 padding mask 的做法之前，首先简单地了解一下 Transformer 的大致流程：sequence id -&gt; embedding -&gt; multi-head attention(<strong>scaled dot-product</strong> -&gt; softmax -&gt; softmax <script type="math/tex">\times</script> value) -&gt; add &amp; norm -&gt; decoder。而 mask 的<strong>具体操作是</strong>：在执行 scaled dot-product <strong>后</strong>，将序列中补零位置所对应的隐藏状态置为 -INF，使得序列经过 softmax 层时，<strong>该对应位置所计算出的概率为 0</strong>。（<em>mask 操作貌似在 Transformer 中是可选的。</em>）<br>&emsp;&emsp;总得来说，padding mask 是为了神经网络忽略 PAD 的信息。例如，虽然模型可以学习到 PAD 这个填充符是没有意义的，但是<strong>在做 attention 时，PAD 所在的这些位置依然有一些 attention score，而我们要的是 0 score</strong>。所以有必要引入一个 <strong>mask 矩阵</strong>，在做 attention 之前，先把 PAD 所在位置的值置为一个极小值，甚至是无穷小（由于 attention 需要经过 softmax，softmax 需要求 e 的次方，要想 e 的某次方为 0，只能使得值为无穷小才可以，这是一个数学问题）。</p>
+    <content><![CDATA[<div class="note default">
+            <p><span class="label warning">mask</span> <span class="label success">gradient clipping</span> <span class="label primary">learning rate decay</span> <span class="label info">dropout</span> <span class="label danger">subword</span> <span class="label info">tensorboardX</span> <span class="label primary">过拟合/欠拟合</span></p>
+          </div>
+<h1 id="mask"><a href="#mask" class="headerlink" title="mask"></a>mask</h1><p>&emsp;&emsp;<strong>题外话</strong>：对于 Transformer，无论 encoder 还是 decoder 都要做 mask（很多对 Transformer 的总结文章都只提到了 decoder 部分的 Masked Multihead Self-Attention，实际上 encoder 也要做一次）。mask 一共分为两种，Transformer 中 decoder 的 mask 指的是 <strong>sequence mask</strong>，encoder 中的 mask 指的是 <strong>padding mask</strong>，对于其他网络模型也是类似的道理。可以查阅参考资料 1，2。</p>
+<h2 id="padding-mask"><a href="#padding-mask" class="headerlink" title="padding mask"></a>padding mask</h2><p>&emsp;&emsp;以 Transformer 为例，在 encoder 中的每次执行 scaled dot-product 后都要做一次 padding mask。由于我们要让序列的长度相等以便做向量化操作，所以必不可少地需要对输入序列进行<strong>截断</strong>或<strong>补零</strong>（即填充 PAD，PAD 不一定非要是 0）操作。所以 padding mask 的<strong>主要目的</strong>是使得 self-attention 不要过多的关注向量中的 PAD 符号。<br>&emsp;&emsp;在进行了解 padding mask 的做法之前，首先简单地了解一下 Transformer 的大致流程：sequence id -&gt; embedding -&gt; multi-head attention(<strong>scaled dot-product</strong> -&gt; softmax -&gt; softmax <script type="math/tex">\times</script> value) -&gt; add &amp; norm -&gt; decoder。而 mask 的<strong>具体操作是</strong>：在执行 scaled dot-product <strong>后</strong>，将序列中补零位置所对应的隐藏状态置为 -INF，使得序列经过 softmax 层时，<strong>该对应位置所计算出的概率为 0</strong>。（<em>mask 操作貌似在 Transformer 中是可选的。</em>）<br>&emsp;&emsp;总得来说，padding mask 是为了神经网络忽略 PAD 的信息。例如，虽然模型可以学习到 PAD 这个填充符是没有意义的，但是<strong>在做 attention 时，PAD 所在的这些位置依然有一些 attention score，而我们要的是 0 score</strong>。所以有必要引入一个 <strong>mask 矩阵</strong>，在做 attention 之前，先把 PAD 所在位置的值置为一个极小值，甚至是无穷小（由于 attention 需要经过 softmax，softmax 需要求 e 的次方，要想 e 的某次方为 0，只能使得值为无穷小才可以，这是一个数学问题）。<br>&emsp;&emsp;以下举一些不是 Transformer 的例子：</p>
 <ol>
 <li><p><strong>对于 Embedding 层来说，符号 PAD 的词向量也是无意义的</strong>，所以也可以将它的所在位置的值（即词向量）置为 0，使得它无意义。也就是说我们需要引入一个 mask 矩阵，它的大小与词表一样，所有位置初始化为 1，但是 PAD 所在的位置置为 0。然后每次在使用词向量时，乘上这个 mask。不过这样略微麻烦，所幸的是 Pytorch 为我们提供了实现。只需要简单地填入 <code>padding_idx</code> 即可，值为 PAD 对应的索引，索引取决于你的项目。可以看到这非常简单，但是这只是让 PAD 这个词向量无意义并且不计算它的梯度而已。在经过复杂的计算之后 PAD 所在位置的值依旧会变为非 0，而对于其他层想要做到使得 PAD 无意义就没那么简单了。</p>
 <figure class="highlight reasonml"><table><tr><td class="code"><pre><span class="line">nn.<span class="constructor">Embedding(<span class="params">vocab_size</span>, <span class="params">embed_dim</span>, <span class="params">padding_idx</span>=PAD_ID)</span></span><br></pre></td></tr></table></figure>
 </li>
-<li><p><strong>对于 LSTM 等的时序特征提取层</strong>可以使用 <code>torch.nn.utils.rnn.pack_padded_sequence(input, lengths, batch_first=False, enforce_sorted=True)</code> 函数将 embedding 打包。然后将这个打包后的 embedding 输入 LSTM，之后使用 <code>torch.nn.utils.rnn.pad_packed_sequence(sequence, batch_first=False, padding_value=0.0, total_length=None)</code> 函数，将 LSTM 的输出还原。</p>
+<li><p><strong>对于 LSTM 等的时序特征提取层</strong>可以使用 <code>torch.nn.utils.rnn.pack_padded_sequence(input, lengths, batch_first=False, enforce_sorted=True)</code> 函数将 embedding 打包。然后将这个打包后的 embedding 输入 LSTM，之后使用 <code>torch.nn.utils.rnn.pad_packed_sequence(sequence, batch_first=False, padding_value=0.0, total_length=None)</code> 函数，将 LSTM 的输出还原。<br>&emsp;&emsp;以以下代码为例，其中第一行代码的 <code>lengths</code> 必须是 pytorch 的 tensor，它代表着你输入序列的长度，比如你输入 [[‘你’, ‘好’, ‘.’], [‘我’, ‘是’, ‘鱼’, ‘.’]]，那么 <code>lengths</code> 就是 <code>torch.Tensor([3, 4])</code>。<code>batch_first</code> 默认是 False，这是因为 LSTM 的输入要求是 (S, N, *)，其中 S 是序列长度，N 是批次大小。<code>batch_first</code> 顾名思义就是输入的序列的第一个维度是否为批次大小，显然为了使得 pytorch 内部兼容，<code>batch_first</code> 默认为 <code>False</code> 是最好的。一般我都懒得对序列进行长度上的排序，所以将 <code>enforce_sorted</code> 设置为 False。</p>
+<figure class="highlight reasonml"><table><tr><td class="code"><pre><span class="line"># lstm padding mask</span><br><span class="line">packed_feature = nn.utils.rnn.pack<span class="constructor">_padded_sequence(<span class="params">embed</span>, <span class="params">lengths</span>, <span class="params">enforce_sorted</span>=False)</span></span><br><span class="line">packed_bi_feature, hx = self.lstm(packed_feature)</span><br><span class="line">bi_feature, lengths_unpacked = nn.utils.rnn.pad<span class="constructor">_packed_sequence(<span class="params">packed_bi_feature</span>)</span></span><br></pre></td></tr></table></figure>
 </li>
-<li><strong>如果有些层</strong>不像 LSTM 一样只能按照时间步读取，而是<strong>可以批量处理时序数据</strong>，那么可以使用 mask 矩阵。<strong>目前我就知道一个 Transformer 需要用到 mask 矩阵。</strong>你可以通过句子的长度自行创建。</li>
+<li><p><strong>如果有些层</strong>不像 LSTM 一样只能按照时间步读取，而是<strong>可以批量处理时序数据</strong>，那么可以使用 mask 矩阵。<strong>目前我就知道一个 Transformer 需要用到 mask 矩阵。</strong>你可以通过句子的长度自行创建。</p>
+</li>
 <li>最后<strong>在计算 loss 时</strong>也需要 padding mask，这可以使用 <code>torch.masked_select(input, mask, out=None)</code> 进行计算。<a id="more"></a>
 </li>
 </ol>
@@ -374,9 +441,110 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
 <li>以后有机会再补充</li>
 </ol>
 <h1 id="subword技术"><a href="#subword技术" class="headerlink" title="subword技术"></a>subword技术</h1><h2 id="参考资料-2"><a href="#参考资料-2" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a href="https://www.zhihu.com/question/329708785" target="_blank" rel="noopener">word2vec缺少单词怎么办？</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/72312668" target="_blank" rel="noopener">香侬读 | 怎样在小数据集下学习OOV词向量？</a></li>
 <li><a href="https://zhuanlan.zhihu.com/p/86965595" target="_blank" rel="noopener">深入理解 NLP Subword 算法：BPE、WordPiece、ULM</a></li>
 </ol>
-<h1 id="调参的技巧"><a href="#调参的技巧" class="headerlink" title="调参的技巧"></a>调参的技巧</h1><h2 id="参考资料-3"><a href="#参考资料-3" class="headerlink" title="参考资料"></a>参考资料</h2>]]></content>
+<h1 id="调参的步骤以及经验"><a href="#调参的步骤以及经验" class="headerlink" title="调参的步骤以及经验"></a>调参的步骤以及经验</h1><div class="note info">
+            <p>&emsp;&emsp;<a href="https://www.bilibili.com/video/BV1Ux411S7rk?p=13" target="_blank" rel="noopener">李宏毅深度学习</a> 大致地讲解了调参技巧，不过现在都是人尽皆知的方法了。</p>
+          </div>
+<p>&emsp;&emsp;根据本人经历，记录调参的方法。</p>
+<h2 id="最初的超参数"><a href="#最初的超参数" class="headerlink" title="最初的超参数"></a>最初的超参数</h2><p>&emsp;&emsp;首先你需要的使用尽可能大的学习率（learning rate，lr），使得你的模型在训练集上拟合的不错，即 loss 值达到可以接受的程度，并且准确率或者你的其他指标达到不错的水平。<br>&emsp;&emsp;这意味着你的模型本身不是存在很大的问题。<strong>但是</strong>，你的模型在验证集上的结果可能差的离谱！不要紧，接下来开始调整参数。要牢记一点，<strong>超参数的好坏一定要在验证集上做评定，并且最好保证在训练集上的性能不受太大影响</strong>。</p>
+<h2 id="如何处理过拟合"><a href="#如何处理过拟合" class="headerlink" title="如何处理过拟合"></a>如何处理过拟合</h2><p>&emsp;&emsp;参考《过拟合处理》</p>
+<h2 id="loss-值并不能作为判断模型性能的指标"><a href="#loss-值并不能作为判断模型性能的指标" class="headerlink" title="loss 值并不能作为判断模型性能的指标"></a>loss 值并不能作为判断模型性能的指标</h2><p>&emsp;&emsp;有一个让我印象深刻的案例，我发现验证集上的 loss 值很高，但是在验证集上的准确率还不错。我认为<strong>loss 值并不能作为判断模型性能的指标</strong>。<br>&emsp;&emsp;例如我的实验，在训练集上 loss 值的大小收敛到 [0.1, 1]，但是在验证集上 loss 值高达 [25, 50]，所以在最开始我一直认为模型在验证集上的性能肯定极差。现在假设以 acc 作为评分指标，在训练集上可能有 60%+，而在验证集上我猜测连 1% 都没有。由于这种错误的思维，其实我并没有编写计算 acc 的代码，因为我觉得这个模型有问题，所以我懒得耗费时间编这个代码。<br>&emsp;&emsp;最后我受不了了，编写了计算 acc 的代码，发现两个数据集上的性能居然类似，大致分别为 68% 和 48%。下面是基于直觉的分析，假设我们的目标多分类任务，预测 <code>[&#39;我&#39;, &#39;是&#39;, &#39;鱼&#39;]</code>。<br>&emsp;&emsp;由于在训练集上的 loss 值很低，所以自然而然地可以想到它的预测水平要高，假设预测 <code>&#39;我&#39;</code> 的概率为 0.9，那么对应的损失值为 <script type="math/tex">-\log(0.9)</script>（负对数似然）。而在验证集上，假设预测 <code>&#39;我&#39;</code> 的概率为 0.6，那么对应的损失值为 <script type="math/tex">-\log(0.6)</script>。可以看出显然验证集上的损失值要大得多，但是他们的结果是一样的，都预测正确了。注：这里的损失值其实相差还是不大，但是对于语言生成任务来说，损失值是要累加的，假设一句话有 30 个字，那么累加之后，差距就大了。</p>
+<h2 id="关于epoch"><a href="#关于epoch" class="headerlink" title="关于epoch"></a>关于epoch</h2><p>&emsp;&emsp;如果你调试了很多参数之后，模型在<strong>训练集</strong>上的性能没有很大改善，<strong>可以尝试大幅度增加 epoch</strong>。当然你也可以在一开始就使用很大的 epoch。因为有些模型很奇怪，可能 loss 曲线已经很平滑了，但是在某个 epoch 之后，loss 值突然暴跌。例如，下图是训练了一段时间的 loss 值，我卡了四五天，一直以为 loss 不会下降了。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/smooth_loss.svg" alt="smooth loss"></p>
+<p>&emsp;&emsp;但是当你加大 epoch 之后，突然发现它又开始下降了。（注：这两条曲线有点不一样，是因为我略微地调整了代码，但是这已经足够说明问题了。经过我的实验，这里的 loss 值下降与我的代码调整无关）<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/slumping_loss.svg" alt="slumping loss"></p>
+<p>&emsp;&emsp;这可能不太明显，我们把它缩放一下，发现真的又开始下降了。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/scaled_slumping_loss.svg" alt="scaled slumping loss"></p>
+<h2 id="GPU内存不够以及随机采样"><a href="#GPU内存不够以及随机采样" class="headerlink" title="GPU内存不够以及随机采样"></a>GPU内存不够以及随机采样</h2><p>&emsp;&emsp;如果你实验室的机器不好，打算使用随机采样的方法使得在小样本上测试超参数。<strong>那么请记得 train/val/test 的比例一定要与原数据集的比例一样</strong>。数据集一般都是由制作者划分好比例的，比如你得到的数据集 train/val/test 的数据量为 12472/900/900。现在你想只训练 6600 条数据，以此提高找到超参数的效率，那么你必须做到以下几点：<br>&emsp;&emsp;按照比例缩放：<script type="math/tex">\frac{6600}{12472} \approx 0.529</script>，那么你所取得的 val/test 数据集合一定要是 <script type="math/tex">0.529 \times 900 \approx 476</script> 条。简单来说，你从总的训练集中取多少比例，也要到验证集和测试集里按这个比例取。不能“<em>哦，总共就 900 份，我不如都算作验证集吧</em>”，<strong>这样会导致数据的分布极其的不平衡</strong>！试想一下，数据的制作者肯定会尽量使得三份数据集的分布尽可能的接近，并且其中的句子肯定也是长短不一的。结果你从训练集中随机取出 6000 份，导致了这些数据的分布和原来不一样，一个直观的解释就是模型无法捕获长句子的信息，因为你的新训练集和训练集中长句子所占的比例不一样。而你还偏偏用原来那个分布的验证集！<br>&emsp;&emsp;一定要使用随机采样的方法！不要直接使用 python 的切片！否则也会导致你的数据集分布不平衡。使用 python 内置的 <code>random.choice()</code> 可以很简单地实现随机采样。</p>
+<h2 id="加大lr，train-loss不一定更快收敛"><a href="#加大lr，train-loss不一定更快收敛" class="headerlink" title="加大lr，train loss不一定更快收敛"></a>加大lr，train loss不一定更快收敛</h2><p>&emsp;&emsp;我有碰到一个情况，<strong>加大学习率后，训练集上的 loss 反而下降的更慢了！</strong>图片我放在了下面，其中深蓝色的曲线代表着学习率是要大的那个模型。我的猜测是，学习率加大后，在某一个时间段的 epoch 中，模型一直在尝试走到山底，但是由于学习率过大，导致它一直来回振荡。而学习率小点，就正好一脚跨下去了。从图中也可以发现，在一开始，大学习率的模型确实要下降的快点，但是后来被小学习率的模型反超了。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/增加lr，loss反而下降更慢.svg" alt="增加 lr，loss 反而下降更慢"></p>
+<h2 id="关于Adam的一个bug"><a href="#关于Adam的一个bug" class="headerlink" title="关于Adam的一个bug"></a>关于Adam的一个bug</h2><p>&emsp;&emsp; 如果需要对模型使用权重衰减的策略，<strong>在 Pytorch 中不要使用 Adam 算法，有 bug</strong>。听说目前流行的深度学习框架都有 bug。请改用 AdamW 算法。甚至在一开始就可以选择 AdamW，因为 Adam 和 AdamW 是一样的，区别仅仅是在权重衰减步骤上有所不同。</p>
+<h1 id="过拟合处理"><a href="#过拟合处理" class="headerlink" title="过拟合处理"></a>过拟合处理</h1><div class="note warning">
+            <p>&emsp;&emsp;奇怪的事写在前面。<br>&emsp;&emsp;我碰到了一种情况，训练集上拟合的很好（loss 约为 1），但是在验证集上很差（loss 约为 280+）。不断地调整代码以及更换学习率，得到的效果均不明显。<br>&emsp;&emsp;我给出其中一种可能：<strong>两种数据集的分布不一样</strong>。例如我的问题，在给定 10000 条训练集样本和 900 条验证集样本的情况下。由于 NLP 任务句子不等长的特性，所以我选择先将句子排序使得同一批次中的数据等长，注意我没有选择填充 <code>&lt;PAD&gt;</code> 这种方法。<br>&emsp;&emsp;然后<strong>我取了 6600 条训练集样本，在取验证集样本时，由于它的数据量较小，所以我全要了，问题就出在这</strong>。我的训练集样本是取的 [1400: 8000]，所以这个区间内的句子长度比较平均，由于我事先排序的原因，所以极短的句子和极长的句子我都没取到。但是原验证集和原训练集的分布是一样的！所以 900 条验证集中包含了极长的句子和极短的句子，这导致了现在的两个数据集分布不一样了！<strong>解决办法是使用随机采样</strong>。<em>不要排序之后直接切片获得数据，而是应该是先随机采样，再排序</em>。<br>&emsp;&emsp;但是处理完之后结果依旧很烂！现在正在调试学习率。待续，后面补充。</p>
+          </div>
+<p>&emsp;&emsp;当过拟合时，可以考虑以下的方法，过拟合的另一种说法是高方差（high variance）。</p>
+<h2 id="增加数据集的大小"><a href="#增加数据集的大小" class="headerlink" title="增加数据集的大小"></a>增加数据集的大小</h2><p>&emsp;&emsp;如下图所示，紫红色和蓝色曲线是验证集上的 loss。蓝色曲线意味着我从 4400 条数据增加到了 6600 条。明显可以看到过拟合略有缓解。但是训练集上的 loss 增加了，灰色那条线是增加数据量后的训练集 loss。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/add_more_data.svg" alt="增加更多的数据" title="增加更多的数据"></p>
+<p>&emsp;&emsp;下图也是一个例子，相比于上个模型还训练的有问题，这个模型已经训练的还可以了。可以看到红色曲线比蓝色的要平缓一点，因为数据集增加，训练集上的 loss 会相应增加。再看上面的橙色和深蓝色，深蓝色是增加数据量之后的 loss 曲线，略微降低。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/add more data2.svg" alt="增加更多的数据2"></p>
+<h2 id="加大批次大小或减小模型复杂度"><a href="#加大批次大小或减小模型复杂度" class="headerlink" title="加大批次大小或减小模型复杂度"></a>加大批次大小或减小模型复杂度</h2><p>&emsp;&emsp;如下图所示，中间的两条橙色和蓝色曲线是批次大小从 128 增加到 224 的结果。橙色曲线为 val loss，可以看到橙色曲线相比于上面那条蓝色的 val loss，已经略有下降，这代表着过拟合的程度略有降低。而中间的蓝色曲线代表 train loss，相比于下面的灰色 train loss 曲线有些许上升，这代表着模型在训练集上的泛化能力有所下降。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/more_larger_batch_size.svg" alt="加大批次大小"></p>
+<p>&emsp;&emsp;下图为减小隐藏状态的例子，中间的绿色以及红色曲线是隐藏状态从 512 减到 400 的结果，可以看到验证集上的 loss 略有下降（略微的缓解过拟合），训练集上的 loss 略有上升。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/reduce_hidden_size.svg" alt="减小隐藏状态大小"></p>
+<h2 id="learning-rate-decay"><a href="#learning-rate-decay" class="headerlink" title="learning rate decay"></a>learning rate decay</h2><p>&emsp;&emsp;Q：在什么时候需要使用 learning rate decay？<br>&emsp;&emsp;A：网上资源不多，还是自己总结吧。在此实验中，加入 learning rate decay 后，准确率略有提升。</p>
+<h2 id="正则化"><a href="#正则化" class="headerlink" title="正则化"></a>正则化</h2><p>&emsp;&emsp;</p>
+<h2 id="Dropout"><a href="#Dropout" class="headerlink" title="Dropout"></a>Dropout</h2><p>&emsp;&emsp;一般设置为 0.5。在 Pytorch 中代表神经网络中某一层的神经元的输出有 0.5 的概率为 0。其他的深度学习框架不保证一样。<br>&emsp;&emsp;参考资料：</p>
+<ol>
+<li><a href="https://zhuanlan.zhihu.com/p/38200980" target="_blank" rel="noopener">深度学习中Dropout原理解析</a></li>
+</ol>
+<h2 id="label-smoothing"><a href="#label-smoothing" class="headerlink" title="label smoothing"></a>label smoothing</h2><h1 id="过拟合和欠拟合"><a href="#过拟合和欠拟合" class="headerlink" title="过拟合和欠拟合"></a>过拟合和欠拟合</h1><h2 id="train-acc很大，gap非常大"><a href="#train-acc很大，gap非常大" class="headerlink" title="train acc很大，gap非常大"></a>train acc很大，gap非常大</h2><p>&emsp;&emsp;在训练过程中出现了一种情况，train acc 94% 左右，但是 val acc 只有 24% 左右，test acc 也是 24% 左右。很多人认为这是<strong>过拟合</strong>状态，因为模型在训练集上拟合的很好，但在验证集上拟合的不好，这两者之间的 gap 很大。也就是<strong>高方差</strong>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/多领域seq2lf/train acc很大，gap也很大.svg" alt="train acc很大，gap也很大"></p>
+<p>&emsp;&emsp;以下是对此现象的分析：</p>
+<ol>
+<li><p>再增加 <strong>epoch</strong> 已经没用了，因为该模型的参数已经很好的拟合了数据集，使得准确率接近 100%。</p>
+<blockquote class="blockquote-center"><p>说明训练集中的几乎所有信息（不论是对泛化有用的信息还是训练集中的噪声）都全部被模型学习到了。（<a href="https://www.zhihu.com/question/65200055" target="_blank" rel="noopener">来源</a>）</p>
+</blockquote>
+</li>
+<li><p>改变（无论增大还是缩小） rnn 的<strong>隐藏状态</strong>也不会有很大改善了。比如说此文章的模型，我尝试选择隐藏状态大小为 (100, 115, 125, 128)，结果如下所示，可以看到增加减少隐藏状态大小，对 train acc 根本无影响，对 val acc 也只有一点影响：</p>
+<blockquote class="blockquote-center"><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>hidden size</th>
+<th>batch</th>
+<th>train acc</th>
+<th>val acc</th>
+<th>test acc</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>100</td>
+<td>32</td>
+<td>94.42%</td>
+<td>20.74%</td>
+<td>21.28%</td>
+</tr>
+<tr>
+<td>115</td>
+<td>32</td>
+<td>94.42%</td>
+<td>22.80%</td>
+<td>23.72%</td>
+</tr>
+<tr>
+<td>125</td>
+<td>32</td>
+<td>94.42%</td>
+<td>24.95%</td>
+<td>24.78%</td>
+</tr>
+<tr>
+<td>128</td>
+<td>32</td>
+<td>94.42%</td>
+<td>21.20%</td>
+<td>22.58%</td>
+</tr>
+<tr>
+<td>125</td>
+<td>128</td>
+<td>98.47%</td>
+<td>19.13%</td>
+<td>20.37%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</blockquote>
+<div class="note info">
+            <p>&emsp;&emsp;但是我认为这种情况<strong>不算过拟合</strong>（暂时不看 <code>batch=128</code> 那组）。因为过拟合指的是模型在训练集上过度地拟合了数据特征，于是在验证集上出现个比较离群的数据样本，就会得到很差的结果。<br>&emsp;&emsp;如果把训练集拥有的特征集合定义为 A，验证集拥有的特征集合定义为 B，那么 <script type="math/tex">C=A \cap B, D = A \cup B - C</script>，其中 C 代表的是未被神经网络拟合的很小的一部分特征，D 代表的是已经被神经网络拟合的特征（注：这里的拟合并不一定要完全的拟合，在拟合线的附近即可）。神经网络要做的是同时拟合 A 与 B 的所有特征。<br>&emsp;&emsp;但是随着 epoch 的增加，A 中的所有特征肯定被拟合的越来越好，而 B 中有些已经被拟合的特征却越来越远离拟合线，所以导致了 C 中的特征越来越多。（可以通过逻辑回归来先思考，验证集数据原本在拟合线附近，但是增加 epoch 或者增加网络参数等操作导致过拟合，原本在拟合线附近的数据点反而偏离了）<br>&emsp;&emsp;<strong>所以训练集和验证集中的数据的分布应该是这样的：训练集和验证集中有很多数据分布类似（对应即使过拟合 val acc 也不会下降到 0%），但是两个数据集中有些数据只有部分特征的分布是类似的（对应于过拟合），最后两个数据集汇总有一部分数据完全无关联（对应于不管怎么拟合，val acc 始终不可能到 100%）。</strong><br>&emsp;&emsp;话说回来文中的情况，明显训练集和验证集的 acc 到达顶部之后一直处于平稳的状态，增加 epoch 或者增加网络参数都没有使得 acc 增加或下降，这就意味这 C 中的特征没有变化。<br>&emsp;&emsp;<strong>所以这种情况应该是这样的：训练集和验证集中的数据有少量是类似的（对应于 val acc 拥有 20+%），其余大部分，可能有超过 60% 的数据都没有关联（对应于不管怎么训练 val acc 始终只有 20+%），最后有两个数据集中一小部分数据可能有部分特征重叠（对应于随着 epoch 的增加，val acc 有略微的波动）。</strong></p>
+          </div>
+</li>
+</ol>
+<p>&emsp;&emsp;对这种情况，一般出现在利用随机采样快速训练模型，只需要加大数据量就行了。所以以后再用小数据量训练时只需要将参数调整到满意的地步就不需要再继续调整了，直接换大数据量。<br>&emsp;&emsp;最后对于 <code>batch = 128</code> 的那组，train acc 上升了，其他的下降了，有过拟合嫌疑，但是幅度不是很大。</p>
+<h1 id="梯度爆炸"><a href="#梯度爆炸" class="headerlink" title="梯度爆炸"></a>梯度爆炸</h1><h1 id="可视化训练结果"><a href="#可视化训练结果" class="headerlink" title="可视化训练结果"></a>可视化训练结果</h1><p>&emsp;&emsp;以前一直用 matplotlib 来画图，现在用了 tensorboardX 之后，感觉人瞬间就爽了，以下为教程。无法启动看 2，启动后网页无法显示看 3，代码不会写看 1。<br>&emsp;&emsp;参考资料：</p>
+<ol>
+<li><a href="https://tensorboardx.readthedocs.io/en/latest/tutorial.html#what-is-tensorboard-x" target="_blank" rel="noopener">官方文档</a></li>
+<li><a href="https://blog.csdn.net/qq_40605167/article/details/95761885" target="_blank" rel="noopener">tensorboard OSError: [Errno 22] Invalid argument错误处理</a></li>
+<li><a href="https://blog.csdn.net/weixin_44135282/article/details/86156961" target="_blank" rel="noopener">tensorboard生成的网址打不开的解决方法</a></li>
+<li><a href="https://blog.csdn.net/bigbennyguo/article/details/87956434" target="_blank" rel="noopener">详解PyTorch项目使用TensorboardX进行训练可视化</a></li>
+</ol>
+]]></content>
       <categories>
         <category>AI</category>
       </categories>
@@ -384,7 +552,10 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
   <entry>
     <title>一些常用的pytorch技巧</title>
     <url>/AI/framework/%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E7%9A%84pytorch%E6%8A%80%E5%B7%A7.html</url>
-    <content><![CDATA[<div class="note warning">
+    <content><![CDATA[<div class="note default">
+            <p><span class="label info">pytorch</span> <span class="label warning">zero grad</span> <span class="label success">改变tensor形状</span> <span class="label primary">矩阵乘法</span> <span class="label info">loss function</span> <span class="label danger">pytorch nn</span> <span class="label success">操作张量</span></p>
+          </div>
+<div class="note warning">
             <p>&emsp;&emsp;本文只记录框架层面的使用。关于深度学习层面的研究记录在 <a href="https://yan624.github.io/AI/神经网络训练技巧（tricks）.html">神经网络训练技巧（tricks）</a>。</p>
           </div>
 <h1 id="view、reshape和resize"><a href="#view、reshape和resize" class="headerlink" title="view、reshape和resize_"></a>view、reshape和resize_</h1><p>&emsp;&emsp;<strong>结论写在前面</strong>：张量连续，使用 <code>view()</code>（此为多数情况）；张量不连续，则使用 <code>reshape()</code>。<code>resize_()</code> 最好不要使用。注意，在张量不连续的情况下，非要使用 <code>view()</code> 也可以，但是要先调用 <code>contiguous()</code> 方法，使得张量连续，但是此方法会返回一个新的张量，浪费时间空间。<br>&emsp;&emsp;<strong>共同点</strong>：这些方法都可以改变 pytorch 中 tensor 的形状，但是它们略有不同。</p>
@@ -419,8 +590,7 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
 <li>如果都是 2 维，则计算二维矩阵相乘；</li>
 <li>如果第一个张量是 1 维，第二个是 2 维，则广播第一个张量，进行二维矩阵相乘计算；</li>
 <li>如果第一个张量是 2 维，第二个是 1 维，则计算矩阵 * 向量；</li>
-<li>如果二者至少都是 1 维，且</li>
-<li>至少一个参数是 N 维（N &gt; 2）。非矩阵的维度将被广播，矩阵维度一般指每个张量的最后一至两位。如 shape=(1, 2, 3, 4) 和 shape=(1, 4, 3)，最后两位是矩阵维度；shape=(1, 2, 3, 4) 和 shape=(4)，第一个张量的最后两位和第二个张量的最后一位就是矩阵维度。</li>
+<li>如果二者至少都是 1 维，且至少一个参数是 N 维（N &gt; 2）。非矩阵的维度将被广播，矩阵维度一般指每个张量的最后一至两位。如 shape=(1, 2, 3, 4) 和 shape=(1, 4, 3)，最后两位是矩阵维度；shape=(1, 2, 3, 4) 和 shape=(4)，第一个张量的最后两位和第二个张量的最后一位就是矩阵维度。</li>
 </ol>
 </li>
 </ol>
@@ -462,6 +632,15 @@ crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)</script><p>&em
 <li><a href="https://www.cnblogs.com/marsggbo/p/10401215.html" target="_blank" rel="noopener">Pytorch里的CrossEntropyLoss详解</a></li>
 </ol>
 <h1 id="pytorch中的神经网络"><a href="#pytorch中的神经网络" class="headerlink" title="pytorch中的神经网络"></a>pytorch中的神经网络</h1><h2 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h2><p>&emsp;&emsp;关于 nn.LSTM 的用法：如果不想手动初始化隐藏状态，而是想让 pytorch 帮你初始化，那么就只需要填入输入值即可。举个例子，下面代码框中的代码所输入的自然语句是 [‘how are you’, ‘i’m fine’]。<br>&emsp;&emsp;其中输入值 x 的形状为 (seq_len, batch_size, input_size)，对应上面的例子就是 (3, 2, 300)，代表序列长度为 3（因为上面的两句话的最大长度为 3），批量大小为 2，词向量维度为 300。需要注意的是：<strong>pytorch 会根据你输入的序列长度</strong>（输入的张量必须是一样长的，参差不齐的张量无法输入，当然了，你也无法创建出这样的张量）<strong>自动地在时间步上做计算，不需要你写一个循环，然后依次输入每一个单词的词向量。</strong><br><figure class="highlight reasonml"><table><tr><td class="code"><pre><span class="line">cell = nn.<span class="constructor">LSTM(<span class="params">input_size</span>, <span class="params">hidden_size</span>, <span class="params">num_layers</span>)</span></span><br><span class="line">output, (a, m) = cell(x)</span><br></pre></td></tr></table></figure></p>
+<h1 id="张量操作"><a href="#张量操作" class="headerlink" title="张量操作"></a>张量操作</h1><h2 id="expand"><a href="#expand" class="headerlink" title="expand()"></a>expand()</h2><p>&emsp;&emsp;<code>expand()</code> 函数按照你想要的大小扩充 tensor，并且<strong>返回一个新的 tensor</strong>。注意它是 tensor 的成员方法，并且你所想要新 tensor 的维度必须与原 tensor 的维度相同。例如，原 tensor.shape=(3, 1)，那么你可以扩大为 (3, 4)，但是你不能扩大为 (3, 1, 1)，当然更不能为 (3, 1, 4)。举个例子：<br><figure class="highlight angelscript"><table><tr><td class="code"><pre><span class="line">x = torch.Tensor([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>]])</span><br><span class="line"># (<span class="number">3</span>, <span class="number">1</span>)</span><br><span class="line">print(x.shape)</span><br><span class="line">y = x.expand(<span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line"># (<span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line">print(y.shape)</span><br><span class="line"># error</span><br><span class="line">x.expand(<span class="number">3</span>, <span class="number">1</span>, <span class="number">1</span>)</span><br></pre></td></tr></table></figure></p>
+<h1 id="optimizer-zero-grad"><a href="#optimizer-zero-grad" class="headerlink" title="optimizer.zero_grad()"></a>optimizer.zero_grad()</h1><p>&emsp;&emsp;在 pytorch 中，为什么要在每个循环之初调用这个方法？因为 pytorch 把计算的每个梯度都累加起来，并不会每迭代一次就将梯度清零。这样做看起来令人费解，并反常理。但是实际上这样做可以做更多神奇的操作，比如</p>
+<ul>
+<li><a href="https://www.zhihu.com/question/303070254" target="_blank" rel="noopener">https://www.zhihu.com/question/303070254</a></li>
+</ul>
+<p>&emsp;&emsp;还有，试想本来你想运行 batch_size=1024，但是由于电脑太差，只能运行 batch_size=256 的批次数据。那么只需要每循环两次调用一次 zero_grad() 即可。<br>&emsp;&emsp;参考：</p>
+<ol>
+<li><a href="https://blog.csdn.net/u011959041/article/details/102760868" target="_blank" rel="noopener">pytorch中为什么要用 zero_grad() 将梯度清零</a></li>
+</ol>
 ]]></content>
       <categories>
         <category>AI</category>
@@ -1024,7 +1203,7 @@ P(w_i | w_{i-1}) = \frac{P(w_{i-1} w_i)}{P(w_{i-1})} \approx \frac{f(w_{i-1} w_i
 <li><a href="https://yan624.github.io/·学习笔记/AI/dl/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">吴恩达李宏毅综合学习笔记：RNN入门#长短期记忆——Long Short-term Memory(LSTM)</a></li>
 <li><a href="https://yan624.github.io/·zcy/AI/dl/深度学习算法（三）：RNN 各种机制.html#LSTM">深度学习算法（三）：RNN 各种机制#LSTM</a></li>
 </ol>
-<p>&emsp;&emsp;之后，对于 LSTM，它还有梯度爆炸和梯度消失两个问题，文章<strong>《<a href="https://yan624.github.io/project/多领域seq2lf.html#LSTM-解决了-RNN-的什么问题">多领域seq2lf#LSTM 解决了 RNN 的什么问题</a>》</strong>讲了 SLTM 的这两个问题的产因，此外，其中还介绍了解决办法。</p>
+<p>&emsp;&emsp;之后，对于 LSTM，它还有梯度爆炸和梯度消失两个问题，文章<strong>《<a href="https://yan624.github.io/·zcy/AI/深度学习500问笔记.html#·LSTM解决了RNN的什么问题">深度学习500问#·LSTM解决了RNN的什么问题</a>》</strong>讲了 SLTM 的这两个问题的产因，此外，其中还介绍了解决办法。</p>
 <h3 id="GRU"><a href="#GRU" class="headerlink" title="GRU"></a>GRU</h3><p>&emsp;&emsp;对于 GRU 早已经写了很多篇笔记，以下的学习笔记记录了 GRU 的网络架构（注：这些都只是学习笔记，仅供参考）。</p>
 <ol>
 <li><a href="https://yan624.github.io/·学习笔记/AI/dl/吴恩达李宏毅综合学习笔记：RNN入门.html#GRU单元——Gate-Recurrent-Unit">吴恩达李宏毅综合学习笔记：RNN入门#GRU单元——Gate Recurrent Unit</a></li>
@@ -1419,7 +1598,7 @@ OPT(i) =
 </ol>
 </li>
 <li><strong>为什么深层神经网络难以训练？</strong> <div class="note info">
-            <ol><li><a href="https://yan624.github.io/project/多领域seq2lf.html#clip-gradient">多领域seq2lf#clip-gradient</a><br>虽然讲得是 clip gradient，但是结合了以前的笔记同时讲了<strong>梯度爆炸</strong>和<strong>梯度消失</strong>。</li></ol>
+            <ol><li><a href="https://yan624.github.io/·zcy/AI/深度学习500问笔记.html#·梯度爆炸">深度学习500问笔记#·梯度爆炸</a><br>虽然讲得是 clip gradient，但是结合了以前的笔记同时讲了<strong>梯度爆炸</strong>和<strong>梯度消失</strong>。</li></ol>
           </div>
 <ol>
 <li>梯度消失<br>梯度消失是指通过隐藏层从后向前看，梯度会变的越来越小，说明前面层的学习会显著慢于后面层的学习，所以学习会卡住，除非梯度变大。<br>梯度消失的原因受到多种因素影响，例如<strong>学习率的大小</strong>，<strong>网络参数的初始化</strong>，<strong>激活函数的边缘效应</strong>等。在深层神经网络中，每一个神经元计算得到的梯度都会传递给前一层，较浅层的神经元接收到的梯度受到之前所有层梯度的影响。如果计算得到的梯度值非常小，随着层数增多，求出的梯度更新信息将会以指数形式衰减，就会发生梯度消失。下图是不同隐含层的学习速率：</li>
@@ -1563,12 +1742,63 @@ OPT(i) =
 </div>
 <h2 id="RNNs和FNNs有什么区别？"><a href="#RNNs和FNNs有什么区别？" class="headerlink" title="RNNs和FNNs有什么区别？"></a>RNNs和FNNs有什么区别？</h2><h2 id="RNNs训练和传统ANN训练异同点？"><a href="#RNNs训练和传统ANN训练异同点？" class="headerlink" title="RNNs训练和传统ANN训练异同点？"></a>RNNs训练和传统ANN训练异同点？</h2><h2 id="为什么RNN训练的时候Loss波动很大"><a href="#为什么RNN训练的时候Loss波动很大" class="headerlink" title="为什么RNN训练的时候Loss波动很大"></a>为什么RNN训练的时候Loss波动很大</h2><p>&emsp;&emsp;由于RNN特有的memory会影响后面 time step 的计算，所以梯度时大时小，learning rate没法个性化的调整，导致RNN在train的过程中，Loss会震荡起伏，为了解决RNN的这个问题，在训练的时候，可以设置临界值，当梯度大于某个临界值，直接截断，用这个临界值作为梯度的大小，防止大幅震荡。</p>
 <h2 id="标准RNN前向输出流程"><a href="#标准RNN前向输出流程" class="headerlink" title="标准RNN前向输出流程"></a>标准RNN前向输出流程</h2><h2 id="BPTT算法推导"><a href="#BPTT算法推导" class="headerlink" title="BPTT算法推导"></a>BPTT算法推导</h2><h2 id="RNN中为什么会出现梯度消失？"><a href="#RNN中为什么会出现梯度消失？" class="headerlink" title="RNN中为什么会出现梯度消失？"></a>RNN中为什么会出现梯度消失？</h2><div class="note default">
-            <ol><li><a href="https://yan624.github.io/project/多领域seq2lf.html#clip-gradient">多领域seq2lf#clip-gradient</a><br> 虽然讲得是 clip gradient，但是结合了以前的笔记同时讲了<strong>梯度爆炸</strong>和<strong>梯度消失</strong>。</li></ol>
+            <ol><li><a href="https://yan624.github.io/·zcy/AI/深度学习500问笔记.html#·梯度爆炸">深度学习500问#·梯度爆炸</a><br> 虽然讲得是 clip gradient，但是结合了以前的笔记同时讲了<strong>梯度爆炸</strong>和<strong>梯度消失</strong>。</li></ol>
           </div>
 <h2 id="如何解决RNN中的梯度消失问题？"><a href="#如何解决RNN中的梯度消失问题？" class="headerlink" title="如何解决RNN中的梯度消失问题？"></a>如何解决RNN中的梯度消失问题？</h2><p>&emsp;&emsp;解决办法是将 sigmoid 函数替换为 tanh。注意，在 CNN 中的首选激活函数是 ReLu，但是对于 RNN 来说，首选是 tanh，因为 ReLu 的右半轴是 <code>y=x</code>，会导致 RNN 的 timestep 越往后输出值越大。</p>
 <h2 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h2><div class="note default">
             <ol><li><a href="https://yan624.github.io/·学习笔记/AI/dl/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">吴恩达李宏毅综合学习笔记：RNN入门#长短期记忆——Long-Short-term-Memory-LSTM</a></li><li><a href="https://yan624.github.io/·zcy/AI/dl/深度学习算法（三）：RNN 各种机制.html#LSTM">深度学习算法（三）：RNN 各种机制#LSTM</a></li></ol>
           </div>
+<h3 id="·梯度爆炸"><a href="#·梯度爆炸" class="headerlink" title="·梯度爆炸"></a>·梯度爆炸</h3><p>&emsp;&emsp;<a href="http://proceedings.mlr.press/v28/pascanu13.pdf" target="_blank" rel="noopener">此论文</a>提出了 clip gradient（以下称 clipping）<strong>解决梯度爆炸</strong>。首先看下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/多领域seq2lf/the error surface is rough.jpg" alt="the error surface is rough"></p>
+<p>&emsp;&emsp;如果只看图，会发现有一个像峭壁一样的东西，它就是罪魁祸首。当我们将一个小球往前移动时，有时候正好迈过峭壁，小球得以正常移动。但是当小球碰到峭壁时，小球就会被反弹回去，导致 loss 发生剧烈变化。<br>&emsp;&emsp;从数学角度来看，那个峭壁就是梯度。<strong>需要注意的是</strong>，由于图中 z 轴标注的是 total loss，所以第一印象感觉峭壁代表 total loss，但是<strong>峭壁代表的是梯度，而不是 total loss</strong>。根据参数更新公式 <script type="math/tex">w -= \alpha * \Delta w</script>，其中 <script type="math/tex">\Delta w</script> 代表 w 的梯度，所以 w 的更新方向其实与梯度直接相关。<strong>当 w 不幸到达某个值时，遇到梯度极大的情况，那么不管梯度是正还是负，都会将 w 更新到一个相对很大的值，从而 loss 值也会跟着改变。注：这里其实也与 learning rate 有关，因为原本的梯度都很小，所以我们初始设置的 lr 都很大。突然梯度增大，而 lr 没有适应，一个大的梯度乘上一个大的 lr，那就更大了</strong>。<br>&emsp;&emsp;<strong>解决办法</strong>是：当 gradient 大于某个 threshold 时，就不让它大于 threshold（视频中说作者的代码中将 threshold 设置为 15，但是这个 threshold 应该是具体情况具体分析）。<br><div class="note warning">
+            <p>&emsp;&emsp;Q：那么是什么导致了出现梯度猛增的现象呢？<br>&emsp;&emsp;A：首先不是 sigmoid 的锅。因为已知 sigmoid 函数只会导致 gradient vanishing（梯度消失）的问题（<em><a href="https://yan624.github.io/·zcy/AI/dl/对神经网络整体的理解.html#缺陷">sigmoid 的缺陷</a>这一章说明了 sigmoid 具有梯度消失的缺陷</em>）。<del>如果是 sigmoid 同时引起梯度爆炸和梯度消失，按理说换成 ReLU 就能同时解决梯度爆炸/消失，但是将 RNN 的激活函数换成 ReLU 并没有解决问题，所以跟激活函数没什么关系</del>（<strong>博主注</strong>：删除内容是从李宏毅老师的视频上记下来的，但是现在看来可能是我理解错了。首先在根本上就错了，sigmoid 会造成梯度消失，但替换品并不是 relu，而是 tanh，其也只是减缓作用而已）。<br>&emsp;&emsp;那么怎么说明是什么导致了梯度爆炸呢？我们只需要小小地改变一个参数，然后观察 output 的变化，就能测出这个参数的 gradient 的大小。现在假设激活函数是 y = w * x，序列长度为 1000，并且第一个 timestep 的输入为 1，其他的 timestep 皆为 0，则<script type="math/tex">1^{1000} = 1</script>，而 <script type="math/tex">1.01^{1000} \approx 20000</script>。既然结果那么大，我们可能会想到去减小 learning rate 从而减小梯度，但是 <script type="math/tex">0.99^{1000} \approx 0</script>，你又要调大 learning rate，导致 lr 调起来很麻烦，所以调不调 lr 并没有什么区别。而这里就分别出现了梯度消失和梯度爆炸。这是由于 RNN 是序列模型，它需要处理一连串的序列。前一个的输出是后一个输入，<strong>类似于蝴蝶效应，一个很小的值，经过多个函数也能被放的很大。</strong><br>&emsp;&emsp;那么为什么可以通过观察一个参数的变化从而观察 gradient 的变化呢？很简单，例如 y = w * x，用上面的例子，第 1000 个输出会是 <script type="math/tex">y_{1000} = w^{1000} * x</script>，对 w 求导得 <script type="math/tex">\Delta w = 1000 w^{999} x</script>，由于 <script type="math/tex">w^{999}</script> 比 <script type="math/tex">w^{1000}</script> 小不了多少，所以 gradient 很大。<br>&emsp;&emsp;经过上面的例子我们就知道了问题出现的原因。当然一般情况下不会像上面序列长度有 1000 那么离谱。现在设序列长度就 40，当我们遇到一个较大的值时（比如 <script type="math/tex">1.1^{40} = 45.26</script>），依旧会出现梯度爆炸的问题。<br>&emsp;&emsp;解决办法：LSTM，clipping 等。<strong>注意：LSTM 只解决了 gradient vanishing 的问题，没有解决 gradient explode。详见下面的《LSTM 解决了 RNN 的什么问题》章节</strong>。同理 clipping 也只能解决 gradient explode 的问题，因为它能将梯度限制在一个点上（<strong>这是博主的思考，视频中并没有给出此结论</strong>）。那么我们可以结合 LSTM 和 clipping，从而同时解决梯度爆炸/消失。<br>&emsp;&emsp;综上所述，在 RNN 中，即使参数在很小一个范围内，梯度的变化也会很大。<br>&emsp;&emsp;最后还有一个问题，就是上面的例子是用 y = w * x 的例子，但是实际上，激活函数是用的 sigmoid, tanh 等，所以每个神经元的输出都永远在 [-1, 1] 中间。那么怎么会造成上面的例子中的情况呢？其实上面的例子只是一个比喻。真正的原因是反向传播时做的链式求导，它导致了梯度的连乘。详细推导见 <a href="https://yan624.github.io/·zcy/AI/dl/深度学习算法（二）：simple RNN 推导与理解.html#simple-RNN-的缺陷">simple RNN 的缺陷</a> 蓝色提示框。</p>
+          </div></p>
+<p>&emsp;&emsp;参考资料：</p>
+<ol>
+<li><a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">P37 26: Recurrent Neural Network (Part II)</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/34203833" target="_blank" rel="noopener">深入理解lstm及其变种gru</a></li>
+</ol>
+<p>&emsp;&emsp;以下对新闻分类进行测评，将使用了 clipping 与没使用 clipping 的结果进行对比。</p>
+<ol>
+<li>测评一条新闻的分类：“<strong>广西最美的县城，很多人第一次旅行就是去这里</strong>”。没有使用 clip gradient 的结果是：<strong>news_agriculture</strong>。使用 clip gradient 的结果是：<strong>news_travel</strong>。</li>
+<li>测评一条新闻的分类：“<strong>在越南游玩，有漂亮女子问“要不要生菜”，这是什么意思？</strong>”。没有使用 clip gradient 的结果是：<strong>news_military</strong>。使用 clip gradient 的结果是：<strong>news_agriculture</strong>。</li>
+<li>测评一条新闻的分类：“<strong>去西藏旅游时，导游反复叮嘱：无论多脏都最好不要洗澡？</strong>”。没有使用 clip gradient 的结果是：<strong>news_agriculture</strong>。使用 clip gradient 的结果是：<strong>news_story</strong>。</li>
+</ol>
+<p>&emsp;&emsp;使用 clip gradient 之后，分类结果好像有点正确了，第二句里面有菜，所以是农业。第三句跟农业好像没什么关系，但是跟 story 虽然说不上有关系，但是好像也不是完全没关系。另外以上三条新闻的正确分类其实都是<strong>旅行</strong>。需要说明的是这只是随便一个例子，用来说明加了 clip gradient 之后，对网络的预测有点用。示例中所用的神经网络只是一个简单的 LSTM，仅供参考：）。</p>
+<h3 id="·LSTM解决了RNN的什么问题"><a href="#·LSTM解决了RNN的什么问题" class="headerlink" title="·LSTM解决了RNN的什么问题"></a>·LSTM解决了RNN的什么问题</h3><p>&emsp;&emsp;解决了两点。仅为个人观点。</p>
+<ol>
+<li>memory 机制</li>
+<li>梯度消失</li>
+</ol>
+<h4 id="memory机制"><a href="#memory机制" class="headerlink" title="memory机制"></a>memory机制</h4><p>&emsp;&emsp;<strong>第一</strong>，RNN 受到短期记忆的影响。如果序列很长，他们将很难将信息从较早的时间步传送到后面的时间步。LSTM 通过改进 memory，可以更好地保留序列信息。<br>&emsp;&emsp;在每个时间点， RNN 都只用每个 cell 的 output 覆盖 memory 里的值，即每个 tiemstep 中的信息都会被覆盖掉。而在 LSTM 中，它会将 memory 乘上一个权重再加上 input，从而获得新的 memory。它不会每次都 forget memory，除非 forget gate 计算结果等于 0。从公式的角度看就是：</p>
+<script type="math/tex; mode=display">
+RNN: memory_{new} = cell(memory, input) \\
+LSTM: memory_{new} = a * input + b * memory \\</script><p>&emsp;&emsp;cell() 代表一个简单的 sigmoid 函数，memory 与 input 可以做拼接处理，也可以 memory + input，具体自己设计。a 是 input gate 的计算结果，b 是 forget gate 的计算结果，说白了都是一个权重，可以忽略。<br>&emsp;&emsp;这样乍一看好像 RNN 和 LSTM 没什么区别，它们都是会进行一些计算，然后获得一个新的 memory。但是 RNN 的计算方式是将 memory 与 input <strong>一起</strong>输入进 neuron，从而产生一个 output，最后将这个 output 作为新的 memory。你会发现，在 RNN 中，虽然 output 是由 memory 和 input 计算得来的，但是在更新 memory 时不是采用 LSTM 的策略，而是直接用 output 将 memory 覆盖掉，<strong>这既没考虑到原 memory 的值，也没考虑当前 input 的值</strong>。而 LSTM 在覆盖 memory 时，会考虑当前 memory 以及 input 的值。<strong>理解该段的重点是：下面的 1</strong>。</p>
+<ol>
+<li><strong>个人理解</strong>：RNN 看似用到了原 memory 和 input，但是在实际计算时（即 cell() 函数所做的操作），由它俩 train 出来的权重矩阵只是为了使 cell() 计算的结果尽可能地接近 y，而并非在计算一个好的 memory。这里尤其要注意，cell() 函数的功能跟 memory 没关系，RNN 与 memory 有关的操作仅仅只有一步，即 <script type="math/tex">memory_{new} = output</script>，它只是将以前的 memory 覆盖掉。而 LSTM 不光在更新 memory 时用到了原 memory 和 input，它里面的 3 个 gate 也都需要通过 input 计算，所以 input 对 LSTM 的输出影响很大，对 memory 的更新自然也大。</li>
+<li><strong>李宏毅机器学习视频中的说法</strong>：如果 weight 可以影响到 memory 里的值，那么这个影响会一直存在。我觉得李宏毅老师的讲解跟我的应该差不多，重点也是 LSTM 多了一个可以训练 memory 的权重。</li>
+<li>memory 本质是在记忆之前所有的 input。</li>
+</ol>
+<p>&emsp;&emsp;其实 forget gate 还是有几率清空 memory 的，那么为什么不直接取消 forget gate 呢？你不是要充分利用 input 吗？实际上在 LSTM 的第一个版本是没有 forget gate 的，它是后来才加上去的。甚至现在的说法是在训练 LSTM 时，不要给 forget gate 太大的权重，要让它大部分时间都是开着的，即大部分时间都不要清空 memory。如果以后训练 LSTM 时，觉得过拟合严重，可以使用 GRU，GRU 只有两个 gate（无 output gate）。（<em>引用<a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">教学视频</a> 22:50 的话</em>）。 </p>
+<h4 id="梯度消失"><a href="#梯度消失" class="headerlink" title="梯度消失"></a>梯度消失</h4><p>&emsp;&emsp;<strong>第二</strong>，反向传播时出现的问题，以下 Q 为问题，A 为解释。<br>&emsp;&emsp;引子：如《clip gradient》一章黄框中所说，RNN 很容易出现峭壁和平原。<strong>LSTM 只解决了 gradient vanishing 的问题</strong>，没有解决 gradient explode。LSTM 使得 error surface 不那么崎岖，<strong>消除了训练时的一些平坦的地方</strong>。虽然梯度在有些地方依然崎岖，但是不会有太平坦的地方。<strong>所以在训练时可以放心的将 lr 调小</strong>，不需要担心会出现平坦的地方，导致训练过慢。<br>&emsp;&emsp;如果公司问为什么把 RNN 换成 LSTM？<del>回答 LSTM 比较潮、因为 LSTM 比较复杂。</del>回答 LSTM 可以处理 gradient vanishing 的问题。具体解释如下：<br>&emsp;&emsp;<strong>Q</strong>：为什么 LSTM 可以解决 gradient vanishing 的问题？（解决梯度消失也可以说成避免 gradient 特别小（消除平原））<br>&emsp;&emsp;<strong>A</strong>：在 RNN 中利用 memory 的方式是一种复合函数的结构，所以在反向传播时，需要链式求导，梯度与梯度相乘容易造成<strong>梯度消失</strong>和<strong>梯度爆炸</strong>。关于 RNN 反向传播的求导结果可以参考 <a href="https://yan624.github.io/·zcy/AI/dl/深度学习算法（二）：simple RNN 推导与理解.html#simple-RNN-的缺陷">simple RNN 的缺陷</a> 蓝色提示框。<br>&emsp;&emsp;虽然这样的求导大致已经可以解释了梯度消失的问题，但是如果仔细想想就会发现盲点。在此之前，我想先说明 RNN 家族的反向传播路径与其他的神经网络不同，它的 loss 值是每一个 timestep 的真实值 y 与输出值 的 loss 之和。<a href="https://mooc.study.163.com/learn/2001280005?tid=2001391038&amp;_trace_c_p_k2_=72573d316c3441869416d70899cdf382#/learn/content?type=detail&amp;id=2001770031" target="_blank" rel="noopener">此视频</a> 大致讲明白了这个总 loss 值到底是由哪些 loss 相加得到的。<br>&emsp;&emsp;知道了上面的前提条件，就可以很简单的理解这个盲点了，接下来我先介绍一下这个盲点是什么：<strong>参考资料 1 大致解释了这一问题</strong>，这一段可能比较绕，<strong>简单来说就是后面的 timestep（比如下图中 <script type="math/tex">loss_4</script>）在反向传播时，求 <script type="math/tex">\Delta W</script> 会出现梯度消失（注意 RNN 每个 timestep 的 W 都是一样），这是因为在求梯度时，函数已经复合了好几层</strong>。而对 <script type="math/tex">loss_1</script> 求 W 的导数时，由于它本身就在序列的前面，函数还没有复合，所以 <script type="math/tex">\Delta W</script> 的导数还没梯度消失。<strong>最后在计算总的 loss 时，是将各个阶段的梯度加起来</strong>，即使后面的 loss 会得到一个很小的的梯度 <script type="math/tex">\Delta W</script>，但由于 <script type="math/tex">loss_1</script> 的原因，并不会发生梯度消失。<br>&emsp;&emsp;但是事实上是会发生的，那么梯度消失从何而来呢？是因为后面的 loss 在求梯度时，导致前面输入值的梯度很小，从而产生了<strong>信息丢失</strong>。信息丢失就是 RNN 的梯度消失。有一点需要考虑，RNN 在反向传播时，是需要传播到输入值 x 的，即词向量。在计算 <script type="math/tex">loss_4</script> 时，RNN 中 W 的梯度肯定是很小的，但是在更新 <script type="math/tex">x_4</script> 时，这里的梯度 <script type="math/tex">\Delta W</script> 还不是很小，所以信息无问题。但是当反向传播到 <script type="math/tex">x_1</script> 时，梯度已经很小了，由于小梯度导致 <script type="math/tex">x_1</script> 无法得到很好的更新，于是产生了信息丢失。<script type="math/tex">loss_3</script> 以及 <script type="math/tex">loss_2</script> 以此类推，不过对于 <script type="math/tex">loss_1</script> 并无问题，因为它没有复合函数。<br>&emsp;&emsp;注：<strong>上两段，还参考了参考资料 3，个人认为参考资料 1 中内容并不是很完整</strong>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/多领域seq2lf/total loss.jpg" alt="total loss"></p>
+<p>&emsp;&emsp;以上的参考资料：</p>
+<ol>
+<li><a href="https://www.zhihu.com/question/34878706/answer/665429718" target="_blank" rel="noopener">LSTM如何来避免梯度弥散和梯度爆炸？</a></li>
+<li><a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">李宏毅机器学习</a>)</li>
+<li><a href="https://www.bilibili.com/video/av41393758?p=8" target="_blank" rel="noopener">RNN 和语言模式</a>，19.50 开始</li>
+</ol>
+<p>&emsp;&emsp;而在 LSTM 中，是使用加和的计算方式（博主注：<strong>由于我没有计算过，所以我也不是很肯定</strong>），所以大致解决了梯度消失的问题。注意我没有说解决了梯度爆炸的问题。<br><div class="note success">
+            <p>&emsp;&emsp;LSTM 的模型以及参数名参考<a href="https://yan624.github.io/·学习笔记/AI/dl/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">此处</a>。</p><script type="math/tex; mode=display">\begin{aligned}    LSTM: z_i & = [a_{i - 1}; x_i] \\    memory_{new} & = g(z_i) * input(z_i) + memory * forget(z_i) \\    a_i & = h(g(z_i) * input(z_i) + memory * forget(z_i)) * output(z_i) \\\end{aligned}</script><p>&emsp;&emsp;对 LSTM 的求导结果很复杂，就不写了（实际上算得我自己都乱了）。。。它的复杂结构使得它不会出现一个数被连乘，导致极小。<strong>注意 LSTM 并没有解决梯度爆炸的问题。可以结合 clipping 训练 LSTM</strong>。<br>参考资料：</p><ol><li><a href="https://zhuanlan.zhihu.com/p/28749444" target="_blank" rel="noopener">LSTM如何解决梯度消失问题</a></li><li><a href="https://zhuanlan.zhihu.com/p/36101196" target="_blank" rel="noopener">漫谈LSTM系列的梯度问题</a></li><li><a href="https://www.zhihu.com/question/34878706/answer/192444888" target="_blank" rel="noopener">LSTM如何来避免梯度弥散和梯度爆炸？</a></li><li><a href="https://zhuanlan.zhihu.com/p/83496936" target="_blank" rel="noopener">人人都能看懂的LSTM介绍及反向传播算法推导（非常详细）</a></li></ol>
+          </div></p>
+<p>&emsp;&emsp;其他一些思考：LSTM 虽然可以永久的记住以前的 input 信息，但是 memory 说白了就是一个权重矩阵，不可能无限制的记住任何信息。所以可以对 memory 进行一些魔改，比如 memory network 将 memory 修改成用数组存储。<br>&emsp;&emsp;那么问题来了，GRU 解决了什么问题呢？为什么过拟合严重，可以使用 GRU？详见下一章。</p>
+<h4 id="其他解决梯度消失的办法"><a href="#其他解决梯度消失的办法" class="headerlink" title="其他解决梯度消失的办法"></a>其他解决梯度消失的办法</h4><ol>
+<li>Clockwise RNN</li>
+<li>Structurally Constrained Recurrent Network(SCRN)</li>
+<li></li>
+</ol>
+<h4 id="LSTM-为什么没有解决梯度爆炸？"><a href="#LSTM-为什么没有解决梯度爆炸？" class="headerlink" title="LSTM 为什么没有解决梯度爆炸？"></a>LSTM 为什么没有解决梯度爆炸？</h4><p>&emsp;&emsp;理论上，梯度爆炸也同样糟糕。但在实践上，其实我们可以直接砍一刀（原话：it turns out we can actually have a hack），这由 Thomas Mikolov 首次提出。在某种程度上是不精确的，比如说“<strong>现在你有一个很大的梯度 100，让我们把它限制在 5 吧</strong>”。这方法就结束了。你只要定义一个临界值，当梯度大于临界值时，就使梯度等于临界值。虽然不是一个数学方法，但结果表明在实践中效果不错。<br>&emsp;&emsp;参考资料：</p>
+<ol>
+<li><a href="https://www.bilibili.com/video/av41393758?p=8" target="_blank" rel="noopener">RNN 和语言模式</a> 49.06 - 62.38</li>
+</ol>
 <h2 id="LSTMs与GRUs的区别"><a href="#LSTMs与GRUs的区别" class="headerlink" title="LSTMs与GRUs的区别"></a>LSTMs与GRUs的区别</h2><h2 id="RNNs在NLP中典型应用？"><a href="#RNNs在NLP中典型应用？" class="headerlink" title="RNNs在NLP中典型应用？"></a>RNNs在NLP中典型应用？</h2><h2 id="常见的RNNs扩展和改进模型"><a href="#常见的RNNs扩展和改进模型" class="headerlink" title="常见的RNNs扩展和改进模型"></a>常见的RNNs扩展和改进模型</h2><ol>
 <li>Simple RNNs(SRNs)</li>
 <li>Bidirectional RNNs</li>
@@ -3063,164 +3293,6 @@ P(a < X \leq b) = & F_X(b) - F_X(a) \\
         <tag>学习笔记</tag>
         <tag>特征工程</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>多领域seq2lf</title>
-    <url>/project/%E5%A4%9A%E9%A2%86%E5%9F%9Fseq2lf.html</url>
-    <content><![CDATA[<div class="note default">
-            <p><span class="label info">pytorch</span> <span class="label warning">zero grad</span> <span class="label success">gradient clipping</span> <span class="label primary">learning rate decay</span> <span class="label info">dropout</span> <span class="label danger">oov</span> <span class="label success">RNN/LSTM/GRU</span> <span class="label info">梯度消失/梯度爆炸原因分析</span> <span class="label danger">attention</span> <span class="label warning">batch norm</span> <span class="label info">tensorboardX</span> <span class="label primary">过拟合/欠拟合</span></p>
-          </div>
-<h1 id="pytorch踩坑"><a href="#pytorch踩坑" class="headerlink" title="pytorch踩坑"></a>pytorch踩坑</h1><ol>
-<li><a href="https://yan624.github.io/AI/framework/一些常用的pytorch技巧.html#view、reshape和resize">view() 的用法</a></li>
-<li><a href="https://yan624.github.io/AI/framework/一些常用的pytorch技巧.html#LSTM">pytorch 中 LSTM 的用法</a></li>
-<li><a href="https://yan624.github.io/AI/framework/一些常用的pytorch技巧.html#pytorch-loss-function">pytorch loss function</a> </li>
-</ol>
-<h1 id="tricks"><a href="#tricks" class="headerlink" title="tricks"></a>tricks</h1><p>&emsp;&emsp;在将神经网络的参数调整的差不多后，需要应用一些 tricks 使得神经网络获得更好的性能。<br><a id="more"></a></p>
-<h2 id="optimizer-zero-grad"><a href="#optimizer-zero-grad" class="headerlink" title="optimizer.zero_grad()"></a>optimizer.zero_grad()</h2><p>&emsp;&emsp;在 pytorch 中，为什么要在每个循环之初调用这个方法？因为 pytorch 把计算的每个梯度都累加起来，并不会每迭代一次就将梯度清零。这样做看起来令人费解，并反常理。但是实际上这样做可以做更多神奇的操作，比如</p>
-<ul>
-<li><a href="https://www.zhihu.com/question/303070254" target="_blank" rel="noopener">https://www.zhihu.com/question/303070254</a></li>
-</ul>
-<p>&emsp;&emsp;还有，试想本来你想运行 batch_size=1024，但是由于电脑太差，只能运行 batch_size=256 的批次数据。那么只需要每循环两次调用一次 zero_grad() 即可。<br>&emsp;&emsp;参考：</p>
-<ol>
-<li><a href="https://blog.csdn.net/u011959041/article/details/102760868" target="_blank" rel="noopener">pytorch中为什么要用 zero_grad() 将梯度清零</a></li>
-</ol>
-<h2 id="clip-gradient"><a href="#clip-gradient" class="headerlink" title="clip gradient"></a>clip gradient</h2><p>&emsp;&emsp;<a href="http://proceedings.mlr.press/v28/pascanu13.pdf" target="_blank" rel="noopener">此论文</a>提出了 clip gradient（以下称 clipping）<strong>解决梯度爆炸</strong>。首先看下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/多领域seq2lf/the error surface is rough.jpg" alt="the error surface is rough"></p>
-<p>&emsp;&emsp;如果只看图，会发现有一个像峭壁一样的东西，它就是罪魁祸首。当我们将一个小球往前移动时，有时候正好迈过峭壁，小球得以正常移动。但是当小球碰到峭壁时，小球就会被反弹回去，导致 loss 发生剧烈变化。<br>&emsp;&emsp;从数学角度来看，那个峭壁就是梯度。<strong>需要注意的是</strong>，由于图中 z 轴标注的是 total loss，所以第一印象感觉峭壁代表 total loss，但是<strong>峭壁代表的是梯度，而不是 total loss</strong>。根据参数更新公式 <script type="math/tex">w -= \alpha * \Delta w</script>，其中 <script type="math/tex">\Delta w</script> 代表 w 的梯度，所以 w 的更新方向其实与梯度直接相关。<strong>当 w 不幸到达某个值时，遇到梯度极大的情况，那么不管梯度是正还是负，都会将 w 更新到一个相对很大的值，从而 loss 值也会跟着改变。注：这里其实也与 learning rate 有关，因为原本的梯度都很小，所以我们初始设置的 lr 都很大。突然梯度增大，而 lr 没有适应，一个大的梯度乘上一个大的 lr，那就更大了</strong>。<br>&emsp;&emsp;<strong>解决办法</strong>是：当 gradient 大于某个 threshold 时，就不让它大于 threshold（视频中说作者的代码中将 threshold 设置为 15，但是这个 threshold 应该是具体情况具体分析）。<br><div class="note warning">
-            <p>&emsp;&emsp;Q：那么是什么导致了出现梯度猛增的现象呢？<br>&emsp;&emsp;A：首先不是 sigmoid 的锅。因为已知 sigmoid 函数只会导致 gradient vanishing（梯度消失）的问题（<em><a href="https://yan624.github.io/·zcy/AI/dl/对神经网络整体的理解.html#缺陷">sigmoid 的缺陷</a>这一章说明了 sigmoid 具有梯度消失的缺陷</em>）。<del>如果是 sigmoid 同时引起梯度爆炸和梯度消失，按理说换成 ReLU 就能同时解决梯度爆炸/消失，但是将 RNN 的激活函数换成 ReLU 并没有解决问题，所以跟激活函数没什么关系</del>（<strong>博主注</strong>：删除内容是从李宏毅老师的视频上记下来的，但是现在看来可能是我理解错了。首先在根本上就错了，sigmoid 会造成梯度消失，但替换品并不是 relu，而是 tanh，其也只是减缓作用而已）。<br>&emsp;&emsp;那么怎么说明是什么导致了梯度爆炸呢？我们只需要小小地改变一个参数，然后观察 output 的变化，就能测出这个参数的 gradient 的大小。现在假设激活函数是 y = w * x，序列长度为 1000，并且第一个 timestep 的输入为 1，其他的 timestep 皆为 0，则<script type="math/tex">1^{1000} = 1</script>，而 <script type="math/tex">1.01^{1000} \approx 20000</script>。既然结果那么大，我们可能会想到去减小 learning rate 从而减小梯度，但是 <script type="math/tex">0.99^{1000} \approx 0</script>，你又要调大 learning rate，导致 lr 调起来很麻烦，所以调不调 lr 并没有什么区别。而这里就分别出现了梯度消失和梯度爆炸。这是由于 RNN 是序列模型，它需要处理一连串的序列。前一个的输出是后一个输入，<strong>类似于蝴蝶效应，一个很小的值，经过多个函数也能被放的很大。</strong><br>&emsp;&emsp;那么为什么可以通过观察一个参数的变化从而观察 gradient 的变化呢？很简单，例如 y = w * x，用上面的例子，第 1000 个输出会是 <script type="math/tex">y_{1000} = w^{1000} * x</script>，对 w 求导得 <script type="math/tex">\Delta w = 1000 w^{999} x</script>，由于 <script type="math/tex">w^{999}</script> 比 <script type="math/tex">w^{1000}</script> 小不了多少，所以 gradient 很大。<br>&emsp;&emsp;经过上面的例子我们就知道了问题出现的原因。当然一般情况下不会像上面序列长度有 1000 那么离谱。现在设序列长度就 40，当我们遇到一个较大的值时（比如 <script type="math/tex">1.1^{40} = 45.26</script>），依旧会出现梯度爆炸的问题。<br>&emsp;&emsp;解决办法：LSTM，clipping 等。<strong>注意：LSTM 只解决了 gradient vanishing 的问题，没有解决 gradient explode。详见下面的《LSTM 解决了 RNN 的什么问题》章节</strong>。同理 clipping 也只能解决 gradient explode 的问题，因为它能将梯度限制在一个点上（<strong>这是博主的思考，视频中并没有给出此结论</strong>）。那么我们可以结合 LSTM 和 clipping，从而同时解决梯度爆炸/消失。<br>&emsp;&emsp;综上所述，在 RNN 中，即使参数在很小一个范围内，梯度的变化也会很大。<br>&emsp;&emsp;最后还有一个问题，就是上面的例子是用 y = w * x 的例子，但是实际上，激活函数是用的 sigmoid, tanh 等，所以每个神经元的输出都永远在 [-1, 1] 中间。那么怎么会造成上面的例子中的情况呢？其实上面的例子只是一个比喻。真正的原因是反向传播时做的链式求导，它导致了梯度的连乘。详细推导见 <a href="https://yan624.github.io/·zcy/AI/dl/深度学习算法（二）：simple RNN 推导与理解.html#simple-RNN-的缺陷">simple RNN 的缺陷</a> 蓝色提示框。</p>
-          </div></p>
-<p>&emsp;&emsp;参考资料：</p>
-<ol>
-<li><a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">P37 26: Recurrent Neural Network (Part II)</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/34203833" target="_blank" rel="noopener">深入理解lstm及其变种gru</a></li>
-</ol>
-<p>&emsp;&emsp;以下对新闻分类进行测评，将使用了 clipping 与没使用 clipping 的结果进行对比。</p>
-<ol>
-<li>测评一条新闻的分类：“<strong>广西最美的县城，很多人第一次旅行就是去这里</strong>”。没有使用 clip gradient 的结果是：<strong>news_agriculture</strong>。使用 clip gradient 的结果是：<strong>news_travel</strong>。</li>
-<li>测评一条新闻的分类：“<strong>在越南游玩，有漂亮女子问“要不要生菜”，这是什么意思？</strong>”。没有使用 clip gradient 的结果是：<strong>news_military</strong>。使用 clip gradient 的结果是：<strong>news_agriculture</strong>。</li>
-<li>测评一条新闻的分类：“<strong>去西藏旅游时，导游反复叮嘱：无论多脏都最好不要洗澡？</strong>”。没有使用 clip gradient 的结果是：<strong>news_agriculture</strong>。使用 clip gradient 的结果是：<strong>news_story</strong>。</li>
-</ol>
-<p>&emsp;&emsp;使用 clip gradient 之后，分类结果好像有点正确了，第二句里面有菜，所以是农业。第三句跟农业好像没什么关系，但是跟 story 虽然说不上有关系，但是好像也不是完全没关系。另外以上三条新闻的正确分类其实都是<strong>旅行</strong>。需要说明的是这只是随便一个例子，用来说明加了 clip gradient 之后，对网络的预测有点用。示例中所用的神经网络只是一个简单的 LSTM，仅供参考：）。</p>
-<h2 id="learning-rate-decay"><a href="#learning-rate-decay" class="headerlink" title="learning rate decay"></a>learning rate decay</h2><p>&emsp;&emsp;Q：在什么时候需要使用 learning rate decay？<br>&emsp;&emsp;A：网上资源不多，还是自己总结吧。在此实验中，加入 learning rate decay 后，准确率略有提升。</p>
-<h2 id="Dropout"><a href="#Dropout" class="headerlink" title="Dropout"></a>Dropout</h2><p>&emsp;&emsp;一般设置为 0.5。在 Pytorch 中代表神经网络中某一层的神经元的输出有 0.5 的概率为 0。其他的深度学习框架不保证一样。<br>&emsp;&emsp;参考资料：</p>
-<ol>
-<li><a href="https://zhuanlan.zhihu.com/p/38200980" target="_blank" rel="noopener">深度学习中Dropout原理解析</a></li>
-</ol>
-<h2 id="处理OOV"><a href="#处理OOV" class="headerlink" title="处理OOV"></a>处理OOV</h2><p>&emsp;&emsp;参考资料：</p>
-<ol>
-<li><a href="https://www.zhihu.com/question/329708785" target="_blank" rel="noopener">word2vec缺少单词怎么办？</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/72312668" target="_blank" rel="noopener">香侬读 | 怎样在小数据集下学习OOV词向量？</a></li>
-</ol>
-<h1 id="LSTM-解决了-RNN-的什么问题"><a href="#LSTM-解决了-RNN-的什么问题" class="headerlink" title="LSTM 解决了 RNN 的什么问题"></a>LSTM 解决了 RNN 的什么问题</h1><p>&emsp;&emsp;解决了两点。仅为个人观点。</p>
-<ol>
-<li>memory 机制</li>
-<li>梯度消失</li>
-</ol>
-<h2 id="memory机制"><a href="#memory机制" class="headerlink" title="memory机制"></a>memory机制</h2><p>&emsp;&emsp;<strong>第一</strong>，RNN 受到短期记忆的影响。如果序列很长，他们将很难将信息从较早的时间步传送到后面的时间步。LSTM 通过改进 memory，可以更好地保留序列信息。<br>&emsp;&emsp;在每个时间点， RNN 都只用每个 cell 的 output 覆盖 memory 里的值，即每个 tiemstep 中的信息都会被覆盖掉。而在 LSTM 中，它会将 memory 乘上一个权重再加上 input，从而获得新的 memory。它不会每次都 forget memory，除非 forget gate 计算结果等于 0。从公式的角度看就是：</p>
-<script type="math/tex; mode=display">
-RNN: memory_{new} = cell(memory, input) \\
-LSTM: memory_{new} = a * input + b * memory \\</script><p>&emsp;&emsp;cell() 代表一个简单的 sigmoid 函数，memory 与 input 可以做拼接处理，也可以 memory + input，具体自己设计。a 是 input gate 的计算结果，b 是 forget gate 的计算结果，说白了都是一个权重，可以忽略。<br>&emsp;&emsp;这样乍一看好像 RNN 和 LSTM 没什么区别，它们都是会进行一些计算，然后获得一个新的 memory。但是 RNN 的计算方式是将 memory 与 input <strong>一起</strong>输入进 neuron，从而产生一个 output，最后将这个 output 作为新的 memory。你会发现，在 RNN 中，虽然 output 是由 memory 和 input 计算得来的，但是在更新 memory 时不是采用 LSTM 的策略，而是直接用 output 将 memory 覆盖掉，<strong>这既没考虑到原 memory 的值，也没考虑当前 input 的值</strong>。而 LSTM 在覆盖 memory 时，会考虑当前 memory 以及 input 的值。<strong>理解该段的重点是：下面的 1</strong>。</p>
-<ol>
-<li><strong>个人理解</strong>：RNN 看似用到了原 memory 和 input，但是在实际计算时（即 cell() 函数所做的操作），由它俩 train 出来的权重矩阵只是为了使 cell() 计算的结果尽可能地接近 y，而并非在计算一个好的 memory。这里尤其要注意，cell() 函数的功能跟 memory 没关系，RNN 与 memory 有关的操作仅仅只有一步，即 <script type="math/tex">memory_{new} = output</script>，它只是将以前的 memory 覆盖掉。而 LSTM 不光在更新 memory 时用到了原 memory 和 input，它里面的 3 个 gate 也都需要通过 input 计算，所以 input 对 LSTM 的输出影响很大，对 memory 的更新自然也大。</li>
-<li><strong>李宏毅机器学习视频中的说法</strong>：如果 weight 可以影响到 memory 里的值，那么这个影响会一直存在。我觉得李宏毅老师的讲解跟我的应该差不多，重点也是 LSTM 多了一个可以训练 memory 的权重。</li>
-<li>memory 本质是在记忆之前所有的 input。</li>
-</ol>
-<p>&emsp;&emsp;其实 forget gate 还是有几率清空 memory 的，那么为什么不直接取消 forget gate 呢？你不是要充分利用 input 吗？实际上在 LSTM 的第一个版本是没有 forget gate 的，它是后来才加上去的。甚至现在的说法是在训练 LSTM 时，不要给 forget gate 太大的权重，要让它大部分时间都是开着的，即大部分时间都不要清空 memory。如果以后训练 LSTM 时，觉得过拟合严重，可以使用 GRU，GRU 只有两个 gate（无 output gate）。（<em>引用<a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">教学视频</a> 22:50 的话</em>）。 </p>
-<h2 id="梯度消失"><a href="#梯度消失" class="headerlink" title="梯度消失"></a>梯度消失</h2><p>&emsp;&emsp;<strong>第二</strong>，反向传播时出现的问题，以下 Q 为问题，A 为解释。<br>&emsp;&emsp;引子：如《clip gradient》一章黄框中所说，RNN 很容易出现峭壁和平原。<strong>LSTM 只解决了 gradient vanishing 的问题</strong>，没有解决 gradient explode。LSTM 使得 error surface 不那么崎岖，<strong>消除了训练时的一些平坦的地方</strong>。虽然梯度在有些地方依然崎岖，但是不会有太平坦的地方。<strong>所以在训练时可以放心的将 lr 调小</strong>，不需要担心会出现平坦的地方，导致训练过慢。<br>&emsp;&emsp;如果公司问为什么把 RNN 换成 LSTM？<del>回答 LSTM 比较潮、因为 LSTM 比较复杂。</del>回答 LSTM 可以处理 gradient vanishing 的问题。具体解释如下：<br>&emsp;&emsp;<strong>Q</strong>：为什么 LSTM 可以解决 gradient vanishing 的问题？（解决梯度消失也可以说成避免 gradient 特别小（消除平原））<br>&emsp;&emsp;<strong>A</strong>：在 RNN 中利用 memory 的方式是一种复合函数的结构，所以在反向传播时，需要链式求导，梯度与梯度相乘容易造成<strong>梯度消失</strong>和<strong>梯度爆炸</strong>。关于 RNN 反向传播的求导结果可以参考 <a href="https://yan624.github.io/·zcy/AI/dl/深度学习算法（二）：simple RNN 推导与理解.html#simple-RNN-的缺陷">simple RNN 的缺陷</a> 蓝色提示框。<br>&emsp;&emsp;虽然这样的求导大致已经可以解释了梯度消失的问题，但是如果仔细想想就会发现盲点。在此之前，我想先说明 RNN 家族的反向传播路径与其他的神经网络不同，它的 loss 值是每一个 timestep 的真实值 y 与输出值 的 loss 之和。<a href="https://mooc.study.163.com/learn/2001280005?tid=2001391038&amp;_trace_c_p_k2_=72573d316c3441869416d70899cdf382#/learn/content?type=detail&amp;id=2001770031" target="_blank" rel="noopener">此视频</a> 大致讲明白了这个总 loss 值到底是由哪些 loss 相加得到的。<br>&emsp;&emsp;知道了上面的前提条件，就可以很简单的理解这个盲点了，接下来我先介绍一下这个盲点是什么：<strong>参考资料 1 大致解释了这一问题</strong>，这一段可能比较绕，<strong>简单来说就是后面的 timestep（比如下图中 <script type="math/tex">loss_4</script>）在反向传播时，求 <script type="math/tex">\Delta W</script> 会出现梯度消失（注意 RNN 每个 timestep 的 W 都是一样），这是因为在求梯度时，函数已经复合了好几层</strong>。而对 <script type="math/tex">loss_1</script> 求 W 的导数时，由于它本身就在序列的前面，函数还没有复合，所以 <script type="math/tex">\Delta W</script> 的导数还没梯度消失。<strong>最后在计算总的 loss 时，是将各个阶段的梯度加起来</strong>，即使后面的 loss 会得到一个很小的的梯度 <script type="math/tex">\Delta W</script>，但由于 <script type="math/tex">loss_1</script> 的原因，并不会发生梯度消失。<br>&emsp;&emsp;但是事实上是会发生的，那么梯度消失从何而来呢？是因为后面的 loss 在求梯度时，导致前面输入值的梯度很小，从而产生了<strong>信息丢失</strong>。信息丢失就是 RNN 的梯度消失。有一点需要考虑，RNN 在反向传播时，是需要传播到输入值 x 的，即词向量。在计算 <script type="math/tex">loss_4</script> 时，RNN 中 W 的梯度肯定是很小的，但是在更新 <script type="math/tex">x_4</script> 时，这里的梯度 <script type="math/tex">\Delta W</script> 还不是很小，所以信息无问题。但是当反向传播到 <script type="math/tex">x_1</script> 时，梯度已经很小了，由于小梯度导致 <script type="math/tex">x_1</script> 无法得到很好的更新，于是产生了信息丢失。<script type="math/tex">loss_3</script> 以及 <script type="math/tex">loss_2</script> 以此类推，不过对于 <script type="math/tex">loss_1</script> 并无问题，因为它没有复合函数。<br>&emsp;&emsp;注：<strong>上两段，还参考了参考资料 3，个人认为参考资料 1 中内容并不是很完整</strong>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/多领域seq2lf/total loss.jpg" alt="total loss"></p>
-<p>&emsp;&emsp;以上的参考资料：</p>
-<ol>
-<li><a href="https://www.zhihu.com/question/34878706/answer/665429718" target="_blank" rel="noopener">LSTM如何来避免梯度弥散和梯度爆炸？</a></li>
-<li><a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">李宏毅机器学习</a>)</li>
-<li><a href="https://www.bilibili.com/video/av41393758?p=8" target="_blank" rel="noopener">RNN 和语言模式</a>，19.50 开始</li>
-</ol>
-<p>&emsp;&emsp;而在 LSTM 中，是使用加和的计算方式（博主注：<strong>由于我没有计算过，所以我也不是很肯定</strong>），所以大致解决了梯度消失的问题。注意我没有说解决了梯度爆炸的问题。<br><div class="note success">
-            <p>&emsp;&emsp;LSTM 的模型以及参数名参考<a href="https://yan624.github.io/·学习笔记/AI/dl/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">此处</a>。</p><script type="math/tex; mode=display">\begin{aligned}    LSTM: z_i & = [a_{i - 1}; x_i] \\    memory_{new} & = g(z_i) * input(z_i) + memory * forget(z_i) \\    a_i & = h(g(z_i) * input(z_i) + memory * forget(z_i)) * output(z_i) \\\end{aligned}</script><p>&emsp;&emsp;对 LSTM 的求导结果很复杂，就不写了（实际上算得我自己都乱了）。。。它的复杂结构使得它不会出现一个数被连乘，导致极小。<strong>注意 LSTM 并没有解决梯度爆炸的问题。可以结合 clipping 训练 LSTM</strong>。<br>参考资料：</p><ol><li><a href="https://zhuanlan.zhihu.com/p/28749444" target="_blank" rel="noopener">LSTM如何解决梯度消失问题</a></li><li><a href="https://zhuanlan.zhihu.com/p/36101196" target="_blank" rel="noopener">漫谈LSTM系列的梯度问题</a></li><li><a href="https://www.zhihu.com/question/34878706/answer/192444888" target="_blank" rel="noopener">LSTM如何来避免梯度弥散和梯度爆炸？</a></li><li><a href="https://zhuanlan.zhihu.com/p/83496936" target="_blank" rel="noopener">人人都能看懂的LSTM介绍及反向传播算法推导（非常详细）</a></li></ol>
-          </div></p>
-<p>&emsp;&emsp;其他一些思考：LSTM 虽然可以永久的记住以前的 input 信息，但是 memory 说白了就是一个权重矩阵，不可能无限制的记住任何信息。所以可以对 memory 进行一些魔改，比如 memory network 将 memory 修改成用数组存储。<br>&emsp;&emsp;那么问题来了，GRU 解决了什么问题呢？为什么过拟合严重，可以使用 GRU？详见下一章。</p>
-<h2 id="其他解决梯度消失的办法"><a href="#其他解决梯度消失的办法" class="headerlink" title="其他解决梯度消失的办法"></a>其他解决梯度消失的办法</h2><ol>
-<li>Clockwise RNN</li>
-<li>Structurally Constrained Recurrent Network(SCRN)</li>
-<li></li>
-</ol>
-<h2 id="LSTM-为什么没有解决梯度爆炸？"><a href="#LSTM-为什么没有解决梯度爆炸？" class="headerlink" title="LSTM 为什么没有解决梯度爆炸？"></a>LSTM 为什么没有解决梯度爆炸？</h2><p>&emsp;&emsp;理论上，梯度爆炸也同样糟糕。但在实践上，其实我们可以直接砍一刀（原话：it turns out we can actually have a hack），这由 Thomas Mikolov 首次提出。在某种程度上是不精确的，比如说“<strong>现在你有一个很大的梯度 100，让我们把它限制在 5 吧</strong>”。这方法就结束了。你只要定义一个临界值，当梯度大于临界值时，就使梯度等于临界值。虽然不是一个数学方法，但结果表明在实践中效果不错。<br>&emsp;&emsp;参考资料：</p>
-<ol>
-<li><a href="https://www.bilibili.com/video/av41393758?p=8" target="_blank" rel="noopener">RNN 和语言模式</a> 49.06 - 62.38</li>
-</ol>
-<h1 id="Batch-Norm"><a href="#Batch-Norm" class="headerlink" title="Batch Norm"></a>Batch Norm</h1><h1 id="可视化训练结果"><a href="#可视化训练结果" class="headerlink" title="可视化训练结果"></a>可视化训练结果</h1><p>&emsp;&emsp;以前一直用 matplotlib 来画图，现在用了 tensorboardX 之后，感觉人瞬间就爽了，以下为教程。无法启动看 2，启动后网页无法显示看 3，代码不会写看 1。<br>&emsp;&emsp;参考资料：</p>
-<ol>
-<li><a href="https://tensorboardx.readthedocs.io/en/latest/tutorial.html#what-is-tensorboard-x" target="_blank" rel="noopener">官方文档</a></li>
-<li><a href="https://blog.csdn.net/qq_40605167/article/details/95761885" target="_blank" rel="noopener">tensorboard OSError: [Errno 22] Invalid argument错误处理</a></li>
-<li><a href="https://blog.csdn.net/weixin_44135282/article/details/86156961" target="_blank" rel="noopener">tensorboard生成的网址打不开的解决方法</a></li>
-<li><a href="https://blog.csdn.net/bigbennyguo/article/details/87956434" target="_blank" rel="noopener">详解PyTorch项目使用TensorboardX进行训练可视化</a></li>
-</ol>
-<h1 id="过拟合-欠拟合"><a href="#过拟合-欠拟合" class="headerlink" title="过拟合/欠拟合"></a>过拟合/欠拟合</h1><h2 id="train-acc很大，gap非常大"><a href="#train-acc很大，gap非常大" class="headerlink" title="train acc很大，gap非常大"></a>train acc很大，gap非常大</h2><p>&emsp;&emsp;在训练过程中出现了一种情况，train acc 94% 左右，但是 val acc 只有 24% 左右，test acc 也是 24% 左右。很多人认为这是<strong>过拟合</strong>状态，因为模型在训练集上拟合的很好，但在验证集上拟合的不好，这两者之间的 gap 很大。也就是<strong>高方差</strong>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/多领域seq2lf/train acc很大，gap也很大.svg" alt="train acc很大，gap也很大"></p>
-<p>&emsp;&emsp;以下是对此现象的分析：</p>
-<ol>
-<li><p>再增加 <strong>epoch</strong> 已经没用了，因为该模型的参数已经很好的拟合了数据集，使得准确率接近 100%。</p>
-<blockquote class="blockquote-center"><p>说明训练集中的几乎所有信息（不论是对泛化有用的信息还是训练集中的噪声）都全部被模型学习到了。（<a href="https://www.zhihu.com/question/65200055" target="_blank" rel="noopener">来源</a>）</p>
-</blockquote>
-</li>
-<li><p>改变（无论增大还是缩小） rnn 的<strong>隐藏状态</strong>也不会有很大改善了。比如说此文章的模型，我尝试选择隐藏状态大小为 (100, 115, 125, 128)，结果如下所示，可以看到增加减少隐藏状态大小，对 train acc 根本无影响，对 val acc 也只有一点影响：</p>
-<blockquote class="blockquote-center"><div class="table-container">
-<table>
-<thead>
-<tr>
-<th>hidden size</th>
-<th>batch</th>
-<th>train acc</th>
-<th>val acc</th>
-<th>test acc</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>100</td>
-<td>32</td>
-<td>94.42%</td>
-<td>20.74%</td>
-<td>21.28%</td>
-</tr>
-<tr>
-<td>115</td>
-<td>32</td>
-<td>94.42%</td>
-<td>22.80%</td>
-<td>23.72%</td>
-</tr>
-<tr>
-<td>125</td>
-<td>32</td>
-<td>94.42%</td>
-<td>24.95%</td>
-<td>24.78%</td>
-</tr>
-<tr>
-<td>128</td>
-<td>32</td>
-<td>94.42%</td>
-<td>21.20%</td>
-<td>22.58%</td>
-</tr>
-<tr>
-<td>125</td>
-<td>128</td>
-<td>98.47%</td>
-<td>19.13%</td>
-<td>20.37%</td>
-</tr>
-</tbody>
-</table>
-</div>
-</blockquote>
-<div class="note info">
-            <p>&emsp;&emsp;但是我认为这种情况<strong>不算过拟合</strong>（暂时不看 <code>batch=128</code> 那组）。因为过拟合指的是模型在训练集上过度地拟合了数据特征，于是在验证集上出现个比较离群的数据样本，就会得到很差的结果。<br>&emsp;&emsp;如果把训练集拥有的特征集合定义为 A，验证集拥有的特征集合定义为 B，那么 <script type="math/tex">C=A \cap B, D = A \cup B - C</script>，其中 C 代表的是未被神经网络拟合的很小的一部分特征，D 代表的是已经被神经网络拟合的特征（注：这里的拟合并不一定要完全的拟合，在拟合线的附近即可）。神经网络要做的是同时拟合 A 与 B 的所有特征。<br>&emsp;&emsp;但是随着 epoch 的增加，A 中的所有特征肯定被拟合的越来越好，而 B 中有些已经被拟合的特征却越来越远离拟合线，所以导致了 C 中的特征越来越多。（可以通过逻辑回归来先思考，验证集数据原本在拟合线附近，但是增加 epoch 或者增加网络参数等操作导致过拟合，原本在拟合线附近的数据点反而偏离了）<br>&emsp;&emsp;<strong>所以训练集和验证集中的数据的分布应该是这样的：训练集和验证集中有很多数据分布类似（对应即使过拟合 val acc 也不会下降到 0%），但是两个数据集中有些数据只有部分特征的分布是类似的（对应于过拟合），最后两个数据集汇总有一部分数据完全无关联（对应于不管怎么拟合，val acc 始终不可能到 100%）。</strong><br>&emsp;&emsp;话说回来文中的情况，明显训练集和验证集的 acc 到达顶部之后一直处于平稳的状态，增加 epoch 或者增加网络参数都没有使得 acc 增加或下降，这就意味这 C 中的特征没有变化。<br>&emsp;&emsp;<strong>所以这种情况应该是这样的：训练集和验证集中的数据有少量是类似的（对应于 val acc 拥有 20+%），其余大部分，可能有超过 60% 的数据都没有关联（对应于不管怎么训练 val acc 始终只有 20+%），最后有两个数据集中一小部分数据可能有部分特征重叠（对应于随着 epoch 的增加，val acc 有略微的波动）。</strong></p>
-          </div>
-</li>
-</ol>
-<p>&emsp;&emsp;对这种情况，一般出现在利用随机采样快速训练模型，只需要加大数据量就行了。所以以后再用小数据量训练时只需要将参数调整到满意的地步就不需要再继续调整了，直接换大数据量。<br>&emsp;&emsp;最后对于 <code>batch = 128</code> 的那组，train acc 上升了，其他的下降了，有过拟合嫌疑，但是幅度不是很大。</p>
-]]></content>
-      <categories>
-        <category>project</category>
-      </categories>
   </entry>
   <entry>
     <title>Improved Representation Learning for Question Answer Matching</title>
@@ -5182,7 +5254,7 @@ W_{ax} x^{<t>} + W_{aa} a^{<t-1>} =
 \}</script><p>&emsp;&emsp;实际上上式很容易就可以发现是一个递归形式的表达式，所以可以写为以下的形式，其中 k 代表第几个激活值，也可以理解为第几个时间步。<br>&emsp;&emsp;<strong>注意与 <script type="math/tex">W_{aa}</script> 相乘的其实是一个 diagonal 矩阵，除主对角线其余全为 0。</strong></p>
 <script type="math/tex; mode=display">
 \frac{\partial{a^k}}{\partial{W_{aa}}} = S_k \circ (1 - S_k) \circ (a^{k - 1} + W_{aa} \cdot \frac{\partial{a^{k - 1}}}{W_{aa}})</script><h1 id="simple-RNN-的缺陷"><a href="#simple-RNN-的缺陷" class="headerlink" title="simple-RNN 的缺陷"></a>simple-RNN 的缺陷</h1><p>&emsp;&emsp;RNN一个最大的缺陷就是梯度消失与梯度爆炸问题，由于这一缺陷，使得RNN在长文本中难以训练，这才诞生了LSTM及各种变体，来源于<a href="https://zhuanlan.zhihu.com/p/44163528" target="_blank" rel="noopener">专栏</a>。梯度消失的原因：参考<a href="https://zhuanlan.zhihu.com/p/28687529" target="_blank" rel="noopener">专栏</a>。<br>&emsp;&emsp;个人的解释如下：<br>&emsp;&emsp;在 RNN 中利用 memory 的方式是一种复合函数的结构，所以在反向传播时，需要链式求导，即 <script type="math/tex">f(g(x)) = f'(g(x))·g'(x)</script>，梯度与梯度相乘容易造成<strong>梯度消失</strong>和<strong>梯度爆炸</strong>。而在 LSTM 中，是使用加和的计算方式，所以大致解决了梯度消失的问题。<br><div class="note info">
-            <p>&emsp;&emsp;在 RNN 中，求导得到的表达式为连乘，而 sigmoid 的输出值在 [0-1] 之间，造成了梯度消失。当然也会造成梯度爆炸，因为激活函数不一定非是 sigmoid，换成 ReLU 输出值就会大于 1 了。<br>&emsp;&emsp;接下来我带入数字来讲解一遍，<strong>具体公式详见上一节，下面只讲求导后的函数</strong>。我们先把公式拿过来，并设 <script type="math/tex">a^3 = 0.2</script>, <script type="math/tex">a^2 = 0.1</script>, <script type="math/tex">a^1 = 0.05</script>, <script type="math/tex">w_{aa} = 0.07</script>。并且<strong>易得</strong> <script type="math/tex">S^1 = a^1</script>, <script type="math/tex">S^2 = a^2</script>, <script type="math/tex">S^3 = a^3</script>（易得部分都不懂的，建议看看上面的《反向传播（BPTT）》就明白了。</p><script type="math/tex; mode=display">\frac{\partial{a^3}}{\partial{W_{aa}}} = S_3 \circ (1 - S_3) \circ\{    \overbrace{a^2}^{\frac{\partial{a^3}}{\partial{W_{aa}}}} + \overbrace{        W_{aa} \cdot \underbrace{            S_2 \circ (1 - S_2)[                a^1 + W_{aa} \cdot \underbrace{                    S_1 \circ (1 - S_1) \circ \frac{\partial{a^0}}{\partial{W_{aa}}}                }_{\frac{\partial{a^1}}{\partial{W_{aa}}}}            ]        }_{\frac{\partial{a^2}}{\partial{W_{aa}}}}    }^{\frac{\partial{a^3}}{\partial{a^2}}}\}</script><p>&emsp;&emsp;则</p><script type="math/tex; mode=display">\frac{\partial{a^3}}{\partial{W_{aa}}} = a^3 \circ (1 - a^3) \circ \{a^2 + W_{aa} \cdot a^2 \circ (1 - a^2) \circ [a^1 + 0]\}</script><p>&emsp;&emsp;<em>首先需要明白一点，对于 RNN 来说，激活值 a 就是 memory。我们将设置的值带入得到 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.0160504</script>。可以发现梯度很小，而这仅仅是在序列长度为 3 的情况下。那么假设我们修改值，将 <script type="math/tex">w_{aa}</script> 改为 0.7，则 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.016504</script>，将 <script type="math/tex">w_{aa}</script> 改为 7，则 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.02104</script>。我们发现即使 <script type="math/tex">w_{aa}</script> 的变化很大，梯度值的变化效果也不是明显。也就是说对于 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}}</script>，<script type="math/tex">W_{aa}</script> 这个值不是很重要，在计算梯度时，可以忽略。</em>（<strong>2020.3.2 更新</strong>：事实上 <script type="math/tex">W_{aa}</script> 对梯度消失也有影响，这里没影响是因为上式嵌套结构中才出现了一个 <script type="math/tex">W_{aa}</script>。刚才试了一下如果多套几个，梯度也会受到很大影响（<strong>其中对梯度消失的影响略小，主要对梯度爆炸的影响很大</strong>））<br>&emsp;&emsp;综上所述，<del>我们发现 W 几乎无法阻止梯度越变越小。</del>激活值全都在 [0-1] 范围内，所以就产生了梯度消失——gradient vanishing。（<script type="math/tex">W_{aa}</script> 也会造成影响）<br>&emsp;&emsp;对于梯度爆炸，由于激活函数是 sigmoid 激活值不可能大于 1，所以可能是 <script type="math/tex">W_{aa}</script> 造成的。如果激活函数是 tanh 的话，激活值会大于 1，那么应该也会造成梯度爆炸。<br>&emsp;&emsp;对 <script type="math/tex">W_{ax}</script> 是差不多的道理，只不过对于输入值 x，它本身的取值就是 [<script type="math/tex">\infty</script>, <script type="math/tex">-\infty</script>]，所以与 a 不同。<br>&emsp;&emsp;然而梯度消失的真正原因并不完全是这个，详见 <a href="https://yan624.github.io/project/多领域seq2lf.html#LSTM-解决了-RNN-的什么问题">LSTM 解决了 RNN 的什么问题</a> 的第二点。</p>
+            <p>&emsp;&emsp;在 RNN 中，求导得到的表达式为连乘，而 sigmoid 的输出值在 [0-1] 之间，造成了梯度消失。当然也会造成梯度爆炸，因为激活函数不一定非是 sigmoid，换成 ReLU 输出值就会大于 1 了。<br>&emsp;&emsp;接下来我带入数字来讲解一遍，<strong>具体公式详见上一节，下面只讲求导后的函数</strong>。我们先把公式拿过来，并设 <script type="math/tex">a^3 = 0.2</script>, <script type="math/tex">a^2 = 0.1</script>, <script type="math/tex">a^1 = 0.05</script>, <script type="math/tex">w_{aa} = 0.07</script>。并且<strong>易得</strong> <script type="math/tex">S^1 = a^1</script>, <script type="math/tex">S^2 = a^2</script>, <script type="math/tex">S^3 = a^3</script>（易得部分都不懂的，建议看看上面的《反向传播（BPTT）》就明白了。</p><script type="math/tex; mode=display">\frac{\partial{a^3}}{\partial{W_{aa}}} = S_3 \circ (1 - S_3) \circ\{    \overbrace{a^2}^{\frac{\partial{a^3}}{\partial{W_{aa}}}} + \overbrace{        W_{aa} \cdot \underbrace{            S_2 \circ (1 - S_2)[                a^1 + W_{aa} \cdot \underbrace{                    S_1 \circ (1 - S_1) \circ \frac{\partial{a^0}}{\partial{W_{aa}}}                }_{\frac{\partial{a^1}}{\partial{W_{aa}}}}            ]        }_{\frac{\partial{a^2}}{\partial{W_{aa}}}}    }^{\frac{\partial{a^3}}{\partial{a^2}}}\}</script><p>&emsp;&emsp;则</p><script type="math/tex; mode=display">\frac{\partial{a^3}}{\partial{W_{aa}}} = a^3 \circ (1 - a^3) \circ \{a^2 + W_{aa} \cdot a^2 \circ (1 - a^2) \circ [a^1 + 0]\}</script><p>&emsp;&emsp;<em>首先需要明白一点，对于 RNN 来说，激活值 a 就是 memory。我们将设置的值带入得到 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.0160504</script>。可以发现梯度很小，而这仅仅是在序列长度为 3 的情况下。那么假设我们修改值，将 <script type="math/tex">w_{aa}</script> 改为 0.7，则 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.016504</script>，将 <script type="math/tex">w_{aa}</script> 改为 7，则 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.02104</script>。我们发现即使 <script type="math/tex">w_{aa}</script> 的变化很大，梯度值的变化效果也不是明显。也就是说对于 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}}</script>，<script type="math/tex">W_{aa}</script> 这个值不是很重要，在计算梯度时，可以忽略。</em>（<strong>2020.3.2 更新</strong>：事实上 <script type="math/tex">W_{aa}</script> 对梯度消失也有影响，这里没影响是因为上式嵌套结构中才出现了一个 <script type="math/tex">W_{aa}</script>。刚才试了一下如果多套几个，梯度也会受到很大影响（<strong>其中对梯度消失的影响略小，主要对梯度爆炸的影响很大</strong>））<br>&emsp;&emsp;综上所述，<del>我们发现 W 几乎无法阻止梯度越变越小。</del>激活值全都在 [0-1] 范围内，所以就产生了梯度消失——gradient vanishing。（<script type="math/tex">W_{aa}</script> 也会造成影响）<br>&emsp;&emsp;对于梯度爆炸，由于激活函数是 sigmoid 激活值不可能大于 1，所以可能是 <script type="math/tex">W_{aa}</script> 造成的。如果激活函数是 tanh 的话，激活值会大于 1，那么应该也会造成梯度爆炸。<br>&emsp;&emsp;对 <script type="math/tex">W_{ax}</script> 是差不多的道理，只不过对于输入值 x，它本身的取值就是 [<script type="math/tex">\infty</script>, <script type="math/tex">-\infty</script>]，所以与 a 不同。<br>&emsp;&emsp;然而梯度消失的真正原因并不完全是这个，详见 <a href="https://yan624.github.io/·zcy/AI/深度学习500问笔记.html#·LSTM解决了RNN的什么问题">LSTM 解决了 RNN 的什么问题</a> 的第二点。</p>
           </div></p>
 <p>&emsp;&emsp;RNN 的 loss 是每个 timestep 上的 loss 的加和，下图显示了这种情况下是如何求导的。不过有时候 RNN 的 loss 也就最后一个 tiemstep 会有一个 loss，比如分类任务。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple RNN 推导与理解/vanishing gradient problem details.jpg" alt="vanishing gradient problem details"></p>
 <p>&emsp;&emsp;参考资料：</p>
@@ -5904,7 +5976,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
             <p>&emsp;&emsp;此处的笔记来源于 <a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">26: Recurrent Neural Network (Part II)</a> 从 0 分开始。</p>
           </div>
 <p>&emsp;&emsp;BPTT——backpropagation through time，与 NN 的 backpropagation 类似，李宏毅老师也没讲原理直接跳过了。<br>&emsp;&emsp;然而不幸的是，RNN 的 training 是很困难的。下面蓝色的线是希望的结果，但是实际上是绿色的线，会出现剧烈地抖动，最后在某个点出现NAN。这就是类似梯度消失问题。可以使用一些办法解决，但是现在用得最多的方法是LSTM。<br>&emsp;&emsp;<strong>视频中花了很长的时间去讲解梯度爆炸和梯度消失的问题，但是我没有将它记录在这，详情可访问下面两个链接。</strong><br><div class="note primary">
-            <p>&emsp;&emsp;Q：如何防止出现如下剧烈抖动的 loss 曲线？<br>&emsp;&emsp;A：<a href="https://yan624.github.io/project/多领域seq2lf#clip-gradient">clip gradient 解决了 loss 剧烈抖动的问题</a><br>&emsp;&emsp;Q：LSTM 解决了 RNN 的什么难题？<br>&emsp;&emsp;A：<a href="https://yan624.github.io/project/多领域seq2lf#LSTM-解决了-RNN-的什么问题">LSTM 解决了 RNN 的什么问题</a></p>
+            <p>&emsp;&emsp;Q：如何防止出现如下剧烈抖动的 loss 曲线？<br>&emsp;&emsp;A：<a href="https://yan624.github.io/·zcy/AI/深度学习500问笔记.html#·梯度爆炸">clip gradient 解决了 loss 剧烈抖动的问题</a><br>&emsp;&emsp;Q：LSTM 解决了 RNN 的什么难题？<br>&emsp;&emsp;A：<a href="https://yan624.github.io/·zcy/AI/深度学习500问笔记.html#·LSTM解决了RNN的什么问题">LSTM 解决了 RNN 的什么问题</a></p>
           </div><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/RNN%20training%E7%A2%B0%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98.jpg" alt="RNN trWaining碰到的问题"></p>
 <h1 id="其他解决梯度消失的办法"><a href="#其他解决梯度消失的办法" class="headerlink" title="其他解决梯度消失的办法"></a>其他解决梯度消失的办法</h1><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/%E5%85%B6%E4%BB%96%E8%A7%A3%E5%86%B3%E6%A2%AF%E5%BA%A6%E6%B6%88%E5%A4%B1%E7%9A%84%E5%8A%9E%E6%B3%95.jpg" alt="其他解决梯度消失的办法"></p>
 <h1 id="seq2seq"><a href="#seq2seq" class="headerlink" title="seq2seq"></a>seq2seq</h1><h2 id="Many-to-one"><a href="#Many-to-one" class="headerlink" title="Many to one"></a>Many to one</h2><p>输入一个向量sequence，只输出一个向量。</p>
