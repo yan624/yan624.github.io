@@ -25,18 +25,18 @@
             <p>学习完神经网络之后，可以学习其他的神经网络模型。由于本人初步决定学习 nlp，所以基本没有看 CNN，直接学了 RNN。本文就是学习 RNN 的记录，包括了许多算法以及技术。<br>one hot representation, RNN(双向、深层), GRU, LSTM, RNN反向传播, seq2seq, 计算图, language model, Pointer Network</p>
           </div></li>
 <li>深度学习：<ol>
-<li><a href="https://yan624.github.io/·zcy/AI/dl/深度学习算法（一）：simple NN（前馈神经网络的正反向推导）.html">深度学习算法（一）：simple NN（前馈神经网络的正反向推导）</a></li>
-<li><a href="https://yan624.github.io/·zcy/AI/dl/深度学习算法（二）：simple RNN 推导与理解.html">深度学习算法（二）：simple RNN 推导与理解</a></li>
-<li><a href="https://yan624.github.io/·zcy/AI/dl/深度学习算法（三）：RNN 各种机制.html">深度学习算法（三）：RNN 各种机制</a></li>
-<li><a href="https://yan624.github.io/·zcy/AI/dl/深度学习算法（四）：Transformer.html">深度学习算法（四）：Transformer</a></li>
+<li><a href="https://yan624.github.io/AI/dl/深度学习算法（一）：simple NN（前馈神经网络的正反向推导）.html">深度学习算法（一）：simple NN（前馈神经网络的正反向推导）</a></li>
+<li><a href="https://yan624.github.io/AI/dl/深度学习算法（二）：simple RNN 推导与理解.html">深度学习算法（二）：simple RNN 推导与理解</a></li>
+<li><a href="https://yan624.github.io/AI/dl/深度学习算法（三）：RNN 各种机制.html">深度学习算法（三）：RNN 各种机制</a></li>
+<li><a href="https://yan624.github.io/AI/dl/深度学习算法（四）：Transformer.html">深度学习算法（四）：Transformer</a></li>
 </ol>
 </li>
 <li><em><a href="https://yan624.github.io/·学习笔记/AI/nlp/吴恩达深度学习学习笔记：自然语言处理与词嵌入.html">吴恩达深度学习学习笔记：自然语言处理与词嵌入</a></em><div class="note success">
             <p>学习完RNN之后，就可以学习 NLP 的概念了，这里面讲得虽然还是神经网络，但是其实都是 NLP 领域的知识。</p>
           </div></li>
 <li>nlp：<ul>
-<li><a href="https://yan624.github.io/·zcy/AI/nlp/【NLP算法】（零）NLP基础算法.html">【NLP算法】（零）NLP基础算法</a></li>
-<li><a href="https://yan624.github.io/·zcy/AI/nlp/【NLP算法】（一）word2vec.html">【NLP算法】（一）word2vec</a></li>
+<li><a href="https://yan624.github.io/AI/nlp/【NLP算法】（零）NLP基础算法.html">【NLP算法】（零）NLP基础算法</a></li>
+<li><a href="https://yan624.github.io/AI/nlp/【NLP算法】（一）word2vec.html">【NLP算法】（一）word2vec</a></li>
 <li><a href="https://yan624.github.io/·zcy/AI/nlp/【NLP算法】（三）条件随机场CRF.html">【NLP算法】（三）条件随机场CRF</a></li>
 <li><a href="https://yan624.github.io/·zcy/AI/KG/【知识图谱】（一）从概念到实战.html">【知识图谱】（一）从概念到实战</a></li>
 </ul>
@@ -119,6 +119,77 @@ A_{3 \times 1} \odot B_{3 \times 1} = C_{3 \times 1} \\</script><h1 id="张量�
 ]]></content>
       <categories>
         <category>assorted</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>深度学习算法总结</title>
+    <url>/%C2%B7zcy/AI/dl/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93.html</url>
+    <content><![CDATA[<h1 id="simple-RNN-的缺陷"><a href="#simple-RNN-的缺陷" class="headerlink" title="simple-RNN 的缺陷"></a>simple-RNN 的缺陷</h1><p>&emsp;&emsp;RNN一个最大的缺陷就是梯度消失与梯度爆炸问题，由于这一缺陷，使得RNN在长文本中难以训练，这才诞生了LSTM及各种变体，来源于<a href="https://zhuanlan.zhihu.com/p/44163528" target="_blank" rel="noopener">专栏</a>。梯度消失的原因：参考<a href="https://zhuanlan.zhihu.com/p/28687529" target="_blank" rel="noopener">专栏</a>。<br>&emsp;&emsp;个人的解释如下：<br>&emsp;&emsp;在 RNN 中利用 memory 的方式是一种复合函数的结构，所以在反向传播时，需要链式求导，即 <script type="math/tex">f(g(x)) = f'(g(x))·g'(x)</script>，梯度与梯度相乘容易造成<strong>梯度消失</strong>和<strong>梯度爆炸</strong>。而在 LSTM 中，是使用加和的计算方式，所以大致解决了梯度消失的问题。<br><div class="note info">
+            <p>&emsp;&emsp;在 RNN 中，求导得到的表达式为连乘，而 sigmoid 的输出值在 [0-1] 之间，造成了梯度消失。当然也会造成梯度爆炸，因为激活函数不一定非是 sigmoid，换成 ReLU 输出值就会大于 1 了。<br>&emsp;&emsp;接下来我带入数字来讲解一遍，<strong>具体公式详见上一节，下面只讲求导后的函数</strong>。我们先把公式拿过来，并设 <script type="math/tex">a^3 = 0.2</script>, <script type="math/tex">a^2 = 0.1</script>, <script type="math/tex">a^1 = 0.05</script>, <script type="math/tex">w_{aa} = 0.07</script>。并且<strong>易得</strong> <script type="math/tex">S^1 = a^1</script>, <script type="math/tex">S^2 = a^2</script>, <script type="math/tex">S^3 = a^3</script>（易得部分都不懂的，建议看看上面的《反向传播（BPTT）》就明白了。</p><script type="math/tex; mode=display">\frac{\partial{a^3}}{\partial{W_{aa}}} = S_3 \circ (1 - S_3) \circ\{    \overbrace{a^2}^{\frac{\partial{a^3}}{\partial{W_{aa}}}} + \overbrace{        W_{aa} \cdot \underbrace{            S_2 \circ (1 - S_2)[                a^1 + W_{aa} \cdot \underbrace{                    S_1 \circ (1 - S_1) \circ \frac{\partial{a^0}}{\partial{W_{aa}}}                }_{\frac{\partial{a^1}}{\partial{W_{aa}}}}            ]        }_{\frac{\partial{a^2}}{\partial{W_{aa}}}}    }^{\frac{\partial{a^3}}{\partial{a^2}}}\}</script><p>&emsp;&emsp;则</p><script type="math/tex; mode=display">\frac{\partial{a^3}}{\partial{W_{aa}}} = a^3 \circ (1 - a^3) \circ \{a^2 + W_{aa} \cdot a^2 \circ (1 - a^2) \circ [a^1 + 0]\}</script><p>&emsp;&emsp;<em>首先需要明白一点，对于 RNN 来说，激活值 a 就是 memory。我们将设置的值带入得到 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.0160504</script>。可以发现梯度很小，而这仅仅是在序列长度为 3 的情况下。那么假设我们修改值，将 <script type="math/tex">w_{aa}</script> 改为 0.7，则 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.016504</script>，将 <script type="math/tex">w_{aa}</script> 改为 7，则 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.02104</script>。我们发现即使 <script type="math/tex">w_{aa}</script> 的变化很大，梯度值的变化效果也不是明显。也就是说对于 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}}</script>，<script type="math/tex">W_{aa}</script> 这个值不是很重要，在计算梯度时，可以忽略。</em>（<strong>2020.3.2 更新</strong>：事实上 <script type="math/tex">W_{aa}</script> 对梯度消失也有影响，这里没影响是因为上式嵌套结构中才出现了一个 <script type="math/tex">W_{aa}</script>。刚才试了一下如果多套几个，梯度也会受到很大影响（<strong>其中对梯度消失的影响略小，主要对梯度爆炸的影响很大</strong>））<br>&emsp;&emsp;综上所述，<del>我们发现 W 几乎无法阻止梯度越变越小。</del>激活值全都在 [0-1] 范围内，所以就产生了梯度消失——gradient vanishing。（<script type="math/tex">W_{aa}</script> 也会造成影响）<br>&emsp;&emsp;对于梯度爆炸，由于激活函数是 sigmoid 激活值不可能大于 1，所以可能是 <script type="math/tex">W_{aa}</script> 造成的。如果激活函数是 tanh 的话，激活值会大于 1，那么应该也会造成梯度爆炸。<br>&emsp;&emsp;对 <script type="math/tex">W_{ax}</script> 是差不多的道理，只不过对于输入值 x，它本身的取值就是 [<script type="math/tex">\infty</script>, <script type="math/tex">-\infty</script>]，所以与 a 不同。<br>&emsp;&emsp;然而梯度消失的真正原因并不完全是这个，详见 <a href="https://yan624.github.io/·zcy/AI/dl/深度学习算法总结.html#LSTM解决了RNN的什么问题">LSTM 解决了 RNN 的什么问题</a> 的第二点。</p>
+          </div></p>
+<p>&emsp;&emsp;RNN 的 loss 是每个 timestep 上的 loss 的加和，下图显示了这种情况下是如何求导的。不过有时候 RNN 的 loss 也就最后一个 tiemstep 会有一个 loss，比如分类任务。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple RNN 推导与理解/vanishing gradient problem details.jpg" alt="vanishing gradient problem details"></p>
+<p>&emsp;&emsp;参考资料：</p>
+<ol>
+<li><a href="https://zhuanlan.zhihu.com/p/28749444" target="_blank" rel="noopener">LSTM如何解决梯度消失问题</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/34203833" target="_blank" rel="noopener">深入理解lstm及其变种gru</a></li>
+<li><a href="https://www.zhihu.com/question/34878706/answer/192444888" target="_blank" rel="noopener">LSTM如何来避免梯度弥散和梯度爆炸？</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/83496936" target="_blank" rel="noopener">人人都能看懂的LSTM介绍及反向传播算法推导（非常详细）</a></li>
+</ol>
+<h1 id="梯度爆炸"><a href="#梯度爆炸" class="headerlink" title="梯度爆炸"></a>梯度爆炸</h1><p>&emsp;&emsp;<a href="http://proceedings.mlr.press/v28/pascanu13.pdf" target="_blank" rel="noopener">此论文</a>提出了 clip gradient（以下称 clipping）<strong>解决梯度爆炸</strong>。首先看下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习500问笔记/the error surface is rough.jpg" alt="the error surface is rough"></p>
+<p>&emsp;&emsp;如果只看图，会发现有一个像峭壁一样的东西，它就是罪魁祸首。当我们将一个小球往前移动时，有时候正好迈过峭壁，小球得以正常移动。但是当小球碰到峭壁时，小球就会被反弹回去，导致 loss 发生剧烈变化。<br>&emsp;&emsp;从数学角度来看，那个峭壁就是梯度。<strong>需要注意的是</strong>，由于图中 z 轴标注的是 total loss，所以第一印象感觉峭壁代表 total loss，但是<strong>峭壁代表的是梯度，而不是 total loss</strong>。根据参数更新公式 <script type="math/tex">w -= \alpha * \Delta w</script>，其中 <script type="math/tex">\Delta w</script> 代表 w 的梯度，所以 w 的更新方向其实与梯度直接相关。<strong>当 w 不幸到达某个值时，遇到梯度极大的情况，那么不管梯度是正还是负，都会将 w 更新到一个相对很大的值，从而 loss 值也会跟着改变。注：这里其实也与 learning rate 有关，因为原本的梯度都很小，所以我们初始设置的 lr 都很大。突然梯度增大，而 lr 没有适应，一个大的梯度乘上一个大的 lr，那就更大了</strong>。<br>&emsp;&emsp;<strong>解决办法</strong>是：当 gradient 大于某个 threshold 时，就不让它大于 threshold（视频中说作者的代码中将 threshold 设置为 15，但是这个 threshold 应该是具体情况具体分析）。<br><div class="note warning">
+            <p>&emsp;&emsp;Q：那么是什么导致了出现梯度猛增的现象呢？<br>&emsp;&emsp;A：首先不是 sigmoid 的锅。因为已知 sigmoid 函数只会导致 gradient vanishing（梯度消失）的问题（<em><a href="https://yan624.github.io/·zcy/AI/dl/对神经网络整体的理解.html#缺陷">sigmoid 的缺陷</a>这一章说明了 sigmoid 具有梯度消失的缺陷</em>）。<del>如果是 sigmoid 同时引起梯度爆炸和梯度消失，按理说换成 ReLU 就能同时解决梯度爆炸/消失，但是将 RNN 的激活函数换成 ReLU 并没有解决问题，所以跟激活函数没什么关系</del>（<strong>博主注</strong>：删除内容是从李宏毅老师的视频上记下来的，但是现在看来可能是我理解错了。首先在根本上就错了，sigmoid 会造成梯度消失，但替换品并不是 relu，而是 tanh，其也只是减缓作用而已）。<br>&emsp;&emsp;那么怎么说明是什么导致了梯度爆炸呢？我们只需要小小地改变一个参数，然后观察 output 的变化，就能测出这个参数的 gradient 的大小。现在假设激活函数是 y = w * x，序列长度为 1000，并且第一个 timestep 的输入为 1，其他的 timestep 皆为 0，则<script type="math/tex">1^{1000} = 1</script>，而 <script type="math/tex">1.01^{1000} \approx 20000</script>。既然结果那么大，我们可能会想到去减小 learning rate 从而减小梯度，但是 <script type="math/tex">0.99^{1000} \approx 0</script>，你又要调大 learning rate，导致 lr 调起来很麻烦，所以调不调 lr 并没有什么区别。而这里就分别出现了梯度消失和梯度爆炸。这是由于 RNN 是序列模型，它需要处理一连串的序列。前一个的输出是后一个输入，<strong>类似于蝴蝶效应，一个很小的值，经过多个函数也能被放的很大。</strong><br>&emsp;&emsp;那么为什么可以通过观察一个参数的变化从而观察 gradient 的变化呢？很简单，例如 y = w * x，用上面的例子，第 1000 个输出会是 <script type="math/tex">y_{1000} = w^{1000} * x</script>，对 w 求导得 <script type="math/tex">\Delta w = 1000 w^{999} x</script>，由于 <script type="math/tex">w^{999}</script> 比 <script type="math/tex">w^{1000}</script> 小不了多少，所以 gradient 很大。<br>&emsp;&emsp;经过上面的例子我们就知道了问题出现的原因。当然一般情况下不会像上面序列长度有 1000 那么离谱。现在设序列长度就 40，当我们遇到一个较大的值时（比如 <script type="math/tex">1.1^{40} = 45.26</script>），依旧会出现梯度爆炸的问题。<br>&emsp;&emsp;解决办法：LSTM，clipping 等。<strong>注意：LSTM 只解决了 gradient vanishing 的问题，没有解决 gradient explode。详见下面的《LSTM 解决了 RNN 的什么问题》章节</strong>。同理 clipping 也只能解决 gradient explode 的问题，因为它能将梯度限制在一个点上（<strong>这是博主的思考，视频中并没有给出此结论</strong>）。那么我们可以结合 LSTM 和 clipping，从而同时解决梯度爆炸/消失。<br>&emsp;&emsp;综上所述，在 RNN 中，即使参数在很小一个范围内，梯度的变化也会很大。<br>&emsp;&emsp;最后还有一个问题，就是上面的例子是用 y = w * x 的例子，但是实际上，激活函数是用的 sigmoid, tanh 等，所以每个神经元的输出都永远在 [-1, 1] 中间。那么怎么会造成上面的例子中的情况呢？其实上面的例子只是一个比喻。真正的原因是反向传播时做的链式求导，它导致了梯度的连乘。详细推导见《simple RNN 的缺陷》蓝色提示框。</p>
+          </div></p>
+<p>&emsp;&emsp;参考资料：</p>
+<ol>
+<li><a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">P37 26: Recurrent Neural Network (Part II)</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/34203833" target="_blank" rel="noopener">深入理解lstm及其变种gru</a></li>
+</ol>
+<p>&emsp;&emsp;以下对新闻分类进行测评，将使用了 clipping 与没使用 clipping 的结果进行对比。</p>
+<ol>
+<li>测评一条新闻的分类：“<strong>广西最美的县城，很多人第一次旅行就是去这里</strong>”。没有使用 clip gradient 的结果是：<strong>news_agriculture</strong>。使用 clip gradient 的结果是：<strong>news_travel</strong>。</li>
+<li>测评一条新闻的分类：“<strong>在越南游玩，有漂亮女子问“要不要生菜”，这是什么意思？</strong>”。没有使用 clip gradient 的结果是：<strong>news_military</strong>。使用 clip gradient 的结果是：<strong>news_agriculture</strong>。</li>
+<li>测评一条新闻的分类：“<strong>去西藏旅游时，导游反复叮嘱：无论多脏都最好不要洗澡？</strong>”。没有使用 clip gradient 的结果是：<strong>news_agriculture</strong>。使用 clip gradient 的结果是：<strong>news_story</strong>。</li>
+</ol>
+<p>&emsp;&emsp;使用 clip gradient 之后，分类结果好像有点正确了，第二句里面有菜，所以是农业。第三句跟农业好像没什么关系，但是跟 story 虽然说不上有关系，但是好像也不是完全没关系。另外以上三条新闻的正确分类其实都是<strong>旅行</strong>。需要说明的是这只是随便一个例子，用来说明加了 clip gradient 之后，对网络的预测有点用。示例中所用的神经网络只是一个简单的 LSTM，仅供参考：）。<br><a id="more"></a></p>
+<h1 id="LSTM解决了RNN的什么问题"><a href="#LSTM解决了RNN的什么问题" class="headerlink" title="LSTM解决了RNN的什么问题"></a>LSTM解决了RNN的什么问题</h1><p>&emsp;&emsp;解决了两点。仅为个人观点。</p>
+<ol>
+<li>memory 机制</li>
+<li>梯度消失</li>
+</ol>
+<h2 id="memory机制"><a href="#memory机制" class="headerlink" title="memory机制"></a>memory机制</h2><p>&emsp;&emsp;<strong>第一</strong>，RNN 受到短期记忆的影响。如果序列很长，他们将很难将信息从较早的时间步传送到后面的时间步。LSTM 通过改进 memory，可以更好地保留序列信息。<br>&emsp;&emsp;在每个时间点， RNN 都只用每个 cell 的 output 覆盖 memory 里的值，即每个 tiemstep 中的信息都会被覆盖掉。而在 LSTM 中，它会将 memory 乘上一个权重再加上 input，从而获得新的 memory。它不会每次都 forget memory，除非 forget gate 计算结果等于 0。从公式的角度看就是：</p>
+<script type="math/tex; mode=display">
+RNN: memory_{new} = cell(memory, input) \\
+LSTM: memory_{new} = a * input + b * memory \\</script><p>&emsp;&emsp;cell() 代表一个简单的 sigmoid 函数，memory 与 input 可以做拼接处理，也可以 memory + input，具体自己设计。a 是 input gate 的计算结果，b 是 forget gate 的计算结果，说白了都是一个权重，可以忽略。<br>&emsp;&emsp;这样乍一看好像 RNN 和 LSTM 没什么区别，它们都是会进行一些计算，然后获得一个新的 memory。但是 RNN 的计算方式是将 memory 与 input <strong>一起</strong>输入进 neuron，从而产生一个 output，最后将这个 output 作为新的 memory。你会发现，在 RNN 中，虽然 output 是由 memory 和 input 计算得来的，但是在更新 memory 时不是采用 LSTM 的策略，而是直接用 output 将 memory 覆盖掉，<strong>这既没考虑到原 memory 的值，也没考虑当前 input 的值</strong>。而 LSTM 在覆盖 memory 时，会考虑当前 memory 以及 input 的值。<strong>理解该段的重点是：下面的 1</strong>。</p>
+<ol>
+<li><strong>个人理解</strong>：RNN 看似用到了原 memory 和 input，但是在实际计算时（即 cell() 函数所做的操作），由它俩 train 出来的权重矩阵只是为了使 cell() 计算的结果尽可能地接近 y，而并非在计算一个好的 memory。这里尤其要注意，cell() 函数的功能跟 memory 没关系，RNN 与 memory 有关的操作仅仅只有一步，即 <script type="math/tex">memory_{new} = output</script>，它只是将以前的 memory 覆盖掉。而 LSTM 不光在更新 memory 时用到了原 memory 和 input，它里面的 3 个 gate 也都需要通过 input 计算，所以 input 对 LSTM 的输出影响很大，对 memory 的更新自然也大。</li>
+<li><strong>李宏毅机器学习视频中的说法</strong>：如果 weight 可以影响到 memory 里的值，那么这个影响会一直存在。我觉得李宏毅老师的讲解跟我的应该差不多，重点也是 LSTM 多了一个可以训练 memory 的权重。</li>
+<li>memory 本质是在记忆之前所有的 input。</li>
+</ol>
+<p>&emsp;&emsp;其实 forget gate 还是有几率清空 memory 的，那么为什么不直接取消 forget gate 呢？你不是要充分利用 input 吗？实际上在 LSTM 的第一个版本是没有 forget gate 的，它是后来才加上去的。甚至现在的说法是在训练 LSTM 时，不要给 forget gate 太大的权重，要让它大部分时间都是开着的，即大部分时间都不要清空 memory。如果以后训练 LSTM 时，觉得过拟合严重，可以使用 GRU，GRU 只有两个 gate（无 output gate）。（<em>引用<a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">教学视频</a> 22:50 的话</em>）。 </p>
+<h2 id="梯度消失"><a href="#梯度消失" class="headerlink" title="梯度消失"></a>梯度消失</h2><p>&emsp;&emsp;<strong>第二</strong>，反向传播时出现的问题，以下 Q 为问题，A 为解释。<br>&emsp;&emsp;引子：如《clip gradient》一章黄框中所说，RNN 很容易出现峭壁和平原。<strong>LSTM 只解决了 gradient vanishing 的问题</strong>，没有解决 gradient explode。LSTM 使得 error surface 不那么崎岖，<strong>消除了训练时的一些平坦的地方</strong>。虽然梯度在有些地方依然崎岖，但是不会有太平坦的地方。<strong>所以在训练时可以放心的将 lr 调小</strong>，不需要担心会出现平坦的地方，导致训练过慢。<br>&emsp;&emsp;如果公司问为什么把 RNN 换成 LSTM？<del>回答 LSTM 比较潮、因为 LSTM 比较复杂。</del>回答 LSTM 可以处理 gradient vanishing 的问题。具体解释如下：<br>&emsp;&emsp;<strong>Q</strong>：为什么 LSTM 可以解决 gradient vanishing 的问题？（解决梯度消失也可以说成避免 gradient 特别小（消除平原））<br>&emsp;&emsp;<strong>A</strong>：在 RNN 中利用 memory 的方式是一种复合函数的结构，所以在反向传播时，需要链式求导，梯度与梯度相乘容易造成<strong>梯度消失</strong>和<strong>梯度爆炸</strong>。关于 RNN 反向传播的求导结果可以参考《simple RNN 的缺陷》蓝色提示框。<br>&emsp;&emsp;虽然这样的求导大致已经可以解释了梯度消失的问题，但是如果仔细想想就会发现盲点。在此之前，我想先说明 RNN 家族的反向传播路径与其他的神经网络不同，它的 loss 值是每一个 timestep 的真实值 y 与输出值 的 loss 之和。<a href="https://mooc.study.163.com/learn/2001280005?tid=2001391038&amp;_trace_c_p_k2_=72573d316c3441869416d70899cdf382#/learn/content?type=detail&amp;id=2001770031" target="_blank" rel="noopener">此视频</a> 大致讲明白了这个总 loss 值到底是由哪些 loss 相加得到的。<br>&emsp;&emsp;知道了上面的前提条件，就可以很简单的理解这个盲点了，接下来我先介绍一下这个盲点是什么：<strong>参考资料 1 大致解释了这一问题</strong>，这一段可能比较绕，<strong>简单来说就是后面的 timestep（比如下图中 <script type="math/tex">loss_4</script>）在反向传播时，求 <script type="math/tex">\Delta W</script> 会出现梯度消失（注意 RNN 每个 timestep 的 W 都是一样），这是因为在求梯度时，函数已经复合了好几层</strong>。而对 <script type="math/tex">loss_1</script> 求 W 的导数时，由于它本身就在序列的前面，函数还没有复合，所以 <script type="math/tex">\Delta W</script> 的导数还没梯度消失。<strong>最后在计算总的 loss 时，是将各个阶段的梯度加起来</strong>，即使后面的 loss 会得到一个很小的的梯度 <script type="math/tex">\Delta W</script>，但由于 <script type="math/tex">loss_1</script> 的原因，并不会发生梯度消失。<br>&emsp;&emsp;但是事实上是会发生的，那么梯度消失从何而来呢？这是因为在求序列前几个单词的梯度时，你需要从 <script type="math/tex">loss_4</script> 开始计算（<em>当然其他的 <script type="math/tex">loss_3</script> 也要计算，但是原理是一样</em>），由于 <script type="math/tex">loss_4</script> 中复合了好几层函数，导致诸如 <script type="math/tex">x_1</script>所对应的 RNN 的梯度很小，从而产生了<strong>信息丢失</strong>。信息丢失就是 RNN 的梯度消失。<br>&emsp;&emsp;你可能会想这不还是梯度连乘导致的？确实，但是有一点需要考虑，RNN 在反向传播时，是需要传播到输入值 x 的，即词向量。而在计算梯度时，<script type="math/tex">x_4</script> 所对应 RNN 肯定拥有不是很小的梯度 <script type="math/tex">\Delta W</script>，这是由于此时它还没有嵌套函数，所以信息无问题。但是当反向传播到 <script type="math/tex">x_1</script> 时，梯度已经很小了，由于小梯度导致 <script type="math/tex">x_1</script> 无法得到很好的更新，于是产生了信息丢失，也就是说长期记忆没有回传给 <script type="math/tex">x_1</script>。<br>&emsp;&emsp;<script type="math/tex">loss_3</script> 以及 <script type="math/tex">loss_2</script> 以此类推，不过对于 <script type="math/tex">loss_1</script> 并无问题，因为它没有复合函数。<br>&emsp;&emsp;注：<strong>上两段，还参考了参考资料 3，个人认为参考资料 1 中内容并不是很完整</strong>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习500问笔记/total loss.jpg" alt="total loss"></p>
+<p>&emsp;&emsp;以上的参考资料：</p>
+<ol>
+<li><a href="https://www.zhihu.com/question/34878706/answer/665429718" target="_blank" rel="noopener">LSTM如何来避免梯度弥散和梯度爆炸？</a></li>
+<li><a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">李宏毅机器学习</a>)</li>
+<li><a href="https://www.bilibili.com/video/av41393758?p=8" target="_blank" rel="noopener">RNN 和语言模式</a>，19.50 开始</li>
+</ol>
+<p>&emsp;&emsp;而在 LSTM 中，是使用加和的计算方式（博主注：<strong>由于我没有计算过，所以我也不是很肯定</strong>），所以大致解决了梯度消失的问题。注意我没有说解决了梯度爆炸的问题。<br><div class="note success">
+            <p>&emsp;&emsp;LSTM 的模型以及参数名参考<a href="https://yan624.github.io/·学习笔记/AI/dl/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">此处</a>。</p><script type="math/tex; mode=display">\begin{aligned}    LSTM: z_i & = [a_{i - 1}; x_i] \\    memory_{new} & = g(z_i) * input(z_i) + memory * forget(z_i) \\    a_i & = h(g(z_i) * input(z_i) + memory * forget(z_i)) * output(z_i) \\\end{aligned}</script><p>&emsp;&emsp;对 LSTM 的求导结果很复杂，就不写了（实际上算得我自己都乱了）。。。它的复杂结构使得它不会出现一个数被连乘，导致极小。<strong>注意 LSTM 并没有解决梯度爆炸的问题。可以结合 clipping 训练 LSTM</strong>。<br>参考资料：</p><ol><li><a href="https://zhuanlan.zhihu.com/p/28749444" target="_blank" rel="noopener">LSTM如何解决梯度消失问题</a></li><li><a href="https://zhuanlan.zhihu.com/p/36101196" target="_blank" rel="noopener">漫谈LSTM系列的梯度问题</a></li><li><a href="https://www.zhihu.com/question/34878706/answer/192444888" target="_blank" rel="noopener">LSTM如何来避免梯度弥散和梯度爆炸？</a></li><li><a href="https://zhuanlan.zhihu.com/p/83496936" target="_blank" rel="noopener">人人都能看懂的LSTM介绍及反向传播算法推导（非常详细）</a></li></ol>
+          </div></p>
+<p>&emsp;&emsp;其他一些思考：LSTM 虽然可以永久的记住以前的 input 信息，但是 memory 说白了就是一个权重矩阵，不可能无限制的记住任何信息。所以可以对 memory 进行一些魔改，比如 memory network 将 memory 修改成用数组存储。<br>&emsp;&emsp;那么问题来了，GRU 解决了什么问题呢？为什么过拟合严重，可以使用 GRU？详见下一章。</p>
+<h2 id="其他解决梯度消失的办法"><a href="#其他解决梯度消失的办法" class="headerlink" title="其他解决梯度消失的办法"></a>其他解决梯度消失的办法</h2><ol>
+<li>Clockwise RNN</li>
+<li>Structurally Constrained Recurrent Network(SCRN)</li>
+<li></li>
+</ol>
+<h2 id="LSTM-为什么没有解决梯度爆炸？"><a href="#LSTM-为什么没有解决梯度爆炸？" class="headerlink" title="LSTM 为什么没有解决梯度爆炸？"></a>LSTM 为什么没有解决梯度爆炸？</h2><p>&emsp;&emsp;理论上，梯度爆炸也同样糟糕。但在实践上，其实我们可以直接砍一刀（原话：it turns out we can actually have a hack），这由 Thomas Mikolov 首次提出。在某种程度上是不精确的，比如说“<strong>现在你有一个很大的梯度 100，让我们把它限制在 5 吧</strong>”。这方法就结束了。你只要定义一个临界值，当梯度大于临界值时，就使梯度等于临界值。虽然不是一个数学方法，但结果表明在实践中效果不错。<br>&emsp;&emsp;参考资料：</p>
+<ol>
+<li><a href="https://www.bilibili.com/video/av41393758?p=8" target="_blank" rel="noopener">RNN 和语言模式</a> 49.06 - 62.38</li>
+</ol>
+]]></content>
+      <categories>
+        <category>AI</category>
+        <category>dl</category>
       </categories>
   </entry>
   <entry>
@@ -472,7 +543,7 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
 <ol>
 <li><a href="https://zhuanlan.zhihu.com/p/38200980" target="_blank" rel="noopener">深度学习中Dropout原理解析</a></li>
 </ol>
-<h2 id="label-smoothing"><a href="#label-smoothing" class="headerlink" title="label smoothing"></a>label smoothing</h2><h1 id="过拟合和欠拟合"><a href="#过拟合和欠拟合" class="headerlink" title="过拟合和欠拟合"></a>过拟合和欠拟合</h1><h2 id="train-acc很大，gap非常大"><a href="#train-acc很大，gap非常大" class="headerlink" title="train acc很大，gap非常大"></a>train acc很大，gap非常大</h2><p>&emsp;&emsp;在训练过程中出现了一种情况，train acc 94% 左右，但是 val acc 只有 24% 左右，test acc 也是 24% 左右。很多人认为这是<strong>过拟合</strong>状态，因为模型在训练集上拟合的很好，但在验证集上拟合的不好，这两者之间的 gap 很大。也就是<strong>高方差</strong>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/多领域seq2lf/train acc很大，gap也很大.svg" alt="train acc很大，gap也很大"></p>
+<h2 id="label-smoothing"><a href="#label-smoothing" class="headerlink" title="label smoothing"></a>label smoothing</h2><h1 id="过拟合和欠拟合"><a href="#过拟合和欠拟合" class="headerlink" title="过拟合和欠拟合"></a>过拟合和欠拟合</h1><h2 id="train-acc很大，gap非常大"><a href="#train-acc很大，gap非常大" class="headerlink" title="train acc很大，gap非常大"></a>train acc很大，gap非常大</h2><p>&emsp;&emsp;在训练过程中出现了一种情况，train acc 94% 左右，但是 val acc 只有 24% 左右，test acc 也是 24% 左右。很多人认为这是<strong>过拟合</strong>状态，因为模型在训练集上拟合的很好，但在验证集上拟合的不好，这两者之间的 gap 很大。也就是<strong>高方差</strong>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/train acc很大，gap也很大.svg" alt="train acc很大，gap也很大"></p>
 <p>&emsp;&emsp;以下是对此现象的分析：</p>
 <ol>
 <li><p>再增加 <strong>epoch</strong> 已经没用了，因为该模型的参数已经很好的拟合了数据集，使得准确率接近 100%。</p>
@@ -1146,9 +1217,9 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} & \underbrace{y^{
     <title>NLP中的各种套路（技术）</title>
     <url>/%C2%B7zcy/AI/nlp/NLP%E4%B8%AD%E7%9A%84%E5%90%84%E7%A7%8D%E5%A5%97%E8%B7%AF%EF%BC%88%E6%8A%80%E6%9C%AF%EF%BC%89.html</url>
     <content><![CDATA[<div class="note warning">
-            <p>&emsp;&emsp;本文名词参考 <a href="#名词参考">名词参考</a> 一章。</p><div class="table-container"><table><thead><tr><th>简述</th><th>章节</th></tr></thead><tbody><tr><td>简单文本表示</td><td>1.1-1.2</td></tr></tbody></table></div>
+            <p>&emsp;&emsp;本文名词参考 <a href="#名词参考">名词参考</a> 一章。</p>
           </div>
-<h1 id="梦开始的地方"><a href="#梦开始的地方" class="headerlink" title="梦开始的地方"></a>梦开始的地方</h1><p>&emsp;&emsp;one hot 编码，词袋模型（BOW）。可以参考文章 <a href="https://yan624.github.io/·zcy/AI/nlp/【NLP算法】（零）NLP基础算法.html">【NLP算法】（零）NLP基础算法</a> 大致了解其概念。<br><a id="more"></a></p>
+<h1 id="梦开始的地方"><a href="#梦开始的地方" class="headerlink" title="梦开始的地方"></a>梦开始的地方</h1><p>&emsp;&emsp;one hot 编码，词袋模型（BOW）。可以参考文章 <a href="https://yan624.github.io/AI/nlp/【NLP算法】（零）NLP基础算法.html">【NLP算法】（零）NLP基础算法</a> 大致了解其概念。<br><a id="more"></a></p>
 <h2 id="词的向量化"><a href="#词的向量化" class="headerlink" title="词的向量化"></a>词的向量化</h2><p>&emsp;&emsp;one hot 编码，关键词抽取算法，分布式表征。</p>
 <h2 id="关键词提取"><a href="#关键词提取" class="headerlink" title="关键词提取"></a>关键词提取</h2><h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
 <li><a href="https://www.iteye.com/blog/eric-weitm-2388730" target="_blank" rel="noopener">nlp 统计语言模型</a></li>
@@ -1201,9 +1272,9 @@ P(w_i | w_{i-1}) = \frac{P(w_{i-1} w_i)}{P(w_{i-1})} \approx \frac{f(w_{i-1} w_i
 <h3 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h3><p>&emsp;&emsp;对于 LSTM 早已经写了很多篇笔记，以下的学习笔记记录了 LSTM 的网络架构（注：这些都只是学习笔记，仅供参考）。</p>
 <ol>
 <li><a href="https://yan624.github.io/·学习笔记/AI/dl/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">吴恩达李宏毅综合学习笔记：RNN入门#长短期记忆——Long Short-term Memory(LSTM)</a></li>
-<li><a href="https://yan624.github.io/·zcy/AI/dl/深度学习算法（三）：RNN 各种机制.html#LSTM">深度学习算法（三）：RNN 各种机制#LSTM</a></li>
+<li><a href="https://yan624.github.io/AI/dl/深度学习算法（三）：RNN 各种机制.html#LSTM">深度学习算法（三）：RNN 各种机制#LSTM</a></li>
 </ol>
-<p>&emsp;&emsp;之后，对于 LSTM，它还有梯度爆炸和梯度消失两个问题，文章<strong>《<a href="https://yan624.github.io/·zcy/AI/深度学习500问笔记.html#·LSTM解决了RNN的什么问题">深度学习500问#·LSTM解决了RNN的什么问题</a>》</strong>讲了 SLTM 的这两个问题的产因，此外，其中还介绍了解决办法。</p>
+<p>&emsp;&emsp;之后，对于 LSTM，它还有梯度爆炸和梯度消失两个问题，文章<strong>《<a href="https://yan624.github.io/·zcy/AI/dl/深度学习算法总结.html#LSTM解决了RNN的什么问题">深度学习算法总结#LSTM解决了RNN的什么问题</a>》</strong>讲了 SLTM 的这两个问题的产因，此外，其中还介绍了解决办法。</p>
 <h3 id="GRU"><a href="#GRU" class="headerlink" title="GRU"></a>GRU</h3><p>&emsp;&emsp;对于 GRU 早已经写了很多篇笔记，以下的学习笔记记录了 GRU 的网络架构（注：这些都只是学习笔记，仅供参考）。</p>
 <ol>
 <li><a href="https://yan624.github.io/·学习笔记/AI/dl/吴恩达李宏毅综合学习笔记：RNN入门.html#GRU单元——Gate-Recurrent-Unit">吴恩达李宏毅综合学习笔记：RNN入门#GRU单元——Gate Recurrent Unit</a></li>
@@ -1213,7 +1284,7 @@ P(w_i | w_{i-1}) = \frac{P(w_{i-1} w_i)}{P(w_{i-1})} \approx \frac{f(w_{i-1} w_i
           </div></p>
 <h2 id="CNN"><a href="#CNN" class="headerlink" title="CNN"></a>CNN</h2><h2 id="Transformer"><a href="#Transformer" class="headerlink" title="Transformer"></a>Transformer</h2><p>&emsp;&emsp;对于 Transformer 早已经写了很多篇笔记，以下的学习笔记记录了 Transformer 的网络架构（注：这些都只是学习笔记，仅供参考）。</p>
 <ol>
-<li><a href="https://yan624.github.io/·zcy/AI/dl/深度学习算法（四）：Transformer.html">深度学习算法（四）：Transformer</a></li>
+<li><a href="https://yan624.github.io/AI/dl/深度学习算法（四）：Transformer.html">深度学习算法（四）：Transformer</a></li>
 </ol>
 <h2 id="GNN"><a href="#GNN" class="headerlink" title="GNN"></a>GNN</h2><h2 id="参考文献-2"><a href="#参考文献-2" class="headerlink" title="参考文献"></a>参考文献</h2><ul>
 <li>RNN<ol>
@@ -1225,7 +1296,7 @@ P(w_i | w_{i-1}) = \frac{P(w_{i-1} w_i)}{P(w_{i-1})} \approx \frac{f(w_{i-1} w_i
 <ol>
 <li><a href="https://yan624.github.io/·学习笔记/AI/dl/吴恩达李宏毅综合学习笔记：RNN入门.html#Attention">吴恩达李宏毅综合学习笔记：RNN入门#Attention</a></li>
 <li><a href="https://yan624.github.io/·学习笔记/AI/nlp/CS224n学习笔记.html#attention">CS224n学习笔记#attention</a></li>
-<li><strong><a href="https://yan624.github.io/·zcy/AI/dl/深度学习算法（三）：RNN 各种机制.html#Attention">RNN 各种机制#Attention</a></strong></li>
+<li><strong><a href="https://yan624.github.io/AI/dl/深度学习算法（三）：RNN 各种机制.html#Attention">RNN 各种机制#Attention</a></strong></li>
 </ol>
 <h2 id="Pointer-Networks"><a href="#Pointer-Networks" class="headerlink" title="Pointer Networks"></a>Pointer Networks</h2><div class="note info">
             <ol><li><a href="https://arxiv.org/pdf/1506.03134.pdf" target="_blank" rel="noopener">论文地址</a></li><li><a href="https://yan624.github.io/·论文笔记/model/46. Pointer Networks.html">论文笔记</a></li><li>《<a href="https://yan624.github.io/·学习笔记/AI/dl/吴恩达李宏毅综合学习笔记：RNN入门.html#Pointer-Network">李宏毅深度学习学习笔记</a>》记录了一个例子。</li></ol>
@@ -1598,7 +1669,7 @@ OPT(i) =
 </ol>
 </li>
 <li><strong>为什么深层神经网络难以训练？</strong> <div class="note info">
-            <ol><li><a href="https://yan624.github.io/·zcy/AI/深度学习500问笔记.html#·梯度爆炸">深度学习500问笔记#·梯度爆炸</a><br>虽然讲得是 clip gradient，但是结合了以前的笔记同时讲了<strong>梯度爆炸</strong>和<strong>梯度消失</strong>。</li></ol>
+            <ol><li><a href="https://yan624.github.io/·zcy/AI/dl/深度学习算法总结.html#梯度爆炸">深度学习算法总结#梯度爆炸</a><br>虽然讲得是 clip gradient，但是结合了以前的笔记同时讲了<strong>梯度爆炸</strong>和<strong>梯度消失</strong>。</li></ol>
           </div>
 <ol>
 <li>梯度消失<br>梯度消失是指通过隐藏层从后向前看，梯度会变的越来越小，说明前面层的学习会显著慢于后面层的学习，所以学习会卡住，除非梯度变大。<br>梯度消失的原因受到多种因素影响，例如<strong>学习率的大小</strong>，<strong>网络参数的初始化</strong>，<strong>激活函数的边缘效应</strong>等。在深层神经网络中，每一个神经元计算得到的梯度都会传递给前一层，较浅层的神经元接收到的梯度受到之前所有层梯度的影响。如果计算得到的梯度值非常小，随着层数增多，求出的梯度更新信息将会以指数形式衰减，就会发生梯度消失。下图是不同隐含层的学习速率：</li>
@@ -1742,63 +1813,12 @@ OPT(i) =
 </div>
 <h2 id="RNNs和FNNs有什么区别？"><a href="#RNNs和FNNs有什么区别？" class="headerlink" title="RNNs和FNNs有什么区别？"></a>RNNs和FNNs有什么区别？</h2><h2 id="RNNs训练和传统ANN训练异同点？"><a href="#RNNs训练和传统ANN训练异同点？" class="headerlink" title="RNNs训练和传统ANN训练异同点？"></a>RNNs训练和传统ANN训练异同点？</h2><h2 id="为什么RNN训练的时候Loss波动很大"><a href="#为什么RNN训练的时候Loss波动很大" class="headerlink" title="为什么RNN训练的时候Loss波动很大"></a>为什么RNN训练的时候Loss波动很大</h2><p>&emsp;&emsp;由于RNN特有的memory会影响后面 time step 的计算，所以梯度时大时小，learning rate没法个性化的调整，导致RNN在train的过程中，Loss会震荡起伏，为了解决RNN的这个问题，在训练的时候，可以设置临界值，当梯度大于某个临界值，直接截断，用这个临界值作为梯度的大小，防止大幅震荡。</p>
 <h2 id="标准RNN前向输出流程"><a href="#标准RNN前向输出流程" class="headerlink" title="标准RNN前向输出流程"></a>标准RNN前向输出流程</h2><h2 id="BPTT算法推导"><a href="#BPTT算法推导" class="headerlink" title="BPTT算法推导"></a>BPTT算法推导</h2><h2 id="RNN中为什么会出现梯度消失？"><a href="#RNN中为什么会出现梯度消失？" class="headerlink" title="RNN中为什么会出现梯度消失？"></a>RNN中为什么会出现梯度消失？</h2><div class="note default">
-            <ol><li><a href="https://yan624.github.io/·zcy/AI/深度学习500问笔记.html#·梯度爆炸">深度学习500问#·梯度爆炸</a><br> 虽然讲得是 clip gradient，但是结合了以前的笔记同时讲了<strong>梯度爆炸</strong>和<strong>梯度消失</strong>。</li></ol>
+            <ol><li><a href="https://yan624.github.io/·zcy/AI/dl/深度学习算法总结.html#梯度爆炸">深度学习算法总结#梯度爆炸</a><br> 虽然讲得是 clip gradient，但是结合了以前的笔记同时讲了<strong>梯度爆炸</strong>和<strong>梯度消失</strong>。</li></ol>
           </div>
 <h2 id="如何解决RNN中的梯度消失问题？"><a href="#如何解决RNN中的梯度消失问题？" class="headerlink" title="如何解决RNN中的梯度消失问题？"></a>如何解决RNN中的梯度消失问题？</h2><p>&emsp;&emsp;解决办法是将 sigmoid 函数替换为 tanh。注意，在 CNN 中的首选激活函数是 ReLu，但是对于 RNN 来说，首选是 tanh，因为 ReLu 的右半轴是 <code>y=x</code>，会导致 RNN 的 timestep 越往后输出值越大。</p>
 <h2 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h2><div class="note default">
-            <ol><li><a href="https://yan624.github.io/·学习笔记/AI/dl/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">吴恩达李宏毅综合学习笔记：RNN入门#长短期记忆——Long-Short-term-Memory-LSTM</a></li><li><a href="https://yan624.github.io/·zcy/AI/dl/深度学习算法（三）：RNN 各种机制.html#LSTM">深度学习算法（三）：RNN 各种机制#LSTM</a></li></ol>
+            <ol><li><a href="https://yan624.github.io/·学习笔记/AI/dl/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">吴恩达李宏毅综合学习笔记：RNN入门#长短期记忆——Long-Short-term-Memory-LSTM</a></li><li><a href="https://yan624.github.io/AI/dl/深度学习算法（三）：RNN 各种机制.html#LSTM">深度学习算法（三）：RNN 各种机制#LSTM</a></li></ol>
           </div>
-<h3 id="·梯度爆炸"><a href="#·梯度爆炸" class="headerlink" title="·梯度爆炸"></a>·梯度爆炸</h3><p>&emsp;&emsp;<a href="http://proceedings.mlr.press/v28/pascanu13.pdf" target="_blank" rel="noopener">此论文</a>提出了 clip gradient（以下称 clipping）<strong>解决梯度爆炸</strong>。首先看下图：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/多领域seq2lf/the error surface is rough.jpg" alt="the error surface is rough"></p>
-<p>&emsp;&emsp;如果只看图，会发现有一个像峭壁一样的东西，它就是罪魁祸首。当我们将一个小球往前移动时，有时候正好迈过峭壁，小球得以正常移动。但是当小球碰到峭壁时，小球就会被反弹回去，导致 loss 发生剧烈变化。<br>&emsp;&emsp;从数学角度来看，那个峭壁就是梯度。<strong>需要注意的是</strong>，由于图中 z 轴标注的是 total loss，所以第一印象感觉峭壁代表 total loss，但是<strong>峭壁代表的是梯度，而不是 total loss</strong>。根据参数更新公式 <script type="math/tex">w -= \alpha * \Delta w</script>，其中 <script type="math/tex">\Delta w</script> 代表 w 的梯度，所以 w 的更新方向其实与梯度直接相关。<strong>当 w 不幸到达某个值时，遇到梯度极大的情况，那么不管梯度是正还是负，都会将 w 更新到一个相对很大的值，从而 loss 值也会跟着改变。注：这里其实也与 learning rate 有关，因为原本的梯度都很小，所以我们初始设置的 lr 都很大。突然梯度增大，而 lr 没有适应，一个大的梯度乘上一个大的 lr，那就更大了</strong>。<br>&emsp;&emsp;<strong>解决办法</strong>是：当 gradient 大于某个 threshold 时，就不让它大于 threshold（视频中说作者的代码中将 threshold 设置为 15，但是这个 threshold 应该是具体情况具体分析）。<br><div class="note warning">
-            <p>&emsp;&emsp;Q：那么是什么导致了出现梯度猛增的现象呢？<br>&emsp;&emsp;A：首先不是 sigmoid 的锅。因为已知 sigmoid 函数只会导致 gradient vanishing（梯度消失）的问题（<em><a href="https://yan624.github.io/·zcy/AI/dl/对神经网络整体的理解.html#缺陷">sigmoid 的缺陷</a>这一章说明了 sigmoid 具有梯度消失的缺陷</em>）。<del>如果是 sigmoid 同时引起梯度爆炸和梯度消失，按理说换成 ReLU 就能同时解决梯度爆炸/消失，但是将 RNN 的激活函数换成 ReLU 并没有解决问题，所以跟激活函数没什么关系</del>（<strong>博主注</strong>：删除内容是从李宏毅老师的视频上记下来的，但是现在看来可能是我理解错了。首先在根本上就错了，sigmoid 会造成梯度消失，但替换品并不是 relu，而是 tanh，其也只是减缓作用而已）。<br>&emsp;&emsp;那么怎么说明是什么导致了梯度爆炸呢？我们只需要小小地改变一个参数，然后观察 output 的变化，就能测出这个参数的 gradient 的大小。现在假设激活函数是 y = w * x，序列长度为 1000，并且第一个 timestep 的输入为 1，其他的 timestep 皆为 0，则<script type="math/tex">1^{1000} = 1</script>，而 <script type="math/tex">1.01^{1000} \approx 20000</script>。既然结果那么大，我们可能会想到去减小 learning rate 从而减小梯度，但是 <script type="math/tex">0.99^{1000} \approx 0</script>，你又要调大 learning rate，导致 lr 调起来很麻烦，所以调不调 lr 并没有什么区别。而这里就分别出现了梯度消失和梯度爆炸。这是由于 RNN 是序列模型，它需要处理一连串的序列。前一个的输出是后一个输入，<strong>类似于蝴蝶效应，一个很小的值，经过多个函数也能被放的很大。</strong><br>&emsp;&emsp;那么为什么可以通过观察一个参数的变化从而观察 gradient 的变化呢？很简单，例如 y = w * x，用上面的例子，第 1000 个输出会是 <script type="math/tex">y_{1000} = w^{1000} * x</script>，对 w 求导得 <script type="math/tex">\Delta w = 1000 w^{999} x</script>，由于 <script type="math/tex">w^{999}</script> 比 <script type="math/tex">w^{1000}</script> 小不了多少，所以 gradient 很大。<br>&emsp;&emsp;经过上面的例子我们就知道了问题出现的原因。当然一般情况下不会像上面序列长度有 1000 那么离谱。现在设序列长度就 40，当我们遇到一个较大的值时（比如 <script type="math/tex">1.1^{40} = 45.26</script>），依旧会出现梯度爆炸的问题。<br>&emsp;&emsp;解决办法：LSTM，clipping 等。<strong>注意：LSTM 只解决了 gradient vanishing 的问题，没有解决 gradient explode。详见下面的《LSTM 解决了 RNN 的什么问题》章节</strong>。同理 clipping 也只能解决 gradient explode 的问题，因为它能将梯度限制在一个点上（<strong>这是博主的思考，视频中并没有给出此结论</strong>）。那么我们可以结合 LSTM 和 clipping，从而同时解决梯度爆炸/消失。<br>&emsp;&emsp;综上所述，在 RNN 中，即使参数在很小一个范围内，梯度的变化也会很大。<br>&emsp;&emsp;最后还有一个问题，就是上面的例子是用 y = w * x 的例子，但是实际上，激活函数是用的 sigmoid, tanh 等，所以每个神经元的输出都永远在 [-1, 1] 中间。那么怎么会造成上面的例子中的情况呢？其实上面的例子只是一个比喻。真正的原因是反向传播时做的链式求导，它导致了梯度的连乘。详细推导见 <a href="https://yan624.github.io/·zcy/AI/dl/深度学习算法（二）：simple RNN 推导与理解.html#simple-RNN-的缺陷">simple RNN 的缺陷</a> 蓝色提示框。</p>
-          </div></p>
-<p>&emsp;&emsp;参考资料：</p>
-<ol>
-<li><a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">P37 26: Recurrent Neural Network (Part II)</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/34203833" target="_blank" rel="noopener">深入理解lstm及其变种gru</a></li>
-</ol>
-<p>&emsp;&emsp;以下对新闻分类进行测评，将使用了 clipping 与没使用 clipping 的结果进行对比。</p>
-<ol>
-<li>测评一条新闻的分类：“<strong>广西最美的县城，很多人第一次旅行就是去这里</strong>”。没有使用 clip gradient 的结果是：<strong>news_agriculture</strong>。使用 clip gradient 的结果是：<strong>news_travel</strong>。</li>
-<li>测评一条新闻的分类：“<strong>在越南游玩，有漂亮女子问“要不要生菜”，这是什么意思？</strong>”。没有使用 clip gradient 的结果是：<strong>news_military</strong>。使用 clip gradient 的结果是：<strong>news_agriculture</strong>。</li>
-<li>测评一条新闻的分类：“<strong>去西藏旅游时，导游反复叮嘱：无论多脏都最好不要洗澡？</strong>”。没有使用 clip gradient 的结果是：<strong>news_agriculture</strong>。使用 clip gradient 的结果是：<strong>news_story</strong>。</li>
-</ol>
-<p>&emsp;&emsp;使用 clip gradient 之后，分类结果好像有点正确了，第二句里面有菜，所以是农业。第三句跟农业好像没什么关系，但是跟 story 虽然说不上有关系，但是好像也不是完全没关系。另外以上三条新闻的正确分类其实都是<strong>旅行</strong>。需要说明的是这只是随便一个例子，用来说明加了 clip gradient 之后，对网络的预测有点用。示例中所用的神经网络只是一个简单的 LSTM，仅供参考：）。</p>
-<h3 id="·LSTM解决了RNN的什么问题"><a href="#·LSTM解决了RNN的什么问题" class="headerlink" title="·LSTM解决了RNN的什么问题"></a>·LSTM解决了RNN的什么问题</h3><p>&emsp;&emsp;解决了两点。仅为个人观点。</p>
-<ol>
-<li>memory 机制</li>
-<li>梯度消失</li>
-</ol>
-<h4 id="memory机制"><a href="#memory机制" class="headerlink" title="memory机制"></a>memory机制</h4><p>&emsp;&emsp;<strong>第一</strong>，RNN 受到短期记忆的影响。如果序列很长，他们将很难将信息从较早的时间步传送到后面的时间步。LSTM 通过改进 memory，可以更好地保留序列信息。<br>&emsp;&emsp;在每个时间点， RNN 都只用每个 cell 的 output 覆盖 memory 里的值，即每个 tiemstep 中的信息都会被覆盖掉。而在 LSTM 中，它会将 memory 乘上一个权重再加上 input，从而获得新的 memory。它不会每次都 forget memory，除非 forget gate 计算结果等于 0。从公式的角度看就是：</p>
-<script type="math/tex; mode=display">
-RNN: memory_{new} = cell(memory, input) \\
-LSTM: memory_{new} = a * input + b * memory \\</script><p>&emsp;&emsp;cell() 代表一个简单的 sigmoid 函数，memory 与 input 可以做拼接处理，也可以 memory + input，具体自己设计。a 是 input gate 的计算结果，b 是 forget gate 的计算结果，说白了都是一个权重，可以忽略。<br>&emsp;&emsp;这样乍一看好像 RNN 和 LSTM 没什么区别，它们都是会进行一些计算，然后获得一个新的 memory。但是 RNN 的计算方式是将 memory 与 input <strong>一起</strong>输入进 neuron，从而产生一个 output，最后将这个 output 作为新的 memory。你会发现，在 RNN 中，虽然 output 是由 memory 和 input 计算得来的，但是在更新 memory 时不是采用 LSTM 的策略，而是直接用 output 将 memory 覆盖掉，<strong>这既没考虑到原 memory 的值，也没考虑当前 input 的值</strong>。而 LSTM 在覆盖 memory 时，会考虑当前 memory 以及 input 的值。<strong>理解该段的重点是：下面的 1</strong>。</p>
-<ol>
-<li><strong>个人理解</strong>：RNN 看似用到了原 memory 和 input，但是在实际计算时（即 cell() 函数所做的操作），由它俩 train 出来的权重矩阵只是为了使 cell() 计算的结果尽可能地接近 y，而并非在计算一个好的 memory。这里尤其要注意，cell() 函数的功能跟 memory 没关系，RNN 与 memory 有关的操作仅仅只有一步，即 <script type="math/tex">memory_{new} = output</script>，它只是将以前的 memory 覆盖掉。而 LSTM 不光在更新 memory 时用到了原 memory 和 input，它里面的 3 个 gate 也都需要通过 input 计算，所以 input 对 LSTM 的输出影响很大，对 memory 的更新自然也大。</li>
-<li><strong>李宏毅机器学习视频中的说法</strong>：如果 weight 可以影响到 memory 里的值，那么这个影响会一直存在。我觉得李宏毅老师的讲解跟我的应该差不多，重点也是 LSTM 多了一个可以训练 memory 的权重。</li>
-<li>memory 本质是在记忆之前所有的 input。</li>
-</ol>
-<p>&emsp;&emsp;其实 forget gate 还是有几率清空 memory 的，那么为什么不直接取消 forget gate 呢？你不是要充分利用 input 吗？实际上在 LSTM 的第一个版本是没有 forget gate 的，它是后来才加上去的。甚至现在的说法是在训练 LSTM 时，不要给 forget gate 太大的权重，要让它大部分时间都是开着的，即大部分时间都不要清空 memory。如果以后训练 LSTM 时，觉得过拟合严重，可以使用 GRU，GRU 只有两个 gate（无 output gate）。（<em>引用<a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">教学视频</a> 22:50 的话</em>）。 </p>
-<h4 id="梯度消失"><a href="#梯度消失" class="headerlink" title="梯度消失"></a>梯度消失</h4><p>&emsp;&emsp;<strong>第二</strong>，反向传播时出现的问题，以下 Q 为问题，A 为解释。<br>&emsp;&emsp;引子：如《clip gradient》一章黄框中所说，RNN 很容易出现峭壁和平原。<strong>LSTM 只解决了 gradient vanishing 的问题</strong>，没有解决 gradient explode。LSTM 使得 error surface 不那么崎岖，<strong>消除了训练时的一些平坦的地方</strong>。虽然梯度在有些地方依然崎岖，但是不会有太平坦的地方。<strong>所以在训练时可以放心的将 lr 调小</strong>，不需要担心会出现平坦的地方，导致训练过慢。<br>&emsp;&emsp;如果公司问为什么把 RNN 换成 LSTM？<del>回答 LSTM 比较潮、因为 LSTM 比较复杂。</del>回答 LSTM 可以处理 gradient vanishing 的问题。具体解释如下：<br>&emsp;&emsp;<strong>Q</strong>：为什么 LSTM 可以解决 gradient vanishing 的问题？（解决梯度消失也可以说成避免 gradient 特别小（消除平原））<br>&emsp;&emsp;<strong>A</strong>：在 RNN 中利用 memory 的方式是一种复合函数的结构，所以在反向传播时，需要链式求导，梯度与梯度相乘容易造成<strong>梯度消失</strong>和<strong>梯度爆炸</strong>。关于 RNN 反向传播的求导结果可以参考 <a href="https://yan624.github.io/·zcy/AI/dl/深度学习算法（二）：simple RNN 推导与理解.html#simple-RNN-的缺陷">simple RNN 的缺陷</a> 蓝色提示框。<br>&emsp;&emsp;虽然这样的求导大致已经可以解释了梯度消失的问题，但是如果仔细想想就会发现盲点。在此之前，我想先说明 RNN 家族的反向传播路径与其他的神经网络不同，它的 loss 值是每一个 timestep 的真实值 y 与输出值 的 loss 之和。<a href="https://mooc.study.163.com/learn/2001280005?tid=2001391038&amp;_trace_c_p_k2_=72573d316c3441869416d70899cdf382#/learn/content?type=detail&amp;id=2001770031" target="_blank" rel="noopener">此视频</a> 大致讲明白了这个总 loss 值到底是由哪些 loss 相加得到的。<br>&emsp;&emsp;知道了上面的前提条件，就可以很简单的理解这个盲点了，接下来我先介绍一下这个盲点是什么：<strong>参考资料 1 大致解释了这一问题</strong>，这一段可能比较绕，<strong>简单来说就是后面的 timestep（比如下图中 <script type="math/tex">loss_4</script>）在反向传播时，求 <script type="math/tex">\Delta W</script> 会出现梯度消失（注意 RNN 每个 timestep 的 W 都是一样），这是因为在求梯度时，函数已经复合了好几层</strong>。而对 <script type="math/tex">loss_1</script> 求 W 的导数时，由于它本身就在序列的前面，函数还没有复合，所以 <script type="math/tex">\Delta W</script> 的导数还没梯度消失。<strong>最后在计算总的 loss 时，是将各个阶段的梯度加起来</strong>，即使后面的 loss 会得到一个很小的的梯度 <script type="math/tex">\Delta W</script>，但由于 <script type="math/tex">loss_1</script> 的原因，并不会发生梯度消失。<br>&emsp;&emsp;但是事实上是会发生的，那么梯度消失从何而来呢？是因为后面的 loss 在求梯度时，导致前面输入值的梯度很小，从而产生了<strong>信息丢失</strong>。信息丢失就是 RNN 的梯度消失。有一点需要考虑，RNN 在反向传播时，是需要传播到输入值 x 的，即词向量。在计算 <script type="math/tex">loss_4</script> 时，RNN 中 W 的梯度肯定是很小的，但是在更新 <script type="math/tex">x_4</script> 时，这里的梯度 <script type="math/tex">\Delta W</script> 还不是很小，所以信息无问题。但是当反向传播到 <script type="math/tex">x_1</script> 时，梯度已经很小了，由于小梯度导致 <script type="math/tex">x_1</script> 无法得到很好的更新，于是产生了信息丢失。<script type="math/tex">loss_3</script> 以及 <script type="math/tex">loss_2</script> 以此类推，不过对于 <script type="math/tex">loss_1</script> 并无问题，因为它没有复合函数。<br>&emsp;&emsp;注：<strong>上两段，还参考了参考资料 3，个人认为参考资料 1 中内容并不是很完整</strong>。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/多领域seq2lf/total loss.jpg" alt="total loss"></p>
-<p>&emsp;&emsp;以上的参考资料：</p>
-<ol>
-<li><a href="https://www.zhihu.com/question/34878706/answer/665429718" target="_blank" rel="noopener">LSTM如何来避免梯度弥散和梯度爆炸？</a></li>
-<li><a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">李宏毅机器学习</a>)</li>
-<li><a href="https://www.bilibili.com/video/av41393758?p=8" target="_blank" rel="noopener">RNN 和语言模式</a>，19.50 开始</li>
-</ol>
-<p>&emsp;&emsp;而在 LSTM 中，是使用加和的计算方式（博主注：<strong>由于我没有计算过，所以我也不是很肯定</strong>），所以大致解决了梯度消失的问题。注意我没有说解决了梯度爆炸的问题。<br><div class="note success">
-            <p>&emsp;&emsp;LSTM 的模型以及参数名参考<a href="https://yan624.github.io/·学习笔记/AI/dl/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">此处</a>。</p><script type="math/tex; mode=display">\begin{aligned}    LSTM: z_i & = [a_{i - 1}; x_i] \\    memory_{new} & = g(z_i) * input(z_i) + memory * forget(z_i) \\    a_i & = h(g(z_i) * input(z_i) + memory * forget(z_i)) * output(z_i) \\\end{aligned}</script><p>&emsp;&emsp;对 LSTM 的求导结果很复杂，就不写了（实际上算得我自己都乱了）。。。它的复杂结构使得它不会出现一个数被连乘，导致极小。<strong>注意 LSTM 并没有解决梯度爆炸的问题。可以结合 clipping 训练 LSTM</strong>。<br>参考资料：</p><ol><li><a href="https://zhuanlan.zhihu.com/p/28749444" target="_blank" rel="noopener">LSTM如何解决梯度消失问题</a></li><li><a href="https://zhuanlan.zhihu.com/p/36101196" target="_blank" rel="noopener">漫谈LSTM系列的梯度问题</a></li><li><a href="https://www.zhihu.com/question/34878706/answer/192444888" target="_blank" rel="noopener">LSTM如何来避免梯度弥散和梯度爆炸？</a></li><li><a href="https://zhuanlan.zhihu.com/p/83496936" target="_blank" rel="noopener">人人都能看懂的LSTM介绍及反向传播算法推导（非常详细）</a></li></ol>
-          </div></p>
-<p>&emsp;&emsp;其他一些思考：LSTM 虽然可以永久的记住以前的 input 信息，但是 memory 说白了就是一个权重矩阵，不可能无限制的记住任何信息。所以可以对 memory 进行一些魔改，比如 memory network 将 memory 修改成用数组存储。<br>&emsp;&emsp;那么问题来了，GRU 解决了什么问题呢？为什么过拟合严重，可以使用 GRU？详见下一章。</p>
-<h4 id="其他解决梯度消失的办法"><a href="#其他解决梯度消失的办法" class="headerlink" title="其他解决梯度消失的办法"></a>其他解决梯度消失的办法</h4><ol>
-<li>Clockwise RNN</li>
-<li>Structurally Constrained Recurrent Network(SCRN)</li>
-<li></li>
-</ol>
-<h4 id="LSTM-为什么没有解决梯度爆炸？"><a href="#LSTM-为什么没有解决梯度爆炸？" class="headerlink" title="LSTM 为什么没有解决梯度爆炸？"></a>LSTM 为什么没有解决梯度爆炸？</h4><p>&emsp;&emsp;理论上，梯度爆炸也同样糟糕。但在实践上，其实我们可以直接砍一刀（原话：it turns out we can actually have a hack），这由 Thomas Mikolov 首次提出。在某种程度上是不精确的，比如说“<strong>现在你有一个很大的梯度 100，让我们把它限制在 5 吧</strong>”。这方法就结束了。你只要定义一个临界值，当梯度大于临界值时，就使梯度等于临界值。虽然不是一个数学方法，但结果表明在实践中效果不错。<br>&emsp;&emsp;参考资料：</p>
-<ol>
-<li><a href="https://www.bilibili.com/video/av41393758?p=8" target="_blank" rel="noopener">RNN 和语言模式</a> 49.06 - 62.38</li>
-</ol>
 <h2 id="LSTMs与GRUs的区别"><a href="#LSTMs与GRUs的区别" class="headerlink" title="LSTMs与GRUs的区别"></a>LSTMs与GRUs的区别</h2><h2 id="RNNs在NLP中典型应用？"><a href="#RNNs在NLP中典型应用？" class="headerlink" title="RNNs在NLP中典型应用？"></a>RNNs在NLP中典型应用？</h2><h2 id="常见的RNNs扩展和改进模型"><a href="#常见的RNNs扩展和改进模型" class="headerlink" title="常见的RNNs扩展和改进模型"></a>常见的RNNs扩展和改进模型</h2><ol>
 <li>Simple RNNs(SRNs)</li>
 <li>Bidirectional RNNs</li>
@@ -2558,7 +2578,7 @@ P(a < X \leq b) = & F_X(b) - F_X(a) \\
   </entry>
   <entry>
     <title>深度学习算法（五）：预训练模型</title>
-    <url>/%C2%B7zcy/AI/dl/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%BA%94%EF%BC%89%EF%BC%9A%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B.html</url>
+    <url>/AI/dl/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%BA%94%EF%BC%89%EF%BC%9A%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B.html</url>
     <content><![CDATA[<div class="note info">
             <p>&emsp;&emsp;视频来自 <a href="https://www.bilibili.com/video/av56235038" target="_blank" rel="noopener">此处</a>，或者 <a href="https://www.bilibili.com/video/av46561029?p=61" target="_blank" rel="noopener">此处</a>。</p><ol><li>4:56 A word can have multiple senses.</li><li>11:24 ELMO</li><li>19:08 BERT</li><li>49:23 GPT(-2)</li></ol>
           </div>
@@ -2727,84 +2747,6 @@ P(a < X \leq b) = & F_X(b) - F_X(a) \\
       </tags>
   </entry>
   <entry>
-    <title>PyDial: A Multi-domain Statistical Dialogue System Toolkit</title>
-    <url>/%C2%B7%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/dilogue/task-oriented/55.%20PyDial%EF%BC%9AA%20Multi-domain%20Statistical%20Dialogue%20System%20Toolkit.html</url>
-    <content><![CDATA[<div class="note info">
-            <p>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/P17-4013/" target="_blank" rel="noopener">论文地址</a>，论文作者 S Ultes 等，发表于 2017 年。<br>&emsp;&emsp;此文中出现了许多专业名词，可参考 <a href="https://yan624.github.io/·论文笔记/dilogue/task-oriented/54. A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management.html">此处</a> 加以理解。</p>
-          </div>
-<h1 id="摘要翻译"><a href="#摘要翻译" class="headerlink" title="摘要翻译"></a>摘要翻译</h1><p>&emsp;&emsp;统计口语对话系统（<em>Statistical Spoken Dialogue Systems, Statistical SDS, 统计 SDS</em>）已经存在多年了。然而，访问这些系统一直很困难，因为仍然没有公开的端到端系统实现。为了缓解这个问题，我们提出了 PyDial，一个开源的端到端统计语音对话系统工具包，它为<strong>所有对话系统模块</strong>提供<strong>统计方法</strong>的实现。此外，它还被扩展为提供多领域会话功能。它提供了各个对话系统模块的简单配置、易扩展性和域无关（<em>domain-independent</em>）的实现。该工具包可在 Apache2.0 许可下下载。</p>
-<h1 id="1-引言"><a href="#1-引言" class="headerlink" title="1 引言"></a>1 引言</h1><p>&emsp;&emsp;针对机器去设计语音接口（凭此人机交互）是多年来的研究热点。这些语音对话系统（SDSs）通常<strong>基于模块化的架构</strong>，包括<strong>语音识别</strong>（<em>speech recognition</em>）和<strong>语义解码</strong>（<em>semantic decoding</em>）的<strong>输入处理模块</strong>（<em>input processing modules</em>）、<strong>信念跟踪</strong>（<em>belief tracking</em>）和<strong>策略</strong>（<em>policy</em>）的<strong>对话管理模块</strong>（<em>dialogue management modules</em>）、<strong>语言生成</strong>（<em>language generation</em>）和<strong>语音合成</strong>（<em>speech synthesis</em>）的<strong>输出处理模块</strong>（<em>output processing modules</em>）（见图 1）。<br><div class="note success">
-            <p>&emsp;&emsp;以上介绍了 SDS 的架构。下一段介绍了一些 SDS 中不同组件的统计方法示例。</p>
-          </div></p>
-<p>&emsp;&emsp;统计 SDS 是一个语音接口，其中所有 SDS 模块都基于统计模型（从数据中学习）（与人工规则相比）。对话系统中<strong>不同组件的统计方法</strong>例子可以在以下中找到：</p>
-<ul>
-<li>……（若干论文），详见原论文 Introduction 第二段。<a id="more"></a>
-</li>
-</ul>
-<p>&emsp;&emsp;尽管对统计 SDS 的研究非常丰富，但是仍然没有通用的平台和开放的工具包。其他工具包实现通常集中在单个模块上（例如：<em>略，详见论文</em>）。提供专门针对统计对话系统（<em>statistical dialogue systems</em>）的工具包将使新进入该领域的人员能够更容易地参与进来，结果更容易比较，研究人员能够专注于他们的特定研究问题，而不是重新实现算法（例如，评估（<em>v.</em>）交互功能中的理解或生成组件的性能）。<br>&emsp;&emsp;因此，为了促进研究，以及使人们更容易参与统计口语对话系统的研究，我们提出了一个多领域统计口语对话系统工具包 <strong>PyDial</strong>。PyDial 是用 Python 实现的，剑桥对话系统团队（<em>Cambridge Dialogue Systems Group</em>）正在积极使用它。<br><div class="note default">
-            <p>&emsp;&emsp;那么什么是 PyDial 呢？</p>
-          </div></p>
-<p>&emsp;&emsp;PyDial 支持多领域的应用程序，在这些应用程序中，对话可能涉及多个不同的主题。这引入了许多新的研究课题，包括广义信念跟踪（<em>generalised belief tracking</em>）（论文略），<em>rapid policy adaptation and parallel learning</em> 和自然语言生成（<em>natural language generation</em>）。<br>&emsp;&emsp;论文的余下部分安排如下：</p>
-<ol>
-<li>第 2 节介绍了 PyDial 的总体架构（并且将 SDS 架构扩展到多个领域）和 PyDial 的主要应用规范；</li>
-<li>第 3 节包含各个对话系统模块的实现细节；</li>
-<li>第 4 节列出了可用的领域，其中有两个领域用于第5节中的示例交互；</li>
-<li>第 6 节总结了该工具包的主要贡献。</li>
-</ol>
-<h1 id="2-PyDial-架构"><a href="#2-PyDial-架构" class="headerlink" title="2 PyDial 架构"></a>2 PyDial 架构</h1><p>&emsp;&emsp;本节介绍 PyDial 的结构及其与环境的接口方式。随后，描述了在单个领域上功能的扩展，以允许在多个领域上进行对话。最后，我们讨论了 PyDial 设计的三个关键原则。</p>
-<h2 id="2-1-总体系统架构"><a href="#2-1-总体系统架构" class="headerlink" title="2.1 总体系统架构"></a>2.1 总体系统架构</h2><p>&emsp;&emsp;PyDial 的总体架构如图 2 所示。其中主要组件被称为 <strong>Agent</strong>，它位于系统的核心。它封装了所有对话系统模块，以实现基于文本的交互，即输入和输出。对话系统模块依赖于由一个<strong>本体</strong>（<strong>Ontology</strong>）定义的领域规范。为了与环境交互（<strong>博主注</strong>：这里的“与环境交互”应该指的是机器与外部环境交互，如机器与餐厅环境交互、与旅游环境交互、与服装商场进行交互等），PyDial 提供了三个接口：<strong>Dialogue Server</strong>【允许语音型交互】、<strong>Texthub</strong>【允许输入型交互】和 <strong>User Simulation system</strong>。交互的性能由<strong>评估</strong>（<strong>Evaluation</strong>）组件监视。</p>
-<ul>
-<li>Agent：负责对话交互，因此内部的架构类似于图 1 中的内容。<strong>Agent</strong> 还维护 dialogue sessions，即确保每个输入都<u>发送到</u>（<em>is routed to</em>）正确的对话。因此，<strong>可以通过实例化多个 agents 来支持多个对话</strong>。<ol>
-<li>semantic parser：将文本输入转化为一个语义表征</li>
-<li>belief tracker：负责维护一个被称为 <strong>belief state</strong> 的对话状态表征（<em>dialogue state representation</em>）</li>
-<li>policy：将 <strong>belief state</strong> 映射到适合的 <strong>system dialogue act</strong></li>
-<li>semantic output：将 <strong>system dialogue act</strong> 转化为文本表示</li>
-<li>topic tracker：对于多域功能，需要 <strong>topic tracker</strong>，其功能将在第 2.2 节中解释</li>
-</ol>
-</li>
-<li>User Simulation：支持在语义层面进行对话模拟，即不使用任何语义解析器或语言生成。这是一种广泛应用于训练和评估基于强化学习算法的技术，因为它避免了昂贵的数据收集练习（<em>data collection exercises</em>）和用户试验（<em>user trials</em>）。它当然只提供了一个近似的真实用户行为，所以通过模拟获得的结果应该谨慎看待！</li>
-<li>与环境交互：为了使 Agent 能够与其环境进行通信，PyDial 提供了两种模式：语音和文本<ul>
-<li>Texthub：只需将 Agent 连接到终端</li>
-<li>Dialogue Server：要启用基于语音的对话，<strong>Dialogue Server</strong> 允许连接到外部语音客户端。此客户端负责使用 ASR 将输入语音信号映射到文本，并使用语音合成将输出文本映射到语音（<em>text to speech</em>, <strong>TTS</strong>）。语音客户端通过 HTTP 交换 JSON 消息连接到对话服务器。请注意，语音客户端不是 PyDial 的一部分。基于云的 ASR 和 TTS 服务可以从 <a href="https://cloud.google.com/speech" target="_blank" rel="noopener">Google</a>、<a href="https://www.microsoft.com/cognitive-services/en-us/speech-api" target="_blank" rel="noopener">Microsoft</a>或 <a href="http://www.ibm.com/watson/developercloud/speech-to-text.html" target="_blank" rel="noopener">IBM</a>等提供商处获得。PyDial 目前连接到 DialPort（Zhao等人，2016），其允许基于语音的交互。</li>
-</ul>
-</li>
-<li>Ontology：除了 <strong>Agent</strong> 和接口组件之外，还有 <strong>Ontology</strong>，Ontology 封装了对话域规范以及对后端数据库（例如，一组餐厅及它们的属性）的访问。它被建模为一个全局对象，大多数对话系统模块和用户模拟器使用它来获取有关用户 <em>actions,  slots, slot values, and system actions</em> 的相关信息。</li>
-<li>Evaluation：用于计算对话的评估度量（例如 <strong>Task Success</strong>）。对于基于强化学习的对话模块来说，评估组件还负责提供 <em>reward</em></li>
-</ul>
-<h2 id="2-2-多领域对话系统架构"><a href="#2-2-多领域对话系统架构" class="headerlink" title="2.2 多领域对话系统架构"></a>2.2 多领域对话系统架构</h2><p>&emsp;&emsp;Agent -&gt; <strong>topic tracker</strong></p>
-<h2 id="2-3-主要原则"><a href="#2-3-主要原则" class="headerlink" title="2.3 主要原则"></a>2.3 主要原则</h2><p>&emsp;&emsp;为了使 PyDial 能够轻松地应用于新问题，PyDial 体系结构的设计支持三个关键原则：</p>
-<ul>
-<li>Domain Independence</li>
-<li>Easy Configurability</li>
-<li>Extensibility</li>
-</ul>
-<h1 id="3-实现"><a href="#3-实现" class="headerlink" title="3 实现"></a>3 实现</h1><p>&emsp;&emsp;PyDial 工具包是一个不断开发的研究系统。可从Apache2.0许可下的<a href="http://pydial.org" target="_blank" rel="noopener">网站</a>免费下载。在最初的版本中可以使用以下各种系统模块的实现，不过，到时候会有更多的实现。</p>
-<ul>
-<li><strong>Semantic Decoder</strong>：为了对输入语句（或n个最佳语句列表，or n-best-list of sentences）进行语义解码，PyDial 提供了一个基于规则（使用正则表达式）的实现，以及一个基于 SVM 的统计模型，即 the Semantic Tuple Classifier（Mairess et al., 2009）。对于后者，只提供了 CamRestaurants 领域的模型。</li>
-<li><strong>Belief Tracker</strong>：为了跟踪 belief state，可用 <strong>the rule-based focus tracker</strong>（Henderson et al., 2014）。该实现与领域无关。所有特定领域的信息都是从本体中提取的。</li>
-<li><strong>Policy</strong>：负责 policy 的决定执行模块有两种实现方式：<strong>1）</strong>人工制定的策略（应该适用于所有领域）；<strong>2）</strong>Gaussian process (GP) reinforcement learning policy（Gasic and Young, 2014）。对于多领域对话，策略管理器可以像处理所有其他模块一样处理策略。给定每个用户的输入的领域，然后选择相应的领域策略。<br>此外，还可以选择 Gasic et al.(2015b) 提出的 Bayesian committee machine(BCM) 处理程序：<strong>当处理一个领域的 belief state 时，参考其他领域的策略来选择最终的系统操作</strong>。为了实现这一点，belief state 被映射到一个抽象表示，然后允许所有策略访问它。在 PyDial 中，经过训练的策略可以在 committee-based handler 和 standard policy manager handler 之间移动。即在 committee 外部（在单域或多域设置中）接受训练的策略可以在 committee 内部使用，反之亦然。</li>
-<li><strong>Language Generator</strong>：为了将 semantic system action 映射为文本，PyDial 提供了两个实现组件：<strong>1）</strong>对于所有领域来说，提供了一个基于模板（定义规则）的语言生成；<strong>2）</strong>此外 Wen et al. (2015) 提出了基于 LSTM 的语言生成器，里面包含了 CamRestaurants 领域的预训练模型</li>
-<li><strong>Topic Tracker</strong>：PyDial 提供了一个基于关键字的 Topic Tracker 实现。如果 Topic Tracker 已为某些用户输入标识了领域，那么它将继续使用该领域，直到识别了新的领域。<strong>因此，并非每个用户输入都必须包含相关关键字</strong>。如果 Topic Tracker <strong>无法在开始时识别领域</strong>，那么它将创建与用户的 meta-dialogue，直到确定初始领域或达到最大重试次数。</li>
-<li><strong>Evaluation</strong>：为了评估对话，目前已经实现了两个 success-based 模块。（下面的话部分看不懂，索性不翻了—）<blockquote>
-<p>The objective task success evaluator compares the constraints and requests the system identifies with the true values. The latter may either be derived from the user simulator or, in real dialogues, by specifying a predefined task. For real dialogues, a subjective task success evaluator may also be applied which queries the user about the outcome of the dialogue.</p>
-</blockquote>
-</li>
-<li><strong>User Simulation</strong>：模拟用户的实现使用 agenda-based 用户模拟器（Schatzmann et al., 2006）。该模拟器包含 user model 和 error model，从而创建 a n-best-list of user acts 来模拟噪声语音信道。通过使用一组普遍适用的参数，模拟器可以应用于所有领域。领域特定的信息取自本体。</li>
-</ul>
-<h1 id="4-一些领域"><a href="#4-一些领域" class="headerlink" title="4 一些领域"></a>4 一些领域</h1><p>&emsp;&emsp;<strong>PyDial 的主要关注的是面向任务的对话，即根据一些约束条件用户必定找到其匹配的实体</strong>。找到实体后，用户可以请求其他信息。为应付这些场景，PyDial 预先加载了总共十个不同复杂度的领域：</p>
-<ul>
-<li>略</li>
-</ul>
-<p>&emsp;&emsp;如前所述，所有 <strong>policy</strong> 实现以及 <strong>belief tracker</strong> 和 <strong>user simulator</strong> 的实现都独立于领域之外。因此，在<strong>所有领域</strong>都可以进行交互的模拟。此外，<strong>semantic decoder</strong> 和 <strong>language generator</strong> 在某种程度上依赖于特定领域的实现。PyDial 包含用于<strong>所有领域</strong>的基于规则的 <strong>semantic decoder</strong> 和一个用于 <strong>CamRestaurants</strong> 的统计解码器（<em>statistical decoder</em>）。此外，PyDial 还为<strong>大多数领域</strong>提供了基于模板的语言生成，并为 <strong>CamRestaurants</strong> 提供了基于 LSTM 的生成器。因此，在 CamRestaurants 领域，实现统计对话完全有可能。</p>
-]]></content>
-      <categories>
-        <category>paper</category>
-      </categories>
-      <tags>
-        <tag>pydial</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management</title>
     <url>/%C2%B7%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/dilogue/task-oriented/54.%20A%20Benchmarking%20Environment%20for%20Reinforcement%20Learning%20Based%20Task%20Oriented%20Dialogue%20Management.html</url>
     <content><![CDATA[<div class="note info">
@@ -2895,6 +2837,84 @@ P(a < X \leq b) = & F_X(b) - F_X(a) \\
       <tags>
         <tag>pydial</tag>
         <tag>benchmarking environment</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PyDial: A Multi-domain Statistical Dialogue System Toolkit</title>
+    <url>/%C2%B7%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/dilogue/task-oriented/55.%20PyDial%EF%BC%9AA%20Multi-domain%20Statistical%20Dialogue%20System%20Toolkit.html</url>
+    <content><![CDATA[<div class="note info">
+            <p>&emsp;&emsp;<a href="https://www.aclweb.org/anthology/P17-4013/" target="_blank" rel="noopener">论文地址</a>，论文作者 S Ultes 等，发表于 2017 年。<br>&emsp;&emsp;此文中出现了许多专业名词，可参考 <a href="https://yan624.github.io/·论文笔记/dilogue/task-oriented/54. A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management.html">此处</a> 加以理解。</p>
+          </div>
+<h1 id="摘要翻译"><a href="#摘要翻译" class="headerlink" title="摘要翻译"></a>摘要翻译</h1><p>&emsp;&emsp;统计口语对话系统（<em>Statistical Spoken Dialogue Systems, Statistical SDS, 统计 SDS</em>）已经存在多年了。然而，访问这些系统一直很困难，因为仍然没有公开的端到端系统实现。为了缓解这个问题，我们提出了 PyDial，一个开源的端到端统计语音对话系统工具包，它为<strong>所有对话系统模块</strong>提供<strong>统计方法</strong>的实现。此外，它还被扩展为提供多领域会话功能。它提供了各个对话系统模块的简单配置、易扩展性和域无关（<em>domain-independent</em>）的实现。该工具包可在 Apache2.0 许可下下载。</p>
+<h1 id="1-引言"><a href="#1-引言" class="headerlink" title="1 引言"></a>1 引言</h1><p>&emsp;&emsp;针对机器去设计语音接口（凭此人机交互）是多年来的研究热点。这些语音对话系统（SDSs）通常<strong>基于模块化的架构</strong>，包括<strong>语音识别</strong>（<em>speech recognition</em>）和<strong>语义解码</strong>（<em>semantic decoding</em>）的<strong>输入处理模块</strong>（<em>input processing modules</em>）、<strong>信念跟踪</strong>（<em>belief tracking</em>）和<strong>策略</strong>（<em>policy</em>）的<strong>对话管理模块</strong>（<em>dialogue management modules</em>）、<strong>语言生成</strong>（<em>language generation</em>）和<strong>语音合成</strong>（<em>speech synthesis</em>）的<strong>输出处理模块</strong>（<em>output processing modules</em>）（见图 1）。<br><div class="note success">
+            <p>&emsp;&emsp;以上介绍了 SDS 的架构。下一段介绍了一些 SDS 中不同组件的统计方法示例。</p>
+          </div></p>
+<p>&emsp;&emsp;统计 SDS 是一个语音接口，其中所有 SDS 模块都基于统计模型（从数据中学习）（与人工规则相比）。对话系统中<strong>不同组件的统计方法</strong>例子可以在以下中找到：</p>
+<ul>
+<li>……（若干论文），详见原论文 Introduction 第二段。<a id="more"></a>
+</li>
+</ul>
+<p>&emsp;&emsp;尽管对统计 SDS 的研究非常丰富，但是仍然没有通用的平台和开放的工具包。其他工具包实现通常集中在单个模块上（例如：<em>略，详见论文</em>）。提供专门针对统计对话系统（<em>statistical dialogue systems</em>）的工具包将使新进入该领域的人员能够更容易地参与进来，结果更容易比较，研究人员能够专注于他们的特定研究问题，而不是重新实现算法（例如，评估（<em>v.</em>）交互功能中的理解或生成组件的性能）。<br>&emsp;&emsp;因此，为了促进研究，以及使人们更容易参与统计口语对话系统的研究，我们提出了一个多领域统计口语对话系统工具包 <strong>PyDial</strong>。PyDial 是用 Python 实现的，剑桥对话系统团队（<em>Cambridge Dialogue Systems Group</em>）正在积极使用它。<br><div class="note default">
+            <p>&emsp;&emsp;那么什么是 PyDial 呢？</p>
+          </div></p>
+<p>&emsp;&emsp;PyDial 支持多领域的应用程序，在这些应用程序中，对话可能涉及多个不同的主题。这引入了许多新的研究课题，包括广义信念跟踪（<em>generalised belief tracking</em>）（论文略），<em>rapid policy adaptation and parallel learning</em> 和自然语言生成（<em>natural language generation</em>）。<br>&emsp;&emsp;论文的余下部分安排如下：</p>
+<ol>
+<li>第 2 节介绍了 PyDial 的总体架构（并且将 SDS 架构扩展到多个领域）和 PyDial 的主要应用规范；</li>
+<li>第 3 节包含各个对话系统模块的实现细节；</li>
+<li>第 4 节列出了可用的领域，其中有两个领域用于第5节中的示例交互；</li>
+<li>第 6 节总结了该工具包的主要贡献。</li>
+</ol>
+<h1 id="2-PyDial-架构"><a href="#2-PyDial-架构" class="headerlink" title="2 PyDial 架构"></a>2 PyDial 架构</h1><p>&emsp;&emsp;本节介绍 PyDial 的结构及其与环境的接口方式。随后，描述了在单个领域上功能的扩展，以允许在多个领域上进行对话。最后，我们讨论了 PyDial 设计的三个关键原则。</p>
+<h2 id="2-1-总体系统架构"><a href="#2-1-总体系统架构" class="headerlink" title="2.1 总体系统架构"></a>2.1 总体系统架构</h2><p>&emsp;&emsp;PyDial 的总体架构如图 2 所示。其中主要组件被称为 <strong>Agent</strong>，它位于系统的核心。它封装了所有对话系统模块，以实现基于文本的交互，即输入和输出。对话系统模块依赖于由一个<strong>本体</strong>（<strong>Ontology</strong>）定义的领域规范。为了与环境交互（<strong>博主注</strong>：这里的“与环境交互”应该指的是机器与外部环境交互，如机器与餐厅环境交互、与旅游环境交互、与服装商场进行交互等），PyDial 提供了三个接口：<strong>Dialogue Server</strong>【允许语音型交互】、<strong>Texthub</strong>【允许输入型交互】和 <strong>User Simulation system</strong>。交互的性能由<strong>评估</strong>（<strong>Evaluation</strong>）组件监视。</p>
+<ul>
+<li>Agent：负责对话交互，因此内部的架构类似于图 1 中的内容。<strong>Agent</strong> 还维护 dialogue sessions，即确保每个输入都<u>发送到</u>（<em>is routed to</em>）正确的对话。因此，<strong>可以通过实例化多个 agents 来支持多个对话</strong>。<ol>
+<li>semantic parser：将文本输入转化为一个语义表征</li>
+<li>belief tracker：负责维护一个被称为 <strong>belief state</strong> 的对话状态表征（<em>dialogue state representation</em>）</li>
+<li>policy：将 <strong>belief state</strong> 映射到适合的 <strong>system dialogue act</strong></li>
+<li>semantic output：将 <strong>system dialogue act</strong> 转化为文本表示</li>
+<li>topic tracker：对于多域功能，需要 <strong>topic tracker</strong>，其功能将在第 2.2 节中解释</li>
+</ol>
+</li>
+<li>User Simulation：支持在语义层面进行对话模拟，即不使用任何语义解析器或语言生成。这是一种广泛应用于训练和评估基于强化学习算法的技术，因为它避免了昂贵的数据收集练习（<em>data collection exercises</em>）和用户试验（<em>user trials</em>）。它当然只提供了一个近似的真实用户行为，所以通过模拟获得的结果应该谨慎看待！</li>
+<li>与环境交互：为了使 Agent 能够与其环境进行通信，PyDial 提供了两种模式：语音和文本<ul>
+<li>Texthub：只需将 Agent 连接到终端</li>
+<li>Dialogue Server：要启用基于语音的对话，<strong>Dialogue Server</strong> 允许连接到外部语音客户端。此客户端负责使用 ASR 将输入语音信号映射到文本，并使用语音合成将输出文本映射到语音（<em>text to speech</em>, <strong>TTS</strong>）。语音客户端通过 HTTP 交换 JSON 消息连接到对话服务器。请注意，语音客户端不是 PyDial 的一部分。基于云的 ASR 和 TTS 服务可以从 <a href="https://cloud.google.com/speech" target="_blank" rel="noopener">Google</a>、<a href="https://www.microsoft.com/cognitive-services/en-us/speech-api" target="_blank" rel="noopener">Microsoft</a>或 <a href="http://www.ibm.com/watson/developercloud/speech-to-text.html" target="_blank" rel="noopener">IBM</a>等提供商处获得。PyDial 目前连接到 DialPort（Zhao等人，2016），其允许基于语音的交互。</li>
+</ul>
+</li>
+<li>Ontology：除了 <strong>Agent</strong> 和接口组件之外，还有 <strong>Ontology</strong>，Ontology 封装了对话域规范以及对后端数据库（例如，一组餐厅及它们的属性）的访问。它被建模为一个全局对象，大多数对话系统模块和用户模拟器使用它来获取有关用户 <em>actions,  slots, slot values, and system actions</em> 的相关信息。</li>
+<li>Evaluation：用于计算对话的评估度量（例如 <strong>Task Success</strong>）。对于基于强化学习的对话模块来说，评估组件还负责提供 <em>reward</em></li>
+</ul>
+<h2 id="2-2-多领域对话系统架构"><a href="#2-2-多领域对话系统架构" class="headerlink" title="2.2 多领域对话系统架构"></a>2.2 多领域对话系统架构</h2><p>&emsp;&emsp;Agent -&gt; <strong>topic tracker</strong></p>
+<h2 id="2-3-主要原则"><a href="#2-3-主要原则" class="headerlink" title="2.3 主要原则"></a>2.3 主要原则</h2><p>&emsp;&emsp;为了使 PyDial 能够轻松地应用于新问题，PyDial 体系结构的设计支持三个关键原则：</p>
+<ul>
+<li>Domain Independence</li>
+<li>Easy Configurability</li>
+<li>Extensibility</li>
+</ul>
+<h1 id="3-实现"><a href="#3-实现" class="headerlink" title="3 实现"></a>3 实现</h1><p>&emsp;&emsp;PyDial 工具包是一个不断开发的研究系统。可从Apache2.0许可下的<a href="http://pydial.org" target="_blank" rel="noopener">网站</a>免费下载。在最初的版本中可以使用以下各种系统模块的实现，不过，到时候会有更多的实现。</p>
+<ul>
+<li><strong>Semantic Decoder</strong>：为了对输入语句（或n个最佳语句列表，or n-best-list of sentences）进行语义解码，PyDial 提供了一个基于规则（使用正则表达式）的实现，以及一个基于 SVM 的统计模型，即 the Semantic Tuple Classifier（Mairess et al., 2009）。对于后者，只提供了 CamRestaurants 领域的模型。</li>
+<li><strong>Belief Tracker</strong>：为了跟踪 belief state，可用 <strong>the rule-based focus tracker</strong>（Henderson et al., 2014）。该实现与领域无关。所有特定领域的信息都是从本体中提取的。</li>
+<li><strong>Policy</strong>：负责 policy 的决定执行模块有两种实现方式：<strong>1）</strong>人工制定的策略（应该适用于所有领域）；<strong>2）</strong>Gaussian process (GP) reinforcement learning policy（Gasic and Young, 2014）。对于多领域对话，策略管理器可以像处理所有其他模块一样处理策略。给定每个用户的输入的领域，然后选择相应的领域策略。<br>此外，还可以选择 Gasic et al.(2015b) 提出的 Bayesian committee machine(BCM) 处理程序：<strong>当处理一个领域的 belief state 时，参考其他领域的策略来选择最终的系统操作</strong>。为了实现这一点，belief state 被映射到一个抽象表示，然后允许所有策略访问它。在 PyDial 中，经过训练的策略可以在 committee-based handler 和 standard policy manager handler 之间移动。即在 committee 外部（在单域或多域设置中）接受训练的策略可以在 committee 内部使用，反之亦然。</li>
+<li><strong>Language Generator</strong>：为了将 semantic system action 映射为文本，PyDial 提供了两个实现组件：<strong>1）</strong>对于所有领域来说，提供了一个基于模板（定义规则）的语言生成；<strong>2）</strong>此外 Wen et al. (2015) 提出了基于 LSTM 的语言生成器，里面包含了 CamRestaurants 领域的预训练模型</li>
+<li><strong>Topic Tracker</strong>：PyDial 提供了一个基于关键字的 Topic Tracker 实现。如果 Topic Tracker 已为某些用户输入标识了领域，那么它将继续使用该领域，直到识别了新的领域。<strong>因此，并非每个用户输入都必须包含相关关键字</strong>。如果 Topic Tracker <strong>无法在开始时识别领域</strong>，那么它将创建与用户的 meta-dialogue，直到确定初始领域或达到最大重试次数。</li>
+<li><strong>Evaluation</strong>：为了评估对话，目前已经实现了两个 success-based 模块。（下面的话部分看不懂，索性不翻了—）<blockquote>
+<p>The objective task success evaluator compares the constraints and requests the system identifies with the true values. The latter may either be derived from the user simulator or, in real dialogues, by specifying a predefined task. For real dialogues, a subjective task success evaluator may also be applied which queries the user about the outcome of the dialogue.</p>
+</blockquote>
+</li>
+<li><strong>User Simulation</strong>：模拟用户的实现使用 agenda-based 用户模拟器（Schatzmann et al., 2006）。该模拟器包含 user model 和 error model，从而创建 a n-best-list of user acts 来模拟噪声语音信道。通过使用一组普遍适用的参数，模拟器可以应用于所有领域。领域特定的信息取自本体。</li>
+</ul>
+<h1 id="4-一些领域"><a href="#4-一些领域" class="headerlink" title="4 一些领域"></a>4 一些领域</h1><p>&emsp;&emsp;<strong>PyDial 的主要关注的是面向任务的对话，即根据一些约束条件用户必定找到其匹配的实体</strong>。找到实体后，用户可以请求其他信息。为应付这些场景，PyDial 预先加载了总共十个不同复杂度的领域：</p>
+<ul>
+<li>略</li>
+</ul>
+<p>&emsp;&emsp;如前所述，所有 <strong>policy</strong> 实现以及 <strong>belief tracker</strong> 和 <strong>user simulator</strong> 的实现都独立于领域之外。因此，在<strong>所有领域</strong>都可以进行交互的模拟。此外，<strong>semantic decoder</strong> 和 <strong>language generator</strong> 在某种程度上依赖于特定领域的实现。PyDial 包含用于<strong>所有领域</strong>的基于规则的 <strong>semantic decoder</strong> 和一个用于 <strong>CamRestaurants</strong> 的统计解码器（<em>statistical decoder</em>）。此外，PyDial 还为<strong>大多数领域</strong>提供了基于模板的语言生成，并为 <strong>CamRestaurants</strong> 提供了基于 LSTM 的生成器。因此，在 CamRestaurants 领域，实现统计对话完全有可能。</p>
+]]></content>
+      <categories>
+        <category>paper</category>
+      </categories>
+      <tags>
+        <tag>pydial</tag>
       </tags>
   </entry>
   <entry>
@@ -3578,7 +3598,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
   </entry>
   <entry>
     <title>深度学习算法（四）：Transformer</title>
-    <url>/%C2%B7zcy/AI/dl/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E5%9B%9B%EF%BC%89%EF%BC%9ATransformer.html</url>
+    <url>/AI/dl/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E5%9B%9B%EF%BC%89%EF%BC%9ATransformer.html</url>
     <content><![CDATA[<h1 id="Transformer位置信息"><a href="#Transformer位置信息" class="headerlink" title="Transformer位置信息"></a>Transformer位置信息</h1><p>&emsp;&emsp;引用自<a href="https://zhuanlan.zhihu.com/p/54743941" target="_blank" rel="noopener">放弃幻想，全面拥抱Transformer：自然语言处理三大特征抽取器（CNN/RNN/TF）比较</a></p>
 <blockquote>
 <p>&emsp;&emsp;NLP 句子中单词之间的相对位置是包含很多信息的，上面提过，RNN 因为结构就是线性序列的，所以天然会将位置信息编码进模型；而CNN的卷积层其实也是保留了位置相对信息的，所以什么也不做问题也不大。但是对于 Transformer 来说，为了能够保留输入句子单词之间的相对位置信息，必须要做点什么。为啥它必须要做点什么呢？因为输入的第一层网络是 Muli-head self attention 层，我们知道，Self attention 会让当前输入单词和句子中任意单词发生关系，然后集成到一个 embedding 向量里，但是当所有信息到了 embedding 后，位置信息并没有被编码进去。所以，Transformer 不像 RNN 或 CNN，必须明确的在输入端将 Positon 信息编码，Transformer 是用<strong>位置函数</strong>来进行位置编码的，而 Bert 等模型则给每个单词一个 <strong>Position embedding</strong>。将单词 embedding 和单词对应的 position embedding 加起来形成单词的输入 embedding，类似上文讲的 ConvS2S 的做法。</p>
@@ -3662,7 +3682,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
   </entry>
   <entry>
     <title>【NLP算法】（零）NLP基础算法</title>
-    <url>/%C2%B7zcy/AI/nlp/%E3%80%90NLP%E7%AE%97%E6%B3%95%E3%80%91%EF%BC%88%E9%9B%B6%EF%BC%89NLP%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95.html</url>
+    <url>/AI/nlp/%E3%80%90NLP%E7%AE%97%E6%B3%95%E3%80%91%EF%BC%88%E9%9B%B6%EF%BC%89NLP%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95.html</url>
     <content><![CDATA[<h1 id="one-hot"><a href="#one-hot" class="headerlink" title="one hot"></a>one hot</h1><h1 id="N-gram-算法"><a href="#N-gram-算法" class="headerlink" title="N-gram 算法"></a>N-gram 算法</h1><ul>
 <li><strong>基本算法</strong><br>有句子：老王吃过了吗？<br>该句子可表示为 <script type="math/tex">S = w_1w_2w_3w_4w_5w_6</script><br>那么该句子的概率为 p(S)=p(w1w2w3w4w5w6) = <script type="math/tex">\prod</script>p(wt|w1w2…wt-1) = p(w1)p(w2|w1)p(w3|w1w2)…<br>由于该算法太复杂，所以就产生了其他的算法。马尔科夫模型，该模型认为，一个词的出现仅仅依赖于它前面出现的几个词。可理解为是n-gram。</li>
 <li><strong>n-gram</strong><br>n-gram只根据前n-1个单词来预测第n个单词的概率。<br>比如n=2时，也被称为bi-gram。公式为： p(wt|wt-1) = p(wtwt-1)/p(wt)<br>意思就是计算wt-1后面出现wt的概率<br>比如t等于1，则就是计算“老”后面出现“王”的概率<br><strong>剩下的问题就是如何计算一个字出现的概率</strong>。</li>
@@ -4379,7 +4399,7 @@ E_{Q|col} = H_Q w</script><p>&emsp;&emsp;在 <strong>Sequence-to-set</strong> �
   </entry>
   <entry>
     <title>【NLP算法】（一）word2vec</title>
-    <url>/%C2%B7zcy/AI/nlp/%E3%80%90NLP%E7%AE%97%E6%B3%95%E3%80%91%EF%BC%88%E4%B8%80%EF%BC%89word2vec.html</url>
+    <url>/AI/nlp/%E3%80%90NLP%E7%AE%97%E6%B3%95%E3%80%91%EF%BC%88%E4%B8%80%EF%BC%89word2vec.html</url>
     <content><![CDATA[<h1 id="词嵌入模型"><a href="#词嵌入模型" class="headerlink" title="词嵌入模型"></a>词嵌入模型</h1><p>&emsp;&emsp;以前在训练语言模型的时候使用one-hot编码，现在使用的是word embedding。但是这样理解其实稍微有点问题，因为如果这样理解，就难以解释embedding层是用来干嘛的了。<br>&emsp;&emsp;正解：<br>&emsp;&emsp;<strong>其实现在使用的还是one-hot</strong>，在keras框架中输入的就是one-hot编码。我以前一直是上面的那种理解，所以我一直不懂为什么要输入one-hot，而不直接输入word embedding。众所周知，one-hot编码乘上词嵌入矩阵可以得到词向量，这步操作看起来有点像查表。但其实这里用到了<strong>预训练</strong>。<br>&emsp;&emsp;词嵌入矩阵是预先训练好的，其实就是一个权重矩阵，而我们做的就是初始化了输入层的权重矩阵，只不过以前是随机初始化，而现在是直接初始化为词嵌入矩阵。embedding层只用了一步就获得了词的特征，但以前需要训练。所以我们算是使用了预训练的方法，直接获得了embedding层，但是相比于cv领域，目前我们还无法初始化高层的权重。<br>&emsp;&emsp;<strong>总结一下就是词嵌入矩阵是input层到embedding层的权重矩阵。</strong></p>
 <ul>
 <li><strong>缺陷</strong><br>多义词问题无法解决，所以导致word embedding一直效果不好。<br>以下引用自<a href="https://zhuanlan.zhihu.com/p/49271699" target="_blank" rel="noopener">专栏</a><br>Word Embedding本质上是个静态的方式，所谓静态指的是训练好之后每个单词的表达就固定住了，以后使用的时候，不论新句子上下文单词是什么，这个单词的Word Embedding不会跟着上下文场景的变化而改变，所以对于比如Bank这个词，它事先学好的Word Embedding中混合了几种语义 ，在应用中来了个新句子，即使从上下文中（比如句子包含money等词）明显可以看出它代表的是“银行”的含义，但是对应的Word Embedding内容也不会变，它还是混合了多种语义。这是为何说它是静态的，这也是问题所在。<a id="more"></a>
@@ -5122,10 +5142,10 @@ c1(no)->e2(left)->st</textarea><textarea id="flowchart-0-options" style="display
   </entry>
   <entry>
     <title>深度学习算法（三）：RNN 各种机制</title>
-    <url>/%C2%B7zcy/AI/dl/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9ARNN%20%E5%90%84%E7%A7%8D%E6%9C%BA%E5%88%B6.html</url>
+    <url>/AI/dl/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9ARNN%20%E5%90%84%E7%A7%8D%E6%9C%BA%E5%88%B6.html</url>
     <content><![CDATA[<h1 id="GRU"><a href="#GRU" class="headerlink" title="GRU"></a>GRU</h1><h1 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h1><p>&emsp;&emsp;该<a href="https://yan624.github.io/·学习笔记/AI/dl/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">博客</a>中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。<br>&emsp;&emsp;下图是吴恩达深度学习第五周作业中的图片，是一个 LSTM 单元。<strong>与李宏毅老师做的图有略微不同，并且在下图中将 input gate 称为了 update gate，并且在李宏毅老师所提供的图片中，g(z) 是由 sigmoid 函数计算出来的，而这里是由 tanh 计算出来的，即下图 update gate 旁边的函数</strong>。另外在李宏毅老师提供的图片中，为了简便，并没有使用上个时间步的激活值。</p>
 <ol>
-<li>首先是<strong>输入的问题</strong>。一般来说一个 LSTM 的输入是前一<strong>个</strong> LSTM 的输出值 <script type="math/tex">a</script> 以及输入值 <script type="math/tex">x</script>（对于第 2 层的 LSTM 的 输入值就是前一<strong>层</strong>的输出值）。但是众所周知，<strong>LSTM 每个门的输入肯定只有一个向量，<script type="math/tex">a</script> 和 <script type="math/tex">x</script> 是两个向量，那么如何处理呢？</strong> <ul>
+<li>首先是<strong>输入的问题</strong>。一般来说一个 LSTM 的输入是前一<strong>个</strong> LSTM 的输出值 <script type="math/tex">a</script> 以及输入值 <script type="math/tex">x</script>（此外对于第 2 层的 LSTM 的 输入值就是前一<strong>层</strong>的输出值）。但是众所周知，<strong>LSTM 每个门的输入肯定只有一个向量，<script type="math/tex">a</script> 和 <script type="math/tex">x</script> 是两个向量，那么如何处理呢？</strong> <ul>
 <li>在下图中使用了 <script type="math/tex">[a^{<t-1>},x^{<t>}]</script> 进行向量拼接。</li>
 <li>在我看的代码中直接使用了加法进行相加，代码<a href="https://github.com/Alex-Fabbri/lang2logic-PyTorch/blob/master/seq2seq/atis/lstm/main.py" target="_blank" rel="noopener">在这</a>，但是代码量太大了，随便看看就行了（<strong>2020.2.25 更新</strong>：该代码使用了加法是基于一种较为特殊的情况，即 lstm 的隐藏状态维度等于词向量维度，所以正好可以使用加法，但是一般情况下，它们的维度不相同，所以<strong>只能使用拼接的方式</strong>）。</li>
 </ul>
@@ -5161,7 +5181,7 @@ c1(no)->e2(left)->st</textarea><textarea id="flowchart-0-options" style="display
   </entry>
   <entry>
     <title>深度学习算法（二）：simple RNN 推导与理解</title>
-    <url>/%C2%B7zcy/AI/dl/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%BA%8C%EF%BC%89%EF%BC%9Asimple%20RNN%20%E6%8E%A8%E5%AF%BC%E4%B8%8E%E7%90%86%E8%A7%A3.html</url>
+    <url>/AI/dl/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%BA%8C%EF%BC%89%EF%BC%9Asimple%20RNN%20%E6%8E%A8%E5%AF%BC%E4%B8%8E%E7%90%86%E8%A7%A3.html</url>
     <content><![CDATA[<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><p><a href="https://github.com/yan624/machine_learning_algorithms/tree/master/simple_recurrent_neural_network" target="_blank" rel="noopener">github地址</a><br>simple RNN只实现了正向传播，反向传播没有实现。是因为simple RNN有梯度消失的问题，索性直接不写了。下一节直接写LSTM。</p>
 <h1 id="simple-RNN和simple-NN的对比"><a href="#simple-RNN和simple-NN的对比" class="headerlink" title="simple RNN和simple NN的对比"></a>simple RNN和simple NN的对比</h1><p>本来觉得simple RNN挺简单的，只不过是simple NN的扩展，区别无非是将simple NN的神经元换成一个RNN cell。但是实际上没那么简单，特别是加上将数据向量化后计算。感觉简直和simple NN是两种架构。</p>
 <h2 id="input"><a href="#input" class="headerlink" title="input"></a>input</h2><p>下图是一个simple NN的架构，其中的一层也叫做全连接层。所以也叫做前馈神经网络。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple RNN 推导与理解/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版"><br>网络中输入的x是一个纯数字，而不是向量。如果输入的是向量，就代表一次输入了多条样本。总的来说，一条样本向量化为：<br><a id="more"></a></p>
@@ -5253,18 +5273,7 @@ W_{ax} x^{<t>} + W_{aa} a^{<t-1>} =
     }^{\frac{\partial{a^3}}{\partial{a^2}}}
 \}</script><p>&emsp;&emsp;实际上上式很容易就可以发现是一个递归形式的表达式，所以可以写为以下的形式，其中 k 代表第几个激活值，也可以理解为第几个时间步。<br>&emsp;&emsp;<strong>注意与 <script type="math/tex">W_{aa}</script> 相乘的其实是一个 diagonal 矩阵，除主对角线其余全为 0。</strong></p>
 <script type="math/tex; mode=display">
-\frac{\partial{a^k}}{\partial{W_{aa}}} = S_k \circ (1 - S_k) \circ (a^{k - 1} + W_{aa} \cdot \frac{\partial{a^{k - 1}}}{W_{aa}})</script><h1 id="simple-RNN-的缺陷"><a href="#simple-RNN-的缺陷" class="headerlink" title="simple-RNN 的缺陷"></a>simple-RNN 的缺陷</h1><p>&emsp;&emsp;RNN一个最大的缺陷就是梯度消失与梯度爆炸问题，由于这一缺陷，使得RNN在长文本中难以训练，这才诞生了LSTM及各种变体，来源于<a href="https://zhuanlan.zhihu.com/p/44163528" target="_blank" rel="noopener">专栏</a>。梯度消失的原因：参考<a href="https://zhuanlan.zhihu.com/p/28687529" target="_blank" rel="noopener">专栏</a>。<br>&emsp;&emsp;个人的解释如下：<br>&emsp;&emsp;在 RNN 中利用 memory 的方式是一种复合函数的结构，所以在反向传播时，需要链式求导，即 <script type="math/tex">f(g(x)) = f'(g(x))·g'(x)</script>，梯度与梯度相乘容易造成<strong>梯度消失</strong>和<strong>梯度爆炸</strong>。而在 LSTM 中，是使用加和的计算方式，所以大致解决了梯度消失的问题。<br><div class="note info">
-            <p>&emsp;&emsp;在 RNN 中，求导得到的表达式为连乘，而 sigmoid 的输出值在 [0-1] 之间，造成了梯度消失。当然也会造成梯度爆炸，因为激活函数不一定非是 sigmoid，换成 ReLU 输出值就会大于 1 了。<br>&emsp;&emsp;接下来我带入数字来讲解一遍，<strong>具体公式详见上一节，下面只讲求导后的函数</strong>。我们先把公式拿过来，并设 <script type="math/tex">a^3 = 0.2</script>, <script type="math/tex">a^2 = 0.1</script>, <script type="math/tex">a^1 = 0.05</script>, <script type="math/tex">w_{aa} = 0.07</script>。并且<strong>易得</strong> <script type="math/tex">S^1 = a^1</script>, <script type="math/tex">S^2 = a^2</script>, <script type="math/tex">S^3 = a^3</script>（易得部分都不懂的，建议看看上面的《反向传播（BPTT）》就明白了。</p><script type="math/tex; mode=display">\frac{\partial{a^3}}{\partial{W_{aa}}} = S_3 \circ (1 - S_3) \circ\{    \overbrace{a^2}^{\frac{\partial{a^3}}{\partial{W_{aa}}}} + \overbrace{        W_{aa} \cdot \underbrace{            S_2 \circ (1 - S_2)[                a^1 + W_{aa} \cdot \underbrace{                    S_1 \circ (1 - S_1) \circ \frac{\partial{a^0}}{\partial{W_{aa}}}                }_{\frac{\partial{a^1}}{\partial{W_{aa}}}}            ]        }_{\frac{\partial{a^2}}{\partial{W_{aa}}}}    }^{\frac{\partial{a^3}}{\partial{a^2}}}\}</script><p>&emsp;&emsp;则</p><script type="math/tex; mode=display">\frac{\partial{a^3}}{\partial{W_{aa}}} = a^3 \circ (1 - a^3) \circ \{a^2 + W_{aa} \cdot a^2 \circ (1 - a^2) \circ [a^1 + 0]\}</script><p>&emsp;&emsp;<em>首先需要明白一点，对于 RNN 来说，激活值 a 就是 memory。我们将设置的值带入得到 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.0160504</script>。可以发现梯度很小，而这仅仅是在序列长度为 3 的情况下。那么假设我们修改值，将 <script type="math/tex">w_{aa}</script> 改为 0.7，则 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.016504</script>，将 <script type="math/tex">w_{aa}</script> 改为 7，则 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.02104</script>。我们发现即使 <script type="math/tex">w_{aa}</script> 的变化很大，梯度值的变化效果也不是明显。也就是说对于 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}}</script>，<script type="math/tex">W_{aa}</script> 这个值不是很重要，在计算梯度时，可以忽略。</em>（<strong>2020.3.2 更新</strong>：事实上 <script type="math/tex">W_{aa}</script> 对梯度消失也有影响，这里没影响是因为上式嵌套结构中才出现了一个 <script type="math/tex">W_{aa}</script>。刚才试了一下如果多套几个，梯度也会受到很大影响（<strong>其中对梯度消失的影响略小，主要对梯度爆炸的影响很大</strong>））<br>&emsp;&emsp;综上所述，<del>我们发现 W 几乎无法阻止梯度越变越小。</del>激活值全都在 [0-1] 范围内，所以就产生了梯度消失——gradient vanishing。（<script type="math/tex">W_{aa}</script> 也会造成影响）<br>&emsp;&emsp;对于梯度爆炸，由于激活函数是 sigmoid 激活值不可能大于 1，所以可能是 <script type="math/tex">W_{aa}</script> 造成的。如果激活函数是 tanh 的话，激活值会大于 1，那么应该也会造成梯度爆炸。<br>&emsp;&emsp;对 <script type="math/tex">W_{ax}</script> 是差不多的道理，只不过对于输入值 x，它本身的取值就是 [<script type="math/tex">\infty</script>, <script type="math/tex">-\infty</script>]，所以与 a 不同。<br>&emsp;&emsp;然而梯度消失的真正原因并不完全是这个，详见 <a href="https://yan624.github.io/·zcy/AI/深度学习500问笔记.html#·LSTM解决了RNN的什么问题">LSTM 解决了 RNN 的什么问题</a> 的第二点。</p>
-          </div></p>
-<p>&emsp;&emsp;RNN 的 loss 是每个 timestep 上的 loss 的加和，下图显示了这种情况下是如何求导的。不过有时候 RNN 的 loss 也就最后一个 tiemstep 会有一个 loss，比如分类任务。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple RNN 推导与理解/vanishing gradient problem details.jpg" alt="vanishing gradient problem details"></p>
-<p>&emsp;&emsp;参考资料：</p>
-<ol>
-<li><a href="https://zhuanlan.zhihu.com/p/28749444" target="_blank" rel="noopener">LSTM如何解决梯度消失问题</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/34203833" target="_blank" rel="noopener">深入理解lstm及其变种gru</a></li>
-<li><a href="https://www.zhihu.com/question/34878706/answer/192444888" target="_blank" rel="noopener">LSTM如何来避免梯度弥散和梯度爆炸？</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/83496936" target="_blank" rel="noopener">人人都能看懂的LSTM介绍及反向传播算法推导（非常详细）</a></li>
-</ol>
-<!-- more -->]]></content>
+\frac{\partial{a^k}}{\partial{W_{aa}}} = S_k \circ (1 - S_k) \circ (a^{k - 1} + W_{aa} \cdot \frac{\partial{a^{k - 1}}}{W_{aa}})</script>]]></content>
       <categories>
         <category>AI</category>
         <category>dl</category>
@@ -5414,7 +5423,7 @@ v_a tanh(W_a [h_t;\bar{h}_s])
   </entry>
   <entry>
     <title>深度学习算法（一）：simple NN（前馈神经网络的正反向推导）</title>
-    <url>/%C2%B7zcy/AI/dl/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9Asimple%20NN%EF%BC%88%E5%89%8D%E9%A6%88%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E6%AD%A3%E5%8F%8D%E5%90%91%E6%8E%A8%E5%AF%BC%EF%BC%89.html</url>
+    <url>/AI/dl/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9Asimple%20NN%EF%BC%88%E5%89%8D%E9%A6%88%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E6%AD%A3%E5%8F%8D%E5%90%91%E6%8E%A8%E5%AF%BC%EF%BC%89.html</url>
     <content><![CDATA[<div class="note info">
             <p>本文的公式不存在次方的说法，所以看见上标，不要想成是次方。<br>对于权重的表示问题，请看<a href="https://yan624.github.io/·学习笔记/AI/dl/《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题.html">博客</a>，但是由于是以前的学习笔记，不保证完全正确。<br>如果想了解为什么梯度下降要对w和b求导，可以看<a href="https://yan624.github.io/·zcy/AI/ml/梯度下降算法的推导.html">这篇</a>。<br><strong>建议边看边写，否则思维跟不上。</strong></p>
           </div>
@@ -5976,7 +5985,7 @@ a^{<t>} = g_1(w_{a} * [a^{<t-1>}, x^{<t>}] + b_a)\\
             <p>&emsp;&emsp;此处的笔记来源于 <a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">26: Recurrent Neural Network (Part II)</a> 从 0 分开始。</p>
           </div>
 <p>&emsp;&emsp;BPTT——backpropagation through time，与 NN 的 backpropagation 类似，李宏毅老师也没讲原理直接跳过了。<br>&emsp;&emsp;然而不幸的是，RNN 的 training 是很困难的。下面蓝色的线是希望的结果，但是实际上是绿色的线，会出现剧烈地抖动，最后在某个点出现NAN。这就是类似梯度消失问题。可以使用一些办法解决，但是现在用得最多的方法是LSTM。<br>&emsp;&emsp;<strong>视频中花了很长的时间去讲解梯度爆炸和梯度消失的问题，但是我没有将它记录在这，详情可访问下面两个链接。</strong><br><div class="note primary">
-            <p>&emsp;&emsp;Q：如何防止出现如下剧烈抖动的 loss 曲线？<br>&emsp;&emsp;A：<a href="https://yan624.github.io/·zcy/AI/深度学习500问笔记.html#·梯度爆炸">clip gradient 解决了 loss 剧烈抖动的问题</a><br>&emsp;&emsp;Q：LSTM 解决了 RNN 的什么难题？<br>&emsp;&emsp;A：<a href="https://yan624.github.io/·zcy/AI/深度学习500问笔记.html#·LSTM解决了RNN的什么问题">LSTM 解决了 RNN 的什么问题</a></p>
+            <p>&emsp;&emsp;Q：如何防止出现如下剧烈抖动的 loss 曲线？<br>&emsp;&emsp;A：<a href="https://yan624.github.io/·zcy/AI/dl/深度学习算法总结.html#梯度爆炸">clip gradient 解决了 loss 剧烈抖动的问题</a><br>&emsp;&emsp;Q：LSTM 解决了 RNN 的什么难题？<br>&emsp;&emsp;A：<a href="https://yan624.github.io/·zcy/AI/dl/深度学习算法总结.html#LSTM解决了RNN的什么问题">LSTM 解决了 RNN 的什么问题</a></p>
           </div><br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/RNN%20training%E7%A2%B0%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98.jpg" alt="RNN trWaining碰到的问题"></p>
 <h1 id="其他解决梯度消失的办法"><a href="#其他解决梯度消失的办法" class="headerlink" title="其他解决梯度消失的办法"></a>其他解决梯度消失的办法</h1><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达李宏毅综合学习笔记：RNN入门/%E5%85%B6%E4%BB%96%E8%A7%A3%E5%86%B3%E6%A2%AF%E5%BA%A6%E6%B6%88%E5%A4%B1%E7%9A%84%E5%8A%9E%E6%B3%95.jpg" alt="其他解决梯度消失的办法"></p>
 <h1 id="seq2seq"><a href="#seq2seq" class="headerlink" title="seq2seq"></a>seq2seq</h1><h2 id="Many-to-one"><a href="#Many-to-one" class="headerlink" title="Many to one"></a>Many to one</h2><p>输入一个向量sequence，只输出一个向量。</p>

@@ -22,31 +22,20 @@
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="&amp;emsp;&amp;emsp;视频来自 此处，或者 此处。4:56 A word can have multiple senses.11:24 ELMO19:08 BERT49:23 GPT(-2)            ELMO&amp;emsp;&amp;emsp;Embedding from Language Model(ELMO) 可以做到每个 word token 分配不同的 emb">
-<meta name="keywords" content="系列,学习笔记,ELMO,BERT,ERNIE,GPT">
+  <meta name="description" content="词嵌入模型&amp;emsp;&amp;emsp;以前在训练语言模型的时候使用one-hot编码，现在使用的是word embedding。但是这样理解其实稍微有点问题，因为如果这样理解，就难以解释embedding层是用来干嘛的了。&amp;emsp;&amp;emsp;正解：&amp;emsp;&amp;emsp;其实现在使用的还是one-hot，在keras框架中输入的就是one-hot编码。我以前一直是上面的那种理解，所以我一直不懂为什">
+<meta name="keywords" content="系列,word2vec">
 <meta property="og:type" content="article">
-<meta property="og:title" content="深度学习算法（五）：预训练模型">
-<meta property="og:url" content="http://yan624.github.io/·zcy/AI/dl/深度学习算法（五）：预训练模型.html">
+<meta property="og:title" content="【NLP算法】（一）word2vec">
+<meta property="og:url" content="http://yan624.github.io/AI/nlp/【NLP算法】（一）word2vec.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="&amp;emsp;&amp;emsp;视频来自 此处，或者 此处。4:56 A word can have multiple senses.11:24 ELMO19:08 BERT49:23 GPT(-2)            ELMO&amp;emsp;&amp;emsp;Embedding from Language Model(ELMO) 可以做到每个 word token 分配不同的 emb">
+<meta property="og:description" content="词嵌入模型&amp;emsp;&amp;emsp;以前在训练语言模型的时候使用one-hot编码，现在使用的是word embedding。但是这样理解其实稍微有点问题，因为如果这样理解，就难以解释embedding层是用来干嘛的了。&amp;emsp;&amp;emsp;正解：&amp;emsp;&amp;emsp;其实现在使用的还是one-hot，在keras框架中输入的就是one-hot编码。我以前一直是上面的那种理解，所以我一直不懂为什">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/ELMO示意图.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/我全都要.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/Masked LM.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/Next Sentence Prediction.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 1.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 2.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 3.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 4.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 4-2.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/What does BERT learn.jpg">
-<meta property="og:updated_time" content="2020-02-09T13:18:40.127Z">
+<meta property="og:updated_time" content="2020-03-28T08:05:24.074Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="深度学习算法（五）：预训练模型">
-<meta name="twitter:description" content="&amp;emsp;&amp;emsp;视频来自 此处，或者 此处。4:56 A word can have multiple senses.11:24 ELMO19:08 BERT49:23 GPT(-2)            ELMO&amp;emsp;&amp;emsp;Embedding from Language Model(ELMO) 可以做到每个 word token 分配不同的 emb">
-<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/ELMO示意图.jpg">
+<meta name="twitter:title" content="【NLP算法】（一）word2vec">
+<meta name="twitter:description" content="词嵌入模型&amp;emsp;&amp;emsp;以前在训练语言模型的时候使用one-hot编码，现在使用的是word embedding。但是这样理解其实稍微有点问题，因为如果这样理解，就难以解释embedding层是用来干嘛的了。&amp;emsp;&amp;emsp;正解：&amp;emsp;&amp;emsp;其实现在使用的还是one-hot，在keras框架中输入的就是one-hot编码。我以前一直是上面的那种理解，所以我一直不懂为什">
 
-<link rel="canonical" href="http://yan624.github.io/·zcy/AI/dl/深度学习算法（五）：预训练模型.html">
+<link rel="canonical" href="http://yan624.github.io/AI/nlp/【NLP算法】（一）word2vec.html">
 
 
 <script id="page-configurations">
@@ -62,7 +51,7 @@
 <!--阿里云矢量库样式-->
 <link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_621sfmh583s.css" />
 
-  <title>深度学习算法（五）：预训练模型 | 博客</title>
+  <title>【NLP算法】（一）word2vec | 博客</title>
   
 
 
@@ -135,7 +124,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">159</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">160</span></a>
 
   </li>
         <li class="menu-item menu-item-about">
@@ -224,48 +213,9 @@
     	
     
     	
-    		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
-        <script type="text/javascript" src="/lib/spop/spop.min.js"></script>
-        <!--判断此文是否为特殊的文章-->
-        <script>
-          var templateSentence = '这是条不可能出现的弹窗提示。';
-          if('学习笔记' == '学习笔记')
-            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记，并非教学，其中可能含有理论错误。';
-          else if('学习笔记' == '4me')
-            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
-          spop({
-            template: templateSentence,
-            group: 'tips',
-            position  : 'bottom-center',
-            style: 'success',
-            autoclose: 5500,
-            onOpen: function () {
-              //这里设置灰色背景色
-            },
-            onClose: function() {
-              //这里可以取消背景色
-              spop({
-                template: 'ε = = (づ′▽`)づ',
-                group: 'tips',
-                position  : 'bottom-center',
-                style: 'success',
-                autoclose: 1500
-              });
-            }
-          });
-        </script>
-    	
-    
-    	
-    
-    	
-    
-    	
-    
-    	
     
 
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·zcy/AI/dl/深度学习算法（五）：预训练模型.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/AI/nlp/【NLP算法】（一）word2vec.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -278,7 +228,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          深度学习算法（五）：预训练模型
+          【NLP算法】（一）word2vec
         </h1>
 
         <div class="post-meta">
@@ -288,14 +238,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-01-23 16:55:34" itemprop="dateCreated datePublished" datetime="2020-01-23T16:55:34+08:00">2020-01-23</time>
+              <time title="创建时间：2019-07-10 16:08:57" itemprop="dateCreated datePublished" datetime="2019-07-10T16:08:57+08:00">2019-07-10</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-09 21:18:40" itemprop="dateModified" datetime="2020-02-09T21:18:40+08:00">2020-02-09</time>
+                <time title="修改时间：2020-03-28 16:05:24" itemprop="dateModified" datetime="2020-03-28T16:05:24+08:00">2020-03-28</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -309,8 +259,8 @@
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/dl/" itemprop="url" rel="index">
-                    <span itemprop="name">dl</span>
+                  <a href="/categories/AI/nlp/" itemprop="url" rel="index">
+                    <span itemprop="name">nlp</span>
                   </a>
                 </span>
             </span>
@@ -328,14 +278,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.5k</span>
+              <span>987</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -347,32 +297,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <div class="note info">
-            <p>&emsp;&emsp;视频来自 <a href="https://www.bilibili.com/video/av56235038" target="_blank" rel="noopener">此处</a>，或者 <a href="https://www.bilibili.com/video/av46561029?p=61" target="_blank" rel="noopener">此处</a>。</p><ol><li>4:56 A word can have multiple senses.</li><li>11:24 ELMO</li><li>19:08 BERT</li><li>49:23 GPT(-2)</li></ol>
-          </div>
-<h1 id="ELMO"><a href="#ELMO" class="headerlink" title="ELMO"></a>ELMO</h1><p>&emsp;&emsp;Embedding from Language Model(ELMO) 可以做到每个 word token 分配不同的 embedding，它是一个 RNN-based model。如下图所示，在提取“潮水退了”这四个字的词向量时，先使用一个 RNN 捕获信息。首先输入单词的词向量，然后将“退了”的 output 作为新的词向量。如果捕获“臣退了”三个字的特征，由于上下文的单词不同，使用 RNN 之后输出的 output 也不同，所以“退了”拥有不同 embeddng。“高烧退了”同理。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/ELMO示意图.jpg" alt="ELMO示意图"></p>
-<a id="more"></a>
-<p>&emsp;&emsp;但是这样做可能没有捕获到句子的后文的信息，那么只需要再 train 一个反向的 RNN，然后将两个正反向的 embedding 拼起来就得到了单词的词向量。<br>&emsp;&emsp;现在我们 train model 都是 deep 的，那么我们的这个 RNN 也可以是 depp 的。但是当 deep 之后会碰到问题，那就是每一层都有 embedding，我们应该哪一层的 embedding 当做词向量。ELMO 的做法是“我全都要”。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/我全都要.jpg" alt="我全都要.jpg"></p>
-<p>&emsp;&emsp;现在每一层都有一个 contextualized embedding，ELMO 的做法是把所有的 embedding 通通加起来变成一个 embedding。但是不是普通的加法，而是 <script type="math/tex">new embedding = \alpha_1 * embed_1 + \alpha_2 * embed_2</script>，其中的 <script type="math/tex">\alpha</script> 是 learn 出来的。但是 <script type="math/tex">\alpha</script> 在不同的任务下实际上选值也不同，详见视频 16:20 或者看论文。</p>
-<h1 id="BERT"><a href="#BERT" class="headerlink" title="BERT"></a>BERT</h1><p>&emsp;&emsp;Bidirectional Encoder Representations from Transformers(BERT)，BERT 用的是 Transformer 的 encoder。<br>&emsp;&emsp;BERT 实际做的是输入一个句子进去，每个单词都会输出一个 embedding。至于 BERT 内部的架构其实跟 Transformer 的 encoder 是一样的。<br>&emsp;&emsp;BERT 有两种训练方法：</p>
+        <h1 id="词嵌入模型"><a href="#词嵌入模型" class="headerlink" title="词嵌入模型"></a>词嵌入模型</h1><p>&emsp;&emsp;以前在训练语言模型的时候使用one-hot编码，现在使用的是word embedding。但是这样理解其实稍微有点问题，因为如果这样理解，就难以解释embedding层是用来干嘛的了。<br>&emsp;&emsp;正解：<br>&emsp;&emsp;<strong>其实现在使用的还是one-hot</strong>，在keras框架中输入的就是one-hot编码。我以前一直是上面的那种理解，所以我一直不懂为什么要输入one-hot，而不直接输入word embedding。众所周知，one-hot编码乘上词嵌入矩阵可以得到词向量，这步操作看起来有点像查表。但其实这里用到了<strong>预训练</strong>。<br>&emsp;&emsp;词嵌入矩阵是预先训练好的，其实就是一个权重矩阵，而我们做的就是初始化了输入层的权重矩阵，只不过以前是随机初始化，而现在是直接初始化为词嵌入矩阵。embedding层只用了一步就获得了词的特征，但以前需要训练。所以我们算是使用了预训练的方法，直接获得了embedding层，但是相比于cv领域，目前我们还无法初始化高层的权重。<br>&emsp;&emsp;<strong>总结一下就是词嵌入矩阵是input层到embedding层的权重矩阵。</strong></p>
 <ul>
-<li>Masked LM：输入给 BERT 的句子有 15% 的机会随机被置换成一个特殊的 token [MASK]，现在的任务是 BERT 去猜测这些被盖住的地方是哪一个词汇。在预测时，把输出的 embedding 丢到一个 Linear Multi-class classifier，让它预测被 mask 掉的词汇是哪一个。因为这个 classifier 是一个 linear 的，所以它的能力是很弱的。所以如果要成功预测出正确的词汇，那么 BERT 可能要很深，比如要 24/48 层，我们需要 BERT 抽取出一个很好的表征。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/Masked LM.jpg" alt="Masked LM"></li>
-<li>Next Sentence Prediction：比如输入“醒醒吧[SEP]你没有妹妹”，我们需要预测这两句话是否是相接的。另外我们需要在句子的首部加上 token [CLS]，然后将 [CLS] 的 embedding 输入到 Linear Binary Classifier 中去预测两个句子是否相接。但是问题来了，为什么要把 [CLS] 放在句子的开头呢？因为 BERT 的内部是一个 Transformer，所以一个 token 放在句子的开头和末尾影响不大，如果是一个 RNN 结构，那么可能应该放在末尾。<ul>
-<li>[SEP]：是两个句子的界限符号</li>
-<li>[CLS]：输出分类结果的位置<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/Next Sentence Prediction.jpg" alt="Next Sentence Prediction"></li>
-</ul>
+<li><strong>缺陷</strong><br>多义词问题无法解决，所以导致word embedding一直效果不好。<br>以下引用自<a href="https://zhuanlan.zhihu.com/p/49271699" target="_blank" rel="noopener">专栏</a><br>Word Embedding本质上是个静态的方式，所谓静态指的是训练好之后每个单词的表达就固定住了，以后使用的时候，不论新句子上下文单词是什么，这个单词的Word Embedding不会跟着上下文场景的变化而改变，所以对于比如Bank这个词，它事先学好的Word Embedding中混合了几种语义 ，在应用中来了个新句子，即使从上下文中（比如句子包含money等词）明显可以看出它代表的是“银行”的含义，但是对应的Word Embedding内容也不会变，它还是混合了多种语义。这是为何说它是静态的，这也是问题所在。<a id="more"></a>
 </li>
 </ul>
-<p>&emsp;&emsp;这两个方法是需要同时使用的，这样 BERT 会学得最好。<br>&emsp;&emsp;最后 BERT 也一直被人改进，有许多新版的 BERT 可以分别适用不同的任务，下面的文章介绍了几种新型的 BERT。<br><a href="https://mp.weixin.qq.com/s?__biz=MjM5ODkzMzMwMQ==&amp;mid=2650411744&amp;idx=2&amp;sn=1db39446e4e91299f9ba8c1d4eeb5983&amp;chksm=becd94ba89ba1dac221e2092cb1a12ecb1a5a704b6ae5cebd2649adc1a903355b95567ab484e&amp;mpshare=1&amp;scene=1&amp;srcid=&amp;sharer_sharetime=1572502447054&amp;sharer_shareid=68f8b84d7a46cc216b0afdc45278d6be&amp;key=8a4bbb55c6c79ce6c9104a6cfe5de2a3d1b8fa801c35e22e74b62948f50b6684c3f06195815e8712080977db6cec80fca5adfc95c9bc6fa848b8e68b41df13d8610e8d6c283ee2392b30de5cdae504bb&amp;ascene=1&amp;uin=MTQxMTUzMzk2MA%3D%3D&amp;devicetype=Windows+10&amp;version=62070152&amp;lang=en&amp;pass_ticket=pZijWLQmmCpNBDcjO4cUImTRWv1ZWLG4JENv1zUqjhXnUnShPGofPjjR%2Bkv1cozV" target="_blank" rel="noopener">BERT 的演进和应用</a></p>
-<h2 id="如何使用BERT"><a href="#如何使用BERT" class="headerlink" title="如何使用BERT"></a>如何使用BERT</h2><p>&emsp;&emsp;已经知道了 BERT 的训练方法，那么现在该如何使用呢？可以向 ELMO 一样，把 BERT 当做提取特征的工具，使我们获得词向量。但是 BERT 论文中他不止做了这样的事情，他说可以将 BERT 和你要解的任务一起做训练。<br>&emsp;&emsp;下图介绍了一种例子。如果我们的任务是输入一个句子，输出一个类别，那么我们可以在输入的句子的开头加上一个 [CLS]，然后将 [CLS] 的 embedding 输入到一个 Linear classifier 中就可以预测类别。也就是说我们将 BERT 下下来后，其实只需要定义我们的 classifier，然而调整 classifier 的参数即可，BERT 的参数仅仅需要微调，因为它已经被预训练过了。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 1.jpg" alt="How to use BERT - Case 1"></p>
-<p>&emsp;&emsp;第二种例子是输入一个句子，输出每一个单词的类别，比如说 slot filling。这个跟上一个差不多。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 2.jpg" alt="How to use BERT - Case 2"></p>
-<p>&emsp;&emsp;第三种例子是输入两个句子，输出一个类别，比如说 Natural Language Inference。这个也差不多，就是加了一个 [SEP]。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 3.jpg" alt="How to use BERT - Case 3"></p>
-<p>&emsp;&emsp;第四种例子是 QA 问题，而且是 extraction-based QA(E.g.  SQuAD)。即给 model 一篇文章，然后问它一个问题，期望得到一个答案。但是这里放水了，就是说答案中出现的词汇一定会出现在文章中。具体来说就是输入文章 D 和问题 Q，输出 s 和 e，其中 s 和 e 指的是文章 D 中的某个区间中单词。如果 s 和 e 矛盾，即 s &gt; e，那么回答“此题无解”。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 4.jpg" alt="How to use BERT - Case 4"></p>
-<p>&emsp;&emsp;具体做法：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 4-2.jpg" alt="How to use BERT - Case 4-2"></p>
-<h2 id="BERT学到了什么"><a href="#BERT学到了什么" class="headerlink" title="BERT学到了什么"></a>BERT学到了什么</h2><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/What does BERT learn.jpg" alt="What does BERT learn"></p>
-<h2 id="Multilingual-BERT"><a href="#Multilingual-BERT" class="headerlink" title="Multilingual BERT"></a>Multilingual BERT</h2><h1 id="ERNIE"><a href="#ERNIE" class="headerlink" title="ERNIE"></a>ERNIE</h1><p>&emsp;&emsp;Enhanced Representation through Kownledge Integration(ERNIE)，它是特别为中文设计的。</p>
-<h1 id="GPT"><a href="#GPT" class="headerlink" title="GPT"></a>GPT</h1><p>&emsp;&emsp;Generative Pre-Training(GPT)，GPT 是 transformer 的 decoder。GPT 与 BERT 类似。<br>&emsp;&emsp;56:45 讲了第一个位置的 attention token。</p>
-
+<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p><a href="https://blog.csdn.net/itplus/article/details/37969519" target="_blank" rel="noopener">word2vec 数学原理目录</a><br><a href="https://www.cnblogs.com/peghoty/p/3857839.html" target="_blank" rel="noopener">word2vec 数学原理</a><br><a href="http://www.hankcs.com/nlp/word2vec.html" target="_blank" rel="noopener">word2vec 原理推导与代码分析</a></p>
+<h1 id="训练词向量得到的-accuracy"><a href="#训练词向量得到的-accuracy" class="headerlink" title="训练词向量得到的 accuracy"></a>训练词向量得到的 accuracy</h1><p>word2vec 的 accuracy 貌似没卵用。我反正用 keras 搭的 CBOW 模型，accuracy 极低，只有 1%不到。<br><a href="https://www.zhihu.com/question/271782463" target="_blank" rel="noopener">参考</a>  </p>
+<h1 id="自己训练-word2vec-还是直接用别人的"><a href="#自己训练-word2vec-还是直接用别人的" class="headerlink" title="自己训练 word2vec 还是直接用别人的"></a>自己训练 word2vec 还是直接用别人的</h1><p><a href="https://bbs.csdn.net/topics/392144812?list=4625705" target="_blank" rel="noopener">参考</a><br>可能还是自己训练 word2vec 比较好，用别人的 word2vec 不太行。</p>
+<h1 id="CBOW"><a href="#CBOW" class="headerlink" title="CBOW"></a>CBOW</h1>
     </div>
 
     
@@ -382,11 +315,7 @@
       <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/系列/" rel="tag"># 系列</a>
-              <a href="/tags/学习笔记/" rel="tag"># 学习笔记</a>
-              <a href="/tags/ELMO/" rel="tag"># ELMO</a>
-              <a href="/tags/BERT/" rel="tag"># BERT</a>
-              <a href="/tags/ERNIE/" rel="tag"># ERNIE</a>
-              <a href="/tags/GPT/" rel="tag"># GPT</a>
+              <a href="/tags/word2vec/" rel="tag"># word2vec</a>
           </div>
 
         
@@ -395,12 +324,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/·学习笔记/AI/rl/李宏毅强化学习算法笔记.html" rel="prev" title="李宏毅强化学习算法笔记">
-      <i class="fa fa-chevron-left"></i> 李宏毅强化学习算法笔记
+    <a href="/·zcy/AI/ml/代价函数.html" rel="prev" title="代价函数">
+      <i class="fa fa-chevron-left"></i> 代价函数
     </a></div>
       <div class="post-nav-item">
-    <a href="/各种乘法的表示符号.html" rel="next" title="各种乘法的表示符号">
-      各种乘法的表示符号 <i class="fa fa-chevron-right"></i>
+    <a href="/·zcy/AI/ml/机器学习算法（八）：Adaboost.html" rel="next" title="机器学习算法（八）：Adaboost">
+      机器学习算法（八）：Adaboost <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -461,7 +390,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ELMO"><span class="nav-number">1.</span> <span class="nav-text">ELMO</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#BERT"><span class="nav-number">2.</span> <span class="nav-text">BERT</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#如何使用BERT"><span class="nav-number">2.1.</span> <span class="nav-text">如何使用BERT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BERT学到了什么"><span class="nav-number">2.2.</span> <span class="nav-text">BERT学到了什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Multilingual-BERT"><span class="nav-number">2.3.</span> <span class="nav-text">Multilingual BERT</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ERNIE"><span class="nav-number">3.</span> <span class="nav-text">ERNIE</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#GPT"><span class="nav-number">4.</span> <span class="nav-text">GPT</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#词嵌入模型"><span class="nav-number">1.</span> <span class="nav-text">词嵌入模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#原理"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#训练词向量得到的-accuracy"><span class="nav-number">3.</span> <span class="nav-text">训练词向量得到的 accuracy</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#自己训练-word2vec-还是直接用别人的"><span class="nav-number">4.</span> <span class="nav-text">自己训练 word2vec 还是直接用别人的</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CBOW"><span class="nav-number">5.</span> <span class="nav-text">CBOW</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -477,7 +406,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">159</span>
+          <span class="site-state-item-count">160</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -494,7 +423,7 @@
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">194.9k</span>
+      	<span class="site-state-item-count">195k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
@@ -661,7 +590,7 @@ $('.content img').on('zoom-out-complete.zoomify', function () {
       quicklink({
         timeout: 3000,
         priority: true,
-        ignores: [uri => uri.includes('#'),uri => uri == 'http://yan624.github.io/·zcy/AI/dl/深度学习算法（五）：预训练模型.html',]
+        ignores: [uri => uri.includes('#'),uri => uri == 'http://yan624.github.io/AI/nlp/【NLP算法】（一）word2vec.html',]
       });
       });
   </script>

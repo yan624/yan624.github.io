@@ -22,24 +22,31 @@
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="GRULSTM&amp;emsp;&amp;emsp;该博客中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。&amp;emsp;&amp;emsp;下图是吴恩达深度学习第五周作业中的图片，是一个 LSTM 单元。与李宏毅老师做的图有略微不同，并且在下图中将 input gate 称为了 update gate，并且在">
-<meta name="keywords" content="系列,学习笔记,GRU,LSTM,seq2seq,attention,memory network">
+  <meta name="description" content="&amp;emsp;&amp;emsp;视频来自 此处，或者 此处。4:56 A word can have multiple senses.11:24 ELMO19:08 BERT49:23 GPT(-2)            ELMO&amp;emsp;&amp;emsp;Embedding from Language Model(ELMO) 可以做到每个 word token 分配不同的 emb">
+<meta name="keywords" content="系列,学习笔记,ELMO,BERT,ERNIE,GPT">
 <meta property="og:type" content="article">
-<meta property="og:title" content="深度学习算法（三）：RNN 各种机制">
-<meta property="og:url" content="http://yan624.github.io/·zcy/AI/dl/深度学习算法（三）：RNN 各种机制.html">
+<meta property="og:title" content="深度学习算法（五）：预训练模型">
+<meta property="og:url" content="http://yan624.github.io/AI/dl/深度学习算法（五）：预训练模型.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="GRULSTM&amp;emsp;&amp;emsp;该博客中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。&amp;emsp;&amp;emsp;下图是吴恩达深度学习第五周作业中的图片，是一个 LSTM 单元。与李宏毅老师做的图有略微不同，并且在下图中将 input gate 称为了 update gate，并且在">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;视频来自 此处，或者 此处。4:56 A word can have multiple senses.11:24 ELMO19:08 BERT49:23 GPT(-2)            ELMO&amp;emsp;&amp;emsp;Embedding from Language Model(ELMO) 可以做到每个 word token 分配不同的 emb">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（三）：RNN 各种机制/LSTM cell.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（三）：RNN 各种机制/多个 LSTM.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（三）：RNN 各种机制/LSTM反向传播.jpg">
-<meta property="og:updated_time" content="2020-05-04T15:39:09.486Z">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/ELMO示意图.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/我全都要.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/Masked LM.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/Next Sentence Prediction.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 1.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 2.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 3.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 4.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 4-2.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/What does BERT learn.jpg">
+<meta property="og:updated_time" content="2020-02-09T13:18:40.127Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="深度学习算法（三）：RNN 各种机制">
-<meta name="twitter:description" content="GRULSTM&amp;emsp;&amp;emsp;该博客中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。&amp;emsp;&amp;emsp;下图是吴恩达深度学习第五周作业中的图片，是一个 LSTM 单元。与李宏毅老师做的图有略微不同，并且在下图中将 input gate 称为了 update gate，并且在">
-<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（三）：RNN 各种机制/LSTM cell.jpg">
+<meta name="twitter:title" content="深度学习算法（五）：预训练模型">
+<meta name="twitter:description" content="&amp;emsp;&amp;emsp;视频来自 此处，或者 此处。4:56 A word can have multiple senses.11:24 ELMO19:08 BERT49:23 GPT(-2)            ELMO&amp;emsp;&amp;emsp;Embedding from Language Model(ELMO) 可以做到每个 word token 分配不同的 emb">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/ELMO示意图.jpg">
 
-<link rel="canonical" href="http://yan624.github.io/·zcy/AI/dl/深度学习算法（三）：RNN 各种机制.html">
+<link rel="canonical" href="http://yan624.github.io/AI/dl/深度学习算法（五）：预训练模型.html">
 
 
 <script id="page-configurations">
@@ -55,7 +62,7 @@
 <!--阿里云矢量库样式-->
 <link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_621sfmh583s.css" />
 
-  <title>深度学习算法（三）：RNN 各种机制 | 博客</title>
+  <title>深度学习算法（五）：预训练模型 | 博客</title>
   
 
 
@@ -128,7 +135,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">159</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">160</span></a>
 
   </li>
         <li class="menu-item menu-item-about">
@@ -257,10 +264,8 @@
     
     	
     
-    	
-    
 
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·zcy/AI/dl/深度学习算法（三）：RNN 各种机制.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/AI/dl/深度学习算法（五）：预训练模型.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -273,7 +278,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          深度学习算法（三）：RNN 各种机制
+          深度学习算法（五）：预训练模型
         </h1>
 
         <div class="post-meta">
@@ -283,14 +288,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-05-23 17:07:17" itemprop="dateCreated datePublished" datetime="2019-05-23T17:07:17+08:00">2019-05-23</time>
+              <time title="创建时间：2020-01-23 16:55:34" itemprop="dateCreated datePublished" datetime="2020-01-23T16:55:34+08:00">2020-01-23</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-05-04 23:39:09" itemprop="dateModified" datetime="2020-05-04T23:39:09+08:00">2020-05-04</time>
+                <time title="修改时间：2020-02-09 21:18:40" itemprop="dateModified" datetime="2020-02-09T21:18:40+08:00">2020-02-09</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -323,7 +328,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.2k</span>
+              <span>2.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -342,28 +347,32 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="GRU"><a href="#GRU" class="headerlink" title="GRU"></a>GRU</h1><h1 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h1><p>&emsp;&emsp;该<a href="https://yan624.github.io/·学习笔记/AI/dl/吴恩达李宏毅综合学习笔记：RNN入门.html#长短期记忆——Long-Short-term-Memory-LSTM">博客</a>中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。<br>&emsp;&emsp;下图是吴恩达深度学习第五周作业中的图片，是一个 LSTM 单元。<strong>与李宏毅老师做的图有略微不同，并且在下图中将 input gate 称为了 update gate，并且在李宏毅老师所提供的图片中，g(z) 是由 sigmoid 函数计算出来的，而这里是由 tanh 计算出来的，即下图 update gate 旁边的函数</strong>。另外在李宏毅老师提供的图片中，为了简便，并没有使用上个时间步的激活值。</p>
-<ol>
-<li>首先是<strong>输入的问题</strong>。一般来说一个 LSTM 的输入是前一<strong>个</strong> LSTM 的输出值 <script type="math/tex">a</script> 以及输入值 <script type="math/tex">x</script>（对于第 2 层的 LSTM 的 输入值就是前一<strong>层</strong>的输出值）。但是众所周知，<strong>LSTM 每个门的输入肯定只有一个向量，<script type="math/tex">a</script> 和 <script type="math/tex">x</script> 是两个向量，那么如何处理呢？</strong> <ul>
-<li>在下图中使用了 <script type="math/tex">[a^{<t-1>},x^{<t>}]</script> 进行向量拼接。</li>
-<li>在我看的代码中直接使用了加法进行相加，代码<a href="https://github.com/Alex-Fabbri/lang2logic-PyTorch/blob/master/seq2seq/atis/lstm/main.py" target="_blank" rel="noopener">在这</a>，但是代码量太大了，随便看看就行了（<strong>2020.2.25 更新</strong>：该代码使用了加法是基于一种较为特殊的情况，即 lstm 的隐藏状态维度等于词向量维度，所以正好可以使用加法，但是一般情况下，它们的维度不相同，所以<strong>只能使用拼接的方式</strong>）。</li>
+        <div class="note info">
+            <p>&emsp;&emsp;视频来自 <a href="https://www.bilibili.com/video/av56235038" target="_blank" rel="noopener">此处</a>，或者 <a href="https://www.bilibili.com/video/av46561029?p=61" target="_blank" rel="noopener">此处</a>。</p><ol><li>4:56 A word can have multiple senses.</li><li>11:24 ELMO</li><li>19:08 BERT</li><li>49:23 GPT(-2)</li></ol>
+          </div>
+<h1 id="ELMO"><a href="#ELMO" class="headerlink" title="ELMO"></a>ELMO</h1><p>&emsp;&emsp;Embedding from Language Model(ELMO) 可以做到每个 word token 分配不同的 embedding，它是一个 RNN-based model。如下图所示，在提取“潮水退了”这四个字的词向量时，先使用一个 RNN 捕获信息。首先输入单词的词向量，然后将“退了”的 output 作为新的词向量。如果捕获“臣退了”三个字的特征，由于上下文的单词不同，使用 RNN 之后输出的 output 也不同，所以“退了”拥有不同 embeddng。“高烧退了”同理。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/ELMO示意图.jpg" alt="ELMO示意图"></p>
+<a id="more"></a>
+<p>&emsp;&emsp;但是这样做可能没有捕获到句子的后文的信息，那么只需要再 train 一个反向的 RNN，然后将两个正反向的 embedding 拼起来就得到了单词的词向量。<br>&emsp;&emsp;现在我们 train model 都是 deep 的，那么我们的这个 RNN 也可以是 depp 的。但是当 deep 之后会碰到问题，那就是每一层都有 embedding，我们应该哪一层的 embedding 当做词向量。ELMO 的做法是“我全都要”。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/我全都要.jpg" alt="我全都要.jpg"></p>
+<p>&emsp;&emsp;现在每一层都有一个 contextualized embedding，ELMO 的做法是把所有的 embedding 通通加起来变成一个 embedding。但是不是普通的加法，而是 <script type="math/tex">new embedding = \alpha_1 * embed_1 + \alpha_2 * embed_2</script>，其中的 <script type="math/tex">\alpha</script> 是 learn 出来的。但是 <script type="math/tex">\alpha</script> 在不同的任务下实际上选值也不同，详见视频 16:20 或者看论文。</p>
+<h1 id="BERT"><a href="#BERT" class="headerlink" title="BERT"></a>BERT</h1><p>&emsp;&emsp;Bidirectional Encoder Representations from Transformers(BERT)，BERT 用的是 Transformer 的 encoder。<br>&emsp;&emsp;BERT 实际做的是输入一个句子进去，每个单词都会输出一个 embedding。至于 BERT 内部的架构其实跟 Transformer 的 encoder 是一样的。<br>&emsp;&emsp;BERT 有两种训练方法：</p>
+<ul>
+<li>Masked LM：输入给 BERT 的句子有 15% 的机会随机被置换成一个特殊的 token [MASK]，现在的任务是 BERT 去猜测这些被盖住的地方是哪一个词汇。在预测时，把输出的 embedding 丢到一个 Linear Multi-class classifier，让它预测被 mask 掉的词汇是哪一个。因为这个 classifier 是一个 linear 的，所以它的能力是很弱的。所以如果要成功预测出正确的词汇，那么 BERT 可能要很深，比如要 24/48 层，我们需要 BERT 抽取出一个很好的表征。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/Masked LM.jpg" alt="Masked LM"></li>
+<li>Next Sentence Prediction：比如输入“醒醒吧[SEP]你没有妹妹”，我们需要预测这两句话是否是相接的。另外我们需要在句子的首部加上 token [CLS]，然后将 [CLS] 的 embedding 输入到 Linear Binary Classifier 中去预测两个句子是否相接。但是问题来了，为什么要把 [CLS] 放在句子的开头呢？因为 BERT 的内部是一个 Transformer，所以一个 token 放在句子的开头和末尾影响不大，如果是一个 RNN 结构，那么可能应该放在末尾。<ul>
+<li>[SEP]：是两个句子的界限符号</li>
+<li>[CLS]：输出分类结果的位置<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/Next Sentence Prediction.jpg" alt="Next Sentence Prediction"></li>
 </ul>
 </li>
-<li>之前说过 update gate 就是 input gate，它的输出 <script type="math/tex">\Gamma^{<t>}_u</script> 实际上也是一个向量，而 <script type="math/tex">\tilde{c^{<t>}}</script> 就是输入向量。<script type="math/tex">\Gamma^{<t>}_u</script> 的意思就是限制 <script type="math/tex">\tilde{c^{<t>}}</script> 的信息进入 memory，试想 <script type="math/tex">\Gamma^{<t>}_u</script> 的输出值范围为 (0, 1)，这不就是在说 <script type="math/tex">\Gamma^{<t>}_u</script> 将 <script type="math/tex">\tilde{c^{<t>}}</script> 的每个元素都按其比例进行调整？就类似于将 <script type="math/tex">\tilde{c^{<t>}}</script> 中的信息丢失一部分。如果 <script type="math/tex">\tilde{c^{<t>}}</script> 的输出全是 1，就代表 <script type="math/tex">\tilde{c^{<t>}}</script> 中的信息我全都要。如果 <script type="math/tex">\tilde{c^{<t>}}</script> 的输出全是 0，就代表 <script type="math/tex">\tilde{c^{<t>}}</script> 中的信息我全都不要。</li>
-<li>问：由于第一个 LSTM 不存在前一个LSTM，那么它的输入值怎么处理？答：<strong>暂且使用随机初始化，具体还要补充</strong>（感觉 0 也可以，婴儿出生的时候不就是一张白纸吗。。。）。<a id="more"></a></li>
-<li>记忆单元（下图中的 c，也可以称作 memory(m)）中的数据也可以随机初始化或者直接为 0。</li>
-<li>每一层的 LSTM 都权重共享。意思是每一层都有多个 LSTM，里面的权重值其实是同一份。</li>
-</ol>
-<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（三）：RNN 各种机制/LSTM cell.jpg" alt="LSTM cell"></p>
-<p>&emsp;&emsp;下图是多个 LSTM 运行的示意图。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（三）：RNN 各种机制/多个 LSTM.jpg" alt="多个 LSTM"></p>
-<p>&emsp;&emsp;下图是 LSTM 的反向传播，被称为 BPTT（backpropagation through time）。由于还没遇到过，并且 pytorch 都已经是自动求导，所以目前处于待补充状态。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（三）：RNN 各种机制/LSTM反向传播.jpg" alt="LSTM反向传播"></p>
-<h1 id="Seq2Seq"><a href="#Seq2Seq" class="headerlink" title="Seq2Seq"></a>Seq2Seq</h1><div class="note info">
-            <p>&emsp;&emsp;对于 Sequence2Sequence 模型，其实很好写代码。Seq2Seq 模型是使用了某个神经细胞作为它的核心。你可以使用 simple-RNN、GRU、LSTM 甚至是 Transformer。而这些构件其实框架都已经实现过了，直接调用代码即可。真正的难点在于理解 Seq2Seq 模型的概念，而这个概念实际上是很简单就能理解的。</p><ul><li>Encoder：<br>无非是对<strong>前一个单元激活值</strong>以及当前的输入值进行一系列的处理（如何处理完全取决于自己，可以相加也可以拼接），然后将处理后的向量当做 encoder 的输入。</li><li>Decoder：<br>与 Encoder 类似，无非是将<strong>前一个单元激活值</strong>替换成 <strong>Encoder 的输出值</strong>（当然这里也是取决于自己，<strong>不一定非要是 Encoder 的输出值</strong>，模型千变万化，全凭自己做主），其他步骤类似。</li><li>Generator：<br>输出层就是一个简单的变换层。对于二元分类你可以接一个 Sigmoid 函数；对于多元分类你可以接一个 Softmax 函数。你也可以自定义其他的函数，比如 log_softmax。nn.LSTM 默认实现了 Softmax</li></ul>
-          </div>
-<p>&emsp;&emsp;该<a href="https://yan624.github.io/·学习笔记/AI/dl/吴恩达李宏毅综合学习笔记：RNN入门.html#seq2seq">博文</a>也可供参考。以前想过 encoder-decoder 如何实现，以为很复杂。现在自己实现了一下，实际上就是很简单的代码，<a href="https://github.com/yan624/machine_learning_algorithms/blob/master/dl/seq2seq.py" target="_blank" rel="noopener">代码地址</a>。<br>&emsp;&emsp;由于 seq2seq 有两个输入。对于 encoder 输入包含隐藏状态 a 以及 输入值 x。对于 decoder 输入包含隐藏状态 a 和 encoder 的输出。这实际上跟 LSTM 差不多，如果 seq2seq 的神经元使用 LSTM 的话，实际上就一模一样了。我只使用了简单的加法，将两个输入合并。当然也可以使用其他方法，比如拼接。其他的方法可以自行发挥。<br>&emsp;&emsp;另外对于 seq2seq 学习，已经不需要每个输入的长度都相等了，可以在句子的最后加入一个结束符，如<code>&lt;EOS&gt;</code>，以此判断输入是否结束。但是这样做如何进行向量化呢？暂时未知，待补充。</p>
-<h1 id="Attention"><a href="#Attention" class="headerlink" title="Attention"></a>Attention</h1><p>&emsp;&emsp;<a href="https://www.zhihu.com/question/68482809/answer/264632289" target="_blank" rel="noopener">参考文章</a>；<a href="https://www.cnblogs.com/robert-dlut/p/5952032.html" target="_blank" rel="noopener">Attention历史</a><br>&emsp;&emsp;实际上九几年的时候在CV领域已经有这概念了。RNN 领域第一篇文章《Recurrent Models of Visual Attention》。<br>&emsp;&emsp;<a href="https://yan624.github.io/·学习笔记/AI/dl/吴恩达李宏毅综合学习笔记：RNN入门.html#Attention">博客</a>中有写到如何计算 Attention。</p>
-<h2 id="Memory-Network"><a href="#Memory-Network" class="headerlink" title="Memory Network"></a>Memory Network</h2><p>&emsp;&emsp;<a href="https://papers.nips.cc/paper/5846-end-to-end-memory-networks.pdf" target="_blank" rel="noopener">论文地址</a><br>&emsp;&emsp;<a href="https://yan624.github.io/·学习笔记/AI/dl/吴恩达李宏毅综合学习笔记：RNN入门.html#Memory-Network">博客</a>有记一些基础的东西。</p>
-<!-- more -->
+</ul>
+<p>&emsp;&emsp;这两个方法是需要同时使用的，这样 BERT 会学得最好。<br>&emsp;&emsp;最后 BERT 也一直被人改进，有许多新版的 BERT 可以分别适用不同的任务，下面的文章介绍了几种新型的 BERT。<br><a href="https://mp.weixin.qq.com/s?__biz=MjM5ODkzMzMwMQ==&amp;mid=2650411744&amp;idx=2&amp;sn=1db39446e4e91299f9ba8c1d4eeb5983&amp;chksm=becd94ba89ba1dac221e2092cb1a12ecb1a5a704b6ae5cebd2649adc1a903355b95567ab484e&amp;mpshare=1&amp;scene=1&amp;srcid=&amp;sharer_sharetime=1572502447054&amp;sharer_shareid=68f8b84d7a46cc216b0afdc45278d6be&amp;key=8a4bbb55c6c79ce6c9104a6cfe5de2a3d1b8fa801c35e22e74b62948f50b6684c3f06195815e8712080977db6cec80fca5adfc95c9bc6fa848b8e68b41df13d8610e8d6c283ee2392b30de5cdae504bb&amp;ascene=1&amp;uin=MTQxMTUzMzk2MA%3D%3D&amp;devicetype=Windows+10&amp;version=62070152&amp;lang=en&amp;pass_ticket=pZijWLQmmCpNBDcjO4cUImTRWv1ZWLG4JENv1zUqjhXnUnShPGofPjjR%2Bkv1cozV" target="_blank" rel="noopener">BERT 的演进和应用</a></p>
+<h2 id="如何使用BERT"><a href="#如何使用BERT" class="headerlink" title="如何使用BERT"></a>如何使用BERT</h2><p>&emsp;&emsp;已经知道了 BERT 的训练方法，那么现在该如何使用呢？可以向 ELMO 一样，把 BERT 当做提取特征的工具，使我们获得词向量。但是 BERT 论文中他不止做了这样的事情，他说可以将 BERT 和你要解的任务一起做训练。<br>&emsp;&emsp;下图介绍了一种例子。如果我们的任务是输入一个句子，输出一个类别，那么我们可以在输入的句子的开头加上一个 [CLS]，然后将 [CLS] 的 embedding 输入到一个 Linear classifier 中就可以预测类别。也就是说我们将 BERT 下下来后，其实只需要定义我们的 classifier，然而调整 classifier 的参数即可，BERT 的参数仅仅需要微调，因为它已经被预训练过了。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 1.jpg" alt="How to use BERT - Case 1"></p>
+<p>&emsp;&emsp;第二种例子是输入一个句子，输出每一个单词的类别，比如说 slot filling。这个跟上一个差不多。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 2.jpg" alt="How to use BERT - Case 2"></p>
+<p>&emsp;&emsp;第三种例子是输入两个句子，输出一个类别，比如说 Natural Language Inference。这个也差不多，就是加了一个 [SEP]。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 3.jpg" alt="How to use BERT - Case 3"></p>
+<p>&emsp;&emsp;第四种例子是 QA 问题，而且是 extraction-based QA(E.g.  SQuAD)。即给 model 一篇文章，然后问它一个问题，期望得到一个答案。但是这里放水了，就是说答案中出现的词汇一定会出现在文章中。具体来说就是输入文章 D 和问题 Q，输出 s 和 e，其中 s 和 e 指的是文章 D 中的某个区间中单词。如果 s 和 e 矛盾，即 s &gt; e，那么回答“此题无解”。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 4.jpg" alt="How to use BERT - Case 4"></p>
+<p>&emsp;&emsp;具体做法：<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How to use BERT - Case 4-2.jpg" alt="How to use BERT - Case 4-2"></p>
+<h2 id="BERT学到了什么"><a href="#BERT学到了什么" class="headerlink" title="BERT学到了什么"></a>BERT学到了什么</h2><p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/What does BERT learn.jpg" alt="What does BERT learn"></p>
+<h2 id="Multilingual-BERT"><a href="#Multilingual-BERT" class="headerlink" title="Multilingual BERT"></a>Multilingual BERT</h2><h1 id="ERNIE"><a href="#ERNIE" class="headerlink" title="ERNIE"></a>ERNIE</h1><p>&emsp;&emsp;Enhanced Representation through Kownledge Integration(ERNIE)，它是特别为中文设计的。</p>
+<h1 id="GPT"><a href="#GPT" class="headerlink" title="GPT"></a>GPT</h1><p>&emsp;&emsp;Generative Pre-Training(GPT)，GPT 是 transformer 的 decoder。GPT 与 BERT 类似。<br>&emsp;&emsp;56:45 讲了第一个位置的 attention token。</p>
+
     </div>
 
     
@@ -374,11 +383,10 @@
           <div class="post-tags">
               <a href="/tags/系列/" rel="tag"># 系列</a>
               <a href="/tags/学习笔记/" rel="tag"># 学习笔记</a>
-              <a href="/tags/GRU/" rel="tag"># GRU</a>
-              <a href="/tags/LSTM/" rel="tag"># LSTM</a>
-              <a href="/tags/seq2seq/" rel="tag"># seq2seq</a>
-              <a href="/tags/attention/" rel="tag"># attention</a>
-              <a href="/tags/memory-network/" rel="tag"># memory network</a>
+              <a href="/tags/ELMO/" rel="tag"># ELMO</a>
+              <a href="/tags/BERT/" rel="tag"># BERT</a>
+              <a href="/tags/ERNIE/" rel="tag"># ERNIE</a>
+              <a href="/tags/GPT/" rel="tag"># GPT</a>
           </div>
 
         
@@ -387,12 +395,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/·zcy/AI/dl/深度学习算法（二）：simple RNN 推导与理解.html" rel="prev" title="深度学习算法（二）：simple RNN 推导与理解">
-      <i class="fa fa-chevron-left"></i> 深度学习算法（二）：simple RNN 推导与理解
+    <a href="/·学习笔记/AI/rl/李宏毅强化学习算法笔记.html" rel="prev" title="李宏毅强化学习算法笔记">
+      <i class="fa fa-chevron-left"></i> 李宏毅强化学习算法笔记
     </a></div>
       <div class="post-nav-item">
-    <a href="/assorted/conference/2019 CCF会议总结.html" rel="next" title="2019 CCF会议总结">
-      2019 CCF会议总结 <i class="fa fa-chevron-right"></i>
+    <a href="/各种乘法的表示符号.html" rel="next" title="各种乘法的表示符号">
+      各种乘法的表示符号 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -453,7 +461,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#GRU"><span class="nav-number">1.</span> <span class="nav-text">GRU</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LSTM"><span class="nav-number">2.</span> <span class="nav-text">LSTM</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Seq2Seq"><span class="nav-number">3.</span> <span class="nav-text">Seq2Seq</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Attention"><span class="nav-number">4.</span> <span class="nav-text">Attention</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Memory-Network"><span class="nav-number">4.1.</span> <span class="nav-text">Memory Network</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ELMO"><span class="nav-number">1.</span> <span class="nav-text">ELMO</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#BERT"><span class="nav-number">2.</span> <span class="nav-text">BERT</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#如何使用BERT"><span class="nav-number">2.1.</span> <span class="nav-text">如何使用BERT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BERT学到了什么"><span class="nav-number">2.2.</span> <span class="nav-text">BERT学到了什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Multilingual-BERT"><span class="nav-number">2.3.</span> <span class="nav-text">Multilingual BERT</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ERNIE"><span class="nav-number">3.</span> <span class="nav-text">ERNIE</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#GPT"><span class="nav-number">4.</span> <span class="nav-text">GPT</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -469,7 +477,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">159</span>
+          <span class="site-state-item-count">160</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -486,7 +494,7 @@
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">194.9k</span>
+      	<span class="site-state-item-count">195k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
@@ -653,7 +661,7 @@ $('.content img').on('zoom-out-complete.zoomify', function () {
       quicklink({
         timeout: 3000,
         priority: true,
-        ignores: [uri => uri.includes('#'),uri => uri == 'http://yan624.github.io/·zcy/AI/dl/深度学习算法（三）：RNN 各种机制.html',]
+        ignores: [uri => uri.includes('#'),uri => uri == 'http://yan624.github.io/AI/dl/深度学习算法（五）：预训练模型.html',]
       });
       });
   </script>

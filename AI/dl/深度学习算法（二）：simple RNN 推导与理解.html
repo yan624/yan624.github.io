@@ -26,7 +26,7 @@
 <meta name="keywords" content="系列,学习笔记,simple RNN">
 <meta property="og:type" content="article">
 <meta property="og:title" content="深度学习算法（二）：simple RNN 推导与理解">
-<meta property="og:url" content="http://yan624.github.io/·zcy/AI/dl/深度学习算法（二）：simple RNN 推导与理解.html">
+<meta property="og:url" content="http://yan624.github.io/AI/dl/深度学习算法（二）：simple RNN 推导与理解.html">
 <meta property="og:site_name" content="博客">
 <meta property="og:description" content="代码github地址simple RNN只实现了正向传播，反向传播没有实现。是因为simple RNN有梯度消失的问题，索性直接不写了。下一节直接写LSTM。 simple RNN和simple NN的对比本来觉得simple RNN挺简单的，只不过是simple NN的扩展，区别无非是将simple NN的神经元换成一个RNN cell。但是实际上没那么简单，特别是加上将数据向量化后计算。感觉简">
 <meta property="og:locale" content="zh-CN">
@@ -34,14 +34,13 @@
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple RNN 推导与理解/吴恩达深度学习中的RNN示意图.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple RNN 推导与理解/simple rnn cell.png">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple RNN 推导与理解/RNN.png">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple RNN 推导与理解/vanishing gradient problem details.jpg">
-<meta property="og:updated_time" content="2020-05-25T08:07:01.233Z">
+<meta property="og:updated_time" content="2020-05-26T05:29:50.062Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="深度学习算法（二）：simple RNN 推导与理解">
 <meta name="twitter:description" content="代码github地址simple RNN只实现了正向传播，反向传播没有实现。是因为simple RNN有梯度消失的问题，索性直接不写了。下一节直接写LSTM。 simple RNN和simple NN的对比本来觉得simple RNN挺简单的，只不过是simple NN的扩展，区别无非是将simple NN的神经元换成一个RNN cell。但是实际上没那么简单，特别是加上将数据向量化后计算。感觉简">
 <meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple RNN 推导与理解/带参数的前馈神经网络模版.svg">
 
-<link rel="canonical" href="http://yan624.github.io/·zcy/AI/dl/深度学习算法（二）：simple RNN 推导与理解.html">
+<link rel="canonical" href="http://yan624.github.io/AI/dl/深度学习算法（二）：simple RNN 推导与理解.html">
 
 
 <script id="page-configurations">
@@ -130,7 +129,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">159</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">160</span></a>
 
   </li>
         <li class="menu-item menu-item-about">
@@ -254,7 +253,7 @@
     	
     
 
-    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/·zcy/AI/dl/深度学习算法（二）：simple RNN 推导与理解.html">
+    <link itemprop="mainEntityOfPage" href="http://yan624.github.io/AI/dl/深度学习算法（二）：simple RNN 推导与理解.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -284,7 +283,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-05-25 16:07:01" itemprop="dateModified" datetime="2020-05-25T16:07:01+08:00">2020-05-25</time>
+                <time title="修改时间：2020-05-26 13:29:50" itemprop="dateModified" datetime="2020-05-26T13:29:50+08:00">2020-05-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -317,14 +316,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>6k</span>
+              <span>4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>10 分钟</span>
+              <span>7 分钟</span>
             </span>
 
         </div>
@@ -427,18 +426,7 @@ W_{ax} x^{<t>} + W_{aa} a^{<t-1>} =
     }^{\frac{\partial{a^3}}{\partial{a^2}}}
 \}</script><p>&emsp;&emsp;实际上上式很容易就可以发现是一个递归形式的表达式，所以可以写为以下的形式，其中 k 代表第几个激活值，也可以理解为第几个时间步。<br>&emsp;&emsp;<strong>注意与 <script type="math/tex">W_{aa}</script> 相乘的其实是一个 diagonal 矩阵，除主对角线其余全为 0。</strong></p>
 <script type="math/tex; mode=display">
-\frac{\partial{a^k}}{\partial{W_{aa}}} = S_k \circ (1 - S_k) \circ (a^{k - 1} + W_{aa} \cdot \frac{\partial{a^{k - 1}}}{W_{aa}})</script><h1 id="simple-RNN-的缺陷"><a href="#simple-RNN-的缺陷" class="headerlink" title="simple-RNN 的缺陷"></a>simple-RNN 的缺陷</h1><p>&emsp;&emsp;RNN一个最大的缺陷就是梯度消失与梯度爆炸问题，由于这一缺陷，使得RNN在长文本中难以训练，这才诞生了LSTM及各种变体，来源于<a href="https://zhuanlan.zhihu.com/p/44163528" target="_blank" rel="noopener">专栏</a>。梯度消失的原因：参考<a href="https://zhuanlan.zhihu.com/p/28687529" target="_blank" rel="noopener">专栏</a>。<br>&emsp;&emsp;个人的解释如下：<br>&emsp;&emsp;在 RNN 中利用 memory 的方式是一种复合函数的结构，所以在反向传播时，需要链式求导，即 <script type="math/tex">f(g(x)) = f'(g(x))·g'(x)</script>，梯度与梯度相乘容易造成<strong>梯度消失</strong>和<strong>梯度爆炸</strong>。而在 LSTM 中，是使用加和的计算方式，所以大致解决了梯度消失的问题。<br><div class="note info">
-            <p>&emsp;&emsp;在 RNN 中，求导得到的表达式为连乘，而 sigmoid 的输出值在 [0-1] 之间，造成了梯度消失。当然也会造成梯度爆炸，因为激活函数不一定非是 sigmoid，换成 ReLU 输出值就会大于 1 了。<br>&emsp;&emsp;接下来我带入数字来讲解一遍，<strong>具体公式详见上一节，下面只讲求导后的函数</strong>。我们先把公式拿过来，并设 <script type="math/tex">a^3 = 0.2</script>, <script type="math/tex">a^2 = 0.1</script>, <script type="math/tex">a^1 = 0.05</script>, <script type="math/tex">w_{aa} = 0.07</script>。并且<strong>易得</strong> <script type="math/tex">S^1 = a^1</script>, <script type="math/tex">S^2 = a^2</script>, <script type="math/tex">S^3 = a^3</script>（易得部分都不懂的，建议看看上面的《反向传播（BPTT）》就明白了。</p><script type="math/tex; mode=display">\frac{\partial{a^3}}{\partial{W_{aa}}} = S_3 \circ (1 - S_3) \circ\{    \overbrace{a^2}^{\frac{\partial{a^3}}{\partial{W_{aa}}}} + \overbrace{        W_{aa} \cdot \underbrace{            S_2 \circ (1 - S_2)[                a^1 + W_{aa} \cdot \underbrace{                    S_1 \circ (1 - S_1) \circ \frac{\partial{a^0}}{\partial{W_{aa}}}                }_{\frac{\partial{a^1}}{\partial{W_{aa}}}}            ]        }_{\frac{\partial{a^2}}{\partial{W_{aa}}}}    }^{\frac{\partial{a^3}}{\partial{a^2}}}\}</script><p>&emsp;&emsp;则</p><script type="math/tex; mode=display">\frac{\partial{a^3}}{\partial{W_{aa}}} = a^3 \circ (1 - a^3) \circ \{a^2 + W_{aa} \cdot a^2 \circ (1 - a^2) \circ [a^1 + 0]\}</script><p>&emsp;&emsp;<em>首先需要明白一点，对于 RNN 来说，激活值 a 就是 memory。我们将设置的值带入得到 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.0160504</script>。可以发现梯度很小，而这仅仅是在序列长度为 3 的情况下。那么假设我们修改值，将 <script type="math/tex">w_{aa}</script> 改为 0.7，则 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.016504</script>，将 <script type="math/tex">w_{aa}</script> 改为 7，则 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.02104</script>。我们发现即使 <script type="math/tex">w_{aa}</script> 的变化很大，梯度值的变化效果也不是明显。也就是说对于 <script type="math/tex">\frac{\partial{a^3}}{\partial{W_{aa}}}</script>，<script type="math/tex">W_{aa}</script> 这个值不是很重要，在计算梯度时，可以忽略。</em>（<strong>2020.3.2 更新</strong>：事实上 <script type="math/tex">W_{aa}</script> 对梯度消失也有影响，这里没影响是因为上式嵌套结构中才出现了一个 <script type="math/tex">W_{aa}</script>。刚才试了一下如果多套几个，梯度也会受到很大影响（<strong>其中对梯度消失的影响略小，主要对梯度爆炸的影响很大</strong>））<br>&emsp;&emsp;综上所述，<del>我们发现 W 几乎无法阻止梯度越变越小。</del>激活值全都在 [0-1] 范围内，所以就产生了梯度消失——gradient vanishing。（<script type="math/tex">W_{aa}</script> 也会造成影响）<br>&emsp;&emsp;对于梯度爆炸，由于激活函数是 sigmoid 激活值不可能大于 1，所以可能是 <script type="math/tex">W_{aa}</script> 造成的。如果激活函数是 tanh 的话，激活值会大于 1，那么应该也会造成梯度爆炸。<br>&emsp;&emsp;对 <script type="math/tex">W_{ax}</script> 是差不多的道理，只不过对于输入值 x，它本身的取值就是 [<script type="math/tex">\infty</script>, <script type="math/tex">-\infty</script>]，所以与 a 不同。<br>&emsp;&emsp;然而梯度消失的真正原因并不完全是这个，详见 <a href="https://yan624.github.io/·zcy/AI/深度学习500问笔记.html#·LSTM解决了RNN的什么问题">LSTM 解决了 RNN 的什么问题</a> 的第二点。</p>
-          </div></p>
-<p>&emsp;&emsp;RNN 的 loss 是每个 timestep 上的 loss 的加和，下图显示了这种情况下是如何求导的。不过有时候 RNN 的 loss 也就最后一个 tiemstep 会有一个 loss，比如分类任务。<br><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple RNN 推导与理解/vanishing gradient problem details.jpg" alt="vanishing gradient problem details"></p>
-<p>&emsp;&emsp;参考资料：</p>
-<ol>
-<li><a href="https://zhuanlan.zhihu.com/p/28749444" target="_blank" rel="noopener">LSTM如何解决梯度消失问题</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/34203833" target="_blank" rel="noopener">深入理解lstm及其变种gru</a></li>
-<li><a href="https://www.zhihu.com/question/34878706/answer/192444888" target="_blank" rel="noopener">LSTM如何来避免梯度弥散和梯度爆炸？</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/83496936" target="_blank" rel="noopener">人人都能看懂的LSTM介绍及反向传播算法推导（非常详细）</a></li>
-</ol>
-<!-- more -->
+\frac{\partial{a^k}}{\partial{W_{aa}}} = S_k \circ (1 - S_k) \circ (a^{k - 1} + W_{aa} \cdot \frac{\partial{a^{k - 1}}}{W_{aa}})</script>
     </div>
 
     
@@ -462,7 +450,7 @@ W_{ax} x^{<t>} + W_{aa} a^{<t-1>} =
       <i class="fa fa-chevron-left"></i> CS224n学习笔记
     </a></div>
       <div class="post-nav-item">
-    <a href="/·zcy/AI/dl/深度学习算法（三）：RNN 各种机制.html" rel="next" title="深度学习算法（三）：RNN 各种机制">
+    <a href="/AI/dl/深度学习算法（三）：RNN 各种机制.html" rel="next" title="深度学习算法（三）：RNN 各种机制">
       深度学习算法（三）：RNN 各种机制 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
@@ -524,7 +512,7 @@ W_{ax} x^{<t>} + W_{aa} a^{<t-1>} =
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#代码"><span class="nav-number">1.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#simple-RNN和simple-NN的对比"><span class="nav-number">2.</span> <span class="nav-text">simple RNN和simple NN的对比</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#input"><span class="nav-number">2.1.</span> <span class="nav-text">input</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#simple-RNN的另一个输入值a"><span class="nav-number">2.2.</span> <span class="nav-text">simple RNN的另一个输入值a</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#以一个记忆细胞为例"><span class="nav-number">2.2.1.</span> <span class="nav-text">以一个记忆细胞为例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#以一个样本为例"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">以一个样本为例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#以128个样本为例"><span class="nav-number">2.2.1.2.</span> <span class="nav-text">以128个样本为例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#以多个记忆细胞为例"><span class="nav-number">2.2.2.</span> <span class="nav-text">以多个记忆细胞为例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#反向传播（BPTT）"><span class="nav-number">2.3.</span> <span class="nav-text">反向传播（BPTT）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#simple-RNN-的缺陷"><span class="nav-number">3.</span> <span class="nav-text">simple-RNN 的缺陷</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#代码"><span class="nav-number">1.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#simple-RNN和simple-NN的对比"><span class="nav-number">2.</span> <span class="nav-text">simple RNN和simple NN的对比</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#input"><span class="nav-number">2.1.</span> <span class="nav-text">input</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#simple-RNN的另一个输入值a"><span class="nav-number">2.2.</span> <span class="nav-text">simple RNN的另一个输入值a</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#以一个记忆细胞为例"><span class="nav-number">2.2.1.</span> <span class="nav-text">以一个记忆细胞为例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#以一个样本为例"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">以一个样本为例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#以128个样本为例"><span class="nav-number">2.2.1.2.</span> <span class="nav-text">以128个样本为例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#以多个记忆细胞为例"><span class="nav-number">2.2.2.</span> <span class="nav-text">以多个记忆细胞为例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#反向传播（BPTT）"><span class="nav-number">2.3.</span> <span class="nav-text">反向传播（BPTT）</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -540,7 +528,7 @@ W_{ax} x^{<t>} + W_{aa} a^{<t-1>} =
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">159</span>
+          <span class="site-state-item-count">160</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -557,7 +545,7 @@ W_{ax} x^{<t>} + W_{aa} a^{<t-1>} =
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">194.9k</span>
+      	<span class="site-state-item-count">195k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
@@ -724,7 +712,7 @@ $('.content img').on('zoom-out-complete.zoomify', function () {
       quicklink({
         timeout: 3000,
         priority: true,
-        ignores: [uri => uri.includes('#'),uri => uri == 'http://yan624.github.io/·zcy/AI/dl/深度学习算法（二）：simple RNN 推导与理解.html',]
+        ignores: [uri => uri.includes('#'),uri => uri == 'http://yan624.github.io/AI/dl/深度学习算法（二）：simple RNN 推导与理解.html',]
       });
       });
   </script>
