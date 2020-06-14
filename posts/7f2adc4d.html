@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="算法思想   比较全的概念：leetcode 回溯法概念。   大白话：世界上有许多只能执行穷举法的问题，并且事实上，这些问题解决办法中不存在除穷尽搜索之外的方法。它一般适用于求存在大量潜在解，但解可拆分为部分的问题。   回溯法基本特征： 1. 节点是用深度优先搜索的方法生成的； 2. 不需要存储整棵搜索树（事实上，连树都没必要存储，只需要记录路径即可）">
+<meta name="keywords" content="leetcode,回溯法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【算法设计题目】回溯法">
+<meta property="og:url" content="https://yan624.github.io/posts/7f2adc4d.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="算法思想   比较全的概念：leetcode 回溯法概念。   大白话：世界上有许多只能执行穷举法的问题，并且事实上，这些问题解决办法中不存在除穷尽搜索之外的方法。它一般适用于求存在大量潜在解，但解可拆分为部分的问题。   回溯法基本特征： 1. 节点是用深度优先搜索的方法生成的； 2. 不需要存储整棵搜索树（事实上，连树都没必要存储，只需要记录路径即可）">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/algorithm/【算法设计题目】回溯法/累加数字搜索树示例.png">
+<meta property="og:updated_time" content="2020-06-14T10:53:51.859Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【算法设计题目】回溯法">
+<meta name="twitter:description" content="算法思想   比较全的概念：leetcode 回溯法概念。   大白话：世界上有许多只能执行穷举法的问题，并且事实上，这些问题解决办法中不存在除穷尽搜索之外的方法。它一般适用于求存在大量潜在解，但解可拆分为部分的问题。   回溯法基本特征： 1. 节点是用深度优先搜索的方法生成的； 2. 不需要存储整棵搜索树（事实上，连树都没必要存储，只需要记录路径即可）">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/algorithm/【算法设计题目】回溯法/累加数字搜索树示例.png">
+
+<link rel="canonical" href="https://yan624.github.io/posts/7f2adc4d.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<!--图片缩放插件样式-->
+<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
+<!--阿里云矢量库样式-->
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_621sfmh583s.css" />
+
+        
+
+  <title>【算法设计题目】回溯法 | 博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">低阶炼金术士</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-常用链接">
+
+    <a href="/常用链接" rel="section"><i class="fas fa-bookmark fa-fw"></i>常用链接</a>
+
+  </li>
+        <li class="menu-item menu-item-时间线">
+
+    <a href="/categories/timeline/" rel="section"><i class="iconfont icon-timeline fa-fw"></i>时间线</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">94</span></a>
+
+  </li>
+        
+            
+  <li class="menu-item menu-item-博客分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>博客分类</a>
+
+  </li>
+
+
+      
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">163</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    
+    	
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/7f2adc4d.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【算法设计题目】回溯法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-02-25 17:10:04" itemprop="dateCreated datePublished" datetime="2020-02-25T17:10:04+08:00">2020-02-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-14 18:53:51" itemprop="dateModified" datetime="2020-06-14T18:53:51+08:00">2020-06-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/algorithm/" itemprop="url" rel="index"><span itemprop="name">algorithm</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="算法思想">算法思想</h1>
+<p>  比较全的概念：<a href="https://leetcode-cn.com/tag/backtracking/" target="_blank" rel="noopener">leetcode 回溯法概念</a>。   大白话：世界上有许多只能执行穷举法的问题，并且事实上，这些问题解决办法中不存在除穷尽搜索之外的方法。它一般适用于求存在大量潜在解，但解可拆分为部分的问题。   <strong>回溯法基本特征</strong>： 1. 节点是用<strong>深度优先搜索</strong>的方法生成的； 2. 不需要存储整棵搜索树（事实上，连树都没必要存储，只需要记录路径即可） <a id="more"></a></p>
+<h2 id="例子三着色问题">例子：三着色问题</h2>
+<p>  给定一个无向图 G=(V, E)，需要使用三种颜色之一为 G 的顶点着色，使得没有两个相邻顶点的颜色相同。 1. 合法：没有两个相邻顶点的颜色相同； 2. 非法：相邻顶点的颜色相同； 3. 搜索树：一个 n 个顶点的无向图共有 <code>3^n</code> 种可能的着色，所有可能的着色集合可以用一棵完全三叉树表示，即搜索树； 4. 部分：如果某时没有两个相邻顶点的颜色相同，但图的着色还未完成，称此时的解为部分解； 5. 现节点：当前待判断该着色是否合法的节点； 6. 死节点：当前节点的着色已经是非法的，则称此节点为死节点。</p>
+<h1 id="面试题08.09.-括号22.-括号生成">面试题08.09. 括号/22. 括号生成</h1>
+<mark class="label warning">中等</mark>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">generateParenthesis</span><span class="params">(self, n: int)</span> -&gt; List[str]:</span></span><br><span class="line">        x = [<span class="number">-1</span> <span class="keyword">for</span> _ <span class="keyword">in</span> range(n * <span class="number">2</span>)]</span><br><span class="line">        x[<span class="number">0</span>] = <span class="number">0</span></span><br><span class="line">        result = []</span><br><span class="line">        i = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> i &gt;= <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">while</span> x[i] &lt; <span class="number">1</span>:</span><br><span class="line">                x[i] += <span class="number">1</span></span><br><span class="line">                <span class="keyword">if</span> self.is_legal(x):</span><br><span class="line">                    result.append(self.transform(x))</span><br><span class="line">                <span class="keyword">elif</span> self.is_partial(x, n):</span><br><span class="line">                    i += <span class="number">1</span></span><br><span class="line">            x[i] = <span class="number">-1</span></span><br><span class="line">            i -= <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">is_legal</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        1）x 中最后一位不是 -1 才代表此种组合可能合法；</span></span><br><span class="line"><span class="string">        2）约束函数的结果必须等于 0。（此方法无法保证括号是合法的，有部分组合可以使结果等于 0 也不合法，如“"()))(("”。</span></span><br><span class="line"><span class="string">        这些组合出现的前提条件是使 is_partial() 为 True，当然，它们组合根本无法通过该方法，所以我们把合法判定的范围缩减了。）</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="keyword">return</span> x[<span class="number">-1</span>] != <span class="number">-1</span> <span class="keyword">and</span> self.constraint(x) == <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">is_partial</span><span class="params">(self, x, n)</span>:</span> </span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        1）x 中最后一位是 -1 才代表此种组合可能为部分；</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="keyword">return</span> x[<span class="number">-1</span>] == <span class="number">-1</span> <span class="keyword">and</span> <span class="keyword">True</span> <span class="keyword">if</span> -n &lt;= self.constraint(x) &lt;= <span class="number">0</span> <span class="keyword">else</span> <span class="keyword">False</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">constraint</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        count = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> item <span class="keyword">in</span> x[::<span class="number">-1</span>]:</span><br><span class="line">            <span class="keyword">if</span> item == <span class="number">1</span>:</span><br><span class="line">                count += <span class="number">1</span></span><br><span class="line">            <span class="keyword">elif</span> item == <span class="number">0</span>:</span><br><span class="line">                count -= <span class="number">1</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">pass</span> </span><br><span class="line">        <span class="keyword">return</span> count</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">transform</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        pattern = []</span><br><span class="line">        <span class="keyword">for</span> item <span class="keyword">in</span> x:</span><br><span class="line">            <span class="keyword">if</span> item == <span class="number">0</span>:</span><br><span class="line">                pattern.append(<span class="string">'('</span>)</span><br><span class="line">            <span class="keyword">elif</span> item == <span class="number">1</span>:</span><br><span class="line">                pattern.append(<span class="string">')'</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                pattern.append(<span class="string">'.'</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">''</span>.join(pattern)</span><br></pre></td></tr></table></figure>
+<h1 id="电话号码的字母组合">17. 电话号码的字母组合</h1>
+<p>  分析：回溯法模版套进去就行了。<mark class="label warning">中等</mark> <figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">letterCombinations</span><span class="params">(<span class="keyword">self</span>, <span class="symbol">digits:</span> str)</span></span> -&gt; List[str]<span class="symbol">:</span></span><br><span class="line">        <span class="keyword">if</span> len(digits) == <span class="number">0</span><span class="symbol">:</span></span><br><span class="line">            <span class="keyword">return</span> []</span><br><span class="line">        alpha_num_list = [<span class="number">3</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line">        x = [-<span class="number">1</span> <span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> range(len(digits))]</span><br><span class="line">        res = []</span><br><span class="line">        i = <span class="number">0</span></span><br><span class="line">        <span class="keyword">while</span> i &gt;= <span class="number">0</span><span class="symbol">:</span></span><br><span class="line">            <span class="keyword">while</span> x[i] &lt; alpha_num_list[int(digits[i]) - <span class="number">2</span>] - <span class="number">1</span><span class="symbol">:</span></span><br><span class="line">                x[i] += <span class="number">1</span></span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">self</span>.is_legal(x)<span class="symbol">:</span></span><br><span class="line">                    res.append(<span class="keyword">self</span>.transform(x, alpha_num_list, digits))</span><br><span class="line">                elif <span class="keyword">self</span>.is_partial(x)<span class="symbol">:</span></span><br><span class="line">                    i += <span class="number">1</span></span><br><span class="line">            x[i] = -<span class="number">1</span></span><br><span class="line">            i -= <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> res</span><br><span class="line">                </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">is_legal</span><span class="params">(<span class="keyword">self</span>, x)</span></span><span class="symbol">:</span></span><br><span class="line">        <span class="keyword">return</span> x[-<span class="number">1</span>] != -<span class="number">1</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">is_partial</span><span class="params">(<span class="keyword">self</span>, x)</span></span><span class="symbol">:</span></span><br><span class="line">        <span class="keyword">return</span> x[-<span class="number">1</span>] == -<span class="number">1</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">transform</span><span class="params">(<span class="keyword">self</span>, x, alpha_num_list, digits)</span></span><span class="symbol">:</span></span><br><span class="line">        res = []</span><br><span class="line">        a = <span class="number">97</span></span><br><span class="line">        <span class="keyword">for</span> i, item <span class="keyword">in</span> enumerate(x)<span class="symbol">:</span></span><br><span class="line">            a += sum(alpha_num_list[: int(digits[i]) - <span class="number">2</span>])</span><br><span class="line">            res.append(chr(a + item))</span><br><span class="line">            a = <span class="number">97</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">''</span>.join(res)</span><br></pre></td></tr></table></figure></p>
+<h1 id="单词搜索">79. 单词搜索</h1>
+<p>  这道题跟普通的回溯法不大一样，普通的回溯法套模板就有解了。但是对于这道，首先我想了一下，迭代回溯法比较难实现，所以选择了递归回溯法。<mark class="label warning">中等</mark> 1. 需要思考的是如何控制单词的移动？显然由于题设，单词只能与相邻的单词两两组合，所以有四个方向，即上下左右。 2. “合法”条件比较好判断，就是从矩阵中找到的单词与给定的单词 <code>word</code> 相等就算合法了。 3. “部分”条件也是类似的，只需要使得与给定单词 <code>word</code> 的前部匹配即可。 4. 另外此题还有一个隐含的约束，就是矩阵中的单词只能被用一次，所以还需要一个记录单词是否被使用的矩阵。</p>
+<p>  上述理清之后，就差不多有解了。 <figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(<span class="keyword">self</span>)</span></span><span class="symbol">:</span></span><br><span class="line">        <span class="comment"># 上下左右</span></span><br><span class="line">        <span class="keyword">self</span>.directions = [(-<span class="number">1</span>, <span class="number">0</span>), (<span class="number">1</span>, <span class="number">0</span>), (<span class="number">0</span>, -<span class="number">1</span>), (<span class="number">0</span>, <span class="number">1</span>)]</span><br><span class="line">        <span class="keyword">self</span>.<span class="symbol">board:</span> list = None</span><br><span class="line">        <span class="keyword">self</span>.word = None</span><br><span class="line">        <span class="keyword">self</span>.rows = <span class="number">0</span></span><br><span class="line">        <span class="keyword">self</span>.columns = <span class="number">0</span></span><br><span class="line">        <span class="keyword">self</span>.<span class="symbol">board_tag:</span> list = None</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">exist</span><span class="params">(<span class="keyword">self</span>, <span class="symbol">board:</span> List[List[str]], <span class="symbol">word:</span> str)</span></span> -&gt; <span class="symbol">bool:</span></span><br><span class="line">        <span class="keyword">self</span>.board = board</span><br><span class="line">        <span class="keyword">self</span>.word = word</span><br><span class="line">        <span class="keyword">self</span>.rows = len(board)</span><br><span class="line">        <span class="keyword">self</span>.columns = len(board[<span class="number">0</span>])</span><br><span class="line">        <span class="comment"># 一个单词是否被使用过的标志</span></span><br><span class="line">        <span class="keyword">self</span>.board_tag = [[<span class="number">0</span> <span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> board[<span class="number">0</span>]] <span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> board]</span><br><span class="line">        <span class="comment"># 遍历所有可能的首字母</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="keyword">self</span>.rows)<span class="symbol">:</span></span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="keyword">self</span>.columns)<span class="symbol">:</span></span><br><span class="line">                w = board[i][j]</span><br><span class="line">                <span class="comment"># 如果第一个单词不相等，就直接跳过这种可能</span></span><br><span class="line">                <span class="keyword">if</span> w != word[<span class="number">0</span>]<span class="symbol">:</span></span><br><span class="line">                    continue</span><br><span class="line">                <span class="comment"># 1）word 只有一个单词；2）递归求得正确解</span></span><br><span class="line">                <span class="keyword">if</span> w == word <span class="keyword">or</span> <span class="keyword">self</span>.rec(i, j, w)<span class="symbol">:</span></span><br><span class="line">                    <span class="keyword">return</span> True</span><br><span class="line">        <span class="keyword">return</span> False</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">rec</span><span class="params">(<span class="keyword">self</span>, i, j, w)</span></span><span class="symbol">:</span></span><br><span class="line">        <span class="comment"># 1 代表这个单词被用过了</span></span><br><span class="line">        <span class="keyword">self</span>.board_tag[i][j] = <span class="number">1</span></span><br><span class="line">        <span class="comment"># 遍历“上下左右”四个方位</span></span><br><span class="line">        <span class="keyword">for</span> vec, hor <span class="keyword">in</span> <span class="keyword">self</span>.<span class="symbol">directions:</span></span><br><span class="line">            new_i = i + vec</span><br><span class="line">            new_j = j + hor</span><br><span class="line">            <span class="comment"># 1）坐标必须满足一定条件，它不能小于 0，也不能越界；2）坐标所在位置的单词必须没有被使用过</span></span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> (<span class="number">0</span> &lt;= new_i &lt; <span class="keyword">self</span>.rows <span class="keyword">and</span> <span class="number">0</span> &lt;= new_j &lt; <span class="keyword">self</span>.columns) <span class="keyword">or</span> <span class="keyword">self</span>.board_tag[new_i][new_j] == <span class="number">1</span><span class="symbol">:</span></span><br><span class="line">                continue</span><br><span class="line">            new_w = w + <span class="keyword">self</span>.board[new_i][new_j]</span><br><span class="line">            <span class="comment"># 这一步合并了“合法”判断以及“部分”判断，拆开来写也可以，但是代码太长了</span></span><br><span class="line">            <span class="keyword">if</span> new_w == <span class="keyword">self</span>.word <span class="keyword">or</span> (new_w == <span class="keyword">self</span>.word[: len(new_w)] <span class="keyword">and</span> <span class="keyword">self</span>.rec(new_i, new_j, new_w))<span class="symbol">:</span></span><br><span class="line">                <span class="keyword">return</span> True</span><br><span class="line">        <span class="comment"># 递归结束前要把用过的标记清除掉，因为退出递归后，该单词又是出于可用状态</span></span><br><span class="line">        <span class="keyword">self</span>.board_tag[i][j] = <span class="number">0</span></span><br><span class="line">        <span class="keyword">return</span> False</span><br></pre></td></tr></table></figure></p>
+<h1 id="累加数">306. 累加数</h1>
+<mark class="label warning">中等</mark>
+<h2 id="解题思路">解题思路</h2>
+<ol type="1">
+<li>首先根据题目在脑子里思考搜索树应该是怎么样的，我的如下图所示（当然图中的例子，使用深度优先遍历就已经得到解了，其他的几个节点只是举个例子）： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/algorithm/【算法设计题目】回溯法/累加数字搜索树示例.png" alt="累加数字搜索树示例"></li>
+<li>判断合法条件（合法即找到解）：
+<ol type="1">
+<li>字符串中的数字均考虑过，即已走到搜索树的叶结点</li>
+<li>符合约束函数：数字不得以“0”开头，“0”本身除外</li>
+<li>是否为累加的：前两个数字相加等于当前的数字</li>
+</ol></li>
+<li>判断是部分解的条件（如果是部分解就进入下一层）：
+<ol type="1">
+<li>字符串中的数字未全考虑过，即未走到搜索树的叶结点</li>
+<li>同 2.2</li>
+<li>同 2.3</li>
+</ol></li>
+</ol>
+<h2 id="算法执行">算法执行</h2>
+<ol type="1">
+<li>字符串长度小于 3 直接返回 False</li>
+<li>初始化前两个数字为 a, b = ''</li>
+<li>开始递归，除了必需的变量，还需要一个字符串剩余长度（rest_len），方便在剩余的字符串中计算当前的数字
+<ul>
+<li>比如在上图中，当前所在层数为 3（即第四层），我们需要计算当前节点的数字。已知 rest_len = 3，str_len = 6，则取出当前节点的数字为 num[6 - 3: 6 - 3 + span]，span 为取数字的跨度，从 1 开始，所以就取到了数字“3”。在图中可以看到此层还有一个节点“35”，如果 span = 2，我们就取得了 num[6 - 3: 6 - 3 + 2]
+<ul>
+<li>array[i: j] 在 python 中意为<strong>取出在 array 中从 i 到 j 的元素</strong>（遵从包头不包尾原则）</li>
+</ul></li>
+<li>rest_len 另一个用途是计算 span，比如“112358”，rest_len = 3，那么我们只能选择取[3, 35 ,358]。我们从 1 遍历到 rest_len + 1，刚好可以得到可取的 span = [1, 2 ,3]</li>
+</ul></li>
+<li>使用 rest_len 计算当前数字 c</li>
+<li>合法则返回 True</li>
+<li>部分则进入下一层
+<ul>
+<li>由于第 0 层和 第 1 层无法进行比对，所以碰到此两层也可进入下一层</li>
+</ul></li>
+</ol>
+<h2 id="回溯法">回溯法</h2>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Solution:</span><br><span class="line">    def <span class="constructor">__init__(<span class="params">self</span>)</span>:</span><br><span class="line">        self.success = False</span><br><span class="line">        self.str_len = -<span class="number">1</span></span><br><span class="line"></span><br><span class="line">    def is<span class="constructor">AdditiveNumber(<span class="params">self</span>, <span class="params">num</span>: <span class="params">str</span>)</span> -&gt; <span class="built_in">bool</span>:</span><br><span class="line">        self.str_len = len(num)</span><br><span class="line">        <span class="keyword">if</span> self.str_len &lt; <span class="number">3</span>:</span><br><span class="line">            return False</span><br><span class="line">        # 开始递归</span><br><span class="line">        self.<span class="keyword">rec</span>(num, self.str_len, <span class="number">0</span>, '', '')</span><br><span class="line">        return self.success</span><br><span class="line"></span><br><span class="line">    def <span class="keyword">rec</span>(self, num_str, rest_len, current_layer, a, b):</span><br><span class="line">        # 遍历所有可能的跨度</span><br><span class="line">        for span <span class="keyword">in</span> range(<span class="number">1</span>, rest_len + <span class="number">1</span>):</span><br><span class="line">            <span class="keyword">if</span> not self.success:</span><br><span class="line">                # 获取当前的数字</span><br><span class="line">                start = self.str_len - rest_len</span><br><span class="line">                c = num_str<span class="literal">[<span class="identifier">start</span>: <span class="identifier">start</span> + <span class="identifier">span</span>]</span></span><br><span class="line">                # 是否合法，合法则找到解，直接退出程序</span><br><span class="line">                <span class="keyword">if</span> current_layer &gt; <span class="number">1</span> <span class="keyword">and</span> self.is<span class="constructor">_legal(<span class="params">rest_len</span>, <span class="params">span</span>, <span class="params">a</span>, <span class="params">b</span>, <span class="params">c</span>)</span>:</span><br><span class="line">                    self.success = True</span><br><span class="line">                    return</span><br><span class="line">                # 是否为部分解，是则进入下一层</span><br><span class="line">                elif current_layer &lt;= <span class="number">1</span> <span class="keyword">or</span> self.is<span class="constructor">_partial(<span class="params">rest_len</span>, <span class="params">span</span>, <span class="params">a</span>, <span class="params">b</span>, <span class="params">c</span>)</span>:</span><br><span class="line">                    self.<span class="keyword">rec</span>(num_str, rest_len - span, current_layer + <span class="number">1</span>, b, c)</span><br><span class="line"></span><br><span class="line">    def is<span class="constructor">_legal(<span class="params">self</span>, <span class="params">rest_len</span>, <span class="params">span</span>, <span class="params">a</span>, <span class="params">b</span>, <span class="params">c</span>)</span>:</span><br><span class="line">        return rest_len - span<span class="operator"> == </span><span class="number">0</span> <span class="keyword">and</span> self.<span class="keyword">constraint</span><span class="constructor">_func(<span class="params">a</span> , <span class="params">b</span>, <span class="params">c</span>)</span> <span class="keyword">and</span> self.is<span class="constructor">_additive(<span class="params">a</span>, <span class="params">b</span>, <span class="params">c</span>)</span></span><br><span class="line"></span><br><span class="line">    def is<span class="constructor">_partial(<span class="params">self</span>, <span class="params">rest_len</span>, <span class="params">span</span>, <span class="params">a</span>, <span class="params">b</span>, <span class="params">c</span>)</span>:</span><br><span class="line">        return rest_len - span != <span class="number">0</span> <span class="keyword">and</span> self.<span class="keyword">constraint</span><span class="constructor">_func(<span class="params">a</span> , <span class="params">b</span>, <span class="params">c</span>)</span> <span class="keyword">and</span> self.is<span class="constructor">_additive(<span class="params">a</span>, <span class="params">b</span>, <span class="params">c</span>)</span></span><br><span class="line"></span><br><span class="line">    def <span class="keyword">constraint</span><span class="constructor">_func(<span class="params">self</span>, <span class="params">a</span>, <span class="params">b</span>, <span class="params">c</span>)</span>:</span><br><span class="line">        return not (len(a) &gt; <span class="number">1</span> <span class="keyword">and</span> <span class="built_in">int</span>(a<span class="literal">[<span class="number">0</span>]</span>)<span class="operator"> == </span><span class="number">0</span> <span class="keyword">or</span> len(b) &gt; <span class="number">1</span> <span class="keyword">and</span> <span class="built_in">int</span>(b<span class="literal">[<span class="number">0</span>]</span>)<span class="operator"> == </span><span class="number">0</span> <span class="keyword">or</span> len(c) &gt; <span class="number">1</span> <span class="keyword">and</span> <span class="built_in">int</span>(c<span class="literal">[<span class="number">0</span>]</span>)<span class="operator"> == </span><span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">    def is<span class="constructor">_additive(<span class="params">self</span>, <span class="params">a</span>, <span class="params">b</span>, <span class="params">c</span>)</span>:</span><br><span class="line">        return <span class="built_in">int</span>(a) + <span class="built_in">int</span>(b)<span class="operator"> == </span><span class="built_in">int</span>(c)</span><br></pre></td></tr></table></figure>
+<h1 id="二进制手表">401. 二进制手表</h1>
+<p>  分析：<mark class="label success">简单</mark> 1. 问题可转化为： 10（4+6） 个电子灯一次实验取出 n 个，取完之后放回，问共有多少种取法？ 2. 显然一次实验中只能取一个电子灯，所以电子灯是不可重复选取的，但是顺序却有关系，这是由于前 4 个电子灯代表小时，后 6 个电子灯代表分钟。所以这是一个排列的问题，共有 <span class="math inline">\(\frac{10!}{(10 - k)!}\)</span> 种。 3. 此问题的<strong>约束函数</strong>是前 4 个电子灯的二进制表示只能在 0~11 之间，后 6 个电子灯的二进制表示只能在 0~59 之间。 - 并且电子灯亮着的个数要为 n。</p>
+<h2 id="回溯法-1">回溯法</h2>
+<p>  解决办法为： <figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(<span class="keyword">self</span>)</span></span><span class="symbol">:</span></span><br><span class="line">        <span class="keyword">self</span>.led_num = <span class="number">10</span></span><br><span class="line">        <span class="comment"># 前四个灯代表时，后六个灯代表分</span></span><br><span class="line">        <span class="keyword">self</span>.leds = [-<span class="number">1</span> <span class="keyword">for</span> <span class="number">_</span> <span class="keyword">in</span> range(<span class="keyword">self</span>.led_num)]</span><br><span class="line">        <span class="comment"># “排列”答案</span></span><br><span class="line">        <span class="keyword">self</span>.permutation = []</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">readBinaryWatch</span><span class="params">(<span class="keyword">self</span>, <span class="symbol">num:</span> int)</span></span> -&gt; List[str]<span class="symbol">:</span></span><br><span class="line">        index = <span class="number">0</span></span><br><span class="line">        <span class="comment"># 算法实现</span></span><br><span class="line">        <span class="keyword">while</span> index &gt;= <span class="number">0</span><span class="symbol">:</span></span><br><span class="line">            <span class="keyword">while</span> <span class="keyword">self</span>.leds[index] &lt; <span class="number">1</span><span class="symbol">:</span></span><br><span class="line">                <span class="keyword">self</span>.leds[index] += <span class="number">1</span></span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">self</span>.is_legal(num)<span class="symbol">:</span></span><br><span class="line">                    h, m = <span class="keyword">self</span>.gethm()</span><br><span class="line">                    <span class="keyword">self</span>.permutation.append(<span class="string">'%i:%s'</span> % (h, <span class="string">'0%i'</span> % m <span class="keyword">if</span> m &lt; <span class="number">10</span> <span class="keyword">else</span> str(m)))</span><br><span class="line">                elif <span class="keyword">self</span>.is_partial(num) <span class="keyword">and</span> index &lt; <span class="keyword">self</span>.led_num - <span class="number">1</span><span class="symbol">:</span></span><br><span class="line">                    index += <span class="number">1</span></span><br><span class="line">            <span class="keyword">self</span>.leds[index] = -<span class="number">1</span></span><br><span class="line">            index -= <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">self</span>.permutation</span><br><span class="line">                </span><br><span class="line">    <span class="comment"># 合法条件：亮灯必须等于 num，并且满足约束函数</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">is_legal</span><span class="params">(<span class="keyword">self</span>, num)</span></span>: <span class="keyword">return</span> sum([<span class="number">1</span> <span class="keyword">for</span> _b <span class="keyword">in</span> <span class="keyword">self</span>.leds <span class="keyword">if</span> _b == <span class="number">1</span>]) == num <span class="keyword">and</span> <span class="keyword">self</span>.constraint_function()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 部分条件：亮灯必须小于等于 num，并且满足约束函数</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">is_partial</span><span class="params">(<span class="keyword">self</span>, num)</span></span>: <span class="keyword">return</span> sum([<span class="number">1</span> <span class="keyword">for</span> _b <span class="keyword">in</span> <span class="keyword">self</span>.leds <span class="keyword">if</span> _b == <span class="number">1</span>]) &lt;= num <span class="keyword">and</span> <span class="keyword">self</span>.constraint_function()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 约束函数为小时的范围为 0~11，分钟的范围为 0~59</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">constraint_function</span><span class="params">(<span class="keyword">self</span>)</span></span><span class="symbol">:</span></span><br><span class="line">        h, m = <span class="keyword">self</span>.gethm()</span><br><span class="line">        <span class="keyword">return</span> h &lt;= <span class="number">11</span> <span class="keyword">and</span> m &lt;= <span class="number">59</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">gethm</span><span class="params">(<span class="keyword">self</span>)</span></span><span class="symbol">:</span></span><br><span class="line">        h = <span class="number">0</span></span><br><span class="line">        m = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> index, _b <span class="keyword">in</span> enumerate(<span class="keyword">self</span>.leds)<span class="symbol">:</span></span><br><span class="line">            <span class="keyword">if</span> _b &gt;= <span class="number">0</span><span class="symbol">:</span></span><br><span class="line">                <span class="keyword">if</span> index &lt;= <span class="number">3</span><span class="symbol">:</span></span><br><span class="line">                    h += (<span class="number">2</span> ** index) * _b</span><br><span class="line">                <span class="symbol">else:</span></span><br><span class="line">                    m += (<span class="number">2</span> ** (index - <span class="number">4</span>)) * _b</span><br><span class="line">        <span class="keyword">return</span> h, m</span><br></pre></td></tr></table></figure></p>
+<h2 id="其他办法">其他办法</h2>
+<p>  leetcode 上有非回溯法的做法。</p>
+<h1 id="字母大小写全排列">784. 字母大小写全排列</h1>
+<p>  一开始是按照回溯法的思想去思考的，但是后来我反应过来了。这题不就是穷举法吗？只不过排除了相同的组合。完全可以使用穷举做出来，只需要用集合的概念将重复的元素剔除即可。<mark class="label success">简单</mark></p>
+<h2 id="暴力穷举法">暴力穷举法</h2>
+<p>  经过十来分钟的研究，发现穷举法不可行，必须要用递归考虑进每种情况。之前想太简单了，还是用回溯法吧。</p>
+<h2 id="回溯法-2">回溯法</h2>
+<p>  就是普通的回溯，需要注意回溯的时候不再是索引减一，而是回到当前索引位置的字符不为数字为止。 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">letterCasePermutation</span><span class="params">(self, S: str)</span>:</span></span><br><span class="line">        str_len = len(S)</span><br><span class="line">        x = [<span class="number">-1</span> <span class="keyword">for</span> _ <span class="keyword">in</span> range(str_len)]</span><br><span class="line">        res = []</span><br><span class="line">        tail_index = len(re.search(<span class="string">r'^.*?(\d*)$'</span>, S).group(<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 数字直接返回</span></span><br><span class="line">        <span class="keyword">if</span> tail_index == str_len:</span><br><span class="line">            <span class="keyword">return</span> [S]</span><br><span class="line"></span><br><span class="line">        i = <span class="number">0</span></span><br><span class="line">        <span class="keyword">while</span> i &gt;= <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">while</span> x[i] &lt; <span class="number">1</span>:</span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">not</span> S[i].isdigit():</span><br><span class="line">                    x[i] += <span class="number">1</span></span><br><span class="line">                    <span class="keyword">if</span> self.is_legal(x, tail_index):</span><br><span class="line">                        res.append(self.transform(x, S))</span><br><span class="line">                <span class="keyword">if</span> (x[-(tail_index + <span class="number">1</span>)] &lt; <span class="number">1</span> <span class="keyword">or</span> S[i].isdigit()) <span class="keyword">and</span> i &lt; str_len - tail_index - <span class="number">1</span>:</span><br><span class="line">                    i += <span class="number">1</span></span><br><span class="line">            <span class="comment"># 回溯，回到当前索引位置的字符不为数字为止</span></span><br><span class="line">            <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">                x[i] = <span class="number">-1</span></span><br><span class="line">                i -= <span class="number">1</span></span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">not</span> S[i].isdigit():</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">return</span> res</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">is_legal</span><span class="params">(self, x, tail_index)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> x[-(tail_index + <span class="number">1</span>)] != <span class="number">-1</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">transform</span><span class="params">(self, x, s)</span>:</span></span><br><span class="line">        final_s = []</span><br><span class="line">        <span class="keyword">for</span> i, item <span class="keyword">in</span> enumerate(x):</span><br><span class="line">            <span class="keyword">if</span> item == <span class="number">-1</span>:</span><br><span class="line">                final_s.append(s[i])</span><br><span class="line">            <span class="keyword">elif</span> item == <span class="number">0</span>:</span><br><span class="line">                final_s.append(s[i].lower())</span><br><span class="line">            <span class="keyword">elif</span> item == <span class="number">1</span>:</span><br><span class="line">                final_s.append(s[i].upper())</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">raise</span> RuntimeError(<span class="string">'未知错误'</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">''</span>.join(final_s)</span><br></pre></td></tr></table></figure></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/leetcode/" rel="tag"># leetcode</a>
+              <a href="/tags/回溯法/" rel="tag"># 回溯法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/5d62ca7e.html" rel="prev" title="更新hexo next主题">
+      <i class="fa fa-chevron-left"></i> 更新hexo next主题
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/b9655d18.html" rel="next" title="Collaborative Multi-Agent Dialogue Model Training Via Reinforcement">
+      Collaborative Multi-Agent Dialogue Model Training Via Reinforcement <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#算法思想"><span class="nav-number">1.</span> <span class="nav-text">算法思想</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#例子三着色问题"><span class="nav-number">1.1.</span> <span class="nav-text">例子：三着色问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#面试题08.09.-括号22.-括号生成"><span class="nav-number">2.</span> <span class="nav-text">面试题08.09. 括号/22. 括号生成</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#电话号码的字母组合"><span class="nav-number">3.</span> <span class="nav-text">17. 电话号码的字母组合</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#单词搜索"><span class="nav-number">4.</span> <span class="nav-text">79. 单词搜索</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#累加数"><span class="nav-number">5.</span> <span class="nav-text">306. 累加数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#解题思路"><span class="nav-number">5.1.</span> <span class="nav-text">解题思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#算法执行"><span class="nav-number">5.2.</span> <span class="nav-text">算法执行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#回溯法"><span class="nav-number">5.3.</span> <span class="nav-text">回溯法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二进制手表"><span class="nav-number">6.</span> <span class="nav-text">401. 二进制手表</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#回溯法-1"><span class="nav-number">6.1.</span> <span class="nav-text">回溯法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他办法"><span class="nav-number">6.2.</span> <span class="nav-text">其他办法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#字母大小写全排列"><span class="nav-number">7.</span> <span class="nav-text">784. 字母大小写全排列</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#暴力穷举法"><span class="nav-number">7.1.</span> <span class="nav-text">暴力穷举法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#回溯法-2"><span class="nav-number">7.2.</span> <span class="nav-text">回溯法</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">朱冲䶮</p>
+  <div class="site-description" itemprop="description">记录学习问题，积累做的 leetcode 题目</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">163</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">94</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+      <!-- 不蒜子/busuanzi -->
+      <div class="site-state-item site-state-posts">
+      	<span class="site-state-item-count">203.6k</span>
+      	<span class="site-state-item-name">总字数</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>zhihu</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div><script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="/lib/my-utils.js"></script>
+<!--图片缩放插件-->
+<script src="/lib/zoomify/zoomify.min.js"></script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- 背景插件 -->
+<script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<!-- 背景图片 -->
+<script>
+	function generateBG(count){
+		var bg_prefix = '/images/background/';
+		var bg =new Array();
+		for(var i = 0; i < count; i++){
+			bg[i] = bg_prefix + i + '.jpg';
+		}
+		bg.shuffle();
+		return bg;
+	}
+	$("body").backstretch(generateBG(11), {
+		duration:90000,//1min半一换
+		fade: 1500
+	});
+</script>
+<!-- 图片缩放 -->
+<script>
+$('.content img').zoomify({duration: 500, });
+$('.content img').on('zoom-in.zoomify', function () {
+	$('.sidebar').css('display', 'none');
+});
+$('.content img').on('zoom-out-complete.zoomify', function () {
+	$('.sidebar').css('display', '');
+});
+</script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/7f2adc4d.html',]
+      });
+      });
+  </script>
+<!-- calendar widget -->
+
+
+</body>
+</html>

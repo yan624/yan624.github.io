@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文名词参考 名词参考 一章。  梦开始的地方   one hot 编码，词袋模型（BOW）。可以参考文章 【NLP算法】（零）NLP基础算法 大致了解其概念。">
+<meta name="keywords" content="博客，java，javaWeb，NLP，python，机器学习，深度学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NLP中的各种套路（技术）">
+<meta property="og:url" content="https://yan624.github.io/posts/70160251.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="本文名词参考 名词参考 一章。  梦开始的地方   one hot 编码，词袋模型（BOW）。可以参考文章 【NLP算法】（零）NLP基础算法 大致了解其概念。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/NLP中的各种套路（技术）/马尔科夫链.jpg">
+<meta property="og:updated_time" content="2020-06-14T10:53:51.970Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NLP中的各种套路（技术）">
+<meta name="twitter:description" content="本文名词参考 名词参考 一章。  梦开始的地方   one hot 编码，词袋模型（BOW）。可以参考文章 【NLP算法】（零）NLP基础算法 大致了解其概念。">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/NLP中的各种套路（技术）/马尔科夫链.jpg">
+
+<link rel="canonical" href="https://yan624.github.io/posts/70160251.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<!--图片缩放插件样式-->
+<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
+<!--阿里云矢量库样式-->
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_621sfmh583s.css" />
+
+        
+
+  <title>NLP中的各种套路（技术） | 博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">低阶炼金术士</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-常用链接">
+
+    <a href="/常用链接" rel="section"><i class="fas fa-bookmark fa-fw"></i>常用链接</a>
+
+  </li>
+        <li class="menu-item menu-item-时间线">
+
+    <a href="/categories/timeline/" rel="section"><i class="iconfont icon-timeline fa-fw"></i>时间线</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">94</span></a>
+
+  </li>
+        
+            
+  <li class="menu-item menu-item-博客分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>博客分类</a>
+
+  </li>
+
+
+      
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">163</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    
+
+    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/70160251.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          NLP中的各种套路（技术）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-03-24 00:57:46" itemprop="dateCreated datePublished" datetime="2020-03-24T00:57:46+08:00">2020-03-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-14 18:53:51" itemprop="dateModified" datetime="2020-06-14T18:53:51+08:00">2020-06-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/nlp/" itemprop="url" rel="index"><span itemprop="name">nlp</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="note warning"><p>  本文名词参考 <a href="#名词参考">名词参考</a> 一章。</p>
+</div>
+<h1 id="梦开始的地方">梦开始的地方</h1>
+<p>  one hot 编码，词袋模型（BOW）。可以参考文章 <a href="https://yan624.github.io/AI/nlp/【NLP算法】（零）NLP基础算法.html">【NLP算法】（零）NLP基础算法</a> 大致了解其概念。 <a id="more"></a></p>
+<h2 id="词的向量化">词的向量化</h2>
+<p>  one hot 编码，关键词抽取算法，分布式表征。</p>
+<h2 id="关键词提取">关键词提取</h2>
+<h2 id="参考文献">参考文献</h2>
+<ol type="1">
+<li><a href="https://www.iteye.com/blog/eric-weitm-2388730" target="_blank" rel="noopener">nlp 统计语言模型</a></li>
+<li><a href="https://blog.csdn.net/songbinxu/article/details/80209197" target="_blank" rel="noopener">自然语言处理NLP中的N-gram模型</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/32829048" target="_blank" rel="noopener">自然语言处理中N-Gram模型介绍</a></li>
+<li>《数学之美》</li>
+<li>《自然语言处理综论》</li>
+<li><a href="http://easyai.tech/ai-definition/tf-idf/" target="_blank" rel="noopener">TF-IDF</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2013/03/tf-idf.html" target="_blank" rel="noopener">TF-IDF与余弦相似性的应用（一）：自动提取关键词</a></li>
+<li><a href="https://blog.csdn.net/QFire/article/details/81065997" target="_blank" rel="noopener">Python自然语言处理实战（5）：关键词提取算法</a></li>
+</ol>
+<h1 id="语言模型开山鼻祖就是我">语言模型：开山鼻祖就是我</h1>
+<h2 id="统计语言模型">统计语言模型</h2>
+<blockquote>
+<p>统计语言模型最先用于解决语音识别问题。计算机需要知道一个文字序列是否能够成人类可以理解且具有意义的句子。——《数学之美》，第 3 章。</p>
+</blockquote>
+<p>  语言模型假设一门语言中所有可能的句子服从一个分布，每个可能存在的句子的概率加起来等于 1。当然，由于在一门语言中有很多句子，所以即使是一个可能存在的句子，它的概率值也是很小的，但是比起一个不太可能存在的句子，它的概率就远远大得多。   更严格的描述是：假定 <span class="math inline">\(S\)</span> 表示一个有意义的句子，它由一串顺序排列的单词 <span class="math inline">\(w_1, w_2, \cdots, w_n\)</span> 组成，其中 <span class="math inline">\(n\)</span> 是句子的长度，句子 <span class="math inline">\(S\)</span> 在一门语言中存在的概率为 <span class="math inline">\(P(S)\)</span>。那么如何计算它呢？最简单的办法是：统计人类有史以来所有的句子，然后计算句子 <span class="math inline">\(S\)</span> 存在的次数，用它除以所有句子的个数。当然这方法肯定行不通。   我们可以用数学的方式计算它。已知 <span class="math inline">\(P(S) = P(w_1, w_2, \cdots, w_n)\)</span>，那么利用条件概率的公式，将其展开得到： <span class="math display">\[
+\begin{align}
+P(w_1, w_2, \cdots, w_n)
+    &amp; = P(w_1) \cdot P(w_2 | w_1) \cdots P(w_n | w_1, w_2, \cdots, w_{n-1}) \\
+    &amp; = \prod^n_{i=1} P(w_i | w_1, w_2, \cdots, w_{i-1}) \tag{1}\\
+\end{align}
+\]</span> <div class="note info"><p>  上式很容易得到，但是为了照顾不会概率论的童鞋，我还是略微地推导一下。假设我们将 <span class="math inline">\(P(S)\)</span> 简化一下，修改为 <span class="math inline">\(P(ABCD)\)</span>，则根据条件概率公式 <span class="math inline">\(P(X|Y) = \frac{P(XY)}{P(Y)} \implies P(XY) = P(X|Y) \cdot P(Y)\)</span>，同理也可以计算出 <span class="math inline">\(P(ABCD) = P(D|ABC) \cdot P(ABC) = P(D|ABC) \cdot \underbrace{P(C|AB) \cdot P(AB)}_{P(ABC)} = \cdots\)</span>。   这里可能有人会有疑惑，为什么是 <span class="math inline">\(P(ABCD) = P(D|ABC) \cdot P(ABC)\)</span> 呢？而不是 <span class="math inline">\(P(ABCD) = P(A|BCD) \cdot P(BCD)\)</span> 或者 <span class="math inline">\(P(ABCD) = P(ABC|D) \cdot P(D)\)</span> 等其他公式。还记得我们在做自然语言处理吗？例如 <code>S = “我喜欢你” = ABCD</code>，在“我喜欢”（ABC）的条件下，计算“你”（D）的概率是有意义的。但是在“喜欢你”（BCD）的条件下，计算“我”（A），或者在“你”（D）的条件下，计算“我喜欢”（ABC）的概率都是完全没意义的。因为语言是线性的，你说一句话，永远都是按“我喜欢你”的顺序说。而不会先说“你”，再说“我喜欢”。</p>
+</div>   继续。显然这样的方法已经从人肉穷举法，转换为了数学上的公式。但是现在有一个问题，计算 <span class="math inline">\(w_n\)</span> 的概率需要依赖前 <span class="math inline">\(n-1\)</span> 个单词，这其实还是需要用人肉穷举法。那么有没有一个办法，可以使得使用穷举法时，更加方便点呢？   上上个世纪有一个人叫马尔可夫，他提出了一个方法，说穿了就不值钱了。就是偷个懒，在计算单词 <span class="math inline">\(w_i\)</span> 的条件概率时，不考虑前 <span class="math inline">\(i-1\)</span> 个词，只考虑前<strong>一个</strong>单词 <span class="math inline">\(w_{i-1}\)</span>。那么上式（1）就转换成了： <span class="math display">\[
+\begin{align}
+P(w_1, w_2, \cdots, w_n)
+    &amp; = P(w_1) \cdot P(w_2 | w_1) \cdots P(w_n | w_{n-1}) \\
+    &amp; = \prod^n_{i=1} P(w_i | w_{i-1}) \tag{2} \\
+\end{align}
+\]</span>   这就是 Bigram Model（二元模型）。当然也可以假设与前面的多个词有关，那么就是 N-gram Model（N 元模型）了。<strong>那么如何估算一个 <span class="math inline">\(P(w_i | w_{i-1})\)</span> 呢？</strong>   根据条件概率公式可得： <span class="math display">\[P(w_i | w_{i-1}) = \frac{P(w_{i-1} w_i)}{P(w_{i-1})} \tag{3}
+\]</span>   我们只需要分别计算分子和分母的概率即可获得条件概率的值。按照最早之前的思路，我们只需要统计有史以来的所有句子，再统计 <span class="math inline">\(w_{i-1} w_i\)</span> 词组出现的次数即可获得 <span class="math inline">\(P(w_{i-1} w_i)\)</span>。但是，这在之前说过了，是不可能的。那么我们可以使用一个简化的方法。   一般来说，在做一个系统之前，我们都会收集一个语料库（corpus），我们拿这个语料库充当有史以来的所有句子。这样就可以统计了。接下来我们以 <span class="math inline">\(Count(X)\)</span> 来表示 <span class="math inline">\(X\)</span> 出现的次数，<span class="math inline">\(Count(\#)\)</span> 表示语料库中的所有可能的词组或词，则出现词组 <span class="math inline">\(w_{i-1} w_i\)</span> 的概率为： <span class="math display">\[f(w_{i-1} w_i) = \frac{Count(w_{i-1} w_i)}{Count(\#)} \tag{4}
+\]</span>   词 <span class="math inline">\(w_{i-1}\)</span> 出现的概率 <span class="math inline">\(f(w_{i-1})\)</span> 类似。根据<strong>大数定理</strong>，当实验接近无穷时，这个比例就会越来越接近实际概率。所以， <span class="math display">\[
+P(w_i | w_{i-1}) = \frac{P(w_{i-1} w_i)}{P(w_{i-1})} \approx \frac{f(w_{i-1} w_i)}{f(w_{i-1})} = \frac{Count(w_{i-1} w_i)}{Count(w_{i-1})} \tag{5}
+\]</span></p>
+<h3 id="n-gram与平滑技术">N-gram与平滑技术</h3>
+<p>  上述一个词 <span class="math inline">\(w_i\)</span> 只与前一个词 <span class="math inline">\(w_{i-1}\)</span> 有关，讲得是 Bigram Model，但是这似乎有点太过简化了。如果更复杂一点，一个词 <span class="math inline">\(w_i\)</span> 与前 <span class="math inline">\(N-1\)</span> 个词有关，那么这就是 <strong><span class="math inline">\(N-1\)</span> 阶马尔科夫假设</strong>，即 N-gram 模型。一般 N 的取值都很小，一般最大只取到 4。 <div class="note warning"><p>为什么只取到 4 呢？可以查阅资料。简单来说就是复杂度呈指数上升。</p>
+</div></p>
+<p>  此外，N-gram 模型依然无法完全覆盖所有的可能。所以后来还出来了一些新的可以捕获长期依赖的方法，将在下一节<strong>《<a href="#神经语言模型">神经语言模型</a>》</strong>中叙述。这些方法在现在已经如雷贯耳了，比如 LSTM。   现在说平滑技术，说穿了也不值钱了。在我们计算 <span class="math inline">\(P(w_i | w_{i-1}) = \frac{Count(w_{i-1} w_i)}{Count(w_{i-1})}\)</span> 时，如果 <span class="math inline">\(Count(w_{i-1}) = 0\)</span> 怎么办？要知道分母是不能为 0 的。此外如果正好一个词出现的次数过少，而导致它无法近似地表示其概率，应该怎么办？   平滑技术可查阅资料（《数学之美》、《自然语言处理综论》等），此处暂时不讲。</p>
+<h2 id="神经语言模型">神经语言模型</h2>
+<p>  什么是神经语言模型？在 21 世纪 20 年代，我想已经不需要解释了。RNN，LSTM，GRU 的大名都如雷贯耳。那么其与统计语言模型有什么区别呢？   在计算统计语言模型的概率时，我们是使用的人肉穷举法。那么计算 <span class="math inline">\(P(S)\)</span> 是否有更简单的方法呢？并且之前用的是二元模型，能否使用一个方法捕获长期依赖，而不仅仅是单词的前一个依赖？   深度学习技术将其变成了可能。再计算 <span class="math inline">\(P(S)\)</span> 时，我们可以使用 LSTM 捕获一整个句子的依赖，而不需要使用二元模型，得到一个近似解。其概率也不再需要统计得到，我们直接将单词转换为词向量，经过 LSTM 后，再经过 softmax，直接得到词表中每一个单词的概率。   神经语言模型大致就是这么个意思。RNN、LSTM、GRU 等模型将在<strong>《<a href="#特征提取器：双月同天，必有大乱">特征提取器：双月同天，必有大乱</a>》</strong>中描述。</p>
+<h2 id="参考文献-1">参考文献</h2>
+<ul>
+<li>统计语言模型
+<ol type="1">
+<li>《数学之美》，第三章</li>
+<li><a href="https://www.zhihu.com/question/29456588" target="_blank" rel="noopener">神经语言模型和统计语言模型有啥异同点？</a></li>
+</ol></li>
+</ul>
+<h1 id="词向量横空出世技惊四座">词向量：横空出世，技惊四座</h1>
+<h2 id="word2vec">word2vec</h2>
+<h2 id="glove">GloVe</h2>
+<h2 id="fasttext">fasttext</h2>
+<h1 id="特征提取器双月同天必有大乱">特征提取器：双月同天，必有大乱</h1>
+<h2 id="rnn">RNN</h2>
+<blockquote>
+<p>1982年，美国加州理工学院物理学家John hopfield 发明了一种单层反馈神经网络 <strong>Hopfield network</strong>，用来解决组合优化问题。这是最早的RNN的雏形。86年，michael I. Jordan 定义了 recurrent 的概念，提出 <strong>Jordan network</strong>。1990年, 美国认知科学家 Jeffrey L. Elman 对 jordan network 进行了简化,并采用 BP 算法进行训练，便有了如今最简单的包含单个自连接节点的 RNN 模型。称之为 Elman Network。</p>
+</blockquote>
+<p>  虽然 Jordan Network 先出现，但是此处《<a href="https://yan624.github.io/posts/5e27260b.html#Elman-Network-amp-Jordan-Network">吴恩达李宏毅综合学习笔记：RNN入门#Elman Network &amp; Jordan Network</a>》介绍了 <strong>Jordan Network 可能性能会更好</strong>。</p>
+<h3 id="lstm">LSTM</h3>
+<p>  对于 LSTM 早已经写了很多篇笔记，以下的学习笔记记录了 LSTM 的网络架构（注：这些都只是学习笔记，仅供参考）。 1. <a href="https://yan624.github.io/posts/5e27260b.html#长短期记忆——Long-Short-term-Memory-LSTM">吴恩达李宏毅综合学习笔记：RNN入门#长短期记忆——Long Short-term Memory(LSTM)</a> 2. <a href="https://yan624.github.io/·zcy/AI/dl/深度学习算法（三）：RNN%20各种机制.html#LSTM">深度学习算法（三）：RNN 各种机制#LSTM</a></p>
+<h3 id="gru">GRU</h3>
+<p>  对于 GRU 早已经写了很多篇笔记，以下的学习笔记记录了 GRU 的网络架构（注：这些都只是学习笔记，仅供参考）。 1. <a href="https://yan624.github.io/posts/5e27260b.html#GRU单元——Gate-Recurrent-Unit">吴恩达李宏毅综合学习笔记：RNN入门#GRU单元——Gate Recurrent Unit</a></p>
+<p>  另外，由于 GRU 与 LSTM 类似，它的梯度问题就不再赘述。但是可以讲解一下它与 LSTM 的区别，以及对 SLTM 的什么地方进行了改进。 <div class="note warning"><p>  <strong>代办</strong>。   简化了 Gate，GRU 能够达到 LSTM 相当的效果，并且相比之下更容易进行训练，能够很大程度上提高训练效率。   参考资料： 1. <a href="https://zhuanlan.zhihu.com/p/32481747" target="_blank" rel="noopener">人人都能看懂的GRU</a></p>
+</div></p>
+<h2 id="cnn">CNN</h2>
+<h2 id="transformer">Transformer</h2>
+<p>  对于 Transformer 早已经写了很多篇笔记，以下的学习笔记记录了 Transformer 的网络架构（注：这些都只是学习笔记，仅供参考）。 1. <a href="https://yan624.github.io/AI/dl/深度学习算法（四）：Transformer.html">深度学习算法（四）：Transformer</a></p>
+<h2 id="gnn">GNN</h2>
+<h2 id="参考文献-2">参考文献</h2>
+<ul>
+<li>RNN
+<ol type="1">
+<li><a href="https://www.jianshu.com/p/d35a2fd593eb" target="_blank" rel="noopener">RNN的研究发展过程</a></li>
+</ol></li>
+</ul>
+<h1 id="encoder-decoder本变种人要让你们知道什么是残忍">Encoder-Decoder：本变种人要让你们知道什么是残忍</h1>
+<h2 id="attention">Attention</h2>
+<p>  本人的笔记 1. <a href="https://yan624.github.io/posts/5e27260b.html#Attention">吴恩达李宏毅综合学习笔记：RNN入门#Attention</a> 2. <a href="https://yan624.github.io/·学习笔记/AI/nlp/CS224n学习笔记.html#attention">CS224n学习笔记#attention</a> 3. <strong><a href="https://yan624.github.io/·zcy/AI/dl/深度学习算法（三）：RNN%20各种机制.html#Attention">RNN 各种机制#Attention</a></strong></p>
+<h2 id="pointer-networks">Pointer Networks</h2>
+<div class="note info"><ol type="1">
+<li><a href="https://arxiv.org/pdf/1506.03134.pdf" target="_blank" rel="noopener">论文地址</a></li>
+<li><a href="https://yan624.github.io/·论文笔记/model/46.%20Pointer%20Networks.html">论文笔记</a></li>
+<li>《<a href="https://yan624.github.io/posts/5e27260b.html#Pointer-Network">李宏毅深度学习学习笔记</a>》记录了一个例子。</li>
+</ol>
+</div>
+<p>  Ptr-Nets（下简称 Ptr）目前已知有两种形式：<strong>1）</strong>Pointer-Generator；<strong>2）</strong>CopyNet。Pointer-Generator 旨在利用 Ptr 处理表外词，以此生成序列。CopyNet 旨在从输入序列中直接拷贝一段序列作为输出的一部分，那一段序列不一定要包含表外词。</p>
+<h2 id="参考文献-3">参考文献</h2>
+<ul>
+<li>Attention
+<ol type="1">
+<li><a href="https://zhuanlan.zhihu.com/p/67909876" target="_blank" rel="noopener">浅谈Attention注意力机制及其实现</a></li>
+</ol></li>
+<li>Pointer Networks
+<ol type="1">
+<li><a href="https://zhuanlan.zhihu.com/p/48959800" target="_blank" rel="noopener">Pointer Networks简介及其应用</a></li>
+</ol></li>
+</ul>
+<h1 id="预训练模型后浪拍前浪曰基操勿6皆坐">预训练模型：后浪拍前浪，曰，基操勿6皆坐</h1>
+<h2 id="ulmfit">ULMFiT</h2>
+<h1 id="其他的模型出来混口饭吃">其他的模型：出来混口饭吃</h1>
+<p>  <a href="http://localhost:4000/posts/5e27260b.html#几个有用的network架构" target="_blank" rel="noopener">此处</a>记录了部分，可以直接复制过来。</p>
+<h2 id="capusle">Capusle</h2>
+<ol type="1">
+<li><a href="https://www.bilibili.com/video/BV1Ux411S7rk?p=12" target="_blank" rel="noopener">李宏毅深度学习(2017)#P12 Capusle</a></li>
+</ol>
+<h2 id="highway-network">Highway Network</h2>
+<ol type="1">
+<li><a href="https://www.bilibili.com/video/BV1Ux411S7rk?p=6" target="_blank" rel="noopener">李宏毅深度学习(2017)#P6 Highway Network &amp; Grid LSTM</a></li>
+</ol>
+<h2 id="recursive-network">Recursive Network</h2>
+<ol type="1">
+<li><a href="https://www.bilibili.com/video/BV1Ux411S7rk?p=7" target="_blank" rel="noopener">李宏毅深度学习(2017)#P7 Recursive Network</a></li>
+</ol>
+<h1 id="应用">应用</h1>
+<h2 id="任务完成型对话系统">任务完成型对话系统</h2>
+<h1 id="概率图模型">概率图模型</h1>
+<h2 id="马尔可夫链">马尔可夫链</h2>
+<p>  有时也称为<strong>显马尔科夫模型</strong>（observed Markov model）。是一个随机过程模型，它表述了一系列可能的事件，在这个系列当中每一个事件的概率仅依赖于前一个事件。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/NLP中的各种套路（技术）/马尔科夫链.jpg" title="马尔科夫链例图" alt="马尔科夫链例图"></p>
+<p>  类似马尔可夫链的随机现象遵守<strong><font color="red">马尔可夫性</font></strong>（或<strong><font color="red">无后效性</font></strong>），即：过程在时刻 <span class="math inline">\(t_0\)</span> 所处的状态为已知条件的情况下，过程在时刻 <span class="math inline">\(t &gt; t_0\)</span> 所处的状态的条件分布与时刻 <span class="math inline">\(t_0\)</span> 之前所处的状态无关。说白了就是，<strong>在已知“现在”的条件下，“未来”不依赖“过去”</strong>。这里面“状态”的概念可能有点难理解，其实“状态”可以理解为“事件发生的各种可能”。例如预测天气这一事件中，状态为“晴”，“阴”，“雨”。   这里有一个比较纠结的地方在于，马尔可夫性为什么要这么规定   用<strong>分布函数</strong>来表述马尔可夫性。设随机过程 <span class="math inline">\(\{X(t), t\in T\}\)</span> 的状态空间为 <span class="math inline">\(I\)</span>。如果对事件 <span class="math inline">\(t\)</span> 的<strong>任意</strong> <span class="math inline">\(n\)</span> 个数值 <span class="math inline">\(t_1 &lt; t_2 &lt; \cdots &lt; t_n, n \ge 3, t_i \in T\)</span>，在条件 <span class="math inline">\(X(t_i) = x_i, x_i \in I, x=1, 2, \cdots, n-1\)</span> 下，<strong>{<span class="math inline">\(X(t_n)\)</span> 的条件分布函数}</strong>恰等于<strong>{在条件 <span class="math inline">\(X(t_{n-1}) = x_{n-1}\)</span> 下 <span class="math inline">\(X(t_n)\)</span> 的条件分布函数}</strong>，即 <span class="math display">\[
+\begin{align}
+    &amp; P\{X(t_n) \le x_n | X(t_1) = x_1, X(t_2) = x_2, \cdots, X(t_{n-1}) = x_{n-1},\} \\
+    = &amp; P\{X(t_n) \le x_n | X(t_{n-1}) = x_{n-1}\}, x_n \in R
+\end{align}
+\]</span>   上一段比较绕，我已经用花括号将句子的读法切割出来了。观察上式可以发现，其实它们之间唯一的区别就是 <span class="math inline">\(X(t_n)\)</span> 的条件部分。等式右边的函数与左边相比，少了 <span class="math inline">\(X(t_1), \cdots, X(t_{n-2})\)</span>，这就表达出了 <span class="math inline">\(X(t_n)\)</span> 只依赖 <span class="math inline">\(X(t_{n-1})\)</span>。上式也可以写成： <span class="math display">\[F_{t_n|t_1 \cdots t_{n-1}}(x_n, t_n | x_1, x_2, \cdots, x_{n-1}; t_1, t_2, \cdots, t_{n-1}) = F_{t_n | t_{n-1}}(x_n, t_n | x_{n-1}, t_{n-1})
+\]</span>   我们还是主要关注第一个式子，注意不要搞混了先后关系，上式不是天然相等的，要拥有马尔可夫性才相等。综上，<strong><u>如果</u>满足上式</strong>，则称过程 <span class="math inline">\(\{X(t), t \in T\}\)</span> 具有马尔可夫性或无后效性，并称此过程为<strong><font color="red">马尔科夫过程</font></strong>。   马尔可夫链的例子已经有很多人讲过了，我在知乎上搜到不少，就不重复造轮子了。可以查阅下面的参考文献。</p>
+<h2 id="crf">CRF</h2>
+<ol type="1">
+<li><a href="https://arxiv.org/abs/1011.4088" target="_blank" rel="noopener">An Introduction to Conditional Random Fields</a></li>
+</ol>
+<h2 id="参考文献-4">参考文献</h2>
+<ul>
+<li>马尔可夫链
+<ol type="1">
+<li><a href="https://zhuanlan.zhihu.com/p/52376035" target="_blank" rel="noopener">[markov系列1]从马尔可夫链看矩阵的乘法</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/26453269" target="_blank" rel="noopener">马尔可夫链 （Markov Chain）是什么鬼</a></li>
+<li><a href="https://www.zhihu.com/question/26665048/answer/55309482" target="_blank" rel="noopener">马尔可夫链模型是什么？</a></li>
+</ol></li>
+</ul>
+<h1 id="全文参考文献">全文参考文献</h1>
+<ol type="1">
+<li><a href="https://blog.csdn.net/weixin_42137700/article/details/83780172" target="_blank" rel="noopener">史上最强NLP知识集合：知识结构、发展历程、导师名单</a></li>
+<li><a href="https://blog.aylien.com/a-review-of-the-recent-history-of-natural-language-processing/" target="_blank" rel="noopener">A Review of the Neural History of Natural Language Processing</a></li>
+</ol>
+<h1 id="名词参考">名词参考</h1>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 34%">
+<col style="width: 43%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>中文名词</th>
+<th>英文名词</th>
+<th>简写</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>独热编码/one hot 编码/one hot 表征</td>
+<td>one hot representation/one hot encoding</td>
+<td>one-hot/one hot</td>
+</tr>
+<tr class="even">
+<td>词袋模型</td>
+<td>bag-of-word</td>
+<td>BOW</td>
+</tr>
+</tbody>
+</table>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/f592f293.html" rel="prev" title="【算法设计题目】动态规划">
+      <i class="fa fa-chevron-left"></i> 【算法设计题目】动态规划
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/49e8bc0c.html" rel="next" title="win10下安装NVIDIA CUDA">
+      win10下安装NVIDIA CUDA <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#梦开始的地方"><span class="nav-number">1.</span> <span class="nav-text">梦开始的地方</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#词的向量化"><span class="nav-number">1.1.</span> <span class="nav-text">词的向量化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关键词提取"><span class="nav-number">1.2.</span> <span class="nav-text">关键词提取</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">1.3.</span> <span class="nav-text">参考文献</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#语言模型开山鼻祖就是我"><span class="nav-number">2.</span> <span class="nav-text">语言模型：开山鼻祖就是我</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#统计语言模型"><span class="nav-number">2.1.</span> <span class="nav-text">统计语言模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#n-gram与平滑技术"><span class="nav-number">2.1.1.</span> <span class="nav-text">N-gram与平滑技术</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#神经语言模型"><span class="nav-number">2.2.</span> <span class="nav-text">神经语言模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献-1"><span class="nav-number">2.3.</span> <span class="nav-text">参考文献</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#词向量横空出世技惊四座"><span class="nav-number">3.</span> <span class="nav-text">词向量：横空出世，技惊四座</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#word2vec"><span class="nav-number">3.1.</span> <span class="nav-text">word2vec</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#glove"><span class="nav-number">3.2.</span> <span class="nav-text">GloVe</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fasttext"><span class="nav-number">3.3.</span> <span class="nav-text">fasttext</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#特征提取器双月同天必有大乱"><span class="nav-number">4.</span> <span class="nav-text">特征提取器：双月同天，必有大乱</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#rnn"><span class="nav-number">4.1.</span> <span class="nav-text">RNN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#lstm"><span class="nav-number">4.1.1.</span> <span class="nav-text">LSTM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gru"><span class="nav-number">4.1.2.</span> <span class="nav-text">GRU</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cnn"><span class="nav-number">4.2.</span> <span class="nav-text">CNN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#transformer"><span class="nav-number">4.3.</span> <span class="nav-text">Transformer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gnn"><span class="nav-number">4.4.</span> <span class="nav-text">GNN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献-2"><span class="nav-number">4.5.</span> <span class="nav-text">参考文献</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#encoder-decoder本变种人要让你们知道什么是残忍"><span class="nav-number">5.</span> <span class="nav-text">Encoder-Decoder：本变种人要让你们知道什么是残忍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#attention"><span class="nav-number">5.1.</span> <span class="nav-text">Attention</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pointer-networks"><span class="nav-number">5.2.</span> <span class="nav-text">Pointer Networks</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献-3"><span class="nav-number">5.3.</span> <span class="nav-text">参考文献</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#预训练模型后浪拍前浪曰基操勿6皆坐"><span class="nav-number">6.</span> <span class="nav-text">预训练模型：后浪拍前浪，曰，基操勿6皆坐</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ulmfit"><span class="nav-number">6.1.</span> <span class="nav-text">ULMFiT</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其他的模型出来混口饭吃"><span class="nav-number">7.</span> <span class="nav-text">其他的模型：出来混口饭吃</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#capusle"><span class="nav-number">7.1.</span> <span class="nav-text">Capusle</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#highway-network"><span class="nav-number">7.2.</span> <span class="nav-text">Highway Network</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#recursive-network"><span class="nav-number">7.3.</span> <span class="nav-text">Recursive Network</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#应用"><span class="nav-number">8.</span> <span class="nav-text">应用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#任务完成型对话系统"><span class="nav-number">8.1.</span> <span class="nav-text">任务完成型对话系统</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#概率图模型"><span class="nav-number">9.</span> <span class="nav-text">概率图模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#马尔可夫链"><span class="nav-number">9.1.</span> <span class="nav-text">马尔可夫链</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#crf"><span class="nav-number">9.2.</span> <span class="nav-text">CRF</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献-4"><span class="nav-number">9.3.</span> <span class="nav-text">参考文献</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#全文参考文献"><span class="nav-number">10.</span> <span class="nav-text">全文参考文献</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#名词参考"><span class="nav-number">11.</span> <span class="nav-text">名词参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">朱冲䶮</p>
+  <div class="site-description" itemprop="description">记录学习问题，积累做的 leetcode 题目</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">163</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">94</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+      <!-- 不蒜子/busuanzi -->
+      <div class="site-state-item site-state-posts">
+      	<span class="site-state-item-count">203.6k</span>
+      	<span class="site-state-item-name">总字数</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>zhihu</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div><script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="/lib/my-utils.js"></script>
+<!--图片缩放插件-->
+<script src="/lib/zoomify/zoomify.min.js"></script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- 背景插件 -->
+<script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<!-- 背景图片 -->
+<script>
+	function generateBG(count){
+		var bg_prefix = '/images/background/';
+		var bg =new Array();
+		for(var i = 0; i < count; i++){
+			bg[i] = bg_prefix + i + '.jpg';
+		}
+		bg.shuffle();
+		return bg;
+	}
+	$("body").backstretch(generateBG(11), {
+		duration:90000,//1min半一换
+		fade: 1500
+	});
+</script>
+<!-- 图片缩放 -->
+<script>
+$('.content img').zoomify({duration: 500, });
+$('.content img').on('zoom-in.zoomify', function () {
+	$('.sidebar').css('display', 'none');
+});
+$('.content img').on('zoom-out-complete.zoomify', function () {
+	$('.sidebar').css('display', '');
+});
+</script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/70160251.html',]
+      });
+      });
+  </script>
+<!-- calendar widget -->
+
+
+</body>
+</html>

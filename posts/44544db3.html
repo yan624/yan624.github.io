@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文的公式不存在次方的说法，所以看见上标，不要想成是次方。 对于权重的表示问题，请看博客，但是由于是以前的学习笔记，不保证完全正确。 如果想了解为什么梯度下降要对w和b求导，可以看这篇。 建议边看边写，否则思维跟不上。  前言 参考文章 以如下神经网络架构为例。参考文章中使用了一个2 2 2的神经网络架构，但是现实中神经网络架构不会这么整整齐齐。所以还是使用了略复杂的架构，此外原文中未对bi">
+<meta name="keywords" content="系列,simple NN,深度学习算法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度学习算法（一）：simple NN（前馈神经网络的正反向推导）">
+<meta property="og:url" content="https://yan624.github.io/posts/44544db3.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="本文的公式不存在次方的说法，所以看见上标，不要想成是次方。 对于权重的表示问题，请看博客，但是由于是以前的学习笔记，不保证完全正确。 如果想了解为什么梯度下降要对w和b求导，可以看这篇。 建议边看边写，否则思维跟不上。  前言 参考文章 以如下神经网络架构为例。参考文章中使用了一个2 2 2的神经网络架构，但是现实中神经网络架构不会这么整整齐齐。所以还是使用了略复杂的架构，此外原文中未对bi">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg">
+<meta property="og:updated_time" content="2020-06-14T10:58:11.862Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深度学习算法（一）：simple NN（前馈神经网络的正反向推导）">
+<meta name="twitter:description" content="本文的公式不存在次方的说法，所以看见上标，不要想成是次方。 对于权重的表示问题，请看博客，但是由于是以前的学习笔记，不保证完全正确。 如果想了解为什么梯度下降要对w和b求导，可以看这篇。 建议边看边写，否则思维跟不上。  前言 参考文章 以如下神经网络架构为例。参考文章中使用了一个2 2 2的神经网络架构，但是现实中神经网络架构不会这么整整齐齐。所以还是使用了略复杂的架构，此外原文中未对bi">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg">
+
+<link rel="canonical" href="https://yan624.github.io/posts/44544db3.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<!--图片缩放插件样式-->
+<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
+<!--阿里云矢量库样式-->
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_621sfmh583s.css" />
+
+        
+
+  <title>深度学习算法（一）：simple NN（前馈神经网络的正反向推导） | 博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">低阶炼金术士</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-常用链接">
+
+    <a href="/常用链接" rel="section"><i class="fas fa-bookmark fa-fw"></i>常用链接</a>
+
+  </li>
+        <li class="menu-item menu-item-时间线">
+
+    <a href="/categories/timeline/" rel="section"><i class="iconfont icon-timeline fa-fw"></i>时间线</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">94</span></a>
+
+  </li>
+        
+            
+  <li class="menu-item menu-item-博客分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>博客分类</a>
+
+  </li>
+
+
+      
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">163</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    
+    	
+    
+    	
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/44544db3.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深度学习算法（一）：simple NN（前馈神经网络的正反向推导）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-05-16 19:53:55" itemprop="dateCreated datePublished" datetime="2019-05-16T19:53:55+08:00">2019-05-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-14 18:58:11" itemprop="dateModified" datetime="2020-06-14T18:58:11+08:00">2020-06-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/dl/" itemprop="url" rel="index"><span itemprop="name">dl</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>14k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>23 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="note info"><p>本文的公式不存在次方的说法，所以看见上标，不要想成是次方。 对于权重的表示问题，请看<a href="https://yan624.github.io/·学习笔记/AI/dl/《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题.html">博客</a>，但是由于是以前的学习笔记，不保证完全正确。 如果想了解为什么梯度下降要对w和b求导，可以看<a href="https://yan624.github.io/·zcy/AI/ml/梯度下降算法的推导.html">这篇</a>。 <strong>建议边看边写，否则思维跟不上。</strong></p>
+</div>
+<h1 id="前言">前言</h1>
+<p>参考<a href="https://www.cnblogs.com/charlotte77/p/5629865.html" target="_blank" rel="noopener">文章</a> 以如下神经网络架构为例。参考<a href="https://www.cnblogs.com/charlotte77/p/5629865.html" target="_blank" rel="noopener">文章</a>中使用了一个2 2 2的神经网络架构，但是现实中神经网络架构不会这么整整齐齐。所以还是使用了略复杂的架构，此外原文中未对bias（偏差）更新。另外原文也没有实现向量化后的计算。虽然在后面的代码写了，但是由于代码太长了，有一种代码我给出来了，你们自己去看的感觉。说实话没多少注释，都没看的欲望(╬￣皿￣)。然后她所使用的符号让我不太习惯，因为看吴恩达以及李宏毅老师使用的符号都是<span class="math inline">\(w^l_{ji}\ a^l_i\)</span>等等，所以自己重新推导一遍，并且使用了数学公式，而不是截图，更好看一点。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版"> 解释一下最下面的神经元，这个神经元初始化为1，也就是意味着1 * b = b。输入值为1，一个偏差乘1还是偏差本身。 <a id="more"></a></p>
+<h2 id="关于函数选用">关于函数选用</h2>
+<p>本文所有激活函数选择sigmoid函数，代价函数选择binary_crossentropy。</p>
+<h2 id="一些约定">一些约定</h2>
+<div class="note info"><p>本文所有的输入值，激活值，输出值都是<strong>列向量</strong>。</p>
+</div>
+<h1 id="初始化数据以及正向传播">初始化数据以及正向传播</h1>
+<h2 id="初始化数据">初始化数据</h2>
+<p>此处初始化各层的权重值，偏差。由于是演示，所以顺便把输入层也初始化了。 设 <span class="math display">\[
+\begin{cases}
+    x_1 = a^0_1 = 0.55, x_2 = a^0_2 = 0.72\\
+    y_1 = 0.60, y_2 = 0.54\\
+\end{cases}\\
+\begin{cases}
+    w^1_{11}=0.4236548, w^1_{12}=0.64589411\quad|\quad w^1_{21}=0.43758721, w^1_{22}=0.891773\quad|\quad w^1_{31}=0.96366276, w^1_{32}=0.38344152\\
+    b^1_1=0.79172504, b^1_2=0.52889492, b^1_3=0.56804456\\
+    w^2_{11}=0.92559664, w^2_{12}=0.07103606, w^2_{13}=0.0871293\quad|\quad w^2_{21}=0.0202184, w^2_{22}=0.83261985, w^2_{23}=0.77815675\\
+    b^2_1=0.87001215, b^2_2=0.97861834\\
+\end{cases}
+\]</span> 不用多看，反正也用不到几次。。。</p>
+<h2 id="正向传播">正向传播</h2>
+<p>对于正向传播，应该是很熟悉了，所以我直接一次写完，不做过多解释。</p>
+<h3 id="输入层到隐藏层">输入层到隐藏层</h3>
+<p><span class="math display">\[
+z^1_1 = w^1_{11} * a^0_1 + w^1_{12} * a^0_2 + 1 * b^1_1\\
+z^1_2 = w^1_{21} * a^0_1 + w^1_{22} * a^0_2 + 1 * b^1_2\\
+z^1_3 = w^1_{31} * a^0_1 + w^1_{32} * a^0_2 + 1 * b^1_3\\
+\]</span> 带入sigmoid函数中，以下开始省略bias乘的1： <span class="math display">\[
+a^1_1 = \sigma{(z^1_1)}\\
+a^1_2 = \sigma{(z^1_2)}\\
+a^1_3 = \sigma{(z^1_3)}\\
+\]</span></p>
+<h3 id="隐藏层到输出层">隐藏层到输出层</h3>
+<p><span class="math display">\[
+z^2_1 = w^2_{11} * a^1_1 + w^2_{12} * a^1_2 + w^2_{13} * a^1_3 + b^2_1\\
+z^2_2 = w^2_{21} * a^1_1 + w^2_{22} * a^1_2 + w^2_{13} * a^1_3 + b^2_2\\
+\]</span> 带入sigmoid函数中： <span class="math display">\[
+a^2_1 = \sigma{(z^2_1)}\\
+a^2_2 = \sigma{(z^2_2)}\\
+\]</span></p>
+<h3 id="计算代价">计算代价</h3>
+<p>以字母J记为代价函数的名称，最后一个表达式为最简版： <span class="math display">\[
+\begin{align}
+    J &amp; = -[(y_1 * \log(a^2_1) + (1 - y_1) * \log(1 - a^2_1) + (y_2 * \log(a^2_2) + (1 - y_2) * \log(1 - a^2_2)]\\
+    J &amp; = -\Sigma^2_{i = 1}{[(y_i * \log(a^2_i) + (1 - y_i) * \log(1 - a^2_i)]}\\
+    J &amp; = -\Sigma{[(y * \log(a^2) + (1 - y) * \log(1 - a^2)]}\\
+\end{align}
+\]</span></p>
+<h3 id="向量化">向量化</h3>
+<p>上述的表达式全部是一个一个列出来的，如果使用向量来表示乘积那就方便很多。可以看到下面只用了五行就写完了上面<a href="https://yan624.github.io/前馈神经网络的正反向推导.html#正向传播">正向传播</a>的所有步骤。 <div class="note warning"><p>如果无法理解这一步那就是不会线性代数的问题，线性代数不在此文的介绍范围之内。</p>
+</div> <span class="math display">\[
+\begin{align}
+    z^1 &amp; = w^1 * a^0 + b^1 &amp; \text{输入层到隐藏层}\\
+    a^1 &amp; = \sigma{(z^1)} &amp; \text{带入隐藏层的激活函数}\\
+    z^2 &amp; = w^2 * a^1 + b^2 &amp; \text{隐藏层到输出层}\\
+    a^2 &amp; = \sigma{(z^2)} &amp; \text{带入输出层的激活函数}\\
+    J &amp; = -\Sigma{[(y * \log(a^2) + (1 - y) * \log(1 - a^2)]} &amp; \text{计算代价}\\
+\end{align}
+\]</span></p>
+<h2 id="上述表达式代码实现">上述表达式代码实现</h2>
+<p>最后几节有神经网络numpy实现的全部代码，可以直接跳过本节看下一节，这里的代码只是给出一个直观的理解，可以自己运行看看。 受到keras以及万物皆对象的启发，首先建立一个神经元对象 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SimpleNN</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, units, activation=<span class="string">'sigmoid'</span>)</span>:</span></span><br><span class="line">        self.units = units</span><br><span class="line">        self.activation = activation</span><br><span class="line">        self.hyperparameters = dict()</span><br><span class="line">        <span class="comment"># W, b, A_prev的导数</span></span><br><span class="line">        self.grads = dict()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_init_hyperparameters</span><span class="params">(self, shape)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        初始化超参数，在神经网络中权重值不能初始化为0，偏差可以</span></span><br><span class="line"><span class="string">        :param shape: 神经元的形状，(units, input_shape)</span></span><br><span class="line"><span class="string">        :return: hyperparameters，该神经元的超参数。可以通过hyperparameters['W']、hyperparameters['b']取值</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="comment"># 由于是演示，所以使用了随机初始化</span></span><br><span class="line">        W = np.random.rand(*shape)</span><br><span class="line">        b = np.random.rand(shape[<span class="number">0</span>], <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> W, b</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">build</span><span class="params">(self, input_shape)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        构造神经元，目前只执行初始化超参数的步骤</span></span><br><span class="line"><span class="string">        :param input_shape:</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        W, b = self._init_hyperparameters(shape=(self.units, input_shape))</span><br><span class="line">        self.hyperparameters[<span class="string">'W'</span>] = W</span><br><span class="line">        self.hyperparameters[<span class="string">'b'</span>] = b</span><br></pre></td></tr></table></figure></p>
+<p>为方便起见，将大部分的函数都放入Model中，下面给出所有的代码 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> simple_neural_network.activation_function <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> simple_neural_network.cost_function <span class="keyword">import</span> *</span><br><span class="line">np.random.seed(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SimpleNN</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, units, activation=<span class="string">'sigmoid'</span>)</span>:</span></span><br><span class="line">        self.units = units</span><br><span class="line">        self.activation = activation</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_init_hyperparameters</span><span class="params">(self, shape)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        初始化超参数，在神经网络中权重值不能初始化为0，偏差可以</span></span><br><span class="line"><span class="string">        :param shape: 神经元的形状，(units, input_shape)</span></span><br><span class="line"><span class="string">        :return: hyperparameters，该神经元的超参数。可以通过hyperparameters['W']、hyperparameters['b']取值</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="comment"># 用于是演示，所以使用了随机初始化</span></span><br><span class="line">        hyperparameters = &#123;</span><br><span class="line">                <span class="string">'W'</span>: np.random.rand(*shape),</span><br><span class="line">                <span class="string">'b'</span>: np.random.rand(shape[<span class="number">0</span>], <span class="number">1</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> hyperparameters</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">build</span><span class="params">(self, input_shape)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        构造神经元，目前只执行初始化超参数的步骤</span></span><br><span class="line"><span class="string">        :param input_shape:</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        self.hyperparameters = self._init_hyperparameters(shape=(self.units, input_shape))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Model</span>:</span></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="comment"># 全部的神经元，并且根据神经元数量计算神经网络架构的层数，在计算时需要减1因为输入层不算入神经网络层数</span></span><br><span class="line">        self.neurons = list()</span><br><span class="line">        <span class="comment"># 按顺序缓存A, (Z, W, b)，由于输入层不需要任何缓存，所以放入None填充此位置。方便根据索引取值</span></span><br><span class="line">        self.value_caches = [<span class="keyword">None</span>]</span><br><span class="line">        <span class="comment"># 代价函数</span></span><br><span class="line">        self.cost = <span class="string">''</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(self, neuron)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        在模型中添加神经元</span></span><br><span class="line"><span class="string">        :param neuron:</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        self.neurons.append(neuron)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">linear_forward</span><span class="params">(self, A_prev, W, b)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        正向传播，线性运算：Z = W * A + b</span></span><br><span class="line"><span class="string">        :param A_prev: 前一层的激活值</span></span><br><span class="line"><span class="string">        :param W: 权重值</span></span><br><span class="line"><span class="string">        :param b: 偏差</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        Z: 运算结果</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        Z = np.dot(W, A_prev) + b</span><br><span class="line">        cache = A_prev, (Z, W, b)</span><br><span class="line">        self.value_caches.append(cache)</span><br><span class="line">        <span class="keyword">return</span> Z</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">nonlinear_forward</span><span class="params">(self, A_prev, W, b, activation)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        进入激活函数进行非线性计算</span></span><br><span class="line"><span class="string">        :param A_prev:</span></span><br><span class="line"><span class="string">        :param W:</span></span><br><span class="line"><span class="string">        :param b:</span></span><br><span class="line"><span class="string">        :param activation:</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        Z = self.linear_forward(A_prev, W, b)</span><br><span class="line">        <span class="keyword">if</span> activation == <span class="string">'sigmoid'</span>:</span><br><span class="line">            <span class="keyword">return</span> sigmoid(Z)</span><br><span class="line">        <span class="keyword">elif</span> activation == <span class="string">'relu'</span>:</span><br><span class="line">            <span class="keyword">return</span> relu(Z)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">deep_forward</span><span class="params">(self, X)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        :param X: 输入值</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        A: 最后一层的运算结果，也就是输出层的激活值</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="comment"># 计算神经网络层数，减1是为了去掉输入层，众所周知输入层不需要进行计算</span></span><br><span class="line">        L = len(self.neurons) - <span class="number">1</span></span><br><span class="line">        A = X</span><br><span class="line">        <span class="comment"># 循环整个神经网络，进行正向传播，从1开始，因为索引0是输入层</span></span><br><span class="line">        <span class="keyword">for</span> l <span class="keyword">in</span> range(<span class="number">1</span>, L + <span class="number">1</span>):</span><br><span class="line">            <span class="comment"># 根据索引获取神经元实例</span></span><br><span class="line">            neuron = self.neurons[l]</span><br><span class="line">            A_prev = A</span><br><span class="line">            W = neuron.hyperparameters[<span class="string">'W'</span>]</span><br><span class="line">            b = neuron.hyperparameters[<span class="string">'b'</span>]</span><br><span class="line">            A = self.nonlinear_forward(A_prev, W, b, neuron.activation)</span><br><span class="line">        <span class="keyword">return</span> A</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">compile</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">fit</span><span class="params">(self, X, Y, epochs=<span class="number">1</span>)</span>:</span></span><br><span class="line">        <span class="comment"># 将输入层的神经元添加进去</span></span><br><span class="line">        self.neurons.insert(<span class="number">0</span>, SimpleNN(len(X)))</span><br><span class="line">        <span class="comment"># 初始化神经元的超参数</span></span><br><span class="line">        <span class="keyword">for</span> i, n <span class="keyword">in</span> enumerate(self.neurons[<span class="number">1</span>:]):</span><br><span class="line">            input_shape = self.neurons[i].units</span><br><span class="line">            n.build(input_shape)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 开始反向传播</span></span><br><span class="line">        AL = self.deep_forward(X)</span><br></pre></td></tr></table></figure></p>
+<p>激活函数 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sigmoid</span><span class="params">(z)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span> / (<span class="number">1</span> + np.exp(-z))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">relu</span><span class="params">(z)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> z * (z &gt; <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">relu_backward</span><span class="params">(dA, Z)</span>:</span></span><br><span class="line">    dZ = np.array(dA, copy=<span class="keyword">True</span>)  <span class="comment"># just converting dz to a correct object.</span></span><br><span class="line"></span><br><span class="line">    dZ[Z &lt;= <span class="number">0</span>] = <span class="number">0</span></span><br><span class="line">    <span class="keyword">return</span> dZ</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sigmoid_backward</span><span class="params">(dA, Z)</span>:</span></span><br><span class="line">    s = sigmoid(Z)</span><br><span class="line">    <span class="keyword">return</span> dA * s * (<span class="number">1</span> - s)</span><br></pre></td></tr></table></figure></p>
+<p>测试一下 <figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 输入值的大小</span></span><br><span class="line">input_size = 2</span><br><span class="line"><span class="comment"># 输出值的大小</span></span><br><span class="line">output_size = 2</span><br><span class="line"><span class="comment"># 方便书写，截断小数</span></span><br><span class="line">X0 = np.round(np.random.rand(input_size, 1), 2)</span><br><span class="line">Y0 = np.round(np.random.rand(output_size, 1),2)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 该模型为2 3 2架构</span></span><br><span class="line">model = Model()</span><br><span class="line">model.add(SimpleNN(3))</span><br><span class="line">model.add(SimpleNN(output_size))</span><br><span class="line">model.compile()</span><br><span class="line">model.fit(X0, Y0)</span><br><span class="line">print(model.value_caches[0])</span><br></pre></td></tr></table></figure></p>
+<h1 id="反向传播">反向传播</h1>
+<div class="note primary"><p>说是说反向传播，实际上整个流程就是在<strong><a href="https://baike.baidu.com/item/链式法则/3314017?fr=aladdin" target="_blank" rel="noopener">链式求导</a></strong>。如果把这点想通了，整个神经网络的难点就只在向量化上了。一定要理解为什么整个流程只是在做链式求导的问题，在这里我并不是随便一提。</p>
+</div>
+<p>为了便于查找，把之前的图再放这。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版"></p>
+<h2 id="首先更新输出层的权重值w以及偏差值b">首先更新输出层的权重值（W）以及偏差值（b）</h2>
+<p>梯度下降公式大家应该都知道：<span class="math inline">\(W = W - \alpha * grad\)</span>。其中的grad实际上就是W的导数，<a href="https://yan624.github.io/·zcy/AI/ml/梯度下降算法的推导.html">参考</a>。 可以对照上图观察，<strong>输出层</strong>的权重值分别为: <span class="math display">\[
+\begin{pmatrix}
+    w^2_{11}&amp;w^2_{12}&amp;w^2_{13}\\
+    w^2_{21}&amp;w^2_{22}&amp;w^2_{23}\\
+\end{pmatrix}
+\]</span> 所以我们需要分别求： <span class="math display">\[
+\begin{pmatrix}
+    \frac{\partial J}{\partial w^2_{11}} &amp; \frac{\partial J}{\partial w^2_{12}} &amp; \frac{\partial J}{\partial w^2_{13}}\\
+    \frac{\partial J}{\partial w^2_{21}} &amp; \frac{\partial J}{\partial w^2_{22}} &amp; \frac{\partial J}{\partial w^2_{23}}\\
+\end{pmatrix} \tag{3.1.1}\label{3.1.1}
+\]</span></p>
+<h3 id="求矩阵中第一个w的导数并更新w">求矩阵中第一个w的导数并更新w</h3>
+<p>先求<span class="math inline">\(\frac{\partial J}{w^2_{11}}\)</span>，我们知道这个神经网络的代价的表达式是 <span class="math display">\[
+J = -[(y_1 * \log(a^2_1) + (1 - y_1) * \log(1 - a^2_1) + (y_2 * \log(a^2_2) + (1 - y_2) * \log(1 - a^2_2)]
+\]</span> <strong>为了方便对照我将隐藏层到输出层的正向传播的步骤</strong>也写在下面： <span class="math display">\[
+\begin{align}
+    z^2_1 &amp; = w^2_{11} * a^1_1 + w^2_{12} * a^1_2 + w^2_{13} * a^1_3 + b^2_1\\
+    z^2_2 &amp; = w^2_{21} * a^1_1 + w^2_{22} * a^1_2 + w^2_{13} * a^1_3 + b^2_2\\
+    a^2_1 &amp; = \sigma{(z^2_1)} = \frac{1}{1 - e^{-z^2_1}}\\
+    a^2_2 &amp; = \sigma{(z^2_2)} = \frac{1}{1 - e^{-z^2_2}}\\
+\end{align}
+\]</span> 根据链式求导法则得： <span class="math display">\[
+\frac{\partial J}{\partial w^2_{11}} = \frac{\partial J}{\partial a^2_1} * \frac{\partial a^2_1}{\partial z^2_1} * \frac{\partial z^2_1}{\partial w^2_{11}} 
+\]</span> 我们将其拆解，一步一步地求： <span class="math display">\[
+\begin{align}
+    \frac{\partial J}{\partial a^2_1} &amp; = -[(\frac{y_1}{a^2_1} + \frac{1 - y_1}{a^2_1 - 1}) + 0] &amp; \text{首先对a求导，此步如果你不会微积分会有疑惑} \tag{3.1.2}\label{3.1.2}\\
+    \frac{\partial a^2_1}{\partial z^2_1} &amp; = (a^2_1) * (1 - a^2_1) &amp; \text{这是对sigmoid函数的求导，百度一下求导过程}\\
+    \frac{\partial J}{\partial z^2_1} &amp; = \frac{\partial J}{\partial a^2_1} * \frac{\partial a^2_1}{\partial z^2_1} &amp; \text{其次对z求导}\\
+                                      &amp; = \frac{\partial J}{\partial a^2_1} * (a^2_1) * (1 - a^2_1) \tag{3.1.3}\label{3.1.3}\\
+    \frac{\partial z^2_1}{\partial w^2_{11}} &amp; = a^1_1\\
+    \frac{\partial J}{\partial w^2_{11}} &amp; = \frac{\partial J}{\partial z^2_1} * \frac{\partial z^2_1}{\partial w^2_{11}} &amp; \text{最后对w求导} \tag{3.1.4}\label{3.1.4}\\
+                                         &amp; = \frac{\partial J}{\partial z^2_1} * a^1_1\\
+    \frac{\partial J}{\partial w^2_{11}} &amp; = -[(\frac{y_1}{a^2_1} + \frac{1 - y_1}{a^2_1 - 1}) + 0] * (a^2_1) * (1 - a^2_1) * a^1_1 &amp; \text{整合在一起}\\
+\end{align}
+\]</span> 其中<span class="math inline">\([(\frac{y_1}{a^2_1} + \frac{1 - y_1}{a^2_1 - 1}) + 0] * (a^2_1) * (1 - a^2_1)\)</span>实际上是可以化简的，化简为<span class="math inline">\(a^2_1 - y_1\)</span>，同时去掉了负号，所以 <span class="math display">\[
+\frac{\partial J}{\partial w^2_{11}} = (a^2_1 - y_1) * a^1_1
+\]</span> 我们将数值带入其中，之前的正向传播已经得到了所有激活值。 <span class="math inline">\(\frac{\partial J}{\partial w^2_{11}} = (0.85220348 - 0.60) * 0.81604509 = 0.20580941153491322\)</span> 对<span class="math inline">\(w^2_{11}\)</span>更新， <span class="math display">\[
+w^2_{11} = w^2_{11} - \alpha * \frac{\partial J}{\partial w^2_{11}}
+\]</span> 学习速率<span class="math inline">\(\alpha\)</span>选1，经过简单的运算，<span class="math inline">\(w^2_{11} = 0.92559664 - 1 * 0.20580941153491322 = 0.7197872284650868\)</span> <div class="note info"><p>如果细心点就会发现，<span class="math inline">\(\frac{\partial J}{\partial w^2_{11}}\)</span>其实就等于这层的z的导数乘上前一层的激活值a。如果没发现也没关系，下面<a href="https://yan624.github.io/前馈神经网络的正反向推导.html#向量化-1">向量化</a>这节会做一个总结。</p>
+</div></p>
+<h3 id="求所有w的导数">求所有w的导数</h3>
+<p>同理可以求出所有的导数 <span class="math display">\[
+\begin{pmatrix}
+    \frac{\partial J}{\partial w^2_{11}} &amp; \frac{\partial J}{\partial w^2_{12}} &amp; \frac{\partial J}{\partial w^2_{13}}\\
+    \frac{\partial J}{\partial w^2_{21}} &amp; \frac{\partial J}{\partial w^2_{22}} &amp; \frac{\partial J}{\partial w^2_{23}}\\
+\end{pmatrix} \tag{\ref{3.1.1}}
+\]</span></p>
+<h3 id="向量化-1">向量化</h3>
+<div class="note danger"><p>上面只求了一个w的导数，虽然其他的w的求导都是类似操作，但是真要算起来，对于自己没去算过的人，可能花一天都没有办法将其用<strong>向量化表示</strong>。 求导是十分简单的，但是向量化可能会有点问题。问题的主要来源是<strong>想偷懒</strong>。对于这种问题，最好得到解决办法是暴力破解，即求出所有的w的导数，然后再将其向量化。</p>
+</div>
+<p>首先观察上述公式<span class="math inline">\(\ref{3.1.4}\)</span>： <span class="math display">\[
+\frac{\partial J}{\partial w^2_{11}} = \frac{\partial J}{\partial z^2_1} * \frac{\partial z^2_1}{\partial w^2_{11}}
+\]</span> 它由两部分组成，一个是<span class="math inline">\(\frac{\partial J}{\partial z^2_1}\)</span>，第二部分是<span class="math inline">\(\frac{\partial z^2_1}{\partial w^2_{11}}\)</span>，如果你自己求过导就会发现其实<span class="math inline">\(\frac{\partial z^2_1}{\partial w^2_{11}} = a^1_1\)</span>。为了方便你们观察，我列出所有式子： <span class="math display">\[
+\begin{align}
+    \frac{\partial J}{\partial w^2_{11}} = \frac{\partial J}{\partial z^2_1} * a^1_1 \quad \frac{\partial J}{\partial w^2_{12}} = \frac{\partial J}{\partial z^2_1} * a^1_2 \quad \frac{\partial J}{\partial w^2_{13}} = \frac{\partial J}{\partial z^2_1} * a^1_3\\
+    \frac{\partial J}{\partial w^2_{21}} = \frac{\partial J}{\partial z^2_2} * a^1_1 \quad \frac{\partial J}{\partial w^2_{22}} = \frac{\partial J}{\partial z^2_2} * a^1_2 \quad \frac{\partial J}{\partial w^2_{23}} = \frac{\partial J}{\partial z^2_2} * a^1_3\\
+\end{align}
+\]</span> <strong>可能到这你有点烦躁了，因为表达式实在太多了。没关系，下方蓝色的note会给出总结，直接一步求解完毕。</strong> 有没有发现，里面有一半是重复的元素？我们可以将它们组成向量得到： <span class="math display">\[
+\eqref{3.1.1}
+\begin{pmatrix}
+    \frac{\partial J}{\partial w^2_{11}} &amp; \frac{\partial J}{\partial w^2_{12}} &amp; \frac{\partial J}{\partial w^2_{13}}\\
+    \frac{\partial J}{\partial w^2_{21}} &amp; \frac{\partial J}{\partial w^2_{22}} &amp; \frac{\partial J}{\partial w^2_{23}}\\
+\end{pmatrix} = 
+\begin{pmatrix}
+\frac{\partial J}{\partial z^2_1}\\
+\frac{\partial J}{\partial z^2_2}\\
+\end{pmatrix} * 
+\begin{pmatrix}
+a^1_1 &amp; a^1_2 &amp; a^1_3
+\end{pmatrix} \tag{3.1.5}
+\]</span> 公式3.1.5和上面那六个表达式实际上计算的东西是一样的。进一步缩写为 <span class="math display">\[
+\frac{\partial J}{\partial w^2} = \frac{\partial J}{\partial z^2} * (a^1)^T \tag{3.1.6}
+\]</span> 这里加了一个T代表转置，实际上我们所有的输入值，激活值，输出值都是列向量。 <div class="note info"><p>总结一下，在这里<strong>求<span class="math inline">\(\frac{\partial J}{\partial w}\)</span>的步骤为：求权重值所在层的z的导数<span class="math inline">\(\frac{\partial J}{\partial z}\)</span>再乘上前一层的激活值</strong>。这是对一个w求导所做的运算，而对一整个W矩阵求导那就是公式3.1.6的那个向量化操作。但是观察公式3.1.6发现，其实求一个w和求一个W矩阵并无区别，无非是将数字相乘改为向量（矩阵）相乘。 另外，其实这对神经网络中每一层的操作都是一样。如果不信可以自己算一下。所以以后理解的时候，可以用这种方式理解，加快理解速度。</p>
+</div></p>
+<h3 id="更新偏差">更新偏差</h3>
+<p>偏差比权重简单很多。 <span class="math display">\[
+\begin{align}
+    \frac{\partial J}{\partial a^2_1} &amp; = -[(\frac{y_1}{a^2_1} + \frac{1 - y_1}{a^2_1 - 1}) + 0] \tag{\ref{3.1.2}}\\
+    \frac{\partial J}{\partial z^2_1} &amp; = \frac{\partial J}{\partial a^2_1} * \frac{\partial a^2_1}{\partial z^2_1}\\
+                                      &amp; = \frac{\partial J}{\partial a^2_1} * (a^2_1) * (1 - a^2_1) \tag{\ref{3.1.3}}\\
+    \frac{\partial J}{\partial b^2_1} &amp; = \frac{\partial J}{\partial z^2_1} * \frac{\partial z^2_1}{\partial b^2_1} \\
+                                      &amp; = \frac{\partial J}{\partial z^2_1}\\
+    \frac{\partial J}{\partial b^2_1} &amp; = -[(\frac{y_1}{a^2_1} + \frac{1 - y_1}{a^2_1 - 1}) + 0] * (a^2_1) * (1 - a^2_1)\\
+\end{align}
+\]</span> 可以看到 <span class="math display">\[
+\frac{\partial J}{\partial b^2_1} = \frac{\partial J}{\partial z^2_1}
+\]</span> 所以偏差的向量化比较简单： <span class="math display">\[
+\begin{pmatrix}
+    \frac{\partial J}{\partial b^2_1}\\
+    \frac{\partial J}{\partial b^2_2}\\
+\end{pmatrix} = 
+\begin{pmatrix}
+    \frac{\partial J}{\partial z^2_1}\\
+    \frac{\partial J}{\partial z^2_2}\\
+\end{pmatrix}
+\]</span> ### 整理 整理一下上一波的求导过程。目标是求得<span class="math inline">\(\frac{\partial J}{w^2_{11}}\)</span>，但是上面我并没有一步求导到底，相反我将每一步都写出来了，这是有原因的。因为<span class="math inline">\(\frac{\partial J}{\partial z^2_1}\)</span>会在前一层对w求导时使用，所以在代码上当然需要保存副本。而<span class="math inline">\(\frac{\partial J}{w^2_{11}}\)</span>已经在这次的反向传播中使用过了，它的价值也算是用完了。 在<a href="https://yan624.github.io/前馈神经网络的正反向推导.html#首先更新输出层的权重值（W）以及偏差值（b）">首先更新输出层的权重值（W）以及偏差值（b）</a>中<strong>略有瑕疵</strong>的步骤（也就是上述所有步骤）是：</p>
+<ol type="1">
+<li>求出<span class="math inline">\(\frac{\partial J}{\partial a^2}\)</span></li>
+<li>进一步求出<span class="math inline">\(\frac{\partial J}{\partial z^2}\)</span></li>
+<li>分别求出<span class="math inline">\(\frac{\partial J}{\partial w^2}\ \frac{\partial J}{\partial b^2}\)</span></li>
+</ol>
+<div class="note info"><p>根据上面三步，我们可以观察出，如果需要求出一层的<span class="math inline">\(\frac{\partial J}{\partial w^2}\ \frac{\partial J}{\partial b^2}\)</span>（<strong>步骤3</strong>），需要<strong>先</strong>求出<strong>同一层</strong>的<span class="math inline">\(\frac{\partial J}{\partial a^2}\ \frac{\partial J}{\partial z^2}\)</span>（<strong>步骤1和2</strong>）。<strong><em>所以</em></strong>如果我们需要求出<strong>前一层</strong>的<span class="math inline">\(\frac{\partial J}{\partial w^1}\ \frac{\partial J}{\partial b^1}\)</span>，必须先求出<strong>前一层</strong>的a的导数<span class="math inline">\(\frac{\partial J}{\partial a^1}\ \frac{\partial J}{\partial z^1}\)</span>，而由于公式<span class="math inline">\(z^2_1 = w^2_{11} * a^1_1 + w^2_{12} * a^1_2 + w^2_{13} * a^1_3 + b^2_1\)</span>，可以观察到上述<strong>步骤2</strong>对z求导之后其实拥有三个选项： 1. 求w的导数（<strong>步骤3</strong>） 2. 求b的导数（<strong>步骤3</strong>） 3. 求上一层a的导数</p>
+</div>
+<p>所以正确的步骤是： 1. 求出<span class="math inline">\(\frac{\partial J}{\partial a^2}\)</span>（<strong>不变</strong>） 2. 进一步求出<span class="math inline">\(\frac{\partial J}{\partial z^2}\)</span>（<strong>不变</strong>） 3. 分别求出<span class="math inline">\(\frac{\partial J}{\partial w^2}\ \frac{\partial J}{\partial b^2}\)</span>（<strong>不变</strong>） 4. 最后求出前一层的<span class="math inline">\(\frac{\partial J}{\partial a^1}\)</span>，准备下一步的计算。</p>
+<p><strong>也就是说，我们在一层中进行求导，需要分别求4个参数的导数，即当前层的a，w，b以及前一层的a的导数。</strong></p>
+<h2 id="更新隐藏层的权重值以及偏差值">更新隐藏层的权重值以及偏差值</h2>
+<p>由于上述步骤太多，来回滑动网页略繁琐，我再次把图放出来，以供参考。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版"> 隐藏层的更新与输出层略微不同，由于看公式不太形象，可以看上面的图。观察发现，隐藏层的某一个神经元链接着输出层的<strong>所有</strong>神经元。所以隐藏层的神经元的误差其实来源于与它相连接的输出层的神经元。 根据链式求导法则，我们知道：一个函数对一个变量求导，如果有多条路径可以到达该变量，那么就需要对每条路径都求导，最后将结果相加。转换成数学公式就跟下面公式3.2.1的求导过程一样。</p>
+<h3 id="对第一个w求导">对第一个w求导</h3>
+<p>我们按照上一节<a href="https://yan624.github.io/前馈神经网络的正反向推导.html#整理">《整理》</a>的四个步骤来做，先求出a的导数： <span class="math display">\[
+\begin{align}
+    \frac{\partial J}{\partial a^1_1} &amp; = \frac{\partial J}{\partial a^2_1} * \frac{\partial a^2_1}{\partial a^1_1} + \frac{\partial J}{\partial a^2_2} * \frac{\partial a^2_2}{\partial a^1_1} &amp; \text{输出层两个神经元均要求导再相加}\\
+                                      &amp; = \frac{\partial J}{\partial z^2_1} * \frac{\partial z^2_1}{\partial a^1_1} + \frac{\partial J}{\partial z^2_2} * \frac{\partial z^2_1}{\partial a^1_1} &amp; \text{之前求过z的导数，为了方便书写用它替换}\\
+                                      &amp; = \frac{\partial J}{\partial z^2_1} * w^2_{11} + \frac{\partial J}{\partial z^2_2} * w^2_{21} \tag{3.2.1}\label{3.2.1}\\
+\end{align}
+\]</span> <div class="note info"><p>我们可以观察到隐藏层的a的导数<span class="math inline">\(\frac{\partial J}{\partial a^1_1}\)</span>实际上就是<strong>输出层</strong>的z的导数<span class="math inline">\(\frac{\partial J}{\partial z^2_1}\)</span>乘上与之相连的<strong>输出层</strong>的神经元的w。 一般化之后就是：<strong>除了输出层</strong>，其他所有层的<strong>a的导数</strong>都是<strong>后一层</strong>的<strong>z的导数</strong>乘上<strong>后一层</strong>的w。因为输出层的<strong>a的导数</strong>是通过代价函数求的。</p>
+</div> 所以下一步就是求z的导数： <span class="math display">\[
+\begin{align}
+    \frac{\partial J}{\partial z^1_1} &amp; = \frac{\partial J}{\partial z^2_1} * \frac{\partial z^2_1}{\partial a^1_1} * \frac{\partial a^1_1}{\partial z^1_1} + \frac{\partial J}{\partial z^2_2} * \frac{\partial z^2_1}{\partial a^1_1} * \frac{\partial a^1_1}{\partial z^1_1}\\
+                                      &amp; = \frac{\partial J}{\partial z^2_1} * w^2_{11} * \frac{\partial a^1_1}{\partial z^1_1}  + \frac{\partial J}{\partial z^2_2} * w^2_{21} * \frac{\partial a^1_1}{\partial z^1_1}\\
+                                      &amp; = \frac{\partial J}{\partial a^1_1} * \frac{\partial a^1_1}{\partial z^1_1} &amp; \text{这里a的导数参考}\ref{3.2.1}\\
+    \frac{\partial a^1_1}{\partial z^1_1} &amp; = a^1_1 * (1 - a^1_1) &amp; \text{对sigmoid函数求导，前面已经说过了}\\
+\end{align}
+\]</span> 最后求出w的导数 <span class="math display">\[
+\begin{align}
+    \frac{\partial J}{\partial w^1_{11}} &amp; = \frac{\partial J}{\partial a^1_1} * \frac{\partial a^1_1}{\partial z^1_1} * \frac{\partial z^1_1}{\partial w^1_{11}}\\
+                                         &amp; = \frac{\partial J}{\partial z^1_1} * \frac{\partial z^1_1}{\partial w^1_{11}}\\
+                                         &amp; = \frac{\partial J}{\partial z^1_1} * a^0_1
+\end{align}
+\]</span></p>
+<h3 id="向量化-2">向量化</h3>
+<p>你肯定已经想把它向量化了。先列出所有的表达式。 <span class="math display">\[
+\frac{\partial J}{\partial w^1_{11}} = \frac{\partial J}{\partial z^1_1} * a^0_1\\
+\frac{\partial J}{\partial w^1_{12}} = \frac{\partial J}{\partial z^1_1} * a^0_2\\
+\frac{\partial J}{\partial w^1_{21}} = \frac{\partial J}{\partial z^1_2} * a^0_1\\
+\frac{\partial J}{\partial w^1_{22}} = \frac{\partial J}{\partial z^1_2} * a^0_2\\
+\frac{\partial J}{\partial w^1_{31}} = \frac{\partial J}{\partial z^1_3} * a^0_1\\
+\frac{\partial J}{\partial w^1_{32}} = \frac{\partial J}{\partial z^1_3} * a^0_2\\
+\]</span> 可以发现这其实跟上面的向量化步骤一模一样： <span class="math display">\[
+\begin{align}
+    \begin{pmatrix}
+        \frac{\partial J}{\partial w^1_{11}} &amp; \frac{\partial J}{\partial w^1_{12}}\\
+        \frac{\partial J}{\partial w^1_{21}} &amp; \frac{\partial J}{\partial w^1_{22}}\\
+        \frac{\partial J}{\partial w^1_{31}} &amp; \frac{\partial J}{\partial w^1_{32}}\\
+    \end{pmatrix} &amp; = 
+    \begin{pmatrix}
+        \frac{\partial J}{\partial z^1_1}\\
+        \frac{\partial J}{\partial z^1_2}\\
+        \frac{\partial J}{\partial z^1_3}\\
+    \end{pmatrix} * 
+    \begin{pmatrix}
+        a^0_1 &amp; a^0_2
+    \end{pmatrix} \\
+    \frac{\partial J}{\partial w^1} &amp; = \frac{\partial J}{\partial z^1} * (a^0)^T
+\end{align}
+\]</span></p>
+<h3 id="对偏差求导">对偏差求导</h3>
+<p>这一步更是简单，直接给结果了。 <span class="math display">\[
+\begin{align}
+    \begin{pmatrix}
+        \frac{\partial J}{\partial b^1_1}\\
+        \frac{\partial J}{\partial b^1_2}\\
+        \frac{\partial J}{\partial b^1_3}\\
+    \end{pmatrix} &amp; = 
+    \begin{pmatrix}
+        \frac{\partial J}{\partial z^1_1}\\
+        \frac{\partial J}{\partial z^1_2}\\
+        \frac{\partial J}{\partial z^1_3}\\
+    \end{pmatrix}\\
+    \frac{\partial J}{\partial b^1} &amp; = \frac{\partial J}{\partial z^1}
+\end{align}
+\]</span></p>
+<h3 id="注意点">注意点</h3>
+<p>上述步骤看起来没什么问题，但是在实际编程中会有很大问题。在向量化的时候，我直接使用了<span class="math inline">\(\frac{\partial J}{\partial z^1}\)</span>，但是问题就是<span class="math inline">\(\frac{\partial J}{\partial z^1}\)</span>的向量化我直接跳过了。要向量化<span class="math inline">\(\frac{\partial J}{\partial z^1}\)</span>，实际上得先向量化<span class="math inline">\(\frac{\partial J}{\partial a^1}\)</span>。观察表达式<span class="math inline">\(\ref{3.2.1}\)</span>，先给出所有的式子： <span class="math display">\[
+\frac{\partial J}{\partial a^1_1} = \frac{\partial J}{\partial z^2_1} * w^2_{11} + \frac{\partial J}{\partial z^2_2} * w^2_{21}\\
+\frac{\partial J}{\partial a^1_2} = \frac{\partial J}{\partial z^2_1} * w^2_{12} + \frac{\partial J}{\partial z^2_2} * w^2_{22}\\
+\frac{\partial J}{\partial a^1_3} = \frac{\partial J}{\partial z^2_1} * w^2_{13} + \frac{\partial J}{\partial z^2_2} * w^2_{23}\\
+\]</span></p>
+<h4 id="向量化-3">向量化</h4>
+<p><span class="math display">\[
+\begin{pmatrix}
+    \frac{\partial J}{\partial a^1_1}\\
+    \frac{\partial J}{\partial a^1_2}\\
+    \frac{\partial J}{\partial a^1_3}\\
+\end{pmatrix} = 
+\begin{pmatrix}
+w^2_{11} &amp; w^2_{12} &amp; w^2_{13}\\
+w^2_{21} &amp; w^2_{22} &amp; w^2_{23}\\
+\end{pmatrix}^T * 
+\begin{pmatrix}
+\frac{\partial J}{\partial z^2_1} &amp; \frac{\partial J}{\partial z^2_2}
+\end{pmatrix}
+\]</span></p>
+<h1 id="总结">总结</h1>
+<p>在反向传播中，每一层都只需要重复如下几步：</p>
+<ol type="1">
+<li>求出<span class="math inline">\(\frac{\partial J}{\partial a^2}\)</span></li>
+<li>进一步求出<span class="math inline">\(\frac{\partial J}{\partial z^2}\)</span></li>
+<li>分别求出<span class="math inline">\(\frac{\partial J}{\partial w^2}\ \frac{\partial J}{\partial b^2}\)</span></li>
+<li>最后求出前一层的<span class="math inline">\(\frac{\partial J}{\partial a^1}\)</span>，准备下一步的计算。此步骤的向量化操作在<a href="https://yan624.github.io/前馈神经网络的正反向推导.html#注意点">注意点</a>。</li>
+</ol>
+<h1 id="代码">代码</h1>
+<p><a href="https://github.com/yan624/machine_learning_algorithms/tree/master/simple_neural_network" target="_blank" rel="noopener">使用numpy实现一个简单的神经网络</a></p>
+<h1 id="注意事项">注意事项</h1>
+<p>在做反向传播代码时，验算了很多遍，发现公式推导没有问题，但是梯度却一直在上升，心态都炸了。 最后发现，用了大半年的crossentropy在最前面居然要加上一个“-”号。以前由于是偷懒，在求导的时候一般不加负号，在求完导之后再补上。然后由于写习惯了，导致我忘记crossentropy居然是有负号的。</p>
+<h1 id="撒花">撒花</h1>
+<p>在第二节有一步是初始化数据，但是全篇都没用几个地方用到。是因为数据测试起来太麻烦了，我需要在代码里一步一步分析神经网络的计算过程，从而获得数据。以后再补充吧。</p>
+<!-- more -->
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/系列/" rel="tag"># 系列</a>
+              <a href="/tags/simple-NN/" rel="tag"># simple NN</a>
+              <a href="/tags/深度学习算法/" rel="tag"># 深度学习算法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/f2ef4f4c.html" rel="prev" title="linux非root用户配置环境变量">
+      <i class="fa fa-chevron-left"></i> linux非root用户配置环境变量
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/d9a134a.html" rel="next" title="CS224n学习笔记">
+      CS224n学习笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#关于函数选用"><span class="nav-number">1.1.</span> <span class="nav-text">关于函数选用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一些约定"><span class="nav-number">1.2.</span> <span class="nav-text">一些约定</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#初始化数据以及正向传播"><span class="nav-number">2.</span> <span class="nav-text">初始化数据以及正向传播</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#初始化数据"><span class="nav-number">2.1.</span> <span class="nav-text">初始化数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正向传播"><span class="nav-number">2.2.</span> <span class="nav-text">正向传播</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#输入层到隐藏层"><span class="nav-number">2.2.1.</span> <span class="nav-text">输入层到隐藏层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#隐藏层到输出层"><span class="nav-number">2.2.2.</span> <span class="nav-text">隐藏层到输出层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算代价"><span class="nav-number">2.2.3.</span> <span class="nav-text">计算代价</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#向量化"><span class="nav-number">2.2.4.</span> <span class="nav-text">向量化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#上述表达式代码实现"><span class="nav-number">2.3.</span> <span class="nav-text">上述表达式代码实现</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#反向传播"><span class="nav-number">3.</span> <span class="nav-text">反向传播</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#首先更新输出层的权重值w以及偏差值b"><span class="nav-number">3.1.</span> <span class="nav-text">首先更新输出层的权重值（W）以及偏差值（b）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#求矩阵中第一个w的导数并更新w"><span class="nav-number">3.1.1.</span> <span class="nav-text">求矩阵中第一个w的导数并更新w</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#求所有w的导数"><span class="nav-number">3.1.2.</span> <span class="nav-text">求所有w的导数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#向量化-1"><span class="nav-number">3.1.3.</span> <span class="nav-text">向量化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#更新偏差"><span class="nav-number">3.1.4.</span> <span class="nav-text">更新偏差</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#更新隐藏层的权重值以及偏差值"><span class="nav-number">3.2.</span> <span class="nav-text">更新隐藏层的权重值以及偏差值</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#对第一个w求导"><span class="nav-number">3.2.1.</span> <span class="nav-text">对第一个w求导</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#向量化-2"><span class="nav-number">3.2.2.</span> <span class="nav-text">向量化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对偏差求导"><span class="nav-number">3.2.3.</span> <span class="nav-text">对偏差求导</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注意点"><span class="nav-number">3.2.4.</span> <span class="nav-text">注意点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#向量化-3"><span class="nav-number">3.2.4.1.</span> <span class="nav-text">向量化</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码"><span class="nav-number">5.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#注意事项"><span class="nav-number">6.</span> <span class="nav-text">注意事项</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#撒花"><span class="nav-number">7.</span> <span class="nav-text">撒花</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">朱冲䶮</p>
+  <div class="site-description" itemprop="description">记录学习问题，积累做的 leetcode 题目</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">163</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">94</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+      <!-- 不蒜子/busuanzi -->
+      <div class="site-state-item site-state-posts">
+      	<span class="site-state-item-count">203.6k</span>
+      	<span class="site-state-item-name">总字数</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>zhihu</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div><script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="/lib/my-utils.js"></script>
+<!--图片缩放插件-->
+<script src="/lib/zoomify/zoomify.min.js"></script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- 背景插件 -->
+<script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<!-- 背景图片 -->
+<script>
+	function generateBG(count){
+		var bg_prefix = '/images/background/';
+		var bg =new Array();
+		for(var i = 0; i < count; i++){
+			bg[i] = bg_prefix + i + '.jpg';
+		}
+		bg.shuffle();
+		return bg;
+	}
+	$("body").backstretch(generateBG(11), {
+		duration:90000,//1min半一换
+		fade: 1500
+	});
+</script>
+<!-- 图片缩放 -->
+<script>
+$('.content img').zoomify({duration: 500, });
+$('.content img').on('zoom-in.zoomify', function () {
+	$('.sidebar').css('display', 'none');
+});
+$('.content img').on('zoom-out-complete.zoomify', function () {
+	$('.sidebar').css('display', '');
+});
+</script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/44544db3.html',]
+      });
+      });
+  </script>
+<!-- calendar widget -->
+
+
+</body>
+</html>

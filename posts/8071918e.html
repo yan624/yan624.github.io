@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="mask gradient clipping learning rate decay dropout subword tensorboardX 过拟合/欠拟合  调参的步骤以及经验   李宏毅深度学习 大致地讲解了调参技巧，不过现在都是人尽皆知的方法了。    根据本人经历，记录调参的方法。 最初的超参数   首先你需要固定自己的 epoch 以及 batch size，然后使用尽可">
+<meta name="keywords" content="4me">
+<meta property="og:type" content="article">
+<meta property="og:title" content="神经网络训练技巧（tricks）">
+<meta property="og:url" content="https://yan624.github.io/posts/8071918e.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="mask gradient clipping learning rate decay dropout subword tensorboardX 过拟合/欠拟合  调参的步骤以及经验   李宏毅深度学习 大致地讲解了调参技巧，不过现在都是人尽皆知的方法了。    根据本人经历，记录调参的方法。 最初的超参数   首先你需要固定自己的 epoch 以及 batch size，然后使用尽可">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/不同超参数之间，性能的对比.svg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/不同超参数之间，性能的对比2.svg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/add_more_data.svg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/add%20more%20data2.svg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/more_larger_batch_size.svg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/reduce_hidden_size.svg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/smooth_loss.svg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/slumping_loss.svg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/scaled_slumping_loss.svg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/增加lr，loss反而下降更慢.svg">
+<meta property="og:updated_time" content="2020-06-14T10:53:52.008Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="神经网络训练技巧（tricks）">
+<meta name="twitter:description" content="mask gradient clipping learning rate decay dropout subword tensorboardX 过拟合/欠拟合  调参的步骤以及经验   李宏毅深度学习 大致地讲解了调参技巧，不过现在都是人尽皆知的方法了。    根据本人经历，记录调参的方法。 最初的超参数   首先你需要固定自己的 epoch 以及 batch size，然后使用尽可">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/不同超参数之间，性能的对比.svg">
+
+<link rel="canonical" href="https://yan624.github.io/posts/8071918e.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<!--图片缩放插件样式-->
+<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
+<!--阿里云矢量库样式-->
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_621sfmh583s.css" />
+
+        
+
+  <title>神经网络训练技巧（tricks） | 博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">低阶炼金术士</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-常用链接">
+
+    <a href="/常用链接" rel="section"><i class="fas fa-bookmark fa-fw"></i>常用链接</a>
+
+  </li>
+        <li class="menu-item menu-item-时间线">
+
+    <a href="/categories/timeline/" rel="section"><i class="iconfont icon-timeline fa-fw"></i>时间线</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">94</span></a>
+
+  </li>
+        
+            
+  <li class="menu-item menu-item-博客分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>博客分类</a>
+
+  </li>
+
+
+      
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">163</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    
+    	
+        <!-- 弹窗插件 -->
+    		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
+        <script type="text/javascript" src="/lib/spop/spop.min.js"></script>
+        <!--判断此文是否为特殊的文章-->
+        <script>
+          var templateSentence = '这是条不可能出现的弹窗提示。';
+          if('4me' == '学习笔记')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记，并非教学，其中可能含有理论错误。';
+          else if('4me' == '4me')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
+          spop({
+            template: templateSentence,
+            group: 'tips',
+            position  : 'bottom-center',
+            style: 'success',
+            autoclose: 5500,
+            onOpen: function () {
+              //这里设置灰色背景色
+            },
+            onClose: function() {
+              //这里可以取消背景色
+              spop({
+                template: 'ε = = (づ′▽`)づ',
+                group: 'tips',
+                position  : 'bottom-center',
+                style: 'success',
+                autoclose: 1500
+              });
+            }
+          });
+        </script>
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/8071918e.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          神经网络训练技巧（tricks）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-26 19:55:20" itemprop="dateCreated datePublished" datetime="2020-04-26T19:55:20+08:00">2020-04-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-14 18:53:52" itemprop="dateModified" datetime="2020-06-14T18:53:52+08:00">2020-06-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>9.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>15 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="note default"><p><mark class="label warning">mask</mark> <mark class="label success">gradient clipping</mark> <mark class="label primary">learning rate decay</mark> <mark class="label info">dropout</mark> <mark class="label danger">subword</mark> <mark class="label info">tensorboardX</mark> <mark class="label primary">过拟合/欠拟合</mark></p>
+</div>
+<h1 id="调参的步骤以及经验">调参的步骤以及经验</h1>
+<div class="note info"><p>  <a href="https://www.bilibili.com/video/BV1Ux411S7rk?p=13" target="_blank" rel="noopener">李宏毅深度学习</a> 大致地讲解了调参技巧，不过现在都是人尽皆知的方法了。</p>
+</div>
+<p>  根据本人经历，记录调参的方法。</p>
+<h2 id="最初的超参数">最初的超参数</h2>
+<p>  首先你需要固定自己的 epoch 以及 batch size，然后使用尽可能大的学习率（learning rate，lr），使得你的模型在训练集上拟合的不错，即 loss 值达到可以接受的程度，并且准确率或者你的其他指标达到不错的水平。<strong>一般我将 batch size 选为 128，epoch 选为 100。</strong>如果初步调试后无法得到一个好的结果，可以根据需求略微地调整这三个参数。<mark class="label danger">三个最重要的参数</mark>   得到一个不错的效果意味着你的模型本身没有存在很大的问题。<strong>但是</strong>由于取的是尽可能大的 lr，那么你的模型在验证集上的结果可能差的离谱！这不要紧，因为之后还要调整各个超参数，此步仅仅是找 lr。最后有一点，如果经过长期调试，在训练集上均无法得到一个好的结果，那么得检查一下代码或者数据处理的是否有问题。<mark class="label primary">验证模型是否有问题，同时得到合适的学习率</mark>   要牢记一点，<strong>超参数的好坏一定要在验证集上做评定，并且最好保证在训练集上的性能不受太大影响</strong>。此外，<strong>在尝试合适的学习率时，可以把验证步骤关了，因为此时的验证精度没什么用。这样做可以加快训练速度。</strong><mark class="label info">一些小技巧</mark>   现在假设你最终使用一套 <code>(lr, epoch, batch_size)</code> 的超参数，在训练集上得到一个还不错的结果。那么可以进行下一阶段，选取合适的 batch size（<em>注意此步《最初的超参数》是用来选择 lr 的，epoch 和 batch size 仅仅是一个根据经验固定的值</em>）。详见下节《<a href="#batch-size的选择">batch size的选择</a>》。 <div class="note warning"><p>  如果在训练集上的结果还不错，那么在验证集上的结果应该不会差到训练不起来的地步。此时可以通过调整上述三个超参数使性能提高，注意，稍微调一下就行。一般来说应该不需要调整。</p>
+</div></p>
+<h2 id="batch-size的选择">batch size的选择</h2>
+<p>  在看了参考文献 1 之后，我对目前我正在做的模型做了几个小实验。我以前以为 batch size 对模型的影响不大，我认为只要 batch size 设置得足够大，只要有足够大的 epoch，模型总能收敛。但是在做了这几个实验之后，我发现 batch size 似乎能够影响模型的性能。</p>
+<h3 id="几个小实验">几个小实验</h3>
+<p>  下图是几个实验的结果，图有点乱，但是其实很好分析。只需要记住一点，曲线在上方的都是 train BLEU，曲线在下方的都是 val BLEU。训练集上的性能比验证集上的高，这很正常。   此实验，其他超参数均固定，epoch 可以暂且无视。先看上方的三条线，灰色的超参数为 <code>(lr, epoch, batch_size) = (0.001, ?, 64)</code>，而蓝红分别为 <code>(0.0003, ?, 32)</code> 和 <code>(0.0003, ?, 16)</code>。可见 batch size 为 64 的模型训练集上的 BLEU 指标比不上其它的模型。下方的验证集同理。还有一点，图中 batch size 为 32 的模型收敛要慢，这是因为 lr 不合理，设置为 0.0005 可能更合理。那么对于此任务来说，这两组参数可能都是一个不错的选择。但是我倾向于 <code>batch size=32</code> 的，因为它训练的速度更快，毕竟时间就是生命。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/不同超参数之间，性能的对比.svg" alt="不同超参数之间，性能的对比"></p>
+<p>  下面给出所有实验的对比，发现还是那两组的性能最好。橙色那条线是 <code>(0.001, ?, 128)</code>。此外我还试了 <code>(0.002, ?, 128)</code>，但是这组实验直接烂掉了，模型早早地拟合完毕，但是训练集上的 BLEU 连 50% 都没。由于已知增加 batch size 的同时需要加大 lr，由上述的两种实验可知，该任务参数的上限可能就是 <code>(0.001, ?, 128)</code>。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/不同超参数之间，性能的对比2.svg" alt="不同超参数之间，性能的对比2"></p>
+<p>  由上述实验可知，batch size 和 lr 还是对模型的性能有影响的。并且二者对模型的影响是具有相互作用的。这是因为在 loss function 中，唯二的超参数就是 batch size 和 lr【<a href="https://zhuanlan.zhihu.com/p/64864995" target="_blank" rel="noopener">1</a>】，其他的超参数是都在神经网络里。上述的实验只是一个大概的实验，其中的变化太多，无法选择到一组完美的组合，但是还是可以有经验可循的。<strong>加大 batch size 就要加大 lr，减小 batch size 就要减小 lr，而且可以以对应倍数进行改变</strong>【<a href="https://zhuanlan.zhihu.com/p/64864995" target="_blank" rel="noopener">1</a>，<a href="https://arxiv.org/pdf/1706.02677.pdf" target="_blank" rel="noopener">2</a>，<a href="https://arxiv.org/pdf/1705.08741.pdf" target="_blank" rel="noopener">3</a>】。   假设经过《<a href="#调参的步骤以及经验">调参的步骤以及经验</a>》之后，现在你的超参数为 <code>(0.001, 100, 64)</code>。那么你接下来可选的超参数组合为：<code>(0.002, 100, 128), (0.0005, 100, 32), (0.00025, 100, 16)</code>。具体的参数值可以按照自己的习惯进行改写，例如 0.00025 可以改成 0.0003。   总而言之，知道这一点之后，有关 lr 和 batch size 的调整就不需要像无头苍蝇一样乱调了。可以选定大概 5 组参数，直接放在服务器上训练。然后选择一个最合适的范围，再进行微小的调整。或者如果嫌麻烦，可以直接选择 5 组里最好的。</p>
+<h3 id="总结">总结</h3>
+<p>  上述的实验只是做个补充，总的来说： 1. 大的 batch size 可以减少训练时间，模型更稳定（<em>关于模型更稳定这点，我没有在论文里读到过，只是取自【<a href="https://zhuanlan.zhihu.com/p/64864995" target="_blank" rel="noopener">1</a>】</em>）。因为批次越大，所需要迭代的次数就要少，训练速度肯定要快。 2. batch size 不是越大越好</p>
+<h3 id="参考资料">参考资料</h3>
+<ol type="1">
+<li><a href="https://zhuanlan.zhihu.com/p/64864995" target="_blank" rel="noopener">【AI 不惑境】学习率和 batchsize 如何影响模型的性能？</a></li>
+<li><a href="https://arxiv.org/pdf/1706.02677.pdf" target="_blank" rel="noopener">Accurate, Large Minibatch SGD: Training ImageNet in 1 Hour</a></li>
+<li><a href="https://arxiv.org/pdf/1705.08741.pdf" target="_blank" rel="noopener">Train longer, generalize better: closing the generalization gap in large batch training of neural networks</a></li>
+</ol>
+<h2 id="如何处理过拟合">如何处理过拟合</h2>
+<p>  参考《过拟合处理》</p>
+<h2 id="loss-值并不能作为判断模型性能的指标">loss 值并不能作为判断模型性能的指标</h2>
+<p>  有一个让我印象深刻的案例，我发现验证集上的 loss 值很高，但是在验证集上的准确率还不错。我认为<strong>loss 值并不能作为判断模型性能的指标</strong>。   例如我的实验，在训练集上 loss 值的大小收敛到 [0.1, 1]，但是在验证集上 loss 值高达 [25, 50]，所以在最开始我一直认为模型在验证集上的性能肯定极差。现在假设以 acc 作为评分指标，在训练集上可能有 60%+，而在验证集上我猜测连 1% 都没有。由于这种错误的思维，其实我并没有编写计算 acc 的代码，因为我觉得这个模型有问题，所以我懒得耗费时间编这个代码。   最后我受不了了，编写了计算 acc 的代码，发现两个数据集上的性能居然类似，大致分别为 68% 和 48%。下面是基于直觉的分析，假设我们的目标多分类任务，预测 <code>['我', '是', '鱼']</code>。   由于在训练集上的 loss 值很低，所以自然而然地可以想到它的预测水平要高，假设预测 <code>'我'</code> 的概率为 0.9，那么对应的损失值为 <span class="math inline">\(-\log(0.9)\)</span>（负对数似然）。而在验证集上，假设预测 <code>'我'</code> 的概率为 0.6，那么对应的损失值为 <span class="math inline">\(-\log(0.6)\)</span>。可以看出显然验证集上的损失值要大得多，但是他们的结果是一样的，都预测正确了。注：这里的损失值其实相差还是不大，但是对于语言生成任务来说，损失值是要累加的，假设一句话有 30 个字，那么累加之后，差距就大了。</p>
+<h2 id="gpu内存不够以及随机采样">GPU内存不够以及随机采样</h2>
+<p>  如果你实验室的机器不好，打算使用随机采样的方法使得在小样本上测试超参数。<strong>那么请记得 train/val/test 的比例一定要与原数据集的比例一样</strong>。数据集一般都是由制作者划分好比例的，比如你得到的数据集 train/val/test 的数据量为 12472/900/900。现在你想只训练 6600 条数据，以此提高找到超参数的效率，那么你必须做到以下几点：   按照比例缩放：<span class="math inline">\(\frac{6600}{12472} \approx 0.529\)</span>，那么你所取得的 val/test 数据集合一定要是 <span class="math inline">\(0.529 \times 900 \approx 476\)</span> 条。简单来说，你从总的训练集中取多少比例，也要到验证集和测试集里按这个比例取。不能“<em>哦，总共就 900 份，我不如都算作验证集吧</em>”，<strong>这样会导致数据的分布极其的不平衡</strong>！试想一下，数据的制作者肯定会尽量使得三份数据集的分布尽可能的接近，并且其中的句子肯定也是长短不一的。结果你从训练集中随机取出 6000 份，导致了这些数据的分布和原来不一样，一个直观的解释就是模型无法捕获长句子的信息，因为你的新训练集和训练集中长句子所占的比例不一样。而你还偏偏用原来那个分布的验证集！   一定要使用随机采样的方法！不要直接使用 python 的切片！否则也会导致你的数据集分布不平衡。使用 python 内置的 <code>random.choice()</code> 可以很简单地实现随机采样。</p>
+<h2 id="关于adam的一个bug">关于Adam的一个bug</h2>
+<p>   如果需要对模型使用权重衰减的策略，<strong>在 Pytorch 中不要使用 Adam 算法，有 bug</strong>。听说目前流行的深度学习框架都有 bug。请改用 AdamW 算法。甚至在一开始就可以选择 AdamW，因为 Adam 和 AdamW 是一样的，区别仅仅是在权重衰减步骤上有所不同。</p>
+<h1 id="mask">mask</h1>
+<p>  <strong>题外话</strong>：对于 Transformer，无论 encoder 还是 decoder 都要做 mask（很多对 Transformer 的总结文章都只提到了 decoder 部分的 Masked Multihead Self-Attention，实际上 encoder 也要做一次）。mask 一共分为两种，Transformer 中 decoder 的 mask 指的是 <strong>sequence mask</strong>，encoder 中的 mask 指的是 <strong>padding mask</strong>，对于其他网络模型也是类似的道理。可以查阅参考资料 1，2。</p>
+<h2 id="padding-mask">padding mask</h2>
+<p>  以 Transformer 为例，在 encoder 中的每次执行 scaled dot-product 后都要做一次 padding mask。由于我们要让序列的长度相等以便做向量化操作，所以必不可少地需要对输入序列进行<strong>截断</strong>或<strong>补零</strong>（即填充 PAD，PAD 不一定非要是 0）操作。所以 padding mask 的<strong>主要目的</strong>是使得 self-attention 不要过多的关注向量中的 PAD 符号。   在进行了解 padding mask 的做法之前，首先简单地了解一下 Transformer 的大致流程：sequence id -&gt; embedding -&gt; multi-head attention(<strong>scaled dot-product</strong> -&gt; softmax -&gt; softmax <span class="math inline">\(\times\)</span> value) -&gt; add &amp; norm -&gt; decoder。而 mask 的<strong>具体操作是</strong>：在执行 scaled dot-product <strong>后</strong>，将序列中补零位置所对应的隐藏状态置为 -INF，使得序列经过 softmax 层时，<strong>该对应位置所计算出的概率为 0</strong>。（<em>mask 操作貌似在 Transformer 中是可选的。</em>）   总得来说，padding mask 是为了神经网络忽略 PAD 的信息。例如，虽然模型可以学习到 PAD 这个填充符是没有意义的，但是<strong>在做 attention 时，PAD 所在的这些位置依然有一些 attention score，而我们要的是 0 score</strong>。所以有必要引入一个 <strong>mask 矩阵</strong>，在做 attention 之前，先把 PAD 所在位置的值置为一个极小值，甚至是无穷小（由于 attention 需要经过 softmax，softmax 需要求 e 的次方，要想 e 的某次方为 0，只能使得值为无穷小才可以，这是一个数学问题）。   以下举一些不是 Transformer 的例子： 1. <strong>对于 Embedding 层来说，符号 PAD 的词向量也是无意义的</strong>，所以也可以将它的所在位置的值（即词向量）置为 0，使得它无意义。也就是说我们需要引入一个 mask 矩阵，它的大小与词表一样，所有位置初始化为 1，但是 PAD 所在的位置置为 0。然后每次在使用词向量时，乘上这个 mask。不过这样略微麻烦，所幸的是 Pytorch 为我们提供了实现。只需要简单地填入 <code>padding_idx</code> 即可，值为 PAD 对应的索引，索引取决于你的项目。可以看到这非常简单，但是这只是让 PAD 这个词向量无意义并且不计算它的梯度而已。在经过复杂的计算之后 PAD 所在位置的值依旧会变为非 0，而对于其他层想要做到使得 PAD 无意义就没那么简单了。 <figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nn.<span class="constructor">Embedding(<span class="params">vocab_size</span>, <span class="params">embed_dim</span>, <span class="params">padding_idx</span>=PAD_ID)</span></span><br></pre></td></tr></table></figure></p>
+<ol start="2" type="1">
+<li><p><strong>对于 LSTM 等的时序特征提取层</strong>可以使用 <code>torch.nn.utils.rnn.pack_padded_sequence(input, lengths, batch_first=False, enforce_sorted=True)</code> 函数将 embedding 打包。然后将这个打包后的 embedding 输入 LSTM，之后使用 <code>torch.nn.utils.rnn.pad_packed_sequence(sequence, batch_first=False, padding_value=0.0, total_length=None)</code> 函数，将 LSTM 的输出还原。   以以下代码为例，其中第一行代码的 <code>lengths</code> 必须是 pytorch 的 tensor，它代表着你输入序列的长度，比如你输入 [['你', '好', '.'], ['我', '是', '鱼', '.']]，那么 <code>lengths</code> 就是 <code>torch.Tensor([3, 4])</code>。<code>batch_first</code> 默认是 False，这是因为 LSTM 的输入要求是 (S, N, *)，其中 S 是序列长度，N 是批次大小。<code>batch_first</code> 顾名思义就是输入的序列的第一个维度是否为批次大小，显然为了使得 pytorch 内部兼容，<code>batch_first</code> 默认为 <code>False</code> 是最好的。一般我都懒得对序列进行长度上的排序，所以将 <code>enforce_sorted</code> 设置为 False。 <figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># lstm padding mask</span><br><span class="line">packed_feature = nn.utils.rnn.pack<span class="constructor">_padded_sequence(<span class="params">embed</span>, <span class="params">lengths</span>, <span class="params">enforce_sorted</span>=False)</span></span><br><span class="line">packed_bi_feature, hx = self.lstm(packed_feature)</span><br><span class="line">bi_feature, lengths_unpacked = nn.utils.rnn.pad<span class="constructor">_packed_sequence(<span class="params">packed_bi_feature</span>)</span></span><br></pre></td></tr></table></figure></p></li>
+<li><p><strong>如果有些层</strong>不像 LSTM 一样只能按照时间步读取，而是<strong>可以批量处理时序数据</strong>，那么可以使用 mask 矩阵。<strong>目前我就知道一个 Transformer 需要用到 mask 矩阵。</strong>你可以通过句子的长度自行创建。</p></li>
+<li><p>最后<strong>在计算 loss 时</strong>也需要 padding mask，这可以使用 <code>torch.masked_select(input, mask, out=None)</code> 进行计算。 <a id="more"></a></p></li>
+</ol>
+<h2 id="sequence-mask">sequence mask</h2>
+<p>  使得 decoder 无法看见未来的信息，其 attention 只能关注解码单词之前的单词，而不能依赖后面未解码出来的单词。这是因为在解码时，由于传统一次只预测一个单词的工作方式太低下，所以 Transformer 的作者做了改进。一次直接将 target 序列输入 decoder，这是可行的，loss 函数还是像往常一样计算即可。例如： <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">我**</span><br><span class="line">我是*</span><br><span class="line">我是鱼</span><br></pre></td></tr></table></figure></p>
+<p>  在传统模型中，在预测玩“我”、“是”之后，需要输入“是”再预测“鱼”。而 Transformer 中，直接输入“<code>&lt;SOS&gt;</code>我是”，再预测“鱼”，其实这两种方式一模一样。同时为了做到输入“<code>&lt;SOS&gt;</code>”预测“我”，输入“<code>&lt;SOS&gt;</code>我”预测“是”等操作，所以需要拷贝多份数据。   说白了这个 sequence mask 矩阵其实就是一个 <span class="math inline">\(L \times L\)</span> 维的矩阵，L 代表一条语句的长度。其内容是，下三角以及对角线全部为 1，代表需要这部分信息。上三角全部为 0，代表这部分信息被掩盖。</p>
+<h2 id="参考资料-1">参考资料</h2>
+<ol type="1">
+<li><a href="https://luozhouyang.github.io/transformer/" target="_blank" rel="noopener">Transformer模型的PyTorch实现</a></li>
+<li><a href="https://www.jianshu.com/p/405bc8d041e0" target="_blank" rel="noopener">The Transformer</a></li>
+<li><a href="https://www.zhihu.com/question/320615749/answer/1080485410" target="_blank" rel="noopener">深度学习中的 mask 到底是什么意思？</a></li>
+<li><a href="https://www.zhihu.com/question/264501322/answer/433784349" target="_blank" rel="noopener">变长序列怎么使用 mini-batch SGD 训练？</a></li>
+<li><a href="https://www.zhihu.com/question/347366108/answer/832932755" target="_blank" rel="noopener">transformer 在解码的时候，用的 k 和 v 的向量来自于编码器的输出还是来自于之前解码输出的值呢？</a></li>
+</ol>
+<h1 id="对于如何融合两个向量的思考">对于如何融合两个向量的思考</h1>
+<p>  在训练神经网络时，有些情况会有两个张量，但是网络的输入只有一个。例如在训练 Bi-LSTM 时，会分别得到正向以及逆向的输出。这两个张量的特征我们都需要利用到，那么该如何融合它们的特征呢？   常用的做法就是<strong>1）直接相加</strong>；<strong>2）或者拼接两个张量</strong>。   <strong>个人比较喜欢第二种方法</strong>，因为我自学习神经网络开始，一直将一个向量的各个维度视作数据的各个特征。而张量拼接的做法，直观上来看，其实就是<strong>将两个张量的特征合并</strong>。个人认为这更符合我的逻辑。反之，张量相加好像体现不出特征的奇妙之处。   当然这样做也各有优缺点，<strong>张量拼接的方式导致了维度倍增</strong>，而相加的方式还是维持原来的维度。但是张量拼接之后可以接一个前馈神经网络（甚至可以接多层感知机，让网络更深），进行降维。总得来说，张量拼接的方式虽然使得维数倍增，但是现在这个年代，这个维数也可以接受，只要的维数不是高的离谱就行。同时<strong>方法 2 后接一个前馈神经网络</strong>，这又进一步<strong>对两个张量进行了特征提取</strong>，用一句话形容就是“取其精华，去其糟粕”。前馈网络对张量的降维可以理解为删去了无用的特征。   其次，方法 1 和方法 2 其实也是类似的。一般方法二需要接一个线性变换，即 <span class="math inline">\(C = f(\begin{pmatrix}M \\ N\end{pmatrix})\)</span>。而方法一可以公式化为：<span class="math inline">\(D = \begin{pmatrix}1 &amp; 1\end{pmatrix} \cdot \begin{pmatrix}M \\ N\end{pmatrix} + 0\)</span>。说白了就是方法一相比于方法二，权重是 1，偏差是 0。也就是说方法一的做法<strong>没有利用神经网络自动为两个张量分配合适的权重</strong>。   最后，其实还有另一个做法。先对两个张量做一次线性变换，再相加。这其实和方法二完全一样，观察下式。实际上，<span class="math inline">\(W_c b_c\)</span> 都可以拆成两个折半的矩阵/向量，例如 <span class="math inline">\(W_c = \begin{pmatrix}W_{c_1} &amp; W_{c_2} \end{pmatrix}\)</span>。拆开之后就是 <span class="math inline">\(C = f(M) + F(N)\)</span>，这其实就是先进行线性变换再相加。 <span class="math display">\[
+f(x) = W \cdot x + b \\
+C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{pmatrix} + b_c
+\]</span></p>
+<h2 id="参考资料-2">参考资料</h2>
+<ol type="1">
+<li><a href="https://www.zhihu.com/question/389912594/answer/1178054600" target="_blank" rel="noopener">神经网络中对需要 concat 的特征进行线性变换然后相加是否好于直接 concat?</a></li>
+<li>以后有机会再补充</li>
+</ol>
+<h1 id="subword技术">subword技术</h1>
+<h2 id="参考资料-3">参考资料</h2>
+<ol type="1">
+<li><a href="https://www.zhihu.com/question/329708785" target="_blank" rel="noopener">word2vec缺少单词怎么办？</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/72312668" target="_blank" rel="noopener">香侬读 | 怎样在小数据集下学习OOV词向量？</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/86965595" target="_blank" rel="noopener">深入理解 NLP Subword 算法：BPE、WordPiece、ULM</a></li>
+</ol>
+<h1 id="过拟合处理">过拟合处理</h1>
+<div class="note warning"><p>  奇怪的事写在前面。   我碰到了一种情况，训练集上拟合的很好（loss 约为 1），但是在验证集上很差（loss 约为 280+）。不断地调整代码以及更换学习率，得到的效果均不明显。   我给出其中一种可能：<strong>两种数据集的分布不一样</strong>。例如我的问题，在给定 10000 条训练集样本和 900 条验证集样本的情况下。由于 NLP 任务句子不等长的特性，所以我选择先将句子排序使得同一批次中的数据等长，注意我没有选择填充 <code>&lt;PAD&gt;</code> 这种方法。   然后<strong>我取了 6600 条训练集样本，在取验证集样本时，由于它的数据量较小，所以我全要了，问题就出在这</strong>。我的训练集样本是取的 [1400: 8000]，所以这个区间内的句子长度比较平均，由于我事先排序的原因，所以极短的句子和极长的句子我都没取到。但是原验证集和原训练集的分布是一样的！所以 900 条验证集中包含了极长的句子和极短的句子，这导致了现在的两个数据集分布不一样了！<strong>解决办法是使用随机采样</strong>。<em>不要排序之后直接切片获得数据，而是应该是先随机采样，再排序</em>。   但是处理完之后结果依旧很烂！现在正在调试学习率。待续，后面补充。</p>
+</div>
+<p>  当过拟合时，可以考虑以下的方法，过拟合的另一种说法是高方差（high variance）。</p>
+<h2 id="增加数据集的大小">增加数据集的大小</h2>
+<p>  如下图所示，紫红色和蓝色曲线是验证集上的 loss。蓝色曲线意味着我从 4400 条数据增加到了 6600 条。明显可以看到过拟合略有缓解。但是训练集上的 loss 增加了，灰色那条线是增加数据量后的训练集 loss。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/add_more_data.svg" title="增加更多的数据" alt="增加更多的数据"></p>
+<p>  下图也是一个例子，相比于上个模型还训练的有问题，这个模型已经训练的还可以了。可以看到红色曲线比蓝色的要平缓一点，因为数据集增加，训练集上的 loss 会相应增加。再看上面的橙色和深蓝色，深蓝色是增加数据量之后的 loss 曲线，略微降低。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/add%20more%20data2.svg" alt="增加更多的数据2"> ## 加大批次大小或减小模型复杂度   如下图所示，中间的两条橙色和蓝色曲线是批次大小从 128 增加到 224 的结果。橙色曲线为 val loss，可以看到橙色曲线相比于上面那条蓝色的 val loss，已经略有下降，这代表着过拟合的程度略有降低。而中间的蓝色曲线代表 train loss，相比于下面的灰色 train loss 曲线有些许上升，这代表着模型在训练集上的泛化能力有所下降。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/more_larger_batch_size.svg" alt="加大批次大小"></p>
+<p>  下图为减小隐藏状态的例子，中间的绿色以及红色曲线是隐藏状态从 512 减到 400 的结果，可以看到验证集上的 loss 略有下降（略微的缓解过拟合），训练集上的 loss 略有上升。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/reduce_hidden_size.svg" alt="减小隐藏状态大小"></p>
+<h2 id="learning-rate-decay">learning rate decay</h2>
+<p>  Q：在什么时候需要使用 learning rate decay？   A：网上资源不多，还是自己总结吧。在此实验中，加入 learning rate decay 后，准确率略有提升。</p>
+<h2 id="正则化">正则化</h2>
+<p>  </p>
+<h2 id="dropout">Dropout</h2>
+<p>  一般设置为 0.5。在 Pytorch 中代表神经网络中某一层的神经元的输出有 0.5 的概率为 0。其他的深度学习框架不保证一样。   参考资料： 1. <a href="https://zhuanlan.zhihu.com/p/38200980" target="_blank" rel="noopener">深度学习中Dropout原理解析</a></p>
+<h2 id="label-smoothing">label smoothing</h2>
+<h1 id="可视化训练结果">可视化训练结果</h1>
+<p>  以前一直用 matplotlib 来画图，现在用了 tensorboardX 之后，感觉人瞬间就爽了，以下为教程。无法启动看 2，启动后网页无法显示看 3，代码不会写看 1。   参考资料： 1. <a href="https://tensorboardx.readthedocs.io/en/latest/tutorial.html#what-is-tensorboard-x" target="_blank" rel="noopener">官方文档</a> 2. <a href="https://blog.csdn.net/qq_40605167/article/details/95761885" target="_blank" rel="noopener">tensorboard OSError: [Errno 22] Invalid argument错误处理</a> 3. <a href="https://blog.csdn.net/weixin_44135282/article/details/86156961" target="_blank" rel="noopener">tensorboard生成的网址打不开的解决方法</a> 4. <a href="https://blog.csdn.net/bigbennyguo/article/details/87956434" target="_blank" rel="noopener">详解PyTorch项目使用TensorboardX进行训练可视化</a></p>
+<h1 id="其他的调参经验">其他的调参经验</h1>
+<h2 id="关于epoch">关于epoch</h2>
+<p>  如果你调试了很多参数之后，模型在<strong>训练集</strong>上的性能没有很大改善，<strong>可以尝试大幅度增加 epoch</strong>。当然你也可以在一开始就使用很大的 epoch。因为有些模型很奇怪，可能 loss 曲线已经很平滑了，但是在某个 epoch 之后，loss 值突然暴跌。例如，下图是训练了一段时间的 loss 值，我卡了四五天，一直以为 loss 不会下降了。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/smooth_loss.svg" alt="smooth loss"></p>
+<p>  但是当你加大 epoch 之后，突然发现它又开始下降了。（注：这两条曲线有点不一样，是因为我略微地调整了代码，但是这已经足够说明问题了。经过我的实验，这里的 loss 值下降与我的代码调整无关） <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/slumping_loss.svg" alt="slumping loss"></p>
+<p>  这可能不太明显，我们把它缩放一下，发现真的又开始下降了。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/scaled_slumping_loss.svg" alt="scaled slumping loss"></p>
+<h2 id="加大lrtrain-loss不一定更快收敛">加大lr，train loss不一定更快收敛</h2>
+<p>  我有碰到一个情况，<strong>加大学习率后，训练集上的 loss 反而下降的更慢了！</strong>图片我放在了下面，其中深蓝色的曲线代表着学习率是要大的那个模型。我的猜测是，学习率加大后，在某一个时间段的 epoch 中，模型一直在尝试走到山底，但是由于学习率过大，导致它一直来回振荡。而学习率小点，就正好一脚跨下去了。从图中也可以发现，在一开始，大学习率的模型确实要下降的快点，但是后来被小学习率的模型反超了。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/增加lr，loss反而下降更慢.svg" alt="增加 lr，loss 反而下降更慢"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/4me/" rel="tag"># 4me</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/6e48825d.html" rel="prev" title="一些常用的pytorch技巧">
+      <i class="fa fa-chevron-left"></i> 一些常用的pytorch技巧
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/70c86b65.html" rel="next" title="【机器学习算法】无监督学习">
+      【机器学习算法】无监督学习 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#调参的步骤以及经验"><span class="nav-number">1.</span> <span class="nav-text">调参的步骤以及经验</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#最初的超参数"><span class="nav-number">1.1.</span> <span class="nav-text">最初的超参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#batch-size的选择"><span class="nav-number">1.2.</span> <span class="nav-text">batch size的选择</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#几个小实验"><span class="nav-number">1.2.1.</span> <span class="nav-text">几个小实验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.2.2.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">1.2.3.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何处理过拟合"><span class="nav-number">1.3.</span> <span class="nav-text">如何处理过拟合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#loss-值并不能作为判断模型性能的指标"><span class="nav-number">1.4.</span> <span class="nav-text">loss 值并不能作为判断模型性能的指标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gpu内存不够以及随机采样"><span class="nav-number">1.5.</span> <span class="nav-text">GPU内存不够以及随机采样</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于adam的一个bug"><span class="nav-number">1.6.</span> <span class="nav-text">关于Adam的一个bug</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#mask"><span class="nav-number">2.</span> <span class="nav-text">mask</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#padding-mask"><span class="nav-number">2.1.</span> <span class="nav-text">padding mask</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sequence-mask"><span class="nav-number">2.2.</span> <span class="nav-text">sequence mask</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料-1"><span class="nav-number">2.3.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#对于如何融合两个向量的思考"><span class="nav-number">3.</span> <span class="nav-text">对于如何融合两个向量的思考</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料-2"><span class="nav-number">3.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#subword技术"><span class="nav-number">4.</span> <span class="nav-text">subword技术</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料-3"><span class="nav-number">4.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#过拟合处理"><span class="nav-number">5.</span> <span class="nav-text">过拟合处理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#增加数据集的大小"><span class="nav-number">5.1.</span> <span class="nav-text">增加数据集的大小</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#learning-rate-decay"><span class="nav-number">5.2.</span> <span class="nav-text">learning rate decay</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正则化"><span class="nav-number">5.3.</span> <span class="nav-text">正则化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dropout"><span class="nav-number">5.4.</span> <span class="nav-text">Dropout</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#label-smoothing"><span class="nav-number">5.5.</span> <span class="nav-text">label smoothing</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#可视化训练结果"><span class="nav-number">6.</span> <span class="nav-text">可视化训练结果</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其他的调参经验"><span class="nav-number">7.</span> <span class="nav-text">其他的调参经验</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#关于epoch"><span class="nav-number">7.1.</span> <span class="nav-text">关于epoch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#加大lrtrain-loss不一定更快收敛"><span class="nav-number">7.2.</span> <span class="nav-text">加大lr，train loss不一定更快收敛</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">朱冲䶮</p>
+  <div class="site-description" itemprop="description">记录学习问题，积累做的 leetcode 题目</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">163</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">94</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+      <!-- 不蒜子/busuanzi -->
+      <div class="site-state-item site-state-posts">
+      	<span class="site-state-item-count">203.6k</span>
+      	<span class="site-state-item-name">总字数</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>zhihu</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div><script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="/lib/my-utils.js"></script>
+<!--图片缩放插件-->
+<script src="/lib/zoomify/zoomify.min.js"></script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- 背景插件 -->
+<script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<!-- 背景图片 -->
+<script>
+	function generateBG(count){
+		var bg_prefix = '/images/background/';
+		var bg =new Array();
+		for(var i = 0; i < count; i++){
+			bg[i] = bg_prefix + i + '.jpg';
+		}
+		bg.shuffle();
+		return bg;
+	}
+	$("body").backstretch(generateBG(11), {
+		duration:90000,//1min半一换
+		fade: 1500
+	});
+</script>
+<!-- 图片缩放 -->
+<script>
+$('.content img').zoomify({duration: 500, });
+$('.content img').on('zoom-in.zoomify', function () {
+	$('.sidebar').css('display', 'none');
+});
+$('.content img').on('zoom-out-complete.zoomify', function () {
+	$('.sidebar').css('display', '');
+});
+</script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/8071918e.html',]
+      });
+      });
+  </script>
+<!-- calendar widget -->
+
+
+</body>
+</html>

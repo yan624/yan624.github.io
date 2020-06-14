@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="论文地址，论文作者 S Ultes 等，发表于 2017 年。   此文中出现了许多专业名词，可参考 此处 加以理解。  摘要翻译   统计口语对话系统（Statistical Spoken Dialogue Systems, Statistical SDS, 统计 SDS）已经存在多年了。然而，访问这些系统一直很困难，因为仍然没有公开的端到端系统实现。为了缓解这个问题，我们提出了 Py">
+<meta name="keywords" content="pydial">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PyDial: A Multi-domain Statistical Dialogue System Toolkit">
+<meta property="og:url" content="https://yan624.github.io/posts/65623ba8.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="论文地址，论文作者 S Ultes 等，发表于 2017 年。   此文中出现了许多专业名词，可参考 此处 加以理解。  摘要翻译   统计口语对话系统（Statistical Spoken Dialogue Systems, Statistical SDS, 统计 SDS）已经存在多年了。然而，访问这些系统一直很困难，因为仍然没有公开的端到端系统实现。为了缓解这个问题，我们提出了 Py">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-06-09T07:37:56.575Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PyDial: A Multi-domain Statistical Dialogue System Toolkit">
+<meta name="twitter:description" content="论文地址，论文作者 S Ultes 等，发表于 2017 年。   此文中出现了许多专业名词，可参考 此处 加以理解。  摘要翻译   统计口语对话系统（Statistical Spoken Dialogue Systems, Statistical SDS, 统计 SDS）已经存在多年了。然而，访问这些系统一直很困难，因为仍然没有公开的端到端系统实现。为了缓解这个问题，我们提出了 Py">
+
+<link rel="canonical" href="https://yan624.github.io/posts/65623ba8.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<!--图片缩放插件样式-->
+<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
+<!--阿里云矢量库样式-->
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_621sfmh583s.css" />
+
+        
+
+  <title>PyDial: A Multi-domain Statistical Dialogue System Toolkit | 博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">低阶炼金术士</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-常用链接">
+
+    <a href="/常用链接" rel="section"><i class="fas fa-bookmark fa-fw"></i>常用链接</a>
+
+  </li>
+        <li class="menu-item menu-item-时间线">
+
+    <a href="/categories/timeline/" rel="section"><i class="iconfont icon-timeline fa-fw"></i>时间线</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">94</span></a>
+
+  </li>
+        
+            
+  <li class="menu-item menu-item-博客分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>博客分类</a>
+
+  </li>
+
+
+      
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">163</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/65623ba8.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          PyDial: A Multi-domain Statistical Dialogue System Toolkit
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-01-09 17:43:19" itemprop="dateCreated datePublished" datetime="2020-01-09T17:43:19+08:00">2020-01-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-09 15:37:56" itemprop="dateModified" datetime="2020-06-09T15:37:56+08:00">2020-06-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="note info"><p>  <a href="https://www.aclweb.org/anthology/P17-4013/" target="_blank" rel="noopener">论文地址</a>，论文作者 S Ultes 等，发表于 2017 年。   此文中出现了许多专业名词，可参考 <a href="https://yan624.github.io/·论文笔记/dilogue/task-oriented/54.%20A%20Benchmarking%20Environment%20for%20Reinforcement%20Learning%20Based%20Task%20Oriented%20Dialogue%20Management.html">此处</a> 加以理解。</p>
+</div>
+<h1 id="摘要翻译">摘要翻译</h1>
+<p>  统计口语对话系统（<em>Statistical Spoken Dialogue Systems, Statistical SDS, 统计 SDS</em>）已经存在多年了。然而，访问这些系统一直很困难，因为仍然没有公开的端到端系统实现。为了缓解这个问题，我们提出了 PyDial，一个开源的端到端统计语音对话系统工具包，它为<strong>所有对话系统模块</strong>提供<strong>统计方法</strong>的实现。此外，它还被扩展为提供多领域会话功能。它提供了各个对话系统模块的简单配置、易扩展性和域无关（<em>domain-independent</em>）的实现。该工具包可在 Apache2.0 许可下下载。</p>
+<h1 id="引言">1 引言</h1>
+<p>  针对机器去设计语音接口（凭此人机交互）是多年来的研究热点。这些语音对话系统（SDSs）通常<strong>基于模块化的架构</strong>，包括<strong>语音识别</strong>（<em>speech recognition</em>）和<strong>语义解码</strong>（<em>semantic decoding</em>）的<strong>输入处理模块</strong>（<em>input processing modules</em>）、<strong>信念跟踪</strong>（<em>belief tracking</em>）和<strong>策略</strong>（<em>policy</em>）的<strong>对话管理模块</strong>（<em>dialogue management modules</em>）、<strong>语言生成</strong>（<em>language generation</em>）和<strong>语音合成</strong>（<em>speech synthesis</em>）的<strong>输出处理模块</strong>（<em>output processing modules</em>）（见图 1）。 <div class="note success"><p>  以上介绍了 SDS 的架构。下一段介绍了一些 SDS 中不同组件的统计方法示例。</p>
+</div></p>
+<p>  统计 SDS 是一个语音接口，其中所有 SDS 模块都基于统计模型（从数据中学习）（与人工规则相比）。对话系统中<strong>不同组件的统计方法</strong>例子可以在以下中找到： - ……（若干论文），详见原论文 Introduction 第二段。 <a id="more"></a></p>
+<p>  尽管对统计 SDS 的研究非常丰富，但是仍然没有通用的平台和开放的工具包。其他工具包实现通常集中在单个模块上（例如：<em>略，详见论文</em>）。提供专门针对统计对话系统（<em>statistical dialogue systems</em>）的工具包将使新进入该领域的人员能够更容易地参与进来，结果更容易比较，研究人员能够专注于他们的特定研究问题，而不是重新实现算法（例如，评估（<em>v.</em>）交互功能中的理解或生成组件的性能）。   因此，为了促进研究，以及使人们更容易参与统计口语对话系统的研究，我们提出了一个多领域统计口语对话系统工具包 <strong>PyDial</strong>。PyDial 是用 Python 实现的，剑桥对话系统团队（<em>Cambridge Dialogue Systems Group</em>）正在积极使用它。 <div class="note default"><p>  那么什么是 PyDial 呢？</p>
+</div></p>
+<p>  PyDial 支持多领域的应用程序，在这些应用程序中，对话可能涉及多个不同的主题。这引入了许多新的研究课题，包括广义信念跟踪（<em>generalised belief tracking</em>）（论文略），<em>rapid policy adaptation and parallel learning</em> 和自然语言生成（<em>natural language generation</em>）。   论文的余下部分安排如下： 1. 第 2 节介绍了 PyDial 的总体架构（并且将 SDS 架构扩展到多个领域）和 PyDial 的主要应用规范； 2. 第 3 节包含各个对话系统模块的实现细节； 3. 第 4 节列出了可用的领域，其中有两个领域用于第5节中的示例交互； 4. 第 6 节总结了该工具包的主要贡献。</p>
+<h1 id="pydial-架构">2 PyDial 架构</h1>
+<p>  本节介绍 PyDial 的结构及其与环境的接口方式。随后，描述了在单个领域上功能的扩展，以允许在多个领域上进行对话。最后，我们讨论了 PyDial 设计的三个关键原则。</p>
+<h2 id="总体系统架构">2.1 总体系统架构</h2>
+<p>  PyDial 的总体架构如图 2 所示。其中主要组件被称为 <strong>Agent</strong>，它位于系统的核心。它封装了所有对话系统模块，以实现基于文本的交互，即输入和输出。对话系统模块依赖于由一个<strong>本体</strong>（<strong>Ontology</strong>）定义的领域规范。为了与环境交互（<strong>博主注</strong>：这里的“与环境交互”应该指的是机器与外部环境交互，如机器与餐厅环境交互、与旅游环境交互、与服装商场进行交互等），PyDial 提供了三个接口：<strong>Dialogue Server</strong>【允许语音型交互】、<strong>Texthub</strong>【允许输入型交互】和 <strong>User Simulation system</strong>。交互的性能由<strong>评估</strong>（<strong>Evaluation</strong>）组件监视。 - Agent：负责对话交互，因此内部的架构类似于图 1 中的内容。<strong>Agent</strong> 还维护 dialogue sessions，即确保每个输入都<u>发送到</u>（<em>is routed to</em>）正确的对话。因此，<strong>可以通过实例化多个 agents 来支持多个对话</strong>。 1. semantic parser：将文本输入转化为一个语义表征 2. belief tracker：负责维护一个被称为 <strong>belief state</strong> 的对话状态表征（<em>dialogue state representation</em>） 3. policy：将 <strong>belief state</strong> 映射到适合的 <strong>system dialogue act</strong> 4. semantic output：将 <strong>system dialogue act</strong> 转化为文本表示 5. topic tracker：对于多域功能，需要 <strong>topic tracker</strong>，其功能将在第 2.2 节中解释 - User Simulation：支持在语义层面进行对话模拟，即不使用任何语义解析器或语言生成。这是一种广泛应用于训练和评估基于强化学习算法的技术，因为它避免了昂贵的数据收集练习（<em>data collection exercises</em>）和用户试验（<em>user trials</em>）。它当然只提供了一个近似的真实用户行为，所以通过模拟获得的结果应该谨慎看待！ - 与环境交互：为了使 Agent 能够与其环境进行通信，PyDial 提供了两种模式：语音和文本 + Texthub：只需将 Agent 连接到终端 + Dialogue Server：要启用基于语音的对话，<strong>Dialogue Server</strong> 允许连接到外部语音客户端。此客户端负责使用 ASR 将输入语音信号映射到文本，并使用语音合成将输出文本映射到语音（<em>text to speech</em>, <strong>TTS</strong>）。语音客户端通过 HTTP 交换 JSON 消息连接到对话服务器。请注意，语音客户端不是 PyDial 的一部分。基于云的 ASR 和 TTS 服务可以从 <a href="https://cloud.google.com/speech" target="_blank" rel="noopener">Google</a>、<a href="https://www.microsoft.com/cognitive-services/en-us/speech-api" target="_blank" rel="noopener">Microsoft</a>或 <a href="http://www.ibm.com/watson/developercloud/speech-to-text.html" target="_blank" rel="noopener">IBM</a>等提供商处获得。PyDial 目前连接到 DialPort（Zhao等人，2016），其允许基于语音的交互。 - Ontology：除了 <strong>Agent</strong> 和接口组件之外，还有 <strong>Ontology</strong>，Ontology 封装了对话域规范以及对后端数据库（例如，一组餐厅及它们的属性）的访问。它被建模为一个全局对象，大多数对话系统模块和用户模拟器使用它来获取有关用户 <em>actions, slots, slot values, and system actions</em> 的相关信息。 - Evaluation：用于计算对话的评估度量（例如 <strong>Task Success</strong>）。对于基于强化学习的对话模块来说，评估组件还负责提供 <em>reward</em></p>
+<h2 id="多领域对话系统架构">2.2 多领域对话系统架构</h2>
+<p>  Agent -&gt; <strong>topic tracker</strong></p>
+<h2 id="主要原则">2.3 主要原则</h2>
+<p>  为了使 PyDial 能够轻松地应用于新问题，PyDial 体系结构的设计支持三个关键原则： - Domain Independence - Easy Configurability - Extensibility</p>
+<h1 id="实现">3 实现</h1>
+<p>  PyDial 工具包是一个不断开发的研究系统。可从Apache2.0许可下的<a href="http://pydial.org" target="_blank" rel="noopener">网站</a>免费下载。在最初的版本中可以使用以下各种系统模块的实现，不过，到时候会有更多的实现。 - <strong>Semantic Decoder</strong>：为了对输入语句（或n个最佳语句列表，or n-best-list of sentences）进行语义解码，PyDial 提供了一个基于规则（使用正则表达式）的实现，以及一个基于 SVM 的统计模型，即 the Semantic Tuple Classifier（Mairess et al., 2009）。对于后者，只提供了 CamRestaurants 领域的模型。 - <strong>Belief Tracker</strong>：为了跟踪 belief state，可用 <strong>the rule-based focus tracker</strong>（Henderson et al., 2014）。该实现与领域无关。所有特定领域的信息都是从本体中提取的。 - <strong>Policy</strong>：负责 policy 的决定执行模块有两种实现方式：<strong>1）</strong>人工制定的策略（应该适用于所有领域）；<strong>2）</strong>Gaussian process (GP) reinforcement learning policy（Gasic and Young, 2014）。对于多领域对话，策略管理器可以像处理所有其他模块一样处理策略。给定每个用户的输入的领域，然后选择相应的领域策略。 此外，还可以选择 Gasic et al.(2015b) 提出的 Bayesian committee machine(BCM) 处理程序：<strong>当处理一个领域的 belief state 时，参考其他领域的策略来选择最终的系统操作</strong>。为了实现这一点，belief state 被映射到一个抽象表示，然后允许所有策略访问它。在 PyDial 中，经过训练的策略可以在 committee-based handler 和 standard policy manager handler 之间移动。即在 committee 外部（在单域或多域设置中）接受训练的策略可以在 committee 内部使用，反之亦然。 - <strong>Language Generator</strong>：为了将 semantic system action 映射为文本，PyDial 提供了两个实现组件：<strong>1）</strong>对于所有领域来说，提供了一个基于模板（定义规则）的语言生成；<strong>2）</strong>此外 Wen et al. (2015) 提出了基于 LSTM 的语言生成器，里面包含了 CamRestaurants 领域的预训练模型 - <strong>Topic Tracker</strong>：PyDial 提供了一个基于关键字的 Topic Tracker 实现。如果 Topic Tracker 已为某些用户输入标识了领域，那么它将继续使用该领域，直到识别了新的领域。<strong>因此，并非每个用户输入都必须包含相关关键字</strong>。如果 Topic Tracker <strong>无法在开始时识别领域</strong>，那么它将创建与用户的 meta-dialogue，直到确定初始领域或达到最大重试次数。 - <strong>Evaluation</strong>：为了评估对话，目前已经实现了两个 success-based 模块。（下面的话部分看不懂，索性不翻了--） &gt; The objective task success evaluator compares the constraints and requests the system identifies with the true values. The latter may either be derived from the user simulator or, in real dialogues, by specifying a predefined task. For real dialogues, a subjective task success evaluator may also be applied which queries the user about the outcome of the dialogue. - <strong>User Simulation</strong>：模拟用户的实现使用 agenda-based 用户模拟器（Schatzmann et al., 2006）。该模拟器包含 user model 和 error model，从而创建 a n-best-list of user acts 来模拟噪声语音信道。通过使用一组普遍适用的参数，模拟器可以应用于所有领域。领域特定的信息取自本体。</p>
+<h1 id="一些领域">4 一些领域</h1>
+<p>  <strong>PyDial 的主要关注的是面向任务的对话，即根据一些约束条件用户必定找到其匹配的实体</strong>。找到实体后，用户可以请求其他信息。为应付这些场景，PyDial 预先加载了总共十个不同复杂度的领域： - 略</p>
+<p>  如前所述，所有 <strong>policy</strong> 实现以及 <strong>belief tracker</strong> 和 <strong>user simulator</strong> 的实现都独立于领域之外。因此，在<strong>所有领域</strong>都可以进行交互的模拟。此外，<strong>semantic decoder</strong> 和 <strong>language generator</strong> 在某种程度上依赖于特定领域的实现。PyDial 包含用于<strong>所有领域</strong>的基于规则的 <strong>semantic decoder</strong> 和一个用于 <strong>CamRestaurants</strong> 的统计解码器（<em>statistical decoder</em>）。此外，PyDial 还为<strong>大多数领域</strong>提供了基于模板的语言生成，并为 <strong>CamRestaurants</strong> 提供了基于 LSTM 的生成器。因此，在 CamRestaurants 领域，实现统计对话完全有可能。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/pydial/" rel="tag"># pydial</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/65cbbd31.html" rel="prev" title="A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management">
+      <i class="fa fa-chevron-left"></i> A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/bc5ab764.html" rel="next" title="分析PyDial toolkit各个包的功能">
+      分析PyDial toolkit各个包的功能 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#摘要翻译"><span class="nav-number">1.</span> <span class="nav-text">摘要翻译</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">2.</span> <span class="nav-text">1 引言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pydial-架构"><span class="nav-number">3.</span> <span class="nav-text">2 PyDial 架构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#总体系统架构"><span class="nav-number">3.1.</span> <span class="nav-text">2.1 总体系统架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多领域对话系统架构"><span class="nav-number">3.2.</span> <span class="nav-text">2.2 多领域对话系统架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#主要原则"><span class="nav-number">3.3.</span> <span class="nav-text">2.3 主要原则</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实现"><span class="nav-number">4.</span> <span class="nav-text">3 实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一些领域"><span class="nav-number">5.</span> <span class="nav-text">4 一些领域</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">朱冲䶮</p>
+  <div class="site-description" itemprop="description">记录学习问题，积累做的 leetcode 题目</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">163</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">94</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+      <!-- 不蒜子/busuanzi -->
+      <div class="site-state-item site-state-posts">
+      	<span class="site-state-item-count">203.6k</span>
+      	<span class="site-state-item-name">总字数</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>zhihu</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div><script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="/lib/my-utils.js"></script>
+<!--图片缩放插件-->
+<script src="/lib/zoomify/zoomify.min.js"></script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- 背景插件 -->
+<script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<!-- 背景图片 -->
+<script>
+	function generateBG(count){
+		var bg_prefix = '/images/background/';
+		var bg =new Array();
+		for(var i = 0; i < count; i++){
+			bg[i] = bg_prefix + i + '.jpg';
+		}
+		bg.shuffle();
+		return bg;
+	}
+	$("body").backstretch(generateBG(11), {
+		duration:90000,//1min半一换
+		fade: 1500
+	});
+</script>
+<!-- 图片缩放 -->
+<script>
+$('.content img').zoomify({duration: 500, });
+$('.content img').on('zoom-in.zoomify', function () {
+	$('.sidebar').css('display', 'none');
+});
+$('.content img').on('zoom-out-complete.zoomify', function () {
+	$('.sidebar').css('display', '');
+});
+</script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/65623ba8.html',]
+      });
+      });
+  </script>
+<!-- calendar widget -->
+
+
+</body>
+</html>

@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="算法思想">
+<meta name="keywords" content="leetcode,分治法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【算法设计题目】分治法">
+<meta property="og:url" content="https://yan624.github.io/posts/3624b325.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="算法思想">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-06-14T10:57:59.301Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【算法设计题目】分治法">
+<meta name="twitter:description" content="算法思想">
+
+<link rel="canonical" href="https://yan624.github.io/posts/3624b325.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<!--图片缩放插件样式-->
+<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
+<!--阿里云矢量库样式-->
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_621sfmh583s.css" />
+
+        
+
+  <title>【算法设计题目】分治法 | 博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">低阶炼金术士</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-常用链接">
+
+    <a href="/常用链接" rel="section"><i class="fas fa-bookmark fa-fw"></i>常用链接</a>
+
+  </li>
+        <li class="menu-item menu-item-时间线">
+
+    <a href="/categories/timeline/" rel="section"><i class="iconfont icon-timeline fa-fw"></i>时间线</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">94</span></a>
+
+  </li>
+        
+            
+  <li class="menu-item menu-item-博客分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>博客分类</a>
+
+  </li>
+
+
+      
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">163</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    
+    	
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/3624b325.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【算法设计题目】分治法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-03-17 22:20:22" itemprop="dateCreated datePublished" datetime="2020-03-17T22:20:22+08:00">2020-03-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-14 18:57:59" itemprop="dateModified" datetime="2020-06-14T18:57:59+08:00">2020-06-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/algorithm/" itemprop="url" rel="index"><span itemprop="name">algorithm</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>930</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="算法思想">算法思想</h1>
+<p>   <a id="more"></a></p>
+<h1 id="最大子序和面试题16.17.连续数列面试题42.连续子数组的最大和">53. 最大子序和/面试题16.17.连续数列/面试题42.连续子数组的最大和</h1>
+<p>  这题想了很久没想出怎么做，最后是看了评论才想出来的。<mark class="label success">简单</mark>   主要是我都没做过分治法的题，由于思维定势，我一直在想“怎么才能将一个序列划分出各种可能的子序列”，然后我又觉得这根本不可能划分出来。   书上看的例子都是二分搜索、合并排序、快速排序等，所以我就觉得可以分割成一块一块最小的序列，然后比较每块的大小就可以解决了。但是比较左右两块的最大值无法得到最终解，因为一个子序列可能会横跨左右两个块，所以按照这个逻辑必须枚举所有的组合。   其实上述的思想已经对了一半了，主要是没经验。按照上述的思想继续往下，由于左右两部分的最大值是最容易求的，我们默认已经求得 max1，max2，那么我们只需要解决“子序列横跨左右两部分”的情况。   其实解决办法就是，逆序遍历左部，通过累加判断左部的最大值。正序遍历右部，通过累加判断右部的最大值。然后将二者相加就是“子序列横跨左右两部分”的最大值 max3。最后取 max1，max2，max3 的最大值即可。 <figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">import math</span><br><span class="line">class Solution:</span><br><span class="line">    def maxSubArray(self, nums: List[int]) -&gt; int:</span><br><span class="line">        def rec(low, high):</span><br><span class="line">            <span class="comment"># 划分到最简便时，返回当前值</span></span><br><span class="line">            <span class="keyword">if</span> high == low:</span><br><span class="line">                <span class="literal">return</span> nums[low]</span><br><span class="line">            <span class="comment"># 计算中间索引</span></span><br><span class="line">            <span class="keyword">mid</span> = math.floor((high - low) / <span class="number">2</span>) + low</span><br><span class="line">            <span class="comment"># 计算 mid 以左的最大值</span></span><br><span class="line">            max_left = rec(low, <span class="keyword">mid</span>)</span><br><span class="line">            <span class="comment"># 计算 mid 以右的最大值</span></span><br><span class="line">            max_right = rec(<span class="keyword">mid</span> + <span class="number">1</span>, high)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 以下均为计算横跨 mid 的序列的最大值</span></span><br><span class="line">            left_max = nums[<span class="keyword">mid</span>]</span><br><span class="line">            accumulation = left_max</span><br><span class="line">            <span class="keyword">for</span> <span class="keyword">item</span> <span class="keyword">in</span> reversed(nums[low: <span class="keyword">mid</span>]):</span><br><span class="line">                accumulation += <span class="keyword">item</span></span><br><span class="line">                left_max = accumulation <span class="keyword">if</span> accumulation &gt; left_max <span class="keyword">else</span> left_max</span><br><span class="line">            </span><br><span class="line">            right_max = nums[<span class="keyword">mid</span> + <span class="number">1</span>]</span><br><span class="line">            accumulation = right_max</span><br><span class="line">            <span class="keyword">for</span> <span class="keyword">item</span> <span class="keyword">in</span> nums[<span class="keyword">mid</span> + <span class="number">2</span>: high + <span class="number">1</span>]:</span><br><span class="line">                accumulation += <span class="keyword">item</span></span><br><span class="line">                right_max = accumulation <span class="keyword">if</span> accumulation &gt; right_max <span class="keyword">else</span> right_max</span><br><span class="line">            <span class="comment"># 返回三者的最大值</span></span><br><span class="line">            <span class="literal">return</span> <span class="built_in">max</span>(max_left, max_right, left_max + right_max)</span><br><span class="line">        <span class="literal">return</span> rec(<span class="number">0</span>, <span class="built_in">len</span>(nums) - <span class="number">1</span>)</span><br></pre></td></tr></table></figure></p>
+<h1 id="多数元素面试题39.-数组中出现次数超过一半的数字面试题17.10.主要元素">169. 多数元素/面试题39. 数组中出现次数超过一半的数字/面试题17.10.主要元素</h1>
+<p>  此题的关键是题目允许你<em>可以假设数组是非空的，并且给定的数组总是存在多数元素</em>。<mark class="label success">简单</mark></p>
+<ol type="1">
+<li>首先判断左部出现最多的数 <code>left</code></li>
+<li>其次判断右部出现最多的数 <code>right</code></li>
+<li>如果 <code>left</code> 与 <code>right</code> 相等，则任意返回一个数</li>
+<li>否则遍历两部分，判断 <code>left</code> 与 <code>right</code> 两个值，到底哪个出现最多次。
+<ol type="1">
+<li>例如 <code>5 5 6 6 | 6 6 6 6</code>。对于左侧的 <code>55|66</code>，我们再次划分出左右两部分，我们首先得出 <code>5</code> 与 <code>6</code> 分别是最常出现的数</li>
+<li>于是遍历 <code>5566</code>，以此判断 <code>5</code> 与 <code>6</code> 哪个出现最多次，返回出现最多次的那一个</li>
+<li>但是题目中是相等的，直觉来讲，我们无法判断出应该返回哪个，因为我们还没考虑右半部分，比如 <code>5566|6689</code>，如果返回 <code>5</code>，那么是不妥的，因为明明 <code>6</code> 才是出现最多次的。返回 <code>6</code>，对于 <code>5566|5589</code>，则是不妥的。</li>
+<li>但是实际上可以任意返回一个值，因为我们已经假定了<strong>数组总是存在多数元素</strong>，这就意味着这个“多数”必定存在于左右其中一部分。所以我们总能找到这个数。</li>
+<li>但是假设数组中并不是总是存在“多数”，则该算法实际上是错误的。 <figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">class Solution:</span><br><span class="line">    def majorityElement(self, num<span class="variable">s:</span> List[<span class="keyword">int</span>]) -&gt; in<span class="variable">t:</span></span><br><span class="line">        def <span class="keyword">rec</span>(low, high):</span><br><span class="line">            <span class="keyword">if</span> low == high:</span><br><span class="line">                <span class="keyword">return</span> nums[low]</span><br><span class="line">            mid = (high - low) // <span class="number">2</span> + low</span><br><span class="line">            <span class="keyword">left</span> = <span class="keyword">rec</span>(low, mid)</span><br><span class="line">            <span class="keyword">right</span> = <span class="keyword">rec</span>(mid + <span class="number">1</span>, high)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">left</span> == righ<span class="variable">t:</span></span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">left</span></span><br><span class="line">            left_count = sum(<span class="number">1</span> <span class="keyword">for</span> item in nums[<span class="keyword">lo</span><span class="variable">w:</span> high + <span class="number">1</span>] <span class="keyword">if</span> item == <span class="keyword">left</span>)</span><br><span class="line">            right_count = sum(<span class="number">1</span> <span class="keyword">for</span> item in nums[<span class="keyword">lo</span><span class="variable">w:</span> high + <span class="number">1</span>] <span class="keyword">if</span> item == <span class="keyword">right</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">left</span> <span class="keyword">if</span> left_count &gt;= right_count <span class="keyword">else</span> <span class="keyword">right</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">rec</span>(<span class="number">0</span>, <span class="built_in">len</span>(nums) - <span class="number">1</span>)</span><br></pre></td></tr></table></figure></li>
+</ol></li>
+</ol>
+<h1 id="面试题40.-最小的k个数">面试题40. 最小的k个数</h1>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/leetcode/" rel="tag"># leetcode</a>
+              <a href="/tags/分治法/" rel="tag"># 分治法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/36b672d2.html" rel="prev" title="Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems">
+      <i class="fa fa-chevron-left"></i> Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/f592f293.html" rel="next" title="【算法设计题目】动态规划">
+      【算法设计题目】动态规划 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#算法思想"><span class="nav-number">1.</span> <span class="nav-text">算法思想</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#最大子序和面试题16.17.连续数列面试题42.连续子数组的最大和"><span class="nav-number">2.</span> <span class="nav-text">53. 最大子序和/面试题16.17.连续数列/面试题42.连续子数组的最大和</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#多数元素面试题39.-数组中出现次数超过一半的数字面试题17.10.主要元素"><span class="nav-number">3.</span> <span class="nav-text">169. 多数元素/面试题39. 数组中出现次数超过一半的数字/面试题17.10.主要元素</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#面试题40.-最小的k个数"><span class="nav-number">4.</span> <span class="nav-text">面试题40. 最小的k个数</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">朱冲䶮</p>
+  <div class="site-description" itemprop="description">记录学习问题，积累做的 leetcode 题目</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">163</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">94</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+      <!-- 不蒜子/busuanzi -->
+      <div class="site-state-item site-state-posts">
+      	<span class="site-state-item-count">203.6k</span>
+      	<span class="site-state-item-name">总字数</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>zhihu</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div><script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="/lib/my-utils.js"></script>
+<!--图片缩放插件-->
+<script src="/lib/zoomify/zoomify.min.js"></script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- 背景插件 -->
+<script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<!-- 背景图片 -->
+<script>
+	function generateBG(count){
+		var bg_prefix = '/images/background/';
+		var bg =new Array();
+		for(var i = 0; i < count; i++){
+			bg[i] = bg_prefix + i + '.jpg';
+		}
+		bg.shuffle();
+		return bg;
+	}
+	$("body").backstretch(generateBG(11), {
+		duration:90000,//1min半一换
+		fade: 1500
+	});
+</script>
+<!-- 图片缩放 -->
+<script>
+$('.content img').zoomify({duration: 500, });
+$('.content img').on('zoom-in.zoomify', function () {
+	$('.sidebar').css('display', 'none');
+});
+$('.content img').on('zoom-out-complete.zoomify', function () {
+	$('.sidebar').css('display', '');
+});
+</script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/3624b325.html',]
+      });
+      });
+  </script>
+<!-- calendar widget -->
+
+
+</body>
+</html>

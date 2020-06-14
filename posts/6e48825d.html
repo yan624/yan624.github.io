@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="pytorch zero grad 改变tensor形状 矩阵乘法 loss function pytorch nn 操作张量    本文只记录框架层面的使用。关于深度学习层面的研究记录在 神经网络训练技巧（tricks）。  view、reshape和resize_   结论写在前面：张量连续，使用 view()（此为多数情况）；张量不连续，则使用 reshape()。resize_(">
+<meta name="keywords" content="4me">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一些常用的pytorch技巧">
+<meta property="og:url" content="https://yan624.github.io/posts/6e48825d.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="pytorch zero grad 改变tensor形状 矩阵乘法 loss function pytorch nn 操作张量    本文只记录框架层面的使用。关于深度学习层面的研究记录在 神经网络训练技巧（tricks）。  view、reshape和resize_   结论写在前面：张量连续，使用 view()（此为多数情况）；张量不连续，则使用 reshape()。resize_(">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-06-14T10:57:54.895Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一些常用的pytorch技巧">
+<meta name="twitter:description" content="pytorch zero grad 改变tensor形状 矩阵乘法 loss function pytorch nn 操作张量    本文只记录框架层面的使用。关于深度学习层面的研究记录在 神经网络训练技巧（tricks）。  view、reshape和resize_   结论写在前面：张量连续，使用 view()（此为多数情况）；张量不连续，则使用 reshape()。resize_(">
+
+<link rel="canonical" href="https://yan624.github.io/posts/6e48825d.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<!--图片缩放插件样式-->
+<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
+<!--阿里云矢量库样式-->
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_621sfmh583s.css" />
+
+        
+
+  <title>一些常用的pytorch技巧 | 博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">低阶炼金术士</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-常用链接">
+
+    <a href="/常用链接" rel="section"><i class="fas fa-bookmark fa-fw"></i>常用链接</a>
+
+  </li>
+        <li class="menu-item menu-item-时间线">
+
+    <a href="/categories/timeline/" rel="section"><i class="iconfont icon-timeline fa-fw"></i>时间线</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">94</span></a>
+
+  </li>
+        
+            
+  <li class="menu-item menu-item-博客分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>博客分类</a>
+
+  </li>
+
+
+      
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">163</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    
+    	
+        <!-- 弹窗插件 -->
+    		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
+        <script type="text/javascript" src="/lib/spop/spop.min.js"></script>
+        <!--判断此文是否为特殊的文章-->
+        <script>
+          var templateSentence = '这是条不可能出现的弹窗提示。';
+          if('4me' == '学习笔记')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记，并非教学，其中可能含有理论错误。';
+          else if('4me' == '4me')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
+          spop({
+            template: templateSentence,
+            group: 'tips',
+            position  : 'bottom-center',
+            style: 'success',
+            autoclose: 5500,
+            onOpen: function () {
+              //这里设置灰色背景色
+            },
+            onClose: function() {
+              //这里可以取消背景色
+              spop({
+                template: 'ε = = (づ′▽`)づ',
+                group: 'tips',
+                position  : 'bottom-center',
+                style: 'success',
+                autoclose: 1500
+              });
+            }
+          });
+        </script>
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/6e48825d.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          一些常用的pytorch技巧
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-24 16:29:42" itemprop="dateCreated datePublished" datetime="2020-04-24T16:29:42+08:00">2020-04-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-14 18:57:54" itemprop="dateModified" datetime="2020-06-14T18:57:54+08:00">2020-06-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/framework/" itemprop="url" rel="index"><span itemprop="name">framework</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="note default"><p><mark class="label info">pytorch</mark> <mark class="label warning">zero grad</mark> <mark class="label success">改变tensor形状</mark> <mark class="label primary">矩阵乘法</mark> <mark class="label info">loss function</mark> <mark class="label danger">pytorch nn</mark> <mark class="label success">操作张量</mark></p>
+</div>
+<div class="note warning"><p>  本文只记录框架层面的使用。关于深度学习层面的研究记录在 <a href="https://yan624.github.io/·zcy/AI/nlp/神经网络训练技巧（tricks）.html">神经网络训练技巧（tricks）</a>。</p>
+</div>
+<h1 id="viewreshape和resize_">view、reshape和resize_</h1>
+<p>  <strong>结论写在前面</strong>：张量连续，使用 <code>view()</code>（此为多数情况）；张量不连续，则使用 <code>reshape()</code>。<code>resize_()</code> 最好不要使用。注意，在张量不连续的情况下，非要使用 <code>view()</code> 也可以，但是要先调用 <code>contiguous()</code> 方法，使得张量连续，但是此方法会返回一个新的张量，浪费时间空间。   <strong>共同点</strong>：这些方法都可以改变 pytorch 中 tensor 的形状，但是它们略有不同。</p>
+<ol type="1">
+<li>view()：只能改变连续的（contiguous）张量，且返回的张量与原张量的数据是共享的。在张量不连续的情况下，硬要使用此方法，需要在使用之前使用 <code>tensor.contiguous()</code>。</li>
+<li>reshape()：对张量是否连续无要求，且<strong>可能</strong>返回的原张量的拷贝（这个“可能”是字面意思，开发者指出，你永远无法预先知道返回的张量是否为拷贝版本。参考 <a href="https://stackoverflow.com/questions/49643225/whats-the-difference-between-reshape-and-view-in-pytorch?utm_medium=organic&amp;utm_source=google_rich_qa&amp;utm_campaign=google_rich_qa" target="_blank" rel="noopener">stackoverflow 回答</a>）。</li>
+<li>resize_()：与上述二者有较大差别，此方法可以无视原张量的形状，进行随意变化。如果元素的数量大于原张量的元素数量，那么底层的存储大小会进行调整，即会进行扩容。小于，则存储空间不做变化。参考《<a href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor.resize_" target="_blank" rel="noopener">pytorch 文档</a>》。 <div class="note warning"><p>  这是一个底层的方法，大多数情况可以使用 <code>view()</code> 或者 <code>reshape()</code>。想要使用自定义步长改变张量内置的大小，请使用 <code>set_()</code>。总而言之，就是最好不要用这个方法。</p>
+</div> <a id="more"></a></li>
+</ol>
+<h2 id="不连续的张量的说明">不连续的张量的说明</h2>
+<p>  如果对 tensor 使用 <code>transpose</code>，<code>permute</code> 等操作会使该 tensor 在内存中变得不再连续。例如，以下代码在使用 <code>view()</code> 方法后会报出 <code>RuntimeError: view size is not compatible with input tensor's size and stride (at least one dimension spans across two contiguous subspaces). Use .reshape(...) instead.</code> 的错误。 <div class="note info"><p>  至于为什么 pytorch 有这种“连续的”设定，这就要从 pytorch 的底层讲起了，又是要几条博客才能解释（ps：关键是我也不懂），不过可以参考《<a href="https://zhuanlan.zhihu.com/p/64551412" target="_blank" rel="noopener">PyTorch 中的 contiguous</a>》。</p>
+</div></p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">tensor = torch.Tensor([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">8</span>, <span class="number">9</span>, <span class="number">0</span>]])</span><br><span class="line"># 正常输出</span><br><span class="line">print(tensor.transpose(<span class="number">1</span>, <span class="number">0</span>).reshape(<span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line">print(tensor.permute(<span class="number">1</span>, <span class="number">0</span>).reshape(<span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line">print(tensor.T.reshape(<span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line"># 报错</span><br><span class="line">print(tensor.transpose(<span class="number">1</span>, <span class="number">0</span>).view(<span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line">print(tensor.permute(<span class="number">1</span>, <span class="number">0</span>).view(<span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line">print(tensor.T.view(<span class="number">2</span>, <span class="number">3</span>))</span><br></pre></td></tr></table></figure>
+<h2 id="contiguous的解释">contiguous()的解释</h2>
+<p>  此外，运行以下代码可以得出非连续张量在使用 <code>contiguous()</code> 后会返回一个新的张量，它会重新开辟一块内存，并按照行优先一维展开顺序重新存储原张量。取自 <a href="https://zhuanlan.zhihu.com/p/64551412" target="_blank" rel="noopener">PyTorch 中的 contiguous#为什么需要 contiguous ？</a>。 <figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">tensor1 = torch.Tensor([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">8</span>, <span class="number">9</span>, <span class="number">0</span>]])</span><br><span class="line">tensor2 = tensor1.transpose(<span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line"># 转置前后，张量并无区别</span><br><span class="line">print(tensor1.dat<span class="built_in">a_ptr</span>() == tensor2.dat<span class="built_in">a_ptr</span>())# <span class="literal">True</span></span><br><span class="line"># 对连续张量（tensor1）使用 contiguous() 是无意义的，无论是否转置都是同一个张量</span><br><span class="line">tensor3 = tensor1.contiguous()</span><br><span class="line">print(tensor3.dat<span class="built_in">a_ptr</span>() == tensor2.dat<span class="built_in">a_ptr</span>(), tensor3.dat<span class="built_in">a_ptr</span>() == tensor1.dat<span class="built_in">a_ptr</span>())# <span class="literal">True</span> <span class="literal">True</span></span><br><span class="line"># 对非连续张量（tensor2）使用会返回一个新的张量，无论是否转置都不是同一个张量</span><br><span class="line">tensor4 = tensor2.contiguous()</span><br><span class="line">print(tensor4.dat<span class="built_in">a_ptr</span>() == tensor2.dat<span class="built_in">a_ptr</span>(), tensor4.dat<span class="built_in">a_ptr</span>() == tensor1.dat<span class="built_in">a_ptr</span>())# <span class="literal">False</span> <span class="literal">False</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="参考资料">参考资料</h2>
+<ol type="1">
+<li><a href="https://blog.csdn.net/qq_39507748/article/details/105381089" target="_blank" rel="noopener">pytorch 学习笔记五：pytorch 中 reshape、view 以及 resize 之间的区别</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/64551412" target="_blank" rel="noopener">PyTorch 中的 contiguous</a></li>
+<li><a href="https://stackoverflow.com/questions/49643225/whats-the-difference-between-reshape-and-view-in-pytorch?utm_medium=organic&amp;utm_source=google_rich_qa&amp;utm_campaign=google_rich_qa" target="_blank" rel="noopener">What's the difference between reshape and view in pytorch?</a></li>
+</ol>
+<h1 id="矩阵乘法">矩阵乘法</h1>
+<p>  pytorch 拥有多种矩阵乘法计算的函数，包括但不限于 <code>torch.mul()</code>，<code>torch.dot()</code>，<code>torch.mm()</code>，<code>torch.bmm()</code>，<code>torch.matmul()</code>。</p>
+<h2 id="矩阵相乘">矩阵相乘</h2>
+<p>  <code>torch.dot()</code> 属于向量点积。   <code>torch.mm()</code>，<code>torch.bmm()</code>，<code>torch.matmul()</code> 都属于矩阵相乘。</p>
+<ol type="1">
+<li>torch.mm()：二维矩阵相乘，它只能处理二维矩阵，对于其它维度需要使用 <code>torch.matmul()</code>。注意：如果你需要计算一个矩阵和一个向量的乘法，那么这个向量在框架角度来讲要是二维的。也就是说向量的 shape=(x, 1)，而不能是 shape=(x, )。</li>
+<li>torch.bmm()：与 <code>torch.mm()</code> 一样，只能处理二维矩阵，但是它被用于计算具有批次这个维度的矩阵，也就是说相乘的两个矩阵实际上是三维的。例如矩阵 <span class="math inline">\(A_{32 \times 3 \times 4}\)</span> 和 <span class="math inline">\(B_{32 \times 4 \times 3}\)</span>，其中 32 是它们的批次大小，32 之后的维度还是要按照矩阵相乘的规则。<strong>它在神经网络计算中被频繁使用，因为数据通常都是被一批一批得输入进神经网络。注意，<code>torch.bmm()</code> 只是一个特例（带有批次属性的二维矩阵），如果需要计算高维矩阵的相乘，必须使用 <code>torch.matmul()</code>。</strong> <div class="note info"><p>  注意，<code>torch.bmm()</code> 的输入只能是 3 维，它不能进行广播。广播矩阵相乘请使用 <code>torch.matmul()</code>。</p>
+</div></li>
+<li>torch.matmul()：执行的乘法操作取决于输入张量的维度。
+<ol type="1">
+<li>如果都是 1 维，则点乘；</li>
+<li>如果都是 2 维，则计算二维矩阵相乘；</li>
+<li>如果第一个张量是 1 维，第二个是 2 维，则广播第一个张量，进行二维矩阵相乘计算；</li>
+<li>如果第一个张量是 2 维，第二个是 1 维，则计算矩阵 * 向量；</li>
+<li>如果二者至少都是 1 维，且至少一个参数是 N 维（N &gt; 2）。非矩阵的维度将被广播，矩阵维度一般指每个张量的最后一至两位。如 shape=(1, 2, 3, 4) 和 shape=(1, 4, 3)，最后两位是矩阵维度；shape=(1, 2, 3, 4) 和 shape=(4)，第一个张量的最后两位和第二个张量的最后一位就是矩阵维度。</li>
+</ol></li>
+</ol>
+<p>  综上，其实没有高维矩阵相乘的概念，一直都是在做矩阵-矩阵/向量乘法，张量中其他的维度只被用于广播。</p>
+<h2 id="矩阵对应元素相乘">矩阵对应元素相乘</h2>
+  <code>torch.mul()</code> 是对应元素的乘法，例如 $
+<span class="math display">\[\begin{pmatrix}1 &amp; 2 \end{pmatrix}\]</span>
+
+<span class="math display">\[\begin{pmatrix}3 &amp; 6 \end{pmatrix}\]</span>
+=
+<span class="math display">\[\begin{pmatrix}3 &amp; 12 \end{pmatrix}\]</span>
+<p>$。它主要分为两种情况：</p>
+<ol type="1">
+<li>张量乘标量：这个很好理解，就是一个张量乘上一个数字。</li>
+<li>张量乘张量：对应元素相乘，<strong>如果两个张量的形状不同，则需要满足能够广播的前提</strong>。如果不满足，则报错。张量广播的机制具体看下面的章节。</li>
+</ol>
+<h2 id="广播机制">广播机制</h2>
+<p>  设现有张量 A，B。广播机制分为两种情况：1）张量的维度不同；2）张量的维度相同。   本来想写的，但是博客<a href="https://blog.csdn.net/littlehaes/article/details/103807303" target="_blank" rel="noopener">《pytorch 中的广播机制》</a>中已经写明白了。此外这些都是经验之说，我在实践过程中发现 A.ndim &lt; B.ndim 也可以进行计算。以后看比较权威的书之后，再来更新吧。   但是有一点比较清楚，广播机制只有 <code>torch.mat.mul()</code> 支持。</p>
+<h2 id="参考资料-1">参考资料</h2>
+<ol type="1">
+<li><a href="https://pytorch.org/docs/stable/torch.html" target="_blank" rel="noopener">pytorch 官方文档</a></li>
+<li><a href="https://pytorch.org/docs/stable/torch.html" target="_blank" rel="noopener">pytorch 中的广播机制</a></li>
+</ol>
+<h1 id="pytorch-loss-function">pytorch loss function</h1>
+<p>  pytorch 的多元分类 loss 有 CrossEntropyLoss 和 NLLLoss。NLLLoss 全称 Negative Log Likelihood Loss，说白了就是求对数概率并取负，我们从函数图像就可以理解。模型输出的概率分布在 0-1 之间，log 函数的 0-1 区间正好全是负数，所以要加上一个负号，让 loss 值为正数。显而易见，概率越接近 1，loss 值越小。接下来描述一下这两个函数。 1. CrossEntropyLoss = LogSoftmax + NLLLoss； 2. CrossEntropyLoss 中已经附带了 log_softmax 操作，所以如果你想省事，那么直接将输出向量输入 CrossEntropyLoss 即可； 3. 如果使用 NLLLoss，那么在使用 NLLLoss 之前，还需要经过一层 LogSoftmax。</p>
+<p>  需要注意一点，我感觉网上很多人也没有理解什么是 CrossEntropyLoss，导致很多人都被误导了。首先 nll 的公式如下： <span class="math display">\[
+nll\_loss = -log(pred)
+\]</span> <div class="note warning"><p>  nll loss 可以有多种表达方式，我把在网上看到的公式都罗列一下。   以下的公式与 crossentropy 一样。（实际上公式就是一样的，只不过在概念上有点不同，由于输出值 y 是 one hot 形式，为 0 时，就相当于没有加，最后的结果就是上面的公式） <span class="math display">\[
+nll\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred)
+\]</span>   这里的 class 就是指第几个标签，它不是 one hot 表示形式。大家会发现这里少了一个 log 函数，实际上 pred 是使用 log_softmax 函数计算之后的结果。 <span class="math display">\[
+nll\_loss = -pred[class]
+\]</span></p>
+</div></p>
+<p>  CrossEntropyLoss 公式如下： <span class="math display">\[
+crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i)
+\]</span>   <del>无法理解的原因之一是，在学机器学习的时候，大家都知道啥是 crossentropy，后来在学多元分类时，开始分 binary_crossentropy 和 crossentropy。这点大家都能理解，但是到看到 NLLLoss 时，就开始懵逼了。</del>   <del>由于 CrossEntropyLoss = LogSoftmax + NLLLoss，在 crossentropy 的公式中貌似没有出现 softmax（更没有 log_softmax），所以开始懵了，无法理解其中的 LogSoftmax 是干啥的。</del>   首先我要解释一点 CrossEntropyLoss 是 LogSoftmax 和 NLLLoss 两个步骤之和，之前说的“+”号，并非是数学意义上的加号。也就是说，CrossEntropyLoss 就比 NLLLoss 多做了一步 LogSoftmax（<strong>博主注</strong>：<em>个人认为实际上只是多做了一步 softmax，说多做了一步 log_softmax，是因为站在 pytorch 框架的角度</em>）。   其次，对于真实输出值 y 来说，无非就是 0 和 1（注意多元分类也只有 0 和 1），并且根据上述 crossentropy 的公式。实际上公式可以化简为以下所示，其中的 m 代表真实值为 1 的索引。 <span class="math display">\[
+crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)
+\]</span>   请注意这里的 <span class="math inline">\(pred_m\)</span>。我们都知道在进行分类问题时，我们需要将输出结果置于 0-1 之间，对于二元分类我们使用 sigmoid 函数，对于多元分类我们使用 softmax（到这开始有内味了）。由于分类问题都是要这么做的，所以将 softmax 这个函数放到公式 <span class="math inline">\(crossentropy\_loss = -log(pred_m)\)</span> 中，我们惊奇的发现 crossentropy 函数变成了 log_softmax（最前面的负号暂时不看）。即 crossentropy + softmax = -log_softmax。 <div class="note warning"><p>  请始终留意，pred 是一个向量通过 softmax/log_softmax 计算之后的值。</p>
+</div></p>
+<p>  最后你会发现这样还是不对。<span class="math inline">\(nll\_loss = -log(pred)\)</span>，之前说 CrossEntropyLoss = <strong>LogSoftmax</strong> + NLLLoss，我把 log_softmax 放到 nll 里，变成了 <span class="math inline">\(LogSoftmax + NLLLoss = -log(log(pred))\)</span>，怎么多了一个 log？实际上 nll 的公式应该以 <span class="math inline">\(nll\_loss = -pred[class]\)</span> 为准，你会发现这个公式中没有 log 函数。这样将 logsoftmax 放入 nll loss 中，就正好是 crossentropy 了。   那么你就会问 nll 明明是 Negative Log Liklihood，log 不见了，这不就是名存实亡了？   <strong>这可能是因为 pytorch 想要简化操作，才这么设置的，别的框架可能并不是这样。简而言之，pytorch 框架中，nll loss 的公式是 -pred。crossentropy 的公式是 logsoftmax + nll loss，即 nll(log_softmax(output))</strong>   <strong>也就是说，如果神经网络的最后一层输出是 logsoftmax，那么就使用 nll loss（上一段 nll loss 那个 pred 就是通过 log_softmax 的输出值）。如果最后一层只是输出，偷懒不想写 logsoftmax，那么就使用 crossentropy loss（上一段 crossentropy 中的 output 就是一个普通的神经网络输出）。</strong></p>
+<h2 id="顺便一提kldivloss">顺便一提KLDivLoss</h2>
+<p>  <a href="https://www.cnblogs.com/charlotte77/p/5392052.html" target="_blank" rel="noopener">【原】浅谈KL散度（相对熵）在用户画像中的应用</a>   暂时还没用过这个 loss，简单来说，是用来比较两个概率分布之间的信息熵差异，如 AB 两组群体，有对某一商品的总消费分布 P 和群体人数的分布 Q，可以计算 PQ 之间的信息熵差异，从而获得 AB 两组群体对该商品的偏爱程度。</p>
+<h2 id="参考资料-2">参考资料</h2>
+<ol type="1">
+<li><a href="http://blog.leanote.com/post/lee-romantic/crossentry" target="_blank" rel="noopener">CrossEntropyLoss和NLLLoss的理解</a></li>
+<li><a href="https://www.cnblogs.com/ranjiewen/p/10059490.html" target="_blank" rel="noopener">Pytorch之CrossEntropyLoss() 与 NLLLoss() 的区别</a></li>
+<li><a href="https://blog.csdn.net/m0_38133212/article/details/88087206" target="_blank" rel="noopener">CrossEntropyLoss与NLLLoss的总结</a></li>
+<li><a href="https://www.cnblogs.com/marsggbo/p/10401215.html" target="_blank" rel="noopener">Pytorch里的CrossEntropyLoss详解</a></li>
+</ol>
+<h1 id="pytorch中的神经网络">pytorch中的神经网络</h1>
+<h2 id="lstm">LSTM</h2>
+<p>  关于 nn.LSTM 的用法：如果不想手动初始化隐藏状态，而是想让 pytorch 帮你初始化，那么就只需要填入输入值即可。举个例子，下面代码框中的代码所输入的自然语句是 ['how are you', 'i'm fine']。   其中输入值 x 的形状为 (seq_len, batch_size, input_size)，对应上面的例子就是 (3, 2, 300)，代表序列长度为 3（因为上面的两句话的最大长度为 3），批量大小为 2，词向量维度为 300。需要注意的是：<strong>pytorch 会根据你输入的序列长度</strong>（输入的张量必须是一样长的，参差不齐的张量无法输入，当然了，你也无法创建出这样的张量）<strong>自动地在时间步上做计算，不需要你写一个循环，然后依次输入每一个单词的词向量。</strong> <figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cell = nn.<span class="constructor">LSTM(<span class="params">input_size</span>, <span class="params">hidden_size</span>, <span class="params">num_layers</span>)</span></span><br><span class="line">output, (a, m) = cell(x)</span><br></pre></td></tr></table></figure></p>
+<h1 id="张量操作">张量操作</h1>
+<h2 id="expand">expand()</h2>
+<p>  <code>expand()</code> 函数按照你想要的大小扩充 tensor，并且<strong>返回一个新的 tensor</strong>。注意它是 tensor 的成员方法，并且你所想要新 tensor 的维度必须与原 tensor 的维度相同。例如，原 tensor.shape=(3, 1)，那么你可以扩大为 (3, 4)，但是你不能扩大为 (3, 1, 1)，当然更不能为 (3, 1, 4)。举个例子： <figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">x = torch.Tensor([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>]])</span><br><span class="line"># (<span class="number">3</span>, <span class="number">1</span>)</span><br><span class="line">print(x.shape)</span><br><span class="line">y = x.expand(<span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line"># (<span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line">print(y.shape)</span><br><span class="line"># error</span><br><span class="line">x.expand(<span class="number">3</span>, <span class="number">1</span>, <span class="number">1</span>)</span><br></pre></td></tr></table></figure></p>
+<h1 id="optimizer.zero_grad">optimizer.zero_grad()</h1>
+<p>  在 pytorch 中，为什么要在每个循环之初调用这个方法？因为 pytorch 把计算的每个梯度都累加起来，并不会每迭代一次就将梯度清零。这样做看起来令人费解，并反常理。但是实际上这样做可以做更多神奇的操作，比如</p>
+<ul>
+<li><a href="https://www.zhihu.com/question/303070254" target="_blank" rel="noopener">https://www.zhihu.com/question/303070254</a></li>
+</ul>
+<p>  还有，试想本来你想运行 batch_size=1024，但是由于电脑太差，只能运行 batch_size=256 的批次数据。那么只需要每循环两次调用一次 zero_grad() 即可。   参考：</p>
+<ol type="1">
+<li><a href="https://blog.csdn.net/u011959041/article/details/102760868" target="_blank" rel="noopener">pytorch中为什么要用 zero_grad() 将梯度清零</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/4me/" rel="tag"># 4me</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/119cad78.html" rel="prev" title="科研中用到的python技巧">
+      <i class="fa fa-chevron-left"></i> 科研中用到的python技巧
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/8071918e.html" rel="next" title="神经网络训练技巧（tricks）">
+      神经网络训练技巧（tricks） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#viewreshape和resize_"><span class="nav-number">1.</span> <span class="nav-text">view、reshape和resize_</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#不连续的张量的说明"><span class="nav-number">1.1.</span> <span class="nav-text">不连续的张量的说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#contiguous的解释"><span class="nav-number">1.2.</span> <span class="nav-text">contiguous()的解释</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">1.3.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#矩阵乘法"><span class="nav-number">2.</span> <span class="nav-text">矩阵乘法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#矩阵相乘"><span class="nav-number">2.1.</span> <span class="nav-text">矩阵相乘</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#矩阵对应元素相乘"><span class="nav-number">2.2.</span> <span class="nav-text">矩阵对应元素相乘</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#广播机制"><span class="nav-number">2.3.</span> <span class="nav-text">广播机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料-1"><span class="nav-number">2.4.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pytorch-loss-function"><span class="nav-number">3.</span> <span class="nav-text">pytorch loss function</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#顺便一提kldivloss"><span class="nav-number">3.1.</span> <span class="nav-text">顺便一提KLDivLoss</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料-2"><span class="nav-number">3.2.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pytorch中的神经网络"><span class="nav-number">4.</span> <span class="nav-text">pytorch中的神经网络</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#lstm"><span class="nav-number">4.1.</span> <span class="nav-text">LSTM</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#张量操作"><span class="nav-number">5.</span> <span class="nav-text">张量操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#expand"><span class="nav-number">5.1.</span> <span class="nav-text">expand()</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#optimizer.zero_grad"><span class="nav-number">6.</span> <span class="nav-text">optimizer.zero_grad()</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">朱冲䶮</p>
+  <div class="site-description" itemprop="description">记录学习问题，积累做的 leetcode 题目</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">163</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">94</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+      <!-- 不蒜子/busuanzi -->
+      <div class="site-state-item site-state-posts">
+      	<span class="site-state-item-count">203.6k</span>
+      	<span class="site-state-item-name">总字数</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>zhihu</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div><script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="/lib/my-utils.js"></script>
+<!--图片缩放插件-->
+<script src="/lib/zoomify/zoomify.min.js"></script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- 背景插件 -->
+<script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<!-- 背景图片 -->
+<script>
+	function generateBG(count){
+		var bg_prefix = '/images/background/';
+		var bg =new Array();
+		for(var i = 0; i < count; i++){
+			bg[i] = bg_prefix + i + '.jpg';
+		}
+		bg.shuffle();
+		return bg;
+	}
+	$("body").backstretch(generateBG(11), {
+		duration:90000,//1min半一换
+		fade: 1500
+	});
+</script>
+<!-- 图片缩放 -->
+<script>
+$('.content img').zoomify({duration: 500, });
+$('.content img').on('zoom-in.zoomify', function () {
+	$('.sidebar').css('display', 'none');
+});
+$('.content img').on('zoom-out-complete.zoomify', function () {
+	$('.sidebar').css('display', '');
+});
+</script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/6e48825d.html',]
+      });
+      });
+  </script>
+<!-- calendar widget -->
+
+
+</body>
+</html>

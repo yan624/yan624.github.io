@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="推荐的论文    类型 技术     tricks    模型    优化器    word embedding fasttext   nlp任务模型     参考： 1. 深度学习入门必看的书和论文？有哪些必备的技能需学习？，直接定位作者：景略集智。">
+<meta name="keywords" content="博客，java，javaWeb，NLP，python，机器学习，深度学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习意见">
+<meta property="og:url" content="https://yan624.github.io/posts/31cda16b.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="推荐的论文    类型 技术     tricks    模型    优化器    word embedding fasttext   nlp任务模型     参考： 1. 深度学习入门必看的书和论文？有哪些必备的技能需学习？，直接定位作者：景略集智。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-06-09T07:37:56.389Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="学习意见">
+<meta name="twitter:description" content="推荐的论文    类型 技术     tricks    模型    优化器    word embedding fasttext   nlp任务模型     参考： 1. 深度学习入门必看的书和论文？有哪些必备的技能需学习？，直接定位作者：景略集智。">
+
+<link rel="canonical" href="https://yan624.github.io/posts/31cda16b.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<!--图片缩放插件样式-->
+<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
+<!--阿里云矢量库样式-->
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_621sfmh583s.css" />
+
+        
+
+  <title>学习意见 | 博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">低阶炼金术士</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-常用链接">
+
+    <a href="/常用链接" rel="section"><i class="fas fa-bookmark fa-fw"></i>常用链接</a>
+
+  </li>
+        <li class="menu-item menu-item-时间线">
+
+    <a href="/categories/timeline/" rel="section"><i class="iconfont icon-timeline fa-fw"></i>时间线</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">94</span></a>
+
+  </li>
+        
+            
+  <li class="menu-item menu-item-博客分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>博客分类</a>
+
+  </li>
+
+
+      
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">163</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    
+
+    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/31cda16b.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          学习意见
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-11-28 17:10:47" itemprop="dateCreated datePublished" datetime="2019-11-28T17:10:47+08:00">2019-11-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-09 15:37:56" itemprop="dateModified" datetime="2020-06-09T15:37:56+08:00">2020-06-09</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="推荐的论文">推荐的论文</h1>
+<table>
+<thead>
+<tr class="header">
+<th>类型</th>
+<th>技术</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>tricks</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>模型</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>优化器</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>word embedding</td>
+<td>fasttext</td>
+</tr>
+<tr class="odd">
+<td>nlp任务模型</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>参考： 1. <a href="https://www.zhihu.com/question/31785984" target="_blank" rel="noopener">深度学习入门必看的书和论文？有哪些必备的技能需学习？</a>，直接定位作者：<strong>景略集智</strong>。 <a id="more"></a></p>
+<h2 id="tricks">tricks</h2>
+<ol start="3" type="1">
+<li><a href="https://arxiv.org/pdf/1207.0580.pdf" target="_blank" rel="noopener">Improving neural networks by preventing co-adaptation of feature detectors</a>，论文作者 Geoffrey Hinton 等人，Hinton 提出了 <strong>Dropout</strong>。</li>
+<li><a href="https://www.cs.toronto.edu/~hinton/absps/JMLRdropout.pdf" target="_blank" rel="noopener">Dropout: a simple way to prevent neural networks from overfitting</a>，论文作者 Srivastava Nitish，对 <strong>dropout</strong> 的理解。</li>
+<li><a href="https://arxiv.org/pdf/1502.03167.pdf" target="_blank" rel="noopener">Batch normalization: Accelerating deep network training by reducing internal covariate shift</a>，论文作者 Ioffe Sergey 和 Christian Szegedy，提出 <strong>Batch normalization</strong>。</li>
+<li><a href="https://arxiv.org/pdf/1607.06450.pdf?utm_source=sciontist.com&amp;utm_medium=refer&amp;utm_campaign=promote" target="_blank" rel="noopener">Layer normalization</a>，作者 Jamie Ryan Kiros 和 Geoffrey E. Hinton 等人，本篇论文是对 Batch Normalization 的进一步研究成果，提出 <strong>Layer normalization</strong>。</li>
+</ol>
+<h2 id="模型">模型</h2>
+<ol start="7" type="1">
+<li><a href="https://www.semanticscholar.org/paper/Binarized-Neural-Networks%3A-Training-Deep-Neural-and-Courbariaux-Hubara/6eecc808d4c74e7d0d7ef6b8a4112c985ced104d" target="_blank" rel="noopener">Binarized Neural Networks: Training Neural Networks with Weights and Activations Constrained to+ 1 or−1</a>，论文作者 Courbariaux Matthieu 等，提出了一种速度非常快的新模型。</li>
+<li><a href="https://arxiv.org/pdf/1608.05343.pdf" target="_blank" rel="noopener">Decoupled neural interfaces using synthetic gradients</a>，论文作者 Jaderberg Max 等，论文提出了一种非常创新的训练方法。</li>
+</ol>
+<h2 id="优化器">优化器</h2>
+<ol type="1">
+<li><a href="http://proceedings.mlr.press/v28/sutskever13.pdf" target="_blank" rel="noopener">On the importance of initialization and momentum in deep learning</a>，作者 Sutskever Ilya 等，论文提出了 <strong>Momentum optimizer</strong>。</li>
+<li><a href="https://arxiv.org/pdf/1412.6980.pdf" target="_blank" rel="noopener">Adam: A method for stochastic optimization</a>，作者 Kingma Diederik 等，提出 Adam。</li>
+</ol>
+<h2 id="word-embedding">word embedding</h2>
+<ol type="1">
+<li><a href="https://arxiv.org/abs/1607.04606" target="_blank" rel="noopener">Enriching Word Vectors with Subword Information</a>，作者 Piotr Bojanowski 和 Edouard Grave，提出了 <strong>fasttext</strong>。<a href="https://github.com/facebookresearch/fastText/" target="_blank" rel="noopener">代码地址</a>，<strong><a href="https://yan624.github.io/·论文笔记/representation%20learning/50.%20Enriching%20Word%20Vectors%20with%20Subword%20Information.html">论文笔记</a></strong>。应用场景：处理 OOV 词或者低频词。</li>
+</ol>
+<h2 id="nlp任务模型">nlp任务模型</h2>
+<ol start="9" type="1">
+<li><a href="https://arxiv.org/pdf/1308.0850.pdf" target="_blank" rel="noopener">Generating sequences with recurrent neural networks</a>，论文作者 Graves Alex，使用 RNN 进行生成序列。</li>
+<li><a href="https://arxiv.org/pdf/1406.1078.pdf" target="_blank" rel="noopener">Learning phrase representations using RNN encoder-decoder for statistical machine translation</a>，论文作者 Cho Kyunghyun，第一篇 <strong>seq2seq</strong> 论文。</li>
+<li><a href="https://arxiv.org/pdf/1409.3215.pdf" target="_blank" rel="noopener">Sequence to sequence learning with neural networks</a>，论文作者 Sutskever Ilya 等人。</li>
+<li><a href="https://arxiv.org/pdf/1410.3916.pdf" target="_blank" rel="noopener">Memory networks</a>，论文作者 Weston Jason 和 Sumit Chopra。</li>
+<li><a href="http://papers.nips.cc/paper/5846-end-to-end-memory-networks.pdf" target="_blank" rel="noopener">End-to-end memory networks</a>，论文作者 Sukhbaatar Sainbayar 和 Jason Weston。</li>
+<li><a href="http://web.eecs.utk.edu/~ielhanan/courses/ECE-692/Bobby_paper1.pdf" target="_blank" rel="noopener">Long short-term memory</a>，LSTM。</li>
+<li><a href="http://papers.nips.cc/paper/5866-pointer-networks.pdf" target="_blank" rel="noopener">Pointer networks</a>，作者 Vinyals Oriol 和 Meire Fortunato 等。</li>
+<li><a href="https://arxiv.xilesou.top/pdf/1409.0473.pdf" target="_blank" rel="noopener"></a></li>
+</ol>
+<h2 id="其他">其他</h2>
+<ol type="1">
+<li><a href="http://pages.cs.wisc.edu/~dyer/cs540/handouts/deep-learning-nature2015.pdf" target="_blank" rel="noopener">Deep learning</a>，Hinton,lecun,bengio 三巨头写的 deep learning 综述。</li>
+<li>《Neural Networks Tricks of the Trade》，调参技巧。</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/ecc0049d.html" rel="prev" title="特征工程：笔记">
+      <i class="fa fa-chevron-left"></i> 特征工程：笔记
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/4ae0b9a6.html" rel="next" title="Enriching Word Vectors with Subword Information">
+      Enriching Word Vectors with Subword Information <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#推荐的论文"><span class="nav-number">1.</span> <span class="nav-text">推荐的论文</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#tricks"><span class="nav-number">1.1.</span> <span class="nav-text">tricks</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模型"><span class="nav-number">1.2.</span> <span class="nav-text">模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优化器"><span class="nav-number">1.3.</span> <span class="nav-text">优化器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#word-embedding"><span class="nav-number">1.4.</span> <span class="nav-text">word embedding</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nlp任务模型"><span class="nav-number">1.5.</span> <span class="nav-text">nlp任务模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他"><span class="nav-number">1.6.</span> <span class="nav-text">其他</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">朱冲䶮</p>
+  <div class="site-description" itemprop="description">记录学习问题，积累做的 leetcode 题目</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">163</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">94</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+      <!-- 不蒜子/busuanzi -->
+      <div class="site-state-item site-state-posts">
+      	<span class="site-state-item-count">203.6k</span>
+      	<span class="site-state-item-name">总字数</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>zhihu</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div><script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="/lib/my-utils.js"></script>
+<!--图片缩放插件-->
+<script src="/lib/zoomify/zoomify.min.js"></script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<!-- 背景插件 -->
+<script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<!-- 背景图片 -->
+<script>
+	function generateBG(count){
+		var bg_prefix = '/images/background/';
+		var bg =new Array();
+		for(var i = 0; i < count; i++){
+			bg[i] = bg_prefix + i + '.jpg';
+		}
+		bg.shuffle();
+		return bg;
+	}
+	$("body").backstretch(generateBG(11), {
+		duration:90000,//1min半一换
+		fade: 1500
+	});
+</script>
+<!-- 图片缩放 -->
+<script>
+$('.content img').zoomify({duration: 500, });
+$('.content img').on('zoom-in.zoomify', function () {
+	$('.sidebar').css('display', 'none');
+});
+$('.content img').on('zoom-out-complete.zoomify', function () {
+	$('.sidebar').css('display', '');
+});
+</script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/pisces.js"></script>
+<script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/31cda16b.html',]
+      });
+      });
+  </script>
+<!-- calendar widget -->
+
+
+</body>
+</html>

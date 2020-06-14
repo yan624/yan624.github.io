@@ -1,13 +1,11 @@
-/* global NexT, CONFIG, Velocity */
+/* global CONFIG, Velocity */
 
-window.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
 
-  var isRight = CONFIG.sidebar.position === 'right';
-  var SIDEBAR_WIDTH = CONFIG.sidebar.width || 320;
-  var SIDEBAR_DISPLAY_DURATION = 200;
-  var mousePos = {};
+  const isRight = CONFIG.sidebar.position === 'right';
+  const mousePos = {};
 
-  var sidebarToggleLines = {
+  const sidebarToggleLines = {
     lines: document.querySelector('.sidebar-toggle'),
     init : function() {
       this.lines.classList.remove('toggle-arrow', 'toggle-close');
@@ -22,8 +20,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  var sidebarToggleMotion = {
-    sidebarEl       : document.querySelector('.sidebar'),
+  const sidebarToggleMotion = {
     isSidebarVisible: false,
     init            : function() {
       sidebarToggleLines.init();
@@ -42,9 +39,9 @@ window.addEventListener('DOMContentLoaded', () => {
       mousePos.Y = event.pageY;
     },
     mouseupHandler: function(event) {
-      var deltaX = event.pageX - mousePos.X;
-      var deltaY = event.pageY - mousePos.Y;
-      var clickingBlankPart = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY)) < 20 && event.target.matches('.main');
+      const deltaX = event.pageX - mousePos.X;
+      const deltaY = event.pageY - mousePos.Y;
+      const clickingBlankPart = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY)) < 20 && event.target.matches('.main');
       if (this.isSidebarVisible && (clickingBlankPart || event.target.matches('img.medium-zoom-image, .fancybox img'))) {
         this.hideSidebar();
       }
@@ -64,7 +61,7 @@ window.addEventListener('DOMContentLoaded', () => {
     },
     showSidebar: function() {
       this.isSidebarVisible = true;
-      this.sidebarEl.classList.add('sidebar-active');
+      document.body.classList.add('sidebar-active');
       if (typeof Velocity === 'function') {
         Velocity(document.querySelectorAll('.sidebar .motion-element'), isRight ? 'transition.slideRightIn' : 'transition.slideLeftIn', {
           stagger: 50,
@@ -73,37 +70,19 @@ window.addEventListener('DOMContentLoaded', () => {
       }
 
       sidebarToggleLines.close();
-      NexT.utils.isDesktop() && window.anime(Object.assign({
-        targets : document.body,
-        duration: SIDEBAR_DISPLAY_DURATION,
-        easing  : 'linear'
-      }, isRight ? {
-        'padding-right': SIDEBAR_WIDTH
-      } : {
-        'padding-left': SIDEBAR_WIDTH
-      }));
     },
     hideSidebar: function() {
       this.isSidebarVisible = false;
-      this.sidebarEl.classList.remove('sidebar-active');
+      document.body.classList.remove('sidebar-active');
 
       sidebarToggleLines.init();
-      NexT.utils.isDesktop() && window.anime(Object.assign({
-        targets : document.body,
-        duration: SIDEBAR_DISPLAY_DURATION,
-        easing  : 'linear'
-      }, isRight ? {
-        'padding-right': 0
-      } : {
-        'padding-left': 0
-      }));
     }
   };
   sidebarToggleMotion.init();
 
   function updateFooterPosition() {
-    var footer = document.querySelector('.footer');
-    var containerHeight = document.querySelector('.header').offsetHeight + document.querySelector('.main').offsetHeight + footer.offsetHeight;
+    const footer = document.querySelector('.footer');
+    const containerHeight = document.querySelector('.header').offsetHeight + document.querySelector('.main').offsetHeight + footer.offsetHeight;
     footer.classList.toggle('footer-fixed', containerHeight <= window.innerHeight);
   }
 
