@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -14,32 +14,33 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
   <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
   <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="什么是迁移学习   现在手上有一些与本实验没有直接关系的数据集，那么能不能使用该数据集来帮助我们做一些事情。   比如说要开发一个图像识别的模型，去识别医学上的图像。这方面的数据集可能很少，但是作为图片本身来说是有很多的。比如猫狗图片也是图片。">
-<meta name="keywords" content="学习笔记">
+  <meta name="description" content="什么是迁移学习 现在手上有一些与本实验没有直接关系的数据集，那么能不能使用该数据集来帮助我们做一些事情。 比如说要开发一个图像识别的模型，去识别医学上的图像。这方面的数据集可能很少，但是作为图片本身来说是有很多的。比如猫狗图片也是图片。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="李宏毅迁移学习视频笔记">
 <meta property="og:url" content="https://yan624.github.io/posts/ed3332ae.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="什么是迁移学习   现在手上有一些与本实验没有直接关系的数据集，那么能不能使用该数据集来帮助我们做一些事情。   比如说要开发一个图像识别的模型，去识别医学上的图像。这方面的数据集可能很少，但是作为图片本身来说是有很多的。比如猫狗图片也是图片。">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/学习笔记/李宏毅迁移学习视频笔记/Transfer_Learning_Overview.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/学习笔记/李宏毅迁移学习视频笔记/Conservative_Training.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/学习笔记/李宏毅迁移学习视频笔记/Layer_Transfer.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/学习笔记/李宏毅迁移学习视频笔记/Multitask_Learning.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/学习笔记/李宏毅迁移学习视频笔记/Source_data_with_label.jpg">
-<meta property="og:updated_time" content="2020-06-14T10:53:52.151Z">
+<meta property="og:description" content="什么是迁移学习 现在手上有一些与本实验没有直接关系的数据集，那么能不能使用该数据集来帮助我们做一些事情。 比如说要开发一个图像识别的模型，去识别医学上的图像。这方面的数据集可能很少，但是作为图片本身来说是有很多的。比如猫狗图片也是图片。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%9D%8E%E5%AE%8F%E6%AF%85%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E8%A7%86%E9%A2%91%E7%AC%94%E8%AE%B0/Transfer_Learning_Overview.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%9D%8E%E5%AE%8F%E6%AF%85%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E8%A7%86%E9%A2%91%E7%AC%94%E8%AE%B0/Conservative_Training.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%9D%8E%E5%AE%8F%E6%AF%85%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E8%A7%86%E9%A2%91%E7%AC%94%E8%AE%B0/Layer_Transfer.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%9D%8E%E5%AE%8F%E6%AF%85%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E8%A7%86%E9%A2%91%E7%AC%94%E8%AE%B0/Multitask_Learning.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%9D%8E%E5%AE%8F%E6%AF%85%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E8%A7%86%E9%A2%91%E7%AC%94%E8%AE%B0/Source_data_with_label.jpg">
+<meta property="article:published_time" content="2020-05-24T02:01:43.000Z">
+<meta property="article:modified_time" content="2020-07-17T15:13:04.660Z">
+<meta property="article:author" content="朱冲䶮">
+<meta property="article:tag" content="学习笔记">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="李宏毅迁移学习视频笔记">
-<meta name="twitter:description" content="什么是迁移学习   现在手上有一些与本实验没有直接关系的数据集，那么能不能使用该数据集来帮助我们做一些事情。   比如说要开发一个图像识别的模型，去识别医学上的图像。这方面的数据集可能很少，但是作为图片本身来说是有很多的。比如猫狗图片也是图片。">
-<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/学习笔记/李宏毅迁移学习视频笔记/Transfer_Learning_Overview.jpg">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%9D%8E%E5%AE%8F%E6%AF%85%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E8%A7%86%E9%A2%91%E7%AC%94%E8%AE%B0/Transfer_Learning_Overview.jpg">
 
 <link rel="canonical" href="https://yan624.github.io/posts/ed3332ae.html">
 
@@ -53,12 +54,9 @@
     lang   : 'zh-CN'
   };
 </script>
-<!--图片缩放插件样式-->
-<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
 <!--阿里云矢量库样式-->
 <link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_621sfmh583s.css" />
 
-        
 
   <title>李宏毅迁移学习视频笔记 | 博客</title>
   
@@ -114,7 +112,7 @@
       <h1 class="site-title">博客</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
-      <p class="site-subtitle" itemprop="description">低阶炼金术士</p>
+      <p class="site-subtitle" itemprop="description">末流炼丹师</p>
   </div>
 
   <div class="site-nav-right">
@@ -140,7 +138,7 @@
   </li>
         <li class="menu-item menu-item-常用链接">
 
-    <a href="/常用链接" rel="section"><i class="fas fa-bookmark fa-fw"></i>常用链接</a>
+    <a href="/%E5%B8%B8%E7%94%A8%E9%93%BE%E6%8E%A5" rel="section"><i class="fas fa-bookmark fa-fw"></i>常用链接</a>
 
   </li>
         <li class="menu-item menu-item-时间线">
@@ -150,7 +148,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">94</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">95</span></a>
 
   </li>
         
@@ -165,7 +163,7 @@
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">163</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">168</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -210,6 +208,7 @@
     <span>0%</span>
   </div>
   <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
 
     <main class="main">
@@ -247,13 +246,13 @@
             },
             onClose: function() {
               //这里可以取消背景色
-              spop({
+              /*spop({
                 template: 'ε = = (づ′▽`)づ',
                 group: 'tips',
                 position  : 'bottom-center',
                 style: 'success',
                 autoclose: 1500
-              });
+              });*/
             }
           });
         </script>
@@ -265,7 +264,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
       <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+      <meta itemprop="description" content="记录">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -290,7 +289,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-14 18:53:52" itemprop="dateModified" datetime="2020-06-14T18:53:52+08:00">2020-06-14</time>
+                <time title="修改时间：2020-07-17 23:13:04" itemprop="dateModified" datetime="2020-07-17T23:13:04+08:00">2020-07-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -326,7 +325,7 @@
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -339,34 +338,63 @@
 
       
         <h1 id="什么是迁移学习">什么是迁移学习</h1>
-<p>  现在手上有一些与本实验没有直接关系的数据集，那么能不能使用该数据集来帮助我们做一些事情。   比如说要开发一个图像识别的模型，去识别医学上的图像。这方面的数据集可能很少，但是作为图片本身来说是有很多的。比如猫狗图片也是图片。 <a id="more"></a></p>
+<p>现在手上有一些与本实验没有直接关系的数据集，那么能不能使用该数据集来帮助我们做一些事情。 比如说要开发一个图像识别的模型，去识别医学上的图像。这方面的数据集可能很少，但是作为图片本身来说是有很多的。比如猫狗图片也是图片。 <a id="more"></a></p>
 <h1 id="概要">概要</h1>
-<p>  与任务有关的数据被称为 target data，与任务没有直接关系的数据被称为 source data。每种数据都有可能有标签和无标签，所以一共分四种情况。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/学习笔记/李宏毅迁移学习视频笔记/Transfer_Learning_Overview.jpg" alt="Transfer Learning Overview"></p>
+<p>与任务有关的数据被称为 target data，与任务没有直接关系的数据被称为 source data。每种数据都有可能有标签和无标签，所以一共分四种情况。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/学习笔记/李宏毅迁移学习视频笔记/Transfer_Learning_Overview.jpg" alt="Transfer Learning Overview" /></p>
 <h2 id="都有标签">都有标签</h2>
-<p>  Target data 和 Source data 都具有标签。   任务定义为：Target data:<span class="math inline">\((x^t, y^t)\)</span> 和 Source data:<span class="math inline">\((x^s, y^s)\)</span>。</p>
+<p>Target data 和 Source data 都具有标签。 任务定义为：Target data:<span class="math inline">\((x^t, y^t)\)</span> 和 Source data:<span class="math inline">\((x^s, y^s)\)</span>。</p>
 <h3 id="fine-tuning">Fine-tuning</h3>
-<p>  最常见以及最简单的做法是微调。<strong>Fine-tuning 在乎的是在 Target data 上的性能好不好，如果在 Source data 上的性能坏掉就算了。</strong>（25:00）   但是通常 Tartget data 的量是很少的，因为如果量多的话，直接当一般的机器学习方法来做就行了。总而言之，一般 Source data 的量会有很多。此外 Target data 很少，大概只有几个样本一般叫做 <strong>One-shot learning</strong>。   例如，Target data 是音频数据，并且是特定用户的声音，而 Source data 是许多人的声音。这里的处理方式是使用 Source data 来训练一个模型，然后使用 Target data 来微调。<strong>但是这可能会有个问题，当你使用 Target data 继续训练时，整个模型可能会坏掉。</strong>   接下里介绍一些可能能够解决的技巧： - Conservative Training：比如在语音辨识的任务中，使用 Source data 训练一个神经网络，这些数据都随处可见。但是你的 Target data 可能是用户特定的声音，可能只有 5 句、10 句。当然如果直接使用 Target data 训练模型肯定也是不行的，注意这个模型已经是之前使用 Source data 预训练的模型。（<em>李宏毅老师没说为什么。</em>）所以我们在微调的时候，需要加入一些正则化约束。通常我们会加 L1 和 L2，但是在 Consertive Training 中我们会加不同的正则化。总而言之，<strong>我们需要使得两个模型之间的输出时接近的，或者模型参数是接近的</strong>。（<em>具体怎么做，他也没说</em>。） <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/学习笔记/李宏毅迁移学习视频笔记/Conservative_Training.jpg" alt="Conservative Training"> - Layer Transfer： 把模型中某几个 layer 拿出来，直接复制到新的模型中。1）然后使用 Target data 只训练自己定义的那几层 layer（<strong>防止过拟合</strong>）；2）当然如果你有足够多的 Target data，你也可以微调整个模型。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/学习笔记/李宏毅迁移学习视频笔记/Layer_Transfer.jpg" alt="Layer Transfer"> + 那么哪些 layer 应该被 transfer 呢？ * Speech：通常拷贝最后几层，然后重新训练 input 的那层。因为在语音识别中，人的发音均有不同，而模型的前几层可能与人的发音（浅层信息）有关。后几层可能与特定的人无关（深层信息）。 * Image：通常拷贝前几层，然后重新训练后几层。因为在机器视觉里，前几层可能捕获的是图片的浅层信息，而这些信息每个人看到的几乎都是一样。后面几层可能是深度的信息，每个任务需要的信息可能都是不同的。</p>
+<p>最常见以及最简单的做法是微调。<strong>Fine-tuning 在乎的是在 Target data 上的性能好不好，如果在 Source data 上的性能坏掉就算了。</strong>（25:00） 但是通常 Tartget data 的量是很少的，因为如果量多的话，直接当一般的机器学习方法来做就行了。总而言之，一般 Source data 的量会有很多。此外 Target data 很少，大概只有几个样本一般叫做 <strong>One-shot learning</strong>。 例如，Target data 是音频数据，并且是特定用户的声音，而 Source data 是许多人的声音。这里的处理方式是使用 Source data 来训练一个模型，然后使用 Target data 来微调。<strong>但是这可能会有个问题，当你使用 Target data 继续训练时，整个模型可能会坏掉。</strong> 接下里介绍一些可能能够解决的技巧： - Conservative Training：比如在语音辨识的任务中，使用 Source data 训练一个神经网络，这些数据都随处可见。但是你的 Target data 可能是用户特定的声音，可能只有 5 句、10 句。当然如果直接使用 Target data 训练模型肯定也是不行的，注意这个模型已经是之前使用 Source data 预训练的模型。（<em>李宏毅老师没说为什么。</em>）所以我们在微调的时候，需要加入一些正则化约束。通常我们会加 L1 和 L2，但是在 Consertive Training 中我们会加不同的正则化。总而言之，<strong>我们需要使得两个模型之间的输出时接近的，或者模型参数是接近的</strong>。（<em>具体怎么做，他也没说</em>。） <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/学习笔记/李宏毅迁移学习视频笔记/Conservative_Training.jpg" alt="Conservative Training" /> - Layer Transfer： 把模型中某几个 layer 拿出来，直接复制到新的模型中。1）然后使用 Target data 只训练自己定义的那几层 layer（<strong>防止过拟合</strong>）；2）当然如果你有足够多的 Target data，你也可以微调整个模型。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/学习笔记/李宏毅迁移学习视频笔记/Layer_Transfer.jpg" alt="Layer Transfer" /> + 那么哪些 layer 应该被 transfer 呢？ * Speech：通常拷贝最后几层，然后重新训练 input 的那层。因为在语音识别中，人的发音均有不同，而模型的前几层可能与人的发音（浅层信息）有关。后几层可能与特定的人无关（深层信息）。 * Image：通常拷贝前几层，然后重新训练后几层。因为在机器视觉里，前几层可能捕获的是图片的浅层信息，而这些信息每个人看到的几乎都是一样。后面几层可能是深度的信息，每个任务需要的信息可能都是不同的。</p>
 <h3 id="multitask-learning">Multitask Learning</h3>
-<p>  Multitask Learning 在乎的是在两个数据集上是否做得都好。   假设现在两个不同任务使用的是同样的 feature 的话（<em>图左</em>）。在叠几层神经网络后，在某一层分成两个任务做。那么这两个任务在前几层是共用特征的。所以在做 Multitask Learning 时，需要确定两个任务是否具有共通性，是否可以共用前几个 layer。   甚至现在有一些更疯狂的做法（<em>图右</em>）。模型的输入都可能没有办法共同学习，但是可以把两个特征输入进同一个模型，然后仅在某几层共享它们的特征。就算 task A 和 B 的输入特征完全不一样，但是只要你觉得在中间某几层有几个共同的地方，你还是可以用 Multitask Learning。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/学习笔记/李宏毅迁移学习视频笔记/Multitask_Learning.jpg" alt="Multitask Learning"></p>
-<p>  Multitask Learning 比较成功的案例是多语言语音识别。</p>
+<p>Multitask Learning 在乎的是在两个数据集上是否做得都好。 假设现在两个不同任务使用的是同样的 feature 的话（<em>图左</em>）。在叠几层神经网络后，在某一层分成两个任务做。那么这两个任务在前几层是共用特征的。所以在做 Multitask Learning 时，需要确定两个任务是否具有共通性，是否可以共用前几个 layer。 甚至现在有一些更疯狂的做法（<em>图右</em>）。模型的输入都可能没有办法共同学习，但是可以把两个特征输入进同一个模型，然后仅在某几层共享它们的特征。就算 task A 和 B 的输入特征完全不一样，但是只要你觉得在中间某几层有几个共同的地方，你还是可以用 Multitask Learning。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/学习笔记/李宏毅迁移学习视频笔记/Multitask_Learning.jpg" alt="Multitask Learning" /></p>
+<p>Multitask Learning 比较成功的案例是多语言语音识别。</p>
 <h3 id="progressive-neural-network">Progressive Neural Network</h3>
-<p>  </p>
 <h2 id="source-data有标签">Source data有标签</h2>
-<p>    任务定义为：Source data:<span class="math inline">\((x^s, y^s)\)</span>，Target data:<span class="math inline">\((x^t)\)</span>。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/学习笔记/李宏毅迁移学习视频笔记/Source_data_with_label.jpg" title="Source data with label" alt="Source data with label"></p>
+<p>任务定义为：Source data:<span class="math inline">\((x^s, y^s)\)</span>，Target data:<span class="math inline">\((x^t)\)</span>。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/学习笔记/李宏毅迁移学习视频笔记/Source_data_with_label.jpg" title="Source data with label" alt="Source data with label" /></p>
 <h3 id="domain-adversarial-training">Domain-adversarial training</h3>
-<p>  </p>
 <h3 id="zero-shot-learning">Zero-shot learning</h3>
-<p>  </p>
 
     </div>
 
     
     
     
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    赞赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.gif" alt="朱冲䶮 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>朱冲䶮
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://yan624.github.io/posts/ed3332ae.html" title="李宏毅迁移学习视频笔记">https://yan624.github.io/posts/ed3332ae.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/学习笔记/" rel="tag"># 学习笔记</a>
+              <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag"># 学习笔记</a>
           </div>
 
         
@@ -449,14 +477,14 @@
     <img class="site-author-image" itemprop="image" alt="朱冲䶮"
       src="/images/avatar.jpg">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
-  <div class="site-description" itemprop="description">记录学习问题，积累做的 leetcode 题目</div>
+  <div class="site-description" itemprop="description">记录</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">163</span>
+          <span class="site-state-item-count">168</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -468,42 +496,53 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">94</span>
+        <span class="site-state-item-count">95</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">203.6k</span>
+      	<span class="site-state-item-count">214.1k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
 </div>
+  <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
+    Chat
+  </a>
+  </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>zhihu</a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
       </span>
   </div>
 
 
   <div class="links-of-blogroll motion-element">
     <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
-      Links
+      友链
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
         </li>
     </ul>
   </div>
+<!-- CloudCalendar -->
+<div class="widget-wrap" style="width: 90%;margin-left: auto;margin-right: auto; opacity: 0.97;">
+	<div class="widget" id="CloudCalendar"></div>
+</div>
 
       </div>
 
@@ -530,12 +569,11 @@
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
-  </div><script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script src="/lib/my-utils.js"></script>
-<!--图片缩放插件-->
-<script src="/lib/zoomify/zoomify.min.js"></script>
-<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
 <!-- 背景图片 -->
@@ -549,20 +587,10 @@
 		bg.shuffle();
 		return bg;
 	}
-	$("body").backstretch(generateBG(11), {
-		duration:90000,//1min半一换
+	$("body").backstretch(generateBG(10), {
+		duration:90000,//1 min 半一换
 		fade: 1500
 	});
-</script>
-<!-- 图片缩放 -->
-<script>
-$('.content img').zoomify({duration: 500, });
-$('.content img').on('zoom-in.zoomify', function () {
-	$('.sidebar').css('display', 'none');
-});
-$('.content img').on('zoom-out-complete.zoomify', function () {
-	$('.sidebar').css('display', '');
-});
 </script>
 
         
@@ -600,18 +628,29 @@ $('.content img').on('zoom-out-complete.zoomify', function () {
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/pisces.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
 
   
 
 
 
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 
@@ -640,6 +679,27 @@ $('.content img').on('zoom-out-complete.zoomify', function () {
       });
   </script>
 <!-- calendar widget -->
+
+    <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-calendar/calendar.min.js"></script>
+    <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-calendar/languages.min.js"></script>
+    <script>
+    $(function() {
+        $('#CloudCalendar').aCalendar('zh-CN',
+            $.extend(
+                '', {
+                    single:true,
+                    root:'/calendar/'
+                }
+            )
+        );
+    });	
+	/*
+	* 2020.08.10: 由本博客博主自定义加入，由于不是很需要日历最下面的前进后退键，其与日历最上方的功能键冲突，所以在此将其删除
+	*/
+	$(function(){
+		$('#CloudCalendar tfoot').remove()
+	})
+	</script>
 
 
 </body>

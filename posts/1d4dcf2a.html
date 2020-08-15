@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="论文地址  摘要以及引言 人类拥有独特能力能够察觉到复杂，有细微差别的情绪，也拥有使用语言与他人交流这些体验的独特能力。尽管近些年的研究（...）提供了大量的证据，证明系统能够表达情感可以很大程度上提高用户的满意程度，但是对于制作一个产生更情绪化回复的对话系统来说，仍旧具有很大的挑战。 在早期的表征工作中，人工地准备一些规则，即有意地从语料库中选择一些需要的“情绪化”回复。在语料库中进行精">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Generating Responses with a Specific Emotion in Dialog">
+<meta property="og:url" content="https://yan624.github.io/posts/1d4dcf2a.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="论文地址  摘要以及引言 人类拥有独特能力能够察觉到复杂，有细微差别的情绪，也拥有使用语言与他人交流这些体验的独特能力。尽管近些年的研究（...）提供了大量的证据，证明系统能够表达情感可以很大程度上提高用户的满意程度，但是对于制作一个产生更情绪化回复的对话系统来说，仍旧具有很大的挑战。 在早期的表征工作中，人工地准备一些规则，即有意地从语料库中选择一些需要的“情绪化”回复。在语料库中进行精">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-07-01T15:41:27.000Z">
+<meta property="article:modified_time" content="2020-07-17T15:13:05.211Z">
+<meta property="article:author" content="朱冲䶮">
+<meta property="article:tag" content="博客，java，javaWeb，NLP，python，机器学习，深度学习">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://yan624.github.io/posts/1d4dcf2a.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<!--阿里云矢量库样式-->
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_621sfmh583s.css" />
+
+
+  <title>Generating Responses with a Specific Emotion in Dialog | 博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">末流炼丹师</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-常用链接">
+
+    <a href="/%E5%B8%B8%E7%94%A8%E9%93%BE%E6%8E%A5" rel="section"><i class="fas fa-bookmark fa-fw"></i>常用链接</a>
+
+  </li>
+        <li class="menu-item menu-item-时间线">
+
+    <a href="/categories/timeline/" rel="section"><i class="iconfont icon-timeline fa-fw"></i>时间线</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">95</span></a>
+
+  </li>
+        
+            
+  <li class="menu-item menu-item-博客分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>博客分类</a>
+
+  </li>
+
+
+      
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">168</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    
+
+    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/1d4dcf2a.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Generating Responses with a Specific Emotion in Dialog
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-01 23:41:27" itemprop="dateCreated datePublished" datetime="2020-07-01T23:41:27+08:00">2020-07-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-17 23:13:05" itemprop="dateModified" datetime="2020-07-17T23:13:05+08:00">2020-07-17</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="note info"><p><a href="https://www.aclweb.org/anthology/P19-1359.pdf" target="_blank" rel="noopener">论文地址</a></p>
+</div>
+<h1 id="摘要以及引言">摘要以及引言</h1>
+<p>人类拥有独特能力能够察觉到复杂，有细微差别的情绪，也拥有使用语言与他人交流这些体验的独特能力。尽管近些年的研究（...）提供了大量的证据，证明<strong>系统能够表达情感可以很大程度上提高用户的满意程度</strong>，但是对于制作一个产生更情绪化回复的对话系统来说，仍旧具有很大的挑战。</p>
+<p>在早期的表征工作中，人工地准备一些规则，即有意地从语料库中选择一些需要的“情绪化”回复。在语料库中进行精心地调查后，这些规则由这方面的专家编写，但是这使得复杂多变的情感难以表达，并且难以很好地扩展到大型数据集。<mark class="label info">早期的情绪表征工作</mark></p>
+<p>最近，seq2seq 被用于构建对话模型。ECM 也由 Zhou et al(2018) 提出解决情绪表达的问题。然而还是遭受到了不小的困难。</p>
+<p>语言在情感中扮演了重要的角色。正如表 1 所示，我们发现至少有两种方式可以将情感填入单词之中。一个是明确地（<strong>explicit</strong>）使用强烈的情感词汇来描述情绪状态（emotion states），例如“anger”，“disgust”，“contentment”，“joy”，“sadness”等；另一个是增强情感表达的强度，与之前的不同，它不是通过情感词汇，而是在某种情感上含蓄地（<strong>implicit</strong>）组合各种中性词。（<strong>博主注</strong>：如果无法理解，可以看原论文中的表一，它提供了例子）</p>
+<p>在本项研究中，我们提出一个情感对话系统（emotional dialogue system，<strong>EmoDS</strong>），<strong>它可以以明确或者含蓄的方式，将一种特定的情感表达到具有连贯结构的词汇中</strong>。<strong>我们使用一个基于字典的 attention 机制（lexicon-based attention mechanism）扩展 seq2seq 模型，这对使用情绪字典中的同义词替换回复中的单词有促进作用</strong>。回复生成步骤将由序列级别的情绪分类器指导，它不仅可以增强情绪表达的强度，还有助于识别不包含任何情绪单词的情绪化语句。我们还提出了一个半监督的方法去创建一个情绪字典，它是一个相对“准确”的情绪状态表征。实验结果显示了 EmoDS “厉害”。 <a id="more"></a></p>
+<h1 id="相关工作">相关工作</h1>
+<p>先前的工作报道对话系统有情感可以增强用户的满意程度。但是所作的工作大都是人工制定的规则，它们都是由受过训练的专家进行撰写。这很难处理复杂的语句，并且很难扩展到大规模的数据集中。</p>
+<p>RNN 及其在 seq2seq 中的应用，可以用于创建聊天机器人。早前的研究，也在企图避免其产生无聊、枯燥的回复。</p>
+<p>最近。。。</p>
+<h1 id="method">Method</h1>
+<h2 id="问题定义">问题定义</h2>
+<p>给定一个 <span class="math inline">\(X = {x_1, x_2, \cdots, x_M}\)</span> 和一个情绪类别 <span class="math inline">\(e\)</span>，目的是生成回复 <span class="math inline">\(Y = {y_1, y_2, \cdots, y_N}\)</span>，其中 <span class="math inline">\(x_i, y_j \in V\)</span>。<span class="math inline">\(V = V_g \cup V_e\)</span> 是一个词表，其中 <span class="math inline">\(V_g\)</span> 是通用词表，<span class="math inline">\(V_e\)</span> 是情绪字典。并且需要 <span class="math inline">\(V_g \cap V_e = \emptyset\)</span>。字典 <span class="math inline">\(V_e\)</span> 还会进一步分为 <span class="math inline">\(V^z_e\)</span>，其中的每个单词都会被划分为一个情绪类别 <span class="math inline">\(z\)</span>。</p>
+<h2 id="dialogue-system-with-lexicon-based-attention-mechanism">Dialogue System with Lexicon-based Attention Mechanism</h2>
+<p><em>介绍 seq2seq</em>；<em>介绍 lexicon-based attention mechanism</em>（这个实际上就是普通的 attention）；EmoDS 的架构如图 1 所示。</p>
+<p><em>介绍 seq2seq 是如何做的</em>。</p>
+<p>decoder 使用前一个预测单词和情绪词更新隐藏状态 <span class="math inline">\(s_j\)</span>，具体公式如下所示： <span class="math display">\[s_j = LSTM_{decoder}([Emb(y_{j-1}); e_j], s_{j-1})
+\]</span></p>
+<p>其中情感向量 <span class="math inline">\(e_j\)</span> 由给定类别 <span class="math inline">\(z\)</span> 的 <span class="math inline">\(V^z_e\)</span> 中的词嵌入加权和计算得到： <span class="math display">\[
+\begin{align}
+    e_j &amp; = \sum_k a_{jk} \cdot Emb(w^z_k) \\
+    a_{jk} &amp; = \frac{exp(c_{jk})}{\sum^{T_z}_{t=1} exp(c_{jt})} \\
+    c_{jk} &amp; = Sigmoid(\alpha^T h_M + \beta^T s_{j-1} + \gamma^T Emb(w^z_k))
+\end{align}
+\]</span></p>
+<p>为了把情绪单词植入回复中，我们估计了两种概率分布。一是，给定情绪类型 <span class="math inline">\(z\)</span>，在 <span class="math inline">\(V^z_e\)</span> 中每个情绪词 <span class="math inline">\(w^e\)</span> 上计算概率分布 <span class="math inline">\(P_e(y_j = w^e)\)</span>；二是，在 <span class="math inline">\(V_g\)</span> 中所有通用词汇上计算概率分布 <span class="math inline">\(P_g(y_j = w^g)\)</span>： <span class="math display">\[
+\begin{align}
+    P_e(y_j = w^e) &amp; = Softmax(W_e s_j) \\
+    P_g(y_j = w^g) &amp; = Softmax(W_g s_j) \\
+    \sigma_j &amp; = Sigmoid(v^T s_j) \\
+    y_j \sim P(y_j) &amp; = 
+        \begin{bmatrix}
+            \sigma_j P_e(y_j = w^e) \\ 
+            (1 - \sigma_j) P_g(y_j = w^g)
+        \end{bmatrix}
+\end{align}
+\]</span></p>
+<p>其中 <span class="math inline">\(sigma_j in (0, 1)\)</span> 是一个类型选择器，控制生成通用词或情绪词的权重，<span class="math inline">\(W_e, W_g, v\)</span> 是可学习的参数。attention 机制有助于在正确的时间步上，将想要的情绪词放进回复，这使得有希望生成特定情绪的回复。每个样本的损失函数被定义为最小化交叉熵函数。</p>
+<h2 id="emotion-classification">Emotion Classification</h2>
+<h2 id="training-objective">Training Objective</h2>
+<p>总的训练目标被分为两部分：生成损失和分类损失。即 <span class="math inline">\(L = L_{MCE} + \lambda L_{CLA}\)</span>，<span class="math inline">\(\lambda\)</span> 控制生成损失的相对重要程度，相对于分类项来说。</p>
+<h2 id="diverse-decoding-algorithm">Diverse Decoding Algorithm</h2>
+<p>Li et al. (2016c) 发现大多数由传统集束搜索产生的 N 个最优回复是类似的，因此我们提出一种 diverse decoding 算法来培养回复生成中的多样性。<strong>我们强制 N 个候选回复中的开头单词必须是不同的，然后模型继续通过贪婪解码策略生成回复</strong>。最终，我们选择 N 个候选回复中，情绪分数最高的回复。候选回复由 emotion classifier 进行评分。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    赞赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.gif" alt="朱冲䶮 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>朱冲䶮
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://yan624.github.io/posts/1d4dcf2a.html" title="Generating Responses with a Specific Emotion in Dialog">https://yan624.github.io/posts/1d4dcf2a.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/6ce305f0.html" rel="prev" title="Affective Neural Response Generation">
+      <i class="fa fa-chevron-left"></i> Affective Neural Response Generation
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/64223641.html" rel="next" title="情感回复生成论文笔记">
+      情感回复生成论文笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#摘要以及引言"><span class="nav-number">1.</span> <span class="nav-text">摘要以及引言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#相关工作"><span class="nav-number">2.</span> <span class="nav-text">相关工作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#method"><span class="nav-number">3.</span> <span class="nav-text">Method</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#问题定义"><span class="nav-number">3.1.</span> <span class="nav-text">问题定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dialogue-system-with-lexicon-based-attention-mechanism"><span class="nav-number">3.2.</span> <span class="nav-text">Dialogue System with Lexicon-based Attention Mechanism</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#emotion-classification"><span class="nav-number">3.3.</span> <span class="nav-text">Emotion Classification</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#training-objective"><span class="nav-number">3.4.</span> <span class="nav-text">Training Objective</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#diverse-decoding-algorithm"><span class="nav-number">3.5.</span> <span class="nav-text">Diverse Decoding Algorithm</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">朱冲䶮</p>
+  <div class="site-description" itemprop="description">记录</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">168</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">95</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+      <!-- 不蒜子/busuanzi -->
+      <div class="site-state-item site-state-posts">
+      	<span class="site-state-item-count">214.1k</span>
+      	<span class="site-state-item-name">总字数</span>
+      </div>
+  </nav>
+</div>
+  <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
+    Chat
+  </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      友链
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+    </ul>
+  </div>
+<!-- CloudCalendar -->
+<div class="widget-wrap" style="width: 90%;margin-left: auto;margin-right: auto; opacity: 0.97;">
+	<div class="widget" id="CloudCalendar"></div>
+</div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="/lib/my-utils.js"></script>
+<script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<!-- 背景插件 -->
+<script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<!-- 背景图片 -->
+<script>
+	function generateBG(count){
+		var bg_prefix = '/images/background/';
+		var bg =new Array();
+		for(var i = 0; i < count; i++){
+			bg[i] = bg_prefix + i + '.jpg';
+		}
+		bg.shuffle();
+		return bg;
+	}
+	$("body").backstretch(generateBG(10), {
+		duration:90000,//1 min 半一换
+		fade: 1500
+	});
+</script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/1d4dcf2a.html',]
+      });
+      });
+  </script>
+<!-- calendar widget -->
+
+    <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-calendar/calendar.min.js"></script>
+    <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-calendar/languages.min.js"></script>
+    <script>
+    $(function() {
+        $('#CloudCalendar').aCalendar('zh-CN',
+            $.extend(
+                '', {
+                    single:true,
+                    root:'/calendar/'
+                }
+            )
+        );
+    });	
+	/*
+	* 2020.08.10: 由本博客博主自定义加入，由于不是很需要日历最下面的前进后退键，其与日历最上方的功能键冲突，所以在此将其删除
+	*/
+	$(function(){
+		$('#CloudCalendar tfoot').remove()
+	})
+	</script>
+
+
+</body>
+</html>

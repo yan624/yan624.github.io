@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -14,32 +14,41 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
   <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
   <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="Exposure Bias  GRU LSTM   该博客中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。   下图是吴恩达深度学习第五周作业中的图片，是一个 LSTM 单元。与李宏毅老师做的图有略微不同，并且在下图中将 input gate 称为了 update gate，">
-<meta name="keywords" content="系列,GRU,LSTM,seq2seq,attention">
+  <meta name="description" content="Exposure Bias 主要机制  GRU 参考资料  人人都能看懂的GRU 吴恩达李宏毅综合学习笔记：RNN入门#GRU单元——Gate Recurrent Unit  LSTM 该博客中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。 下图是吴恩达深度学习第五">
 <meta property="og:type" content="article">
 <meta property="og:title" content="深度学习算法（三）：RNN 各种机制">
 <meta property="og:url" content="https://yan624.github.io/posts/d5936d3.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="Exposure Bias  GRU LSTM   该博客中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。   下图是吴恩达深度学习第五周作业中的图片，是一个 LSTM 单元。与李宏毅老师做的图有略微不同，并且在下图中将 input gate 称为了 update gate，">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/LSTM%20cell.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/多个%20LSTM.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/LSTM反向传播.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/Cho%20seq2seq.png">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/Sutskever%20seq2seq.png">
-<meta property="og:updated_time" content="2020-06-14T12:43:21.965Z">
+<meta property="og:description" content="Exposure Bias 主要机制  GRU 参考资料  人人都能看懂的GRU 吴恩达李宏毅综合学习笔记：RNN入门#GRU单元——Gate Recurrent Unit  LSTM 该博客中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。 下图是吴恩达深度学习第五">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9ARNN%20%E5%90%84%E7%A7%8D%E6%9C%BA%E5%88%B6/LSTM%20cell.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9ARNN%20%E5%90%84%E7%A7%8D%E6%9C%BA%E5%88%B6/%E5%A4%9A%E4%B8%AA%20LSTM.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9ARNN%20%E5%90%84%E7%A7%8D%E6%9C%BA%E5%88%B6/LSTM%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9ARNN%20%E5%90%84%E7%A7%8D%E6%9C%BA%E5%88%B6/Cho%20seq2seq.png">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9ARNN%20%E5%90%84%E7%A7%8D%E6%9C%BA%E5%88%B6/Sutskever%20seq2seq.png">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9ARNN%20%E5%90%84%E7%A7%8D%E6%9C%BA%E5%88%B6/free-running-seq2seq.gif">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9ARNN%20%E5%90%84%E7%A7%8D%E6%9C%BA%E5%88%B6/teacher-forcing-seq2seq.gif">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9ARNN%20%E5%90%84%E7%A7%8D%E6%9C%BA%E5%88%B6/bahdanau-attention.gif">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9ARNN%20%E5%90%84%E7%A7%8D%E6%9C%BA%E5%88%B6/global-attention.gif">
+<meta property="article:published_time" content="2019-05-23T09:07:17.000Z">
+<meta property="article:modified_time" content="2020-08-14T09:38:02.199Z">
+<meta property="article:author" content="朱冲䶮">
+<meta property="article:tag" content="系列">
+<meta property="article:tag" content="GRU">
+<meta property="article:tag" content="LSTM">
+<meta property="article:tag" content="seq2seq">
+<meta property="article:tag" content="attention">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="深度学习算法（三）：RNN 各种机制">
-<meta name="twitter:description" content="Exposure Bias  GRU LSTM   该博客中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。   下图是吴恩达深度学习第五周作业中的图片，是一个 LSTM 单元。与李宏毅老师做的图有略微不同，并且在下图中将 input gate 称为了 update gate，">
-<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/LSTM%20cell.jpg">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9ARNN%20%E5%90%84%E7%A7%8D%E6%9C%BA%E5%88%B6/LSTM%20cell.jpg">
 
 <link rel="canonical" href="https://yan624.github.io/posts/d5936d3.html">
 
@@ -53,12 +62,9 @@
     lang   : 'zh-CN'
   };
 </script>
-<!--图片缩放插件样式-->
-<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
 <!--阿里云矢量库样式-->
 <link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_621sfmh583s.css" />
 
-        
 
   <title>深度学习算法（三）：RNN 各种机制 | 博客</title>
   
@@ -114,7 +120,7 @@
       <h1 class="site-title">博客</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
-      <p class="site-subtitle" itemprop="description">低阶炼金术士</p>
+      <p class="site-subtitle" itemprop="description">末流炼丹师</p>
   </div>
 
   <div class="site-nav-right">
@@ -140,7 +146,7 @@
   </li>
         <li class="menu-item menu-item-常用链接">
 
-    <a href="/常用链接" rel="section"><i class="fas fa-bookmark fa-fw"></i>常用链接</a>
+    <a href="/%E5%B8%B8%E7%94%A8%E9%93%BE%E6%8E%A5" rel="section"><i class="fas fa-bookmark fa-fw"></i>常用链接</a>
 
   </li>
         <li class="menu-item menu-item-时间线">
@@ -150,7 +156,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">94</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">95</span></a>
 
   </li>
         
@@ -165,7 +171,7 @@
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">163</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">168</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -210,6 +216,7 @@
     <span>0%</span>
   </div>
   <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
 
     <main class="main">
@@ -241,7 +248,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
       <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+      <meta itemprop="description" content="记录">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -266,7 +273,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-14 20:43:21" itemprop="dateModified" datetime="2020-06-14T20:43:21+08:00">2020-06-14</time>
+                <time title="修改时间：2020-08-14 17:38:02" itemprop="dateModified" datetime="2020-08-14T17:38:02+08:00">2020-08-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -295,14 +302,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>6.3k</span>
+              <span>16k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>11 分钟</span>
+              <span>14 分钟</span>
             </span>
 
         </div>
@@ -314,12 +321,17 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <div class="note "><p><mark class="label warning">Exposure Bias</mark></p>
+        <div class="note "><p><mark class="label warning">Exposure Bias</mark> <mark class="label info">主要机制</mark></p>
 </div>
 <h1 id="gru">GRU</h1>
+<h2 id="参考资料">参考资料</h2>
+<ol type="1">
+<li><a href="https://zhuanlan.zhihu.com/p/32481747" target="_blank" rel="noopener">人人都能看懂的GRU</a></li>
+<li><em><a href="https://yan624.github.io/posts/5e27260b.html#GRU单元——Gate-Recurrent-Unit">吴恩达李宏毅综合学习笔记：RNN入门#GRU单元——Gate Recurrent Unit</a></em></li>
+</ol>
 <h1 id="lstm">LSTM</h1>
-<p>  该<a href="https://yan624.github.io/posts/5e27260b.html#长短期记忆——Long-Short-term-Memory-LSTM">博客</a>中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。</p>
-<p>  下图是吴恩达深度学习第五周作业中的图片，是一个 LSTM 单元。<strong>与李宏毅老师做的图有略微不同，并且在下图中将 input gate 称为了 update gate，并且在李宏毅老师所提供的图片中，g(z) 是由 sigmoid 函数计算出来的，而这里是由 tanh 计算出来的，即下图 update gate 旁边的函数</strong>。另外在李宏毅老师提供的图片中，为了简便，并没有使用上个时间步的激活值。</p>
+<p>该<a href="https://yan624.github.io/posts/5e27260b.html#长短期记忆——Long-Short-term-Memory-LSTM">博客</a>中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。</p>
+<p>下图是吴恩达深度学习第五周作业中的图片，是一个 LSTM 单元。<strong>与李宏毅老师做的图有略微不同，并且在下图中将 input gate 称为了 update gate，并且在李宏毅老师所提供的图片中，g(z) 是由 sigmoid 函数计算出来的，而这里是由 tanh 计算出来的，即下图 update gate 旁边的函数</strong>。另外在李宏毅老师提供的图片中，为了简便，并没有使用上个时间步的激活值。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/LSTM%20cell.jpg" alt="LSTM cell" /></p>
 <ol type="1">
 <li>首先是<strong>输入的问题</strong>。一般来说一个 LSTM 的输入是前一<strong>个</strong> LSTM 的输出值 <span class="math inline">\(a\)</span> 以及输入值 <span class="math inline">\(x\)</span>（此外对于第 2 层的 LSTM 的 输入值就是前一<strong>层</strong>的输出值）。但是众所周知，<strong>LSTM 每个门的输入肯定只有一个向量，<span class="math inline">\(a\)</span> 和 <span class="math inline">\(x\)</span> 是两个向量，那么如何处理呢？</strong>
 <ul>
@@ -331,76 +343,234 @@
 <li>记忆单元（下图中的 c，也可以称作 memory(m)）中的数据也可以随机初始化或者直接为 0。</li>
 <li>每一层的 LSTM 都权重共享。意思是每一层都有多个 LSTM，里面的权重值其实是同一份。</li>
 </ol>
-<figure>
-<img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/LSTM%20cell.jpg" alt><figcaption>LSTM cell</figcaption>
-</figure>
-<p>  下图是多个 LSTM 运行的示意图。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/多个%20LSTM.jpg" alt="多个 LSTM"></p>
-<p>  下图是 LSTM 的反向传播，被称为 BPTT（backpropagation through time）。由于还没遇到过，并且 pytorch 都已经是自动求导，所以目前处于待补充状态。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/LSTM反向传播.jpg" alt="LSTM反向传播"></p>
+<p>下图是多个 LSTM 运行的示意图。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/多个%20LSTM.jpg" alt="多个 LSTM" /></p>
+<p>下图是 LSTM 的反向传播，被称为 BPTT（backpropagation through time）。由于还没遇到过，并且 pytorch 都已经是自动求导，所以目前处于待补充状态。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/LSTM反向传播.jpg" alt="LSTM反向传播" /></p>
 <h1 id="seq2seq">Seq2Seq</h1>
-<p>  Seq2Seq 模型于 2014 年由 Bengio 团队<a href="https://arxiv.org/pdf/1406.1078.pdf" title="Learning Phrase Representations using RNN Encoder–Decoder for Statistical Machine Translation" target="_blank" rel="noopener"><span class="citation" data-cites="Cho_2014">(Cho et al. 2014)</span></a>首先提出，同年，大概三个月后，google 团队<a href="https://arxiv.org/pdf/1409.3215.pdf" title="Sequence to Sequence Learning with Neural Networks" target="_blank" rel="noopener"><span class="citation" data-cites="sutskever2014sequence">(Sutskever, Vinyals, and Le 2014)</span></a>对此做出了改进。它们的架构分别如下二图所示： <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/Cho%20seq2seq.png" title="Cho seq2seq" alt="Cho seq2seq"></div><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/Sutskever%20seq2seq.png" title="Sutskever seq2seq" alt="Sutskever seq2seq"></div></div></div></p>
-<p>  正如上图所示，它们是 seq2seq 两种不同的架构，<strong>现在我们常用的架构是由 google 团队 Sutskever 等人提出的架构</strong>。实际上，它们在 encoder 部分是一样的，只是在 decoder 部分有所不同。对于第一种架构，decoder 的每一个时间步都需要接收 encoder 最后一个时间步的隐藏状态。对于第二种架构，每一个时间步只是接收上一个时间步的隐藏状态。</p>
-<p>  那么这两种做法在直觉上来看有什么区别呢？（os：<em>没办法从理论上看啊！我们在炼丹啊</em>）实际上，光看图就可以看到区别。<strong>首先</strong>，第一个架构中，一个时间步的输入一共有三项，而第二个架构只有两项。多出来的一项是 encoder 最后的输出。<strong>其次</strong>，第一个架构是用 simple RNN 做的，第二个架构是用 LSTM 做的。RNN 的缺点大家都知道，不过我好奇的是这篇论文发表的时候，LSTM 应该是流行的啊，为什么不用 LSTM 呢？</p>
-<p>  不过这算是远古时代的论文了，也没兴趣再复现一遍了。<em>貌似目前没看到有人讲解过，加不加那个 c 到底有什么区别。</em></p>
-<p>  除了这些，我倒是还有一个看法。将 Cho seq2seq，Sutskever seq2seq 和 attention 三者进行比较，我发现 Sutskever seq2seq 并没有做出多大的改进，顶多就是将 simple RNN 替换成了 4-layer LSTM，并使用了逆序的 trick。仔细观察可以发现，<strong>Cho seq2seq 和 attention 一样除了隐藏状态 h 和输入值 x 之后，都还需要一个上下文向量 c。只不过 Cho seq2seq 的 c 是 encoder 的最后一个隐藏状态，而 attention 的 c 是 encoder 各个时间步输出的加权和平均</strong>。而将它们的模型去掉这个上下文 c 就变成了 Sutskever seq2seq。因此我认为由于以前不用 attention 机制，并且 Cho 的 seq2seq 确实会有一些问题，所以大家默认还是使用 Sutskever seq2seq。</p>
+<p>Seq2Seq 模型于 2014 年由 Bengio 团队<a href="https://arxiv.org/pdf/1406.1078.pdf" target="_blank" rel="noopener" title="Learning Phrase Representations using RNN Encoder–Decoder for Statistical Machine Translation"><span class="citation" data-cites="Cho_2014">(Cho et al. 2014)</span></a>首先提出，同年，大概三个月后，google 团队<a href="https://arxiv.org/pdf/1409.3215.pdf" target="_blank" rel="noopener" title="Sequence to Sequence Learning with Neural Networks"><span class="citation" data-cites="sutskever2014sequence">(Sutskever, Vinyals, and Le 2014)</span></a>对此做出了改进。总得来说，seq2seq 架构中所使用的的神经网络可以是任意的神经网络，例如上面提到的 GRU 和 LSTM，甚至还可以是 CNN。它们的具体架构分别如下二图所示： <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/Cho%20seq2seq.png" title="Cho seq2seq" alt="Cho seq2seq" /></div><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/Sutskever%20seq2seq.png" title="Sutskever seq2seq" alt="Sutskever seq2seq" /></div></div></div></p>
+<p>正如上图所示，它们是 seq2seq 两种不同的架构，<strong>现在我们常用的架构是由 google 团队 Sutskever 等人提出的架构</strong>。实际上，它们在 encoder 部分是一样的，只是在 decoder 部分有所不同。对于第一种架构，decoder 的每一个时间步都需要接收 encoder 最后一个时间步的隐藏状态。对于第二种架构，每一个时间步只是接收上一个时间步的隐藏状态。</p>
+<p>那么这两种做法在直觉上来看有什么区别呢？（os：<em>没办法从理论上看啊！我们在炼丹啊</em>）实际上，有一点光看图就可以看到区别。<strong>首先</strong>，第一个架构中，一个时间步的输入一共有三项，而第二个架构只有两项。多出来的一项是 encoder 最后的输出。<strong>其次</strong>，第一个架构是用 simple RNN 做的，第二个架构是用 LSTM 做的。RNN 的缺点大家都知道，不过我好奇的是这篇论文发表的时候，LSTM 应该是流行的啊，为什么不用 LSTM 呢？</p>
+<p>不过这算是远古时代的论文了，也没兴趣再复现一遍了。<em>貌似目前没看到有人讲解过，加不加那个 c 到底有什么区别。</em></p>
+<p>除了这些，我倒是还有一个看法。将 Cho seq2seq，Sutskever seq2seq 和 attention 三者进行比较，我发现 Sutskever seq2seq 并没有做出多大的改进，顶多就是将 simple RNN 替换成了 4-layer LSTM，并使用了逆序的 trick。仔细观察可以发现，<strong>Cho seq2seq 和 attention 一样除了隐藏状态 h 和输入值 x 之后，都还需要一个上下文向量 c。只不过 Cho seq2seq 的 c 是 encoder 的最后一个隐藏状态，而 attention 的 c 是 encoder 各个时间步输出的加权和平均</strong>。而将它们的模型去掉这个上下文 c 就变成了 Sutskever seq2seq。因此我认为由于以前不用 attention 机制，并且 Cho 的 seq2seq 确实会有一些问题，所以大家默认还是使用 Sutskever seq2seq。</p>
 <h2 id="free-running和teacher-forcing">free-running和teacher-forcing</h2>
-<p>  按照国际（Ge Ren）惯例，结论写在前面。可以看完下面的文章之后，再回来看图，或者边看文章边看图。</p>
-<p>  在大部分教程之中（<em>可能是所有</em>）只介绍了如何训练一个 seq2seq 模型，但是并没有讲如何测试。这对于前馈神经网络或者 CNN 来说可能没什么区别，但是对于 seq2seq 来说却有很大区别。</p>
-<p>  其实 seq2seq 拥有两种训练方式：<strong>1）</strong>free-running 方法；<strong>2）</strong>teacher-forcing 方法。<strong>其中我们熟知的以及教程上讲的，通常是第一种 free-running</strong>。该方法的思路是，将上一个时间步的预测结果输入进当前时间步的 RNN，以此循环往复，直至预测出结束符 <code>&lt;EOS&gt;</code> 或者循环到一个给定的次数（<em>例如解码 90 次</em>），程序才会结束。而由于第一个时间步的特殊性，所以第一个时间步的输入是起始符 <code>&lt;SOS&gt;</code>。</p>
-<p>  但是这其实是比较理想的情况。首先在训练时，target（即 y）是已知的，所以没必要等到预测出 <code>&lt;EOS&gt;</code> 才结束，我们完全可以根据 target 的长度（<em>例如一句话长 20 个字</em>）进行控制。此外由于该方法，RNN 的输入是上一个 RNN 的输出（预测值），所以可以用一句话概括这种情况，即“一步错，步步错”。只要预测错一步，那么后面的部分肯定都是错的，因此使用 <strong>free-running</strong> 训练很费时间，模型需要花大量的时间去学习如何记忆。</p>
-<p>  <strong>teacher-foring 就是为了解决这一问题而提出的</strong>【<a href="https://blog.csdn.net/qq_30219017/article/details/89090690" target="_blank" rel="noopener">3</a>】。根据字面意思，这种方法就好像“老师在教导学生一样”，每个时间步的输入不再是上一个时间步的输出，而是真实的 target。例如 <span class="math inline">\(t-1\)</span> 步时，预测值为“i”，我们假设真实值为“we”，那么在 <span class="math inline">\(t\)</span> 步时，RNN 的输入不是“i”的词向量，而是直接输入“we”的词向量。这就好像“老师在纠正学生的错误一样”。 <div class="note warning"><p>  但是对于我来说有点不一样。我在学习完基础知识后，正好看了一篇论文并根据源码复现了一下，所以我是知道训练和测试之间的区别的。但是我不知道这两种方法是什么名字，也不知道为什么要使用不同的方法。我当初以为 seq2seq 算法可能就是这样写的，所以没去了解它。</p>
-<p>  但是最近的一个实验暴露出了我的一个短板。我发现在训练时使用 teacher-forcing，测试时使用 free-running，会使得模型在测试集上的性能特别差。一般 train bleu = 80%-90%，而 test bleu &lt; 1%。这是由于模型过渡依赖标签，导致模型在测试时太过脆弱【<a href="https://blog.csdn.net/qq_30219017/article/details/89090690" title="一文弄懂关于循环神经网络 (RNN) 的 Teacher Forcing 训练机制" target="_blank" rel="noopener">3</a>】</p>
-<p>  目前有一些解决办法。<strong>1）</strong>Beam Search；<strong>2）</strong>Curriculum Learning；<strong>3）</strong>……详细的解法请看下一章节。</p>
-</div></p>
-<h2 id="seq2seq的缺陷">Seq2Seq的缺陷</h2>
-<p>  seq2seq 是语言生成任务中的一个重要架构，它可以应用在 NLP 的各种任务之上，例如语义解析、神经机器翻译、对话系统等。虽然 seq2seq 模型取得了显著的效果，但是它却迟迟无法达到人类的水平（<em>此处有待考证</em>）。其中有几个重要因素制约了 seq2seq 的性能：</p>
+<p>按照国（Ge）际（Ren）惯例，结论写在前面。可以看完下面的文章之后，再回来看图，或者边看文章边看图。如下图所示，左边就是 free-running 形式的 seq2seq，是不是很熟悉？因为这是我们经常使用的结构。右图就是 teacher-forcing seq2seq，实际上二者并没有特别大的区别。 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/free-running-seq2seq.gif" alt="free-running-seq2seq" /></div><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/teacher-forcing-seq2seq.gif" alt="teacher-forcing-seq2seq" /></div></div></div></p>
+<p>大部分教程之中只介绍了如何训练一个 seq2seq 模型，但是并没有讲如何测试。这对于前馈神经网络或者 CNN 来说可能没什么区别，但是对于 seq2seq 来说却有很大区别。</p>
+<p>其实 seq2seq 拥有两种训练方式：<strong>1）</strong>free-running 方法；<strong>2）</strong>teacher-forcing 方法。<strong>其中我们熟知的以及教程上讲的，通常是第一种 free-running</strong>。该方法的思路是，将上一个时间步的预测结果输入进当前时间步的 RNN，以此循环往复，直至预测出结束符 <code>&lt;EOS&gt;</code> 或者循环到一个给定的次数（<em>例如解码 90 次</em>），程序才会结束。而由于第一个时间步的特殊性，所以第一个时间步的输入是起始符 <code>&lt;SOS&gt;</code>。</p>
+<p>但是这其实是比较理想的情况。首先在训练时，target（即 y）是已知的，所以没必要等到预测出 <code>&lt;EOS&gt;</code> 才结束，我们完全可以根据 target 的长度（<em>例如一句话长 20 个字</em>）进行控制。此外由于该方法，RNN 的输入是上一个 RNN 的输出（预测值），所以可以用一句话概括这种情况，即“一步错，步步错”。只要预测错一步，那么后面的部分肯定都是错的。因此使用 <strong>free-running</strong> 训练会产生以下几项问题【<a href="https://machinelearningmastery.com/teacher-forcing-for-recurrent-neural-networks/" target="_blank" rel="noopener">2</a>】：</p>
 <ol type="1">
-<li>seq2seq 模型在训练（training）时的输入和在推理（inference）时的输入是不一样的。详见《<a href="#free-running和teacher-forcing">free-running和teacher-forcing</a>》。而这种问题被称为 <strong>Exposure Bias</strong>。</li>
-<li>由于 seq2seq 模型在训练时，要求模型输出的预测结果必须与参考句一一对应【<a href="https://www.jiqizhixin.com/articles/2019-08-10-2" title="ACL2019 最佳论文冯洋：Teacher Forcing 亟待解决 ，通用预训练模型并非万能" target="_blank" rel="noopener">5</a>】。这显然是不合理的。因为文字具有多样性，一词多义或者一义多词的情况比比皆是，甚至英语还具有时态变化。</li>
-<li><em>对于第二点，原文想要表达的意思可能并不是我所说的意思，但是我觉得我所说的也是一个比较重要的问题。此外，原文中的第二个因素我觉得实际上与第一个是类似的</em></li>
-<li>矫枉过正（overcorrect）</li>
+<li>收敛缓慢</li>
+<li>模型不稳定</li>
+<li>技能匮乏</li>
 </ol>
-<p>  目前 teacher-forcing 是亟待解决的问题。由于模型的训练方法和推理方法不同，因此会导致模型在推理时受到很大的影响。目前有一个不算解决办法的办法，就是 Beam Search，详见《<a href="#Beam-Search">Beam Search</a>》。其次还有 scheduled sampling<a href="https://arxiv.org/abs/1506.03099" title="Scheduled Sampling for Sequence Prediction with Recurrent Neural Networks" target="_blank" rel="noopener"><span class="citation" data-cites="bengio2015scheduled">(Bengio et al. 2015)</span></a>，Professor Forcing<a href="https://arxiv.org/pdf/1610.09038.pdf" title="Professor Forcing: A New Algorithm for Training Recurrent Networks" target="_blank" rel="noopener"><span class="citation" data-cites="lamb2016professor">(Lamb et al. 2016)</span></a>，curriculum learning<a href="https://dl.acm.org/doi/pdf/10.1145/1553374.1553380" title="Curriculum Learning" target="_blank" rel="noopener"><span class="citation" data-cites="bengio2009curriculum">(Bengio et al. 2009)</span></a>，<a href="https://arxiv.org/pdf/1906.02448.pdf" title="Bridging the Gap between Training and Inference for Neural Machine Translation" target="_blank" rel="noopener"><span class="citation" data-cites="Zhang_2019">(Zhang et al. 2019)</span></a>。</p>
-<h2 id="beam-search">Beam Search</h2>
-<p>  </p>
-<h2 id="参考资料">参考资料</h2>
+<p><strong>teacher-foring 就是为了解决这一问题而提出的</strong>【<a href="https://blog.csdn.net/qq_30219017/article/details/89090690" target="_blank" rel="noopener">1</a>】。根据字面意思，这种方法就好像“老师在教导学生一样”，每个时间步的输入不再是上一个时间步的输出，而是真实的 target。例如 <span class="math inline">\(t-1\)</span> 步时，预测值为“i”，我们假设真实值为“we”，那么在 <span class="math inline">\(t\)</span> 步时，RNN 的输入不是“i”的词向量，而是直接输入“we”的词向量。这就好像“老师在纠正学生的错误一样”。</p>
+<div class="note warning"><p>但是对于我来说有点不一样。我在学习完基础知识后，正好看了一篇论文并根据源码复现了一下，所以我是知道训练和测试之间的区别的。但是我不知道这两种方法是什么名字，也不知道为什么要使用不同的方法。我当初以为 seq2seq 算法可能就是这样写的，所以没去了解它。</p>
+<p>但是最近的一个实验暴露出了我的一个短板。我发现在训练时使用 teacher-forcing，测试时使用 free-running，会使得模型在测试集上的性能特别差。一般 train bleu = 80%-90%，而 test bleu &lt; 1%。这是由于模型过渡依赖标签，导致模型在测试时太过脆弱【<a href="https://blog.csdn.net/qq_30219017/article/details/89090690" target="_blank" rel="noopener" title="一文弄懂关于循环神经网络 (RNN) 的 Teacher Forcing 训练机制">1</a>】</p>
+</div>
+<p>teacher-forcing 是一个快速且高效的训练方式，但是当生成的序列与模型在训练过程中看到的不同时，这种方法会在实际使用时导致模型特别<strong>脆弱</strong>或者<strong>有所限制</strong>【<a href="https://machinelearningmastery.com/teacher-forcing-for-recurrent-neural-networks/" target="_blank" rel="noopener">2</a>】。目前有一些解决办法：<strong>1）</strong>Beam Search；<strong>2）</strong>Curriculum Learning……详见《<a href="#seq2seq的缺陷">Seq2Seq的缺陷</a>》。</p>
+<h3 id="参考资料-1">参考资料</h3>
 <ol type="1">
 <li><a href="https://blog.csdn.net/qq_30219017/article/details/89090690" target="_blank" rel="noopener">一文弄懂关于循环神经网络 (RNN) 的 Teacher Forcing 训练机制</a>（算是 free-running 以及 teacher-forcing 的一篇综述文章）</li>
 <li><a href="https://machinelearningmastery.com/teacher-forcing-for-recurrent-neural-networks/" target="_blank" rel="noopener">teacher forcing for recurrent neural networks</a>（上一篇综述部分内容的英语原文）</li>
+</ol>
+<h2 id="seq2seq的缺陷">Seq2Seq的缺陷</h2>
+<p>seq2seq 是语言生成任务中的一个重要架构，它可以应用在 NLP 的各种任务之上，例如语义解析、神经机器翻译、对话系统等。虽然 seq2seq 模型取得了显著的效果，但是它却迟迟无法达到人类的水平（<em>此处有待考证</em>）。其中有几个重要因素制约了 seq2seq 的性能：</p>
+<ol type="1">
+<li>seq2seq 模型在训练（training）时的输入和在推理（inference）时的输入是不一样的。详见《<a href="#free-running和teacher-forcing">free-running和teacher-forcing</a>》。而这种问题被称为 <strong>Exposure Bias</strong>。</li>
+<li>由于 seq2seq 模型在训练时，要求模型输出的预测结果必须与参考句一一对应【<a href="https://www.jiqizhixin.com/articles/2019-08-10-2" target="_blank" rel="noopener" title="ACL2019 最佳论文冯洋：Teacher Forcing 亟待解决 ，通用预训练模型并非万能">1</a>】。这显然是不合理的。因为文字具有多样性，一词多义或者一义多词的情况比比皆是，甚至英语还具有时态变化。
+<ul>
+<li><em>对于这点，原文想要表达的意思可能并不是我所说的意思，但是我觉得我所说的也是一个比较重要的问题。此外，原文中的第二个因素我觉得实际上与第一个是类似的</em></li>
+</ul></li>
+<li>矫枉过正（overcorrect）</li>
+<li>无法捕获长句的特征，因为 decoder 的输入是 encoder 最后一个 RNN 的输出，上下文的信息被浓缩进这一个向量，这显然不合理，我们无法将希望寄托于这单独的一个向量上。（<em>此缺陷将在下节《<a href="#attention">Attention</a>》中展开</em>）</li>
+</ol>
+<p>目前 teacher-forcing 是亟待解决的问题。由于模型的训练方法和推理方法不同，因此会导致模型在推理时受到很大的影响。目前有一个不算解决办法的办法，就是 Beam Search，详见《<a href="#Beam-Search">Beam Search</a>》。其次还有 scheduled sampling<a href="https://arxiv.org/abs/1506.03099" target="_blank" rel="noopener" title="Scheduled Sampling for Sequence Prediction with Recurrent Neural Networks"><span class="citation" data-cites="bengio2015scheduled">(Bengio et al. 2015)</span></a>（一种 curriculum learning），Professor Forcing<a href="https://arxiv.org/pdf/1610.09038.pdf" target="_blank" rel="noopener" title="Professor Forcing: A New Algorithm for Training Recurrent Networks"><span class="citation" data-cites="lamb2016professor">(Lamb et al. 2016)</span></a>，curriculum learning<a href="https://dl.acm.org/doi/pdf/10.1145/1553374.1553380" target="_blank" rel="noopener" title="Curriculum Learning"><span class="citation" data-cites="bengio2009curriculum">(Bengio et al. 2009)</span></a>，<a href="https://arxiv.org/pdf/1906.02448.pdf" target="_blank" rel="noopener" title="Bridging the Gap between Training and Inference for Neural Machine Translation"><span class="citation" data-cites="Zhang_2019">(Zhang et al. 2019)</span></a>。</p>
+<h3 id="参考资料-2">参考资料</h3>
+<ol type="1">
 <li><a href="https://www.jiqizhixin.com/articles/2019-08-10-2" target="_blank" rel="noopener">ACL2019 最佳论文冯洋：Teacher Forcing 亟待解决 ，通用预训练模型并非万能</a></li>
+</ol>
+<h2 id="beam-search">Beam Search</h2>
+<p>国内关于 beam search 的资料比较少，我搜寻了一番大都数都在知乎，它上面有些许讲解。据<span class="citation" data-cites="Freitag_2017">(Freitag and Al-Onaizan 2017)</span>论文中所述，beam search 首先由<span class="citation" data-cites="graves2012sequence boulanger2013audio">(Graves 2012; Boulanger-Lewandowski, Bengio, and Vincent 2013)</span>为 seq2seq 模型提出，此后在机器翻译领域由<span class="citation" data-cites="sutskever2014sequence">(Sutskever, Vinyals, and Le 2014)</span>首次提出。下面给出 wikipedia 上的描述，这是<a href="https://en.wikipedia.org/wiki/Beam_search" target="_blank" rel="noopener">原链接</a>（<em>需番蔷</em>）有兴趣可以去网站上看全文。</p>
+<blockquote>
+<p>In computer science, beam search is a heuristic search algorithm that explores a graph by expanding the most promising node in a limited set. Beam search is an optimization of best-first search that reduces its memory requirements. Best-first search is a graph search which orders all partial solutions (states) according to some heuristic. But in beam search, only a predetermined number of best partial solutions are kept as candidates.[1] It is thus a greedy algorithm.</p>
+<p>The term &quot;beam search&quot; was coined by Raj Reddy of Carnegie Mellon University in 1977.[2]</p>
+</blockquote>
+<del>
+但是我个人在实验之中使用 beam search 算法，发现并没有任何效果，甚至结果更差。
+</del>
+<p>2020.06.22 更新：上一段写下约半个礼拜之后，我又去想了一下，如果别人大规模应用这个算法，没道理没效果。所以经过一番代码检查后，我发现了问题。原来之前的代码对于隐藏状态的处理有问题，我将 beam size 大小的预测结果视作了线性的，而不是固定它们的隐藏状态。</p>
+<p>具体来说，例如时间步 <span class="math inline">\(t\)</span> 的预测结果为单词 <span class="math inline">\(I\)</span>，并且隐藏状态为 <span class="math inline">\(h_I\)</span>。接下来假设我们已知下一个时间步的预测结果为 <span class="math inline">\(\{love, hate, told\}\)</span>（注：单词预测结果由 Beam Search 产生，并非词表大小只是 3），则它们的隐藏状态输入都应该是 <span class="math inline">\(h_I\)</span> 才是正确的，但是我将它们的隐藏状态输入分别设置为了 <span class="math inline">\(h_I, h_{love}, h_{hate}\)</span>，其中 <span class="math inline">\(h_{love}, h_{hate}\)</span> 是将 love 和 hate 输入 LSTM 后得到的隐藏状态。所以简单来说就是代码写错了……在循环遍历的时候写错了……实际上大概可以提升 3 个左右的百分点。</p>
+<h3 id="参考资料-3">参考资料</h3>
+<ol type="1">
+<li><a href="https://zhuanlan.zhihu.com/p/28048246" target="_blank" rel="noopener">seq2seq中的beam search算法过程</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/114669778" target="_blank" rel="noopener">十分钟读懂Beam Search 1：基础</a></li>
+</ol>
+<h2 id="scheduled-sampling">Scheduled Sampling</h2>
+<p>Scheduled Sampling 由<a href="https://arxiv.org/abs/1506.03099" target="_blank" rel="noopener" title="Scheduled Sampling for Sequence Prediction with Recurrent Neural Networks"><span class="citation" data-cites="bengio2015scheduled">(Bengio et al. 2015)</span></a>首次提出，这是一种 Curriculum learning 策略。</p>
+<p>序列预测任务的训练和推理之间的主要区别是：当预测一个符号时是使用上一个真实值 <span class="math inline">\(y_{t-1}\)</span>，还是使用模型本身预测出的估计 <span class="math inline">\(\hat{y}_{t-1}\)</span>。<strong>scheduled sampling 机制就是在训练阶段，随机地决定使用 <span class="math inline">\(y_{t-1}\)</span> 还是 <span class="math inline">\(\hat{y}_{t-1}\)</span></strong>。以掷硬币的方法来实现，当概率为 <span class="math inline">\(\epsilon_i\)</span> 则使用真实值 <span class="math inline">\(y_{t-1}\)</span>，当概率为 <span class="math inline">\(1- \epsilon_i\)</span> 则使用模型的估计 <span class="math inline">\(\hat{y}_{t-1}\)</span>。（<em>注意：在实验中，需要对每一个符号都掷一次硬币。论文中提出，为每个序列掷一次硬币的实验他们也测试过，但是结果更差</em>）</p>
+<p>如果 <span class="math inline">\(\epsilon_i\)</span> 等于 1 就代表是 teacher-forcing 方法，反之就是 free-running 方法。此外，直观来说，当模型训练初期，模型会产生一些随机的符号，这是因为模型还训练得不是很好，如果使用 free-running 方法可能会导致收敛过慢，所以可能应该更多地选择 teacher-forcing。反之，当训练的末尾， <span class="math inline">\(\epsilon_i\)</span> 更应该倾向于 free-running。这样更符合模型的推理情况，同时也可以期望模型已经准备好能够处理未知情况以及采样出合理的符号。</p>
+<p>最后一个问题就是，如上一段所述，如何动态地控制抛硬币的概率？其实跟 learning rete decay 是一样的。论文中建议使用一个时间表以此减少 <span class="math inline">\(\epsilon_i\)</span>，时间表就是一个以 <span class="math inline">\(i\)</span> 为自变量的函数，并且提出三种方式：</p>
+<ol type="1">
+<li>Linear decay：<span class="math inline">\(\epsilon_i = max(\epsilon, k - ci)\)</span>，其中 <span class="math inline">\(k\)</span> 和 <span class="math inline">\(c\)</span> 分别代表偏移量和斜率，这取决于观测到的收敛速度；</li>
+<li>Expoential decay：<span class="math inline">\(\epsilon_i = k^i\)</span>，其中 <span class="math inline">\(k &lt; 1\)</span> 是一个常量，这取决于观测到的收敛速度；</li>
+<li>Inverse sigmoid decay：<span class="math inline">\(\epsilon = \frac{k}{k + exp(\frac{i}{k})}\)</span>，其中 <span class="math inline">\(k \ge 1\)</span> 取决于观测到的收敛速度。</li>
+</ol>
+<p>以上的方法就被称为 <strong>Scheduled Sampling</strong>。由于 scheduled sampling 其实就是以某个概率动态地控制 teacher-forcing 和 free-running，所以 gif 就不做了，可以参考上面《<a href="#free-running和teacher-forcing">free-running和teacher-forcing</a>》一节的 gif。</p>
+<h3 id="训练经验">训练经验</h3>
+<p>虽说 Scheduled Sampling 在概念上很简单，但是在实际使用过程中，还是有诸多技巧的。</p>
+<h2 id="参考资料-4">参考资料</h2>
+<ol start="20" type="1">
 <li><em><a href="https://yan624.github.io/posts/5e27260b.html#seq2seq">吴恩达李宏毅综合学习笔记：RNN入门</a></em></li>
 </ol>
 <h1 id="attention">Attention</h1>
-<p>  Attention 机制由 Bahdanau 在 2015 年，首次由<a href="https://arxiv.org/pdf/1409.0473.pdf" title="Neural Machine Translation by Jointly Learning to Align and Translate" target="_blank" rel="noopener"><span class="citation" data-cites="bahdanau2014neural">(Bahdanau, Cho, and Bengio 2014)</span></a>提出，它是机器翻译领域第一篇应用 attention 机制的论文，应该也是在 NLP 领域中，所有应用 attention 机制的论文中最有名的（<em>事实上 attention 机制早就有人提出了</em>）。RNN 领域的第一篇文章为《Recurrent Models of Visual Attention》。</p>
-<p>  在此论文中 Attention 机制基于 encoder-decoder 模型（<em>现在已经不止于此了，有多种变体</em>）。本人的理解是 encoder-decoder 模型是一种范式，它主要由两个部分组成，即 encoder 和 decoder。encoder 负责提取输入的特征，decoder 负责运用提取出的特征并且生成（v.）任务所需要的目标。而在 NLP 领域之中，由于输入以及输出都是一段序列，所以又可以被称为 Sequence-to-Sequence 模型，简写为 Seq2Seq。所以 encoder-decoder 其实还可以有其他的变体，例如在图像描述（Image Caption）生成领域，encoder 就是一个 CNN，decoder 是一个 RNN。</p>
-<p>  关于 Seq2Seq 的内容，已经在上一节讲述完毕。此节不再赘述，接下来将主要描述：<strong>1）</strong>在机器翻译领域最早提出的 Attention 机制——Bahdanau Attention；<strong>2）</strong>后来 Luong 提出的几种 attention 变体，以及几种基于 attention 机制的 Seq2Seq 训练方法；<strong>3）</strong>其它的一些 attention 机制变体。</p>
-<p>  </p>
-<h2 id="参考文章">参考文章</h2>
-<p>  <a href="https://www.zhihu.com/question/68482809/answer/264632289" target="_blank" rel="noopener">参考文章</a>；<a href="https://www.cnblogs.com/robert-dlut/p/5952032.html" target="_blank" rel="noopener">Attention历史</a>。实际上九几年的时候在CV领域已经有这概念了。<a href="https://yan624.github.io/posts/5e27260b.html#Attention">博客</a>中有写到如何计算 Attention。</p>
-<h2 id="memory-network">Memory Network</h2>
-<p>  <a href="https://papers.nips.cc/paper/5846-end-to-end-memory-networks.pdf" target="_blank" rel="noopener">论文地址</a></p>
-<p>  <a href="https://yan624.github.io/posts/5e27260b.html#Memory-Network">博客</a>有记一些基础的东西。</p>
-<h1 class="unnumbered" id="参考文献">参考文献</h1>
-<div id="refs" class="references hanging-indent" role="doc-bibliography">
+<p>按照国（Ge）际（Ren）惯例，结论写在前面。下面几张图片分别是 Bahdanau attention、Luong attention（global attention + input-feeding） 以及 local attention 的执行步骤。</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/bahdanau-attention.gif" title="bahdanau attention" alt="bahdanau attention" /></div><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/global-attention.gif" title="global attention" alt="global attention" /></div></div></div>
+<p>Attention 机制由 Bahdanau 在 2015 年，首次由<a href="https://arxiv.org/pdf/1409.0473.pdf" target="_blank" rel="noopener" title="Neural Machine Translation by Jointly Learning to Align and Translate"><span class="citation" data-cites="bahdanau2014neural">(Bahdanau, Cho, and Bengio 2014)</span></a>提出，它是机器翻译领域第一篇应用 attention 机制的论文，应该也是在 NLP 领域中，所有应用 attention 机制的论文中最有名的（<em>事实上 attention 机制早就有人提出了</em>）。RNN 领域的第一篇文章为《Recurrent Models of Visual Attention》。</p>
+<p>在此论文中 Attention 机制基于 encoder-decoder 模型（<em>现在已经不止于此了，有多种变体</em>）。本人的理解是 encoder-decoder 模型是一种范式，它主要由两个部分组成，即 encoder 和 decoder。encoder 负责提取输入的特征，decoder 负责运用提取出的特征并且生成（v.）任务所需要的目标。而在 NLP 领域之中，由于输入以及输出都是一段序列，所以又可以被称为 Sequence-to-Sequence 模型，简写为 Seq2Seq。所以 encoder-decoder 其实还可以有其他的变体，例如在图像描述（Image Caption）生成领域，encoder 就是一个 CNN，decoder 是一个 RNN。</p>
+<p><span class="citation" data-cites="xu2015show">(Xu et al. 2015)</span>在论文中提出 <strong>soft/hard attention</strong> 的概念。</p>
+<p>后来，<span class="citation" data-cites="luong2015effective">(Luong, Pham, and Manning 2015)</span> 对 attention 进行了深度的探索，告诉人们它还有很多玩法，提出了 <strong>global/local attention</strong> 的概念。其中 global attention 与 soft attention 类似。但是你也可以将 soft attention 视为一个种类，包括 global/local attention。此外，<span class="citation" data-cites="luong2015effective">(Luong, Pham, and Manning 2015)</span> 还提出了 Input-fedding Approach。</p>
+<p>我们所熟知或者刚接触到的 attention 基本上都是 global attention，它主要的做法是对 encoder 每个时间步上的输出都去加权和。而 local attention 就是只取局部的加权和。那么 hard attention 其实就是只关注一个地方（类似 pointer network）。最后<span class="citation" data-cites="luong2015effective">(Luong, Pham, and Manning 2015)</span>指出对比 global/local attention，更常用的还是 global attention，即我们熟知的那个。</p>
+<p>为了区分两种 Attention 机制，后来将<span class="citation" data-cites="bahdanau2014neural">(Bahdanau, Cho, and Bengio 2014)</span>提出的方法和这篇论文方法分别称为 <strong>Bahdanau Attention</strong>（亦称 additive attention）和 <strong>Luong Attention</strong>（亦称 multiplicative attention）。</p>
+<p>此外，关于 Seq2Seq 的内容，已经在上一节讲述完毕。此节不再赘述，接下来将主要描述：<strong>1）</strong>attention 的基本知识；<strong>2）</strong>hard attention；<strong>3）</strong>在机器翻译领域最早提出的 attention 机制——Bahdanau Attention 以及 Luong 提出的几种 attention 变体；<strong>4）</strong>其它的一些 attention 机制变体。</p>
+<h2 id="基础知识">基础知识</h2>
+<p>本章开头基本上已经讲解了很多关于 attention 的知识以及历史，但是有一点没讲，就是以什么方式区分那么多 attention？其实 attention model 的形式多种多样，不过大都是由两个函数进行控制的：<strong>1）</strong>alignment function；<strong>2）</strong>score function。<strong>alignment function 控制 decoder 应该关注 encoder 中的哪些部分；score function 控制应该以怎么样的方式进行关注。</strong>因此 alignment function 区分了 <strong>global/local/soft/hard attention</strong>。<span class="citation" data-cites="luong2015effective">(Luong, Pham, and Manning 2015)</span>提出四种不同的计算方式（最后一种大家可能不常听见）：</p>
+<p><span class="math display">\[
+score(h_t, \bar{h}_s) = 
+\begin{cases}
+h^T_t \bar{h}_s &amp; \text{dot} \\ 
+h^T_t W_a \bar{h}_s &amp; \text{general} \\ 
+v^T_a tanh(W_a [h_t;\bar{h}_s]) &amp; \text{concat} \\
+softmax(W_a h_t) &amp; \text{location} \\
+\end{cases}
+\]</span></p>
+<h2 id="hard-attention">hard attention</h2>
+<h2 id="global-attention">global attention</h2>
+<p>global attention 相较于 Bahdanau attention，虽然在灵感上与其相似，但是细微的不同之处还是反映了其是如何从原模型简化和泛化的。</p>
+<ol type="1">
+<li>global attention 简单地使用了最上一层 LSTM 的隐藏状态。而 Bahdanau attention 使用的是 bi-encoder 正反向隐藏状态和 uni-decoder 隐藏状态的拼接版；</li>
+<li>global attention 的计算路线是 <span class="math inline">\(h_t \to a_t \to c_t \to \tilde{h}_t\)</span>，即在时间步 <span class="math inline">\(t\)</span>，先由 decoder 生成隐藏状态 <span class="math inline">\(h_t\)</span>，将使用它计算 attention <span class="math inline">\(c_t\)</span>，最后再使用 <span class="math inline">\(c_t\)</span> 与 <span class="math inline">\(h_t\)</span> 拼接获得用于生成单词的 <span class="math inline">\(\tilde{h}_t\)</span>。这更简单；
+<ul>
+<li>而 Bahdanau attention 的计算路线是 <span class="math inline">\(h_{t-1} \to a_t \to c_t \to h_t\)</span>，它使用的是上一个时间步 <span class="math inline">\(t-1\)</span> 的隐藏状态 <span class="math inline">\(h_{t-1}\)</span>，然后计算 attention <span class="math inline">\(c_t\)</span>，最后将 <span class="math inline">\(c_t\)</span> 输入进 decoder 获得当前时间步 <span class="math inline">\(t\)</span> 的隐藏状态 <span class="math inline">\(h_t\)</span>。</li>
+</ul></li>
+</ol>
+<p>上述 attention 的计算路线取自<span class="citation" data-cites="luong2015effective">(Luong, Pham, and Manning 2015)</span>的论文。但是我认为这样的曲线无法直观的体现出 attention 的计算路线，所以我重画了它：</p>
+<p><span class="math display">\[
+\begin{cases}
+[y_{t-1}; \tilde{h}_{t-1}], h_{t-1} \to h_t \to a_t \to c_t \to \tilde{h}_t \to predict &amp; \text{(global attention)} \\
+[y_{t-2}; c_i], h_{t-2} \to h_{t-1} \to a_t \to c_t \to h_t \to predict &amp; \text{(bahdanau attention)}\\
+\end{cases}
+\]</span></p>
+<p>总的来说，global attention 于 <span class="math inline">\(t\)</span> 时间步，RNN <strong>执行完毕之后</strong>，计算注意力向量 <span class="math inline">\(c_t\)</span>，并用其与隐藏状态 <span class="math inline">\(h_t\)</span> 合并进一步预测结果；而 Bahdanau attention 则是在 <span class="math inline">\(t\)</span> 时间步，RNN <strong>执行之前</strong>，计算注意力向量 <span class="math inline">\(c_t\)</span>，并将其输入进 RNN，得到隐藏状态 <span class="math inline">\(h_t\)</span>，最后预测结果。</p>
+<p>此外，无论是 Global 还是下节介绍 local 方法，注意决策都是独立执行的，这是一个次优解。鉴于在标准的机器翻译中，在翻译阶段通常需要维护一个 coverage 集，以跟踪哪个源词已被翻译。类似地，在基于注意的 NMT 中，对齐决策应该结合过去的对齐信息。所以该论文提出了 input-feeding 方法，指的是将注意力向量 <span class="math inline">\(\tilde{h}_t\)</span> 与下一个时间步的输入做拼接。这种连接方式有两方面作用：<strong>1）</strong>使模型充分了解到以前的对齐选择；<strong>2）</strong>创建了一个水平和垂直跨度非常深的网络。</p>
+<h2 id="local-attention">local attention</h2>
+<p>文中指出，local attention 与机器视觉领域<span class="citation" data-cites="gregor2015draw">(Gregor et al. 2015)</span>等提出的 selective attention mechanism 类似。</p>
+<p>global attention 的一个缺陷是，它必须关注源句中的所有单词，这种方式代价非常昂贵并且对于翻译较长的序列比较不切实际，例如按段落或者文档翻译。为了解决这种低效问题，<span class="citation" data-cites="luong2015effective">(Luong, Pham, and Manning 2015)</span>提出了 local attention，它仅仅选择源句中的一个子集。</p>
+<p>相比于不可微的 hard attention，local attention 是可微的<span class="citation" data-cites="luong2015effective">(Luong, Pham, and Manning 2015)</span>。在具体细节上，在时间步 <span class="math inline">\(t\)</span>，模型首先生成一个对齐位置 <span class="math inline">\(p_t\)</span>，那么上下文向量 <span class="math inline">\(c_t\)</span> 就是源句窗口 <span class="math inline">\([p_t - D, p_t + D]\)</span> 内的隐藏状态集合的加权平均值，<span class="math inline">\(D\)</span> <strong>根据经验选择</strong>。与 global attention 不同，local attention 的对齐向量 <span class="math inline">\(a_t\)</span> 现在是一个固定的维度，即 <span class="math inline">\(\in \mathbb{R}^{2D + 1}\)</span>。接下来将介绍两类变种。</p>
+<p>Monotonic alignment(<strong>local-m</strong>)：无变化对齐。我们简单地设置 <span class="math inline">\(p_t = t\)</span>，假定了源句和目标句的单词是一一对应的。那么此时的 attention 计算方式其实与 global attention 一致。这种假设在真实环境中是不切实际的，但是可能有部分特殊的任务可以使用，例如序列标注。</p>
+<p>Predictive alignment(<strong>local-p</strong>)：模型预测对齐位置为 <span class="math inline">\(p_t = S \cdot sigmoid(v^T_p tanh(W_p h_t))\)</span></p>
+<h2 id="self-attention">self-attention</h2>
+<p>self-attention 主要应用在 Transformer 中，详见 <a href="https://yan624.github.io/posts/16ad4ed4.html">深度学习算法（四）：Transformer</a>。</p>
+<h2 id="参考资料-5">参考资料</h2>
+<ol type="1">
+<li><a href="https://www.zhihu.com/question/68482809/answer/264632289" target="_blank" rel="noopener">参考文章</a>；</li>
+<li><a href="https://www.cnblogs.com/robert-dlut/p/5952032.html" target="_blank" rel="noopener">Attention历史</a>。实际上九几年的时候在CV领域已经有这概念了；</li>
+<li><a href="https://mp.weixin.qq.com/s/0k71fKKv2SRLv9M6BjDo4w" target="_blank" rel="noopener">真正的完全图解 Seq2Seq Attention 模型</a>；</li>
+<li><em><a href="https://yan624.github.io/posts/5e27260b.html#Attention">吴恩达李宏毅综合学习笔记：RNN 入门#attention</a>；</em></li>
+<li><em><a href="https://yan624.github.io/posts/d9a134a.html#attention">CS224n学习笔记#attention</a></em></li>
+</ol>
+<h1 id="pointer-networks">Pointer Networks</h1>
+<div class="note info"><p>我在 TRADE(Wu et al. 2019) 这篇论文中看到了一些 Ptr 的分类，虽然不知道是不是业界通用的分类方法，但是还是记录一下。</p>
+<ol type="1">
+<li>index-based，即最初的 Ptr；</li>
+<li>hard-gated copy，即《Pointing the Unknown Words》、《Global-to-local memory pointer networks for task-oriented dialogue》</li>
+<li>soft-gated copy，即 Pointer-Generator</li>
+</ol>
+</div>
+<h2 id="index-based">Index-based</h2>
+<p>Ptr-Nets（下简称 <strong><em>Ptr</em></strong>）最早由 <span class="citation" data-cites="vinyals2015pointer">(Vinyals, Fortunato, and Jaitly 2015)</span> 提出。Ptr 的原理与 attention 非常相似，如下所示，其实就只是少了最后一步上下文向量缩放的过程。而它所选用的评分函数为 Luong Attention 提出的 <code>concat</code> 方法，实际上评分函数可以自己选。 <span class="math display">\[
+\begin{align}
+    u^i_j &amp; = v^T tanh(W_1 e_j + W_2 d_i) \quad j \in (1, \cdots, n) \\
+    p(\mathcal{C}_i | \mathcal{C}_1, \cdots, \mathcal{C}_{i-1}, \mathcal{P}) &amp; = softmax(u^i)
+\end{align}
+\]</span></p>
+<p>以上是最初的 Ptr，主要的贡献是提出了 Ptr 机制，但是论文本身并未对 NLP 领域进行相关的实验，例如文本摘要任务或者命名体识别任务。</p>
+<h2 id="hard-gated-copy">Hard-gated Copy</h2>
+<p>随后，<strong><em><span class="citation" data-cites="gulcehre2016pointing">(Gulcehre et al. 2016)</span></em></strong> 进一步完善了 Ptr，并且在文本摘要任务和翻译任务上进行了实践。该论文的思想还是类似于<strong>门控机制</strong>（gated mechanism）。例如在翻译任务中，在生成时，模型自动地选择 attention 机制或者 Ptr 机制去生成单词。选择的方式为 <span class="math inline">\(p_z \times p_l\)</span> 以及 <span class="math inline">\((1 - p_z) \times p_w\)</span>，其中 <span class="math inline">\(p_z\)</span> 代表 <span class="math inline">\(\{0, 1\}\)</span> 。这样就可以动态地选择其中的一个机制去生成。</p>
+<p>但是需要注意的是， <span class="math inline">\(p_z\)</span> 是 sigmoid 函数的输出，所以其为 <span class="math inline">\([0, 1]\)</span>。解决办法是以 0.5 为阈值，基于规则手动调整。这篇论文的思路感觉还是 LSTM 那种路子，毕竟那时还是 2016 年，深度学习涅槃了才 3 年。下面介绍的 Pointer-Generator 虽然也用的是门控机制，但是多了一点花样。它将两个概率分布合并了，而不是两个中挑一个。</p>
+<h2 id="soft-gated-copy">Soft-gated Copy</h2>
+<p>不久之后，[gu2016incorporating] 提出了 <strong>CopyNet</strong>，其本质上还是 Ptr。这篇论文我没看过，但是我在知乎的<a href="https://zhuanlan.zhihu.com/p/73590690" target="_blank" rel="noopener">某篇专栏</a>里看过对它的介绍，感觉从直觉上看，还是 Pointer-Generator 那篇更合理。专栏的作者也认为这篇论文的算法有点奇怪。不过，这篇论文的模型基本上算是起了一个开头作用，pointer-generator 与这个模型类似。</p>
+<p><span class="citation" data-cites="see2017get">(See, Liu, and Manning 2017)</span> 提出了 <strong><em>Pointer-Generator</em></strong>，该模型是现在比较常见的 Ptr，具体也不用多讲，相信看下面的公式之后，应该就能意会是哪个模型了。</p>
+<p><span class="math display">\[P_{final} = P_{gen} \times P_{vocab} + (1 - P_{gen}) \times P_{history}
+\]</span></p>
+<p>有一点需要说明，上式是目前比较常见的写法，但是原论文中的写法并不是这样的。个人认为还是原论文写得合理些，上式的写法总感觉差点味道。但是原论文的公式可能比这个更难理解点。总而言之，实际上上述公式的思想是将两个概率分布<strong>合并到一起</strong>，更形象的说法是将两个概率分布摞成一摞。对于表外词的话，显然就是单独的放一摞，其他的词汇都是摞在另一个概率分布上。</p>
+<h2 id="参考文献">参考文献</h2>
+<ul>
+<li>Attention
+<ol type="1">
+<li><a href="https://zhuanlan.zhihu.com/p/67909876" target="_blank" rel="noopener">浅谈Attention注意力机制及其实现</a></li>
+</ol></li>
+<li>Pointer Networks
+<ol type="1">
+<li><a href="https://zhuanlan.zhihu.com/p/48959800" target="_blank" rel="noopener">Pointer Networks简介及其应用</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/73590690" target="_blank" rel="noopener">NLP 硬核入门 - PointerNet 和 CopyNet</a></li>
+</ol></li>
+</ul>
+<div class="note info"><p>以下是一些以前关于 Ptr 的笔记：</p>
+<ol type="1">
+<li><a href="https://yan624.github.io/·论文笔记/model/46.%20Pointer%20Networks.html">论文笔记</a></li>
+<li>《<a href="https://yan624.github.io/posts/5e27260b.html#Pointer-Network">李宏毅深度学习学习笔记</a>》记录了一个例子。</li>
+</ol>
+</div>
+<h1 id="memory-network">Memory Network</h1>
+<p><a href="https://papers.nips.cc/paper/5846-end-to-end-memory-networks.pdf" target="_blank" rel="noopener">论文地址</a></p>
+<p><a href="https://yan624.github.io/posts/5e27260b.html#Memory-Network">博客</a>有记一些基础的东西。</p>
+<h1 id="参考文献-1" class="unnumbered">参考文献</h1>
+<div id="refs" class="references">
 <div id="ref-bahdanau2014neural">
-<p>Bahdanau, Dzmitry, Kyunghyun Cho, and Yoshua Bengio. 2014. “Neural Machine Translation by Jointly Learning to Align and Translate.” <a href="http://arxiv.org/abs/1409.0473" target="_blank" rel="noopener">http://arxiv.org/abs/1409.0473</a>.</p>
+<p>Bahdanau, Dzmitry, Kyunghyun Cho, and Yoshua Bengio. 2014. “Neural Machine Translation by Jointly Learning to Align and Translate.”</p>
 </div>
 <div id="ref-bengio2015scheduled">
-<p>Bengio, Samy, Oriol Vinyals, Navdeep Jaitly, and Noam Shazeer. 2015. “Scheduled Sampling for Sequence Prediction with Recurrent Neural Networks.” <a href="http://arxiv.org/abs/1506.03099" target="_blank" rel="noopener">http://arxiv.org/abs/1506.03099</a>.</p>
+<p>Bengio, Samy, Oriol Vinyals, Navdeep Jaitly, and Noam Shazeer. 2015. “Scheduled Sampling for Sequence Prediction with Recurrent Neural Networks.”</p>
 </div>
 <div id="ref-bengio2009curriculum">
 <p>Bengio, Yoshua, Jérôme Louradour, Ronan Collobert, and Jason Weston. 2009. “Curriculum Learning.” In <em>Proceedings of the 26th Annual International Conference on Machine Learning</em>, 41–48.</p>
 </div>
+<div id="ref-boulanger2013audio">
+<p>Boulanger-Lewandowski, Nicolas, Yoshua Bengio, and Pascal Vincent. 2013. “Audio Chord Recognition with Recurrent Neural Networks.” In <em>ISMIR</em>, 335–40. Citeseer.</p>
+</div>
 <div id="ref-Cho_2014">
-<p>Cho, Kyunghyun, Bart van Merrienboer, Caglar Gulcehre, Dzmitry Bahdanau, Fethi Bougares, Holger Schwenk, and Yoshua Bengio. 2014. “Learning Phrase Representations Using Rnn Encoder–Decoder for Statistical Machine Translation.” <em>Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing (EMNLP)</em>. <a href="https://doi.org/10.3115/v1/d14-1179" target="_blank" rel="noopener">https://doi.org/10.3115/v1/d14-1179</a>.</p>
+<p>Cho, Kyunghyun, Bart van Merrienboer, Caglar Gulcehre, Dzmitry Bahdanau, Fethi Bougares, Holger Schwenk, and Yoshua Bengio. 2014. “Learning Phrase Representations Using Rnn Encoder–Decoder for Statistical Machine Translation.” <em>Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing (EMNLP)</em>. Association for Computational Linguistics. <a href="https://doi.org/10.3115/v1/d14-1179" target="_blank" rel="noopener" class="uri">https://doi.org/10.3115/v1/d14-1179</a>.</p>
+</div>
+<div id="ref-Freitag_2017">
+<p>Freitag, Markus, and Yaser Al-Onaizan. 2017. “Beam Search Strategies for Neural Machine Translation.” <em>Proceedings of the First Workshop on Neural Machine Translation</em>. Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/w17-3207" target="_blank" rel="noopener" class="uri">https://doi.org/10.18653/v1/w17-3207</a>.</p>
+</div>
+<div id="ref-graves2012sequence">
+<p>Graves, Alex. 2012. “Sequence Transduction with Recurrent Neural Networks.” <em>arXiv Preprint arXiv:1211.3711</em>.</p>
+</div>
+<div id="ref-gregor2015draw">
+<p>Gregor, Karol, Ivo Danihelka, Alex Graves, Danilo Jimenez Rezende, and Daan Wierstra. 2015. “Draw: A Recurrent Neural Network for Image Generation.” <em>arXiv Preprint arXiv:1502.04623</em>.</p>
+</div>
+<div id="ref-gulcehre2016pointing">
+<p>Gulcehre, Caglar, Sungjin Ahn, Ramesh Nallapati, Bowen Zhou, and Yoshua Bengio. 2016. “Pointing the Unknown Words.” <em>arXiv Preprint arXiv:1603.08148</em>.</p>
 </div>
 <div id="ref-lamb2016professor">
-<p>Lamb, Alex, Anirudh Goyal, Ying Zhang, Saizheng Zhang, Aaron Courville, and Yoshua Bengio. 2016. “Professor Forcing: A New Algorithm for Training Recurrent Networks.” <a href="http://arxiv.org/abs/1610.09038" target="_blank" rel="noopener">http://arxiv.org/abs/1610.09038</a>.</p>
+<p>Lamb, Alex, Anirudh Goyal, Ying Zhang, Saizheng Zhang, Aaron Courville, and Yoshua Bengio. 2016. “Professor Forcing: A New Algorithm for Training Recurrent Networks.”</p>
+</div>
+<div id="ref-luong2015effective">
+<p>Luong, Minh-Thang, Hieu Pham, and Christopher D Manning. 2015. “Effective Approaches to Attention-Based Neural Machine Translation.” <em>arXiv Preprint arXiv:1508.04025</em>.</p>
+</div>
+<div id="ref-see2017get">
+<p>See, Abigail, Peter J Liu, and Christopher D Manning. 2017. “Get to the Point: Summarization with Pointer-Generator Networks.” <em>arXiv Preprint arXiv:1704.04368</em>.</p>
 </div>
 <div id="ref-sutskever2014sequence">
-<p>Sutskever, Ilya, Oriol Vinyals, and Quoc V. Le. 2014. “Sequence to Sequence Learning with Neural Networks.” <a href="http://arxiv.org/abs/1409.3215" target="_blank" rel="noopener">http://arxiv.org/abs/1409.3215</a>.</p>
+<p>Sutskever, Ilya, Oriol Vinyals, and Quoc V. Le. 2014. “Sequence to Sequence Learning with Neural Networks.”</p>
+</div>
+<div id="ref-vinyals2015pointer">
+<p>Vinyals, Oriol, Meire Fortunato, and Navdeep Jaitly. 2015. “Pointer Networks.” In <em>Advances in Neural Information Processing Systems</em>, 2692–2700.</p>
+</div>
+<div id="ref-xu2015show">
+<p>Xu, Kelvin, Jimmy Ba, Ryan Kiros, Kyunghyun Cho, Aaron Courville, Ruslan Salakhudinov, Rich Zemel, and Yoshua Bengio. 2015. “Show, Attend and Tell: Neural Image Caption Generation with Visual Attention.” In <em>International Conference on Machine Learning</em>, 2048–57.</p>
 </div>
 <div id="ref-Zhang_2019">
-<p>Zhang, Wen, Yang Feng, Fandong Meng, Di You, and Qun Liu. 2019. “Bridging the Gap Between Training and Inference for Neural Machine Translation.” <em>Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics</em>. <a href="https://doi.org/10.18653/v1/p19-1426" target="_blank" rel="noopener">https://doi.org/10.18653/v1/p19-1426</a>.</p>
+<p>Zhang, Wen, Yang Feng, Fandong Meng, Di You, and Qun Liu. 2019. “Bridging the Gap Between Training and Inference for Neural Machine Translation.” <em>Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics</em>. Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/p19-1426" target="_blank" rel="noopener" class="uri">https://doi.org/10.18653/v1/p19-1426</a>.</p>
 </div>
 </div>
 
@@ -409,10 +579,42 @@
     
     
     
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    赞赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.gif" alt="朱冲䶮 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>朱冲䶮
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://yan624.github.io/posts/d5936d3.html" title="深度学习算法（三）：RNN 各种机制">https://yan624.github.io/posts/d5936d3.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/系列/" rel="tag"># 系列</a>
+              <a href="/tags/%E7%B3%BB%E5%88%97/" rel="tag"># 系列</a>
               <a href="/tags/GRU/" rel="tag"># GRU</a>
               <a href="/tags/LSTM/" rel="tag"># LSTM</a>
               <a href="/tags/seq2seq/" rel="tag"># seq2seq</a>
@@ -490,7 +692,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#gru"><span class="nav-number">1.</span> <span class="nav-text">GRU</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lstm"><span class="nav-number">2.</span> <span class="nav-text">LSTM</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#seq2seq"><span class="nav-number">3.</span> <span class="nav-text">Seq2Seq</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#free-running和teacher-forcing"><span class="nav-number">3.1.</span> <span class="nav-text">free-running和teacher-forcing</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#seq2seq的缺陷"><span class="nav-number">3.2.</span> <span class="nav-text">Seq2Seq的缺陷</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#beam-search"><span class="nav-number">3.3.</span> <span class="nav-text">Beam Search</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">3.4.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#attention"><span class="nav-number">4.</span> <span class="nav-text">Attention</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文章"><span class="nav-number">4.1.</span> <span class="nav-text">参考文章</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#memory-network"><span class="nav-number">4.2.</span> <span class="nav-text">Memory Network</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考文献"><span class="nav-number">5.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#gru"><span class="nav-number">1.</span> <span class="nav-text">GRU</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">1.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lstm"><span class="nav-number">2.</span> <span class="nav-text">LSTM</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#seq2seq"><span class="nav-number">3.</span> <span class="nav-text">Seq2Seq</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#free-running和teacher-forcing"><span class="nav-number">3.1.</span> <span class="nav-text">free-running和teacher-forcing</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料-1"><span class="nav-number">3.1.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#seq2seq的缺陷"><span class="nav-number">3.2.</span> <span class="nav-text">Seq2Seq的缺陷</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料-2"><span class="nav-number">3.2.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#beam-search"><span class="nav-number">3.3.</span> <span class="nav-text">Beam Search</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料-3"><span class="nav-number">3.3.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#scheduled-sampling"><span class="nav-number">3.4.</span> <span class="nav-text">Scheduled Sampling</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#训练经验"><span class="nav-number">3.4.1.</span> <span class="nav-text">训练经验</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料-4"><span class="nav-number">3.5.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#attention"><span class="nav-number">4.</span> <span class="nav-text">Attention</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基础知识"><span class="nav-number">4.1.</span> <span class="nav-text">基础知识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hard-attention"><span class="nav-number">4.2.</span> <span class="nav-text">hard attention</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#global-attention"><span class="nav-number">4.3.</span> <span class="nav-text">global attention</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#local-attention"><span class="nav-number">4.4.</span> <span class="nav-text">local attention</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#self-attention"><span class="nav-number">4.5.</span> <span class="nav-text">self-attention</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料-5"><span class="nav-number">4.6.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pointer-networks"><span class="nav-number">5.</span> <span class="nav-text">Pointer Networks</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#index-based"><span class="nav-number">5.1.</span> <span class="nav-text">Index-based</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hard-gated-copy"><span class="nav-number">5.2.</span> <span class="nav-text">Hard-gated Copy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#soft-gated-copy"><span class="nav-number">5.3.</span> <span class="nav-text">Soft-gated Copy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">5.4.</span> <span class="nav-text">参考文献</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#memory-network"><span class="nav-number">6.</span> <span class="nav-text">Memory Network</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考文献-1"><span class="nav-number">7.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -499,14 +701,14 @@
     <img class="site-author-image" itemprop="image" alt="朱冲䶮"
       src="/images/avatar.jpg">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
-  <div class="site-description" itemprop="description">记录学习问题，积累做的 leetcode 题目</div>
+  <div class="site-description" itemprop="description">记录</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">163</span>
+          <span class="site-state-item-count">168</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -518,42 +720,53 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">94</span>
+        <span class="site-state-item-count">95</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">203.6k</span>
+      	<span class="site-state-item-count">214.1k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
 </div>
+  <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
+    Chat
+  </a>
+  </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>zhihu</a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
       </span>
   </div>
 
 
   <div class="links-of-blogroll motion-element">
     <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
-      Links
+      友链
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
         </li>
     </ul>
   </div>
+<!-- CloudCalendar -->
+<div class="widget-wrap" style="width: 90%;margin-left: auto;margin-right: auto; opacity: 0.97;">
+	<div class="widget" id="CloudCalendar"></div>
+</div>
 
       </div>
 
@@ -580,12 +793,11 @@
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
-  </div><script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script src="/lib/my-utils.js"></script>
-<!--图片缩放插件-->
-<script src="/lib/zoomify/zoomify.min.js"></script>
-<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
 <!-- 背景图片 -->
@@ -599,20 +811,10 @@
 		bg.shuffle();
 		return bg;
 	}
-	$("body").backstretch(generateBG(11), {
-		duration:90000,//1min半一换
+	$("body").backstretch(generateBG(10), {
+		duration:90000,//1 min 半一换
 		fade: 1500
 	});
-</script>
-<!-- 图片缩放 -->
-<script>
-$('.content img').zoomify({duration: 500, });
-$('.content img').on('zoom-in.zoomify', function () {
-	$('.sidebar').css('display', 'none');
-});
-$('.content img').on('zoom-out-complete.zoomify', function () {
-	$('.sidebar').css('display', '');
-});
 </script>
 
         
@@ -650,18 +852,29 @@ $('.content img').on('zoom-out-complete.zoomify', function () {
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/pisces.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
 
   
 
 
 
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 
@@ -690,6 +903,27 @@ $('.content img').on('zoom-out-complete.zoomify', function () {
       });
   </script>
 <!-- calendar widget -->
+
+    <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-calendar/calendar.min.js"></script>
+    <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-calendar/languages.min.js"></script>
+    <script>
+    $(function() {
+        $('#CloudCalendar').aCalendar('zh-CN',
+            $.extend(
+                '', {
+                    single:true,
+                    root:'/calendar/'
+                }
+            )
+        );
+    });	
+	/*
+	* 2020.08.10: 由本博客博主自定义加入，由于不是很需要日历最下面的前进后退键，其与日历最上方的功能键冲突，所以在此将其删除
+	*/
+	$(function(){
+		$('#CloudCalendar tfoot').remove()
+	})
+	</script>
 
 
 </body>

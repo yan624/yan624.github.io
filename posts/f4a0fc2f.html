@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -14,30 +14,31 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
   <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
   <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="梯度消失 simple-RNN 的缺陷   RNN一个最大的缺陷就是梯度消失与梯度爆炸问题，由于这一缺陷，使得RNN在长文本中难以训练，这才诞生了LSTM及各种变体，来源于专栏。梯度消失的原因：参考专栏。   个人的解释如下：   在 RNN 中利用 memory 的方式是一种复合函数的结构，所以在反向传播时，需要链式求导，即 \(f(g(x)) = f&amp;#39;(g(x))·g&amp;#39;(x">
-<meta name="keywords" content="博客，java，javaWeb，NLP，python，机器学习，深度学习">
+  <meta name="description" content="梯度消失 simple-RNN 的缺陷 RNN一个最大的缺陷就是梯度消失与梯度爆炸问题，由于这一缺陷，使得RNN在长文本中难以训练，这才诞生了LSTM及各种变体，来源于专栏。梯度消失的原因：参考专栏。 个人的解释如下： 在 RNN 中利用 memory 的方式是一种复合函数的结构，所以在反向传播时，需要链式求导，即 \(f(g(x)) &#x3D; f&#39;(g(x))·g&#39;(x)\)，梯度">
 <meta property="og:type" content="article">
 <meta property="og:title" content="NLP疑难杂题总结">
 <meta property="og:url" content="https://yan624.github.io/posts/f4a0fc2f.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="梯度消失 simple-RNN 的缺陷   RNN一个最大的缺陷就是梯度消失与梯度爆炸问题，由于这一缺陷，使得RNN在长文本中难以训练，这才诞生了LSTM及各种变体，来源于专栏。梯度消失的原因：参考专栏。   个人的解释如下：   在 RNN 中利用 memory 的方式是一种复合函数的结构，所以在反向传播时，需要链式求导，即 \(f(g(x)) = f&amp;#39;(g(x))·g&amp;#39;(x">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple%20RNN%20推导与理解/vanishing%20gradient%20problem%20details.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习500问笔记/total%20loss.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习500问笔记/the%20error%20surface%20is%20rough.jpg">
-<meta property="og:updated_time" content="2020-06-14T10:53:51.990Z">
+<meta property="og:description" content="梯度消失 simple-RNN 的缺陷 RNN一个最大的缺陷就是梯度消失与梯度爆炸问题，由于这一缺陷，使得RNN在长文本中难以训练，这才诞生了LSTM及各种变体，来源于专栏。梯度消失的原因：参考专栏。 个人的解释如下： 在 RNN 中利用 memory 的方式是一种复合函数的结构，所以在反向传播时，需要链式求导，即 \(f(g(x)) &#x3D; f&#39;(g(x))·g&#39;(x)\)，梯度">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%BA%8C%EF%BC%89%EF%BC%9Asimple%20RNN%20%E6%8E%A8%E5%AF%BC%E4%B8%8E%E7%90%86%E8%A7%A3/vanishing%20gradient%20problem%20details.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0500%E9%97%AE%E7%AC%94%E8%AE%B0/total%20loss.jpg">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0500%E9%97%AE%E7%AC%94%E8%AE%B0/the%20error%20surface%20is%20rough.jpg">
+<meta property="article:published_time" content="2020-06-01T02:59:32.000Z">
+<meta property="article:modified_time" content="2020-07-17T15:13:04.412Z">
+<meta property="article:author" content="朱冲䶮">
+<meta property="article:tag" content="博客，java，javaWeb，NLP，python，机器学习，深度学习">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="NLP疑难杂题总结">
-<meta name="twitter:description" content="梯度消失 simple-RNN 的缺陷   RNN一个最大的缺陷就是梯度消失与梯度爆炸问题，由于这一缺陷，使得RNN在长文本中难以训练，这才诞生了LSTM及各种变体，来源于专栏。梯度消失的原因：参考专栏。   个人的解释如下：   在 RNN 中利用 memory 的方式是一种复合函数的结构，所以在反向传播时，需要链式求导，即 \(f(g(x)) = f&amp;#39;(g(x))·g&amp;#39;(x">
-<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple%20RNN%20推导与理解/vanishing%20gradient%20problem%20details.jpg">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%BA%8C%EF%BC%89%EF%BC%9Asimple%20RNN%20%E6%8E%A8%E5%AF%BC%E4%B8%8E%E7%90%86%E8%A7%A3/vanishing%20gradient%20problem%20details.jpg">
 
 <link rel="canonical" href="https://yan624.github.io/posts/f4a0fc2f.html">
 
@@ -51,12 +52,9 @@
     lang   : 'zh-CN'
   };
 </script>
-<!--图片缩放插件样式-->
-<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
 <!--阿里云矢量库样式-->
 <link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_621sfmh583s.css" />
 
-        
 
   <title>NLP疑难杂题总结 | 博客</title>
   
@@ -112,7 +110,7 @@
       <h1 class="site-title">博客</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
-      <p class="site-subtitle" itemprop="description">低阶炼金术士</p>
+      <p class="site-subtitle" itemprop="description">末流炼丹师</p>
   </div>
 
   <div class="site-nav-right">
@@ -138,7 +136,7 @@
   </li>
         <li class="menu-item menu-item-常用链接">
 
-    <a href="/常用链接" rel="section"><i class="fas fa-bookmark fa-fw"></i>常用链接</a>
+    <a href="/%E5%B8%B8%E7%94%A8%E9%93%BE%E6%8E%A5" rel="section"><i class="fas fa-bookmark fa-fw"></i>常用链接</a>
 
   </li>
         <li class="menu-item menu-item-时间线">
@@ -148,7 +146,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">94</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">95</span></a>
 
   </li>
         
@@ -163,7 +161,7 @@
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">163</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">168</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -208,6 +206,7 @@
     <span>0%</span>
   </div>
   <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
 
     <main class="main">
@@ -229,7 +228,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
       <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+      <meta itemprop="description" content="记录">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -254,7 +253,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-14 18:53:51" itemprop="dateModified" datetime="2020-06-14T18:53:51+08:00">2020-06-14</time>
+                <time title="修改时间：2020-07-17 23:13:04" itemprop="dateModified" datetime="2020-07-17T23:13:04+08:00">2020-07-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -290,7 +289,7 @@
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>13 分钟</span>
+              <span>7 分钟</span>
             </span>
 
         </div>
@@ -304,7 +303,7 @@
       
         <h1 id="梯度消失">梯度消失</h1>
 <h2 id="simple-rnn-的缺陷">simple-RNN 的缺陷</h2>
-<p>  RNN一个最大的缺陷就是梯度消失与梯度爆炸问题，由于这一缺陷，使得RNN在长文本中难以训练，这才诞生了LSTM及各种变体，来源于<a href="https://zhuanlan.zhihu.com/p/44163528" target="_blank" rel="noopener">专栏</a>。梯度消失的原因：参考<a href="https://zhuanlan.zhihu.com/p/28687529" target="_blank" rel="noopener">专栏</a>。   个人的解释如下：   在 RNN 中利用 memory 的方式是一种复合函数的结构，所以在反向传播时，需要链式求导，即 <span class="math inline">\(f(g(x)) = f&#39;(g(x))·g&#39;(x)\)</span>，梯度与梯度相乘容易造成<strong>梯度消失</strong>和<strong>梯度爆炸</strong>。而在 LSTM 中，是使用加和的计算方式，所以大致解决了梯度消失的问题。 <div class="note info"><p>  在 RNN 中，求导得到的表达式为连乘，而 sigmoid 的输出值在 [0-1] 之间，造成了梯度消失。当然也会造成梯度爆炸，因为激活函数不一定非是 sigmoid，换成 ReLU 输出值就会大于 1 了。   接下来我带入数字来讲解一遍，<strong>具体公式详见《<a href="https://yan624.github.io/AI/dl/深度学习算法（二）：simple%20RNN%20推导与理解.html#反向传播（BPTT）">Simple RNN 的反向传播</a>》，下面只讲求导后的函数</strong>。我们先把公式拿过来，并设 <span class="math inline">\(a^3 = 0.2\)</span>, <span class="math inline">\(a^2 = 0.1\)</span>, <span class="math inline">\(a^1 = 0.05\)</span>, <span class="math inline">\(w_{aa} = 0.07\)</span>。并且<strong>易得</strong> <span class="math inline">\(S^1 = a^1\)</span>, <span class="math inline">\(S^2 = a^2\)</span>, <span class="math inline">\(S^3 = a^3\)</span>（易得部分都不懂的，建议仔细看看文章里的公式）。 <span class="math display">\[
+<p>RNN一个最大的缺陷就是梯度消失与梯度爆炸问题，由于这一缺陷，使得RNN在长文本中难以训练，这才诞生了LSTM及各种变体，来源于<a href="https://zhuanlan.zhihu.com/p/44163528" target="_blank" rel="noopener">专栏</a>。梯度消失的原因：参考<a href="https://zhuanlan.zhihu.com/p/28687529" target="_blank" rel="noopener">专栏</a>。 个人的解释如下： 在 RNN 中利用 memory 的方式是一种复合函数的结构，所以在反向传播时，需要链式求导，即 <span class="math inline">\(f(g(x)) = f&#39;(g(x))·g&#39;(x)\)</span>，梯度与梯度相乘容易造成<strong>梯度消失</strong>和<strong>梯度爆炸</strong>。而在 LSTM 中，是使用加和的计算方式，所以大致解决了梯度消失的问题。 <div class="note info"><p>在 RNN 中，求导得到的表达式为连乘，而 sigmoid 的输出值在 [0-1] 之间，造成了梯度消失。当然也会造成梯度爆炸，因为激活函数不一定非是 sigmoid，换成 ReLU 输出值就会大于 1 了。 接下来我带入数字来讲解一遍，<strong>具体公式详见《<a href="https://yan624.github.io/posts/b2bd11c2.html#反向传播（BPTT）">Simple RNN 的反向传播</a>》，下面只讲求导后的函数</strong>。我们先把公式拿过来，并设 <span class="math inline">\(a^3 = 0.2\)</span>, <span class="math inline">\(a^2 = 0.1\)</span>, <span class="math inline">\(a^1 = 0.05\)</span>, <span class="math inline">\(w_{aa} = 0.07\)</span>。并且<strong>易得</strong> <span class="math inline">\(S^1 = a^1\)</span>, <span class="math inline">\(S^2 = a^2\)</span>, <span class="math inline">\(S^3 = a^3\)</span>（易得部分都不懂的，建议仔细看看文章里的公式）。 <span class="math display">\[
 \frac{\partial{a^3}}{\partial{W_{aa}}} = S_3 \circ (1 - S_3) \circ
 \{
     \overbrace{a^2}^{\frac{\partial{W_{aa} \cdot a^2}}{\partial{W_{aa}}}} + \overbrace{
@@ -317,31 +316,31 @@
         }_{\frac{\partial{a^2}}{\partial{W_{aa}}}}
     }^{\frac{\partial{a^3}}{\partial{a^2}}}
 \}
-\]</span>   则 <span class="math display">\[
+\]</span> 则 <span class="math display">\[
 \frac{\partial{a^3}}{\partial{W_{aa}}} = a^3 \circ (1 - a^3) \circ \{a^2 + W_{aa} \cdot a^2 \circ (1 - a^2) \circ [a^1 + 0]\}
-\]</span>   <em>首先需要明白一点，对于 RNN 来说，激活值 a 就是 memory。我们将设置的值带入得到 <span class="math inline">\(\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.0160504\)</span>。可以发现梯度很小，而这仅仅是在序列长度为 3 的情况下。那么假设我们修改值，将 <span class="math inline">\(w_{aa}\)</span> 改为 0.7，则 <span class="math inline">\(\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.016504\)</span>，将 <span class="math inline">\(w_{aa}\)</span> 改为 7，则 <span class="math inline">\(\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.02104\)</span>。我们发现即使 <span class="math inline">\(w_{aa}\)</span> 的变化很大，梯度值的变化效果也不是明显。也就是说对于 <span class="math inline">\(\frac{\partial{a^3}}{\partial{W_{aa}}}\)</span>，<span class="math inline">\(W_{aa}\)</span> 这个值不是很重要，在计算梯度时，可以忽略。</em>（<strong>2020.3.2 更新</strong>：事实上 <span class="math inline">\(W_{aa}\)</span> 对梯度消失也有影响，这里没影响是因为上式嵌套结构中才出现了一个 <span class="math inline">\(W_{aa}\)</span>。刚才试了一下如果多套几个，梯度也会受到很大影响（<strong>其中对梯度消失的影响略小，主要对梯度爆炸的影响很大</strong>））   综上所述，<del>我们发现 W 几乎无法阻止梯度越变越小。</del>激活值全都在 [0-1] 范围内，所以就产生了梯度消失——gradient vanishing。（<span class="math inline">\(W_{aa}\)</span> 也会造成影响）   对于梯度爆炸，由于激活函数是 sigmoid 激活值不可能大于 1，所以可能是 <span class="math inline">\(W_{aa}\)</span> 造成的。如果激活函数是 tanh 的话，激活值会大于 1，那么应该也会造成梯度爆炸。   对 <span class="math inline">\(W_{ax}\)</span> 是差不多的道理，只不过对于输入值 x，它本身的取值就是 [<span class="math inline">\(\infty\)</span>, <span class="math inline">\(-\infty\)</span>]，所以与 a 不同。   然而梯度消失的真正原因并不完全是这个，详见 <a href="https://yan624.github.io/·zcy/AI/nlp/NLP模型训练分析.html#LSTM解决了RNN的什么问题">LSTM 解决了 RNN 的什么问题</a> 的第二点。</p>
-</div> <a id="more"></a>   RNN 的 loss 是每个 timestep 上的 loss 的加和，下图显示了这种情况下是如何求导的。不过有时候 RNN 的 loss 也就最后一个 tiemstep 会有一个 loss，比如分类任务。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple%20RNN%20推导与理解/vanishing%20gradient%20problem%20details.jpg" alt="vanishing gradient problem details"></p>
-<p>  参考资料： 1. <a href="https://zhuanlan.zhihu.com/p/28749444" target="_blank" rel="noopener">LSTM如何解决梯度消失问题</a> 2. <a href="https://zhuanlan.zhihu.com/p/34203833" target="_blank" rel="noopener">深入理解lstm及其变种gru</a> 3. <a href="https://www.zhihu.com/question/34878706/answer/192444888" target="_blank" rel="noopener">LSTM如何来避免梯度弥散和梯度爆炸？</a> 4. <a href="https://zhuanlan.zhihu.com/p/83496936" target="_blank" rel="noopener">人人都能看懂的LSTM介绍及反向传播算法推导（非常详细）</a></p>
+\]</span> <em>首先需要明白一点，对于 RNN 来说，激活值 a 就是 memory。我们将设置的值带入得到 <span class="math inline">\(\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.0160504\)</span>。可以发现梯度很小，而这仅仅是在序列长度为 3 的情况下。那么假设我们修改值，将 <span class="math inline">\(w_{aa}\)</span> 改为 0.7，则 <span class="math inline">\(\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.016504\)</span>，将 <span class="math inline">\(w_{aa}\)</span> 改为 7，则 <span class="math inline">\(\frac{\partial{a^3}}{\partial{W_{aa}}} = 0.02104\)</span>。我们发现即使 <span class="math inline">\(w_{aa}\)</span> 的变化很大，梯度值的变化效果也不是明显。也就是说对于 <span class="math inline">\(\frac{\partial{a^3}}{\partial{W_{aa}}}\)</span>，<span class="math inline">\(W_{aa}\)</span> 这个值不是很重要，在计算梯度时，可以忽略。</em>（<strong>2020.3.2 更新</strong>：事实上 <span class="math inline">\(W_{aa}\)</span> 对梯度消失也有影响，这里没影响是因为上式嵌套结构中才出现了一个 <span class="math inline">\(W_{aa}\)</span>。刚才试了一下如果多套几个，梯度也会受到很大影响（<strong>其中对梯度消失的影响略小，主要对梯度爆炸的影响很大</strong>）） 综上所述，<del>我们发现 W 几乎无法阻止梯度越变越小。</del>激活值全都在 [0-1] 范围内，所以就产生了梯度消失——gradient vanishing。（<span class="math inline">\(W_{aa}\)</span> 也会造成影响） 对于梯度爆炸，由于激活函数是 sigmoid 激活值不可能大于 1，所以可能是 <span class="math inline">\(W_{aa}\)</span> 造成的。如果激活函数是 tanh 的话，激活值会大于 1，那么应该也会造成梯度爆炸。 对 <span class="math inline">\(W_{ax}\)</span> 是差不多的道理，只不过对于输入值 x，它本身的取值就是 [<span class="math inline">\(\infty\)</span>, <span class="math inline">\(-\infty\)</span>]，所以与 a 不同。 然而梯度消失的真正原因并不完全是这个，详见 <a href="https://yan624.github.io/·zcy/AI/nlp/NLP模型训练分析.html#LSTM解决了RNN的什么问题">LSTM 解决了 RNN 的什么问题</a> 的第二点。</p>
+</div> <a id="more"></a> RNN 的 loss 是每个 timestep 上的 loss 的加和，下图显示了这种情况下是如何求导的。不过有时候 RNN 的 loss 也就最后一个 tiemstep 会有一个 loss，比如分类任务。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple%20RNN%20推导与理解/vanishing%20gradient%20problem%20details.jpg" alt="vanishing gradient problem details" /></p>
+<p>参考资料： 1. <a href="https://zhuanlan.zhihu.com/p/28749444" target="_blank" rel="noopener">LSTM如何解决梯度消失问题</a> 2. <a href="https://zhuanlan.zhihu.com/p/34203833" target="_blank" rel="noopener">深入理解lstm及其变种gru</a> 3. <a href="https://www.zhihu.com/question/34878706/answer/192444888" target="_blank" rel="noopener">LSTM如何来避免梯度弥散和梯度爆炸？</a> 4. <a href="https://zhuanlan.zhihu.com/p/83496936" target="_blank" rel="noopener">人人都能看懂的LSTM介绍及反向传播算法推导（非常详细）</a></p>
 <h1 id="lstm解决了rnn的什么问题">LSTM解决了RNN的什么问题</h1>
-<p>  解决了两点。仅为个人观点。 1. memory 机制 2. 梯度消失</p>
+<p>解决了两点。仅为个人观点。 1. memory 机制 2. 梯度消失</p>
 <h2 id="memory机制">memory机制</h2>
-<p>  <strong>第一</strong>，RNN 受到短期记忆的影响。如果序列很长，他们将很难将信息从较早的时间步传送到后面的时间步。LSTM 通过改进 memory，可以更好地保留序列信息。   在每个时间点， RNN 都只用每个 cell 的 output 覆盖 memory 里的值，即每个 tiemstep 中的信息都会被覆盖掉。而在 LSTM 中，它会将 memory 乘上一个权重再加上 input，从而获得新的 memory。它不会每次都 forget memory，除非 forget gate 计算结果等于 0。从公式的角度看就是： <span class="math display">\[
+<p><strong>第一</strong>，RNN 受到短期记忆的影响。如果序列很长，他们将很难将信息从较早的时间步传送到后面的时间步。LSTM 通过改进 memory，可以更好地保留序列信息。 在每个时间点， RNN 都只用每个 cell 的 output 覆盖 memory 里的值，即每个 tiemstep 中的信息都会被覆盖掉。而在 LSTM 中，它会将 memory 乘上一个权重再加上 input，从而获得新的 memory。它不会每次都 forget memory，除非 forget gate 计算结果等于 0。从公式的角度看就是： <span class="math display">\[
 RNN: memory_{new} = cell(memory, input) \\
 LSTM: memory_{new} = a * input + b * memory \\
-\]</span>   cell() 代表一个简单的 sigmoid 函数，memory 与 input 可以做拼接处理，也可以 memory + input，具体自己设计。a 是 input gate 的计算结果，b 是 forget gate 的计算结果，说白了都是一个权重，可以忽略。   这样乍一看好像 RNN 和 LSTM 没什么区别，它们都是会进行一些计算，然后获得一个新的 memory。但是 RNN 的计算方式是将 memory 与 input <strong>一起</strong>输入进 neuron，从而产生一个 output，最后将这个 output 作为新的 memory。你会发现，在 RNN 中，虽然 output 是由 memory 和 input 计算得来的，但是在更新 memory 时不是采用 LSTM 的策略，而是直接用 output 将 memory 覆盖掉，<strong>这既没考虑到原 memory 的值，也没考虑当前 input 的值</strong>。而 LSTM 在覆盖 memory 时，会考虑当前 memory 以及 input 的值。<strong>理解该段的重点是：下面的 1</strong>。 1. <strong>个人理解</strong>：RNN 看似用到了原 memory 和 input，但是在实际计算时（即 cell() 函数所做的操作），由它俩 train 出来的权重矩阵只是为了使 cell() 计算的结果尽可能地接近 y，而并非在计算一个好的 memory。这里尤其要注意，cell() 函数的功能跟 memory 没关系，RNN 与 memory 有关的操作仅仅只有一步，即 <span class="math inline">\(memory_{new} = output\)</span>，它只是将以前的 memory 覆盖掉。而 LSTM 不光在更新 memory 时用到了原 memory 和 input，它里面的 3 个 gate 也都需要通过 input 计算，所以 input 对 LSTM 的输出影响很大，对 memory 的更新自然也大。 2. <strong>李宏毅机器学习视频中的说法</strong>：如果 weight 可以影响到 memory 里的值，那么这个影响会一直存在。我觉得李宏毅老师的讲解跟我的应该差不多，重点也是 LSTM 多了一个可以训练 memory 的权重。 3. memory 本质是在记忆之前所有的 input。</p>
-<p>  其实 forget gate 还是有几率清空 memory 的，那么为什么不直接取消 forget gate 呢？你不是要充分利用 input 吗？实际上在 LSTM 的第一个版本是没有 forget gate 的，它是后来才加上去的。甚至现在的说法是在训练 LSTM 时，不要给 forget gate 太大的权重，要让它大部分时间都是开着的，即大部分时间都不要清空 memory。如果以后训练 LSTM 时，觉得过拟合严重，可以使用 GRU，GRU 只有两个 gate（无 output gate）。（<em>引用<a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">教学视频</a> 22:50 的话</em>）。</p>
+\]</span> cell() 代表一个简单的 sigmoid 函数，memory 与 input 可以做拼接处理，也可以 memory + input，具体自己设计。a 是 input gate 的计算结果，b 是 forget gate 的计算结果，说白了都是一个权重，可以忽略。 这样乍一看好像 RNN 和 LSTM 没什么区别，它们都是会进行一些计算，然后获得一个新的 memory。但是 RNN 的计算方式是将 memory 与 input <strong>一起</strong>输入进 neuron，从而产生一个 output，最后将这个 output 作为新的 memory。你会发现，在 RNN 中，虽然 output 是由 memory 和 input 计算得来的，但是在更新 memory 时不是采用 LSTM 的策略，而是直接用 output 将 memory 覆盖掉，<strong>这既没考虑到原 memory 的值，也没考虑当前 input 的值</strong>。而 LSTM 在覆盖 memory 时，会考虑当前 memory 以及 input 的值。<strong>理解该段的重点是：下面的 1</strong>。 1. <strong>个人理解</strong>：RNN 看似用到了原 memory 和 input，但是在实际计算时（即 cell() 函数所做的操作），由它俩 train 出来的权重矩阵只是为了使 cell() 计算的结果尽可能地接近 y，而并非在计算一个好的 memory。这里尤其要注意，cell() 函数的功能跟 memory 没关系，RNN 与 memory 有关的操作仅仅只有一步，即 <span class="math inline">\(memory_{new} = output\)</span>，它只是将以前的 memory 覆盖掉。而 LSTM 不光在更新 memory 时用到了原 memory 和 input，它里面的 3 个 gate 也都需要通过 input 计算，所以 input 对 LSTM 的输出影响很大，对 memory 的更新自然也大。 2. <strong>李宏毅机器学习视频中的说法</strong>：如果 weight 可以影响到 memory 里的值，那么这个影响会一直存在。我觉得李宏毅老师的讲解跟我的应该差不多，重点也是 LSTM 多了一个可以训练 memory 的权重。 3. memory 本质是在记忆之前所有的 input。</p>
+<p>其实 forget gate 还是有几率清空 memory 的，那么为什么不直接取消 forget gate 呢？你不是要充分利用 input 吗？实际上在 LSTM 的第一个版本是没有 forget gate 的，它是后来才加上去的。甚至现在的说法是在训练 LSTM 时，不要给 forget gate 太大的权重，要让它大部分时间都是开着的，即大部分时间都不要清空 memory。如果以后训练 LSTM 时，觉得过拟合严重，可以使用 GRU，GRU 只有两个 gate（无 output gate）。（<em>引用<a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">教学视频</a> 22:50 的话</em>）。</p>
 <h2 id="梯度消失-1">梯度消失</h2>
-<p>  <strong>第二</strong>，反向传播时出现的问题，以下 Q 为问题，A 为解释。   引子：如《clip gradient》一章黄框中所说，RNN 很容易出现峭壁和平原。<strong>LSTM 只解决了 gradient vanishing 的问题</strong>，没有解决 gradient explode。LSTM 使得 error surface 不那么崎岖，<strong>消除了训练时的一些平坦的地方</strong>。虽然梯度在有些地方依然崎岖，但是不会有太平坦的地方。<strong>所以在训练时可以放心的将 lr 调小</strong>，不需要担心会出现平坦的地方，导致训练过慢。   如果公司问为什么把 RNN 换成 LSTM？<del>回答 LSTM 比较潮、因为 LSTM 比较复杂。</del>回答 LSTM 可以处理 gradient vanishing 的问题。具体解释如下：   <strong>Q</strong>：为什么 LSTM 可以解决 gradient vanishing 的问题？（解决梯度消失也可以说成避免 gradient 特别小（消除平原））   <strong>A</strong>：在 RNN 中利用 memory 的方式是一种复合函数的结构，所以在反向传播时，需要链式求导，梯度与梯度相乘容易造成<strong>梯度消失</strong>和<strong>梯度爆炸</strong>。关于 RNN 反向传播的求导结果可以参考《simple RNN 的缺陷》蓝色提示框。   虽然这样的求导大致已经可以解释了梯度消失的问题，但是如果仔细想想就会发现盲点。在此之前，我想先说明 RNN 家族的反向传播路径与其他的神经网络不同，它的 loss 值是每一个 timestep 的真实值 y 与输出值 的 loss 之和。<a href="https://mooc.study.163.com/learn/2001280005?tid=2001391038&amp;_trace_c_p_k2_=72573d316c3441869416d70899cdf382#/learn/content?type=detail&amp;id=2001770031" target="_blank" rel="noopener">此视频</a> 大致讲明白了这个总 loss 值到底是由哪些 loss 相加得到的。   知道了上面的前提条件，就可以很简单的理解这个盲点了，接下来我先介绍一下这个盲点是什么：<strong>参考资料 1 大致解释了这一问题</strong>，这一段可能比较绕，<strong>简单来说就是后面的 timestep（比如下图中 <span class="math inline">\(loss_4\)</span>）在反向传播时，求 <span class="math inline">\(\Delta W\)</span> 会出现梯度消失（注意 RNN 每个 timestep 的 W 都是一样），这是因为在求梯度时，函数已经复合了好几层</strong>。而对 <span class="math inline">\(loss_1\)</span> 求 W 的导数时，由于它本身就在序列的前面，函数还没有复合，所以 <span class="math inline">\(\Delta W\)</span> 的导数还没梯度消失。<strong>最后在计算总的 loss 时，是将各个阶段的梯度加起来</strong>，即使后面的 loss 会得到一个很小的的梯度 <span class="math inline">\(\Delta W\)</span>，但由于 <span class="math inline">\(loss_1\)</span> 的原因，并不会发生梯度消失。   但是事实上是会发生的，那么梯度消失从何而来呢？这是因为在求序列前几个单词的梯度时，你需要从 <span class="math inline">\(loss_4\)</span> 开始计算（<em>当然其他的 <span class="math inline">\(loss_3\)</span> 也要计算，但是原理是一样</em>），由于 <span class="math inline">\(loss_4\)</span> 中复合了好几层函数，导致诸如 <span class="math inline">\(x_1\)</span>所对应的 RNN 的梯度很小，从而产生了<strong>信息丢失</strong>。信息丢失就是 RNN 的梯度消失。   你可能会想这不还是梯度连乘导致的？确实，但是有一点需要考虑，RNN 在反向传播时，是需要传播到输入值 x 的，即词向量。而在计算梯度时，<span class="math inline">\(x_4\)</span> 所对应 RNN 肯定拥有不是很小的梯度 <span class="math inline">\(\Delta W\)</span>，这是由于此时它还没有嵌套函数，所以信息无问题。但是当反向传播到 <span class="math inline">\(x_1\)</span> 时，梯度已经很小了，由于小梯度导致 <span class="math inline">\(x_1\)</span> 无法得到很好的更新，于是产生了信息丢失，也就是说长期记忆没有回传给 <span class="math inline">\(x_1\)</span>。   <span class="math inline">\(loss_3\)</span> 以及 <span class="math inline">\(loss_2\)</span> 以此类推，不过对于 <span class="math inline">\(loss_1\)</span> 并无问题，因为它没有复合函数。   注：<strong>上两段，还参考了参考资料 3，个人认为参考资料 1 中内容并不是很完整</strong>。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习500问笔记/total%20loss.jpg" alt="total loss"></p>
-<p>  以上的参考资料： 1. <a href="https://www.zhihu.com/question/34878706/answer/665429718" target="_blank" rel="noopener">LSTM如何来避免梯度弥散和梯度爆炸？</a> 2. <a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">李宏毅机器学习</a>) 3. <a href="https://www.bilibili.com/video/av41393758?p=8" target="_blank" rel="noopener">RNN 和语言模式</a>，19.50 开始</p>
-<p>  而在 LSTM 中，是使用加和的计算方式（博主注：<strong>由于我没有计算过，所以我也不是很肯定</strong>），所以大致解决了梯度消失的问题。注意我没有说解决了梯度爆炸的问题。 <div class="note success"><p>  LSTM 的模型以及参数名参考<a href="https://yan624.github.io/posts/5e27260b.html#长短期记忆——Long-Short-term-Memory-LSTM">此处</a>。 <span class="math display">\[
+<p><strong>第二</strong>，反向传播时出现的问题，以下 Q 为问题，A 为解释。 引子：如《clip gradient》一章黄框中所说，RNN 很容易出现峭壁和平原。<strong>LSTM 只解决了 gradient vanishing 的问题</strong>，没有解决 gradient explode。LSTM 使得 error surface 不那么崎岖，<strong>消除了训练时的一些平坦的地方</strong>。虽然梯度在有些地方依然崎岖，但是不会有太平坦的地方。<strong>所以在训练时可以放心的将 lr 调小</strong>，不需要担心会出现平坦的地方，导致训练过慢。 如果公司问为什么把 RNN 换成 LSTM？<del>回答 LSTM 比较潮、因为 LSTM 比较复杂。</del>回答 LSTM 可以处理 gradient vanishing 的问题。具体解释如下： <strong>Q</strong>：为什么 LSTM 可以解决 gradient vanishing 的问题？（解决梯度消失也可以说成避免 gradient 特别小（消除平原）） <strong>A</strong>：在 RNN 中利用 memory 的方式是一种复合函数的结构，所以在反向传播时，需要链式求导，梯度与梯度相乘容易造成<strong>梯度消失</strong>和<strong>梯度爆炸</strong>。关于 RNN 反向传播的求导结果可以参考《simple RNN 的缺陷》蓝色提示框。 虽然这样的求导大致已经可以解释了梯度消失的问题，但是如果仔细想想就会发现盲点。在此之前，我想先说明 RNN 家族的反向传播路径与其他的神经网络不同，它的 loss 值是每一个 timestep 的真实值 y 与输出值 的 loss 之和。<a href="https://mooc.study.163.com/learn/2001280005?tid=2001391038&amp;_trace_c_p_k2_=72573d316c3441869416d70899cdf382#/learn/content?type=detail&amp;id=2001770031" target="_blank" rel="noopener">此视频</a> 大致讲明白了这个总 loss 值到底是由哪些 loss 相加得到的。 知道了上面的前提条件，就可以很简单的理解这个盲点了，接下来我先介绍一下这个盲点是什么：<strong>参考资料 1 大致解释了这一问题</strong>，这一段可能比较绕，<strong>简单来说就是后面的 timestep（比如下图中 <span class="math inline">\(loss_4\)</span>）在反向传播时，求 <span class="math inline">\(\Delta W\)</span> 会出现梯度消失（注意 RNN 每个 timestep 的 W 都是一样），这是因为在求梯度时，函数已经复合了好几层</strong>。而对 <span class="math inline">\(loss_1\)</span> 求 W 的导数时，由于它本身就在序列的前面，函数还没有复合，所以 <span class="math inline">\(\Delta W\)</span> 的导数还没梯度消失。<strong>最后在计算总的 loss 时，是将各个阶段的梯度加起来</strong>，即使后面的 loss 会得到一个很小的的梯度 <span class="math inline">\(\Delta W\)</span>，但由于 <span class="math inline">\(loss_1\)</span> 的原因，并不会发生梯度消失。 但是事实上是会发生的，那么梯度消失从何而来呢？这是因为在求序列前几个单词的梯度时，你需要从 <span class="math inline">\(loss_4\)</span> 开始计算（<em>当然其他的 <span class="math inline">\(loss_3\)</span> 也要计算，但是原理是一样</em>），由于 <span class="math inline">\(loss_4\)</span> 中复合了好几层函数，导致诸如 <span class="math inline">\(x_1\)</span>所对应的 RNN 的梯度很小，从而产生了<strong>信息丢失</strong>。信息丢失就是 RNN 的梯度消失。 你可能会想这不还是梯度连乘导致的？确实，但是有一点需要考虑，RNN 在反向传播时，是需要传播到输入值 x 的，即词向量。而在计算梯度时，<span class="math inline">\(x_4\)</span> 所对应 RNN 肯定拥有不是很小的梯度 <span class="math inline">\(\Delta W\)</span>，这是由于此时它还没有嵌套函数，所以信息无问题。但是当反向传播到 <span class="math inline">\(x_1\)</span> 时，梯度已经很小了，由于小梯度导致 <span class="math inline">\(x_1\)</span> 无法得到很好的更新，于是产生了信息丢失，也就是说长期记忆没有回传给 <span class="math inline">\(x_1\)</span>。 <span class="math inline">\(loss_3\)</span> 以及 <span class="math inline">\(loss_2\)</span> 以此类推，不过对于 <span class="math inline">\(loss_1\)</span> 并无问题，因为它没有复合函数。 注：<strong>上两段，还参考了参考资料 3，个人认为参考资料 1 中内容并不是很完整</strong>。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习500问笔记/total%20loss.jpg" alt="total loss" /></p>
+<p>以上的参考资料： 1. <a href="https://www.zhihu.com/question/34878706/answer/665429718" target="_blank" rel="noopener">LSTM如何来避免梯度弥散和梯度爆炸？</a> 2. <a href="https://www.bilibili.com/video/av10590361?p=37" target="_blank" rel="noopener">李宏毅机器学习</a>) 3. <a href="https://www.bilibili.com/video/av41393758?p=8" target="_blank" rel="noopener">RNN 和语言模式</a>，19.50 开始</p>
+<p>而在 LSTM 中，是使用加和的计算方式（博主注：<strong>由于我没有计算过，所以我也不是很肯定</strong>），所以大致解决了梯度消失的问题。注意我没有说解决了梯度爆炸的问题。 <div class="note success"><p>LSTM 的模型以及参数名参考<a href="https://yan624.github.io/posts/5e27260b.html#长短期记忆——Long-Short-term-Memory-LSTM">此处</a>。 <span class="math display">\[
 \begin{aligned}
     LSTM: z_i &amp; = [a_{i - 1}; x_i] \\
     memory_{new} &amp; = g(z_i) * input(z_i) + memory * forget(z_i) \\
     a_i &amp; = h(g(z_i) * input(z_i) + memory * forget(z_i)) * output(z_i) \\
 \end{aligned}
-\]</span>   对 LSTM 的求导结果很复杂，就不写了（实际上算得我自己都乱了）。。。它的复杂结构使得它不会出现一个数被连乘，导致极小。<strong>注意 LSTM 并没有解决梯度爆炸的问题。可以结合 clipping 训练 LSTM</strong>。 参考资料： 1. <a href="https://zhuanlan.zhihu.com/p/28749444" target="_blank" rel="noopener">LSTM如何解决梯度消失问题</a> 2. <a href="https://zhuanlan.zhihu.com/p/36101196" target="_blank" rel="noopener">漫谈LSTM系列的梯度问题</a> 3. <a href="https://www.zhihu.com/question/34878706/answer/192444888" target="_blank" rel="noopener">LSTM如何来避免梯度弥散和梯度爆炸？</a> 4. <a href="https://zhuanlan.zhihu.com/p/83496936" target="_blank" rel="noopener">人人都能看懂的LSTM介绍及反向传播算法推导（非常详细）</a></p>
+\]</span> 对 LSTM 的求导结果很复杂，就不写了（实际上算得我自己都乱了）。。。它的复杂结构使得它不会出现一个数被连乘，导致极小。<strong>注意 LSTM 并没有解决梯度爆炸的问题。可以结合 clipping 训练 LSTM</strong>。 参考资料： 1. <a href="https://zhuanlan.zhihu.com/p/28749444" target="_blank" rel="noopener">LSTM如何解决梯度消失问题</a> 2. <a href="https://zhuanlan.zhihu.com/p/36101196" target="_blank" rel="noopener">漫谈LSTM系列的梯度问题</a> 3. <a href="https://www.zhihu.com/question/34878706/answer/192444888" target="_blank" rel="noopener">LSTM如何来避免梯度弥散和梯度爆炸？</a> 4. <a href="https://zhuanlan.zhihu.com/p/83496936" target="_blank" rel="noopener">人人都能看懂的LSTM介绍及反向传播算法推导（非常详细）</a></p>
 </div></p>
-<p>  其他一些思考：LSTM 虽然可以永久的记住以前的 input 信息，但是 memory 说白了就是一个权重矩阵，不可能无限制的记住任何信息。所以可以对 memory 进行一些魔改，比如 memory network 将 memory 修改成用数组存储。   那么问题来了，GRU 解决了什么问题呢？为什么过拟合严重，可以使用 GRU？详见下一章。</p>
+<p>其他一些思考：LSTM 虽然可以永久的记住以前的 input 信息，但是 memory 说白了就是一个权重矩阵，不可能无限制的记住任何信息。所以可以对 memory 进行一些魔改，比如 memory network 将 memory 修改成用数组存储。 那么问题来了，GRU 解决了什么问题呢？为什么过拟合严重，可以使用 GRU？详见下一章。</p>
 <h2 id="其他解决梯度消失的办法">其他解决梯度消失的办法</h2>
 <ol type="1">
 <li>Clockwise RNN</li>
@@ -349,10 +348,10 @@ LSTM: memory_{new} = a * input + b * memory \\
 <li></li>
 </ol>
 <h2 id="lstm-为什么没有解决梯度爆炸">LSTM 为什么没有解决梯度爆炸？</h2>
-<p>  理论上，梯度爆炸也同样糟糕。但在实践上，其实我们可以直接砍一刀（原话：it turns out we can actually have a hack），这由 Thomas Mikolov 首次提出。在某种程度上是不精确的，比如说“<strong>现在你有一个很大的梯度 100，让我们把它限制在 5 吧</strong>”。这方法就结束了。你只要定义一个临界值，当梯度大于临界值时，就使梯度等于临界值。虽然不是一个数学方法，但结果表明在实践中效果不错。   参考资料： 1. <a href="https://www.bilibili.com/video/av41393758?p=8" target="_blank" rel="noopener">RNN 和语言模式</a> 49.06 - 62.38</p>
+<p>理论上，梯度爆炸也同样糟糕。但在实践上，其实我们可以直接砍一刀（原话：it turns out we can actually have a hack），这由 Thomas Mikolov 首次提出。在某种程度上是不精确的，比如说“<strong>现在你有一个很大的梯度 100，让我们把它限制在 5 吧</strong>”。这方法就结束了。你只要定义一个临界值，当梯度大于临界值时，就使梯度等于临界值。虽然不是一个数学方法，但结果表明在实践中效果不错。 参考资料： 1. <a href="https://www.bilibili.com/video/av41393758?p=8" target="_blank" rel="noopener">RNN 和语言模式</a> 49.06 - 62.38</p>
 <h1 id="梯度爆炸">梯度爆炸</h1>
-<p>  <a href="http://proceedings.mlr.press/v28/pascanu13.pdf" target="_blank" rel="noopener">此论文</a>提出了 clip gradient（以下称 clipping）<strong>解决梯度爆炸</strong>。首先看下图： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习500问笔记/the%20error%20surface%20is%20rough.jpg" alt="the error surface is rough"></p>
-<p>  如果只看图，会发现有一个像峭壁一样的东西，它就是罪魁祸首。当我们将一个小球往前移动时，有时候正好迈过峭壁，小球得以正常移动。但是当小球碰到峭壁时，小球就会被反弹回去，导致 loss 发生剧烈变化。   从数学角度来看，那个峭壁就是梯度。<strong>需要注意的是</strong>，由于图中 z 轴标注的是 total loss，所以第一印象感觉峭壁代表 total loss，但是<strong>峭壁代表的是梯度，而不是 total loss</strong>。根据参数更新公式 <span class="math inline">\(w -= \alpha * \Delta w\)</span>，其中 <span class="math inline">\(\Delta w\)</span> 代表 w 的梯度，所以 w 的更新方向其实与梯度直接相关。<strong>当 w 不幸到达某个值时，遇到梯度极大的情况，那么不管梯度是正还是负，都会将 w 更新到一个相对很大的值，从而 loss 值也会跟着改变。注：这里其实也与 learning rate 有关，因为原本的梯度都很小，所以我们初始设置的 lr 都很大。突然梯度增大，而 lr 没有适应，一个大的梯度乘上一个大的 lr，那就更大了</strong>。   <strong>解决办法</strong>是：当 gradient 大于某个 threshold 时，就不让它大于 threshold（视频中说作者的代码中将 threshold 设置为 15，但是这个 threshold 应该是具体情况具体分析）。 <div class="note warning"><p>  Q：那么是什么导致了出现梯度猛增的现象呢？   A：首先不是 sigmoid 的锅。因为已知 sigmoid 函数只会导致 gradient vanishing（梯度消失）的问题（<em><a href="https://yan624.github.io/posts/b803ed7e.html#缺陷">sigmoid 的缺陷</a>这一章说明了 sigmoid 具有梯度消失的缺陷</em>）。<del>如果是 sigmoid 同时引起梯度爆炸和梯度消失，按理说换成 ReLU 就能同时解决梯度爆炸/消失，但是将 RNN 的激活函数换成 ReLU 并没有解决问题，所以跟激活函数没什么关系</del>（<strong>博主注</strong>：删除内容是从李宏毅老师的视频上记下来的，但是现在看来可能是我理解错了。首先在根本上就错了，sigmoid 会造成梯度消失，但替换品并不是 relu，而是 tanh，其也只是减缓作用而已）。   那么怎么说明是什么导致了梯度爆炸呢？我们只需要小小地改变一个参数，然后观察 output 的变化，就能测出这个参数的 gradient 的大小。现在假设激活函数是 y = w * x，序列长度为 1000，并且第一个 timestep 的输入为 1，其他的 timestep 皆为 0，则<span class="math inline">\(1^{1000} = 1\)</span>，而 <span class="math inline">\(1.01^{1000} \approx 20000\)</span>。既然结果那么大，我们可能会想到去减小 learning rate 从而减小梯度，但是 <span class="math inline">\(0.99^{1000} \approx 0\)</span>，你又要调大 learning rate，导致 lr 调起来很麻烦，所以调不调 lr 并没有什么区别。而这里就分别出现了梯度消失和梯度爆炸。这是由于 RNN 是序列模型，它需要处理一连串的序列。前一个的输出是后一个输入，<strong>类似于蝴蝶效应，一个很小的值，经过多个函数也能被放的很大。</strong>   那么为什么可以通过观察一个参数的变化从而观察 gradient 的变化呢？很简单，例如 y = w * x，用上面的例子，第 1000 个输出会是 <span class="math inline">\(y_{1000} = w^{1000} * x\)</span>，对 w 求导得 <span class="math inline">\(\Delta w = 1000 w^{999} x\)</span>，由于 <span class="math inline">\(w^{999}\)</span> 比 <span class="math inline">\(w^{1000}\)</span> 小不了多少，所以 gradient 很大。   经过上面的例子我们就知道了问题出现的原因。当然一般情况下不会像上面序列长度有 1000 那么离谱。现在设序列长度就 40，当我们遇到一个较大的值时（比如 <span class="math inline">\(1.1^{40} = 45.26\)</span>），依旧会出现梯度爆炸的问题。   解决办法：LSTM，clipping 等。<strong>注意：LSTM 只解决了 gradient vanishing 的问题，没有解决 gradient explode。详见《<a href="#LSTM解决了RNN的什么问题">LSTM 解决了 RNN 的什么问题</a>》章节</strong>。同理 clipping 也只能解决 gradient explode 的问题，因为它能将梯度限制在一个点上（<strong>这是博主的思考，视频中并没有给出此结论</strong>）。那么我们可以结合 LSTM 和 clipping，从而同时解决梯度爆炸/消失。   综上所述，在 RNN 中，即使参数在很小一个范围内，梯度的变化也会很大。   最后还有一个问题，就是上面的例子是用 y = w * x 的例子，但是实际上，激活函数是用的 sigmoid, tanh 等，所以每个神经元的输出都永远在 [-1, 1] 中间。那么怎么会造成上面的例子中的情况呢？其实上面的例子只是一个比喻。真正的原因是反向传播时做的链式求导，它导致了梯度的连乘。详细推导见《<a href="#simple-RNN-的缺陷">simple RNN 的缺陷</a>》蓝色提示框。</p>
+<p><a href="http://proceedings.mlr.press/v28/pascanu13.pdf" target="_blank" rel="noopener">此论文</a>提出了 clip gradient（以下称 clipping）<strong>解决梯度爆炸</strong>。首先看下图： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习500问笔记/the%20error%20surface%20is%20rough.jpg" alt="the error surface is rough" /></p>
+<p>如果只看图，会发现有一个像峭壁一样的东西，它就是罪魁祸首。当我们将一个小球往前移动时，有时候正好迈过峭壁，小球得以正常移动。但是当小球碰到峭壁时，小球就会被反弹回去，导致 loss 发生剧烈变化。 从数学角度来看，那个峭壁就是梯度。<strong>需要注意的是</strong>，由于图中 z 轴标注的是 total loss，所以第一印象感觉峭壁代表 total loss，但是<strong>峭壁代表的是梯度，而不是 total loss</strong>。根据参数更新公式 <span class="math inline">\(w -= \alpha * \Delta w\)</span>，其中 <span class="math inline">\(\Delta w\)</span> 代表 w 的梯度，所以 w 的更新方向其实与梯度直接相关。<strong>当 w 不幸到达某个值时，遇到梯度极大的情况，那么不管梯度是正还是负，都会将 w 更新到一个相对很大的值，从而 loss 值也会跟着改变。注：这里其实也与 learning rate 有关，因为原本的梯度都很小，所以我们初始设置的 lr 都很大。突然梯度增大，而 lr 没有适应，一个大的梯度乘上一个大的 lr，那就更大了</strong>。 <strong>解决办法</strong>是：当 gradient 大于某个 threshold 时，就不让它大于 threshold（视频中说作者的代码中将 threshold 设置为 15，但是这个 threshold 应该是具体情况具体分析）。 <div class="note warning"><p>Q：那么是什么导致了出现梯度猛增的现象呢？ A：首先不是 sigmoid 的锅。因为已知 sigmoid 函数只会导致 gradient vanishing（梯度消失）的问题（<em><a href="https://yan624.github.io/posts/b803ed7e.html#缺陷">sigmoid 的缺陷</a>这一章说明了 sigmoid 具有梯度消失的缺陷</em>）。<del>如果是 sigmoid 同时引起梯度爆炸和梯度消失，按理说换成 ReLU 就能同时解决梯度爆炸/消失，但是将 RNN 的激活函数换成 ReLU 并没有解决问题，所以跟激活函数没什么关系</del>（<strong>博主注</strong>：删除内容是从李宏毅老师的视频上记下来的，但是现在看来可能是我理解错了。首先在根本上就错了，sigmoid 会造成梯度消失，但替换品并不是 relu，而是 tanh，其也只是减缓作用而已）。 那么怎么说明是什么导致了梯度爆炸呢？我们只需要小小地改变一个参数，然后观察 output 的变化，就能测出这个参数的 gradient 的大小。现在假设激活函数是 y = w * x，序列长度为 1000，并且第一个 timestep 的输入为 1，其他的 timestep 皆为 0，则<span class="math inline">\(1^{1000} = 1\)</span>，而 <span class="math inline">\(1.01^{1000} \approx 20000\)</span>。既然结果那么大，我们可能会想到去减小 learning rate 从而减小梯度，但是 <span class="math inline">\(0.99^{1000} \approx 0\)</span>，你又要调大 learning rate，导致 lr 调起来很麻烦，所以调不调 lr 并没有什么区别。而这里就分别出现了梯度消失和梯度爆炸。这是由于 RNN 是序列模型，它需要处理一连串的序列。前一个的输出是后一个输入，<strong>类似于蝴蝶效应，一个很小的值，经过多个函数也能被放的很大。</strong> 那么为什么可以通过观察一个参数的变化从而观察 gradient 的变化呢？很简单，例如 y = w * x，用上面的例子，第 1000 个输出会是 <span class="math inline">\(y_{1000} = w^{1000} * x\)</span>，对 w 求导得 <span class="math inline">\(\Delta w = 1000 w^{999} x\)</span>，由于 <span class="math inline">\(w^{999}\)</span> 比 <span class="math inline">\(w^{1000}\)</span> 小不了多少，所以 gradient 很大。 经过上面的例子我们就知道了问题出现的原因。当然一般情况下不会像上面序列长度有 1000 那么离谱。现在设序列长度就 40，当我们遇到一个较大的值时（比如 <span class="math inline">\(1.1^{40} = 45.26\)</span>），依旧会出现梯度爆炸的问题。 解决办法：LSTM，clipping 等。<strong>注意：LSTM 只解决了 gradient vanishing 的问题，没有解决 gradient explode。详见《<a href="#LSTM解决了RNN的什么问题">LSTM 解决了 RNN 的什么问题</a>》章节</strong>。同理 clipping 也只能解决 gradient explode 的问题，因为它能将梯度限制在一个点上（<strong>这是博主的思考，视频中并没有给出此结论</strong>）。那么我们可以结合 LSTM 和 clipping，从而同时解决梯度爆炸/消失。 综上所述，在 RNN 中，即使参数在很小一个范围内，梯度的变化也会很大。 最后还有一个问题，就是上面的例子是用 y = w * x 的例子，但是实际上，激活函数是用的 sigmoid, tanh 等，所以每个神经元的输出都永远在 [-1, 1] 中间。那么怎么会造成上面的例子中的情况呢？其实上面的例子只是一个比喻。真正的原因是反向传播时做的链式求导，它导致了梯度的连乘。详细推导见《<a href="#simple-RNN-的缺陷">simple RNN 的缺陷</a>》蓝色提示框。</p>
 </div></p>
 <h2 id="参考资料">参考资料</h2>
 <ol type="1">
@@ -360,7 +359,6 @@ LSTM: memory_{new} = a * input + b * memory \\
 <li><a href="https://zhuanlan.zhihu.com/p/34203833" target="_blank" rel="noopener">深入理解lstm及其变种gru</a></li>
 </ol>
 <h1 id="什么时候该用梯度裁剪">什么时候该用梯度裁剪？</h1>
-<p>  </p>
 <ol type="1">
 <li><a href="https://zhuanlan.zhihu.com/p/32154263" target="_blank" rel="noopener">浅谈神经网络中的梯度爆炸问题</a></li>
 </ol>
@@ -370,6 +368,38 @@ LSTM: memory_{new} = a * input + b * memory \\
     
     
     
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    赞赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.gif" alt="朱冲䶮 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>朱冲䶮
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://yan624.github.io/posts/f4a0fc2f.html" title="NLP疑难杂题总结">https://yan624.github.io/posts/f4a0fc2f.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
 
       <footer class="post-footer">
 
@@ -453,14 +483,14 @@ LSTM: memory_{new} = a * input + b * memory \\
     <img class="site-author-image" itemprop="image" alt="朱冲䶮"
       src="/images/avatar.jpg">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
-  <div class="site-description" itemprop="description">记录学习问题，积累做的 leetcode 题目</div>
+  <div class="site-description" itemprop="description">记录</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">163</span>
+          <span class="site-state-item-count">168</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -472,42 +502,53 @@ LSTM: memory_{new} = a * input + b * memory \\
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">94</span>
+        <span class="site-state-item-count">95</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">203.6k</span>
+      	<span class="site-state-item-count">214.1k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
 </div>
+  <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
+    Chat
+  </a>
+  </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>zhihu</a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
       </span>
   </div>
 
 
   <div class="links-of-blogroll motion-element">
     <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
-      Links
+      友链
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
         </li>
     </ul>
   </div>
+<!-- CloudCalendar -->
+<div class="widget-wrap" style="width: 90%;margin-left: auto;margin-right: auto; opacity: 0.97;">
+	<div class="widget" id="CloudCalendar"></div>
+</div>
 
       </div>
 
@@ -534,12 +575,11 @@ LSTM: memory_{new} = a * input + b * memory \\
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
-  </div><script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script src="/lib/my-utils.js"></script>
-<!--图片缩放插件-->
-<script src="/lib/zoomify/zoomify.min.js"></script>
-<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
 <!-- 背景图片 -->
@@ -553,20 +593,10 @@ LSTM: memory_{new} = a * input + b * memory \\
 		bg.shuffle();
 		return bg;
 	}
-	$("body").backstretch(generateBG(11), {
-		duration:90000,//1min半一换
+	$("body").backstretch(generateBG(10), {
+		duration:90000,//1 min 半一换
 		fade: 1500
 	});
-</script>
-<!-- 图片缩放 -->
-<script>
-$('.content img').zoomify({duration: 500, });
-$('.content img').on('zoom-in.zoomify', function () {
-	$('.sidebar').css('display', 'none');
-});
-$('.content img').on('zoom-out-complete.zoomify', function () {
-	$('.sidebar').css('display', '');
-});
 </script>
 
         
@@ -604,18 +634,29 @@ $('.content img').on('zoom-out-complete.zoomify', function () {
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/pisces.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
 
   
 
 
 
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 
@@ -644,6 +685,27 @@ $('.content img').on('zoom-out-complete.zoomify', function () {
       });
   </script>
 <!-- calendar widget -->
+
+    <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-calendar/calendar.min.js"></script>
+    <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-calendar/languages.min.js"></script>
+    <script>
+    $(function() {
+        $('#CloudCalendar').aCalendar('zh-CN',
+            $.extend(
+                '', {
+                    single:true,
+                    root:'/calendar/'
+                }
+            )
+        );
+    });	
+	/*
+	* 2020.08.10: 由本博客博主自定义加入，由于不是很需要日历最下面的前进后退键，其与日历最上方的功能键冲突，所以在此将其删除
+	*/
+	$(function(){
+		$('#CloudCalendar tfoot').remove()
+	})
+	</script>
 
 
 </body>

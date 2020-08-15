@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -14,26 +14,31 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
   <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
   <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="Multi-domain Dialogue State Tracking as Dynamic Knowledge Graph Enhanced Question Answering   本文将多领域 DST 视为问答问题，被称为 Dialogue State Tracking via Question Answering（DSTQA）。在 DSTQA 之中，每一轮生成一个问题，询问域槽对的槽值">
-<meta name="keywords" content="4me,DST">
+  <meta name="description" content="TripPy: A Triple Copy Strategy for Value Independent Neural Dialog State Tracking 模型的计算方法与 DS-DST 几乎完全一致，只不过补充了几点 slot gate 的类型。 唯一不同的在特征提取这块。DS-DST 将 CLS，一个域槽对和对话上下文拼接起来。由于所有域槽对的词向量是不同的，则可以凭此遍历所有的域">
 <meta property="og:type" content="article">
-<meta property="og:title" content="DST论文笔记（？-2019）">
+<meta property="og:title" content="DST论文笔记（？-2020）">
 <meta property="og:url" content="https://yan624.github.io/posts/89f2cf08.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="Multi-domain Dialogue State Tracking as Dynamic Knowledge Graph Enhanced Question Answering   本文将多领域 DST 视为问答问题，被称为 Dialogue State Tracking via Question Answering（DSTQA）。在 DSTQA 之中，每一轮生成一个问题，询问域槽对的槽值">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-06-14T10:53:52.395Z">
+<meta property="og:description" content="TripPy: A Triple Copy Strategy for Value Independent Neural Dialog State Tracking 模型的计算方法与 DS-DST 几乎完全一致，只不过补充了几点 slot gate 的类型。 唯一不同的在特征提取这块。DS-DST 将 CLS，一个域槽对和对话上下文拼接起来。由于所有域槽对的词向量是不同的，则可以凭此遍历所有的域">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E8%AE%BA%E6%96%87/%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90%E5%9E%8B%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/TripPy.png">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E8%AE%BA%E6%96%87/%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90%E5%9E%8B%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/TRADE.png">
+<meta property="article:published_time" content="2020-03-30T01:58:31.000Z">
+<meta property="article:modified_time" content="2020-08-14T06:25:22.052Z">
+<meta property="article:author" content="朱冲䶮">
+<meta property="article:tag" content="4me">
+<meta property="article:tag" content="DST">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="DST论文笔记（？-2019）">
-<meta name="twitter:description" content="Multi-domain Dialogue State Tracking as Dynamic Knowledge Graph Enhanced Question Answering   本文将多领域 DST 视为问答问题，被称为 Dialogue State Tracking via Question Answering（DSTQA）。在 DSTQA 之中，每一轮生成一个问题，询问域槽对的槽值">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E8%AE%BA%E6%96%87/%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90%E5%9E%8B%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/TripPy.png">
 
 <link rel="canonical" href="https://yan624.github.io/posts/89f2cf08.html">
 
@@ -47,14 +52,11 @@
     lang   : 'zh-CN'
   };
 </script>
-<!--图片缩放插件样式-->
-<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
 <!--阿里云矢量库样式-->
 <link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_621sfmh583s.css" />
 
-        
 
-  <title>DST论文笔记（？-2019） | 博客</title>
+  <title>DST论文笔记（？-2020） | 博客</title>
   
 
 
@@ -108,7 +110,7 @@
       <h1 class="site-title">博客</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
-      <p class="site-subtitle" itemprop="description">低阶炼金术士</p>
+      <p class="site-subtitle" itemprop="description">末流炼丹师</p>
   </div>
 
   <div class="site-nav-right">
@@ -134,7 +136,7 @@
   </li>
         <li class="menu-item menu-item-常用链接">
 
-    <a href="/常用链接" rel="section"><i class="fas fa-bookmark fa-fw"></i>常用链接</a>
+    <a href="/%E5%B8%B8%E7%94%A8%E9%93%BE%E6%8E%A5" rel="section"><i class="fas fa-bookmark fa-fw"></i>常用链接</a>
 
   </li>
         <li class="menu-item menu-item-时间线">
@@ -144,7 +146,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">94</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">95</span></a>
 
   </li>
         
@@ -159,7 +161,7 @@
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">163</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">168</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -204,6 +206,7 @@
     <span>0%</span>
   </div>
   <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
 
     <main class="main">
@@ -241,13 +244,13 @@
             },
             onClose: function() {
               //这里可以取消背景色
-              spop({
+              /*spop({
                 template: 'ε = = (づ′▽`)づ',
                 group: 'tips',
                 position  : 'bottom-center',
                 style: 'success',
                 autoclose: 1500
-              });
+              });*/
             }
           });
         </script>
@@ -261,7 +264,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
       <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+      <meta itemprop="description" content="记录">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -269,7 +272,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          DST论文笔记（？-2019）
+          DST论文笔记（？-2020）
         </h1>
 
         <div class="post-meta">
@@ -286,7 +289,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-14 18:53:52" itemprop="dateModified" datetime="2020-06-14T18:53:52+08:00">2020-06-14</time>
+                <time title="修改时间：2020-08-14 14:25:22" itemprop="dateModified" datetime="2020-08-14T14:25:22+08:00">2020-08-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -311,14 +314,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>12k</span>
+              <span>16k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>21 分钟</span>
+              <span>14 分钟</span>
             </span>
 
         </div>
@@ -330,104 +333,284 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="multi-domain-dialogue-state-tracking-as-dynamic-knowledge-graph-enhanced-question-answering">Multi-domain Dialogue State Tracking as Dynamic Knowledge Graph Enhanced Question Answering</h1>
-<p>  本文将多领域 DST 视为问答问题，被称为 <em>Dialogue State Tracking via Question Answering</em>（<strong>DSTQA</strong>）。在 DSTQA 之中，每一轮生成一个问题，询问域槽对的槽值，因此可以很自然地将其扩展到未知领域，槽位和槽值。此外，我们使用一个<strong>动态变化的知识图谱</strong>，以清楚地学习槽值对之间的关系。 - 公式阐述：在多领域 DST 问题中，有 <span class="math inline">\(M\)</span> 个领域 <span class="math inline">\(D=\{d_1, d_2, \cdots, d_M\}\)</span>。每个领域 <span class="math inline">\(d \in D\)</span> 有 <span class="math inline">\(N^d\)</span> 个槽位 <span class="math inline">\(S^d=\{s^d_1, s^d_2, \cdots, s^d_{N^d}\}\)</span>。每个槽位 <span class="math inline">\(s \in S^d\)</span> 有 <span class="math inline">\(K^s\)</span> 个可能的值 <span class="math inline">\(V^s=\{v^s_1, v^s_2, \cdots, v^s_{K^s}\}\)</span>。对话 <span class="math inline">\(X\)</span> 定义为 <span class="math inline">\(X = \{U^a_1, U^u_1, U^a_2, U^u_2, \cdots, U^a_T, U^u_T\}\)</span>。</p>
-<a id="more"></a>
+        <h1 id="trippy-a-triple-copy-strategy-for-value-independent-neural-dialog-state-tracking">TripPy: A Triple Copy Strategy for Value Independent Neural Dialog State Tracking</h1>
+<div class="note primary"><p>模型的计算方法与 DS-DST 几乎完全一致，只不过补充了几点 slot gate 的类型。</p>
+<p>唯一不同的在特征提取这块。DS-DST 将 <code>CLS</code>，一个域槽对和对话上下文拼接起来。由于所有域槽对的词向量是不同的，则可以凭此遍历所有的域槽对，使得每次捕获到的特征都是根据域槽对的变化而变化。所以当使用 <code>CLS</code> 进行 slot gate 分类时，可以确定该 slot gate 是基于某一域槽对的，并且 <code>CLS</code> 表征总是不同的。<strong>但是这样的做法计算起来特别麻烦，因为如果想要向量化，必须复制 N 份上下文（N 为域槽对数量）</strong>。</p>
+<p>TripPy 应该是略微地改进了它，它移除了输入中的域槽对，其他基本不变，顶多是改变了一下上下文的输入顺序，这并无大碍。然后，TripPy 为每一个域槽对都设计了一个线性层用于计算 slot gate。这也能使得 <code>CLS</code> 的表征总是不同，因为线性层中的权重矩阵是不同的。<strong>但是这样貌似更加无法向量化了？</strong>反而，弄巧成拙？</p>
+<p>所以，我认为在 dst 模型上，还是 TRADE 模型设计的更合理，它是采用了 attention 的机制。<strong>相比于 DS-DST 和 TripPy，参数量大大地减少，并且可以向量化。</strong></p>
+</div>
+<figure>
+<img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/TripPy.png" title="TripPy" alt="图 TripPy" /><figcaption>图 TripPy</figcaption>
+</figure>
+<p>本文提出三种复制机制：<strong>1）</strong>从用户语句中直接提取出槽值的跨度预测（span prediction）；<strong>2）</strong>从 system inform memory 中复制出槽值，其为系统回复操作的追踪；<strong>3）</strong>从对话状态历史中复制槽值。</p>
+<p>令 <span class="math inline">\(X = \{(U_1, M_1), \cdots, (U_T, M_T)\}\)</span>，<span class="math inline">\(U_t\)</span> 是 <span class="math inline">\(t\)</span> 轮时的用户语句，<span class="math inline">\(M_t\)</span> 是 <span class="math inline">\(t\)</span> 轮时的回复语句。模型的任务是 <strong>1）</strong>决定每轮是否提到了 <span class="math inline">\(S = \{S_1, \cdots, S_N\}\)</span> 中的 <span class="math inline">\(N\)</span> 个域槽对；<strong>2）</strong>预测每个 <span class="math inline">\(S_n\)</span> 的槽值；<strong>3）</strong>追踪整场对话过程中的对话状态。</p>
+<h2 id="context-encoder">Context Encoder</h2>
+<p>使用 BERT 提取上下文特征，公式为：</p>
+<p><span class="math inline">\(R_t = BERT([CLS] \oplus U_t \oplus [SEP] \oplus M_t \oplus [SEP] \oplus H_t \oplus [SEP])\)</span></p>
+<p>其中 <span class="math inline">\(U_t\)</span> 是 t 轮的用户语句，<span class="math inline">\([CLS], [SEP]\)</span> 都是 BERT 需要的特殊符号，分别为分类特殊符和分隔符，<span class="math inline">\(H_t\)</span> 为对话历史。那么 <span class="math inline">\(R_t = [r^{CLS}_t, r^1_t, \cdots, r^{seq_{max}}_t]\)</span>。以上都是比较基础的公式，具体说明略。<strong>值得注意得是</strong>，TripPy 的输入是逆序的，先输入 t 轮的对话，再输入逆序的历史对话。</p>
+<h2 id="slot-gates">Slot Gates</h2>
+<p>Slot Gate 的思想应该取自 TRADE 模型，简单来说，就是设计一个多分类器，判断接下来的操作应该交给哪个组件执行，一般来说可以选择 <span class="math inline">\(\{None, dontcare, Ptr, \cdots\}\)</span>。</p>
+<p><strong>TripPy 为每一个域槽对都配备了一个 slot gate。</strong>还是跟以往的做法差不多，将槽值的识别问题转换为一个分类问题。与 TRADE 模型不同的是，TripPy 的 slot gate 在每轮为槽位 <span class="math inline">\(S_n\)</span> 进行分类，类别包括 <span class="math inline">\(C = \{none, dontcare, span, inform, refer\}\)</span>，其中 inform 代表系统的通知，refer 代表历史对话状态中所提到的，其他都是类似的，就不提了。</p>
+<p>由于在 <strong>Context Encoder</strong> 中已经提取到了上下文特征，而且这步也是 BERT 做的，所以 <strong>Slot Gate</strong> 实际上就是做几个线性分类而已。BERT 可以得到 <span class="math inline">\(r^{CLS}_t\)</span>，这代表 <span class="math inline">\(t\)</span> 轮 <span class="math inline">\([CLS]\)</span> 的表征，那么域槽对 <span class="math inline">\(S_n\)</span> 在类别 <span class="math inline">\(C\)</span> 上的概率分布为：</p>
+<p><span class="math display">\[p^{gate}_{t,s}(r^{CLS}_t) = softmax(W^{gate}_s \cdot r^{CLS}_t + b^{gate}_s) \in \mathbb{R}^5
+\]</span></p>
+<p>需要注意的是，上述的分类器是对一个域槽对进行五元分类。但是<strong>在系统中我们拥有 <span class="math inline">\(N\)</span> 个域槽对，所以我们需要 <span class="math inline">\(N\)</span> 个上述的分类器</strong>，这就导致需要一定的参数量。</p>
+<p>对于特殊的槽位 <strong>Boolean Slot</strong>，也使用了类似的方法，但是类别 <span class="math inline">\(C_{bool} = \{none, dontcare, true, false\}\)</span>。</p>
+<h2 id="span-based-value-prediction">Span-based Value Prediction</h2>
+<p>使用 Ptr 神经网络预测槽值在用户语句中的位置，包括 start 以及 end 位置。如果 end &gt; start，则简单地将跨度（span）置为空。</p>
+<h2 id="system-inform-memory-for-value-prediction">System Inform Memory for Value Prediction</h2>
+<p>系统通知记忆（System Inform Memory） <span class="math inline">\(I_t = \{I^1_t, \cdots, I^N_t\}\)</span> 追踪系统提到的所有槽值对。简单来说，这就是一个 python 中的 dict，记录每一个槽值对是否被系统提及到。简单来说，如果用户提到了某个系统所通知给用户的槽值，那么槽位应该直接填充这个“通知值”，而不是去使用 Ptr 预测跨度，然后从用户的语句中提取出来。</p>
+<p>这听起来可能有点奇怪，因为如果用户提到了某个系统的“通知值”，那么理所当然地我们也可以使用 Ptr 从用于语句中提取出来，为什么要多此一举使用 System Inform Memory 呢？原因在于，用户所提到的“通知值”可能并不是其本身。思考下面的例句，“系统：‘xx酒店有你想要的食物类型。’；用户：‘好的，就是<strong>它</strong>了。’”。可见系统提到的“xx酒店”，用户并没有直接引用它，而是使用了一种<strong>共指</strong>的语法。</p>
+<h2 id="ds-memory-for-coreference-resolution">DS Memory for Coreference Resolution</h2>
+<p>更复杂的对话需要进行共指解析。简单来说，就是某一个槽位的槽值与另一个槽位的槽值相同，所以使用一个 N 元（槽位的数量）分类器，用于计算当前槽位的槽值是否指向另外一个槽位。<em>事实上，这与 System Inform Memory for Value Prediction 类似，都是解决共指解析</em>。</p>
+<h2 id="auxiliary-features">Auxiliary Features</h2>
+<p>辅助特征。个人认为这种特征没什么特别大的意义。</p>
+<h2 id="dialog-state-update">Dialog State Update</h2>
+<p>使用与 Chao and Lane (2019) 同样的规则更新机制。每轮，如果槽值不为 <em>none</em>，则更新槽值；否则不更新。</p>
+<h2 id="总结">总结</h2>
+<p>这模型与 TRADE 之类的 span-based 或者 open-vocabulary 模型有点不同。这个模型需要为每个域槽对都设计一个分类器，即有 <span class="math inline">\(N\)</span> 个权重矩阵，然后将 <span class="math inline">\([CLS]\)</span> 的特征输入<strong>每个分类器</strong>从而判断该域槽对是否被用户提取。而 TRADE 的做法是捕获域槽对的隐藏状态，然后将该隐藏状态 <span class="math inline">\(h^{dec}\)</span> 输入<strong>一个分类器</strong>从而判断该域槽对是否被用户提取。粗体就是区别，一个输入的是 <span class="math inline">\([CLS]\)</span> 特征，其是固定的，只能使用不同的权重矩阵来判断不同的域槽对，另一个输入的是域槽对的隐藏状态 <span class="math inline">\(h^{dec}\)</span>，由于域槽对是不同的，则 <span class="math inline">\(h^{dec}\)</span> 也是不同的，所只需要一个分类器即可。 <a id="more"></a></p>
+<h1 id="multi-domain-dialogue-state-tracking-as-dynamic-knowledge-graph-enhanced-question-answering">Multi-domain Dialogue State Tracking as Dynamic Knowledge Graph Enhanced Question Answering</h1>
+<p>本文将多领域 DST 视为问答问题，被称为 <em>Dialogue State Tracking via Question Answering</em>（<strong>DSTQA</strong>）。在 DSTQA 之中，每一轮生成一个问题，询问域槽对的槽值，因此可以很自然地将其扩展到未知领域，槽位和槽值。此外，我们使用一个<strong>动态变化的知识图谱</strong>，以清楚地学习槽值对之间的关系。</p>
+<ul>
+<li>公式阐述：在多领域 DST 问题中，有 <span class="math inline">\(M\)</span> 个领域 <span class="math inline">\(D=\{d_1, d_2, \cdots, d_M\}\)</span>。每个领域 <span class="math inline">\(d \in D\)</span> 有 <span class="math inline">\(N^d\)</span> 个槽位 <span class="math inline">\(S^d=\{s^d_1, s^d_2, \cdots, s^d_{N^d}\}\)</span>。每个槽位 <span class="math inline">\(s \in S^d\)</span> 有 <span class="math inline">\(K^s\)</span> 个可能的值 <span class="math inline">\(V^s=\{v^s_1, v^s_2, \cdots, v^s_{K^s}\}\)</span>。对话 <span class="math inline">\(X\)</span> 定义为 <span class="math inline">\(X = \{U^a_1, U^u_1, U^a_2, U^u_2, \cdots, U^a_T, U^u_T\}\)</span>。</li>
+</ul>
 <h1 id="find-or-classify-dual-strategy-for-slot-value-predictions-on-multi-domain-dialog-state-tracking">Find or Classify? Dual Strategy for Slot-Value Predictions on Multi-Domain Dialog State Tracking</h1>
-<p>  <strong>作者：Zhang et al., 2019。</strong>   现存的 DST 方法分为两种类型：picklist-based 和 span-based。<strong>picklist-based</strong> 方法在预定义本体的条件下，为每个槽位上潜在的槽值执行分类任务。但是它在工业环境下，是不切实际的，因为很难获得对本体的完全访问。<strong>span-based</strong> 方法在对话上下文中，通过寻找一个文本跨度（text spans），为每个槽位跟踪槽值。然而，由于槽值的多样性，很难在对话上下文中找到一个合适的字符串。为了解决这一问题，通过借鉴前两者方法的优点，本文提出 <strong>Dual Strategy for DST (DS-DST)</strong>。 - 本文的做法：将域槽对视为 picklist-based 槽位或者 span-based 槽位，决定域槽对类别归属的方法是凭借人类启发（human heuristics）。 + 例如在订酒店的场景下，请求一个停车位通常只有“yes”或者“no”的回复，所以将此类槽位视为 picklist-based 槽位。鉴于用户停留的天数是无限的，并且可以在上下文中找到，所以将其视为 span-based 槽位。 - DS-DST：令 <span class="math inline">\(X = \{(U^{sys}_1, U^{usr}_1), \cdots, (U^{sys}_T, U^{usr}_T)\}\)</span> 代表系统语句 <span class="math inline">\(U^{sys}_t\)</span> 和 用户语句 <span class="math inline">\(U^{usr}_t\)</span> 的集合（<span class="math inline">\(1 \le t \le T\)</span>），在给定 T 轮对话的情况下。令 N 个可能的域槽对表示为 <span class="math inline">\(S = \{S_1, \cdots, S_N\}\)</span>，其中，<strong>每个域槽对都有 n 个符号</strong>。 DST 是追踪整个对上的状态，因此每一轮，我们都需要在上下文 <span class="math inline">\(X_t = \{(U^{sys}_1, U^{usr}_1), \cdots, (U^{sys}_t, U^{usr}_t)\}\)</span> 中预测<strong>每个</strong>域槽对 S 的槽值，<strong>其中 <span class="math inline">\(X_t\)</span> 拥有 m 个符号</strong>。我们假定 span-based 槽位在 S 中有 M 个，picklist-based 槽位有 <code>N-M</code> 个。每个 picklist-based 槽位有 C 个可能的槽值，即 <span class="math inline">\(V_1, \cdots, V_C\)</span>，其中 C 是 picklist 的容量，<strong>每个槽值有 c 个符号</strong>。 我们首先使用 <strong>BERT</strong> 编码对话上下文 <span class="math inline">\(X_t\)</span> 的信息，编码时还考虑了 S 中每个域槽对，以此获取基于域槽对信息的上下文表征。然后使用 <strong>slot gate</strong> 处理特殊类型的槽值。对于 span-based 槽位，使用 <strong>two-way 线性映射</strong>以找到文本跨度。对于 picklist-based 槽位，我们基于上下文表征从 picklist 中选择可信的槽值。 - <strong>Slot-Context Encoder</strong>：对于第 j 个域槽对以及 t 时的对话上下文，我们使用 BERT 进行编码，将二者拼接，然后获取表征： <span class="math display">\[R_{tj} = BERT([CLS] \oplus S_j \oplus [SEP] \oplus X_t) \tag{1}
-    \]</span> 其中 <code>[CLS]</code> 是一个特殊符号，每个样本之前都应该有它，<code>[SEP]</code> 是一个特殊的分割符。公式 1 中的输出可拆解为 <span class="math inline">\(R_{tj} = [r^{CLS}_{tj}, r^1_{tj}, \cdots, r^k_{tj}]\)</span>，其中 <span class="math inline">\(r^{CLS}_{tj}\)</span> 代表 K 个输入的聚合表征（<strong>博主注</strong>：这个只是一个定义而已），<span class="math inline">\(r^k_{tj}\)</span> 就是普通的符号表征。 - <strong>Slot-Gate Classification</strong>：多领域对话中有非常多的域槽对，很不容易判断一个域槽对是否出现在每一轮的对话中。总的来说，在 t 轮，我们让分类器在 <code>{none, dontcare, prediction}</code> 中做出决策。<code>none</code> 代表没有提及，<code>dontcare</code> 代表对于某槽位用户可以接受任何槽值，<code>prediction</code> 代表应该由模型处理。我们在 slot-gate classification 中利用 <span class="math inline">\(r^{CLS}_{tj}\)</span>，t 轮中第 j 个域槽对的概率由如下公式计算： <span class="math display">\[P^{gate}_{tj} = softmax(W_{gate} \cdot (r^{CLS}_{tj})^T + b_{gate}) \tag{2}
-    \]</span> 此分类器的 loss 函数为： <span class="math display">\[\mathcal{L}_{gate} = \sum^T_{t=1} \sum^N_{j=1} -log(P^{gate}_{tj} \cdot (y^{gate}_{tj})^T) \tag{3}
-    \]</span> 其中 <span class="math inline">\(y^{gate}_{tj}\)</span> 是第 t 轮第 j 个域槽对的 one-hot 标签。 - <strong>Span-Based Slot-Value Prediction</strong>：计算 start 和 end 位置的向量： <span class="math display">\[[\alpha^{start}_{tj}, \alpha^{end}_{tj}] = W_{span} \cdot ([r^1_{tj}, \cdots, r^k_{tj}])^T +b_{span} \tag{4}
-    \]</span> 那么，start 的概率可以使用公式：<span class="math inline">\(P^{start}_{tj} = \frac{e^{\alpha^{start}_{tj} \cdot r^i_{tj}}}{\sum_k \alpha^{start}_{tj} \cdot r^k_{tj}}\)</span> 得到（<strong>博主注</strong>：这应该是 softmax，所以他可能漏了个 e，正确共识我认为是这样的：<span class="math inline">\(P^{start}_{tj} = \frac{e^{\alpha^{start}_{tj} \cdot r^i_{tj}}}{\sum_k e^{\alpha^{start}_{tj} \cdot r^k_{tj}}}\)</span>），因此此模型的 loss 为（end 类似，不再赘述）： <span class="math display">\[\mathcal{L}_{start} = \sum^T_{t=1} \sum^M_{j=1} -log(P^{start}_{tj} \cdot (y^{start}_{tj})^T) \tag{5}
-    \]</span> - <strong>Picklist-Based Slot-Value Prediction</strong>：首先获得候选值的聚合表征 <span class="math display">\[Y_j = BERT([CLS] \oplus V_j \oplus [SEP]) \tag{6}
-    \]</span> （余下略，写起来太麻烦了） - <strong>Training Objective</strong>：<span class="math inline">\(\mathcal{L}_{total} = \mathcal{L}_{sg} + \mathcal{L}_{span} + \mathcal{L}_{picklist} \tag{9}\)</span></p>
+<p><strong>作者：Zhang et al., 2019。</strong></p>
+<p>现存的 DST 方法分为两种类型：picklist-based 和 span-based。<strong>picklist-based</strong> 方法在预定义本体的条件下，为每个槽位上潜在的槽值执行分类任务。但是它在工业环境下，是不切实际的，因为很难获得对本体的完全访问。<strong>span-based</strong> 方法在对话上下文中，通过寻找一个文本跨度（text spans），为每个槽位跟踪槽值。然而，由于槽值的多样性，很难在对话上下文中找到一个合适的字符串。为了解决这一问题，通过借鉴前两者方法的优点，本文提出 <strong>Dual Strategy for DST (DS-DST)</strong>。</p>
+<p>本文的做法：将域槽对视为 picklist-based 槽位或者 span-based 槽位，决定域槽对类别归属的方法是凭借人类启发（human heuristics）。</p>
+<p>例如在订酒店的场景下，请求一个停车位通常只有“yes”或者“no”的回复，所以将此类槽位视为 picklist-based 槽位。鉴于用户停留的天数是无限的，并且可以在上下文中找到，所以将其视为 span-based 槽位。</p>
+<p><strong>DS-DST：</strong>令 <span class="math inline">\(X = \{(U^{sys}_1, U^{usr}_1), \cdots, (U^{sys}_T, U^{usr}_T)\}\)</span> 代表系统语句 <span class="math inline">\(U^{sys}_t\)</span> 和 用户语句 <span class="math inline">\(U^{usr}_t\)</span> 的集合（<span class="math inline">\(1 \le t \le T\)</span>），在给定 T 轮对话的情况下。令 N 个可能的域槽对表示为 <span class="math inline">\(S = \{S_1, \cdots, S_N\}\)</span>，其中，<strong>每个域槽对都有 n 个符号</strong>。</p>
+<p>DST 是追踪整个对上的状态，因此每一轮，我们都需要在上下文 <span class="math inline">\(X_t = \{(U^{sys}_1, U^{usr}_1), \cdots, (U^{sys}_t, U^{usr}_t)\}\)</span> 中预测<strong>每个</strong>域槽对 S 的槽值，<strong>其中 <span class="math inline">\(X_t\)</span> 拥有 m 个符号</strong>。我们假定 span-based 槽位在 S 中有 M 个，picklist-based 槽位有 <code>N-M</code> 个。每个 picklist-based 槽位有 C 个可能的槽值，即 <span class="math inline">\(V_1, \cdots, V_C\)</span>，其中 C 是 picklist 的容量，<strong>每个槽值有 c 个符号</strong>。</p>
+<p>我们首先使用 <strong>BERT</strong> 编码对话上下文 <span class="math inline">\(X_t\)</span> 的信息，编码时还考虑了 S 中每个域槽对，以此获取基于域槽对信息的上下文表征。然后使用 <strong>slot gate</strong> 处理特殊类型的槽值。对于 span-based 槽位，使用 <strong>two-way 线性映射</strong>以找到文本跨度。对于 picklist-based 槽位，我们基于上下文表征从 picklist 中选择可信的槽值。</p>
+<h2 id="slot-context-encoder">Slot-Context Encoder</h2>
+<div class="note danger"><p>请注意，DS-DST 的做法是将所有域槽对中的一个与上下文拼接起来，并使用 BERT 获取特征，然后将 <span class="math inline">\(r^{CLS}\)</span> 输入进一个线性层，以此计算该域槽对的 slot gate 是什么。最后，对于每一个域槽对都需要进行以上的操作。<strong>博主注：但是这样好像并行起来比较困难？</strong></p>
+<p>而 TRADE 的做法是将域槽对单独拿出来，使用词向量表示，然后使用域槽对词向量与上下文执行 attention 机制，以此获得一个上下文向量。最后再使用该向量进行分类，从而得到 slot gate。</p>
+<p>个人认为还是 TRADE 的方法更合理一点。</p>
+</div>
+<p>对于第 j 个域槽对以及 t 时的对话上下文，我们使用 BERT 进行编码，将二者拼接，然后获取表征： <span class="math display">\[R_{tj} = BERT([CLS] \oplus S_j \oplus [SEP] \oplus X_t) \tag{1}
+\]</span></p>
+<p>其中 <code>[CLS]</code> 是一个特殊符号，每个样本之前都应该有它，<code>[SEP]</code> 是一个特殊的分割符。公式 1 中的输出可拆解为 <span class="math inline">\(R_{tj} = [r^{CLS}_{tj}, r^1_{tj}, \cdots, r^k_{tj}]\)</span>，其中 <span class="math inline">\(r^{CLS}_{tj}\)</span> 代表 K 个输入的聚合表征（<strong>博主注</strong>：这个只是一个定义而已），<span class="math inline">\(r^k_{tj}\)</span> 就是普通的符号表征。</p>
+<h2 id="slot-gate-classification">Slot-Gate Classification</h2>
+<p>多领域对话中有非常多的域槽对，很不容易判断一个域槽对是否出现在每一轮的对话中。总的来说，在 t 轮，我们让分类器在 <code>{none, dontcare, prediction}</code> 中做出决策。<code>none</code> 代表没有提及，<code>dontcare</code> 代表对于某槽位用户可以接受任何槽值，<code>prediction</code> 代表应该由模型处理。我们在 slot-gate classification 中利用 <span class="math inline">\(r^{CLS}_{tj}\)</span>，t 轮中第 j 个域槽对的概率由如下公式计算： <span class="math display">\[P^{gate}_{tj} = softmax(W_{gate} \cdot (r^{CLS}_{tj})^T + b_{gate}) \tag{2}
+\]</span></p>
+<p>此分类器的 loss 函数为： <span class="math display">\[\mathcal{L}_{gate} = \sum^T_{t=1} \sum^N_{j=1} -log(P^{gate}_{tj} \cdot (y^{gate}_{tj})^T) \tag{3}
+\]</span></p>
+<p>其中 <span class="math inline">\(y^{gate}_{tj}\)</span> 是第 t 轮第 j 个域槽对的 one-hot 标签。</p>
+<h2 id="span-based-slot-value-prediction">Span-Based Slot-Value Prediction</h2>
+<p>计算 start 和 end 位置的向量： <span class="math display">\[[\alpha^{start}_{tj}, \alpha^{end}_{tj}] = W_{span} \cdot ([r^1_{tj}, \cdots, r^k_{tj}])^T +b_{span} \tag{4}
+\]</span></p>
+<p>那么，start 的概率可以使用公式：<span class="math inline">\(P^{start}_{tj} = \frac{e^{\alpha^{start}_{tj} \cdot r^i_{tj}}}{\sum_k \alpha^{start}_{tj} \cdot r^k_{tj}}\)</span> 得到（<strong>博主注</strong>：这应该是 softmax，所以他可能漏了个 e，正确公式我认为是这样的：<span class="math inline">\(P^{start}_{tj} = \frac{e^{\alpha^{start}_{tj} \cdot r^i_{tj}}}{\sum_k e^{\alpha^{start}_{tj} \cdot r^k_{tj}}}\)</span>），因此此模型的 loss 为（end 类似，不再赘述）： <span class="math display">\[\mathcal{L}_{start} = \sum^T_{t=1} \sum^M_{j=1} -log(P^{start}_{tj} \cdot (y^{start}_{tj})^T) \tag{5}
+\]</span></p>
+<h2 id="picklist-based-slot-value-prediction">Picklist-Based Slot-Value Prediction</h2>
+<p>首先获得候选值的聚合表征 <span class="math display">\[Y_j = BERT([CLS] \oplus V_j \oplus [SEP]) \tag{6}
+\]</span></p>
+<p>（余下略，写起来太麻烦了）</p>
+<h2 id="training-objective">Training Objective</h2>
+<p><span class="math display">\[\mathcal{L}_{total} = \mathcal{L}_{sg} + \mathcal{L}_{span} + \mathcal{L}_{picklist} \tag{9}\]</span></p>
 <h1 id="transferable-multi-domain-state-generator-for-task-oriented-dialogue-systems">Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems</h1>
 <blockquote class="blockquote-center">
 <i class="fa fa-quote-left"></i>
-<p><a href="https://yan624.github.io/·论文笔记/dilogue/task-oriented/61.%20Transferable%20Multi-Domain%20State%20Generator%20for%20Task-Oriented%20Dialogue%20Systems.html">论文笔记</a></p>
+<p><a href="https://yan624.github.io/posts/36b672d2.html">论文笔记</a>。<strong>作者：Wu, Chien-Sheng et al., 2019。</strong></p>
 
 <i class="fa fa-quote-right"></i>
 </blockquote>
-<p>  <strong>作者：Wu, Chien-Sheng et al., 2019。</strong></p>
+<figure>
+<img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/TRADE.png" alt="图 TRADE" /><figcaption>图 TRADE</figcaption>
+</figure>
 <h1 id="global-locally-self-attentive-dialogue-state-tracker">Global-Locally Self-Attentive Dialogue State Tracker</h1>
-<p>  <strong>作者：Zhong et al. 2018。</strong> - 引言 + 在 DST 中，state 通常由一系列的 <strong>requests</strong> 和 <strong>joint goals</strong> 组成。 + DST 中的一个重要问题是，现存的方法没有解决<strong>对低频槽值的提取</strong>。这是因为任务导向的对话系统涵盖了巨大的状态空间，许多槽值对组成的状态在训练集中很少出现。尽管用户一轮对话指定一个低频槽值对的概率很小，但是他们在整个对话中指定一个的概率很大。 + 本文提出 <strong>G</strong>lobal-<strong>L</strong>ocally Self-<strong>A</strong>ttentive <strong>D</strong>ialogue State Tracker(GLAD) 。相比于先前的工作， GLAD 独立地估计每一个槽值，使用 global modules 在估计器之间为每一个槽位共享参数，使用 local modules 学习特定槽位的表征。 - GLAD：GLAD 对每对槽值使用了一个估计器，将多元状态分类分解为一系列的二元分类问题，以此跟新状态。 + <strong>Global-Locally Self-Attentive Encoder</strong>：每个状态都由一系列的槽值对组成，它们中有许多都是低频的，这会造成误差在多轮对话中累积。为了解决这一问题，使用 global module 对每个槽位进行参数共享，使用 local module 学习特定槽位的特征。使 n 代表序列长度， <span class="math inline">\(d_{emb}\)</span> 为词向量维度，<span class="math inline">\(X \in \mathbb{R}^{n \times d_{emb}}\)</span> 为序列中所有单词的词向量矩阵。我们使用 Bi-LSTM 产生 X <strong>全局编码</strong> <span class="math inline">\(H^g\)</span>，其中 <span class="math inline">\(d_{rnn}\)</span> 代表 LSTM 隐藏状态的维度。以同样的方法产生 X 的<strong>局部编码</strong> <span class="math inline">\(H^s\)</span>，这考虑的是槽位 s。然后二者通过一个混合函数产生一个 X 的 <strong>global-local 编码</strong> H，其中 <span class="math inline">\(\beta^s\)</span> 是一个特定于槽位 s 的 01 之间的可学习参数。公式如下所示： <span class="math display">\[
-    \begin{align}
-        H^g &amp; = biLSTM^g(X) \in \mathbb{R}^{n \times d_{rnn}} \tag{1} \\
-        H^s &amp; = biLSTM^s(X) \in \mathbb{R}^{n \times d_{rnn}} \tag{2} \\
-        H &amp; = \beta^s H^s + (1 - \beta^s)H^g \in \mathbb{R}^{n \times d_{rnn}} \tag{3} \\
-    \end{align}
-    \]</span> 接下来计算 H 的 global-local self-attention context <span class="math inline">\(c\)</span>。self-attention（或称 intra-attention） 是一种计算变长序列长下文摘要的好方法。对于第 i 个元素 <span class="math inline">\(H_i\)</span>，我们计算全局自注意力分数标量 <span class="math inline">\(a^g_i\)</span>，之后通过 softmax 将所有元素归一化，global self-attention context（下称<strong>全局自注意力上下文</strong>）<span class="math inline">\(c^g\)</span> 就通过加权和计算出来了。 local self-attention context（下称<strong>局部自注意力上下文</strong>）<span class="math inline">\(c^s\)</span> 同理。而 global-local self-attention context <span class="math inline">\(c\)</span> 是它们的混合。计算公式如下所示： <span class="math display">\[
-    \begin{align}
-        a^g_i &amp; = W^g H_i + b^g \in \mathbb{R} \tag{4} \\
-        p^g &amp; = softmax(a^g) \in \mathbb{R}^n \tag{5} \\
-        c^g &amp; = \sum_i p^g_i H_i \in \mathbb{R}^{d_{rnn}} \tag{6} \\
-        a^s_i &amp; = W^s H_i + b^s \in \mathbb{R} \tag{7} \\
-        p^s &amp; = softmax(a^s) \in \mathbb{R}^n \tag{8} \\
-        c^s &amp; = \sum_i p^s_i H_i \in \mathbb{R}^{d_{rnn}} \tag{9} \\
-        c &amp; = \beta^s c^s + (1 - \beta^s) c^g \in \mathbb{R}^{d_{rnn}} \tag{10}
-    \end{align}
-    \]</span> 为了便于说明，我们定义了函数 <code>encode(X)</code>，它将序列 X 映射为编码 H 和自注意力上下文 c： <span class="math display">\[encode: X \to H, c \tag{11}
-    \]</span> + <strong>Encoding module</strong>：定义好 global-locally self-attentive encoder 之后，我们可以构建用户语句、上一轮系统动作和槽值对的表征了。使 <span class="math inline">\(U\)</span> 代表用户语句的嵌入，<span class="math inline">\(A_j\)</span> 代表上一轮系统的第 j 个动作（例：request(price range)），<span class="math inline">\(V\)</span> 代表槽值对（例：food=french）。所以我们有公式： <span class="math display">\[
-    \begin{align}
-        H^{utt}, c^{utt} &amp; = encode(U) \tag{12} \\
-        H^{act}_j, C^{act}_j &amp; = encode(A_j) \tag{13} \\
-        H^{val}, c^{val} &amp; = encode(V) \tag{14} \\
-    \end{align}
-    \]</span> + <strong>Scoring module</strong>：该组件，直观来说，我们可以通过检查两个输入，判断用户是否表达出了槽值对。第一个输入是用户语句，用户直接陈述<strong>目标与请求</strong>。做法是判断用户是否指定了某个槽值对。考虑用户语句 <span class="math inline">\(H^{utt}\)</span>，槽值对 <span class="math inline">\(c^{val}\)</span>，最后使用 resulting attention context <span class="math inline">\(q^{utt}\)</span> 计算槽值对的分数，其中 m 代表用户语句中单词数量，分数 <span class="math inline">\(y^{utt}\)</span> 代表用户表达槽值对的程度。公式如下所示： <span class="math display">\[
-    \begin{align}
-        a^{utt}_i &amp; = (H^{utt}_i)^T c^{val} \in \mathbb{R} \tag{15} \\
-        p^{utt} &amp; = softmax(a^{utt}) \in \mathbb{R}^m \tag{16} \\
-        q^{utt} &amp; = \sum_i p^{utt}_i H^{utt}_i \in \mathbb{R}^{d_{rnn}} \tag{17} \\
-        y^{utt} &amp; = W q^{utt} + b \in \mathbb{R} \tag{18} \\
-    \end{align}
-    \]</span> 第二个输入是前一轮系统动作。这在用户没有提供信息，但是提到先前系统动作时很有效。如：在系统询问“你喜欢在市中心的酒店吗”，用户回答“喜欢”。为了处理这种情况，考虑动作表征 <span class="math inline">\(C^{act} = [C^{act}_1, \cdots, C^{act}_l]\)</span> 以及用户语句上下文 <span class="math inline">\(c^{utt}\)</span>，<span class="math inline">\(l\)</span> 是动作数量，然后使用 <span class="math inline">\(q^{act}\)</span> 和 <span class="math inline">\(c^{val}\)</span> 之间的相似度来衡量槽值对： <span class="math display">\[
-    \begin{align}
-        a^{act}_j &amp; = (C^{act}_j)^T c^{utt} \in \mathbb{R} \tag{19} \\
-        p^{act} &amp; = softmax(a^{act}) \in \mathbb{R}^{l+1} \tag{20} \\
-        q^{act} &amp; = \sum_i p^{act}_j C^{act}_j \in \mathbb{R}^{d_{rnn}} \tag{21} \\
-        y^{act} &amp; = (q^{act})^T c^{val} \in \mathbb{R} \tag{22} \\
-    \end{align}
-    \]</span> 除了真实的动作，我们还引入了哨兵动作以忽略上一轮的系统动作。<span class="math inline">\(y^{act}\)</span> 代表上一轮动作表达了某个槽值的程度。最后的 y 使用二者的加权和，使用 sigmoid 函数归一化，w 是可学习参数。 <span class="math display">\[y = \sigma(y^{utt} + w y^{act}) \in \mathbb{R} \tag{23}
-    \]</span> - 总结：<strong>虽然文中没有明确指出，但是 global Bi-LSTM 应该是所有的槽位共享一个模型，而 local Bi-LSTM 应该指的是对于每一个槽位都训练一个模型。最后从文中的实验结果发现，似乎 global 组件对于 request 的实验结果毫无影响？？？</strong></p>
+<p><strong>作者：Zhong et al. 2018。</strong></p>
+<h2 id="引言">引言</h2>
+<ul>
+<li>在 DST 中，state 通常由一系列的 <strong>requests</strong> 和 <strong>joint goals</strong> 组成。</li>
+<li>DST 中的一个重要问题是，现存的方法没有解决<strong>对低频槽值的提取</strong>。这是因为任务导向的对话系统涵盖了巨大的状态空间，许多槽值对组成的状态在训练集中很少出现。尽管用户一轮对话指定一个低频槽值对的概率很小，但是他们在整个对话中指定一个的概率很大。</li>
+<li>本文提出 <strong>G</strong>lobal-<strong>L</strong>ocally Self-<strong>A</strong>ttentive <strong>D</strong>ialogue State Tracker(GLAD) 。相比于先前的工作， GLAD 独立地估计每一个槽值，使用 global modules 在估计器之间为每一个槽位共享参数，使用 local modules 学习特定槽位的表征。</li>
+</ul>
+<h2 id="glad">GLAD</h2>
+<p>GLAD 对每对槽值使用了一个估计器，将多元状态分类分解为一系列的二元分类问题，以此跟新状态。</p>
+<ul>
+<li><strong>Global-Locally Self-Attentive Encoder</strong>：每个状态都由一系列的槽值对组成，它们中有许多都是低频的，这会造成误差在多轮对话中累积。为了解决这一问题，使用 global module 对每个槽位进行参数共享，使用 local module 学习特定槽位的特征。使 n 代表序列长度， <span class="math inline">\(d_{emb}\)</span> 为词向量维度，<span class="math inline">\(X \in \mathbb{R}^{n \times d_{emb}}\)</span> 为序列中所有单词的词向量矩阵。我们使用 Bi-LSTM 产生 X <strong>全局编码</strong> <span class="math inline">\(H^g\)</span>，其中 <span class="math inline">\(d_{rnn}\)</span> 代表 LSTM 隐藏状态的维度。以同样的方法产生 X 的<strong>局部编码</strong> <span class="math inline">\(H^s\)</span>，这考虑的是槽位 s。然后二者通过一个混合函数产生一个 X 的 <strong>global-local 编码</strong> H，其中 <span class="math inline">\(\beta^s\)</span> 是一个特定于槽位 s 的 01 之间的可学习参数。公式如下所示： <span class="math display">\[
+\begin{align}
+  H^g &amp; = biLSTM^g(X) \in \mathbb{R}^{n \times d_{rnn}} \tag{1} \\
+  H^s &amp; = biLSTM^s(X) \in \mathbb{R}^{n \times d_{rnn}} \tag{2} \\
+  H &amp; = \beta^s H^s + (1 - \beta^s)H^g \in \mathbb{R}^{n \times d_{rnn}} \tag{3} \\
+\end{align}
+\]</span> 接下来计算 H 的 global-local self-attention context <span class="math inline">\(c\)</span>。self-attention（或称 intra-attention） 是一种计算变长序列长下文摘要的好方法。对于第 i 个元素 <span class="math inline">\(H_i\)</span>，我们计算全局自注意力分数标量 <span class="math inline">\(a^g_i\)</span>，之后通过 softmax 将所有元素归一化，global self-attention context（下称<strong>全局自注意力上下文</strong>）<span class="math inline">\(c^g\)</span> 就通过加权和计算出来了。 local self-attention context（下称<strong>局部自注意力上下文</strong>）<span class="math inline">\(c^s\)</span> 同理。而 global-local self-attention context <span class="math inline">\(c\)</span> 是它们的混合。计算公式如下所示： <span class="math display">\[
+\begin{align}
+  a^g_i &amp; = W^g H_i + b^g \in \mathbb{R} \tag{4} \\
+  p^g &amp; = softmax(a^g) \in \mathbb{R}^n \tag{5} \\
+  c^g &amp; = \sum_i p^g_i H_i \in \mathbb{R}^{d_{rnn}} \tag{6} \\
+  a^s_i &amp; = W^s H_i + b^s \in \mathbb{R} \tag{7} \\
+  p^s &amp; = softmax(a^s) \in \mathbb{R}^n \tag{8} \\
+  c^s &amp; = \sum_i p^s_i H_i \in \mathbb{R}^{d_{rnn}} \tag{9} \\
+  c &amp; = \beta^s c^s + (1 - \beta^s) c^g \in \mathbb{R}^{d_{rnn}} \tag{10}
+\end{align}
+\]</span> 为了便于说明，我们定义了函数 <code>encode(X)</code>，它将序列 X 映射为编码 H 和自注意力上下文 c： <span class="math display">\[encode: X \to H, c \tag{11}
+\]</span></li>
+<li><strong>Encoding module</strong>：定义好 global-locally self-attentive encoder 之后，我们可以构建用户语句、上一轮系统动作和槽值对的表征了。使 <span class="math inline">\(U\)</span> 代表用户语句的嵌入，<span class="math inline">\(A_j\)</span> 代表上一轮系统的第 j 个动作（例：request(price range)），<span class="math inline">\(V\)</span> 代表槽值对（例：food=french）。所以我们有公式： <span class="math display">\[
+\begin{align}
+  H^{utt}, c^{utt} &amp; = encode(U) \tag{12} \\
+  H^{act}_j, C^{act}_j &amp; = encode(A_j) \tag{13} \\
+  H^{val}, c^{val} &amp; = encode(V) \tag{14} \\
+\end{align}
+\]</span></li>
+<li><strong>Scoring module</strong>：该组件，直观来说，我们可以通过检查两个输入，判断用户是否表达出了槽值对。第一个输入是用户语句，用户直接陈述<strong>目标与请求</strong>。做法是判断用户是否指定了某个槽值对。考虑用户语句 <span class="math inline">\(H^{utt}\)</span>，槽值对 <span class="math inline">\(c^{val}\)</span>，最后使用 resulting attention context <span class="math inline">\(q^{utt}\)</span> 计算槽值对的分数，其中 m 代表用户语句中单词数量，分数 <span class="math inline">\(y^{utt}\)</span> 代表用户表达槽值对的程度。公式如下所示： <span class="math display">\[
+\begin{align}
+  a^{utt}_i &amp; = (H^{utt}_i)^T c^{val} \in \mathbb{R} \tag{15} \\
+  p^{utt} &amp; = softmax(a^{utt}) \in \mathbb{R}^m \tag{16} \\
+  q^{utt} &amp; = \sum_i p^{utt}_i H^{utt}_i \in \mathbb{R}^{d_{rnn}} \tag{17} \\
+  y^{utt} &amp; = W q^{utt} + b \in \mathbb{R} \tag{18} \\
+\end{align}
+\]</span> 第二个输入是前一轮系统动作。这在用户没有提供信息，但是提到先前系统动作时很有效。如：在系统询问“你喜欢在市中心的酒店吗”，用户回答“喜欢”。为了处理这种情况，考虑动作表征 <span class="math inline">\(C^{act} = [C^{act}_1, \cdots, C^{act}_l]\)</span> 以及用户语句上下文 <span class="math inline">\(c^{utt}\)</span>，<span class="math inline">\(l\)</span> 是动作数量，然后使用 <span class="math inline">\(q^{act}\)</span> 和 <span class="math inline">\(c^{val}\)</span> 之间的相似度来衡量槽值对： <span class="math display">\[
+\begin{align}
+  a^{act}_j &amp; = (C^{act}_j)^T c^{utt} \in \mathbb{R} \tag{19} \\
+  p^{act} &amp; = softmax(a^{act}) \in \mathbb{R}^{l+1} \tag{20} \\
+  q^{act} &amp; = \sum_i p^{act}_j C^{act}_j \in \mathbb{R}^{d_{rnn}} \tag{21} \\
+  y^{act} &amp; = (q^{act})^T c^{val} \in \mathbb{R} \tag{22} \\
+\end{align}
+\]</span> 除了真实的动作，我们还引入了哨兵动作以忽略上一轮的系统动作。<span class="math inline">\(y^{act}\)</span> 代表上一轮动作表达了某个槽值的程度。最后的 y 使用二者的加权和，使用 sigmoid 函数归一化，w 是可学习参数。 <span class="math display">\[y = \sigma(y^{utt} + w y^{act}) \in \mathbb{R} \tag{23}
+\]</span></li>
+</ul>
+<h2 id="总结-1">总结</h2>
+<p><strong>虽然文中没有明确指出，但是 global Bi-LSTM 应该是所有的槽位共享一个模型，而 local Bi-LSTM 应该指的是对于每一个槽位都训练一个模型。最后从文中的实验结果发现，似乎 global 组件对于 request 的实验结果毫无影响？？？</strong></p>
 <h1 id="scalable-multi-domain-dialogue-state-tracking">Scalable multi-domain dialogue state tracking</h1>
-<p>  <strong>作者：Rastogi A et al., 2017。</strong> - 引言 + <strong>相关工作</strong>：在有些方法中，本体为一个任务定义了一组槽位，这些槽位又关联了一组槽值。还有些方法使用本体中的条目去探测用户语句中潜在的槽值对（如 Henderson et al., 2014d）。 + <strong>缺陷与本文方法</strong>：<em>事实上，定义本体是困难且不切实际的，一个槽位所拥有的槽值是无穷无尽的，这使得灵活性成为了一个重大的问题。此外使用深度学习来表示槽位/槽值无法处理在训练期间从未见过的实体，使得很难与动态变化的数据库进行交互。</em>所以我们的论文提出： 1. 用一个巨大的或者无限的潜在值（possible values）集合表示槽位 2. 为了给用户语句中的槽位打标签，我们使用了 <strong>multi-domain LU</strong> 模型 3. SLU 的输出被用于 delexicalize 用户语句，由 DST 处理并进行特征提取 4. 然后通过集成一个独立的 candidate 生成步骤，使用 local conversation context 也有可能是外部的知识源（而不是本体）来估计一组<strong>候选槽值对</strong>（slot-value candidates）。DST 仅操作这些候选者，从而产生一种能够扩展到大且丰富的数据集的方法 - 此方法可以被扩展到其他大型数据集是因为：候选槽值对的产生依赖于上下文或者外部知识源，而不是预定义的本体。 5. 此外这个新颖的 DST 框架提取的一系列特征，其独立于槽值对集合 - 为了捕获语句中的长期依赖，使用 Bi-GRU 来表示输入语句，扩展了前人工作的 DNN，CNN 6. 共享一个领域但不同槽位之间的参数，并将参数迁移到从未见过的数据集或领域中。这样就不需要为每个领域中的每个 slot 类型训练模型，并有助于快速向领域中添加新 slot。 - dialogue sate + <strong>Candidate Set</strong>：令 <span class="math inline">\(C^t_s\)</span> 代表领域 D 中，第 t 轮对话，槽位 s 的候选集。对话初始，对于每个槽位，<span class="math inline">\(C^0_s\)</span> 都是空的。令 <span class="math inline">\(|C^t_s| \le K\)</span> 以限制候选集的上限（博主吐槽：这跟前人的工作有锤子区别，不还是假定槽值已知）。<span class="math inline">\(C^t_s\)</span> 由用户语句，前一轮的系统语句以及先前的候选集初始化，初始化的内容来自 LU 模块，一般 K 取 7。如果初始化完毕后，候选集溢出，则根据分数排序，并从后往前开始删除候选值； 有两点需要说明：<strong>1）</strong>初始化步骤很容易拓展到诸如 ASR 或者来自后端（API）的响应；<strong>2）</strong>候选集的最大容量必须最够大以确保可能的值不会被冲洗掉。 + <strong>State Representation</strong>：在第 t 轮上使用 <span class="math inline">\({V&#39;}^t_s = C^t_s \cup \{\delta_s, \phi_s\}\)</span> 限制分布的大小，以此代替 <span class="math inline">\(V_s\)</span> 上的分布。<span class="math inline">\(V_s\)</span> 代表槽位 s 所有可能的值，<span class="math inline">\(C^t_s\)</span> 表示第 t 轮，槽位 s 生成的候选值，<span class="math inline">\(\delta_s, \phi_s\)</span> 分别表示 don't care（即对于槽位 s，用户不关心值是什么）和 null value（即用户所表达的语句中不包含任何槽位 s）。这样表示会更好，因为对话中未被提到的槽值，它们的概率只会接近 0。 为了保持分布的大小，在 <span class="math inline">\({V&#39;}^t_s\)</span> 加入了 <span class="math inline">\(K - |C^t_s|\)</span> 个 <code>PAD</code> 符号，使其为一个定值 <code>K + 2</code>。此外，对于大多数槽位， <span class="math inline">\(|{V&#39;}_s| = K + 2 \ll |V_s|\)</span>。 - dialogue state tracking + <strong>Model Description</strong>：是一个辨别式模型，用每个槽位的候选值集合作为输入，并更新候选值的分数。它也可识别 <span class="math inline">\(\delta_s\)</span> 或 <span class="math inline">\(\phi_s\)</span>。 在用户轮数 t，DST 使用前一轮的候选集合 <span class="math inline">\(C^{t-1}_s\)</span> 及其分数，最近的用户/系统语句和它们的对话状态，去提取语句相关（<span class="math inline">\(r^t_{utt}\)</span>），槽相关（<span class="math inline">\(r^t_{slot}(s)\)</span>），候选值相关（<span class="math inline">\(r^t_{cand}(c^t_{s,i})\)</span>）的特征。候选集 <span class="math inline">\(\alpha \in {V&#39;}^t_s = C^t_s \cap \{\delta_s, \phi_s\}\)</span> 的分数 <span class="math inline">\(p^t_{\alpha}\)</span> <strong>更新公式</strong>如下所示，其中 <span class="math inline">\(\oplus\)</span> 代表向量拼接，图 2 描述了模型的架构： <span class="math display">\[
-    \begin{align}
-        g^t_s &amp; = r^t_{utt} \oplus r^t_{slot}(s) \\
-        f^t_{c_{s,i}} &amp; = g^t_s \oplus r^t_{cand}(c^t_{s,i}) \\
-        l^t_{\phi_s} &amp; = l_{\phi_s} \\
-        l^t_{c_{s,i}} &amp; = W^s_2 \cdot \sigma(W^s_1 \cdot f^t_{c_{s,i}} + b^s_1) + b^s_2 \tag{1} \\
-        l^t_{\delta_s} &amp; = W^s_4 \cdot \sigma(W^s_3 \cdot g^t_s + b^s_3) + b^s_4 \tag{2} \\
-        p^t_{\alpha} &amp; = \frac{\exp(l^t_{\alpha})}{\exp(l^t_{\phi_s}) + \exp(l^t_{\delta_s}) + \Sigma_i \exp(l^t_{c_{s,i}})} \tag{3} \\
-    \end{align}
-    \]</span> 其中 <span class="math inline">\(l_{\phi_s}, W^s_k, b^s_k\)</span> 都是可训练的模型参数，接下来描述特征 <span class="math inline">\(r^t_{utt}, r^t_{slot}(s), r^t_{cand}(c^t_{s,i})\)</span> 是如何背计算出来的。 + <strong>Feature Extraction</strong>：使用一个特殊的符号替换所有的槽值，这些槽值由 SLU 模块识别出来，<strong>所以并不需要知道槽位关联的所有槽值或是人工构建的词表</strong>。需要注意的是只替换槽值，并不替换槽位。最后使用一个两层 Bi-GRU 处理被 delexicalisation 的语句。 除了为槽位的所有槽值打上标签之外，SLU 还预测用户语句对应的动作，如 <code>affirm, negate(time)</code> 等。 此外对于系统的语句也是类似操作。 * 语句特征：<span class="math inline">\(r^t_{utt} = c^t \oplus a^t_u \oplus {c&#39;}^t \oplus {a&#39;}^t_u\)</span>，其中 <span class="math inline">\(c^t\)</span> 代表语句的表征，来自 Bi-GRU 的隐藏状态；<span class="math inline">\(a^t_u\)</span> 代表动作表征，由 SLU 模块产生；<span class="math inline">\({c&#39;}^t\)</span> 和 <span class="math inline">\({a&#39;}^t_u\)</span> 表示用户语句之前的系统语句所对应的特征。 * 槽特征：<span class="math inline">\(r^t_{slot}(s) = a^t_u(s) \oplus {a&#39;}^t_s(s) \oplus p^{t-1}_{\delta_s} \oplus p^{t-1}_{\phi_s}\)</span>，其中 <span class="math inline">\(p^{t-1}_{\delta_s}\)</span> 和 <span class="math inline">\(p^{t-1}_{\phi_s}\)</span> 代表特殊值 <code>dontcare</code> 和 <code>null</code> 在前一轮 DST 输出中的分数；<span class="math inline">\(a^t_s(s)\)</span> 是带参对话动作的二维向量，如 <code>request(s), deny(s)</code>；<span class="math inline">\({a&#39;}^t_s\)</span> 是系统动作对应的二维向量。 * 候选值特征： - 参数共享以及迁移学习：上式中，候选值评分函数的参数 <span class="math inline">\(l_{\phi_s}, W^t_k, W^s_k, 1 \le k \le 4\)</span>，每个槽位都会定义一组，但是 GUR 的参数是为一个领域定义的。这些参数的维度不依赖槽位和领域，这得以参数共享或者在跨领域迁移。</p>
+<p><strong>作者：Rastogi A et al., 2017。</strong></p>
+<ul>
+<li>引言
+<ul>
+<li><strong>相关工作</strong>：在有些方法中，本体为一个任务定义了一组槽位，这些槽位又关联了一组槽值。还有些方法使用本体中的条目去探测用户语句中潜在的槽值对（如 Henderson et al., 2014d）。</li>
+<li><strong>缺陷与本文方法</strong>：<em>事实上，定义本体是困难且不切实际的，一个槽位所拥有的槽值是无穷无尽的，这使得灵活性成为了一个重大的问题。此外使用深度学习来表示槽位/槽值无法处理在训练期间从未见过的实体，使得很难与动态变化的数据库进行交互。</em>所以我们的论文提出：
+<ol type="1">
+<li>用一个巨大的或者无限的潜在值（possible values）集合表示槽位</li>
+<li>为了给用户语句中的槽位打标签，我们使用了 <strong>multi-domain LU</strong> 模型</li>
+<li>SLU 的输出被用于 delexicalize 用户语句，由 DST 处理并进行特征提取</li>
+<li>然后通过集成一个独立的 candidate 生成步骤，使用 local conversation context 也有可能是外部的知识源（而不是本体）来估计一组<strong>候选槽值对</strong>（slot-value candidates）。DST 仅操作这些候选者，从而产生一种能够扩展到大且丰富的数据集的方法
+<ul>
+<li>此方法可以被扩展到其他大型数据集是因为：候选槽值对的产生依赖于上下文或者外部知识源，而不是预定义的本体。</li>
+</ul></li>
+<li>此外这个新颖的 DST 框架提取的一系列特征，其独立于槽值对集合
+<ul>
+<li>为了捕获语句中的长期依赖，使用 Bi-GRU 来表示输入语句，扩展了前人工作的 DNN，CNN</li>
+</ul></li>
+<li>共享一个领域但不同槽位之间的参数，并将参数迁移到从未见过的数据集或领域中。这样就不需要为每个领域中的每个 slot 类型训练模型，并有助于快速向领域中添加新 slot。</li>
+</ol></li>
+</ul></li>
+<li>dialogue sate
+<ul>
+<li><strong>Candidate Set</strong>：令 <span class="math inline">\(C^t_s\)</span> 代表领域 D 中，第 t 轮对话，槽位 s 的候选集。对话初始，对于每个槽位，<span class="math inline">\(C^0_s\)</span> 都是空的。令 <span class="math inline">\(|C^t_s| \le K\)</span> 以限制候选集的上限（博主吐槽：这跟前人的工作有锤子区别，不还是假定槽值已知）。<span class="math inline">\(C^t_s\)</span> 由用户语句，前一轮的系统语句以及先前的候选集初始化，初始化的内容来自 LU 模块，一般 K 取 7。如果初始化完毕后，候选集溢出，则根据分数排序，并从后往前开始删除候选值；<br />
+有两点需要说明：<strong>1）</strong>初始化步骤很容易拓展到诸如 ASR 或者来自后端（API）的响应；<strong>2）</strong>候选集的最大容量必须最够大以确保可能的值不会被冲洗掉。</li>
+<li><strong>State Representation</strong>：在第 t 轮上使用 <span class="math inline">\({V&#39;}^t_s = C^t_s \cup \{\delta_s, \phi_s\}\)</span> 限制分布的大小，以此代替 <span class="math inline">\(V_s\)</span> 上的分布。<span class="math inline">\(V_s\)</span> 代表槽位 s 所有可能的值，<span class="math inline">\(C^t_s\)</span> 表示第 t 轮，槽位 s 生成的候选值，<span class="math inline">\(\delta_s, \phi_s\)</span> 分别表示 don't care（即对于槽位 s，用户不关心值是什么）和 null value（即用户所表达的语句中不包含任何槽位 s）。这样表示会更好，因为对话中未被提到的槽值，它们的概率只会接近 0。<br />
+为了保持分布的大小，在 <span class="math inline">\({V&#39;}^t_s\)</span> 加入了 <span class="math inline">\(K - |C^t_s|\)</span> 个 <code>PAD</code> 符号，使其为一个定值 <code>K + 2</code>。此外，对于大多数槽位， <span class="math inline">\(|{V&#39;}_s| = K + 2 \ll |V_s|\)</span>。</li>
+</ul></li>
+<li>dialogue state tracking
+<ul>
+<li><strong>Model Description</strong>：是一个辨别式模型，用每个槽位的候选值集合作为输入，并更新候选值的分数。它也可识别 <span class="math inline">\(\delta_s\)</span> 或 <span class="math inline">\(\phi_s\)</span>。<br />
+在用户轮数 t，DST 使用前一轮的候选集合 <span class="math inline">\(C^{t-1}_s\)</span> 及其分数，最近的用户/系统语句和它们的对话状态，去提取语句相关（<span class="math inline">\(r^t_{utt}\)</span>），槽相关（<span class="math inline">\(r^t_{slot}(s)\)</span>），候选值相关（<span class="math inline">\(r^t_{cand}(c^t_{s,i})\)</span>）的特征。候选集 <span class="math inline">\(\alpha \in {V&#39;}^t_s = C^t_s \cap \{\delta_s, \phi_s\}\)</span> 的分数 <span class="math inline">\(p^t_{\alpha}\)</span> <strong>更新公式</strong>如下所示，其中 <span class="math inline">\(\oplus\)</span> 代表向量拼接，图 2 描述了模型的架构： <span class="math display">\[
+  \begin{align}
+  g^t_s &amp; = r^t_{utt} \oplus r^t_{slot}(s) \\
+  f^t_{c_{s,i}} &amp; = g^t_s \oplus r^t_{cand}(c^t_{s,i}) \\
+  l^t_{\phi_s} &amp; = l_{\phi_s} \\
+  l^t_{c_{s,i}} &amp; = W^s_2 \cdot \sigma(W^s_1 \cdot f^t_{c_{s,i}} + b^s_1) + b^s_2 \tag{1} \\
+  l^t_{\delta_s} &amp; = W^s_4 \cdot \sigma(W^s_3 \cdot g^t_s + b^s_3) + b^s_4 \tag{2} \\
+  p^t_{\alpha} &amp; = \frac{\exp(l^t_{\alpha})}{\exp(l^t_{\phi_s}) + \exp(l^t_{\delta_s}) + \Sigma_i \exp(l^t_{c_{s,i}})} \tag{3} \\
+  \end{align}
+  \]</span> 其中 <span class="math inline">\(l_{\phi_s}, W^s_k, b^s_k\)</span> 都是可训练的模型参数，接下来描述特征 <span class="math inline">\(r^t_{utt}, r^t_{slot}(s), r^t_{cand}(c^t_{s,i})\)</span> 是如何背计算出来的。</li>
+<li><strong>Feature Extraction</strong>：使用一个特殊的符号替换所有的槽值，这些槽值由 SLU 模块识别出来，<strong>所以并不需要知道槽位关联的所有槽值或是人工构建的词表</strong>。需要注意的是只替换槽值，并不替换槽位。最后使用一个两层 Bi-GRU 处理被 delexicalisation 的语句。<br />
+除了为槽位的所有槽值打上标签之外，SLU 还预测用户语句对应的动作，如 <code>affirm, negate(time)</code> 等。<br />
+此外对于系统的语句也是类似操作。
+<ul>
+<li>语句特征：<span class="math inline">\(r^t_{utt} = c^t \oplus a^t_u \oplus {c&#39;}^t \oplus {a&#39;}^t_u\)</span>，其中 <span class="math inline">\(c^t\)</span> 代表语句的表征，来自 Bi-GRU 的隐藏状态；<span class="math inline">\(a^t_u\)</span> 代表动作表征，由 SLU 模块产生；<span class="math inline">\({c&#39;}^t\)</span> 和 <span class="math inline">\({a&#39;}^t_u\)</span> 表示用户语句之前的系统语句所对应的特征。</li>
+<li>槽特征：<span class="math inline">\(r^t_{slot}(s) = a^t_u(s) \oplus {a&#39;}^t_s(s) \oplus p^{t-1}_{\delta_s} \oplus p^{t-1}_{\phi_s}\)</span>，其中 <span class="math inline">\(p^{t-1}_{\delta_s}\)</span> 和 <span class="math inline">\(p^{t-1}_{\phi_s}\)</span> 代表特殊值 <code>dontcare</code> 和 <code>null</code> 在前一轮 DST 输出中的分数；<span class="math inline">\(a^t_s(s)\)</span> 是带参对话动作的二维向量，如 <code>request(s), deny(s)</code>；<span class="math inline">\({a&#39;}^t_s\)</span> 是系统动作对应的二维向量。</li>
+<li>候选值特征：</li>
+</ul></li>
+</ul></li>
+<li>参数共享以及迁移学习：上式中，候选值评分函数的参数 <span class="math inline">\(l_{\phi_s}, W^t_k, W^s_k, 1 \le k \le 4\)</span>，每个槽位都会定义一组，但是 GUR 的参数是为一个领域定义的。这些参数的维度不依赖槽位和领域，这得以参数共享或者在跨领域迁移。</li>
+</ul>
 <h1 id="neural-belief-tracker-data-driven-dialogue-state-tracking">Neural Belief Tracker: Data-Driven Dialogue State Tracking</h1>
 <blockquote class="blockquote-center">
 <i class="fa fa-quote-left"></i>
-<p><a href="https://yan624.github.io/·论文笔记/dilogue/task-oriented/57.%20Neural%20Belief%20Tracker：Data-Driven%20Dialogue%20State%20Tracking.html">论文笔记</a></p>
+<p><a href="https://yan624.github.io/·论文笔记/dilogue/task-oriented/57.%20Neural%20Belief%20Tracker：Data-Driven%20Dialogue%20State%20Tracking.html">论文笔记</a>。<strong>作者：Mrkšić N et al., 2016。</strong></p>
 
 <i class="fa fa-quote-right"></i>
 </blockquote>
-<p>  <strong>作者：Mrkšić N et al., 2016。</strong></p>
 <h1 id="incremental-lstm-based-dialog-state-tracker">Incremental LSTM-based dialog state tracker</h1>
-<p>  <strong>作者：Zilka and Jurcicek, 2015。</strong> - 此论文是作者同年发表的论文的扩展，他们将论文中的状态跟踪器称为 LecTrack。<strong>它能一个接一个地处理单词，这其实是 RNN 的特性，也是论文名中“Incremental”的起因。</strong> - 本文定义：在第 t 轮，对话状态 <span class="math inline">\(s_t \in C_1 \times \cdots \times C_k\)</span> 为一个向量，包含 k 个元素，有时候在文献中它们被称为槽位（slot）。每个 <span class="math inline">\(c_i \in C_i = \{v_1, \cdots, v_{n_i}\}\)</span> 包含 <span class="math inline">\(n_i\)</span> 个槽值，并且我们假设各成分（slot）之间是独立的，则： <span class="math display">\[P(s_t | w_1, \cdots, w_t) = \prod_i p(c_i | w_1, \cdots, w_t; \theta)
-\]</span> - LSTM dialogue state tracker + <strong>model</strong>：使用 LSTM 提取语句信息，但是做了小小的改动，将输入门的 sigmoid 函数换做了 tanh。公式如下所示： <span class="math display">\[
-    \begin{align}
-        u &amp; = NN(a, r) \\
-        q_t &amp; = Enc(u, q_{t-1}) \\
-        p_t &amp; = C(h_t) \\
-    \end{align}
-    \]</span> 其中单词 a 与其 ASR 置信度分数 r 的联合表征为 u，LSTM decoder 使用 u 以及前一时间步的隐藏状态 <span class="math inline">\(q_{t-1} = (c_{t-1}, h_{t-1})\)</span> 计算出当前隐藏状态 <span class="math inline">\(q_t\)</span>，C 代表 softmax 层，将隐藏状态映射为各个可能值的分布。 注意，虽然论文中没有明确写出，但是对于最后一个公式 <span class="math inline">\(p_t = C(h_t)\)</span>，它可能需要<strong>为每一个槽位都设计一个函数</strong>。这个公式应该是这样的：<span class="math inline">\(p^j_t = C(h_t), \forall j \in 1, \cdots, k\)</span>，j 代表槽位索引，t 代表单词在句子中的索引。 + <strong>Improvements</strong>：1）包括了 ASR 置信度分数；2）将训练集中的 Transcriptions 加入训练；3）多个模型取均值；4）低频词抽象化 - 模型流程（个人向）：输入每个单词，输出对应的隐藏状态。隐藏状态经过一个函数输出槽值的分布，这个函数是特定于槽位的。也就是说每个槽位都有一个独一无二的函数，在生成槽值时，只需要遍历所有槽位的函数，然后将隐藏状态传入每一个函数，就可以得到每个槽位对应的槽值分布。</p>
+<p><strong>作者：Zilka and Jurcicek, 2015。</strong></p>
+<p>此论文是作者同年发表的论文的扩展，他们将论文中的状态跟踪器称为 LecTrack。<strong>它能一个接一个地处理单词，这其实是 RNN 的特性，也是论文名中“Incremental”的起因。</strong> 本文定义：在第 t 轮，对话状态 <span class="math inline">\(s_t \in C_1 \times \cdots \times C_k\)</span> 为一个向量，包含 k 个元素，有时候在文献中它们被称为槽位（slot）。每个 <span class="math inline">\(c_i \in C_i = \{v_1, \cdots, v_{n_i}\}\)</span> 包含 <span class="math inline">\(n_i\)</span> 个槽值，并且我们假设各成分（slot）之间是独立的，则： <span class="math display">\[P(s_t | w_1, \cdots, w_t) = \prod_i p(c_i | w_1, \cdots, w_t; \theta)
+\]</span></p>
+<p><strong>LSTM dialogue state tracker</strong>：</p>
+<ul>
+<li><strong>model</strong>：使用 LSTM 提取语句信息，但是做了小小的改动，将输入门的 sigmoid 函数换做了 tanh。公式如下所示： <span class="math display">\[
+\begin{align}
+  u &amp; = NN(a, r) \\
+  q_t &amp; = Enc(u, q_{t-1}) \\
+  p_t &amp; = C(h_t) \\
+\end{align}
+\]</span> 其中单词 a 与其 ASR 置信度分数 r 的联合表征为 u，LSTM decoder 使用 u 以及前一时间步的隐藏状态 <span class="math inline">\(q_{t-1} = (c_{t-1}, h_{t-1})\)</span> 计算出当前隐藏状态 <span class="math inline">\(q_t\)</span>，C 代表 softmax 层，将隐藏状态映射为各个可能值的分布。<br />
+注意，虽然论文中没有明确写出，但是对于最后一个公式 <span class="math inline">\(p_t = C(h_t)\)</span>，它可能需要<strong>为每一个槽位都设计一个函数</strong>。这个公式应该是这样的：<span class="math inline">\(p^j_t = C(h_t), \forall j \in 1, \cdots, k\)</span>，j 代表槽位索引，t 代表单词在句子中的索引。<br />
+</li>
+<li><strong>Improvements</strong>：1）包括了 ASR 置信度分数；2）将训练集中的 Transcriptions 加入训练；3）多个模型取均值；4）低频词抽象化</li>
+</ul>
+<p>模型流程（个人向）：输入每个单词，输出对应的隐藏状态。隐藏状态经过一个函数输出槽值的分布，这个函数是特定于槽位的。也就是说每个槽位都有一个独一无二的函数，在生成槽值时，只需要遍历所有槽位的函数，然后将隐藏状态传入每一个函数，就可以得到每个槽位对应的槽值分布。</p>
 <h1 id="word-based-dialog-state-tracking-with-recurrent-neural-networks">Word-Based Dialog State Tracking with Recurrent Neural Networks</h1>
-<div class="note warning"><p>  之前的论文大都是使用 SLU 的结果作为输入，这篇论文则直接使用 ASR 的结果作为输入。由于我看的论文不是很多，对于这篇论文，我不敢说是首创，但是应该有渐隐之色。这样的做法是，消除了 ASR 到 SLU 的误差 [<a href="https://www.cnblogs.com/jiangxinyang/p/10794364.html" target="_blank" rel="noopener">4</a>]。</p>
+<div class="note warning"><p>之前的论文大都是使用 SLU 的结果作为输入，这篇论文则直接使用 ASR 的结果作为输入。由于我看的论文不是很多，对于这篇论文，我不敢说它是首创，但是应该有渐隐之色。这种做法的好处是，消除了 ASR 到 SLU 的误差 [<a href="https://www.cnblogs.com/jiangxinyang/p/10794364.html" target="_blank" rel="noopener">4</a>]。<strong>作者：Henderson et al., 2014d</strong>。</p>
 </div>
-<p>  <strong>作者：Henderson et al., 2014d</strong>。   近来 DST 领域的辨别式方法已经展示出了超于传统的生成式方法的性能。本文提出 word-based DST，直接从 ASR 结果映射到对话状态。使用 RNN 结构，有能力泛化到未见的对话状态假设，只需要一点特征工程。   通常，DST 假定 SLU 将 ASR 的假设映射为一系列的语义假设，本论文直接将 ASR 的假设映射为对话中某轮的对话状态，省略了中间 SLU 的处理步骤。这避免了显式语义表征的需要以及在 SLU 阶段可能的信息误差。   与用户交流时，统计对话系统必须维护一个潜在的对话状态的分布，这个步骤被称为 DST。这个分布有时候也被称作 belief state （<strong>划重点要考</strong>），直接决定了系统的决策。   <em>介绍了一堆 14 年前的做法以及区别。</em>   <strong>Feature Representation</strong>(1-2)/<strong>Generalisation to Unseen States</strong>(3)： 1. 如图 1 所示，从 ASR 的 N-best 列表中提取出 n-gram 特征，即为每个假设计算 uni-/bi-/tri-gram。然后用 N-best 列表的概率计算加权和求得到单个向量。如果出现了相同的项，把对应的概率相加即可。 2. <strong>此领域的 dialogue acts 由形如 acttype(slot=value) 的一系列 act 成分组成，其中 slot=value 是可选的</strong>。n-gram 正是提取自这些成分，如：<code>'acttype', 'slot', 'value', 'acttype slot', 'slot value'</code> 和 <code>'acttype slot value'</code> 或者对于 <code>acttype()</code> 只有 <code>'acttype'</code>。处理方法与 1 类似，只是它们的权重都置为 1 3. 处理未在训练集出现的状态（如一种食物类型）的方法是：使用 'tagged' 方法，即忽略特定的槽值，将其替换为类似 <code>&lt;value&gt;</code> 的标签。如图 1 所示，<span class="math inline">\(f_s, f_v\)</span> 来自未标过的 <span class="math inline">\(f\)</span>。</p>
-<p>  <strong>Model Definition</strong>： 1. RNN 拥有一个内部的记忆 <span class="math inline">\(m \in \mathbb{R}^{N_{mem}}\)</span>。如果对于槽位 s 有 N 个槽值，那么概率分布输出 <span class="math inline">\(p \in \mathbb{R}^{N+1}\)</span>，其中最后一个成分 <span class="math inline">\(P|_N\)</span> 代表 None。图 2 解释了 p 和 m 在某一轮中是如何被更新为 p' 和 m' 的。 2. 神经网络的一部分结构用于学习将 untagged input, memory, previous state 映射为向量 <span class="math inline">\(h \in \mathbb{R}^N\)</span>，它将直接参与 <span class="math inline">\(p&#39;\)</span> 的计算。公式为：<span class="math inline">\(h=NNet(f \oplus p \oplus m) \in \mathbb{R}^N\)</span>。（<strong>博主注</strong>：h 学习将 lexical n-grams 映射为特定的槽值对，<strong>此步可能对 domain-independent 具有一定的影响</strong>，故<a href="https://arxiv.xilesou.top/pdf/1506.07190.pdf" target="_blank" rel="noopener">此论文</a>移除了这部分的网络） 3. 本文 <span class="math inline">\(NNet(\cdot)\)</span> 均代表激活函数为 sigmoid 的隐藏层 4. 其次，由于 h 的计算需要使用训练集中每一个槽值的样本，所以泛化性并不好。<strong>通过 g</strong>，采用 tagged feature 作为输入，<strong>可能可以提高泛化性</strong>。对于一个槽位的槽值 v，计算公式为：<span class="math inline">\(g|_v = NNet(f \oplus f_s \oplus f_v \oplus \{p|_v, P|_N\} \oplus m) \in \mathbb{R}\)</span>。此结构的网络能够处理未见或者不频繁的 dailogue state 5. <strong>博主注</strong>：不同的槽位拥有不同模型，即其中的每个 p 都不同 5. new belief <span class="math inline">\(p&#39;\)</span> 的更新公式为：<span class="math inline">\(p&#39; = softmax([h+g] \oplus \{B\}) \in \mathbb{R}^{N+1}\)</span>，其中 B 是 RNN 的一个参数，有助于 None 的假设的估计 6. 最后 memory 的更新公式为：<span class="math inline">\(m&#39; = \sigma(W_{m0}f + W_{m1}m) \in \mathbb{R}^{N_{mem}}\)</span>，其中 <span class="math inline">\(W_{mi}\)</span> 是 RNN 的参数</p>
+<p>近来 DST 领域的辨别式方法已经展示出了超于传统的生成式方法的性能。本文提出 word-based DST，直接从 ASR 结果映射到对话状态。使用 RNN 结构，有能力泛化到未见的对话状态假设，只需要一点特征工程。</p>
+<p>通常，DST 假定 SLU 将 ASR 的假设映射为一系列的语义假设，本论文直接将 ASR 的假设映射为对话中某轮的对话状态，省略了中间 SLU 的处理步骤。这避免了显式语义表征的需要以及在 SLU 阶段可能的信息误差。</p>
+<p>与用户交流时，统计对话系统必须维护一个潜在的对话状态的分布，这个步骤被称为 DST。这个分布有时候也被称作 belief state （<strong>划重点要考</strong>），直接决定了系统的决策。</p>
+<p><em>介绍了一堆 14 年前的做法以及区别。</em></p>
+<p><strong>Feature Representation</strong>(1-2)/<strong>Generalisation to Unseen States</strong>(3)：</p>
+<ol type="1">
+<li>如图 1 所示，从 ASR 的 N-best 列表中提取出 n-gram 特征，即为每个假设计算 uni-/bi-/tri-gram。然后用 N-best 列表的概率计算加权和求得到单个向量。如果出现了相同的项，把对应的概率相加即可。</li>
+<li><strong>此领域的 dialogue acts 由形如 acttype(slot=value) 的一系列 act 成分组成，其中 slot=value 是可选的</strong>。n-gram 正是提取自这些成分，如：<code>'acttype', 'slot', 'value', 'acttype slot', 'slot value'</code> 和 <code>'acttype slot value'</code> 或者对于 <code>acttype()</code> 只有 <code>'acttype'</code>。处理方法与 1 类似，只是它们的权重都置为 1</li>
+<li>处理未在训练集出现的状态（如一种食物类型）的方法是：使用 'tagged' 方法，即忽略特定的槽值，将其替换为类似 <code>&lt;value&gt;</code> 的标签。如图 1 所示，<span class="math inline">\(f_s, f_v\)</span> 来自未标过的 <span class="math inline">\(f\)</span>。</li>
+</ol>
+<p><strong>Model Definition</strong>：</p>
+<ol type="1">
+<li>RNN 拥有一个内部的记忆 <span class="math inline">\(m \in \mathbb{R}^{N_{mem}}\)</span>。如果对于槽位 s 有 N 个槽值，那么概率分布输出 <span class="math inline">\(p \in \mathbb{R}^{N+1}\)</span>，其中最后一个成分 <span class="math inline">\(P|_N\)</span> 代表 None。图 2 解释了 p 和 m 在某一轮中是如何被更新为 p' 和 m' 的。</li>
+<li>神经网络的一部分结构用于学习将 untagged input, memory, previous state 映射为向量 <span class="math inline">\(h \in \mathbb{R}^N\)</span>，它将直接参与 <span class="math inline">\(p&#39;\)</span> 的计算。公式为：<span class="math inline">\(h=NNet(f \oplus p \oplus m) \in \mathbb{R}^N\)</span>。（<strong>博主注</strong>：h 学习将 lexical n-grams 映射为特定的槽值对，<strong>此步可能对 domain-independent 具有一定的影响</strong>，故<a href="https://arxiv.com/pdf/1506.07190.pdf" target="_blank" rel="noopener">这篇论文</a>移除了这部分的网络）</li>
+<li>本文 <span class="math inline">\(NNet(\cdot)\)</span> 均代表激活函数为 sigmoid 的隐藏层</li>
+<li>其次，由于 h 的计算需要使用训练集中每一个槽值的样本，所以泛化性并不好。<strong>通过 g</strong>，采用 tagged feature 作为输入，<strong>可能可以提高泛化性</strong>。对于一个槽位的槽值 v，计算公式为：<span class="math inline">\(g|_v = NNet(f \oplus f_s \oplus f_v \oplus \{p|_v, P|_N\} \oplus m) \in \mathbb{R}\)</span>。此结构的网络能够处理未见或者不频繁的 dailogue state</li>
+<li><strong>博主注</strong>：不同的槽位拥有不同模型，即其中的每个 p 都不同</li>
+<li>new belief <span class="math inline">\(p&#39;\)</span> 的更新公式为：<span class="math inline">\(p&#39; = softmax([h+g] \oplus \{B\}) \in \mathbb{R}^{N+1}\)</span>，其中 B 是 RNN 的一个参数，有助于 None 的假设的估计</li>
+<li>最后 memory 的更新公式为：<span class="math inline">\(m&#39; = \sigma(W_{m0}f + W_{m1}m) \in \mathbb{R}^{N_{mem}}\)</span>，其中 <span class="math inline">\(W_{mi}\)</span> 是 RNN 的参数</li>
+</ol>
 
     </div>
 
     
     
     
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    赞赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.gif" alt="朱冲䶮 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>朱冲䶮
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://yan624.github.io/posts/89f2cf08.html" title="DST论文笔记（？-2020）">https://yan624.github.io/posts/89f2cf08.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
 
       <footer class="post-footer">
           <div class="post-tags">
@@ -445,8 +628,8 @@
       <i class="fa fa-chevron-left"></i> win10下安装NVIDIA CUDA
     </a></div>
       <div class="post-nav-item">
-    <a href="/posts/81299a9a.html" rel="next" title="SLU论文笔记（？-2019）">
-      SLU论文笔记（？-2019） <i class="fa fa-chevron-right"></i>
+    <a href="/posts/81299a9a.html" rel="next" title="SLU论文笔记（？-2020）">
+      SLU论文笔记（？-2020） <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -506,7 +689,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#multi-domain-dialogue-state-tracking-as-dynamic-knowledge-graph-enhanced-question-answering"><span class="nav-number">1.</span> <span class="nav-text">Multi-domain Dialogue State Tracking as Dynamic Knowledge Graph Enhanced Question Answering</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#find-or-classify-dual-strategy-for-slot-value-predictions-on-multi-domain-dialog-state-tracking"><span class="nav-number">2.</span> <span class="nav-text">Find or Classify? Dual Strategy for Slot-Value Predictions on Multi-Domain Dialog State Tracking</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#transferable-multi-domain-state-generator-for-task-oriented-dialogue-systems"><span class="nav-number">3.</span> <span class="nav-text">Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#global-locally-self-attentive-dialogue-state-tracker"><span class="nav-number">4.</span> <span class="nav-text">Global-Locally Self-Attentive Dialogue State Tracker</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#scalable-multi-domain-dialogue-state-tracking"><span class="nav-number">5.</span> <span class="nav-text">Scalable multi-domain dialogue state tracking</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#neural-belief-tracker-data-driven-dialogue-state-tracking"><span class="nav-number">6.</span> <span class="nav-text">Neural Belief Tracker: Data-Driven Dialogue State Tracking</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#incremental-lstm-based-dialog-state-tracker"><span class="nav-number">7.</span> <span class="nav-text">Incremental LSTM-based dialog state tracker</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#word-based-dialog-state-tracking-with-recurrent-neural-networks"><span class="nav-number">8.</span> <span class="nav-text">Word-Based Dialog State Tracking with Recurrent Neural Networks</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#trippy-a-triple-copy-strategy-for-value-independent-neural-dialog-state-tracking"><span class="nav-number">1.</span> <span class="nav-text">TripPy: A Triple Copy Strategy for Value Independent Neural Dialog State Tracking</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#context-encoder"><span class="nav-number">1.1.</span> <span class="nav-text">Context Encoder</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#slot-gates"><span class="nav-number">1.2.</span> <span class="nav-text">Slot Gates</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#span-based-value-prediction"><span class="nav-number">1.3.</span> <span class="nav-text">Span-based Value Prediction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#system-inform-memory-for-value-prediction"><span class="nav-number">1.4.</span> <span class="nav-text">System Inform Memory for Value Prediction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ds-memory-for-coreference-resolution"><span class="nav-number">1.5.</span> <span class="nav-text">DS Memory for Coreference Resolution</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#auxiliary-features"><span class="nav-number">1.6.</span> <span class="nav-text">Auxiliary Features</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dialog-state-update"><span class="nav-number">1.7.</span> <span class="nav-text">Dialog State Update</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">1.8.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#multi-domain-dialogue-state-tracking-as-dynamic-knowledge-graph-enhanced-question-answering"><span class="nav-number">2.</span> <span class="nav-text">Multi-domain Dialogue State Tracking as Dynamic Knowledge Graph Enhanced Question Answering</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#find-or-classify-dual-strategy-for-slot-value-predictions-on-multi-domain-dialog-state-tracking"><span class="nav-number">3.</span> <span class="nav-text">Find or Classify? Dual Strategy for Slot-Value Predictions on Multi-Domain Dialog State Tracking</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#slot-context-encoder"><span class="nav-number">3.1.</span> <span class="nav-text">Slot-Context Encoder</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#slot-gate-classification"><span class="nav-number">3.2.</span> <span class="nav-text">Slot-Gate Classification</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#span-based-slot-value-prediction"><span class="nav-number">3.3.</span> <span class="nav-text">Span-Based Slot-Value Prediction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#picklist-based-slot-value-prediction"><span class="nav-number">3.4.</span> <span class="nav-text">Picklist-Based Slot-Value Prediction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#training-objective"><span class="nav-number">3.5.</span> <span class="nav-text">Training Objective</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#transferable-multi-domain-state-generator-for-task-oriented-dialogue-systems"><span class="nav-number">4.</span> <span class="nav-text">Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#global-locally-self-attentive-dialogue-state-tracker"><span class="nav-number">5.</span> <span class="nav-text">Global-Locally Self-Attentive Dialogue State Tracker</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#引言"><span class="nav-number">5.1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#glad"><span class="nav-number">5.2.</span> <span class="nav-text">GLAD</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结-1"><span class="nav-number">5.3.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#scalable-multi-domain-dialogue-state-tracking"><span class="nav-number">6.</span> <span class="nav-text">Scalable multi-domain dialogue state tracking</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#neural-belief-tracker-data-driven-dialogue-state-tracking"><span class="nav-number">7.</span> <span class="nav-text">Neural Belief Tracker: Data-Driven Dialogue State Tracking</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#incremental-lstm-based-dialog-state-tracker"><span class="nav-number">8.</span> <span class="nav-text">Incremental LSTM-based dialog state tracker</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#word-based-dialog-state-tracking-with-recurrent-neural-networks"><span class="nav-number">9.</span> <span class="nav-text">Word-Based Dialog State Tracking with Recurrent Neural Networks</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -515,14 +698,14 @@
     <img class="site-author-image" itemprop="image" alt="朱冲䶮"
       src="/images/avatar.jpg">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
-  <div class="site-description" itemprop="description">记录学习问题，积累做的 leetcode 题目</div>
+  <div class="site-description" itemprop="description">记录</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">163</span>
+          <span class="site-state-item-count">168</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -534,42 +717,53 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">94</span>
+        <span class="site-state-item-count">95</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">203.6k</span>
+      	<span class="site-state-item-count">214.1k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
 </div>
+  <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
+    Chat
+  </a>
+  </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>zhihu</a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
       </span>
   </div>
 
 
   <div class="links-of-blogroll motion-element">
     <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
-      Links
+      友链
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
         </li>
     </ul>
   </div>
+<!-- CloudCalendar -->
+<div class="widget-wrap" style="width: 90%;margin-left: auto;margin-right: auto; opacity: 0.97;">
+	<div class="widget" id="CloudCalendar"></div>
+</div>
 
       </div>
 
@@ -596,12 +790,11 @@
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
-  </div><script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script src="/lib/my-utils.js"></script>
-<!--图片缩放插件-->
-<script src="/lib/zoomify/zoomify.min.js"></script>
-<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
 <!-- 背景图片 -->
@@ -615,20 +808,10 @@
 		bg.shuffle();
 		return bg;
 	}
-	$("body").backstretch(generateBG(11), {
-		duration:90000,//1min半一换
+	$("body").backstretch(generateBG(10), {
+		duration:90000,//1 min 半一换
 		fade: 1500
 	});
-</script>
-<!-- 图片缩放 -->
-<script>
-$('.content img').zoomify({duration: 500, });
-$('.content img').on('zoom-in.zoomify', function () {
-	$('.sidebar').css('display', 'none');
-});
-$('.content img').on('zoom-out-complete.zoomify', function () {
-	$('.sidebar').css('display', '');
-});
 </script>
 
         
@@ -666,18 +849,29 @@ $('.content img').on('zoom-out-complete.zoomify', function () {
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/pisces.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
 
   
 
 
 
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 
@@ -706,6 +900,27 @@ $('.content img').on('zoom-out-complete.zoomify', function () {
       });
   </script>
 <!-- calendar widget -->
+
+    <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-calendar/calendar.min.js"></script>
+    <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-calendar/languages.min.js"></script>
+    <script>
+    $(function() {
+        $('#CloudCalendar').aCalendar('zh-CN',
+            $.extend(
+                '', {
+                    single:true,
+                    root:'/calendar/'
+                }
+            )
+        );
+    });	
+	/*
+	* 2020.08.10: 由本博客博主自定义加入，由于不是很需要日历最下面的前进后退键，其与日历最上方的功能键冲突，所以在此将其删除
+	*/
+	$(function(){
+		$('#CloudCalendar tfoot').remove()
+	})
+	</script>
 
 
 </body>

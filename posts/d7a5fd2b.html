@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -14,26 +14,28 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
   <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
   <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="论文地址，作者是 Vinyals et al.，发表于 2015 年。  摘要   提出一个新的神经结构来学习输出序列的条件概率，输出的元素是在输入序列中对应位置的离散标记。由于输出的每一步都与输入的长度有关，但是输入的长度是可变的，所以现有方法 seq2seq 和神经图灵机都无法简单地解决这问题。可变长度序列的排序，各种组合优化的问题都输入此类。我们的模型使用 attention 机制">
-<meta name="keywords" content="4me,Ptr">
+  <meta name="description" content="论文地址，作者是 Vinyals et al.，发表于 2015 年。  摘要 提出一个新的神经结构来学习输出序列的条件概率，输出元素是在输入序列中对应位置的离散标记。 由于输出的每一步都与输入的长度有关，但是输入的长度是可变的，所以现有方法 seq2seq 和神经图灵机都无法简单地解决这问题。可变长度序列的排序，各种组合优化的问题都属于此类。我们的模型使用 attention 机制来解决">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Pointer Networks">
 <meta property="og:url" content="https://yan624.github.io/posts/d7a5fd2b.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="论文地址，作者是 Vinyals et al.，发表于 2015 年。  摘要   提出一个新的神经结构来学习输出序列的条件概率，输出的元素是在输入序列中对应位置的离散标记。由于输出的每一步都与输入的长度有关，但是输入的长度是可变的，所以现有方法 seq2seq 和神经图灵机都无法简单地解决这问题。可变长度序列的排序，各种组合优化的问题都输入此类。我们的模型使用 attention 机制">
-<meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-06-14T10:53:52.429Z">
+<meta property="og:description" content="论文地址，作者是 Vinyals et al.，发表于 2015 年。  摘要 提出一个新的神经结构来学习输出序列的条件概率，输出元素是在输入序列中对应位置的离散标记。 由于输出的每一步都与输入的长度有关，但是输入的长度是可变的，所以现有方法 seq2seq 和神经图灵机都无法简单地解决这问题。可变长度序列的排序，各种组合优化的问题都属于此类。我们的模型使用 attention 机制来解决">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-04-07T14:12:00.000Z">
+<meta property="article:modified_time" content="2020-08-14T06:20:28.655Z">
+<meta property="article:author" content="朱冲䶮">
+<meta property="article:tag" content="4me">
+<meta property="article:tag" content="Ptr">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Pointer Networks">
-<meta name="twitter:description" content="论文地址，作者是 Vinyals et al.，发表于 2015 年。  摘要   提出一个新的神经结构来学习输出序列的条件概率，输出的元素是在输入序列中对应位置的离散标记。由于输出的每一步都与输入的长度有关，但是输入的长度是可变的，所以现有方法 seq2seq 和神经图灵机都无法简单地解决这问题。可变长度序列的排序，各种组合优化的问题都输入此类。我们的模型使用 attention 机制">
 
 <link rel="canonical" href="https://yan624.github.io/posts/d7a5fd2b.html">
 
@@ -47,12 +49,9 @@
     lang   : 'zh-CN'
   };
 </script>
-<!--图片缩放插件样式-->
-<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
 <!--阿里云矢量库样式-->
 <link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_621sfmh583s.css" />
 
-        
 
   <title>Pointer Networks | 博客</title>
   
@@ -108,7 +107,7 @@
       <h1 class="site-title">博客</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
-      <p class="site-subtitle" itemprop="description">低阶炼金术士</p>
+      <p class="site-subtitle" itemprop="description">末流炼丹师</p>
   </div>
 
   <div class="site-nav-right">
@@ -134,7 +133,7 @@
   </li>
         <li class="menu-item menu-item-常用链接">
 
-    <a href="/常用链接" rel="section"><i class="fas fa-bookmark fa-fw"></i>常用链接</a>
+    <a href="/%E5%B8%B8%E7%94%A8%E9%93%BE%E6%8E%A5" rel="section"><i class="fas fa-bookmark fa-fw"></i>常用链接</a>
 
   </li>
         <li class="menu-item menu-item-时间线">
@@ -144,7 +143,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">94</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">95</span></a>
 
   </li>
         
@@ -159,7 +158,7 @@
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">163</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">168</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -204,6 +203,7 @@
     <span>0%</span>
   </div>
   <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
 
     <main class="main">
@@ -241,13 +241,13 @@
             },
             onClose: function() {
               //这里可以取消背景色
-              spop({
+              /*spop({
                 template: 'ε = = (づ′▽`)づ',
                 group: 'tips',
                 position  : 'bottom-center',
                 style: 'success',
                 autoclose: 1500
-              });
+              });*/
             }
           });
         </script>
@@ -261,7 +261,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
       <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+      <meta itemprop="description" content="记录">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -286,7 +286,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-14 18:53:52" itemprop="dateModified" datetime="2020-06-14T18:53:52+08:00">2020-06-14</time>
+                <time title="修改时间：2020-08-14 14:20:28" itemprop="dateModified" datetime="2020-08-14T14:20:28+08:00">2020-08-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -318,7 +318,7 @@
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
+              <span>1 分钟</span>
             </span>
 
         </div>
@@ -330,32 +330,65 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <div class="note info"><p>  <a href="https://arxiv.org/pdf/1506.03134.pdf" target="_blank" rel="noopener">论文地址</a>，作者是 Vinyals et al.，发表于 2015 年。</p>
+        <div class="note info"><p><a href="https://arxiv.org/pdf/1506.03134.pdf" target="_blank" rel="noopener">论文地址</a>，作者是 Vinyals et al.，发表于 2015 年。</p>
 </div>
 <h1 id="摘要">摘要</h1>
-<p>  提出一个新的神经结构来学习输出序列的条件概率，输出的元素是在输入序列中对应位置的离散标记。由于输出的每一步都与输入的长度有关，但是输入的长度是可变的，所以现有方法 seq2seq 和神经图灵机都无法简单地解决这问题。可变长度序列的排序，各种组合优化的问题都输入此类。我们的模型<strong>使用 attention 机制来解决这种输出字典可变大小的问题</strong>。 <a id="more"></a></p>
+<p>提出一个新的神经结构来学习输出序列的条件概率，输出元素是在输入序列中对应位置的离散标记。</p>
+<p>由于输出的每一步都与输入的长度有关，但是输入的长度是可变的，所以现有方法 seq2seq 和神经图灵机都无法简单地解决这问题。可变长度序列的排序，各种组合优化的问题都属于此类。我们的模型<strong>使用 attention 机制来解决这种输出字典可变大小的问题</strong>。 <a id="more"></a></p>
 <h1 id="引言">引言</h1>
-<p>  RNN 在序列上学习函数已经用了超过 30 年。然而，它们的架构有一定的局限性，<strong>输入和输出只能是固定的</strong>。最近，<strong>引入的 seq2seq 范式移除了这些限制</strong>。Bahdanau et. al. 使用 <strong>attention 机制传播来自输入的额外上下文信息</strong>，以此增强 decoder。   尽管如此，这些方法仍旧需要固定的词典。由于这些限制，我们无法直接地将这些框架应用在输出字典的大小取决于输入序列长度的问题上。本文，我们提出 Pointer Networks（Ptr-Nets），它可以解决三种组合优化问题：<code>computing planar convex hulls, Delaunay triangulations and the symmetric planar Travelling Salesman Problem (TSP)</code>。</p>
+<p>RNN 在序列上学习函数已经用了超过 30 年。然而，它们的架构有一定的局限性，<strong>输入和输出只能是固定的</strong>。最近，<strong>引入的 seq2seq 范式移除了这些限制</strong>。Bahdanau et. al. 使用 <strong>attention 机制进一步优化来自输入的额外上下文信息</strong>，以此增强 decoder。 尽管如此，这些方法仍旧需要固定的词典。由于这些限制，我们无法直接地将这些框架应用在输出字典的大小取决于输入序列长度的问题上。本文，我们提出 Pointer Networks（Ptr-Nets），它可以解决三种组合优化问题：<code>computing planar convex hulls, Delaunay triangulations and the symmetric planar Travelling Salesman Problem (TSP)</code>。</p>
 <h1 id="模型">模型</h1>
-<p>  先回顾一下 seq2seq model 和 attention 机制，它们是我们工作的基线。</p>
+<p>先回顾一下 seq2seq model 和 attention 机制，它们是我们工作的基线。</p>
 <h2 id="seq2seq-model">seq2seq model</h2>
-<p>  给定一个训练对 <span class="math inline">\((\mathcal{P}, \mathcal{C}^{\mathcal{P}})\)</span>，seq2seq 模型使用一个带参数的模型（带参数 <span class="math inline">\(\theta\)</span> 的 RNN）计算条件概率 <span class="math inline">\(p(\mathcal{C}^{\mathcal{P}} | \mathcal{P}; \theta)\)</span> 以此估计概率链式法则，即： <span class="math display">\[p(\mathcal{C}^{\mathcal{P}} | \mathcal{P}; \theta) = \prod^{m(\mathcal{P})}_{i=1} p(\mathcal{C}_i | \mathcal{C}_1, \cdots, \mathcal{C}_{i-1}, \mathcal{P}; \theta) \tag{1}
-\]</span>   其中 <span class="math inline">\(\mathcal{P} = \{P_1, \cdots, P_n\}\)</span>，<span class="math inline">\(\mathcal{C} = \{C_1, \cdots, C_{m(\mathcal{P})}\}\)</span>。模型参数在训练集上最大化条件概率： <span class="math display">\[\theta^{\star} = \arg \max_{\theta} \sum_{\mathcal{P}, \mathcal{C^{\mathcal{P}}}} \log p(\mathcal{C}^{\mathcal{P}} | \mathcal{P}; \theta) \tag{2}
+<p>给定一个训练对 <span class="math inline">\((\mathcal{P}, \mathcal{C}^{\mathcal{P}})\)</span>，seq2seq 模型使用一个带参数的模型（带参数 <span class="math inline">\(\theta\)</span> 的 RNN）计算条件概率 <span class="math inline">\(p(\mathcal{C}^{\mathcal{P}} | \mathcal{P}; \theta)\)</span> 以此估计概率链式法则，即： <span class="math display">\[p(\mathcal{C}^{\mathcal{P}} | \mathcal{P}; \theta) = \prod^{m(\mathcal{P})}_{i=1} p(\mathcal{C}_i | \mathcal{C}_1, \cdots, \mathcal{C}_{i-1}, \mathcal{P}; \theta) \tag{1}
+\]</span> 其中 <span class="math inline">\(\mathcal{P} = \{P_1, \cdots, P_n\}\)</span>，<span class="math inline">\(\mathcal{C} = \{C_1, \cdots, C_{m(\mathcal{P})}\}\)</span>。模型参数在训练集上最大化条件概率： <span class="math display">\[\theta^{\star} = \arg \max_{\theta} \sum_{\mathcal{P}, \mathcal{C^{\mathcal{P}}}} \log p(\mathcal{C}^{\mathcal{P}} | \mathcal{P}; \theta) \tag{2}
 \]</span></p>
 <h2 id="content-based-input-attention">Content Based Input Attention</h2>
 <h2 id="ptr-net">Ptr-Net</h2>
-<p>  我们现在描述一个非常简化版的 attention 模型，它能使得我们解决上面提到的难题。我们使用 attention 机制建模 <span class="math inline">\(p(\mathcal{C}_i | \mathcal{C}_1, \cdots, \mathcal{C}_{i-1}, \mathcal{P})\)</span>： <span class="math display">\[
+<p>我们现在描述一个非常简化版的 attention 模型，它能使得我们解决上面提到的难题。我们使用 attention 机制建模 <span class="math inline">\(p(\mathcal{C}_i | \mathcal{C}_1, \cdots, \mathcal{C}_{i-1}, \mathcal{P})\)</span>： <span class="math display">\[
 \begin{align}
     u^i_j &amp; = v^T tanh(W_1 e_j + W_2 d_i) \quad j \in (1, \cdots, n) \\
     p(\mathcal{C}_i | \mathcal{C}_1, \cdots, \mathcal{C}_{i-1}, \mathcal{P}) &amp; = softmax(u^i)
 \end{align}
-\]</span>   然后，不同于 attention 机制，<strong>我们不混合编码状态 <span class="math inline">\(e_j\)</span></strong> 以此将信息带到 decoder 中，而是<strong>使用 <span class="math inline">\(u^i_j\)</span> 作为指针，指出输出元素</strong>。   <strong>我们还注意到，我们的方法特别针对输出是离散的并且与输入中的位置相对应的问题。</strong></p>
+\]</span> 然后，不同于 attention 机制，<strong>我们不混合编码状态 <span class="math inline">\(e_j\)</span></strong> 以此将信息带到 decoder 中，而是<strong>使用 <span class="math inline">\(u^i_j\)</span> 作为指针，指出输出元素</strong>。 <strong>我们还注意到，我们的方法特别针对输出是离散的并且与输入中的位置相对应的问题。</strong></p>
 
     </div>
 
     
     
     
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    赞赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.gif" alt="朱冲䶮 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>朱冲䶮
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://yan624.github.io/posts/d7a5fd2b.html" title="Pointer Networks">https://yan624.github.io/posts/d7a5fd2b.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
 
       <footer class="post-footer">
           <div class="post-tags">
@@ -369,8 +402,8 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/posts/bbe4416e.html" rel="prev" title="机器学习中的各种优化算法">
-      <i class="fa fa-chevron-left"></i> 机器学习中的各种优化算法
+    <a href="/posts/bbe4416e.html" rel="prev" title="机器学习中各种优化算法的学习笔记">
+      <i class="fa fa-chevron-left"></i> 机器学习中各种优化算法的学习笔记
     </a></div>
       <div class="post-nav-item">
     <a href="/posts/119cad78.html" rel="next" title="科研中用到的python技巧">
@@ -443,14 +476,14 @@
     <img class="site-author-image" itemprop="image" alt="朱冲䶮"
       src="/images/avatar.jpg">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
-  <div class="site-description" itemprop="description">记录学习问题，积累做的 leetcode 题目</div>
+  <div class="site-description" itemprop="description">记录</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">163</span>
+          <span class="site-state-item-count">168</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -462,42 +495,53 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">94</span>
+        <span class="site-state-item-count">95</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">203.6k</span>
+      	<span class="site-state-item-count">214.1k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
 </div>
+  <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
+    Chat
+  </a>
+  </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>zhihu</a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
       </span>
   </div>
 
 
   <div class="links-of-blogroll motion-element">
     <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
-      Links
+      友链
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
         </li>
     </ul>
   </div>
+<!-- CloudCalendar -->
+<div class="widget-wrap" style="width: 90%;margin-left: auto;margin-right: auto; opacity: 0.97;">
+	<div class="widget" id="CloudCalendar"></div>
+</div>
 
       </div>
 
@@ -524,12 +568,11 @@
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
-  </div><script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script src="/lib/my-utils.js"></script>
-<!--图片缩放插件-->
-<script src="/lib/zoomify/zoomify.min.js"></script>
-<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
 <!-- 背景图片 -->
@@ -543,20 +586,10 @@
 		bg.shuffle();
 		return bg;
 	}
-	$("body").backstretch(generateBG(11), {
-		duration:90000,//1min半一换
+	$("body").backstretch(generateBG(10), {
+		duration:90000,//1 min 半一换
 		fade: 1500
 	});
-</script>
-<!-- 图片缩放 -->
-<script>
-$('.content img').zoomify({duration: 500, });
-$('.content img').on('zoom-in.zoomify', function () {
-	$('.sidebar').css('display', 'none');
-});
-$('.content img').on('zoom-out-complete.zoomify', function () {
-	$('.sidebar').css('display', '');
-});
 </script>
 
         
@@ -594,18 +627,29 @@ $('.content img').on('zoom-out-complete.zoomify', function () {
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/pisces.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
 
   
 
 
 
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 
@@ -634,6 +678,27 @@ $('.content img').on('zoom-out-complete.zoomify', function () {
       });
   </script>
 <!-- calendar widget -->
+
+    <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-calendar/calendar.min.js"></script>
+    <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-calendar/languages.min.js"></script>
+    <script>
+    $(function() {
+        $('#CloudCalendar').aCalendar('zh-CN',
+            $.extend(
+                '', {
+                    single:true,
+                    root:'/calendar/'
+                }
+            )
+        );
+    });	
+	/*
+	* 2020.08.10: 由本博客博主自定义加入，由于不是很需要日历最下面的前进后退键，其与日历最上方的功能键冲突，所以在此将其删除
+	*/
+	$(function(){
+		$('#CloudCalendar tfoot').remove()
+	})
+	</script>
 
 
 </body>

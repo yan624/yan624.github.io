@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 3.9.0">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -14,32 +14,33 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
   <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
   <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="网上的介绍很多，我主要描述网上不常见的： @ApiImplicitParam 这个注解有一个属性：paramType。它的有效值仅有5中，分别为：path，query，form，body，header。 但是这几个值，我感觉用起来特别麻烦。 ### path（配合@PathVariable） 这是最简单的，如/user/{userId}，如果使用这种形式，就可以使用path； query（配合@">
-<meta name="keywords" content="印象笔记上的博文">
+  <meta name="description" content="网上的介绍很多，我主要描述网上不常见的： @ApiImplicitParam 这个注解有一个属性：paramType。它的有效值仅有5中，分别为：path，query，form，body，header。 但是这几个值，我感觉用起来特别麻烦。 ### path（配合@PathVariable） 这是最简单的，如&#x2F;user&#x2F;{userId}，如果使用这种形式，就可以使用path； query（配合@">
 <meta property="og:type" content="article">
 <meta property="og:title" content="swagger的初步运用">
 <meta property="og:url" content="https://yan624.github.io/posts/b982c2af.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="网上的介绍很多，我主要描述网上不常见的： @ApiImplicitParam 这个注解有一个属性：paramType。它的有效值仅有5中，分别为：path，query，form，body，header。 但是这几个值，我感觉用起来特别麻烦。 ### path（配合@PathVariable） 这是最简单的，如/user/{userId}，如果使用这种形式，就可以使用path； query（配合@">
-<meta property="og:locale" content="zh-CN">
+<meta property="og:description" content="网上的介绍很多，我主要描述网上不常见的： @ApiImplicitParam 这个注解有一个属性：paramType。它的有效值仅有5中，分别为：path，query，form，body，header。 但是这几个值，我感觉用起来特别麻烦。 ### path（配合@PathVariable） 这是最简单的，如&#x2F;user&#x2F;{userId}，如果使用这种形式，就可以使用path； query（配合@">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/ee28b7c4e8f84f33938d2d2c1deced0a.PNG">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/737c0b56dad0405cb8a5b0e330ee8380.PNG">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/e98acd4958754ee5b5876623b758a493.PNG">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/327d110778174272982d99f219254f7e.PNG">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/b9b79737da504931b2a940c1a201330f.PNG">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/ebcbfdb2368e43be85252b69a65dce96.PNG">
-<meta property="og:updated_time" content="2020-06-14T10:10:50.555Z">
+<meta property="article:published_time" content="2018-03-23T11:03:57.000Z">
+<meta property="article:modified_time" content="2020-06-14T10:10:50.555Z">
+<meta property="article:author" content="朱冲䶮">
+<meta property="article:tag" content="印象笔记上的博文">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="swagger的初步运用">
-<meta name="twitter:description" content="网上的介绍很多，我主要描述网上不常见的： @ApiImplicitParam 这个注解有一个属性：paramType。它的有效值仅有5中，分别为：path，query，form，body，header。 但是这几个值，我感觉用起来特别麻烦。 ### path（配合@PathVariable） 这是最简单的，如/user/{userId}，如果使用这种形式，就可以使用path； query（配合@">
 <meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/ee28b7c4e8f84f33938d2d2c1deced0a.PNG">
 
 <link rel="canonical" href="https://yan624.github.io/posts/b982c2af.html">
@@ -54,12 +55,9 @@
     lang   : 'zh-CN'
   };
 </script>
-<!--图片缩放插件样式-->
-<link rel="stylesheet" href="/lib/zoomify/zoomify.min.css" />
 <!--阿里云矢量库样式-->
 <link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_621sfmh583s.css" />
 
-        
 
   <title>swagger的初步运用 | 博客</title>
   
@@ -115,7 +113,7 @@
       <h1 class="site-title">博客</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
-      <p class="site-subtitle" itemprop="description">低阶炼金术士</p>
+      <p class="site-subtitle" itemprop="description">末流炼丹师</p>
   </div>
 
   <div class="site-nav-right">
@@ -141,7 +139,7 @@
   </li>
         <li class="menu-item menu-item-常用链接">
 
-    <a href="/常用链接" rel="section"><i class="fas fa-bookmark fa-fw"></i>常用链接</a>
+    <a href="/%E5%B8%B8%E7%94%A8%E9%93%BE%E6%8E%A5" rel="section"><i class="fas fa-bookmark fa-fw"></i>常用链接</a>
 
   </li>
         <li class="menu-item menu-item-时间线">
@@ -151,7 +149,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">94</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">95</span></a>
 
   </li>
         
@@ -166,7 +164,7 @@
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">163</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">168</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -211,6 +209,7 @@
     <span>0%</span>
   </div>
   <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
 
     <main class="main">
@@ -234,7 +233,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
       <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录学习问题，积累做的 leetcode 题目">
+      <meta itemprop="description" content="记录">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -295,7 +294,7 @@
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -310,9 +309,9 @@
         <p>网上的介绍很多，我主要描述网上不常见的： <code>@ApiImplicitParam</code> 这个注解有一个属性：paramType。它的有效值仅有5中，分别为：path，query，form，body，header。 但是这几个值，我感觉用起来特别麻烦。 ### path（配合@PathVariable） 这是最简单的，如/user/{userId}，如果使用这种形式，就可以使用path；</p>
 <h3 id="query配合requestparam">query（配合@RequestParam）</h3>
 <p>这个我认为是有bug的，如果在swagger2的配置中这样写： <a id="more"></a> <figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="constructor">Docket(DocumentationType.SWAGGER_2)</span></span><br><span class="line">    .api<span class="constructor">Info(<span class="params">new</span> ApiInfoBuilder()</span></span><br><span class="line">        .title(<span class="string">"订餐系统_接口文档"</span>)</span><br><span class="line">        .description(<span class="string">"描述：用于订餐管理系统其他模块的数据调用"</span>)</span><br><span class="line">        .version(<span class="string">"版本号:1.0"</span>)</span><br><span class="line">        .build<span class="literal">()</span></span><br><span class="line">    )</span><br><span class="line">    .select<span class="literal">()</span></span><br><span class="line">    .apis(<span class="module-access"><span class="module"><span class="identifier">RequestHandlerSelectors</span>.</span></span>any<span class="literal">()</span>)</span><br><span class="line">    .paths(<span class="module-access"><span class="module"><span class="identifier">PathSelectors</span>.</span></span>any<span class="literal">()</span>)</span><br><span class="line">    .build<span class="literal">()</span></span><br><span class="line">    .path<span class="constructor">Mapping(<span class="string">"/"</span>)</span></span><br><span class="line">    .direct<span class="constructor">ModelSubstitute(LocalDate.<span class="params">class</span>, String.<span class="params">class</span>)</span></span><br><span class="line">    .generic<span class="constructor">ModelSubstitutes(ResponseEntity.<span class="params">class</span>)</span></span><br><span class="line">    .use<span class="constructor">DefaultResponseMessages(<span class="params">false</span>)</span></span><br><span class="line">    .enable<span class="constructor">UrlTemplating(<span class="params">true</span>)</span></span><br></pre></td></tr></table></figure></p>
-<p>看最后一个方法，这就代表你的文档最后生成是这样的： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/ee28b7c4e8f84f33938d2d2c1deced0a.PNG" title="swagger post的接口样例截图" alt="swagger post的接口样例截图"> 我为什么要说有bug？这看起来很美好，但是当你在网站上测试时，如下 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/737c0b56dad0405cb8a5b0e330ee8380.PNG" title="url模板bug" alt="url模板bug"> swagger提供了，在网站上直接测试的功能，但是请看黄色部分，/modify-password后面跟了什么，看起来那只是说明用的{?newPassword...}，直接加在了链接上，导致报了404，找不到该url。 就这玩意搞了我好几个小时，后来还是无意中发现的。但是如果把那个方法删了那么就会变成下面的样子。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/e98acd4958754ee5b5876623b758a493.PNG" title="正常的post请求url模板" alt="正常的post请求url模板"> 这样就是正常的，就是普通的get请求，但是这里注意一点，post请求就不要用query了，因为它是直接在url后跟参数的。说是post其实被它改成了get（ps：仅在网页上测试时很坑爹，如果只是给其他开发者使用，那是无所谓的，顶多不要在线测试这项功能）。 ### form 这个也很坑爹，我也是后来发现的。常见的表单提交，可以f12看到是Query String Parameters，但是这个使用了坑爹的Request Plyload（并没有说它不好）。哪坑爹呢？后台的controller方法里我试了无数个注解，无数个方法接受不到值，要么是null，要么http错误。 我最会想到了，也是因为前段时间正好用过---》我看到swagger在网页上提示是formData，玩过前端的人应该知道js有一个对象叫做：FormData（感兴趣的自己百度）。坑爹的就在这，FormData是用来提交二进制数据的（我是这么理解的），比如一张图片，一份文件。所以我抱着尝试的心态，在Controller的方法中加入了一个参数MultipartFile对象，尼玛，居然正常接收到了参数。 综上，如果用了form，想使用在线测试功能，就加个MultipartFile参数。 ### body 这个还行，因为如果使用了这个swagger会提交json数据（但是不知道是字符串还是对象，初步估计应该是对象），所以如果使用body，那么@ApiImplicitParam就不用写很多了，比如说，你想接受用户的账号（account），密码（password），那么不需要这样写：</p>
+<p>看最后一个方法，这就代表你的文档最后生成是这样的： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/ee28b7c4e8f84f33938d2d2c1deced0a.PNG" title="swagger post的接口样例截图" alt="swagger post的接口样例截图" /> 我为什么要说有bug？这看起来很美好，但是当你在网站上测试时，如下 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/737c0b56dad0405cb8a5b0e330ee8380.PNG" title="url模板bug" alt="url模板bug" /> swagger提供了，在网站上直接测试的功能，但是请看黄色部分，/modify-password后面跟了什么，看起来那只是说明用的{?newPassword...}，直接加在了链接上，导致报了404，找不到该url。 就这玩意搞了我好几个小时，后来还是无意中发现的。但是如果把那个方法删了那么就会变成下面的样子。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/e98acd4958754ee5b5876623b758a493.PNG" title="正常的post请求url模板" alt="正常的post请求url模板" /> 这样就是正常的，就是普通的get请求，但是这里注意一点，post请求就不要用query了，因为它是直接在url后跟参数的。说是post其实被它改成了get（ps：仅在网页上测试时很坑爹，如果只是给其他开发者使用，那是无所谓的，顶多不要在线测试这项功能）。 ### form 这个也很坑爹，我也是后来发现的。常见的表单提交，可以f12看到是Query String Parameters，但是这个使用了坑爹的Request Plyload（并没有说它不好）。哪坑爹呢？后台的controller方法里我试了无数个注解，无数个方法接受不到值，要么是null，要么http错误。 我最会想到了，也是因为前段时间正好用过---》我看到swagger在网页上提示是formData，玩过前端的人应该知道js有一个对象叫做：FormData（感兴趣的自己百度）。坑爹的就在这，FormData是用来提交二进制数据的（我是这么理解的），比如一张图片，一份文件。所以我抱着尝试的心态，在Controller的方法中加入了一个参数MultipartFile对象，尼玛，居然正常接收到了参数。 综上，如果用了form，想使用在线测试功能，就加个MultipartFile参数。 ### body 这个还行，因为如果使用了这个swagger会提交json数据（但是不知道是字符串还是对象，初步估计应该是对象），所以如果使用body，那么@ApiImplicitParam就不用写很多了，比如说，你想接受用户的账号（account），密码（password），那么不需要这样写：</p>
 <figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@ApiImplicitParams</span>(</span><br><span class="line">    &#123;<span class="variable">@ApiImplicitParam</span>(name=<span class="string">"account"</span>,value=<span class="string">"账号"</span>,dataType=<span class="string">"String"</span>, paramType = <span class="string">"body"</span>), </span><br><span class="line">    <span class="variable">@ApiImplicitParam</span>(name=<span class="string">"password"</span>,value=<span class="string">"密码"</span>,dataType=<span class="string">"String"</span>, paramType = <span class="string">"body"</span>)&#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<p>只需要这样：<code>@ApiImplicitParam(name="user",value="用户信息",dataType="User", paramType = "body")</code> 就可以了，User就是实体类，在网页上显示就是这样： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/327d110778174272982d99f219254f7e.PNG" title="swagger中将参数类型设置body后的结果" alt="swagger中将参数类型设置body后的结果"> 它会让你提交json数据，只有body会让你提交json数据，很好区分。 但是我为什么要说它坑爹。因为swagger吧User的所有字段都放进去了，虽然可以一个个删掉，但是每次浏览网页都要做一遍，麻烦死了。所以需要使用如下方法： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/b9b79737da504931b2a940c1a201330f.PNG" title="用户实体类" alt="用户实体类"> 设置为只读，这样就不会在网页上显示了，我们可以把除了account（图中的tel）和password的字段全部设置为只读。这里放心我测试过了，只读只是在网页看不见，其他的功能暂时没有受到影响。 <strong>注：</strong>@RequestBody 和 @ModelAttribute不能一起用 <strong>更新：</strong>今天测试的时候发现，如果其他客户端使用代码的方式调用会出现不小的问题。这里把我解决的部分写出：content-type必须设置为“application/json”，传递参数时，不需要写键，只需要传一个json字符串即可，并且json字符串必须使用双引号，而不能是单引号（测试于fastxml jackson）。 我列出我的代码（使用RestTemplate） <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/ebcbfdb2368e43be85252b69a65dce96.PNG" title="使用body的问题" alt="使用body的问题"></p>
+<p>只需要这样：<code>@ApiImplicitParam(name=&quot;user&quot;,value=&quot;用户信息&quot;,dataType=&quot;User&quot;, paramType = &quot;body&quot;)</code> 就可以了，User就是实体类，在网页上显示就是这样： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/327d110778174272982d99f219254f7e.PNG" title="swagger中将参数类型设置body后的结果" alt="swagger中将参数类型设置body后的结果" /> 它会让你提交json数据，只有body会让你提交json数据，很好区分。 但是我为什么要说它坑爹。因为swagger吧User的所有字段都放进去了，虽然可以一个个删掉，但是每次浏览网页都要做一遍，麻烦死了。所以需要使用如下方法： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/b9b79737da504931b2a940c1a201330f.PNG" title="用户实体类" alt="用户实体类" /> 设置为只读，这样就不会在网页上显示了，我们可以把除了account（图中的tel）和password的字段全部设置为只读。这里放心我测试过了，只读只是在网页看不见，其他的功能暂时没有受到影响。 <strong>注：</strong>@RequestBody 和 @ModelAttribute不能一起用 <strong>更新：</strong>今天测试的时候发现，如果其他客户端使用代码的方式调用会出现不小的问题。这里把我解决的部分写出：content-type必须设置为“application/json”，传递参数时，不需要写键，只需要传一个json字符串即可，并且json字符串必须使用双引号，而不能是单引号（测试于fastxml jackson）。 我列出我的代码（使用RestTemplate） <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/ebcbfdb2368e43be85252b69a65dce96.PNG" title="使用body的问题" alt="使用body的问题" /></p>
 <h3 id="header">header</h3>
 <p>没有用过，但是是配合@RequestHeader用的 <!-- more --></p>
 
@@ -321,10 +320,42 @@
     
     
     
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    赞赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.gif" alt="朱冲䶮 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>朱冲䶮
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://yan624.github.io/posts/b982c2af.html" title="swagger的初步运用">https://yan624.github.io/posts/b982c2af.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/印象笔记上的博文/" rel="tag"># 印象笔记上的博文</a>
+              <a href="/tags/%E5%8D%B0%E8%B1%A1%E7%AC%94%E8%AE%B0%E4%B8%8A%E7%9A%84%E5%8D%9A%E6%96%87/" rel="tag"># 印象笔记上的博文</a>
           </div>
 
         
@@ -407,14 +438,14 @@
     <img class="site-author-image" itemprop="image" alt="朱冲䶮"
       src="/images/avatar.jpg">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
-  <div class="site-description" itemprop="description">记录学习问题，积累做的 leetcode 题目</div>
+  <div class="site-description" itemprop="description">记录</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">163</span>
+          <span class="site-state-item-count">168</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -426,42 +457,53 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">94</span>
+        <span class="site-state-item-count">95</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">203.6k</span>
+      	<span class="site-state-item-count">214.1k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
 </div>
+  <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
+    Chat
+  </a>
+  </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>zhihu</a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
       </span>
   </div>
 
 
   <div class="links-of-blogroll motion-element">
     <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
-      Links
+      友链
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
         </li>
     </ul>
   </div>
+<!-- CloudCalendar -->
+<div class="widget-wrap" style="width: 90%;margin-left: auto;margin-right: auto; opacity: 0.97;">
+	<div class="widget" id="CloudCalendar"></div>
+</div>
 
       </div>
 
@@ -488,12 +530,11 @@
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
-  </div><script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script src="/lib/my-utils.js"></script>
-<!--图片缩放插件-->
-<script src="/lib/zoomify/zoomify.min.js"></script>
-<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
 <!-- 背景图片 -->
@@ -507,20 +548,10 @@
 		bg.shuffle();
 		return bg;
 	}
-	$("body").backstretch(generateBG(11), {
-		duration:90000,//1min半一换
+	$("body").backstretch(generateBG(10), {
+		duration:90000,//1 min 半一换
 		fade: 1500
 	});
-</script>
-<!-- 图片缩放 -->
-<script>
-$('.content img').zoomify({duration: 500, });
-$('.content img').on('zoom-in.zoomify', function () {
-	$('.sidebar').css('display', 'none');
-});
-$('.content img').on('zoom-out-complete.zoomify', function () {
-	$('.sidebar').css('display', '');
-});
 </script>
 
         
@@ -558,18 +589,29 @@ $('.content img').on('zoom-out-complete.zoomify', function () {
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/pisces.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
 <script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
 
   
 
 
 
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="/js/local-search.js"></script>
+
 
 
 
@@ -598,6 +640,27 @@ $('.content img').on('zoom-out-complete.zoomify', function () {
       });
   </script>
 <!-- calendar widget -->
+
+    <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-calendar/calendar.min.js"></script>
+    <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-calendar/languages.min.js"></script>
+    <script>
+    $(function() {
+        $('#CloudCalendar').aCalendar('zh-CN',
+            $.extend(
+                '', {
+                    single:true,
+                    root:'/calendar/'
+                }
+            )
+        );
+    });	
+	/*
+	* 2020.08.10: 由本博客博主自定义加入，由于不是很需要日历最下面的前进后退键，其与日历最上方的功能键冲突，所以在此将其删除
+	*/
+	$(function(){
+		$('#CloudCalendar tfoot').remove()
+	})
+	</script>
 
 
 </body>
