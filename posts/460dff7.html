@@ -23,34 +23,18 @@
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="视频来自 此处，或者 此处。  4:56 A word can have multiple senses. 11:24 ELMO 19:08 BERT 49:23 GPT(-2)  此处是一个讲解得更详细的视频。  ELMO Embedding from Language Model(ELMO) 可以做到每个 word token 分配不同的 embedding，它是一个 RN">
+  <meta name="description" content="模型对比名词解释   名称 特征提取器 模型种类 任务 使用方法     EMLo LSTM AR LM pt+fb   BERT Transformer AE MLM, NSP pt+ft    缩写  pre-training &#x3D; pt feature-based &#x3D; fb fine-tuning &#x3D; ft  模型种类  A">
 <meta property="og:type" content="article">
 <meta property="og:title" content="深度学习算法（五）：预训练模型">
 <meta property="og:url" content="https://yan624.github.io/posts/460dff7.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="视频来自 此处，或者 此处。  4:56 A word can have multiple senses. 11:24 ELMO 19:08 BERT 49:23 GPT(-2)  此处是一个讲解得更详细的视频。  ELMO Embedding from Language Model(ELMO) 可以做到每个 word token 分配不同的 embedding，它是一个 RN">
+<meta property="og:description" content="模型对比名词解释   名称 特征提取器 模型种类 任务 使用方法     EMLo LSTM AR LM pt+fb   BERT Transformer AE MLM, NSP pt+ft    缩写  pre-training &#x3D; pt feature-based &#x3D; fb fine-tuning &#x3D; ft  模型种类  A">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%BA%94%EF%BC%89%EF%BC%9A%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/ELMO%E7%A4%BA%E6%84%8F%E5%9B%BE.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%BA%94%EF%BC%89%EF%BC%9A%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/%E6%88%91%E5%85%A8%E9%83%BD%E8%A6%81.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%BA%94%EF%BC%89%EF%BC%9A%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/Masked%20LM.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%BA%94%EF%BC%89%EF%BC%9A%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/Next%20Sentence%20Prediction.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%BA%94%EF%BC%89%EF%BC%9A%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/How%20to%20use%20BERT%20-%20Case%201.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%BA%94%EF%BC%89%EF%BC%9A%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/How%20to%20use%20BERT%20-%20Case%202.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%BA%94%EF%BC%89%EF%BC%9A%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/How%20to%20use%20BERT%20-%20Case%203.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%BA%94%EF%BC%89%EF%BC%9A%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/How%20to%20use%20BERT%20-%20Case%204.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%BA%94%EF%BC%89%EF%BC%9A%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/How%20to%20use%20BERT%20-%20Case%204-2.jpg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%BA%94%EF%BC%89%EF%BC%9A%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/What%20does%20BERT%20learn.jpg">
-<meta property="article:published_time" content="2020-01-23T08:55:34.000Z">
-<meta property="article:modified_time" content="2020-07-22T07:42:30.730Z">
+<meta property="article:published_time" content="2020-08-25T15:32:05.000Z">
+<meta property="article:modified_time" content="2020-09-06T06:13:33.709Z">
 <meta property="article:author" content="朱冲䶮">
-<meta property="article:tag" content="系列">
-<meta property="article:tag" content="学习笔记">
-<meta property="article:tag" content="ELMO">
-<meta property="article:tag" content="BERT">
-<meta property="article:tag" content="ERNIE">
-<meta property="article:tag" content="GPT">
+<meta property="article:tag" content="博客，java，javaWeb，NLP，python，机器学习，深度学习">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%BA%94%EF%BC%89%EF%BC%9A%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/ELMO%E7%A4%BA%E6%84%8F%E5%9B%BE.jpg">
 
 <link rel="canonical" href="https://yan624.github.io/posts/460dff7.html">
 
@@ -65,7 +49,7 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_621sfmh583s.css" />
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
 
 
   <title>深度学习算法（五）：预训练模型 | 博客</title>
@@ -153,12 +137,7 @@
   </li>
         <li class="menu-item menu-item-时间线">
 
-    <a href="/categories/timeline/" rel="section"><i class="iconfont icon-timeline fa-fw"></i>时间线</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">95</span></a>
+    <a href="/categories/assorted/timeline/" rel="section"><i class="iconfont icon-timeline fa-fw"></i>时间线</a>
 
   </li>
         
@@ -173,7 +152,7 @@
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">168</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">181</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -234,55 +213,11 @@
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     
-    	
-    
-    	
-        <!-- 弹窗插件 -->
-    		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
-        <script type="text/javascript" src="/lib/spop/spop.min.js"></script>
-        <!--判断此文是否为特殊的文章-->
-        <script>
-          var templateSentence = '这是条不可能出现的弹窗提示。';
-          if('学习笔记' == '学习笔记')
-            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记，并非教学，其中可能含有理论错误。';
-          else if('学习笔记' == '4me')
-            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
-          spop({
-            template: templateSentence,
-            group: 'tips',
-            position  : 'bottom-center',
-            style: 'success',
-            autoclose: 5500,
-            onOpen: function () {
-              //这里设置灰色背景色
-            },
-            onClose: function() {
-              //这里可以取消背景色
-              /*spop({
-                template: 'ε = = (づ′▽`)づ',
-                group: 'tips',
-                position  : 'bottom-center',
-                style: 'success',
-                autoclose: 1500
-              });*/
-            }
-          });
-        </script>
-    	
-    
-    	
-    
-    	
-    
-    	
-    
-    	
-    
 
     <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/460dff7.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
       <meta itemprop="name" content="朱冲䶮">
       <meta itemprop="description" content="记录">
     </span>
@@ -302,14 +237,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-01-23 16:55:34" itemprop="dateCreated datePublished" datetime="2020-01-23T16:55:34+08:00">2020-01-23</time>
+              <time title="创建时间：2020-08-25 23:32:05" itemprop="dateCreated datePublished" datetime="2020-08-25T23:32:05+08:00">2020-08-25</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-22 15:42:30" itemprop="dateModified" datetime="2020-07-22T15:42:30+08:00">2020-07-22</time>
+                <time title="修改时间：2020-09-06 14:13:33" itemprop="dateModified" datetime="2020-09-06T14:13:33+08:00">2020-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -338,14 +273,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.4k</span>
+              <span>7.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>7 分钟</span>
             </span>
 
         </div>
@@ -357,58 +292,202 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <div class="note info"><p>视频来自 <a href="https://www.bilibili.com/video/av56235038" target="_blank" rel="noopener">此处</a>，或者 <a href="https://www.bilibili.com/video/av46561029?p=61" target="_blank" rel="noopener">此处</a>。</p>
-<ol type="1">
-<li>4:56 A word can have multiple senses.</li>
-<li>11:24 ELMO</li>
-<li>19:08 BERT</li>
-<li>49:23 GPT(-2)</li>
-</ol>
-<p><a href="https://www.bilibili.com/video/BV1MZ4y1W7mw" target="_blank" rel="noopener">此处</a>是一个讲解得更详细的视频。</p>
-</div>
-<h1 id="elmo">ELMO</h1>
-<p>Embedding from Language Model(ELMO) 可以做到每个 word token 分配不同的 embedding，它是一个 RNN-based model。如下图所示，在提取“潮水退了”这四个字的词向量时，先使用一个 RNN 捕获信息。首先输入单词的词向量，然后将“退了”的 output 作为新的词向量。如果捕获“臣退了”三个字的特征，由于上下文的单词不同，使用 RNN 之后输出的 output 也不同，所以“退了”拥有不同 embeddng。“高烧退了”同理。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/ELMO示意图.jpg" alt="ELMO示意图" /></p>
-<a id="more"></a>
-<p>但是这样做可能没有捕获到句子的后文的信息，那么只需要再 train 一个反向的 RNN，然后将两个正反向的 embedding 拼起来就得到了单词的词向量。</p>
-<p>此外，现在我们 train model 都是 deep 的，那么我们的这个 RNN 也可以是 depp 的。但是当 deep 之后会碰到问题，那就是每一层都有 embedding，我们应该哪一层的 embedding 当做词向量。ELMO 的做法是“我全都要”。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/我全都要.jpg" alt="我全都要.jpg" /></p>
-<p>现在每一层都有一个 contextualized embedding，ELMO 的做法是把所有的 embedding 通通加起来变成一个 embedding。但是不是普通的加法，而是 <span class="math inline">\(new \, embedding = \alpha_1 * embed_1 + \alpha_2 * embed_2\)</span>，其中的 <span class="math inline">\(\alpha\)</span> 是 learn 出来的。但是 <span class="math inline">\(\alpha\)</span> 在不同的任务下实际上选值也不同，详见视频 16:20 或者看论文。</p>
-<h1 id="bert">BERT</h1>
-<p>Bidirectional Encoder Representations from Transformers(BERT)，BERT 用的是 Transformer 的 encoder。</p>
-<p>BERT 实际做的是输入一个句子进去，每个单词都会输出一个 embedding。至于 BERT 内部的架构其实跟 Transformer 的 encoder 是一样的。</p>
-<p>BERT 有两种训练方法：</p>
+        <div class="tabs" id=""><ul class="nav-tabs"><li class="tab active"><a href="#-1">模型对比</a></li><li class="tab"><a href="#-2">名词解释</a></li></ul><div class="tab-content"><div class="tab-pane active" id="-1"><table>
+<thead>
+<tr class="header">
+<th>名称</th>
+<th>特征提取器</th>
+<th>模型种类</th>
+<th>任务</th>
+<th>使用方法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>EMLo</td>
+<td>LSTM</td>
+<td>AR</td>
+<td>LM</td>
+<td>pt+fb</td>
+</tr>
+<tr class="even">
+<td>BERT</td>
+<td>Transformer</td>
+<td>AE</td>
+<td>MLM, NSP</td>
+<td>pt+ft</td>
+</tr>
+</tbody>
+</table></div><div class="tab-pane" id="-2"><ol type="1">
+<li>缩写
 <ul>
-<li>Masked LM：输入给 BERT 的句子有 15% 的机会随机被置换成一个特殊的 token [MASK]，现在的任务是 BERT 去猜测这些被盖住的地方是哪一个词汇。在预测时，把输出的 embedding 丢到一个 Linear Multi-class classifier，让它预测被 mask 掉的词汇是哪一个。因为这个 classifier 是一个 linear 的，所以它的能力是很弱的。所以如果要成功预测出正确的词汇，那么 BERT 可能要很深，比如要 24/48 层，我们需要 BERT 抽取出一个很好的表征。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/Masked%20LM.jpg" alt="Masked LM" /></li>
-<li>Next Sentence Prediction：比如输入“醒醒吧[SEP]你没有妹妹”，我们需要预测这两句话是否是相接的。另外我们需要在句子的首部加上 token [CLS]，然后将 [CLS] 的 embedding 输入到 Linear Binary Classifier 中去预测两个句子是否相接。但是问题来了，为什么要把 [CLS] 放在句子的开头呢？因为 BERT 的内部是一个 Transformer，所以一个 token 放在句子的开头和末尾影响不大，如果是一个 RNN 结构，那么可能应该放在末尾。
-<ul>
-<li>[SEP]：是两个句子的界限符号</li>
-<li>[CLS]：输出分类结果的位置 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/Next%20Sentence%20Prediction.jpg" alt="Next Sentence Prediction" /></li>
+<li>pre-training = pt</li>
+<li>feature-based = fb</li>
+<li>fine-tuning = ft</li>
 </ul></li>
-</ul>
-<p>这两个方法是需要同时使用的，这样 BERT 会学得最好。</p>
-<p>最后 BERT 也一直被人改进，有许多新版的 BERT 可以分别适用不同的任务，《BERT 的演进和应用》[1]介绍了几种新型的 BERT。</p>
-<h2 id="如何使用bert">如何使用BERT</h2>
-<p>已经知道了 BERT 的训练方法，那么现在该如何使用呢？可以向 ELMO 一样，把 BERT 当做提取特征的工具，使我们获得词向量。但是 BERT 论文中他不止做了这样的事情，他说可以将 BERT 和你要解的任务一起做训练。</p>
-<p>下图介绍了一种例子。如果我们的任务是输入一个句子，输出一个类别，那么我们可以在输入的句子的开头加上一个 [CLS]，然后将 [CLS] 的 embedding 输入到一个 Linear classifier 中就可以预测类别。也就是说我们将 BERT 下下来后，其实只需要定义我们的 classifier，然而调整 classifier 的参数即可，BERT 的参数仅仅需要微调，因为它已经被预训练过了。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How%20to%20use%20BERT%20-%20Case%201.jpg" alt="How to use BERT - Case 1" /></p>
-<p>第二种例子是输入一个句子，输出每一个单词的类别，比如说 slot filling。这个跟上一个差不多。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How%20to%20use%20BERT%20-%20Case%202.jpg" alt="How to use BERT - Case 2" /></p>
-<p>第三种例子是输入两个句子，输出一个类别，比如说 Natural Language Inference。这个也差不多，就是加了一个 [SEP]。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How%20to%20use%20BERT%20-%20Case%203.jpg" alt="How to use BERT - Case 3" /></p>
-<p>第四种例子是 QA 问题，而且是 extraction-based QA(E.g. SQuAD)。即给 model 一篇文章，然后问它一个问题，期望得到一个答案。但是这里放水了，就是说答案中出现的词汇一定会出现在文章中。具体来说就是输入文章 D 和问题 Q，输出 s 和 e，其中 s 和 e 指的是文章 D 中的某个区间中单词。如果 s 和 e 矛盾，即 s &gt; e，那么回答“此题无解”。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How%20to%20use%20BERT%20-%20Case%204.jpg" alt="How to use BERT - Case 4" /></p>
-<p>具体做法： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/How%20to%20use%20BERT%20-%20Case%204-2.jpg" alt="How to use BERT - Case 4-2" /></p>
-<h2 id="bert学到了什么">BERT学到了什么</h2>
-<figure>
-<img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（五）：预训练模型/What%20does%20BERT%20learn.jpg" alt="What does BERT learn" /><figcaption>What does BERT learn</figcaption>
-</figure>
-<h2 id="multilingual-bert">Multilingual BERT</h2>
-<h1 id="ernie">ERNIE</h1>
-<p>Enhanced Representation through Kownledge Integration(ERNIE)，它是特别为中文设计的。</p>
-<h1 id="gpt">GPT</h1>
-<p>Generative Pre-Training(GPT)，GPT 是 transformer 的 decoder。GPT 与 BERT 类似。 56:45 讲了第一个位置的 attention token。</p>
+<li>模型种类
+<ul>
+<li>AR：自回归模型（Autoregressive Language Model）是典型的语言模型。显然 AR 是更符合 NLP 的做法。但是它的缺点是只能单向，尽管可以近似双向，但是终究不是正道。</li>
+<li>AE：自编码模型（Autoencoding Language Model）不是语言模型。支持双向。</li>
+</ul></li>
+</ol></div></div></div>
+<a id="more"></a>
+<h1 id="word-embedding">Word Embedding</h1>
+<p>18 年末的 BERT 模型无疑是将 NLP 带入了预训练时代。但是在此之前，NLP 领域中，其实早已经有了预训练的概念。它就是 word embedding。</p>
+<p>word embedding 其实是更早以前（2003 年）神经语言模型（NNLM）的副产物，但是当时并没有引起多大的关注，直到 2013 年，深度学习进军 NLP 领域时，才焕发异彩。</p>
+<p>彼时，由谷歌率先打响了第一枪。于 2013 年发布 Word2Vec 工具包，值得注意的是 Word2Vec 只是一个工具包，但是同时它也是该词向量的代称，并且也可以算做一种单词转为向量的算法名称，所以初学者在接触它时可能会感到困惑。接下来我简略地介绍一下 word2vec 与 NNLM 的不同之处。</p>
+<p>word2vec 与 NNLM 有稍许的不同。<strong>1）目的不同</strong>：word2vec 的目的是产生词向量；NNLM 的目的是实现一个神经语言模型，但是它同样具有词向量，只不过这个词向量是副产品。<strong>2）模型算法不同</strong>：为了产生词向量，word2vec 使用了两种算法，即 CBOW 和 skip-gram。其中 CBOW 使用单词 <span class="math inline">\(w_t\)</span> 的上下文来预测其本身；而 skip-gram 与之相反，使用单词 <span class="math inline">\(w_t\)</span> 来预测其上下文。由于 NNLM 的主要目的是构建语言模型，所以它使用的算法是传统的条件概率，即已知前面若干词的情况下，预测下一个单词的概率。<strong>3）模型结构不同</strong>：为了更快地训练词向量，word2vec 舍弃了隐藏层，那么它的模型架构为 input -&gt; output。而 NNLM 还是使用了隐藏层，即 input -&gt; hidden -&gt; output。</p>
+<p>此外，由于 word2vec 出现的时间处于深度学习的早期，彼时，GPU 还未在深度学习领域中大量投入使用。所以它还附带了两种高效的解码算法，即 hierarchical softmax 和 negative sampling。不过由于现在 GPU、TPU 大行其道，hierarchical softmax 已经不常见了，这是因为它主要是为了加速 softmax，从而设计出的一个近似算法，主要思想是使用层次的二元分类逼近多元分类。</p>
+<p>此后还出了不少的词向量算法，例如 2014 年的 GloVe，2016 年的 fasttext。但是无论是哪种算法都存在着一个致命的问题，就是无法处理一词多义，<em>题外话，可能一义多词也无法处理</em>。<strong>那么后起之秀 ELMo、BERT 就是来缓解这一问题的。</strong></p>
+<p>由于本篇的主旨是预训练模型，所以 word embedding 就讲到这了。最后需要补充一点的是，个人认为 CBOW 算法与后来 BERT 使用的 MLM 模型类似，都是使用周围词来预测其中的某一个词。</p>
+<div class="note warning"><p>我为什么之前说 BERT 之类的模型只是起到了<strong>缓解</strong>的作用呢？因为我认为这些预训练模型本质上并没有解决一词多义的问题，它只不过将 word2vec 的静态词向量转化为了动态词向量。它依靠上下文的力量重新构建了一个词向量。我感觉这种做法有种说不出来的奇怪。</p>
+</div>
+<h1 id="elmo">ELMo</h1>
+<div class="note info"><p><a href="https://arxiv.org/pdf/1802.05365.pdf" target="_blank" rel="noopener">论文地址</a>，<a href="https://allennlp.org/elmo" target="_blank" rel="noopener">预训练模型地址</a></p>
+</div>
+<p>与以前的预训练词向量不同，ELMo<span class="citation" data-cites="peters2018deep">(Peters et al. 2018)</span> 的词向量表征是一个基于整条输入语句的函数。这个函数就是一个 biLM。下面将先绍1）什么是 biLM，2）ELMo 词向量是如何产生的，3）如何在下游任务使用，4）biLM 的具体结构。</p>
+<h2 id="bilm">biLM</h2>
+<p>biLM 实际上就是一个双向的语言模型，使用 LSTM 进行构建。给定一个包含 N 个符号的序列 <span class="math inline">\((t_1, t_2, \cdots, t_N)\)</span>，<strong>前向语言模型</strong>计算给定 <span class="math inline">\((t_1, \cdots, t_{k-1})\)</span> 时 <span class="math inline">\(t_k\)</span> 的条件概率：</p>
+<p><span class="math display">\[p(t_1, t_2, \cdots, t_N) = \prod^N_{k=1} p(t_k | t_1, t_2, \cdots, t_{k-1})
+\]</span></p>
+<p>在深度学习领域中，计算该概率的普遍做法是将<strong>上下文<font color='red'>无关</font></strong>的词向量 <span class="math inline">\(x^{LM}_k\)</span>（可以是任意种类的词向量）输入 <span class="math inline">\(L\)</span> 层的前向 LSTM。那么在位置 <span class="math inline">\(k\)</span>，<strong>每层</strong> LSTM 都会输出一个<strong>上下文<font color='red'>相关</font></strong>的表征 <span class="math inline">\(\overrightarrow{h}^{LM}_{k, j}\)</span>，其中 <span class="math inline">\(j = 1, \cdots, L\)</span>。最后，<span class="math inline">\(\overrightarrow{h}^{LM}_{k, j}\)</span> 通过一个 softmax layer 去预测下一个符号 <span class="math inline">\(t_{k+1}\)</span>。</p>
+<p>之前说了 ELMo 使用的是一个双向语言模型，所以自然还有一个<strong>后向语言模型</strong>。它与前向语言模型类似，基于下文预测当前位置的单词：</p>
+<p><span class="math display">\[p(t_1, t_2, \cdots, t_N ) = \prod^N_{k=1} (t_k | t_{k+1}, t_{k+2}, \cdots, t_N)
+\]</span></p>
+<p>可以发现这个双向语言模型其实类似于 word2vec 的 CBOW 算法。那么这个双向语言模型的优化目标就是二者的对数似然损失之和：</p>
+<p><span class="math display">\[\sum^N_{k=1}(log(p(t_k | t_1, t_2, \cdots, t_{k-1}; \theta_x, \overrightarrow{\theta}_{LSTM}, \theta_s)) + log(p(t_k | t_{k+1}, t_{k+2}, \cdots, t_N; \theta_x, \overleftarrow{\theta}_{LSTM}, \theta_s)))
+\]</span></p>
+<p>其中 <span class="math inline">\(\theta_x\)</span> 是词向量，<span class="math inline">\(\theta_{LSTM}\)</span> 是 LSTM 的参数，<span class="math inline">\(\theta_s\)</span> 是 softmax layer 的参数。<strong>注意 ELMo 中，正反向的参数是独立的。</strong>下一节将介绍一个与先前工作不同的新方法：<strong>将 biLM 学到的表征线性组合起来。</strong></p>
+<div class="note danger"><p>需要注意的是这里使用的双向模型与我们平常用的双向模型略微不同，主要在优化对象上。我们平时搭的语言模型，是将两个方向的特征融合（无论是拼接还是相加），然后优化一个目标。而 ELMo 是分别优化正向和反向的目标。</p>
+<p>这应该主要是为了防止模型可以看见“未来”。因为正向的特征融入了反向的特征，就相当于看见了“未来”，反之亦然。</p>
+<p>直观来讲，对于字符 <span class="math inline">\(t_k\)</span>，我们融合两个特征之后，优化目标就只剩一个，那么相当于从损失函数开始在同时优化正反向的单词。然而分开优化的话，虽然也是从损失函数同时优化正反向的单词，但是实际上是分成两路进行优化。</p>
+<p>ELMo 优化对象与传统语言模型不同的重点应该是：<strong>为什么要设计成正反向输入不同，而不是像传统的双向语言模型一样，正反向的唯一区别只是输入的顺序不同？</strong>可能答案是人家只是正好这么设计的。。。</p>
+</div>
+<h2 id="elmo词向量">ELMo词向量</h2>
+<p>对于每一个符号 <span class="math inline">\(t_k\)</span>，<span class="math inline">\(L\)</span> 层的 biLM 可以计算得到 <span class="math inline">\(2L + 1\)</span> 个表征（<strong>ELMo 好像就用了两层，所以应该为 <span class="math inline">\(2L + 1 = 5\)</span>，那么当正反向表征合并之后，就只有三个表征了，即 <span class="math inline">\(x^{LM}, h^{LM}_{k, 1}, h^{LM}_{k, 2}\)</span></strong>）：</p>
+<p><span class="math display">\[
+\begin{align}
+R_k = &amp; \{x^{LM}_k, \overrightarrow{h}^{LM}_{k, j}, \overleftarrow{h}^{LM}_{k, j} | j = 1, \cdots, L\} \\
+= &amp; \{h^{LM}_{k, j} | j = 0, \cdots, L\}
+\end{align}
+\]</span></p>
+<p>其中 <span class="math inline">\(h^{LM}_0\)</span> 是词向量层的表征 <span class="math inline">\(x^{LM}\)</span>，<span class="math inline">\(h^{LM}_{k, j} = [\overrightarrow{h}^{LM}_{k, j}; \overleftarrow{h}^{LM}_{k, j}]\)</span></p>
+<p>在下游任务，ELMo 将多层表征融合进一个向量中，<span class="math inline">\(ELMo_k = E(R_k; \theta_e)\)</span>。最简单的做法，是只取最上层的表征。即 <span class="math inline">\(ELMo_k = h^{LM}_{k, j}\)</span>，这也是比较普遍的做法。更通用的做法是对所有层计算一个特定于任务的加权和：</p>
+<p><span class="math display">\[ELMo^{task} = \gamma^{task} \sum^L_{j = 0} s^{task}_j h^{LM}_{k, j}
+\]</span></p>
+<p>其中 <span class="math inline">\(\gamma^{task}\)</span> 是一个特定于任务的缩放因子，<span class="math inline">\(s^{task}_j\)</span> softmax 标准化权重（注意，这是一个可学习的参数）。其中 <span class="math inline">\(\gamma\)</span> 对优化过程起到非常重要的作用，详见论文中的附加材料。</p>
+<h2 id="如何在下游任务中使用">如何在下游任务中使用</h2>
+<p>一般来说，对于监督 NLP 模型的通用做法是：将上下文无关的词向量（可以是预训练的、字符级的、来自 CNN 的等等类型）输入进一个模型得到一个上下文敏感的表征，通常是 bi-RNN，CNN或者是线性层。</p>
+<p>关于下游任务具体使用哪种模型还是有很多选择的，论文中提到可以使用 RNN、CNN或者线性层。但是由于预训练模型本身就比较大，一些内存小点的服务器可能无法再支撑后面接一个 RNN 之类的大型神经网络了。所以实战的时候可以自行调节。</p>
+<p>那么如何将 ELMo 加入进这个监督模型呢？<strong>首先</strong>冻结 biLM 的权重，<strong>然后</strong>拼接词向量 <span class="math inline">\(x_k\)</span> 和 ELMo 的产生的 <span class="math inline">\(ELMo^{task}_k\)</span>，<strong>最后</strong>将 ELMO 增强的表征 <span class="math inline">\([x_k; ELMo^{task}_k]\)</span> 输入进任务相关的 RNN。对于一些任务，不同的组合可能还有提升。由于模型的其余部分不变，ELMo 还可以用在更复杂的结构中。</p>
+<p><strong>简单来说，就是将 ELMo 的权重冻结，然后使用 ELMo 产生的表征去替换任务中原先使用的词向量（例如 ELMo 替换 Glove）。</strong></p>
+<div class="note info"><p>关于具体使用问题，还需要说明一下：</p>
+<ol type="1">
+<li>论文中提到需要冻结 biLM 的权重参数，那么 ELMo 的输入——词向量是否需要冻结呢？论文中并没有给出答案。</li>
+<li><span class="math inline">\(ELMo^{token}_k\)</span> 本身就包含了 <span class="math inline">\(x_k = ELMo^{token}_0\)</span>，怎么还需要再拼接成 <span class="math inline">\([x_k; ELMo^{task}_k]\)</span>？</li>
+</ol>
+</div>
+<h2 id="bilm的具体结构">biLM的具体结构</h2>
+<p>biLM 的结构与 A、B（由于一个人的名字不是英文，无法复制，我就简称 A、B 了，具体是谁可以去原文看） 的工作一样（大致应该是引入了 char-level 的信息），但是改成了支持双向的联合训练，以及在 LSTM 各层中加入残差连接。</p>
+<p>biLM 使用的是 CNN-BIG-LSTM，考虑到模型的复杂度对下游任务的影响，作者对原模型的参数减了半。最后模型使用 2 层双向的 LSTM（4096 个隐藏单元，512 维）以及一个在一二层之间的残差连接层。输入是 2048 个的 n-gram 级卷积 filter，512 维。</p>
+<p>与之相反，传统的词向量只是提供一个一层的表征。</p>
+<h2 id="elmo的缺点">ELMo的缺点</h2>
+<ol type="1">
+<li>使用的是自回归语言模型（Autoregressive LM），缺点是只能看上文或者下文。尽管 ELMo 使用了两个正反向的自回归来近似捕获上下文，但是这终究只是近似。</li>
+<li>ELMo 官方推荐把它当做冻结的词向量用，那么就无法微调了，这样可能使得词向量无法适应自己的任务。（后续听说不微调确实要好，可以参考<a href="https://arxiv.org/pdf/1903.05987" target="_blank" rel="noopener" title="To Tune or Not to Tune? Adapting Pretrained Representations to Diverse Tasks">论文</a>，我是在知乎上看到这篇论文的）
+<ul>
+<li>那么这种冻结词向量而不去微调的思想，最直观的体现就是在 <span class="math inline">\(\gamma^{task}\)</span> 这个参数上。。。要自己根据任务去调，那还不如直接微调。那么问题又来了，为什么 ELMo 不能微调呢？我认为有以下几点：
+<ol type="1">
+<li>微调的本质是更新预训练模型中所有的参数，而 LSTM 可能对这样的更新不支持。想想是不是平时做实验 LSTM 就一层？现在 ELMo 搞得这么复杂，可能会同时出现梯度爆炸和梯度消失。
+<ul>
+<li>如果定住预训练模型中的参数，但是开放最底层上下文无关的词向量，这也是不可行的。因为预训练模型没有收到词向量更新的反馈，词向量是更新了，但是预训练模型中的参数没有适应。</li>
+</ul></li>
+</ol></li>
+</ul></li>
+<li>无法更改词表的内容</li>
+<li>有人认为还有个缺点是用了 LSTM，没用 Transformer。。。</li>
+</ol>
+<h1 id="bert">BERT</h1>
+<div class="note info"><p><a href="https://arxiv.org/pdf/1810.04805.pdf" target="_blank" rel="noopener">论文地址</a>，<a href="https://github.com/google-research/bert#pre-trained-models" target="_blank" rel="noopener">预训练模型地址</a></p>
+</div>
+<p>BERT 分为两步：预训练和微调，其中预训练是 google 已经做好的，那么我们只需要做微调即可。</p>
+<p>在微调阶段，首先要做的是加载所有预训练好的参数，然后使用下游任务的标签数据更新所有的参数。每种任务都有独立的微调模型，即使它们使用的是相同的预训练参数。这里的微调模型应该指的是架构，比如分类模型就用 <code>[CLS]</code>，序列标注就用语句本身。</p>
+<p><strong>BERT 的一个独特特性就是对于不同的任务，它都有一个统一的结构。</strong>不过在预训练结构与最终的下游任务结构有一点略微的差异。</p>
+<h2 id="模型结构">模型结构</h2>
+<p>几乎与 Transformer encoder 相同，<span class="math inline">\(BERT_{BASE}\)</span>: L=12, H=768, A=12, Total Parameters=110M，<span class="math inline">\(BERT_{LARGE}\)</span>: L=24, H=1024, A=16, Total Parameters=340M。其中 <span class="math inline">\(BERT_{BASE}\)</span> 的参数里与 GPT 一样，是为了做对比。</p>
+<p>为了处理多样的下游任务，模型可以接受一条语句或者一个语句对（问答对）。<strong>在 BERT 中，一个句子可以是一段任意跨度的连续文本，不一定真的是一条语句。</strong></p>
+<p>BERT 使用 wordpiece 词嵌入，其词表大小为 30000。</p>
+<p>每条序列的首个符号总是为 <code>[CLS]</code>，它的隐藏状态输出将用于分类任务。由于语句对将被打包为一个序列，为了区分二条语句，首先用 <code>[SEP]</code> 分隔二者，其次为每一个符号添加一个学习好的嵌入（<strong>位置编码</strong>），以此判断究竟是哪个句子。那么，<strong>对于一个给定的符号，它的输入表征是对应的词嵌入和位置编码之和。</strong></p>
+<p>文章后续将以 <span class="math inline">\(E\)</span> 表示输入的词嵌入，<code>[CLS]</code> 的隐藏向量表示为 <span class="math inline">\(C \in \mathbb{R}^H\)</span>，每个符号的隐藏向量表示为 <span class="math inline">\(T_i \in \mathbb{R}^H\)</span>。</p>
+<h2 id="预训练bert">预训练BERT</h2>
+<p>与 ELMo 和 GPT 不同，BERT 使用的双向语言模型。</p>
+<h3 id="masked-lm">Masked LM</h3>
+<p>直觉上来讲，有理由相信<strong>深层双向模型</strong>比<strong>从左到右</strong>或者<strong>浅层的从左到右以及从右到左的拼接模型</strong>要好。不幸的是，标准的语言模型只能做到捕获一个方向的语言特征。</p>
+<p>为了训练一个深层的双向语言模型，BERT 以一定概率（论文中为 15%）随机地掩盖输入语句中的部分符号（论文中，这里的符号指 wordpiece 符号），然后预测那些符号。这被称为“masked LM”（MLM），在文学领域这被称为完形填空（Cloze）。与 denoising auto-encoders (Vincent et al., 2008) 相比，BERT 只是预测被掩盖的单词，而不是重构整个输入。</p>
+<p>尽管 MLM 实现了双向的预训练模型，但是<strong>它有一个缺点就是引入了预训练和微调阶段的不一致性，因为 <code>[MASK]</code> 没有出现在微调阶段</strong>。为了缓解这一症状，BERT 不是为每条句子都进行替换。80% 替换，10% 替换成一个随机的符号，10% 不做变换。</p>
+<h3 id="nsp">NSP</h3>
+<p>许多重要的下游任务都基于理解两个句子之间的关系，例如 QA 和 NLI，而这并不是语言模型能捕捉到的。为了模型能够理解句子之间的联系，BERT 还额外训练了 NSP 任务。具体来讲，对于句子 A 和 B，50% 的情况，B 就是 A 的下一句；50% 的情况，A 的下一句是一条随机语句。</p>
+<h2 id="微调bert">微调BERT</h2>
+<p>只需要输入语句或者语句对，然后得到表征。输出的符号表征可以用于序列标注或者问答，<code>[CLS]</code> 表征可以输入一个输出层用以分类。</p>
+<h2 id="缺点">缺点</h2>
+<ol type="1">
+<li>输入是 wordpiece，这让基于 span 的任务很难办。对于命名体识别来说，每一个符号都有对应的标签，如果用 wordpiece 算法会打乱标签。BERT 的做法是只使用 sub-word 的第一个部分的隐藏状态，详情可参考<a href="https://github.com/huggingface/transformers/issues/323" target="_blank" rel="noopener">issue1</a>。需要注意，BERT 的论文应该做过修改，issue1 中提到的段落，现在应该在 5.3。原文我放在下面。然而这只能解决命名体识别任务，无法解决基于位置信息的任务，例如基于 index-based Ptr 模型做的任务。
+<ul>
+<li><blockquote>
+<p>We use the representation of the first sub-token as the input to the token-level classifier over the NER label set.</p>
+</blockquote></li>
+</ul></li>
+<li>只能输入两句话</li>
+<li>使用 MLM 语言模型，虽然使用了一定技巧去缓解，但是有点像拆东墙补西墙</li>
+<li>感觉 NSP 任务没什么用</li>
+</ol>
 <h1 id="参考资料">参考资料</h1>
 <ol type="1">
 <li><a href="https://mp.weixin.qq.com/s?__biz=MjM5ODkzMzMwMQ==&amp;mid=2650411744&amp;idx=2&amp;sn=1db39446e4e91299f9ba8c1d4eeb5983&amp;chksm=becd94ba89ba1dac221e2092cb1a12ecb1a5a704b6ae5cebd2649adc1a903355b95567ab484e&amp;mpshare=1&amp;scene=1&amp;srcid=&amp;sharer_sharetime=1572502447054&amp;sharer_shareid=68f8b84d7a46cc216b0afdc45278d6be&amp;key=8a4bbb55c6c79ce6c9104a6cfe5de2a3d1b8fa801c35e22e74b62948f50b6684c3f06195815e8712080977db6cec80fca5adfc95c9bc6fa848b8e68b41df13d8610e8d6c283ee2392b30de5cdae504bb&amp;ascene=1&amp;uin=MTQxMTUzMzk2MA%3D%3D&amp;devicetype=Windows+10&amp;version=62070152&amp;lang=en&amp;pass_ticket=pZijWLQmmCpNBDcjO4cUImTRWv1ZWLG4JENv1zUqjhXnUnShPGofPjjR%2Bkv1cozV" target="_blank" rel="noopener">BERT 的演进和应用</a></li>
 <li><a href="https://zhuanlan.zhihu.com/p/145119424" target="_blank" rel="noopener">万字长文带你纵览 BERT 家族</a></li>
 <li><a href="https://arxiv.org/pdf/2003.07278.pdf" target="_blank" rel="noopener">A Survey on Contextual Embeddings</a></li>
 <li><a href="https://arxiv.org/pdf/2003.08271.pdf" target="_blank" rel="noopener">Pre-trained Models for Natural Language Processing: A Survey</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/49271699" target="_blank" rel="noopener">从 Word Embedding 到 Bert 模型 — 自然语言处理中的预训练技术发展史</a></li>
 </ol>
+<h1 id="隐藏章节">隐藏章节</h1>
+<ol type="1">
+<li>创新方面
+<ol type="1">
+<li>将 ELMo 的 LSTM 改为了 Transformer</li>
+<li>将 GPT 的单向改为了双向</li>
+<li>引入了 MLM，但是实际上跟 CBOW 差不多</li>
+<li>引入了 NSP，但是实际上感觉没什么卵用</li>
+</ol></li>
+<li>模型结构方面
+<ol type="1">
+<li>最大长度限制为 512，压根处理不了长文本，即使能处理也是狗尾续貂。有些论文中使用额外的技巧进行处理，但是这样就比较强行。</li>
+<li>其高预测准确率到底来源于预训练？还是数据量大？还是依靠的底层模型？</li>
+<li>只能输入两句话？这是什么奇葩设定？</li>
+<li>由于 Transformer 完全没有语序的概念，自然 BERT 也没有，所以需要用位置编码。而这个位置编码毕竟不是原汁原味的语序位置。</li>
+</ol></li>
+<li>任务方面
+<ol type="1">
+<li>无法完成语言生成任务</li>
+</ol></li>
+<li>对 NLP 的影响
+<ol type="1">
+<li>我最近发现很多人上来就是一个 BERT，后面就接一些任务导向的线性层。这使得很多人对它太过依赖，没有思考如何提取特征才最好。</li>
+</ol></li>
+<li>硬件方面
+<ol type="1">
+<li>模型太大了，如果使用 BERT 提取特征，接下来的分类层只能设计小一点</li>
+</ol></li>
+<li>营销方面
+<ol type="1">
+<li>太会吹了</li>
+</ol></li>
+</ol>
+<h1 id="bibliography" class="unnumbered">参考文献</h1>
+<div id="refs" class="references">
+<div id="ref-peters2018deep">
+<p>Peters, Matthew E, Mark Neumann, Mohit Iyyer, Matt Gardner, Christopher Clark, Kenton Lee, and Luke Zettlemoyer. 2018. “Deep Contextualized Word Representations.” <em>arXiv Preprint arXiv:1802.05365</em>.</p>
+</div>
+</div>
 
     </div>
 
@@ -449,14 +528,6 @@
 
 
       <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/%E7%B3%BB%E5%88%97/" rel="tag"># 系列</a>
-              <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag"># 学习笔记</a>
-              <a href="/tags/ELMO/" rel="tag"># ELMO</a>
-              <a href="/tags/BERT/" rel="tag"># BERT</a>
-              <a href="/tags/ERNIE/" rel="tag"># ERNIE</a>
-              <a href="/tags/GPT/" rel="tag"># GPT</a>
-          </div>
 
         
 
@@ -464,12 +535,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/posts/871c22e7.html" rel="prev" title="李宏毅强化学习算法笔记">
-      <i class="fa fa-chevron-left"></i> 李宏毅强化学习算法笔记
+    <a href="/posts/4d5445b6.html" rel="prev" title="nlp 领域的一些有用的模型">
+      <i class="fa fa-chevron-left"></i> nlp 领域的一些有用的模型
     </a></div>
       <div class="post-nav-item">
-    <a href="/posts/c05e7547.html" rel="next" title="各种乘法的表示符号">
-      各种乘法的表示符号 <i class="fa fa-chevron-right"></i>
+    <a href="/posts/5bd6d30b.html" rel="next" title="Self-paced Curriculum Learning">
+      Self-paced Curriculum Learning <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -529,14 +600,14 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#elmo"><span class="nav-number">1.</span> <span class="nav-text">ELMO</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bert"><span class="nav-number">2.</span> <span class="nav-text">BERT</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#如何使用bert"><span class="nav-number">2.1.</span> <span class="nav-text">如何使用BERT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bert学到了什么"><span class="nav-number">2.2.</span> <span class="nav-text">BERT学到了什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#multilingual-bert"><span class="nav-number">2.3.</span> <span class="nav-text">Multilingual BERT</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ernie"><span class="nav-number">3.</span> <span class="nav-text">ERNIE</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#gpt"><span class="nav-number">4.</span> <span class="nav-text">GPT</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#word-embedding"><span class="nav-number">1.</span> <span class="nav-text">Word Embedding</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#elmo"><span class="nav-number">2.</span> <span class="nav-text">ELMo</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#bilm"><span class="nav-number">2.1.</span> <span class="nav-text">biLM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#elmo词向量"><span class="nav-number">2.2.</span> <span class="nav-text">ELMo词向量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何在下游任务中使用"><span class="nav-number">2.3.</span> <span class="nav-text">如何在下游任务中使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bilm的具体结构"><span class="nav-number">2.4.</span> <span class="nav-text">biLM的具体结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#elmo的缺点"><span class="nav-number">2.5.</span> <span class="nav-text">ELMo的缺点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bert"><span class="nav-number">3.</span> <span class="nav-text">BERT</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#模型结构"><span class="nav-number">3.1.</span> <span class="nav-text">模型结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#预训练bert"><span class="nav-number">3.2.</span> <span class="nav-text">预训练BERT</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#masked-lm"><span class="nav-number">3.2.1.</span> <span class="nav-text">Masked LM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nsp"><span class="nav-number">3.2.2.</span> <span class="nav-text">NSP</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#微调bert"><span class="nav-number">3.3.</span> <span class="nav-text">微调BERT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缺点"><span class="nav-number">3.4.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#隐藏章节"><span class="nav-number">5.</span> <span class="nav-text">隐藏章节</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bibliography"><span class="nav-number">6.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="朱冲䶮"
-      src="/images/avatar.jpg">
+      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
   <div class="site-description" itemprop="description">记录</div>
 </div>
@@ -545,24 +616,23 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">168</span>
+          <span class="site-state-item-count">181</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-count">31</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-          
-        <span class="site-state-item-count">95</span>
+        <span class="site-state-item-count">105</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">214.1k</span>
+      	<span class="site-state-item-count">246k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
@@ -631,7 +701,20 @@
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
-  </div>
+  </div><!--
+樱花特效 
+最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
+然后在 github 上搜了一下，发现有个 jquery-sakura，但是这个插件用起来很麻烦，经过测试，我的博客上无法使用。
+后来发现是两个不同的插件，只是刚好特效一样。
+于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
+原地址为：https://cangshui.net/2372.html
+-->
+<script>
+	var pathname = window.location.pathname;
+	if(pathname == '/' || pathname == '/index.html'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+</script>
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script src="/lib/my-utils.js"></script>
 <script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -740,27 +823,6 @@
       });
   </script>
 <!-- calendar widget -->
-
-    <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-calendar/calendar.min.js"></script>
-    <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-calendar/languages.min.js"></script>
-    <script>
-    $(function() {
-        $('#CloudCalendar').aCalendar('zh-CN',
-            $.extend(
-                '', {
-                    single:true,
-                    root:'/calendar/'
-                }
-            )
-        );
-    });	
-	/*
-	* 2020.08.10: 由本博客博主自定义加入，由于不是很需要日历最下面的前进后退键，其与日历最上方的功能键冲突，所以在此将其删除
-	*/
-	$(function(){
-		$('#CloudCalendar tfoot').remove()
-	})
-	</script>
 
 
 </body>

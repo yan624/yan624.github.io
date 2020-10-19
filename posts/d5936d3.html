@@ -40,7 +40,7 @@
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9ARNN%20%E5%90%84%E7%A7%8D%E6%9C%BA%E5%88%B6/bahdanau-attention.gif">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9ARNN%20%E5%90%84%E7%A7%8D%E6%9C%BA%E5%88%B6/global-attention.gif">
 <meta property="article:published_time" content="2019-05-23T09:07:17.000Z">
-<meta property="article:modified_time" content="2020-08-14T09:38:02.199Z">
+<meta property="article:modified_time" content="2020-10-06T06:06:18.686Z">
 <meta property="article:author" content="朱冲䶮">
 <meta property="article:tag" content="系列">
 <meta property="article:tag" content="GRU">
@@ -63,7 +63,7 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_621sfmh583s.css" />
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
 
 
   <title>深度学习算法（三）：RNN 各种机制 | 博客</title>
@@ -151,12 +151,7 @@
   </li>
         <li class="menu-item menu-item-时间线">
 
-    <a href="/categories/timeline/" rel="section"><i class="iconfont icon-timeline fa-fw"></i>时间线</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">95</span></a>
+    <a href="/categories/assorted/timeline/" rel="section"><i class="iconfont icon-timeline fa-fw"></i>时间线</a>
 
   </li>
         
@@ -171,7 +166,7 @@
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">168</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">181</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -246,7 +241,7 @@
     <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/d5936d3.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
       <meta itemprop="name" content="朱冲䶮">
       <meta itemprop="description" content="记录">
     </span>
@@ -273,7 +268,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-08-14 17:38:02" itemprop="dateModified" datetime="2020-08-14T17:38:02+08:00">2020-08-14</time>
+                <time title="修改时间：2020-10-06 14:06:18" itemprop="dateModified" datetime="2020-10-06T14:06:18+08:00">2020-10-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -302,14 +297,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>16k</span>
+              <span>17k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>14 分钟</span>
+              <span>15 分钟</span>
             </span>
 
         </div>
@@ -393,11 +388,19 @@
 <p>In computer science, beam search is a heuristic search algorithm that explores a graph by expanding the most promising node in a limited set. Beam search is an optimization of best-first search that reduces its memory requirements. Best-first search is a graph search which orders all partial solutions (states) according to some heuristic. But in beam search, only a predetermined number of best partial solutions are kept as candidates.[1] It is thus a greedy algorithm.</p>
 <p>The term &quot;beam search&quot; was coined by Raj Reddy of Carnegie Mellon University in 1977.[2]</p>
 </blockquote>
+<p>相较于 beam search 算法，还有两类算法，即贪婪搜索（greedy search）和穷举搜索（exhaustive search）。<strong>穷举搜索可以确保生成的结果是全局最优的</strong>，但是它的搜索空间非常大，可能是个天文数字。<em>Q：为什么是全局最优的？A：废话，都穷举每一个可能了，还不是全局最优？</em>而<strong>贪婪搜索只能确保局部最优</strong>，它的思想是，在每一个解码步，只取概率最大的那个字。</p>
+<p>需要注意的是，每次取概率最大的字并不是最优的。举个简单的例子。<strong>1）</strong>使用贪婪搜索，取 A，B 两个字，概率分别为 0.5 和 0.6，则 AB 的概率为 0.3；<strong>2）</strong>现在使用 beam search，取 C，D 两个字，概率分别为 0.4 和 0.9，则 AB 的概率为 0.36。可以看到在使用 beam search 算法时，第一个字并没有选择概率最大的 A，而是选择了第二大的 C，但是最终结果却是 beam search 要好。这是由于第二个字的概率是不同的。<em>注意：AC两字的概率之和小于 1，BD 两字的概率之和大于 1。这是因为 BD 二字不在同一个 beam 上，而 AC 在。</em></p>
+<p>TODO</p>
+<p>之前在知乎上看到一个问题：“怎么解决 beam search 的局部最优问题？”我笑了，这 tm 怎么解决，想解决只能上穷举搜索。</p>
+<h3 id="实战感悟">实战感悟</h3>
+<div class="note "><p>
 <del>
-但是我个人在实验之中使用 beam search 算法，发现并没有任何效果，甚至结果更差。
+我个人在实验之中使用 beam search 算法，发现并没有任何效果，甚至结果更差。
 </del>
+</p>
 <p>2020.06.22 更新：上一段写下约半个礼拜之后，我又去想了一下，如果别人大规模应用这个算法，没道理没效果。所以经过一番代码检查后，我发现了问题。原来之前的代码对于隐藏状态的处理有问题，我将 beam size 大小的预测结果视作了线性的，而不是固定它们的隐藏状态。</p>
 <p>具体来说，例如时间步 <span class="math inline">\(t\)</span> 的预测结果为单词 <span class="math inline">\(I\)</span>，并且隐藏状态为 <span class="math inline">\(h_I\)</span>。接下来假设我们已知下一个时间步的预测结果为 <span class="math inline">\(\{love, hate, told\}\)</span>（注：单词预测结果由 Beam Search 产生，并非词表大小只是 3），则它们的隐藏状态输入都应该是 <span class="math inline">\(h_I\)</span> 才是正确的，但是我将它们的隐藏状态输入分别设置为了 <span class="math inline">\(h_I, h_{love}, h_{hate}\)</span>，其中 <span class="math inline">\(h_{love}, h_{hate}\)</span> 是将 love 和 hate 输入 LSTM 后得到的隐藏状态。所以简单来说就是代码写错了……在循环遍历的时候写错了……实际上大概可以提升 3 个左右的百分点。</p>
+</div>
 <h3 id="参考资料-3">参考资料</h3>
 <ol type="1">
 <li><a href="https://zhuanlan.zhihu.com/p/28048246" target="_blank" rel="noopener">seq2seq中的beam search算法过程</a></li>
@@ -421,7 +424,7 @@
 <li><em><a href="https://yan624.github.io/posts/5e27260b.html#seq2seq">吴恩达李宏毅综合学习笔记：RNN入门</a></em></li>
 </ol>
 <h1 id="attention">Attention</h1>
-<p>按照国（Ge）际（Ren）惯例，结论写在前面。下面几张图片分别是 Bahdanau attention、Luong attention（global attention + input-feeding） 以及 local attention 的执行步骤。</p>
+<p>按照国（Ge）际（Ren）惯例，结论写在前面。下面几张图片分别是 Bahdanau attention、Luong attention（global attention + input-feeding） 以及 local attention 的执行步骤。（注：下面两幅图可能画有点问题，2020.08.24 留）</p>
 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/bahdanau-attention.gif" title="bahdanau attention" alt="bahdanau attention" /></div><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/global-attention.gif" title="global attention" alt="global attention" /></div></div></div>
 <p>Attention 机制由 Bahdanau 在 2015 年，首次由<a href="https://arxiv.org/pdf/1409.0473.pdf" target="_blank" rel="noopener" title="Neural Machine Translation by Jointly Learning to Align and Translate"><span class="citation" data-cites="bahdanau2014neural">(Bahdanau, Cho, and Bengio 2014)</span></a>提出，它是机器翻译领域第一篇应用 attention 机制的论文，应该也是在 NLP 领域中，所有应用 attention 机制的论文中最有名的（<em>事实上 attention 机制早就有人提出了</em>）。RNN 领域的第一篇文章为《Recurrent Models of Visual Attention》。</p>
 <p>在此论文中 Attention 机制基于 encoder-decoder 模型（<em>现在已经不止于此了，有多种变体</em>）。本人的理解是 encoder-decoder 模型是一种范式，它主要由两个部分组成，即 encoder 和 decoder。encoder 负责提取输入的特征，decoder 负责运用提取出的特征并且生成（v.）任务所需要的目标。而在 NLP 领域之中，由于输入以及输出都是一段序列，所以又可以被称为 Sequence-to-Sequence 模型，简写为 Seq2Seq。所以 encoder-decoder 其实还可以有其他的变体，例如在图像描述（Image Caption）生成领域，encoder 就是一个 CNN，decoder 是一个 RNN。</p>
@@ -446,19 +449,19 @@ softmax(W_a h_t) &amp; \text{location} \\
 <p>global attention 相较于 Bahdanau attention，虽然在灵感上与其相似，但是细微的不同之处还是反映了其是如何从原模型简化和泛化的。</p>
 <ol type="1">
 <li>global attention 简单地使用了最上一层 LSTM 的隐藏状态。而 Bahdanau attention 使用的是 bi-encoder 正反向隐藏状态和 uni-decoder 隐藏状态的拼接版；</li>
-<li>global attention 的计算路线是 <span class="math inline">\(h_t \to a_t \to c_t \to \tilde{h}_t\)</span>，即在时间步 <span class="math inline">\(t\)</span>，先由 decoder 生成隐藏状态 <span class="math inline">\(h_t\)</span>，将使用它计算 attention <span class="math inline">\(c_t\)</span>，最后再使用 <span class="math inline">\(c_t\)</span> 与 <span class="math inline">\(h_t\)</span> 拼接获得用于生成单词的 <span class="math inline">\(\tilde{h}_t\)</span>。这更简单；
+<li>global attention 的计算路线是 <span class="math inline">\(h_t \to a_t \to c_t \to \tilde{h}_t\)</span>，即在时间步 <span class="math inline">\(t\)</span>，先由 decoder 生成隐藏状态 <span class="math inline">\(h_t\)</span>，然后使用它计算 attention <span class="math inline">\(c_t\)</span>，最后再使用 <span class="math inline">\(c_t\)</span> 与 <span class="math inline">\(h_t\)</span> 拼接获得用于生成单词的 <span class="math inline">\(\tilde{h}_t\)</span>。
 <ul>
 <li>而 Bahdanau attention 的计算路线是 <span class="math inline">\(h_{t-1} \to a_t \to c_t \to h_t\)</span>，它使用的是上一个时间步 <span class="math inline">\(t-1\)</span> 的隐藏状态 <span class="math inline">\(h_{t-1}\)</span>，然后计算 attention <span class="math inline">\(c_t\)</span>，最后将 <span class="math inline">\(c_t\)</span> 输入进 decoder 获得当前时间步 <span class="math inline">\(t\)</span> 的隐藏状态 <span class="math inline">\(h_t\)</span>。</li>
 </ul></li>
 </ol>
-<p>上述 attention 的计算路线取自<span class="citation" data-cites="luong2015effective">(Luong, Pham, and Manning 2015)</span>的论文。但是我认为这样的曲线无法直观的体现出 attention 的计算路线，所以我重画了它：</p>
+<p>上述 Bahdanau attention 的计算路线取自<span class="citation" data-cites="luong2015effective">(Luong, Pham, and Manning 2015)</span>的论文。但是我认为这样的曲线无法直观的体现出 attention 的计算路线，所以我重画了它：</p>
 <p><span class="math display">\[
 \begin{cases}
-[y_{t-1}; \tilde{h}_{t-1}], h_{t-1} \to h_t \to a_t \to c_t \to \tilde{h}_t \to predict &amp; \text{(global attention)} \\
-[y_{t-2}; c_i], h_{t-2} \to h_{t-1} \to a_t \to c_t \to h_t \to predict &amp; \text{(bahdanau attention)}\\
+[y_{t-1}; \tilde{h}_{t-1}], h_{t-1} \to h_t \to a_t \to c_t \to tanh([c_t; h_t]) \to \tilde{h}_t \to predict &amp; \text{(global attention)} \\
+h_{t-1} \to a_t \to c_t \to [y_{t-1}; c_t], h_{t-1} \to h_t \to predict &amp; \text{(bahdanau attention)}\\
 \end{cases}
 \]</span></p>
-<p>总的来说，global attention 于 <span class="math inline">\(t\)</span> 时间步，RNN <strong>执行完毕之后</strong>，计算注意力向量 <span class="math inline">\(c_t\)</span>，并用其与隐藏状态 <span class="math inline">\(h_t\)</span> 合并进一步预测结果；而 Bahdanau attention 则是在 <span class="math inline">\(t\)</span> 时间步，RNN <strong>执行之前</strong>，计算注意力向量 <span class="math inline">\(c_t\)</span>，并将其输入进 RNN，得到隐藏状态 <span class="math inline">\(h_t\)</span>，最后预测结果。</p>
+<p>总的来说，global attention 于 <span class="math inline">\(t\)</span> 时间步，RNN <strong>执行完毕之后</strong>，计算注意力向量 <span class="math inline">\(c_t\)</span>，并用其与隐藏状态 <span class="math inline">\(h_t\)</span> 合并得到 <span class="math inline">\(\tilde{h}_t\)</span> 从而预测结果；而 Bahdanau attention 则是在 <span class="math inline">\(t\)</span> 时间步，RNN <strong>执行之前</strong>，计算注意力向量 <span class="math inline">\(c_t\)</span>，并将其<strong>输入进 RNN</strong>，得到隐藏状态 <span class="math inline">\(h_t\)</span>，最后<strong>直接</strong>预测结果。可以通过观察上面两组公式的对比，或者上文的描述得知，<strong>Luong attention 在计算得到当前的隐藏状态之后又做了一系列的操作才去执行预测，而 Bahdanau attention 则是在获得隐藏状态之后直接执行预测</strong>。</p>
 <p>此外，无论是 Global 还是下节介绍 local 方法，注意决策都是独立执行的，这是一个次优解。鉴于在标准的机器翻译中，在翻译阶段通常需要维护一个 coverage 集，以跟踪哪个源词已被翻译。类似地，在基于注意的 NMT 中，对齐决策应该结合过去的对齐信息。所以该论文提出了 input-feeding 方法，指的是将注意力向量 <span class="math inline">\(\tilde{h}_t\)</span> 与下一个时间步的输入做拼接。这种连接方式有两方面作用：<strong>1）</strong>使模型充分了解到以前的对齐选择；<strong>2）</strong>创建了一个水平和垂直跨度非常深的网络。</p>
 <h2 id="local-attention">local attention</h2>
 <p>文中指出，local attention 与机器视觉领域<span class="citation" data-cites="gregor2015draw">(Gregor et al. 2015)</span>等提出的 selective attention mechanism 类似。</p>
@@ -468,6 +471,23 @@ softmax(W_a h_t) &amp; \text{location} \\
 <p>Predictive alignment(<strong>local-p</strong>)：模型预测对齐位置为 <span class="math inline">\(p_t = S \cdot sigmoid(v^T_p tanh(W_p h_t))\)</span></p>
 <h2 id="self-attention">self-attention</h2>
 <p>self-attention 主要应用在 Transformer 中，详见 <a href="https://yan624.github.io/posts/16ad4ed4.html">深度学习算法（四）：Transformer</a>。</p>
+<h2 id="mask">mask</h2>
+<div class="note warning"><p>注意：无论是哪种 attention，它们的本质都是在计算当前词的信息时，去融入其他词的信息。而我们一般都会使用 <code>&lt;PAD&gt;</code> 去补足不等长的序列，并且 <code>&lt;PAD&gt;</code> 符号是没有意义的，所以我们需要在计算 attention score 时，额外地将 <code>&lt;PAD&gt;</code> 位置的 score 置为负无穷。那么该 score 进入 softmax 之后，会被 <span class="math inline">\(e^{-\infty}\)</span> 置为 0。</p>
+在 pytorch 中，一般可以写成像下面的代码一样。其中 context_len 是上下文的长度，一般是 <code>[1, batch_size]</code> 的维度。
+<figure class="highlight reasonml">
+<table>
+<tr>
+<td class="gutter">
+<pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre>
+</td>
+<td class="code">
+<pre><span class="line">def get<span class="constructor">_mask(<span class="params">self</span>, <span class="params">context_len</span>)</span>:</span><br><span class="line">    max_len = torch.max(context_len)</span><br><span class="line">    mask = <span class="literal">[[<span class="number">1</span> <span class="identifier">for</span> <span class="identifier">_</span> <span class="identifier">in</span> <span class="identifier">range</span>(<span class="identifier">max_len</span>)]</span> for _ <span class="keyword">in</span> context_len]</span><br><span class="line">    mask = torch.<span class="constructor">BoolTensor(<span class="params">mask</span>)</span></span><br><span class="line">    for which_batch, seq_len <span class="keyword">in</span> enumerate(context_len):</span><br><span class="line">        mask<span class="literal">[<span class="identifier">which_batch</span>, : <span class="identifier">seq_len</span>]</span> = <span class="number">0</span></span><br><span class="line">    <span class="keyword">if</span> torch.cuda.is<span class="constructor">_available()</span>:</span><br><span class="line">        mask = mask.cuda<span class="literal">()</span></span><br><span class="line">    return mask</span><br><span class="line"></span><br><span class="line">score.masked<span class="constructor">_fill_(<span class="params">mask</span>=<span class="params">self</span>.<span class="params">get_mask</span>(<span class="params">context_len</span>)</span>, value=<span class="built_in">float</span>('-inf'))</span><br><span class="line">softmax_score = <span class="module-access"><span class="module"><span class="identifier">F</span>.</span></span>softmax(score, dim=<span class="number">2</span>)</span><br></pre>
+</td>
+</tr>
+</table>
+</figure>
+<p>如果你想试验一下，可以自己初始化一下 score 和 context_len。</p>
+</div>
 <h2 id="参考资料-5">参考资料</h2>
 <ol type="1">
 <li><a href="https://www.zhihu.com/question/68482809/answer/264632289" target="_blank" rel="noopener">参考文章</a>；</li>
@@ -496,7 +516,7 @@ softmax(W_a h_t) &amp; \text{location} \\
 <p>随后，<strong><em><span class="citation" data-cites="gulcehre2016pointing">(Gulcehre et al. 2016)</span></em></strong> 进一步完善了 Ptr，并且在文本摘要任务和翻译任务上进行了实践。该论文的思想还是类似于<strong>门控机制</strong>（gated mechanism）。例如在翻译任务中，在生成时，模型自动地选择 attention 机制或者 Ptr 机制去生成单词。选择的方式为 <span class="math inline">\(p_z \times p_l\)</span> 以及 <span class="math inline">\((1 - p_z) \times p_w\)</span>，其中 <span class="math inline">\(p_z\)</span> 代表 <span class="math inline">\(\{0, 1\}\)</span> 。这样就可以动态地选择其中的一个机制去生成。</p>
 <p>但是需要注意的是， <span class="math inline">\(p_z\)</span> 是 sigmoid 函数的输出，所以其为 <span class="math inline">\([0, 1]\)</span>。解决办法是以 0.5 为阈值，基于规则手动调整。这篇论文的思路感觉还是 LSTM 那种路子，毕竟那时还是 2016 年，深度学习涅槃了才 3 年。下面介绍的 Pointer-Generator 虽然也用的是门控机制，但是多了一点花样。它将两个概率分布合并了，而不是两个中挑一个。</p>
 <h2 id="soft-gated-copy">Soft-gated Copy</h2>
-<p>不久之后，[gu2016incorporating] 提出了 <strong>CopyNet</strong>，其本质上还是 Ptr。这篇论文我没看过，但是我在知乎的<a href="https://zhuanlan.zhihu.com/p/73590690" target="_blank" rel="noopener">某篇专栏</a>里看过对它的介绍，感觉从直觉上看，还是 Pointer-Generator 那篇更合理。专栏的作者也认为这篇论文的算法有点奇怪。不过，这篇论文的模型基本上算是起了一个开头作用，pointer-generator 与这个模型类似。</p>
+<p>不久之后，<span class="citation" data-cites="gu2016incorporating">(Gu et al. 2016)</span> 提出了 <strong>CopyNet</strong>，其本质上还是 Ptr。这篇论文我没看过，但是我在知乎的<a href="https://zhuanlan.zhihu.com/p/73590690" target="_blank" rel="noopener">某篇专栏</a>里看过对它的介绍，感觉从直觉上看，还是 Pointer-Generator 那篇更合理。专栏的作者也认为这篇论文的算法有点奇怪。不过，这篇论文的模型基本上算是起了一个开头作用，pointer-generator 与这个模型类似。</p>
 <p><span class="citation" data-cites="see2017get">(See, Liu, and Manning 2017)</span> 提出了 <strong><em>Pointer-Generator</em></strong>，该模型是现在比较常见的 Ptr，具体也不用多讲，相信看下面的公式之后，应该就能意会是哪个模型了。</p>
 <p><span class="math display">\[P_{final} = P_{gen} \times P_{vocab} + (1 - P_{gen}) \times P_{history}
 \]</span></p>
@@ -547,6 +567,9 @@ softmax(W_a h_t) &amp; \text{location} \\
 </div>
 <div id="ref-gregor2015draw">
 <p>Gregor, Karol, Ivo Danihelka, Alex Graves, Danilo Jimenez Rezende, and Daan Wierstra. 2015. “Draw: A Recurrent Neural Network for Image Generation.” <em>arXiv Preprint arXiv:1502.04623</em>.</p>
+</div>
+<div id="ref-gu2016incorporating">
+<p>Gu, Jiatao, Zhengdong Lu, Hang Li, and Victor OK Li. 2016. “Incorporating Copying Mechanism in Sequence-to-Sequence Learning.” <em>arXiv Preprint arXiv:1603.06393</em>.</p>
 </div>
 <div id="ref-gulcehre2016pointing">
 <p>Gulcehre, Caglar, Sungjin Ahn, Ramesh Nallapati, Bowen Zhou, and Yoshua Bengio. 2016. “Pointing the Unknown Words.” <em>arXiv Preprint arXiv:1603.08148</em>.</p>
@@ -692,14 +715,14 @@ softmax(W_a h_t) &amp; \text{location} \\
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#gru"><span class="nav-number">1.</span> <span class="nav-text">GRU</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">1.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lstm"><span class="nav-number">2.</span> <span class="nav-text">LSTM</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#seq2seq"><span class="nav-number">3.</span> <span class="nav-text">Seq2Seq</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#free-running和teacher-forcing"><span class="nav-number">3.1.</span> <span class="nav-text">free-running和teacher-forcing</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料-1"><span class="nav-number">3.1.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#seq2seq的缺陷"><span class="nav-number">3.2.</span> <span class="nav-text">Seq2Seq的缺陷</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料-2"><span class="nav-number">3.2.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#beam-search"><span class="nav-number">3.3.</span> <span class="nav-text">Beam Search</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料-3"><span class="nav-number">3.3.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#scheduled-sampling"><span class="nav-number">3.4.</span> <span class="nav-text">Scheduled Sampling</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#训练经验"><span class="nav-number">3.4.1.</span> <span class="nav-text">训练经验</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料-4"><span class="nav-number">3.5.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#attention"><span class="nav-number">4.</span> <span class="nav-text">Attention</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基础知识"><span class="nav-number">4.1.</span> <span class="nav-text">基础知识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hard-attention"><span class="nav-number">4.2.</span> <span class="nav-text">hard attention</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#global-attention"><span class="nav-number">4.3.</span> <span class="nav-text">global attention</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#local-attention"><span class="nav-number">4.4.</span> <span class="nav-text">local attention</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#self-attention"><span class="nav-number">4.5.</span> <span class="nav-text">self-attention</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料-5"><span class="nav-number">4.6.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pointer-networks"><span class="nav-number">5.</span> <span class="nav-text">Pointer Networks</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#index-based"><span class="nav-number">5.1.</span> <span class="nav-text">Index-based</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hard-gated-copy"><span class="nav-number">5.2.</span> <span class="nav-text">Hard-gated Copy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#soft-gated-copy"><span class="nav-number">5.3.</span> <span class="nav-text">Soft-gated Copy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">5.4.</span> <span class="nav-text">参考文献</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#memory-network"><span class="nav-number">6.</span> <span class="nav-text">Memory Network</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考文献-1"><span class="nav-number">7.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#gru"><span class="nav-number">1.</span> <span class="nav-text">GRU</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">1.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lstm"><span class="nav-number">2.</span> <span class="nav-text">LSTM</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#seq2seq"><span class="nav-number">3.</span> <span class="nav-text">Seq2Seq</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#free-running和teacher-forcing"><span class="nav-number">3.1.</span> <span class="nav-text">free-running和teacher-forcing</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料-1"><span class="nav-number">3.1.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#seq2seq的缺陷"><span class="nav-number">3.2.</span> <span class="nav-text">Seq2Seq的缺陷</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料-2"><span class="nav-number">3.2.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#beam-search"><span class="nav-number">3.3.</span> <span class="nav-text">Beam Search</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实战感悟"><span class="nav-number">3.3.1.</span> <span class="nav-text">实战感悟</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料-3"><span class="nav-number">3.3.2.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#scheduled-sampling"><span class="nav-number">3.4.</span> <span class="nav-text">Scheduled Sampling</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#训练经验"><span class="nav-number">3.4.1.</span> <span class="nav-text">训练经验</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料-4"><span class="nav-number">3.5.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#attention"><span class="nav-number">4.</span> <span class="nav-text">Attention</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基础知识"><span class="nav-number">4.1.</span> <span class="nav-text">基础知识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hard-attention"><span class="nav-number">4.2.</span> <span class="nav-text">hard attention</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#global-attention"><span class="nav-number">4.3.</span> <span class="nav-text">global attention</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#local-attention"><span class="nav-number">4.4.</span> <span class="nav-text">local attention</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#self-attention"><span class="nav-number">4.5.</span> <span class="nav-text">self-attention</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mask"><span class="nav-number">4.6.</span> <span class="nav-text">mask</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料-5"><span class="nav-number">4.7.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pointer-networks"><span class="nav-number">5.</span> <span class="nav-text">Pointer Networks</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#index-based"><span class="nav-number">5.1.</span> <span class="nav-text">Index-based</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hard-gated-copy"><span class="nav-number">5.2.</span> <span class="nav-text">Hard-gated Copy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#soft-gated-copy"><span class="nav-number">5.3.</span> <span class="nav-text">Soft-gated Copy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">5.4.</span> <span class="nav-text">参考文献</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#memory-network"><span class="nav-number">6.</span> <span class="nav-text">Memory Network</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考文献-1"><span class="nav-number">7.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="朱冲䶮"
-      src="/images/avatar.jpg">
+      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
   <div class="site-description" itemprop="description">记录</div>
 </div>
@@ -708,24 +731,23 @@ softmax(W_a h_t) &amp; \text{location} \\
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">168</span>
+          <span class="site-state-item-count">181</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-count">31</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-          
-        <span class="site-state-item-count">95</span>
+        <span class="site-state-item-count">105</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">214.1k</span>
+      	<span class="site-state-item-count">246k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
@@ -794,7 +816,20 @@ softmax(W_a h_t) &amp; \text{location} \\
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
-  </div>
+  </div><!--
+樱花特效 
+最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
+然后在 github 上搜了一下，发现有个 jquery-sakura，但是这个插件用起来很麻烦，经过测试，我的博客上无法使用。
+后来发现是两个不同的插件，只是刚好特效一样。
+于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
+原地址为：https://cangshui.net/2372.html
+-->
+<script>
+	var pathname = window.location.pathname;
+	if(pathname == '/' || pathname == '/index.html'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+</script>
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script src="/lib/my-utils.js"></script>
 <script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -903,27 +938,6 @@ softmax(W_a h_t) &amp; \text{location} \\
       });
   </script>
 <!-- calendar widget -->
-
-    <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-calendar/calendar.min.js"></script>
-    <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-calendar/languages.min.js"></script>
-    <script>
-    $(function() {
-        $('#CloudCalendar').aCalendar('zh-CN',
-            $.extend(
-                '', {
-                    single:true,
-                    root:'/calendar/'
-                }
-            )
-        );
-    });	
-	/*
-	* 2020.08.10: 由本博客博主自定义加入，由于不是很需要日历最下面的前进后退键，其与日历最上方的功能键冲突，所以在此将其删除
-	*/
-	$(function(){
-		$('#CloudCalendar tfoot').remove()
-	})
-	</script>
 
 
 </body>

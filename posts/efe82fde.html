@@ -23,17 +23,18 @@
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="词嵌入模型 以前在训练语言模型的时候使用one-hot编码，现在使用的是word embedding。但是这样理解其实稍微有点问题，因为如果这样理解，就难以解释embedding层是用来干嘛的了。 正解： 其实现在使用的还是one-hot，在keras框架中输入的就是one-hot编码。我以前一直是上面的那种理解，所以我一直不懂为什么要输入one-hot，而不直接输入word embedding">
+  <meta name="description" content="以前在训练语言模型的时候使用one-hot编码，现在使用的是word embedding。但是这样理解其实稍微有点问题，因为如果这样理解，就难以解释embedding层是用来干嘛的了。 其实现在使用的还是one-hot，在keras框架中输入的就是one-hot编码。我以前一直是上面的那种理解，所以我一直不懂为什么要输入one-hot，而不直接输入word embedding。众所周知，one-">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【NLP算法】（一）word2vec">
 <meta property="og:url" content="https://yan624.github.io/posts/efe82fde.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="词嵌入模型 以前在训练语言模型的时候使用one-hot编码，现在使用的是word embedding。但是这样理解其实稍微有点问题，因为如果这样理解，就难以解释embedding层是用来干嘛的了。 正解： 其实现在使用的还是one-hot，在keras框架中输入的就是one-hot编码。我以前一直是上面的那种理解，所以我一直不懂为什么要输入one-hot，而不直接输入word embedding">
+<meta property="og:description" content="以前在训练语言模型的时候使用one-hot编码，现在使用的是word embedding。但是这样理解其实稍微有点问题，因为如果这样理解，就难以解释embedding层是用来干嘛的了。 其实现在使用的还是one-hot，在keras框架中输入的就是one-hot编码。我以前一直是上面的那种理解，所以我一直不懂为什么要输入one-hot，而不直接输入word embedding。众所周知，one-">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2019-07-10T08:08:57.000Z">
-<meta property="article:modified_time" content="2020-07-17T15:13:03.926Z">
+<meta property="article:modified_time" content="2020-08-25T07:27:27.418Z">
 <meta property="article:author" content="朱冲䶮">
 <meta property="article:tag" content="系列">
+<meta property="article:tag" content="4me">
 <meta property="article:tag" content="word2vec">
 <meta name="twitter:card" content="summary">
 
@@ -50,7 +51,7 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_621sfmh583s.css" />
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
 
 
   <title>【NLP算法】（一）word2vec | 博客</title>
@@ -138,12 +139,7 @@
   </li>
         <li class="menu-item menu-item-时间线">
 
-    <a href="/categories/timeline/" rel="section"><i class="iconfont icon-timeline fa-fw"></i>时间线</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">95</span></a>
+    <a href="/categories/assorted/timeline/" rel="section"><i class="iconfont icon-timeline fa-fw"></i>时间线</a>
 
   </li>
         
@@ -158,7 +154,7 @@
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">168</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">181</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -222,12 +218,46 @@
     	
     
     	
+        <!-- 弹窗插件 -->
+    		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
+        <script type="text/javascript" src="/lib/spop/spop.min.js"></script>
+        <!--判断此文是否为特殊的文章-->
+        <script>
+          var templateSentence = '这是条不可能出现的弹窗提示。';
+          if('4me' == '学习笔记')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记。';
+          else if('4me' == '4me')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
+          spop({
+            template: templateSentence,
+            group: 'tips',
+            position  : 'bottom-center',
+            style: 'success',
+            autoclose: 5500,
+            onOpen: function () {
+              //这里设置灰色背景色
+            },
+            onClose: function() {
+              //这里可以取消背景色
+              /*spop({
+                template: 'ε = = (づ′▽`)づ',
+                group: 'tips',
+                position  : 'bottom-center',
+                style: 'success',
+                autoclose: 1500
+              });*/
+            }
+          });
+        </script>
+    	
+    
+    	
     
 
     <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/efe82fde.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
       <meta itemprop="name" content="朱冲䶮">
       <meta itemprop="description" content="记录">
     </span>
@@ -254,7 +284,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-17 23:13:03" itemprop="dateModified" datetime="2020-07-17T23:13:03+08:00">2020-07-17</time>
+                <time title="修改时间：2020-08-25 15:27:27" itemprop="dateModified" datetime="2020-08-25T15:27:27+08:00">2020-08-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -283,14 +313,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>928</span>
+              <span>1.9k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -302,16 +332,42 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="词嵌入模型">词嵌入模型</h1>
-<p>以前在训练语言模型的时候使用one-hot编码，现在使用的是word embedding。但是这样理解其实稍微有点问题，因为如果这样理解，就难以解释embedding层是用来干嘛的了。 正解： <strong>其实现在使用的还是one-hot</strong>，在keras框架中输入的就是one-hot编码。我以前一直是上面的那种理解，所以我一直不懂为什么要输入one-hot，而不直接输入word embedding。众所周知，one-hot编码乘上词嵌入矩阵可以得到词向量，这步操作看起来有点像查表。但其实这里用到了<strong>预训练</strong>。 词嵌入矩阵是预先训练好的，其实就是一个权重矩阵，而我们做的就是初始化了输入层的权重矩阵，只不过以前是随机初始化，而现在是直接初始化为词嵌入矩阵。embedding层只用了一步就获得了词的特征，但以前需要训练。所以我们算是使用了预训练的方法，直接获得了embedding层，但是相比于cv领域，目前我们还无法初始化高层的权重。 <strong>总结一下就是词嵌入矩阵是input层到embedding层的权重矩阵。</strong> - <strong>缺陷</strong><br />
-多义词问题无法解决，所以导致word embedding一直效果不好。 以下引用自<a href="https://zhuanlan.zhihu.com/p/49271699" target="_blank" rel="noopener">专栏</a> Word Embedding本质上是个静态的方式，所谓静态指的是训练好之后每个单词的表达就固定住了，以后使用的时候，不论新句子上下文单词是什么，这个单词的Word Embedding不会跟着上下文场景的变化而改变，所以对于比如Bank这个词，它事先学好的Word Embedding中混合了几种语义 ，在应用中来了个新句子，即使从上下文中（比如句子包含money等词）明显可以看出它代表的是“银行”的含义，但是对应的Word Embedding内容也不会变，它还是混合了多种语义。这是为何说它是静态的，这也是问题所在。 <a id="more"></a></p>
-<h1 id="原理">原理</h1>
-<p><a href="https://blog.csdn.net/itplus/article/details/37969519" target="_blank" rel="noopener">word2vec 数学原理目录</a> <a href="https://www.cnblogs.com/peghoty/p/3857839.html" target="_blank" rel="noopener">word2vec 数学原理</a> <a href="http://www.hankcs.com/nlp/word2vec.html" target="_blank" rel="noopener">word2vec 原理推导与代码分析</a></p>
+        <div class="note "><p>以前在训练语言模型的时候使用one-hot编码，现在使用的是word embedding。但是这样理解其实稍微有点问题，因为如果这样理解，就难以解释embedding层是用来干嘛的了。</p>
+<p><strong>其实现在使用的还是one-hot</strong>，在keras框架中输入的就是one-hot编码。我以前一直是上面的那种理解，所以我一直不懂为什么要输入one-hot，而不直接输入word embedding。众所周知，one-hot编码乘上词嵌入矩阵可以得到词向量，这步操作实际上就是<strong>查表</strong>。</p>
+<p>词嵌入矩阵是预先训练好的，其实就是一个权重矩阵，而我们做的就是初始化了<strong>输入层</strong>（即 Embedding layer）的权重矩阵。区别为：以前对参数随机初始化，现在使用了预训练的词向量。所以我们算是使用了预训练的方法，直接获得了embedding层，但是相比于cv领域，目前我们还无法初始化高层的权重。</p>
+<p><strong>总结一下：词嵌入矩阵就是输入值 x 到输入层 Embedding layer 的权重矩阵。</strong></p>
+<ul>
+<li><strong>缺陷</strong>：多义词问题无法解决，所以导致 word embedding 一直效果不好。</li>
+</ul>
+</div>
+<h1 id="算法">算法</h1>
+<p>我认为关于 word2vec 这个算法，<strong><a href="https://www.cnblogs.com/peghoty/p/3857839.html" target="_blank" rel="noopener">这篇</a>博客</strong>已经讲得很清楚了，就不再重复造轮子了。注意，word2vec 发表的时间是 2013 年，该博文发表的时间是 2014 年，所以算是深度学习刚萌芽的时候。博主用了相对现在比较古老的知识来进行讲解，这些知识都是很有用的。因为处于如今的深度学习时代，可能会忽略有些远古知识，这篇文章也算是帮我们复习了一遍。</p>
+<p>其中介绍的背景知识点包括：贝叶斯公式、哈夫曼树；统计语言模型、 n-gram 模型、神经语言模型。然后就是讲解了 word2vec。最后讲了一些源码细节（注：这部分好像也有点用，因为我在知乎上看到，有个外国小哥认为论文中的 word2vec 和实际发布的 word2vec 算法工具包完全就不一样，论文里面简化了太多东西）。</p>
+<p>防止这篇文章挂掉，我把该文章的名字也写下，网上应该有其他人做了备份。博文名称为<strong>《word2vec 中的数学原理详解</strong>》，作者分别发表在了 CSDN 和博客园。</p>
+<p>文章中，第 1、2、3 章都是前置知识，如果已经对自己掌握的知识有自信的话，可以跳过。</p>
+<div class="note warning"><p>word2vec 模型是没有隐藏层的，而 NNLM 是有隐藏层的。</p>
+</div>
+<a id="more"></a>
+<h2 id="cbow">CBOW</h2>
+<p>CBOW 算法的本质是通过周围词来预测中间词。优化的是函数 <span class="math inline">\(p(w | context(w))\)</span>，其中 <span class="math inline">\(context(w)\)</span> 代表 <span class="math inline">\(w\)</span> 周围的词，具体窗口大小取决于自己。</p>
+<h2 id="skip-gram">skip-gram</h2>
+<p>skip-gram 算法的本质是通过中间词来预测周围词。优化的是函数 <span class="math inline">\(p(context(w) | w)\)</span>，其中 <span class="math inline">\(context(w)\)</span> 代表 <span class="math inline">\(w\)</span> 周围的词，具体窗口大小取决于自己。</p>
+<h1 id="训练方法">训练方法</h1>
+<h2 id="hierarchical-softmax">Hierarchical Softmax</h2>
+<p>hierarchical softmax 在输出层会<strong>事先</strong>构建一棵哈夫曼树，这里面涉及到了很多 tricks，具体可以看最后一章《源码细节》。简答来说，就是通过计算词频预先构建一棵哈夫曼树。</p>
+<p>模型在最后的输出层本质上是执行了若干个<strong>二元分类</strong>。一般来说，模型在输出层会计算 <span class="math inline">\(z = a \cdot W\)</span>，其中 <span class="math inline">\(W\)</span> 代表向量维度乘类别大小。但是由于 hierarchical softmax 是执行二元分类，所以 <span class="math inline">\(W \in \mathbb{R}^{h\_dim \times 2}\)</span></p>
+<p>而 hierarchical softmax 优化的对象本质上是一个哈夫曼编码，例如字“猫”的哈夫曼编码为 <code>1001</code>，那么就需要执行 4 次二元分类，每次优化的对象为 1、0、0、1。最后只需要把四次分类的结果相乘就是 <span class="math inline">\(p(猫 | context(猫)) = \prod_i p_i\)</span> 其中 <span class="math inline">\(p_i\)</span> 代表所做的所有二元分类。</p>
+<p>了解了函数之后，就可以对其优化了。与其它的分类任务一样，我们使用交叉熵损失函数。剩下的就是优化部分了，说白了就是求导，可以看上面提到的文章。</p>
+<h2 id="negative-sampling">Negative Sampling</h2>
+<p>这一节还是直接看上面的文章吧，需要的计算太多了，懒得拿过来算一遍了。需要注意的是，初看 negative sampling 感觉很难，因为放眼望去全是公式，但是静下心来看个 5-10 分钟，还是感觉挺简单的。（PS：本人数学学渣）</p>
+<h1 id="参考资料">参考资料</h1>
+<ul>
+<li><a href="https://www.cnblogs.com/peghoty/p/3857839.html" target="_blank" rel="noopener">word2vec 数学原理</a>（<a href="https://blog.csdn.net/itplus/article/details/37969519" target="_blank" rel="noopener">CSDN 版</a>）</li>
+<li><a href="http://www.hankcs.com/nlp/word2vec.html" target="_blank" rel="noopener">word2vec 原理推导与代码分析</a>（这个其实基本上就是上一篇文章的复制版，但是加了一点对各种编程语言实现的评价）</li>
+<li><a href="https://www.zhihu.com/question/40309730/answer/86453469" target="_blank" rel="noopener">词向量，LDA，word2vec 三者的关系是什么？</a></li>
+</ul>
 <h1 id="训练词向量得到的-accuracy">训练词向量得到的 accuracy</h1>
 <p>word2vec 的 accuracy 貌似没卵用。我反正用 keras 搭的 CBOW 模型，accuracy 极低，只有 1%不到。 <a href="https://www.zhihu.com/question/271782463" target="_blank" rel="noopener">参考</a></p>
-<h1 id="自己训练-word2vec-还是直接用别人的">自己训练 word2vec 还是直接用别人的</h1>
-<p><a href="https://bbs.csdn.net/topics/392144812?list=4625705" target="_blank" rel="noopener">参考</a> 可能还是自己训练 word2vec 比较好，用别人的 word2vec 不太行。</p>
-<h1 id="cbow">CBOW</h1>
 
     </div>
 
@@ -354,6 +410,7 @@
       <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/%E7%B3%BB%E5%88%97/" rel="tag"># 系列</a>
+              <a href="/tags/4me/" rel="tag"># 4me</a>
               <a href="/tags/word2vec/" rel="tag"># word2vec</a>
           </div>
 
@@ -428,14 +485,14 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#词嵌入模型"><span class="nav-number">1.</span> <span class="nav-text">词嵌入模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#原理"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#训练词向量得到的-accuracy"><span class="nav-number">3.</span> <span class="nav-text">训练词向量得到的 accuracy</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#自己训练-word2vec-还是直接用别人的"><span class="nav-number">4.</span> <span class="nav-text">自己训练 word2vec 还是直接用别人的</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#cbow"><span class="nav-number">5.</span> <span class="nav-text">CBOW</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#算法"><span class="nav-number">1.</span> <span class="nav-text">算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#cbow"><span class="nav-number">1.1.</span> <span class="nav-text">CBOW</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#skip-gram"><span class="nav-number">1.2.</span> <span class="nav-text">skip-gram</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#训练方法"><span class="nav-number">2.</span> <span class="nav-text">训练方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#hierarchical-softmax"><span class="nav-number">2.1.</span> <span class="nav-text">Hierarchical Softmax</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#negative-sampling"><span class="nav-number">2.2.</span> <span class="nav-text">Negative Sampling</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">3.</span> <span class="nav-text">参考资料</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#训练词向量得到的-accuracy"><span class="nav-number">4.</span> <span class="nav-text">训练词向量得到的 accuracy</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="朱冲䶮"
-      src="/images/avatar.jpg">
+      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
   <div class="site-description" itemprop="description">记录</div>
 </div>
@@ -444,24 +501,23 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">168</span>
+          <span class="site-state-item-count">181</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-count">31</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-          
-        <span class="site-state-item-count">95</span>
+        <span class="site-state-item-count">105</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">214.1k</span>
+      	<span class="site-state-item-count">246k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
@@ -530,7 +586,20 @@
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
-  </div>
+  </div><!--
+樱花特效 
+最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
+然后在 github 上搜了一下，发现有个 jquery-sakura，但是这个插件用起来很麻烦，经过测试，我的博客上无法使用。
+后来发现是两个不同的插件，只是刚好特效一样。
+于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
+原地址为：https://cangshui.net/2372.html
+-->
+<script>
+	var pathname = window.location.pathname;
+	if(pathname == '/' || pathname == '/index.html'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+</script>
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script src="/lib/my-utils.js"></script>
 <script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -639,27 +708,6 @@
       });
   </script>
 <!-- calendar widget -->
-
-    <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-calendar/calendar.min.js"></script>
-    <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-calendar/languages.min.js"></script>
-    <script>
-    $(function() {
-        $('#CloudCalendar').aCalendar('zh-CN',
-            $.extend(
-                '', {
-                    single:true,
-                    root:'/calendar/'
-                }
-            )
-        );
-    });	
-	/*
-	* 2020.08.10: 由本博客博主自定义加入，由于不是很需要日历最下面的前进后退键，其与日历最上方的功能键冲突，所以在此将其删除
-	*/
-	$(function(){
-		$('#CloudCalendar tfoot').remove()
-	})
-	</script>
 
 
 </body>

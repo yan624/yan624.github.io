@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="由于该领域涉及太多知识点，本文只涉及 task-oriented dialog system 四大组件之二：SLU 和 DST。其余两项组件 DPL 以及 NLG 将在 xxxx 中给出。值得一提的是，这四个组件也可以两两融合，正好可以分成两部分。但是由 DST 和 DPL 组成的对话管理（Dialog Manager，DM）只能拆开来讲了。 本文是系列文章的第一篇，一开始架构文章的时候没有考虑">
+<meta property="og:type" content="article">
+<meta property="og:title" content="任务完成型对话系统论文调研（一）">
+<meta property="og:url" content="https://yan624.github.io/posts/e0902c9c.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="由于该领域涉及太多知识点，本文只涉及 task-oriented dialog system 四大组件之二：SLU 和 DST。其余两项组件 DPL 以及 NLG 将在 xxxx 中给出。值得一提的是，这四个组件也可以两两融合，正好可以分成两部分。但是由 DST 和 DPL 组成的对话管理（Dialog Manager，DM）只能拆开来讲了。 本文是系列文章的第一篇，一开始架构文章的时候没有考虑">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-02-26T16:21:08.000Z">
+<meta property="article:modified_time" content="2020-10-12T10:12:37.407Z">
+<meta property="article:author" content="朱冲䶮">
+<meta property="article:tag" content="dialogue system">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://yan624.github.io/posts/e0902c9c.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<!--阿里云矢量库样式-->
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
+
+
+  <title>任务完成型对话系统论文调研（一） | 博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">末流炼丹师</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-常用链接">
+
+    <a href="/%E5%B8%B8%E7%94%A8%E9%93%BE%E6%8E%A5" rel="section"><i class="fas fa-bookmark fa-fw"></i>常用链接</a>
+
+  </li>
+        <li class="menu-item menu-item-时间线">
+
+    <a href="/categories/assorted/timeline/" rel="section"><i class="iconfont icon-timeline fa-fw"></i>时间线</a>
+
+  </li>
+        
+            
+  <li class="menu-item menu-item-博客分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>博客分类</a>
+
+  </li>
+
+
+      
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">181</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/e0902c9c.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          任务完成型对话系统论文调研（一）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-02-27 00:21:08" itemprop="dateCreated datePublished" datetime="2020-02-27T00:21:08+08:00">2020-02-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-10-12 18:12:37" itemprop="dateModified" datetime="2020-10-12T18:12:37+08:00">2020-10-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/nlp/" itemprop="url" rel="index"><span itemprop="name">nlp</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>15k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>14 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="note info"><p>由于该领域涉及太多知识点，本文只涉及 task-oriented dialog system 四大组件之二：SLU 和 DST。其余两项组件 DPL 以及 NLG 将在 <a href="#">xxxx</a> 中给出。值得一提的是，这四个组件也可以两两融合，正好可以分成两部分。但是由 DST 和 DPL 组成的对话管理（Dialog Manager，DM）只能拆开来讲了。</p>
+<p>本文是系列文章的第一篇，一开始架构文章的时候没有考虑太多，所以本文到目前为止只是写了一些基础的内容。更多的内容可以移驾<a href="https://yan624.github.io/posts/4ec51203.html">任务完成型对话系统论文调研（二）</a>。</p>
+</div>
+<h1 id="任务完成型对话系统">任务完成型对话系统</h1>
+<div class="note info"><p>可以点击后面对应的按钮，找到各领域论文的详细对比。<a class="btn" href="#slu论文对比"><i class="fa fa-"></i>SLU 论文对比</a><a class="btn" href="#dst论文对比"><i class="fa fa-"></i>DST 论文对比</a></p>
+</div>
+<p>任务完成型对话系统（Task-oriented Dialog System，<strong>TODS</strong>），业界中也被称为口语对话系统（Spoken Dialogue System，<strong>SDS</strong>），下统称为 SDS。</p>
+<h2 id="对话状态与对话动作">对话状态与对话动作</h2>
+<p>对话状态（Dialog State，DS）是 SDS 中的一个重要概念，它贯穿了整个系统的运行过程。要理解 SDS，首先需要从对话状态入手。</p>
+<p>对话状态也被称为信念状态（Belief State），或者对话信念状态（Dialog Belief State）。这是历史问题，一般在以前的模型中称之为对话状态，现在使用深度学习技术的对话系统称之为信念状态<span class="citation" data-cites="zhang2020recent">(Zhang et al. 2020)</span>，不过如今二者混用，下称之为对话状态。<span class="citation" data-cites="zhang2020recent">(Zhang et al. 2020)</span>认为<strong>对话状态由槽值对组成</strong>，以此呈现用户的目的。</p>
+<div class="note danger"><p>需要在此说明很重要的一点。狭义来讲，对话状态指的是槽值对。但是广义来讲，对话状态可以保存任意的对象，因为对话状态的本意是对话的<strong>状态</strong>。例如还可以保存当前对话的轮数、历史的对话动作、是否已经完成用户的任务、是否超时、根据当前轮所拥有的信息从数据库中查到的一系列数据项等。</p>
+</div>
+<p>对话动作（Dialog Action）由用户意图（Intention）和<strong>若干槽值对</strong>（通常只有 1 对）组成。一般来说，槽值对的表示方式为 <code>slot=value</code>。但是实际上还有多种不同的表示方式，例如 <code>slot&gt;value</code>，<code>slot in value</code> 等（<strong>参考 Plato 框架</strong>）。下面如果不做说明，我们还是默认使用 <code>slot=value</code> 的方式。</p>
+<p><strong>值得注意的是，对话状态由槽值对组成，对话动作也由槽值对组成。但是对话状态保存的是对话历史中提到的所有槽值对，而对话动作只保存当前轮提到的若干槽值对。</strong></p>
+<a id="more"></a>
+<p>举个例子，用户：“请帮我预定一个在市中心的餐厅，四人桌，大概晚上 6:30 到。”则对话动作为：</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attribute">intention</span>: <span class="string">'inform'</span>,</span><br><span class="line">  <span class="attribute">sv</span>: &#123;</span><br><span class="line">    <span class="attribute">location</span>: <span class="string">'市中心'</span>,</span><br><span class="line">    <span class="attribute">time</span>: <span class="string">'晚上 6:30'</span>,</span><br><span class="line">    <span class="attribute">num_people</span>: <span class="number">4</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果系统回复：“那么，您需要什么口味呢？”此时系统也拥有对话状态和对话动作，但是暂且不做解释，目前只讲解<strong>用户相关</strong>的对话状态和对话动作。用户回复：“我们吃浙菜。”则此时的对话动作为：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attribute">intention</span>: <span class="string">'inform'</span>,</span><br><span class="line">  sv: &#123;</span><br><span class="line">    food_type: <span class="string">'浙菜'</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此时，系统可能就可以根据以上的条件，到数据库中检索出一个合适的餐厅返回给用户。通过上述的例子可以观察到，我们追踪到的只是用户的动作。然而，其实可以很容易地取出槽值对，从而形成对话状态。那么为什么要多次一举呢？有了对话动作，还要有对话状态。首先，这还是历史遗留问题。一般而言，以前，对话动作都从 SLU 模块获取，然后将其输入进 DST。但是近几年，许多模型都将该模块并入 DST 模块，导致对话动作没什么发挥的空间。其次，在对话状态中可以保存当前轮的对话动作，乍一听这没什么用！但是遇到需要更新槽值的情况时，就有用了。</p>
+<p>例如，当前的对话动作是 <code>inform(food_type='浙菜')</code>，那么我们可以得到对话状态 <code>food_type='浙菜'</code>。但是，如果在后面几轮中，用户突然改变了用餐的类型呢？那么我们的对话状态就是 <code>food_type='*'</code>，而之前的对话动作还是成立的，只不过是用户改了想法而已。如果以后还需要使用到很久以前用户做出的决策，那么就可以用到之前所保存的动作了。<strong>所以这也是对话动作和对话状态之间的一个区别。</strong></p>
+<p>最后需要说明的是，以上提到的名词在不同的框架或者论文中还有不同的叫法。例如，intention 被称为动作；对话动作被称为语义框架（Semantic Frame）等。</p>
+<h2 id="系统动作">系统动作</h2>
+<p>系统动作与用户动作（即上节的状态动作）类似，有区别的是，系统动作包含一些用户所不具有的动作。</p>
+<h1 id="slu">SLU</h1>
+<div class="note warning"><p>注意，由于 2019 年之后大部分论文都默认将 SLU 并入 DST 中，故本节以后将不再更新。</p>
+</div>
+<p><strong>口语理解</strong>（Spoken language Understanding，<strong>SLU</strong>）是 SDS 的重要组成部分。其共由两项任务组成，分别是<strong>意图检测</strong>（Intent detection，<strong>ID</strong>）与<strong>槽填充</strong>（slot-filling，<strong>SF</strong>）。在实际操作中，ID 可以被视为句子分类任务，SF 可以被视为序列标注任务。需要注意的是，有些作者也将 SLU 称为自然语言理解（Natural Language Understanding，NLU），但是由于 NLU 本身在自然语言处理中就是一项比较重要的任务，难免会产生歧义，所以下文统称为 SLU。另外，有时意图检测也被称为<strong>意图识别</strong>（Intent Determination，<strong>ID</strong>）。</p>
+<p>SLU 的实现大致分为两种：1）独立模型（separate models）：训练两个独立的神经网络，一个用于 ID 任务，另一个用于 SF 任务；2）联合模型（joint model）：使用一个神经网络对两个任务进行联合训练，它旨在共享两个任务所捕获的信息。</p>
+<p><em>突然发现已经有人对比过很多论文，详见<a href="https://blog.csdn.net/black_soil/article/details/90405098" target="_blank" rel="noopener">【综述】对话系统中的口语理解技术</a>，就不重复造轮子了。以下大部分都是该文未统计的论文，一般是 2018 年以后的论文。</em></p>
+<p>以下论文按发表时间（或提交到 arxiv 的时间）排序： <div class="tabs" id="slu论文对比"><ul class="nav-tabs"><li class="tab"><a href="#slu论文对比-1">论文介绍</a></li><li class="tab"><a href="#slu论文对比-2">论文瑕瑜</a></li><li class="tab"><a href="#slu论文对比-3">数据集评估对比</a></li></ul><div class="tab-content"><div class="tab-pane" id="slu论文对比-1"><table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>论文</th>
+<th style="text-align: center;">类别</th>
+<th>标签</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a class="btn" href="https://yan624.github.io/posts/81299a9a.html#btn" title="A Joint Learning Framework With BERT for Spoken Language Understanding"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=8907842" target="_blank" rel="noopener" title="19.11"><i class="fa fa-"></i>论文</a> Zhang et al. 2019</td>
+<td style="text-align: center;"></td>
+<td><mark class="label primary">BERT</mark></td>
+</tr>
+<tr class="even">
+<td><a class="btn" href="https://yan624.github.io/posts/81299a9a.html#btn" title="BERT for Joint Intent Classification and Slot Filling"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1902.10909.pdf" target="_blank" rel="noopener" title="19.02"><i class="fa fa-"></i>论文</a> Chen et al. 2019</td>
+<td style="text-align: center;"></td>
+<td><mark class="label primary">BERT</mark></td>
+</tr>
+<tr class="odd">
+<td><a class="btn" href="https://yan624.github.io/posts/81299a9a.html#A-Bi-model-based-RNN-Semantic-Frame-Parsing-Model-for-Intent-Detection-and-Slot-Filling" title="A Bi-model based RNN Semantic Frame Parsing Model for Intent Detection and Slot Filling"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.xilesou.top/pdf/1812.10235.pdf" target="_blank" rel="noopener" title="18.12"><i class="fa fa-"></i>论文</a> <strong><font color='blue'>Wang et al., 2018</font></strong></td>
+<td style="text-align: center;">separate</td>
+<td><mark class="label primary">BiLSTM</mark><br />
+<mark class="label primary">encoder-decoder</mark> <mark class="label info">cross-impact</mark> <mark class="label danger"><strong>hidden state sharing</strong></mark></td>
+</tr>
+<tr class="even">
+<td><a class="btn" href="https://yan624.github.io/posts/81299a9a.html#A-Self-Attentive-Model-with-Gate-Mechanism-for-Spoken-Language-Understanding" title="A Self-Attentive Model with Gate Mechanism for Spoken Language Understanding"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://www.aclweb.org/anthology/D18-1417.pdf" target="_blank" rel="noopener" title="18.11"><i class="fa fa-"></i>论文</a> <strong>Li et al., 2018</strong></td>
+<td style="text-align: center;">joint</td>
+<td><mark class="label primary">BiLSTM</mark><br />
+<mark class="label info">self-attention</mark> <mark class="label success">Intent-Augmented Gating Mechanism</mark></td>
+</tr>
+<tr class="odd">
+<td><a class="btn" href="https://yan624.github.io/posts/81299a9a.html#Attention-Based-Recurrent-Neural-Network-Models-for-Joint-Intent-Detection-and-Slot-Filling" title="Attention-Based Recurrent Neural Network Models for Joint Intent Detection and Slot Filling"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.xilesou.top/pdf/1609.01454.pdf" target="_blank" rel="noopener" title="16.09"><i class="fa fa-"></i>论文</a> Liu and Lane, 2016a</td>
+<td style="text-align: center;">joint</td>
+<td><mark class="label primary">BiLSTM</mark><br />
+<mark class="label primary">encoder-decoder</mark> <mark class="label info">attention</mark></td>
+</tr>
+<tr class="even">
+<td><a class="btn" href="https://yan624.github.io/posts/81299a9a.html#Encoder-decoder-with-focus-mechanism-for-sequence-labelling-based-spoken-language-understanding" title="Encoder-decoder with focus-mechanism for sequence labelling based spoken language understanding"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1608.02097.pdf" target="_blank" rel="noopener" title="16.08"><i class="fa fa-"></i>论文</a> Zhu and Yu, 2017</td>
+<td style="text-align: center;">separate</td>
+<td><mark class="label primary">BiLSTM</mark><br />
+<mark class="label primary">encoder-decoder</mark> <mark class="label info">focus mechanism</mark></td>
+</tr>
+<tr class="odd">
+<td><a class="btn" href="https://yan624.github.io/posts/81299a9a.html#A-Joint-Model-of-Intent-Determination-and-Slot-Filling-for-Spoken-Language-Understanding" title="A Joint Model of Intent Determination and Slot Filling for Spoken Language Understanding"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://pdfs.semanticscholar.org/1f9e/2d6df1eaaf04aebf428d9fa9a9ffc89e373c.pdf" target="_blank" rel="noopener" title="16"><i class="fa fa-"></i>论文</a> <strong>Zhang and Wang, 2016</strong></td>
+<td style="text-align: center;">joint</td>
+<td><mark class="label primary">Bi-GRU</mark><br />
+<mark class="label primary">contextual word embedding</mark></td>
+</tr>
+<tr class="even">
+<td><a class="btn" href="https://yan624.github.io/posts/81299a9a.html#btn"><i class="fa fa-"></i>笔记</a><a class="btn" href="#url"><i class="fa fa-"></i>论文</a> 粗体代表有启发的论文</td>
+<td style="text-align: center;"></td>
+<td><mark class="label primary">BERT</mark>\</td>
+</tr>
+</tbody>
+</table></div><div class="tab-pane" id="slu论文对比-2"><table>
+<thead>
+<tr class="header">
+<th>论文</th>
+<th>解决的问题</th>
+<th>局限性</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Wang et al., 2018</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Li et al., 2018</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Liu and Lane, 2016a</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Zhu and Yu, 2017</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Zhang and Wang, 2016</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>----------------</td>
+<td>粗体代表不错的想法</td>
+<td>斜体代表在以后的论文中此缺点大致已被解决</td>
+</tr>
+</tbody>
+</table></div><div class="tab-pane" id="slu论文对比-3"><p><a class="btn" href="#slu-atis"><i class="fa fa-"></i>ATIS</a></p></div></div></div></p>
+<h2 id="难点未来的工作">难点/未来的工作</h2>
+<p>大多数模型都假定用户的语句只有一个意图分类，但是现实并不是如此。而且在系统覆盖多个领域时，ID 模型的决策空间变得过大。如果以后要新增一个意图，必须重新训练整个模型。</p>
+<p>此外任务完成型对话系统很难找到现成的数据，因为完成任务的系统动作有时可能并不是语言，而是数据库查询语句或是其他动作，这就使得难以界定任务是否完成，导致数据难以爬取。综上所述，SLU 的难点大致如下所示：</p>
+<ul>
+<li>如何解决多意图分类？</li>
+<li>如何解决未知的意图和槽值对？</li>
+<li>如何解决数据稀缺问题？</li>
+</ul>
+<h2 id="相关工作">相关工作</h2>
+<p>传统模型将 SF 和 ID 视为两个独立的任务，许多工作为它们单独一个训练神经网络，并执行预测。这忽略了二者之间的联系。近年来，一些工作开始将二者进行联合训练，共享它们的信息。</p>
+<p>以下将分别介绍独立模型和联合模型的几项工作。</p>
+<h3 id="独立模型">独立模型</h3>
+<ol type="1">
+<li><span class="citation" data-cites="zhu2017encoder">(Zhu and Yu 2017)</span> 对 SF 任务提出了一个模型，使用 encoder-decoder 架构，encoder 部分应用 BiLSTM，deocder 部分应用 uniLSTM，同时结合 attention 机制。但是他们发现 attention 机制对于 SF 任务确实有一定局限性：1）序列标注任务中的输入和输出是对齐（alignment）的，一个单词对应着一个标注，但是 attention 机制的思想却是取所有输入单词的加权和；2）单词的对齐可由 attention 机制学习到，但是在序列标记任务中，很难拟合有限的标注数据（与此不同的是机器翻译更容易获得成对数据，如中英文翻译，而序列标注任务的数据非常稀少，且需要人工标注）。所以他们提出了一种新的 focus 机制。原理是在执行 attention 机制时，放弃其他上下文单词，只关注当前单词。</li>
+<li><strong><span class="citation" data-cites="wang2018bi">(Wang, Shen, and Jin 2018)</span></strong> 认为先前的工作经常将 ID 和 SF 当做两个平行的任务看待，一般使用一个联合模型建模两个认为，他们认为这样无法完全利用二者之间的交叉影响。所以为了考虑二者的交叉影响，虽然他们使用的是独立模型架构，分别为 ID 以及 SF 任务训练一个 LSTM 模型，但是在训练时，<strong>共享了两个模型的隐藏状态</strong>。</li>
+</ol>
+<h3 id="联合模型">联合模型</h3>
+<ol type="1">
+<li><span class="citation" data-cites="mesnil2014using">(Mesnil et al. 2014)</span> 发现使用一个 context word window 可以提高 RNN 在 SF 上的性能。<strong><span class="citation" data-cites="zhang2016joint">(Zhang and Wang 2016)</span></strong> 利用此方法，对 ID 以及 SF 训练了一个联合模型。具体做法是：获得词向量 <span class="math inline">\(e(w_t)\)</span> 后，令 <span class="math inline">\(x^d_t = [e(w_{t-d}), \cdots, e(w_t), \cdots, e(w_{t+d})]\)</span> 重新表示词向量，其中 <span class="math inline">\(e(w_t)\)</span> 代表单词 <span class="math inline">\(w_t\)</span> 的词向量，d 代表窗口半径。此外为了使模型获得更好的性能，在 <span class="math inline">\(x^d_t\)</span> 中还拼接了单词所对应的命名体词向量，比如“New York”的命名体为“B-city I-City”，最终 <span class="math inline">\(x^d_t = [e(w_{t-d}), \cdots, e(w_t), \cdots, e(w_{t+d}), e\prime(n_{t-c}), \cdots, e\prime(n_t), \cdots, e\prime(n_{t+c})]\)</span>，其中 <span class="math inline">\(e\prime(n_t)\)</span> 代表命名体 <span class="math inline">\(n_t\)</span> 的词向量，c 代表窗口半径。在编码部分，句子的信息由 Bidirectional GRU（Bi-GRU）进行提取。在解码部分，一个 decoder 用于输出意图，另一个 decoder 用于输出句子中每个单词的命名体。<strong><em>不过在真实的场景下可能无法获取单词的命名体信息</em></strong>（<em>所以本文不采用 W+N 的特征，而是选用 W 的特征与其他论文作对比</em>）。</li>
+<li><span class="citation" data-cites="liu2016attention">(Liu and Lane 2016)</span> 采用 sequence-to-sequence 模型以及 attention 机制，对于 ID 任务来说，提高了 0.56% 的性能，对于 SF 任务来说，提高了 0.23% 的性能。就实验的结果来看，attention 机制对于序列标注任务来说提升不明显，对于意图分类任务有些许提升。</li>
+<li><strong><span class="citation" data-cites="li2018self">(Li, Li, and Qi 2018)</span></strong> 使用词级别的嵌入和字母级别的嵌入组合而成的词向量进行模型训练。<strong>使用 self-attention 机制获取上下文信息</strong>，然后使用 BiLSTM 产生隐藏状态，此时利用隐藏状态生成意图分类，最后加上<strong>意图增强门控机制</strong>产生槽位标签。</li>
+</ol>
+<h2 id="论文笔记">论文笔记</h2>
+<p>详见 <a href="https://yan624.github.io/posts/81299a9a.html">SLU论文笔记（？-2020）</a>。</p>
+<h2 id="引用">引用</h2>
+<ol type="1">
+<li><a href="https://zhuanlan.zhihu.com/p/83825070" target="_blank" rel="noopener">认真的聊一聊对话系统（任务型、检索式、生成式对话论文与工具串讲）</a></li>
+<li><a href="https://mp.weixin.qq.com/s/DTcwvTx-JDZJqqOI_FRiIQ" target="_blank" rel="noopener">Awesome Paper List of Dialogue Systems</a></li>
+<li><a href="https://www.cnblogs.com/jiangxinyang/p/10789512.html" target="_blank" rel="noopener">任务型对话（一）—— NLU/SLU（意图识别和槽值填充）</a></li>
+<li><a href="https://github.com/sz128/Natural-language-understanding-papers" target="_blank" rel="noopener">Natural-language-understanding-papers</a></li>
+</ol>
+<h1 id="dst">DST</h1>
+<div class="note info"><p>注意，目前 DST 的做法多种多样，(Zhang et al. 2019)<!-- @zhang2019find --> 认为主要可以分为：1）picklist-based；2）span-based。但是也有其他论文(Eric et al. 2019)将其分为：1）fixed-vocabulary；2）open-vocabulary。 <!-- @eric2019multiwoz --> 实际上上述两种分类方法是一一对应的。</p>
+<p>以下将 picklist-based 称为 <code>classify</code>，将 span-based 称为 <code>span</code>。</p>
+</div>
+<table>
+<thead>
+<tr class="header">
+<th>模型</th>
+<th>生成方法</th>
+<th>判别方法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>TripPy<span class="citation" data-cites="heck2020trippy">(Heck et al. 2020)</span></td>
+<td><mark class="label success">discriminative</mark></td>
+<td><mark class="label info">bool</mark> <mark class="label info">span</mark> <mark class="label info">refer</mark> <mark class="label info">inform</mark></td>
+</tr>
+<tr class="even">
+<td>DS-DST<span class="citation" data-cites="zhang2019find">(Zhang et al. 2019)</span></td>
+<td><mark class="label success">discriminative</mark></td>
+<td><mark class="label info">classify</mark> <mark class="label info">span</mark></td>
+</tr>
+<tr class="odd">
+<td>BERT-DST</td>
+<td><mark class="label success">discriminative</mark></td>
+<td><mark class="label info">span</mark></td>
+</tr>
+<tr class="even">
+<td>TRADE<span class="citation" data-cites="wu2019transferable">(Wu et al. 2019)</span></td>
+<td><mark class="label success">generatvie</mark></td>
+<td><mark class="label info">soft-gated copy</mark></td>
+</tr>
+<tr class="odd">
+<td>GLAD<span class="citation" data-cites="zhong2018global">(Zhong, Xiong, and Socher 2018)</span></td>
+<td><mark class="label success">discriminative</mark></td>
+<td><mark class="label info">classify</mark></td>
+</tr>
+<tr class="even">
+<td>NBT<span class="citation" data-cites="mrkvsic2016neural">(Mrkšić et al. 2016)</span></td>
+<td><mark class="label success">discriminative</mark></td>
+<td><mark class="label info">classify</mark></td>
+</tr>
+</tbody>
+</table>
+<div class="tabs" id="dst论文对比"><ul class="nav-tabs"><li class="tab active"><a href="#dst论文对比-1">论文介绍</a></li><li class="tab"><a href="#dst论文对比-2">论文瑕瑜</a></li><li class="tab"><a href="#dst论文对比-3">重要思想</a></li><li class="tab"><a href="#dst论文对比-4">数据集评估对比</a></li></ul><div class="tab-content"><div class="tab-pane active" id="dst论文对比-1"><table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>论文</th>
+<th>标签</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#trippy-a-triple-copy-strategy-for-value-independent-neural-dialog-state-tracking" title="TripPy: A Triple Copy Strategy for Value Independent Neural Dialog State Tracking"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/2005.02877.pdf" target="_blank" rel="noopener" title="20.05"><i class="fa fa-"></i>论文</a> <br /> Heck et al., 2020</td>
+<td><mark class="label primary"><strong>BERT</strong></mark> <mark class="label warning"><strong>处理变化的槽值</strong></mark><br />
+<mark class="label success"><strong>TripPy</strong></mark> <mark class="label warning">Context Encoder</mark> <mark class="label primary">Slot Gate</mark> <mark class="label primary">Boolean slot</mark> <mark class="label success">System Inform Memory</mark> <mark class="label info">DS Memory</mark> <mark class="label danger">Auxiliary Features</mark></td>
+</tr>
+<tr class="even">
+<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#Find-or-Classify-Dual-Strategy-for-Slot-Value-Predictions-on-Multi-Domain-Dialog-State-Tracking" title="Find or Classify? Dual Strategy for Slot-Value Predictions on Multi-Domain Dialog State Tracking"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1910.03544.pdf" target="_blank" rel="noopener" title="19.10"><i class="fa fa-"></i>论文</a> <br /> Zhang et al., 2019</td>
+<td><mark class="label primary"><strong>BERT</strong></mark> <mark class="label warning"><strong>处理变化的槽值</strong></mark><br />
+<mark class="label success"><strong><a href="https://github.com/gusalsdmlwlq/DS-DST" target="_blank" rel="noopener">DS-DST</a></strong></mark> <mark class="label success"><strong>DST-Picklist</strong></mark> <mark class="label info">Slot-Context Encoder</mark> <mark class="label danger">Slot-Gate</mark> <mark class="label default">拼接词向量</mark></td>
+</tr>
+<tr class="odd">
+<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#btn"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1907.03040.pdf" target="_blank" rel="noopener" title="19.07"><i class="fa fa-"></i>论文</a> Chao et al., 2019<br /></td>
+<td><mark class="label primary"><strong>BERT</strong></mark><br />
+<mark class="label success"><strong><a href="https://github.com/guanlinchao/bert-dst" target="_blank" rel="noopener">BERT-DST</a></strong></mark> <mark class="label info">turn level ds</mark></td>
+</tr>
+<tr class="even">
+<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#Transferable-Multi-Domain-State-Generator-for-Task-Oriented-Dialogue-Systems" title="Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1905.08743.pdf" target="_blank" rel="noopener" title="19.05"><i class="fa fa-"></i>论文</a> <br /> Wu, Chien-Sheng et al., 2019</td>
+<td><mark class="label primary"><strong>BiGRU</strong></mark> <mark class="label warning"><strong>处理变化的槽值</strong></mark><br />
+<mark class="label success"><strong><a href="https://github.com/jasonwu0731/trade-dst" target="_blank" rel="noopener">TRADE</a></strong></mark> <mark class="label info">Utterance Encoder</mark> <mark class="label primary">State Generator</mark> <mark class="label danger">Slot Gate</mark> <mark class="label warning">soft-gated copy</mark></td>
+</tr>
+<tr class="odd">
+<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#Global-Locally-Self-Attentive-Dialogue-State-Tracker" title="Global-Locally Self-Attentive Dialogue State Tracker"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1805.09655.pdf" target="_blank" rel="noopener" title="18.05"><i class="fa fa-"></i>论文</a> <br /> Zhong et al. 2018</td>
+<td><mark class="label primary"><strong>BiLSTM</strong></mark> <mark class="label warning"><strong>处理变化的槽值</strong></mark> <mark class="label warning"><strong>处理低频槽值</strong></mark><br />
+<mark class="label success"><strong><a href="https://github.com/salesforce/glad" target="_blank" rel="noopener">GLAD</a></strong></mark> <mark class="label primary">global-locally</mark></td>
+</tr>
+<tr class="even">
+<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#Scalable-multi-domain-dialogue-state-tracking" title="Scalable multi-domain dialogue state tracking"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1712.10224.pdf" target="_blank" rel="noopener" title="17.12"><i class="fa fa-"></i>论文</a> <br /> Rastogi A et al., 2017</td>
+<td><mark class="label primary"><strong>2 layer BiGRU</strong></mark> <mark class="label warning"><strong>处理变化的槽值</strong></mark> <mark class="label info"><strong>classify</strong></mark><br />
+<mark class="label primary">使用有限候选集</mark> <mark class="label warning">delexicalisation</mark> <mark class="label danger">迁移到其他领域</mark></td>
+</tr>
+<tr class="odd">
+<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#Neural-Belief-Tracker-Data-Driven-Dialogue-State-Tracking" title="Neural Belief Tracker: Data-Driven Dialogue State Tracking"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/abs/1606.03777" target="_blank" rel="noopener" title="16.06"><i class="fa fa-"></i>论文</a> <br /> <font color='blue'>Mrkšić N et al., 2016</font></td>
+<td><mark class="label primary"><strong>simpleNN</strong></mark> <mark class="label default"><strong>摆脱人工构建的词表</strong></mark><br />
+<mark class="label success"><strong>NBT-DNN</strong></mark> <mark class="label success"><strong>NBT-CNN</strong></mark> <mark class="label warning">Semantic Decoding</mark> <mark class="label primary">Context Modelling</mark> <mark class="label default">二元决策</mark> <mark class="label danger">Belief State Update Mechanism</mark></td>
+</tr>
+<tr class="even">
+<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#Incremental-LSTM-based-dialog-state-tracker" title="Incremental LSTM-based dialog state tracker"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1507.03471.pdf" target="_blank" rel="noopener" title="15.07"><i class="fa fa-"></i>论文</a> <br /> Zilka and Jurcicek, 2015</td>
+<td><mark class="label primary"><strong>LSTM</strong></mark> <mark class="label default"><strong>摆脱人工构建的词表</strong></mark> <mark class="label info"><strong>classify</strong></mark><br />
+<mark class="label success"><strong>LecTrack</strong></mark> <mark class="label danger">结合置信度分数</mark> <mark class="label success">无需遍历槽值</mark> <mark class="label primary">低频词抽象化</mark> <mark class="label info">Model Averaging</mark></td>
+</tr>
+<tr class="odd">
+<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#Word-Based-Dialog-State-Tracking-with-Recurrent-Neural-Networks" title="Word-Based Dialog State Tracking with Recurrent Neural Networks"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://www.aclweb.org/anthology/W14-4340.pdf" target="_blank" rel="noopener" title="14.06"><i class="fa fa-"></i>论文</a> <br /> Henderson et al., 2014d</td>
+<td><mark class="label primary"><strong>RNN</strong></mark> <mark class="label default"><strong>省略SLU，但需要词汇表</strong></mark> <mark class="label info"><strong>classify</strong></mark><br />
+<mark class="label info">delexicalisation</mark> <mark class="label primary">n-gram</mark></td>
+</tr>
+<tr class="even">
+<td>--</td>
+<td>目前以上除 Rastogi A et al., 2017 之外全是<mark class="label warning">联合模型</mark></td>
+</tr>
+</tbody>
+</table></div><div class="tab-pane" id="dst论文对比-2"><table>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 52%" />
+<col style="width: 23%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">论文</th>
+<th>解决的问题</th>
+<th>局限性</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Heck et al., 2020</td>
+<td><strong>1）</strong>使用 span-based 方法同时处理了 span-based slot 和 boolean slot；<strong>2）初步处理了共指解析问题</strong>；</td>
+<td><strong>1）</strong>需要枚举 (domian, slot)，并且相比于 TRADE/DS-DST，参数量更大；<strong>2）</strong>使用了两种内存记忆实现共指解析，但是感觉只使用一种也可以做到；<strong>3）</strong>并没有处理 pick-list slot；</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Zhang et al., 2019</td>
+<td><strong>1）</strong>使用 (domian, slot, value) 三元组；<strong>2）</strong>使用 Ptr，槽值不再预定义与本体中；<strong>3）结合 picklist-based 和 span-based 方法</strong>；</td>
+<td><strong>1）</strong>需要枚举 (domian, slot)；<strong>2）</strong>需要人工定义哪个槽位是 picklist-based，哪个是 span-based。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Wu, Chien-Sheng et al., 2019</td>
+<td><strong>1）使用 (domian, slot, value) 的三元组形式，只需要枚举 (domain, slot) 即可</strong>；<strong>2）</strong>三元组中的槽值不再预定义在本体之中，而是使用 Ptr 直接在用户的语句中抽取出来；<strong>3）能够处理未见或低频的槽位（zero-shot）。</strong></td>
+<td><strong>1）</strong>每一轮都需要枚举 (domian, slot)；<strong>2）</strong>可能会生成错误格式的字符串；<strong>3）</strong>有些槽位并不需要直接生成，直接选取槽值即可（例如“是否”问题）；<strong>4）</strong>没有利用领域和槽位之间的联系。</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Zhong et al. 2018</td>
+<td><strong>1）使用 global-locally self-attn 机制处理低频槽值对不好追踪的问题</strong>。</td>
+<td><strong>1）</strong>对于局部编码器来说，每一个槽位都需要一个模型，这很麻烦；<em>2）要遍历所有的槽值对</em>。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Rastogi A et al., 2017.12</td>
+<td><strong>1）</strong>不再需要枚举槽值对，转而使用一个有限的候选集（一般只有 7 个）；<strong>2）</strong>不再需要人工构建的词表，但需要 SLU 模块；<strong>3）提取特征的 GRU 实现领域内参数共享，所以可以进行迁移学习，能够迁移到新领域之中（这里应该知识简单的贡献 GRU 的隐藏状态而已）</strong>。</td>
+<td><em>1）还是需要遍历有限的槽值对</em>；<strong>2）</strong>需要使用 SLU 模块进行 delexicalisation，所以实际上它是使用两个独立模型进行训练的；<em>3）不同的槽位需要不同的参数，没有做到槽位之间也贡献参数</em>。</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Mrkšić N et al., 2016</td>
+<td><strong>1）</strong>利用词向量来进行语义匹配，省去了人工构建的词汇表；<strong>2）</strong>只需要训练一个模型就可以完成 DST 过程。</td>
+<td><em>1）DST 模型需要遍历所有槽值对组合，但是有时候用户的语句所对应的槽值对可能并没有出现在训练集中</em>；<em>2）槽值对可能有时无法枚举</em>；<em>3）很难迁移到一个新的领域</em>。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Zilka and Jurcicek, 2015</td>
+<td><strong>1）</strong>结合了 ASR 的置信度分数；<strong>2）将槽值的生成转为多分类问题（其中每个槽位都有一个独立的函数去生成槽值的分布）</strong>；<strong>3）</strong>使用特殊处理，缓解低频词的问题，这使得无需使用人工构建的词表（抽象化）。</td>
+<td><em>1）还是需要遍历槽位，并为每一个都设计一个分类函数</em>；<strong>2）</strong>太过于简化模型，在现实中应该无法适用。</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Henderson et al., 2014d</td>
+<td><strong>1）</strong>使用 ASR 的结果作为 DST 的输入，而不是使用 SLU 的结果，减去了来自 SLU 潜在的信息误差；<strong>2）</strong>使用 delexicalisation 特征工程（这步还是需要一个词汇表来做替换），提高模型的泛化性，有助于模型能够处理未见或低频的对话状态；<strong>3）使用 n-grams 特征，而不是 ASR 直接的输出（此效果暂不明）</strong>。</td>
+<td><strong>1）</strong>需要为每个槽位都训练一个模型，在确定<strong>槽值</strong>是否出现在语句中时，需要遍历所有<strong>槽位</strong>的模型；<em>2）还是需要人工构建的词汇表</em>。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span style="display:block; width:9em"></td>
+<td>粗体代表不错的想法</td>
+<td>斜体代表在以后的论文中此缺点大致已被解决</td>
+</tr>
+</tbody>
+</table></div><div class="tab-pane" id="dst论文对比-3"><table>
+<colgroup>
+<col style="width: 42%" />
+<col style="width: 31%" />
+<col style="width: 26%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>更新时间</th>
+<th>介绍</th>
+<th>难点</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>2020.3.29</td>
+<td>对当下难点的尝试</td>
+<td><strong>槽值</strong>：<strong>1）</strong>使用 Ptr 直接生成槽值</td>
+</tr>
+<tr class="even">
+<td>2020.3.29</td>
+<td>过渡的技术</td>
+<td>摒弃人工构建的词表：<strong>1）</strong>Zilka and Jurcicek (2015) 对低频槽值抽象化（比如对于低频槽值“jamaican”，可以将其替换为“#food1”），使得可以脱离词表；<strong>2）</strong>此后的技术大都使用<strong>词向量的技术</strong>脱离词表的束缚。</td>
+</tr>
+<tr class="odd">
+<td>2020.3.28</td>
+<td>传统难题的解决</td>
+<td><strong>1）</strong>Henderson et al., 2014d 使用 ASR 的结果作为 DST 的输入，而不是使用 SLU；<strong>2）</strong>Zilka and Jurcicek (2015) 结合了 ASR 的置信度分数；<strong>3）</strong>Henderson et al., 2014d 提出 delexicalisation 技术（这需要词表）。</td>
+</tr>
+<tr class="even">
+<td>--</td>
+<td><span style="display:block; width:5em"></td>
+<td>此处只记录突破性的思想</td>
+</tr>
+</tbody>
+</table></div><div class="tab-pane" id="dst论文对比-4"><p><a class="btn" href="#dst-dstc2"><i class="fa fa-"></i>DSTC2</a> <a class="btn" href="#dst-woz2.0"><i class="fa fa-"></i>WOZ 2.0</a> <a class="btn" href="#dst-multiwoz2.1"><i class="fa fa-"></i>MultiWOZ 2.1</a></p></div></div></div>
+<p>对话状态追踪（Dialogue State Tracking，DST）也是 SDS 中一个重要的模块，同时它也是对话管理（Dialog Manager，DM）模块中的一部分，另一部分为对话策略学习（Dialog Policy Learning，DPL）。</p>
+<p>下面将简单地介绍 DST 的两种实现方式。具体的论文可参考上方提供的各个 Tab，或者参考其他的 task-oriented dialog system 综述。然后对 DST 任务中目前具有的各项挑战做一个总结。最后给出近年（到 2019 年为止）的相关工作。</p>
+<div class="note primary"><p>如果觉得以下的内容太啰嗦，可以前往<a href="https://yan624.github.io/posts/4ec51203.html#前情提要">任务完成型对话系统论文调研（二）</a>，该文将以下的内容回顾了一遍。</p>
+</div>
+<h2 id="独立模型与联合模型">独立模型与联合模型</h2>
+<p>DST 的工作是处理人机对话过程中的各种信息，并将其记录下来，简单来说也是一个 CRUD（增删改查） 的活。</p>
+<p>传统的做法是：接收 SLU 模块的输出，从而生成当前的对话状态。我们将这类模型称为<strong>独立模型</strong>。但是这样的做法首先需要一个显示的语义表征，即 SLU 模块提供的用户动作。另外，传统做法还会导致信息误差的层级传播，ASR 以及 SLU 模块都可能会存在信息误差，它会一级一级地传播到 DST 模块。</p>
+<p>2014 年左右开始，大家采用的方法是使用<strong>联合模型</strong>，DST 的输入是 ASR 识别出的用户语句，不再是 SLU 模块输出的语义表征。该模型同时执行了语音理解以及对话状态跟踪的功能，对于该方法而言，SLU 模块在名义上已经不再存在。</p>
+<div class="tabs" id="两种dst模型对比"><ul class="nav-tabs"><li class="tab"><a href="#两种dst模型对比-1">独立模型</a></li><li class="tab"><a href="#两种dst模型对比-2">联合模型</a></li></ul><div class="tab-content"><div class="tab-pane" id="两种dst模型对比-1"><ol type="1">
+<li>结合<em>从 SLU 模块提取出的语义</em>去估计当前的对话状态。（论文 07-14）[<a href="https://arxiv.org/pdf/1905.08743.pdf" target="_blank" rel="noopener">3</a>]</li>
+</ol>
+<blockquote>
+<p>传统的 SDS pipeline 使用 SLU decoder 来检测在 ASR 输出中所表达的槽值对。然后下游 DST 模型将这些信息与过去的对话上下文结合起来更新 belief state。</p>
+<p>在 DSTC 挑战中，一些系统使用<strong>基于模板</strong>的匹配系统（如 <a href="https://www.isca-speech.org/archive/archive_papers/icslp_1994/i94_0083.pdf" target="_blank" rel="noopener" title="Extracting Information in Spontaneous Speech">Phoenix</a>）的输出。然而还有许多更精确的<strong>统计 SLU 系统</strong>可用。</p>
+<ol type="1">
+<li>许多辨别式 SLU 训练独立的<strong>二元模型</strong>，以此决定每个槽值对是否出现在用户话语中（<a href="https://www.researchgate.net/publication/220735369_Spoken_language_understanding_from_unaligned_data_using_discriminative_classification_models" target="_blank" rel="noopener">Mairesse et al., 2009</a>）。这项工作后来将重点转移到对 ASR 输出的处理上（<a href="http://svr-ftp.eng.cam.ac.uk/~sjy/papers/hgtt12.pdf" target="_blank" rel="noopener">Henderson et al., 2012</a>;<a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.702.3627&amp;rep=rep1&amp;type=pdf" target="_blank" rel="noopener">Tur et al., 2013</a>）。</li>
+<li>SLU 也被视为<strong>序列标注</strong>的问题，句中的每个字都根据用户的意图贴上标签，可以使用标准的标记模型，如 CRFs 或 RNN（07-16 论文）。</li>
+<li>另外的方法受语义解析的启发，采用更复杂的建模结构（14 论文）。</li>
+</ol>
+<p>这些方法有一个<strong>共同的缺点</strong>：资源需求。要么是因为它们需要为每个槽值对学习独立的参数，要么是因为它们需要在单词级别上进行精细的人工标注。这阻碍了其扩展到更大、更现实的应用程序上 [<a href="https://arxiv.org/abs/1606.03777" target="_blank" rel="noopener" title="Neural Belief Tracker: Data-Driven Dialogue State Tracking">2</a>]。</p>
+</blockquote></div><div class="tab-pane" id="两种dst模型对比-2"><ol start="2" type="1">
+<li>或者与 SLU 模块联合学习（论文 14-17）[<a href="https://arxiv.xilesou.top/pdf/1905.08743.pdf" target="_blank" rel="noopener">3</a>]</li>
+</ol>
+<blockquote>
+<p>研究发现，以 ASR 预测为输入，以信念状态的产生为输出。联合 SLU 和 DST，有利于两个模型的推理。</p>
+<p>联合模型通常依赖一种 delexicalisation 策略，即将句子中出现的槽位/槽值替换为通用的标签。替换完毕之后可以使用 n-gram 提取特征，比如 <code>[want &lt;value&gt; food]</code>，<code>[want Chinese &lt;slot&gt;]</code> 等。为了执行 DST，这个模型需要遍历所有的槽值对，提取特征，并进行二元决策。</p>
+<p><strong>Delexicalisation 引入了一个很少被讨论的隐藏依赖关系：我们如何识别文本中提到的槽位/槽值？</strong>对于不是很正式的领域，可以手动构建词表，枚举所有可能的表达。如 <a href="https://arxiv.xilesou.top/pdf/1603.00892.pdf" target="_blank" rel="noopener" title="Counter-fitting Word Vectors to Linguistic Constraints">Mrkšić N et al., 2016</a> 所示，使用此类词典对于当前基于 delexicalisation 的模型的性能至关重要。<strong>不过，这也不能扩展到丰富多样的用户语言或者通用领域</strong> [<a href="https://arxiv.org/abs/1606.03777" target="_blank" rel="noopener" title="Neural Belief Tracker: Data-Driven Dialogue State Tracking">2</a>]。</p>
+</blockquote></div></div></div>
+<h2 id="难点未来的工作-1">难点/未来的工作</h2>
+<p>当前 DST 模型还有许多问题亟待解决，在《相关工作》一节中罗列了数篇论文。遗憾的是，它们大都是在解决“可扩展性”中“变化的槽值”这一难题。下面将列出目前已知的几类难点：</p>
+<ul>
+<li>可扩展性 [<a href="https://zhuanlan.zhihu.com/p/100843827" target="_blank" rel="noopener" title="任务导向型对话系统——对话管理模型研究最新进展">1</a>]
+<ul>
+<li>变化的槽位：槽值对的表征不够灵活，目前的做法是将槽位预定义在本体之中，其拥有对应的槽值。但是如果有些槽位是未见过的或者低频的，那么系统将无法处理。<em>注：大约在 2019 年开始已经有工作（TRADE）开始在处理这一问题，但是本文暂且不涉及此类问题。</em></li>
+<li>变化的槽值：无法表示无限的或者动态的值，即有些槽值不可枚举，例如日期、地点。</li>
+<li>新增的意图：随着系统的更新迭代，有可能会新增意图，这样就必须重新训练模型。</li>
+<li>变化的<strong>系统</strong>动作（action）：注意，用户的意图+槽值对也是 action，即 user act，而这里所阐述的是 system act。例如在手机销售的场景下，系统原本只有提供产品信息的动作。但是假设一个用户询问“如何升级手机系统？”[<a href="https://zhuanlan.zhihu.com/p/100843827" target="_blank" rel="noopener" title="任务导向型对话系统——对话管理模型研究最新进展">1</a>]，系统必定无法告知用户操作方法，因为系统不具有提供手机系统升级步骤的动作。</li>
+<li>多领域 DST：略</li>
+</ul></li>
+<li>数据稀缺：DST 模型需要标签数据。数据的稀缺对于创建一个新领域的模型有着巨大的挑战。</li>
+<li>计算复杂度高</li>
+</ul>
+<h2 id="相关工作-1">相关工作</h2>
+<p>早年（最初-2014 年左右），由于深度学习以及基于深度学习的自然语言处理技术才刚开始起步，并没有词向量作为支撑，大多数模型都需要采用一个<strong>人工构建的词汇表</strong>，这是一个相当费时费力的工作。由于近几年的工作已经抛弃这一做法，所以可能有部分人都无法理解这个词汇表到底代表什么意思。接下来本文将举例介绍一下它。简单来说，它其实就是一个同义词表。</p>
+<p>例如某人告知系统，心仪的餐厅位置是“the center of town”，直观来说模型可以提取出槽值对“area=center”，但是对于值“center”，它还有其他的变体词汇，如 [center, downtown, central, city centre, midtown, town centre...] [<a href="https://arxiv.org/abs/1606.03777" target="_blank" rel="noopener" title="Neural Belief Tracker: Data-Driven Dialogue State Tracking">2</a>]。这就使得模型很难提取出确切的词汇，因此如上所述，系统需要维护一个人工构建的词汇表，将所有的同义词都替换为同一个单词。</p>
+<h3 id="传统模型">传统模型</h3>
+<p>传统 DST 模型的做法大都结合 SLU 模块。一般的做法是：使用从 SLU 模块提取出的语义信息，例如意图以及槽值对，去估计当前的对话状态。 <blockquote class="blockquote-center">
+<i class="fa fa-quote-left"></i>
+<p>传统 DST 模型具有如下几项缺点：<strong>1）</strong>依赖人工制作的特征；<strong>2）</strong>需要复杂的特定于领域的词汇表（本体除外）；<strong>3）</strong>很难扩展以及灵活调整到新的领域 [<a href="https://arxiv.xilesou.top/pdf/1905.08743.pdf" target="_blank" rel="noopener" title="Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems">3</a>]；<strong>4）</strong>需要显式语义表征以及在 SLU 阶段可能存在信息误差 [<a href="https://www.aclweb.org/anthology/W14-4340.pdf" target="_blank" rel="noopener" title="Word-Based Dialog State Tracking with Recurrent Neural Networks">5</a>]，这些误差将传播到 DST 模型上，使得误差累积；<strong>5）</strong>并未解决上述 DST 模型所拥有的难点。</p>
+
+<i class="fa fa-quote-right"></i>
+</blockquote></p>
+<p>由于时代过于久远，本节不做深度展开。</p>
+<h3 id="可扩展性">可扩展性</h3>
+<p>近年（<strong>2014 年左右</strong>起）的工作试图<strong>1）</strong>摒弃复杂、高人力成本且难以维护的词汇表；<strong>2）</strong>直接从用户的语句中提取对话状态而不是从 SLU 的输出中。具体做法是使用词向量去匹配用户语句与槽值对之间的关系，例如对于单词“centre”和“center”都是“中心”的意思，虽然它们在单词的形态上不同，但是在词向量空间中的距离却很接近。这避免了显式语义表征的需要以及在 SLU 阶段可能的信息误差 [<a href="https://www.aclweb.org/anthology/W14-4340.pdf" target="_blank" rel="noopener">5</a>]。不过这些工作大都是在单领域之中。<strong>2018 年开始，渐渐地有人开始考虑多领域 DST 的问题。</strong></p>
+<p>根据《<a href="#难点未来的工作-1">难点/未来的工作</a>》章节提出的几条难点，以下，我们将分析几篇试图解决对应难点的论文。此外，由于槽值受到大家的广泛关注，我们将其分为单领域 DST 以及多领域 DST。此外，由于其余的难题并未受到过多的关注，本文暂不对其进行总结。</p>
+<p><em>文章写毕之后更新（2020.10.05）：以下的绝大多数论文都只在解决“变化的槽值”问题。</em></p>
+<h4 id="单领域dst">单领域DST</h4>
+<ol type="1">
+<li><a href="https://www.aclweb.org/anthology/W14-4340.pdf" target="_blank" rel="noopener"><span class="citation" data-cites="henderson2014word">(Henderson, Thomson, and Young 2014)</span></a> 使用 RNN 试图直接使用 ASR 的结果作为 DST 输入，这避免了<strong>显式语义表征的需要</strong>以及在 SLU 阶段<strong>潜在的信息误差</strong>。并且继续沿用作者同年发表的论文中的方法——使用 <strong>delexicalised features</strong>，但是该方法有一个弊端，需要使用一个人工构建的词汇表。比如说对于“i want chinese food”可以被替换为“<code>i want &lt;value&gt; &lt;slot&gt;</code>”，这样可以提升模型的泛化性，使得模型能够<strong>处理未见或低频的对话状态</strong>。但是该模型的<strong>缺点</strong>是需要为每一个槽位都训练一个模型，而后遍历所有槽位的模型，以此确定某槽值是否与用户的语句有关联。此外该论文还从用户语句和对话状态中提取出了 n-grams 特征。<strong>最后由于此论文发表的时间尚早，人工构建词汇表的问题并没有得到解决。</strong></li>
+<li><a href="https://arxiv.org/pdf/1507.03471.pdf" target="_blank" rel="noopener"><span class="citation" data-cites="zilka2015incremental">(Zilka and Jurcicek 2015)</span></a> 在输入用户语句时还结合了 ASR 的置信度分数，并且将生成对话状态中的槽值转为了多分类问题，<strong>不再需要人工构建的词表。</strong></li>
+<li><a href="https://www.aclweb.org/anthology/P17-1163/" target="_blank" rel="noopener"><span class="citation" data-cites="mrkvsic2016neural">(Mrkšić et al. 2016)</span></a> 提出了 Neural Belief Tracker（<strong>NBT</strong>），使用分布式表征表达的语义信息解决<strong>一义多词</strong>的问题。借助词向量的优势，可以使得回答“center”的语句也能匹配槽值对 (area=central)，这得以<strong>摆脱人工构建词表的束缚</strong>。由于该论文的做法是迭代所有预定义好的槽值对去和历史对话做匹配，故有一定缺陷。因为槽值对的组合无穷无尽，即使有穷，也会拥有大量的组合（这也导致<strong>参数在槽位之间无法共享</strong> [<a href="https://arxiv.org/pdf/1905.08743.pdf" target="_blank" rel="noopener" title="Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems">3</a>]），并且这种枚举的做法也无法处理从未见过的槽值。此外它<strong>还缺少一些扩展性</strong>，它的信念状态（belief state）更新机制在其他领域需要进行大量修改，所以无法跨领域<em>（这已经有人在解决了，详见论文 <a href="https://arxiv.xilesou.top/pdf/1805.11350.pdf" target="_blank" rel="noopener">Fully Statistical Neural Belief Tracking</a>）</em>。</li>
+<li><a href="http://aclweb.org/anthology/P18-1135" target="_blank" rel="noopener"><span class="citation" data-cites="zhong2018global">(Zhong, Xiong, and Socher 2018)</span></a> 使用 global-locally 自注意力机制改进了<strong>对低频槽值对的追踪</strong>。具体做法是，每一个槽位拥有一个局部编码器，编码用户的输入。除此之外，所有的槽位还共享同一个全局编码器，这意味着该编码器的参数被所有槽位共享。状态追踪的思想还是与 NBT 类似，将其分解为一个个的二元分类问题，即遍历所有槽值对组合，判断此槽值对是否在用户语句中被提及。它的缺点也与 NBT 类似，需要遍历所有的槽值对。此外它的另一个缺陷是需要每个槽位创建一个局部编码器，这很麻烦。</li>
+<li><em>另一方面，<a href="https://www.aclweb.org/anthology/P18-1133.pdf" target="_blank" rel="noopener">Lei et al. (2018)</a> 使用。。。<a href="https://arxiv.xilesou.top/pdf/1810.09587.pdf" target="_blank" rel="noopener">Ren et al. (2018)</a> 提出了 StateNet，它可以<strong>生成对话历史的表征</strong>并且作者<strong>与候选集中的槽值向量比对了距离</strong>。</em></li>
+<li><a href="https://www.aclweb.org/anthology/P18-1134/" target="_blank" rel="noopener"><span class="citation" data-cites="xu-hu-2018-end">(Xu and Hu 2018)</span></a> 将 <strong>index-based Pointer Network</strong> 用于不同的槽位，展示了<strong>指向未知槽值的能力</strong>。然而，许多模型都需要一个预定义的领域本体，并且模型<strong>只在单领域的设置（DSTC2）上进行评估</strong>。</li>
+<li><em><a href="https://arxiv.org/abs/1812.00899" target="_blank" rel="noopener">Nouri and Hosseini-Asl (2018)</a> 对 GLAD 改进，去除了局部编码器及其 self-attention 机制。</em></li>
+</ol>
+<h4 id="多领域dst">多领域DST</h4>
+<ol type="1">
+<li><a href="https://arxiv.org/pdf/1712.10224.pdf" target="_blank" rel="noopener"><span class="citation" data-cites="rastogi2017scalable">(Rastogi, Hakkani-Tür, and Heck 2017)</span></a> <strong>1）</strong>提出一个多领域模型，它使用两层的 Bi-GRU。虽然它不再需要枚举所有的槽值对组合，而是转用一个候选集（因为某些槽位不可能出现在用户语句中，在预测时并不需要它），但是它依赖 delexicalisation 来提取特征；<strong>2）</strong>并且它是利用 SLU 模块提取出槽值，从而将此槽值替换成一个特殊的符号，所以<strong>它不算是一个联合模型</strong>；<strong>3）</strong>另外它还是不可避免地需要遍历所有的槽位，对于槽值，由于有候选集，所以只需要枚举槽值即可；<strong>4）</strong>最后评分函数中的参数，每个槽位都有特定的一组，但是 GRU 中的参数都是为一整个领域定义的，因此它可以轻松地被迁移到新的领域之中。</li>
+<li>无论是传统模型，还是近年使用的深度学习模型，都不可避免地需要使用本体，其定义了槽值对。<a href="https://arxiv.org/pdf/1905.08743.pdf" target="_blank" rel="noopener" title="Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems"><span class="citation" data-cites="wu2019transferable">(Wu et al. 2019)</span></a> 认为一个完整的本体很难获取，即使存在这么一个本体，槽值对的数量也会极其的庞大。此外，由于 <span class="citation" data-cites="budzianowski2018multiwoz">(Budzianowski et al. 2018)</span> 提出了多领域对话数据集 MultiWOZ，将 DST 迁移到多领域内势在必行。<span class="citation" data-cites="wu2019transferable">(Wu et al. 2019)</span><strong>1）</strong>提出将原先的 (slot, value) 二元组修改为 (domain, slot, value) 的三元组形式，并且槽值不再预定义于本体之中，而是使用 Pointer Network 直接从用户的语句中提取而出；<strong>2）</strong>另外他们强调要共享知识，因为一个槽位可能会出现在多个领域之内；<strong>3）</strong>zero-shot。</li>
+<li><a href="https://arxiv.org/pdf/1910.03544.pdf" target="_blank" rel="noopener"><span class="citation" data-cites="zhang2019find">(Zhang et al. 2019)</span></a> 认为当前基于神经网络的对话系统大致可以分为两类：<strong>1）</strong>picklist-based；<strong>2）</strong>span-based。picklist-based 讲究从预定义的槽值中选取最可能的值，span-based 讲究使用 Ptr 直接从用户语句中生成槽值，它由 <a href="https://www.aclweb.org/anthology/P18-1134/" target="_blank" rel="noopener"><span class="citation" data-cites="xu-hu-2018-end">(Xu and Hu 2018)</span></a> 首次提出。作者认为二者各有优缺点，picklist-based 方法太麻烦，而 span-based 方法中，由于用户语言的多样性，有些槽值并不会出现在上下文中（如，回答有关“是否”的问题，它拥有一个包含两个元素的 picklist 就可以解决，不需要 Ptr 生成）。所以作者将二者结合起来，提出了 DS-DST。<br />
+由于模型中会出现多个句子或者符号，比如说对于 picklist-based 方法，一个 picklist 中有多个槽值，那么该怎么处理它们？作者直接用了<strong>拼接</strong>的方式。用户的多轮对话语句，域槽对都是使用此方法。</li>
+<li><span class="citation" data-cites="heck2020trippy">(Heck et al. 2020)</span> 提出 TripPy，其包含三种拷贝机制，即<strong>1）</strong>Ptr；<strong>2）</strong>from System Inform Memory（SIM）；<strong>3）</strong>from Dialog State Memory（DSM）。TripPy 主要通过一个 Slot Gate 判断使用哪种拷贝机制，与 TRADE 等模型类似。具体来讲，模型的运行流程为：使用 BERT 对上下文建模，然后将 BERT 的特殊符号 <span class="math inline">\([CLS]\)</span> 输入 Slot Gate 进行五元分类，即 <span class="math inline">\(\{none, dontcare, span, inform, refer\}\)</span>，然后执行对应的拷贝机制。以下将介绍三种机制的具体实现。 <mark class="label danger">但是没说怎么追踪 system inform，猜测是生成自 DPL。</mark><br />
+<strong>1）</strong>Ptr 为 span-based 方法，即从用户的语句中直接提取槽值，具体公式略，可参考原文。此外，对于特殊的 Boolean Slot，他们的做法与 DS-DST 类似，DS-DST 采用 picklist-based 方法，而 TripPy 将 Slot Gate 改为四元分类，即 <span class="math inline">\(\{none, dontcare, true, false\}\)</span>。<strong>2）</strong>SIM 记录被系统提及到的槽值，如果用户引用了它，则直接从 SIM 中拷贝，而不使用 Ptr（例，“<font color='red'>xx酒店</font>不错”；“那就<font color='red'>它</font>了”）。<strong>3）</strong>DSM 用于共指解析（个人认为，SIM 也算共指解析）。假设槽位 A 的槽值已在上文中被提及，如果槽位 B 在当前轮被触发，且槽值与槽位 A 相同，那么直接引用槽位 A 的槽值，而不使用 Ptr（例，订餐的酒店地址和用餐后打的的乘车地址）。</li>
+</ol>
+<h3 id="计算复杂度高">计算复杂度高</h3>
+<p><span class="citation" data-cites="Ren_2019">(Ren, Ni, and McAuley 2019)</span> 认为以往的 DST 模型依赖一个预定义的本体，其包含一系列的潜在的槽值对。这些模型在单领域上已经取得了不错的性能，但是它们都一直遭受着计算复杂度的问题。这个问题在多领域中将更为严重，因为多领域中的槽值对是单领域的数倍之多。<span class="citation" data-cites="Ren_2019">(Ren, Ni, and McAuley 2019)</span>提出以往算法的推理时间复杂度（Inference Time Complexity，<strong>ITC</strong>）为 <span class="math inline">\(O(mn)\)</span> 或 <span class="math inline">\(O(n)\)</span>，他们提出的模型则是 <span class="math inline">\(O(1)\)</span>。<strong>为了解决以上的问题</strong>，他们提出了 <strong>COMER</strong> 模型，抛弃了传统的模型架构，即将槽值的识别或者生成视为一个二元分类问题，而是转用了 seqseq 模型。</p>
+<h2 id="论文笔记-1">论文笔记</h2>
+<p>详见 <a href="https://yan624.github.io/posts/89f2cf08.html">DST论文笔记（？-2019）</a>。</p>
+<h2 id="引用-1">引用</h2>
+<ol type="1">
+<li><a href="https://zhuanlan.zhihu.com/p/100843827" target="_blank" rel="noopener">任务导向型对话系统——对话管理模型研究最新进展</a></li>
+<li><a href="https://arxiv.org/abs/1606.03777" target="_blank" rel="noopener">Neural Belief Tracker: Data-Driven Dialogue State Tracking</a></li>
+<li><a href="https://arxiv.xilesou.top/pdf/1905.08743.pdf" target="_blank" rel="noopener">Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems</a></li>
+<li><a href="https://www.cnblogs.com/jiangxinyang/p/10794364.html" target="_blank" rel="noopener">任务型对话（二）—— DST（对话状态追踪）</a></li>
+<li><a href="https://www.aclweb.org/anthology/W14-4340.pdf" target="_blank" rel="noopener">Word-Based Dialog State Tracking with Recurrent Neural Networks</a></li>
+<li><a href="https://blog.csdn.net/weixin_44385551/article/details/103180371" target="_blank" rel="noopener">多领域多轮问答调研报告 3</a>：也是一个综述文章。</li>
+<li>文中已给出的论文链接</li>
+</ol>
+<h1 id="结果对比">结果对比</h1>
+<h2 id="slu模块结果对比">SLU模块结果对比</h2>
+<div id="slu-atis" style="width: 100%;height: 350px;margin: 0 auto"></div>
+<script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.0.0-alpha.2/echarts.common.min.js"></script>
+<script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('slu-atis'));
+        // 指定图表的配置项和数据
+        var option = {
+	title: {text: 'ATIS 结果对比'},
+	tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
+	legend: {
+		type: 'scroll',
+		data: ['Zhang et al.', 'Chen et al.', 'Wang et al.', 'Li et al.', 'Liu and Lane, 2016a', 'Zhu and Yu', 'Zhang and Wang'],
+		top: 25,
+	},
+	toolbox: {
+		orient: 'vertical',
+		left: 'right',
+		top: 'center',
+		feature: {
+			dataView: {show: true},
+			magicType: {show: true, type: ['bar', 'tiled']},
+			restore: {show: true},
+			saveAsImage: {show: true, pixelRatio: 2}
+		}
+	},
+	xAxis: {type: 'category', name: '<--年份--', nameLocation: 'middle', data: ['Slot(F1)', 'Intent(Acc)']},
+	yAxis: {
+		type: 'value',
+		min: function (value) {
+			_min = value.min - 20;
+			if(_min < 0) return 0;
+			else return Math.floor(_min);
+		},
+		max: 100
+	},
+	series: [{
+			name: 'Zhang et al.',
+			type: 'bar',
+			data: [98.75, 99.76],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'BERT-SLU',}
+			},
+		},{
+			name: 'Chen et al.',
+			type: 'bar',
+			data: [96, 97.9],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'BERT + CRF', offset: [0, 20]}
+			},
+		},{
+			name: 'Wang et al.',
+			type: 'bar',
+			data: [96.89, 98.99],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'with dec', }
+			},
+		},{
+			name: 'Li et al.',
+			type: 'bar',
+			data: [96.52, 98.77],
+		},{
+			name: 'Liu and Lane, 2016a',
+			type: 'bar',
+			data: [95.98, 98.21],
+		},{
+			name: 'Zhu and Yu',
+			type: 'bar',
+			data: [95.79],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'focus', }
+			},
+		},{
+			name: 'Zhang and Wang',
+			type: 'bar',
+			data: [95.49, 98.1],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'W', }
+			},
+		},]
+};
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+</script>
+<h2 id="dst模块结果对比">DST模块结果对比</h2>
+<div id="dst-dstc2" style="width: 100%;height: 350px;margin: 0 auto"></div>
+<script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.0.0-alpha.2/echarts.common.min.js"></script>
+<script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('dst-dstc2'));
+        // 指定图表的配置项和数据
+        var option = {
+	title: {text: 'DSTC2 结果对比'},
+	tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
+	legend: {
+		type: 'scroll',
+		data: ['Wu, Chien-Sheng et al.', 'Zhong et al.', 'Rastogi A et al.', 'Mrkšić N et al.', 'Zilka and Jurcicek', 'Henderson et al., 2014d'],
+		top: 25,
+	},
+	toolbox: {
+		orient: 'vertical',
+		left: 'right',
+		top: 'center',
+		feature: {
+			dataView: {show: true},
+			magicType: {show: true, type: ['bar', 'tiled']},
+			restore: {show: true},
+			saveAsImage: {show: true, pixelRatio: 2}
+		}
+	},
+    xAxis: {type: 'category', name: '<--年份--', nameLocation: 'middle', data: ['Goals', 'Requests']},
+    yAxis: {
+    	type: 'value',
+		min: function (value) {
+			_min = value.min - 20;
+			if(_min < 0) return 0;
+			else return Math.floor(_min);
+		},
+    	max: 100
+    },
+    series: [{
+            name: 'Zhong et al.',
+            type: 'bar',
+            data: [74.5, 97.5],
+        },{
+            name: 'Rastogi A et al.',
+            type: 'bar',
+            data: [70.3],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'shared', }
+			},
+        },{ 
+            name: 'Mrkšić N et al.',
+            type: 'bar',
+            data: [72.6, 96.4],
+			label: {
+				normal: { show: true, textBorderColor: 'black', formatter:'NBT-DNN', offset: [0, 30]
+				}
+			},
+        },{
+            name: 'Mrkšić N et al.',
+            type: 'bar',
+            data: [73.4, 96.5],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'NBT-CNN'}
+			},
+        },{
+            name: 'Zilka and Jurcicek',
+            type: 'bar',
+            data: [72, 97],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'model avg', offset: [0, 15]}
+			},
+        },{
+            name: 'Henderson et al., 2014d',
+            type: 'bar',
+            data: [76.8, 97.8],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'include h',}
+			},
+        }]
+};
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+</script>
+<div id="dst-woz2.0" style="width: 100%;height: 350px;margin: 0 auto"></div>
+<script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.0.0-alpha.2/echarts.common.min.js"></script>
+<script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('dst-woz2.0'));
+        // 指定图表的配置项和数据
+        var option = {
+	title: {text: 'WOZ 2.0 结果对比'},
+	tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
+	legend: {
+		type: 'scroll',
+		data: ['Heck et al.', 'Wu, Chien-Sheng et al.', 'Zhong et al.', 'Rastogi A et al.', 'Mrkšić N et al.', 'Zilka and Jurcicek', 'Henderson et al., 2014d'],
+		top: 25,
+	},
+	toolbox: {
+		orient: 'vertical',
+		left: 'right',
+		top: 'center',
+		feature: {
+			dataView: {show: true},
+			magicType: {show: true, type: ['bar', 'tiled']},
+			restore: {show: true},
+			saveAsImage: {show: true, pixelRatio: 2}
+		}
+	},
+    xAxis: {type: 'category', name: '<--年份--', nameLocation: 'middle', data: ['Goals/Joint Accuracy', 'Requests']},
+    yAxis: {
+		type: 'value',
+		min: function (value) {
+			_min = value.min - 20;
+			if(_min < 0) return 0;
+			else return Math.floor(_min);
+		},
+		max: 100
+	},
+    series: [{
+            name: 'Heck et al.',
+            type: 'bar',
+            data: [92.7],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'TripPy', offset: [0, 30]}
+			},
+        },{
+            name: 'Zhong et al.',
+            type: 'bar',
+            data: [88.1, 97.1],
+        },{ 
+            name: 'Mrkšić N et al.',
+            type: 'bar',
+            data: [84.4, 91.2],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'NBT-DNN', offset: [0, 30]}
+			},
+        },{
+            name: 'Mrkšić N et al.',
+            type: 'bar',
+            data: [84.2, 91.6],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'NBT-CNN'}
+			},
+        }]
+};
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+</script>
+<div id="dst-multiwoz2.1" style="width: 100%;height: 350px;margin: 0 auto"></div>
+<script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.0.0-alpha.2/echarts.common.min.js"></script>
+<script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('dst-multiwoz2.1'));
+        // 指定图表的配置项和数据
+        var option = {
+	title: {text: 'MultiWOZ 2.1 结果对比'},
+	tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
+	legend: {
+		type: 'scroll',
+		data: ['Heck et al.', 'Zhang et al.', 'Wu, Chien-Sheng et al.',],
+		top: 25,
+	},
+	toolbox: {
+		orient: 'vertical',
+		left: 'right',
+		top: 'center',
+		feature: {
+			dataView: {show: true},
+			magicType: {show: true, type: ['bar', 'tiled']},
+			restore: {show: true},
+			saveAsImage: {show: true, pixelRatio: 2}
+		}
+	},
+    xAxis: {type: 'category', name: '<--年份--', data: ['Goals/Joint Accuracy']},
+    yAxis: {
+		type: 'value',
+		min: function (value) {
+			_min = value.min - 20;
+			if(_min < 0) return 0;
+			else return Math.floor(_min);
+		},
+		max: 100
+	},
+    series: [{ 
+            name: 'Heck et al.',
+            type: 'bar',
+            data: [55.29],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'TripPy', offset: [0, 10]}
+			}
+		},{ 
+            name: 'Zhang et al.',
+            type: 'bar',
+            data: [53.3],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'DST-Picklist', offset: [0, 10]}
+			}
+		},{ 
+			name: 'Wu, Chien-Sheng et al.',
+			type: 'bar',
+			data: [45.6],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'TRADE', offset: [0, 10]}
+			}
+		}]
+};
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+</script>
+<h1 id="名词">名词</h1>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 66%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>中文</th>
+<th>对应的英文</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>槽位</td>
+<td>slot</td>
+</tr>
+<tr class="even">
+<td>槽值</td>
+<td>value</td>
+</tr>
+<tr class="odd">
+<td>槽值对</td>
+<td>slot-value / slot value / slot value pair<br />
+（有时为了简便，可能会直接称之为“槽值”，但是本文中如此称呼有歧义，所以几乎不会出现这种情况）</td>
+</tr>
+<tr class="even">
+<td>意图</td>
+<td>intent</td>
+</tr>
+<tr class="odd">
+<td>域槽对</td>
+<td>domain-slot pair</td>
+</tr>
+</tbody>
+</table>
+<script>
+window.onload = function () {
+    $('colgroup').remove()
+    }
+</script>
+<h1 id="bibliography" class="unnumbered">参考文献</h1>
+<div id="refs" class="references">
+<div id="ref-budzianowski2018multiwoz">
+<p>Budzianowski, Pawel, Tsung-Hsien Wen, Bo-Hsiang Tseng, Inigo Casanueva, Stefan Ultes, Osman Ramadan, and Milica Gašić. 2018. “Multiwoz-a Large-Scale Multi-Domain Wizard-of-Oz Dataset for Task-Oriented Dialogue Modelling.” <em>arXiv Preprint arXiv:1810.00278</em>.</p>
+</div>
+<div id="ref-heck2020trippy">
+<p>Heck, Michael, Carel van Niekerk, Nurul Lubis, Christian Geishauser, Hsien-Chin Lin, Marco Moresi, and Milica Gašić. 2020. “TripPy: A Triple Copy Strategy for Value Independent Neural Dialog State Tracking.”</p>
+</div>
+<div id="ref-henderson2014word">
+<p>Henderson, Matthew, Blaise Thomson, and Steve Young. 2014. “Word-Based Dialog State Tracking with Recurrent Neural Networks.” In <em>Proceedings of the 15th Annual Meeting of the Special Interest Group on Discourse and Dialogue (Sigdial)</em>, 292–99.</p>
+</div>
+<div id="ref-li2018self">
+<p>Li, Changliang, Liang Li, and Ji Qi. 2018. “A Self-Attentive Model with Gate Mechanism for Spoken Language Understanding.” In <em>Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing</em>, 3824–33.</p>
+</div>
+<div id="ref-liu2016attention">
+<p>Liu, Bing, and Ian Lane. 2016. “Attention-Based Recurrent Neural Network Models for Joint Intent Detection and Slot Filling.” <em>arXiv Preprint arXiv:1609.01454</em>.</p>
+</div>
+<div id="ref-mesnil2014using">
+<p>Mesnil, Grégoire, Yann Dauphin, Kaisheng Yao, Yoshua Bengio, Li Deng, Dilek Hakkani-Tur, Xiaodong He, et al. 2014. “Using Recurrent Neural Networks for Slot Filling in Spoken Language Understanding.” <em>IEEE/ACM Transactions on Audio, Speech, and Language Processing</em> 23 (3). IEEE: 530–39.</p>
+</div>
+<div id="ref-mrkvsic2016neural">
+<p>Mrkšić, Nikola, Diarmuid O Séaghdha, Tsung-Hsien Wen, Blaise Thomson, and Steve Young. 2016. “Neural Belief Tracker: Data-Driven Dialogue State Tracking.” <em>arXiv Preprint arXiv:1606.03777</em>.</p>
+</div>
+<div id="ref-rastogi2017scalable">
+<p>Rastogi, Abhinav, Dilek Hakkani-Tür, and Larry Heck. 2017. “Scalable Multi-Domain Dialogue State Tracking.” In <em>2017 Ieee Automatic Speech Recognition and Understanding Workshop (Asru)</em>, 561–68. IEEE.</p>
+</div>
+<div id="ref-Ren_2019">
+<p>Ren, Liliang, Jianmo Ni, and Julian McAuley. 2019. “Scalable and Accurate Dialogue State Tracking via Hierarchical Sequence Generation.” <em>Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)</em>. Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/d19-1196" target="_blank" rel="noopener" class="uri">https://doi.org/10.18653/v1/d19-1196</a>.</p>
+</div>
+<div id="ref-wang2018bi">
+<p>Wang, Yu, Yilin Shen, and Hongxia Jin. 2018. “A Bi-Model Based Rnn Semantic Frame Parsing Model for Intent Detection and Slot Filling.” <em>arXiv Preprint arXiv:1812.10235</em>.</p>
+</div>
+<div id="ref-wu2019transferable">
+<p>Wu, Chien-Sheng, Andrea Madotto, Ehsan Hosseini-Asl, Caiming Xiong, Richard Socher, and Pascale Fung. 2019. “Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems.” <em>arXiv Preprint arXiv:1905.08743</em>.</p>
+</div>
+<div id="ref-xu-hu-2018-end">
+<p>Xu, Puyang, and Qi Hu. 2018. “An End-to-End Approach for Handling Unknown Slot Values in Dialogue State Tracking.” In <em>Proceedings of the 56th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)</em>, 1448–57. Melbourne, Australia: Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/P18-1134" target="_blank" rel="noopener" class="uri">https://doi.org/10.18653/v1/P18-1134</a>.</p>
+</div>
+<div id="ref-zhang2019find">
+<p>Zhang, Jian-Guo, Kazuma Hashimoto, Chien-Sheng Wu, Yao Wan, Philip S Yu, Richard Socher, and Caiming Xiong. 2019. “Find or Classify? Dual Strategy for Slot-Value Predictions on Multi-Domain Dialog State Tracking.” <em>arXiv Preprint arXiv:1910.03544</em>.</p>
+</div>
+<div id="ref-zhang2016joint">
+<p>Zhang, Xiaodong, and Houfeng Wang. 2016. “A Joint Model of Intent Determination and Slot Filling for Spoken Language Understanding.” In <em>IJCAI</em>, 16:2993–9.</p>
+</div>
+<div id="ref-zhang2020recent">
+<p>Zhang, Zheng, Ryuichi Takanobu, Qi Zhu, Minlie Huang, and Xiaoyan Zhu. 2020. “Recent Advances and Challenges in Task-Oriented Dialog System.”</p>
+</div>
+<div id="ref-zhong2018global">
+<p>Zhong, Victor, Caiming Xiong, and Richard Socher. 2018. “Global-Locally Self-Attentive Dialogue State Tracker.” <em>arXiv Preprint arXiv:1805.09655</em>.</p>
+</div>
+<div id="ref-zhu2017encoder">
+<p>Zhu, Su, and Kai Yu. 2017. “Encoder-Decoder with Focus-Mechanism for Sequence Labelling Based Spoken Language Understanding.” In <em>2017 Ieee International Conference on Acoustics, Speech and Signal Processing (Icassp)</em>, 5675–9. IEEE.</p>
+</div>
+<div id="ref-zilka2015incremental">
+<p>Zilka, Lukas, and Filip Jurcicek. 2015. “Incremental Lstm-Based Dialog State Tracker.” In <em>2015 Ieee Workshop on Automatic Speech Recognition and Understanding (Asru)</em>, 757–62. IEEE.</p>
+</div>
+</div>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    赞赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.gif" alt="朱冲䶮 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>朱冲䶮
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://yan624.github.io/posts/e0902c9c.html" title="任务完成型对话系统论文调研（一）">https://yan624.github.io/posts/e0902c9c.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/dialogue-system/" rel="tag"># dialogue system</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/7f2adc4d.html" rel="prev" title="【算法设计题目】回溯法">
+      <i class="fa fa-chevron-left"></i> 【算法设计题目】回溯法
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/b9655d18.html" rel="next" title="Collaborative Multi-Agent Dialogue Model Training Via Reinforcement">
+      Collaborative Multi-Agent Dialogue Model Training Via Reinforcement <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#任务完成型对话系统"><span class="nav-number">1.</span> <span class="nav-text">任务完成型对话系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#对话状态与对话动作"><span class="nav-number">1.1.</span> <span class="nav-text">对话状态与对话动作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#系统动作"><span class="nav-number">1.2.</span> <span class="nav-text">系统动作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#slu"><span class="nav-number">2.</span> <span class="nav-text">SLU</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#难点未来的工作"><span class="nav-number">2.1.</span> <span class="nav-text">难点&#x2F;未来的工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关工作"><span class="nav-number">2.2.</span> <span class="nav-text">相关工作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#独立模型"><span class="nav-number">2.2.1.</span> <span class="nav-text">独立模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#联合模型"><span class="nav-number">2.2.2.</span> <span class="nav-text">联合模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#论文笔记"><span class="nav-number">2.3.</span> <span class="nav-text">论文笔记</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#引用"><span class="nav-number">2.4.</span> <span class="nav-text">引用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#dst"><span class="nav-number">3.</span> <span class="nav-text">DST</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#独立模型与联合模型"><span class="nav-number">3.1.</span> <span class="nav-text">独立模型与联合模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#难点未来的工作-1"><span class="nav-number">3.2.</span> <span class="nav-text">难点&#x2F;未来的工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关工作-1"><span class="nav-number">3.3.</span> <span class="nav-text">相关工作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#传统模型"><span class="nav-number">3.3.1.</span> <span class="nav-text">传统模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可扩展性"><span class="nav-number">3.3.2.</span> <span class="nav-text">可扩展性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#单领域dst"><span class="nav-number">3.3.2.1.</span> <span class="nav-text">单领域DST</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#多领域dst"><span class="nav-number">3.3.2.2.</span> <span class="nav-text">多领域DST</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算复杂度高"><span class="nav-number">3.3.3.</span> <span class="nav-text">计算复杂度高</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#论文笔记-1"><span class="nav-number">3.4.</span> <span class="nav-text">论文笔记</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#引用-1"><span class="nav-number">3.5.</span> <span class="nav-text">引用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结果对比"><span class="nav-number">4.</span> <span class="nav-text">结果对比</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#slu模块结果对比"><span class="nav-number">4.1.</span> <span class="nav-text">SLU模块结果对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dst模块结果对比"><span class="nav-number">4.2.</span> <span class="nav-text">DST模块结果对比</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#名词"><span class="nav-number">5.</span> <span class="nav-text">名词</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bibliography"><span class="nav-number">6.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+  <p class="site-author-name" itemprop="name">朱冲䶮</p>
+  <div class="site-description" itemprop="description">记录</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">181</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">105</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+      <!-- 不蒜子/busuanzi -->
+      <div class="site-state-item site-state-posts">
+      	<span class="site-state-item-count">246k</span>
+      	<span class="site-state-item-name">总字数</span>
+      </div>
+  </nav>
+</div>
+  <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
+    Chat
+  </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      友链
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+    </ul>
+  </div>
+<!-- CloudCalendar -->
+<div class="widget-wrap" style="width: 90%;margin-left: auto;margin-right: auto; opacity: 0.97;">
+	<div class="widget" id="CloudCalendar"></div>
+</div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div><!--
+樱花特效 
+最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
+然后在 github 上搜了一下，发现有个 jquery-sakura，但是这个插件用起来很麻烦，经过测试，我的博客上无法使用。
+后来发现是两个不同的插件，只是刚好特效一样。
+于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
+原地址为：https://cangshui.net/2372.html
+-->
+<script>
+	var pathname = window.location.pathname;
+	if(pathname == '/' || pathname == '/index.html'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="/lib/my-utils.js"></script>
+<script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<!-- 背景插件 -->
+<script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<!-- 背景图片 -->
+<script>
+	function generateBG(count){
+		var bg_prefix = '/images/background/';
+		var bg =new Array();
+		for(var i = 0; i < count; i++){
+			bg[i] = bg_prefix + i + '.jpg';
+		}
+		bg.shuffle();
+		return bg;
+	}
+	$("body").backstretch(generateBG(10), {
+		duration:90000,//1 min 半一换
+		fade: 1500
+	});
+</script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/e0902c9c.html',]
+      });
+      });
+  </script>
+<!-- calendar widget -->
+
+
+</body>
+</html>

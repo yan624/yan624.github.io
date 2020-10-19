@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文续任务完成型对话系统论文调研（一）。  引言 任务完成型对话系统的难点比起之前已经有所改变。在 (Xu and Hu 2018) 提出使用 Ptr 缓解低频槽值提取的问题之后，两年之内涌现了许多有突破性的论文。变化的槽值已经不再是难点。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="任务完成型对话系统论文调研（二）">
+<meta property="og:url" content="https://yan624.github.io/posts/4ec51203.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="本文续任务完成型对话系统论文调研（一）。  引言 任务完成型对话系统的难点比起之前已经有所改变。在 (Xu and Hu 2018) 提出使用 Ptr 缓解低频槽值提取的问题之后，两年之内涌现了许多有突破性的论文。变化的槽值已经不再是难点。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-07T06:09:19.000Z">
+<meta property="article:modified_time" content="2020-10-16T02:59:00.146Z">
+<meta property="article:author" content="朱冲䶮">
+<meta property="article:tag" content="博客，java，javaWeb，NLP，python，机器学习，深度学习">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://yan624.github.io/posts/4ec51203.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<!--阿里云矢量库样式-->
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
+
+
+  <title>任务完成型对话系统论文调研（二） | 博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">末流炼丹师</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-常用链接">
+
+    <a href="/%E5%B8%B8%E7%94%A8%E9%93%BE%E6%8E%A5" rel="section"><i class="fas fa-bookmark fa-fw"></i>常用链接</a>
+
+  </li>
+        <li class="menu-item menu-item-时间线">
+
+    <a href="/categories/assorted/timeline/" rel="section"><i class="iconfont icon-timeline fa-fw"></i>时间线</a>
+
+  </li>
+        
+            
+  <li class="menu-item menu-item-博客分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>博客分类</a>
+
+  </li>
+
+
+      
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">181</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    
+
+    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/4ec51203.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          任务完成型对话系统论文调研（二）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-07 14:09:19" itemprop="dateCreated datePublished" datetime="2020-09-07T14:09:19+08:00">2020-09-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-10-16 10:59:00" itemprop="dateModified" datetime="2020-10-16T10:59:00+08:00">2020-10-16</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/nlp/" itemprop="url" rel="index"><span itemprop="name">nlp</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div class="note info"><p>本文续<a href="https://yan624.github.io/posts/e0902c9c.html">任务完成型对话系统论文调研（一）</a>。</p>
+</div>
+<h1 id="引言">引言</h1>
+<p>任务完成型对话系统的难点比起之前已经有所改变。在 <span class="citation" data-cites="xu-hu-2018-end">(Xu and Hu 2018)</span> 提出使用 Ptr 缓解低频槽值提取的问题之后，两年之内涌现了许多有突破性的论文。<strong>变化的槽值</strong>已经不再是难点。 <a id="more"></a></p>
+<h1 id="dst">DST</h1>
+<p>本文结构与上一篇不同。删除了《独立模型与联合模型》。删除了《难点/未来的工作》一节，这是因为其中的大部分难点都或多或少地得到了缓解，所以本文将其替换为了《各项难点的处理方式》。增加了《前情提要》一节，回顾了 2020 年之前 DST 模型的做法。增加了《DSTC》一节，介绍对话状态跟踪挑战（Dialog State Tracking Challenge，DSTC）。其余章节不做变化。</p>
+<table>
+<thead>
+<tr class="header">
+<th>模型</th>
+<th>生成方法</th>
+<th>判别方法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>DST-SC<span class="citation" data-cites="ouyang-etal-2020-dialogue">(Ouyang et al. 2020)</span></td>
+<td><mark class="label success">generative</mark></td>
+<td><mark class="label info">soft-gated copy</mark></td>
+</tr>
+<tr class="even">
+<td>CSFN-DST<span class="citation" data-cites="zhu2020efficient">(Zhu et al. 2020)</span></td>
+<td><mark class="label success">generative</mark></td>
+<td><mark class="label info">soft-gated copy</mark></td>
+</tr>
+</tbody>
+</table>
+<div class="tabs" id="dst论文对比"><ul class="nav-tabs"><li class="tab active"><a href="#dst论文对比-1">论文介绍</a></li><li class="tab"><a href="#dst论文对比-2">论文瑕瑜</a></li></ul><div class="tab-content"><div class="tab-pane active" id="dst论文对比-1"><table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>论文</th>
+<th>标签</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#dialogue-state-tracking-with-explicit-slot-connection-modeling" title="Dialogue State Tracking with Explicit Slot Connection Modeling"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://www.aclweb.org/anthology/2020.acl-main.5/" target="_blank" rel="noopener" title="20.07"><i class="fa fa-"></i>论文</a> <br /> Ouyang et al., 2020</td>
+<td><mark class="label primary"><strong>BiGRU</strong></mark><br />
+<mark class="label success"><strong>DST-SC</strong></mark> <mark class="label info">slot connection mechanism</mark></td>
+</tr>
+<tr class="even">
+<td><a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#efficient-context-and-schema-fusion-networks-for-multi-domain-dialogue-state-tracking" title="Efficient Context and Schema Fusion Networks for Multi-Domain Dialogue State Tracking"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/2004.03386.pdf" target="_blank" rel="noopener" title="20.04"><i class="fa fa-"></i>论文</a> <br /> Zhu et al. 2020</td>
+<td><mark class="label primary"><strong>CSFN</strong></mark><br />
+<mark class="label success"><strong>CSFN-DST</strong></mark> <mark class="label primary">Schema Grapha</mark> <mark class="label info">Graph-based Multi-head Attention</mark></td>
+</tr>
+</tbody>
+</table></div><div class="tab-pane" id="dst论文对比-2"><table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">论文</th>
+<th>解决的问题</th>
+<th>局限性</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Ouyang et al., 2020</td>
+<td>1）共指解析</td>
+<td></td>
+</tr>
+</tbody>
+</table></div></div></div>
+<h2 id="前情提要">前情提要</h2>
+<div class="note "><p>本节回顾一下 2020 年之前 DST 的做法。</p>
+</div>
+<p>我暂时没有阅读过远古时代如何构建 DST 模型的论文，所以对那时的做法不做分析或评价。但是据我所知，在以前都需要一个人工构建的同义词表，以此替换用户语句中的一些同义词。例如“center”和“centre”都是“中心”的意思，但是由于它们是不同单词，所以一般都需要使用同义词表对用户的输入进行预处理。然而这种构建同义词表的做法显然费时费力。</p>
+<h3 id="同义词表以及误差传递的问题">同义词表以及误差传递的问题</h3>
+<p>在描述如何解决标题中的难点之前，首先需要介绍另一个要点。TODS 一般由六部分组成，每一部分的输入分别是其前一部分的输出，这就导致了一个严重的问题——层级误差传递。由于神经网络或者其他的技术都无法做到百分之百的正确，所以每一个模块的误差会被一次一次地放大。</p>
+<p>为解决这一问题，<span class="citation" data-cites="henderson2014word">(Henderson, Thomson, and Young 2014)</span> <strong>舍弃了 SLU 模块</strong>，直接使用 ASR 识别出的结果作为 RNN 的输入，注意那时他们并没有使用词向量。同时他们沿用了他们同年发表的论文中的方法——delexicalised features。简单来说就是将“槽”和“值”替换为一种标签，例如“i want chinese food”-&gt;“i want <code>&lt;value&gt;</code> <code>&lt;slot&gt;</code>”。这样做虽然可以提高模型的泛化性，但是还是需要一个人工构建的同义词表。<mark class="label default">联合模型</mark></p>
+<p>2013 年下半年词向量横空出世。此后，DST 领域也开始<strong>借助词向量的优势</strong>。<span class="citation" data-cites="zilka2015incremental">(Zilka and Jurcicek 2015)</span> 额外使用了 ASR 输出的置信度分数，具体来说就是将置信度分数乘上词向量从而得到一个全新的词向量，并将其作为模型的输入（具体做法还可以改进，文中只说了将分数和词向量结合），从而作为 LSTM 的输入。然后在<strong>每一个时间步</strong>上都接 N 个线性分类层，用于在所有候选槽值上进行分类，N 代表槽位的数量。<em>博主注：说实话这中分类方式挺诡异的，因为每个时间步都要执行一次分类。但是不管怎么样，这种方式借助词向量的优势已经不需要同义词表了。</em> <mark class="label info">不再需要使用同义词表</mark></p>
+<h3 id="判别式dst">判别式DST</h3>
+<p>此后，<span class="citation" data-cites="mrkvsic2016neural">(Mrkšić et al. 2016)</span> 提出了 neural belief tracker（NBT），也使用了词向量，不过他们使用的词向量是自己训练的。此外最重要的是他们提出了判别式 DST，即<strong>使用槽值对的表征去与用户语句做判别，以此判断该槽值对是否被用户提及</strong>，如果是则更新对话状态，反之亦反。<strong>但是这显然包含着重大的隐患，就是有些槽值对是不可枚举的，这该如何去匹配？</strong>所以之后的模型大都在围绕两点：1）槽值不可枚举怎么办？2）有未知的槽值怎么办？<mark class="label info">判别式 DST</mark></p>
+<p><span class="citation" data-cites="rastogi2017scalable">(Rastogi, Hakkani-Tür, and Heck 2017)</span> 提出了一个多领域 DST 模型，但是它是一个独立模型，这是因为它需要 SLU 模块帮助其实现 delexicalisation。<strong>他们将槽值候选集加了一项限定，即每一个槽值都会有一项分数，通过分数的排名，将候选集限定在一定的范围内，实验中选择 7 最为最大值。</strong>候选集的生成方式有多种，文中使用了外部的知识源而不是本体（因为本体通常很难构建以及访问。而知识源则很简答，可能还描述了其他方式去构建，但是时间太久了，有点忘了）。<mark class="label warning">有限候选集</mark> <mark class="label success">多领域 DST</mark></p>
+<p>[Zhong et al., 2018] 使用 global-locally 自注意力机制改进了对低频槽值对的追踪。</p>
+<p>另外有一个插曲是在 2015-2017 年之间，有人提出了 Pointer Network（PTR），并且后续还有人将其进一步完善。<span class="citation" data-cites="xu-hu-2018-end">(Xu and Hu 2018)</span> 首次在 DST 中引入了 index-based Ptr，此后几乎所有的模型都是用了该方式，不过他们提出的只是单领域模型。<mark class="label success">span-based</mark></p>
+<h3 id="slot-gate和多领域dst">Slot Gate和多领域DST</h3>
+<p>在之前其实已经有了多领域 DST，不过他们都是在不同的数据集之间进行实验。直到 <span class="citation" data-cites="budzianowski2018multiwoz">(Budzianowski et al. 2018)</span> 发布了 MultiWOZ 多领域任务完成型对话数据集，才涌现了一大批相对正常的多领域 DST 模型。有一点需要强调，由于已经进入多领域 DST 的时代，所以使用槽值对 <code>&lt;slot, value&gt;</code> 来表示信息显然已经不够了，所以以后一般都是使用三元组 <code>&lt;domain, slot, value&gt;</code> 的形式来表示，而槽位一般也写作 <code>doamin-slot</code>，可以读作“域槽对”。</p>
+<div class="note warning"><p>注意，NBT 是使用<strong>槽值对</strong>去与用户语句判别从而实现二元分类。而 TRADE 是使用<strong>域槽对</strong>去与用户语句做判别，从而实现三元分类得到槽位的类别，然后依靠槽位的类别再进一步去生成槽值。</p>
+</div>
+<p><span class="citation" data-cites="wu2019transferable">(Wu et al. 2019)</span> 提出了 TRADE 模型，沿用了 Ptr 神经网络，此外还是用 zero-shot 的训练方式使模型有能力处理未知领域中的槽位。他们将槽位分为 <span class="math inline">\(\{none, dontcare, ptr\}\)</span> 三种。<code>none</code> 代表当前所判别的槽位不包含槽值，槽值就是 <code>none</code>；<code>dontcare</code> 代表用户不关心当前所判别的槽位的具体槽值是什么，槽值就是 <code>dontcare</code>；<code>ptr</code> 代表模型需要再额外使用一个 ptr 神经网络来从用户语句中直接提取槽值。具体做法是，模型使用域槽对去和用户语句做判别，得到槽位的类别，然后根据槽位的类别进一步得到槽值。<em>博主注：这样的做法实际上会造成误差的层级传播，后面会说到。</em><mark class="label info">slot gate</mark></p>
+<p><span class="citation" data-cites="zhang2019find">(Zhang et al. 2019)</span> 将槽位分为 <span class="math inline">\(\{none, dontcare, picklist-based, span-based\}\)</span>，其中前两个和最后一个与 TRADE 中的定义一一对应。他们认为有些槽位是没必要使用 ptr 从用户语句中提取的，例如对于槽位“hotel-pricerange”，只有三个槽值 <span class="math inline">\(\{cheap, moderate, expensive\}\)</span>。<span class="citation" data-cites="heck2020trippy">(Heck et al. 2020)</span> 将槽位分为 <span class="math inline">\(\{none, dontcare, span-based, bool-based, refer, inform\}\)</span>。</p>
+<h2 id="各项难点的处理方式">各项难点的处理方式</h2>
+<ol type="1">
+<li>未知的槽位：任务导向对话模式、zero-shot learning</li>
+<li>未知以及不可枚举的槽值：span-based</li>
+<li>未知的意图：任务导向对话模式</li>
+<li>变化的系统动作：目前不知</li>
+<li>数据稀缺：MultiWOZ，TaskMaster，CrossWOZ，SGD</li>
+<li>计算复杂度：目前不知</li>
+</ol>
+<h2 id="dstc">DSTC</h2>
+<p>本节介绍 DSTC1-DSTC8 数据集。</p>
+<h2 id="相关工作">相关工作</h2>
+<ol type="1">
+<li><span class="citation" data-cites="zhu2020efficient">(Zhu et al. 2020)</span> 提出了 CSFN-DST（Context and Schema Fusion Network）。主要思想是将冗长的上下文改为：当前系统回复 <span class="math inline">\(A_t\)</span>，用户输入 <span class="math inline">\(U_t\)</span> 以及上一轮的对话状态 <span class="math inline">\(B_{t-1}\)</span>。作者将上一轮的对话状态视为对话历史的抽象表征，在训练时使用真实的对话状态，<font color="red"><strong>在推理阶段使用预测出的对话状态</strong></font>。此外，还将领域 <span class="math inline">\(D\)</span>，槽位 <span class="math inline">\(S\)</span> 以及域槽对 <span class="math inline">\(O\)</span> 表示图结构，并称之为协议图（schema graph）或者模式图。使用了 Graph-based Multi-head Attention 编码该协议图，实际上就是使用 mask 而已。详见论文笔记。<br />
+可以<strong>将其视为一种全新的域槽对表示方式</strong>，其它的方式可以参考 DS-DST<span class="citation" data-cites="zhang2019find">(Zhang et al. 2019)</span>。不过我觉得这好像没有利用到知识图谱的优势。此外虽然作者列出了 <strong>Graph Neural Network</strong> 的相关工作，但是并没有使用 GNN 去提取特征。</li>
+<li><span class="citation" data-cites="ouyang-etal-2020-dialogue">(Ouyang et al. 2020)</span>提出了 slot connection mechanism 用于处理省略、共指的难题，思想与 TripPy 类似，但是做法不同。具体不做阐述了。</li>
+</ol>
+<h2 id="论文笔记">论文笔记</h2>
+<p>详见 <a href="https://yan624.github.io/posts/5286f9c6.html">DST论文笔记（2020—至今）</a>。</p>
+<h1 id="dpl">DPL</h1>
+<p>待续。</p>
+<h1 id="结果对比">结果对比</h1>
+<div id="dst-multiwoz2.1" style="width: 100%;height: 350px;margin: 0 auto"></div>
+<script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.0.0-alpha.2/echarts.common.min.js"></script>
+<script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('dst-multiwoz2.1'));
+        // 指定图表的配置项和数据
+        var option = {
+	title: {text: 'MultiWOZ 2.1 结果对比'},
+	tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
+	legend: {
+		type: 'scroll',
+		data: ['Ouyang et al.', 'Zhu et al.'],
+		top: 25,
+	},
+	toolbox: {
+		orient: 'vertical',
+		left: 'right',
+		top: 'center',
+		feature: {
+			dataView: {show: true},
+			magicType: {show: true, type: ['bar', 'tiled']},
+			restore: {show: true},
+			saveAsImage: {show: true, pixelRatio: 2}
+		}
+	},
+    xAxis: {type: 'category', name: '<--年份--', data: ['Goals/Joint Accuracy']},
+    yAxis: {
+		type: 'value',
+		min: function (value) {
+			_min = value.min - 20;
+			if(_min < 0) return 0;
+			else return Math.floor(_min);
+		},
+		max: 100
+	},
+    series: [{ 
+            name: 'Ouyang et al.',
+            type: 'bar',
+            data: [49.58],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'DST-SC', offset: [0, 10]}
+			}
+		},{ 
+            name: 'Zhu et al.',
+            type: 'bar',
+            data: [50.81],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'CSFN-DST', offset: [0, 10]}
+			}
+		},{ 
+            name: 'Zhu et al.',
+            type: 'bar',
+            data: [52.88],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'+BERT', offset: [0, 10]}
+			}
+		}]
+};
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+</script>
+<script>
+window.onload = function () {
+    $('colgroup').remove()
+    }
+</script>
+<h1 id="bibliography" class="unnumbered">参考文献</h1>
+<div id="refs" class="references">
+<div id="ref-budzianowski2018multiwoz">
+<p>Budzianowski, Pawel, Tsung-Hsien Wen, Bo-Hsiang Tseng, Inigo Casanueva, Stefan Ultes, Osman Ramadan, and Milica Gašić. 2018. “Multiwoz-a Large-Scale Multi-Domain Wizard-of-Oz Dataset for Task-Oriented Dialogue Modelling.” <em>arXiv Preprint arXiv:1810.00278</em>.</p>
+</div>
+<div id="ref-heck2020trippy">
+<p>Heck, Michael, Carel van Niekerk, Nurul Lubis, Christian Geishauser, Hsien-Chin Lin, Marco Moresi, and Milica Gašić. 2020. “TripPy: A Triple Copy Strategy for Value Independent Neural Dialog State Tracking.”</p>
+</div>
+<div id="ref-henderson2014word">
+<p>Henderson, Matthew, Blaise Thomson, and Steve Young. 2014. “Word-Based Dialog State Tracking with Recurrent Neural Networks.” In <em>Proceedings of the 15th Annual Meeting of the Special Interest Group on Discourse and Dialogue (Sigdial)</em>, 292–99.</p>
+</div>
+<div id="ref-mrkvsic2016neural">
+<p>Mrkšić, Nikola, Diarmuid O Séaghdha, Tsung-Hsien Wen, Blaise Thomson, and Steve Young. 2016. “Neural Belief Tracker: Data-Driven Dialogue State Tracking.” <em>arXiv Preprint arXiv:1606.03777</em>.</p>
+</div>
+<div id="ref-ouyang-etal-2020-dialogue">
+<p>Ouyang, Yawen, Moxin Chen, Xinyu Dai, Yinggong Zhao, Shujian Huang, and Jiajun Chen. 2020. “Dialogue State Tracking with Explicit Slot Connection Modeling.” In <em>Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics</em>, 34–40. Online: Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/2020.acl-main.5" target="_blank" rel="noopener" class="uri">https://doi.org/10.18653/v1/2020.acl-main.5</a>.</p>
+</div>
+<div id="ref-rastogi2017scalable">
+<p>Rastogi, Abhinav, Dilek Hakkani-Tür, and Larry Heck. 2017. “Scalable Multi-Domain Dialogue State Tracking.” In <em>2017 Ieee Automatic Speech Recognition and Understanding Workshop (Asru)</em>, 561–68. IEEE.</p>
+</div>
+<div id="ref-wu2019transferable">
+<p>Wu, Chien-Sheng, Andrea Madotto, Ehsan Hosseini-Asl, Caiming Xiong, Richard Socher, and Pascale Fung. 2019. “Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems.” <em>arXiv Preprint arXiv:1905.08743</em>.</p>
+</div>
+<div id="ref-xu-hu-2018-end">
+<p>Xu, Puyang, and Qi Hu. 2018. “An End-to-End Approach for Handling Unknown Slot Values in Dialogue State Tracking.” In <em>Proceedings of the 56th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)</em>, 1448–57. Melbourne, Australia: Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/P18-1134" target="_blank" rel="noopener" class="uri">https://doi.org/10.18653/v1/P18-1134</a>.</p>
+</div>
+<div id="ref-zhang2019find">
+<p>Zhang, Jian-Guo, Kazuma Hashimoto, Chien-Sheng Wu, Yao Wan, Philip S Yu, Richard Socher, and Caiming Xiong. 2019. “Find or Classify? Dual Strategy for Slot-Value Predictions on Multi-Domain Dialog State Tracking.” <em>arXiv Preprint arXiv:1910.03544</em>.</p>
+</div>
+<div id="ref-zhu2020efficient">
+<p>Zhu, Su, Jieyu Li, Lu Chen, and Kai Yu. 2020. “Efficient Context and Schema Fusion Networks for Multi-Domain Dialogue State Tracking.” <em>arXiv Preprint arXiv:2004.03386</em>.</p>
+</div>
+<div id="ref-zilka2015incremental">
+<p>Zilka, Lukas, and Filip Jurcicek. 2015. “Incremental Lstm-Based Dialog State Tracker.” In <em>2015 Ieee Workshop on Automatic Speech Recognition and Understanding (Asru)</em>, 757–62. IEEE.</p>
+</div>
+</div>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    赞赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.gif" alt="朱冲䶮 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>朱冲䶮
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://yan624.github.io/posts/4ec51203.html" title="任务完成型对话系统论文调研（二）">https://yan624.github.io/posts/4ec51203.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/8d66b5f2.html" rel="prev" title="栈和队列">
+      <i class="fa fa-chevron-left"></i> 栈和队列
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/25dd0342.html" rel="next" title="强化学习入门（整理）">
+      强化学习入门（整理） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#dst"><span class="nav-number">2.</span> <span class="nav-text">DST</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#前情提要"><span class="nav-number">2.1.</span> <span class="nav-text">前情提要</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#同义词表以及误差传递的问题"><span class="nav-number">2.1.1.</span> <span class="nav-text">同义词表以及误差传递的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#判别式dst"><span class="nav-number">2.1.2.</span> <span class="nav-text">判别式DST</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#slot-gate和多领域dst"><span class="nav-number">2.1.3.</span> <span class="nav-text">Slot Gate和多领域DST</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#各项难点的处理方式"><span class="nav-number">2.2.</span> <span class="nav-text">各项难点的处理方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dstc"><span class="nav-number">2.3.</span> <span class="nav-text">DSTC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关工作"><span class="nav-number">2.4.</span> <span class="nav-text">相关工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#论文笔记"><span class="nav-number">2.5.</span> <span class="nav-text">论文笔记</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#dpl"><span class="nav-number">3.</span> <span class="nav-text">DPL</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结果对比"><span class="nav-number">4.</span> <span class="nav-text">结果对比</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bibliography"><span class="nav-number">5.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+  <p class="site-author-name" itemprop="name">朱冲䶮</p>
+  <div class="site-description" itemprop="description">记录</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">181</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">105</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+      <!-- 不蒜子/busuanzi -->
+      <div class="site-state-item site-state-posts">
+      	<span class="site-state-item-count">246k</span>
+      	<span class="site-state-item-name">总字数</span>
+      </div>
+  </nav>
+</div>
+  <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
+    Chat
+  </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      友链
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+    </ul>
+  </div>
+<!-- CloudCalendar -->
+<div class="widget-wrap" style="width: 90%;margin-left: auto;margin-right: auto; opacity: 0.97;">
+	<div class="widget" id="CloudCalendar"></div>
+</div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div><!--
+樱花特效 
+最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
+然后在 github 上搜了一下，发现有个 jquery-sakura，但是这个插件用起来很麻烦，经过测试，我的博客上无法使用。
+后来发现是两个不同的插件，只是刚好特效一样。
+于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
+原地址为：https://cangshui.net/2372.html
+-->
+<script>
+	var pathname = window.location.pathname;
+	if(pathname == '/' || pathname == '/index.html'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="/lib/my-utils.js"></script>
+<script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<!-- 背景插件 -->
+<script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<!-- 背景图片 -->
+<script>
+	function generateBG(count){
+		var bg_prefix = '/images/background/';
+		var bg =new Array();
+		for(var i = 0; i < count; i++){
+			bg[i] = bg_prefix + i + '.jpg';
+		}
+		bg.shuffle();
+		return bg;
+	}
+	$("body").backstretch(generateBG(10), {
+		duration:90000,//1 min 半一换
+		fade: 1500
+	});
+</script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/4ec51203.html',]
+      });
+      });
+  </script>
+<!-- calendar widget -->
+
+
+</body>
+</html>

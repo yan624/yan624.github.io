@@ -23,23 +23,20 @@
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="拟合异常分析 val loss上升，val acc也上升 这里的 acc 只是一种比较抽象的说法，换成 BLEU 等指标也是可以的。  使用 seq2seq 训练一个对话模型时，发现 val loss 始终很高，用尽了办法也没办法让它下去。train loss 一般都在 0.x - 3 之间，BLEU 也在 80%-90% 之间。但是 val loss 就是大概在 80 以上，而 BLEU">
+  <meta name="description" content="系统架构 框架 预训练模型">
 <meta property="og:type" content="article">
-<meta property="og:title" content="NLP模型训练分析">
-<meta property="og:url" content="https://yan624.github.io/posts/38ae497e.html">
+<meta property="og:title" content="构建一个任务完成型对话系统（零）：调研">
+<meta property="og:url" content="https://yan624.github.io/posts/efcdf06b.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="拟合异常分析 val loss上升，val acc也上升 这里的 acc 只是一种比较抽象的说法，换成 BLEU 等指标也是可以的。  使用 seq2seq 训练一个对话模型时，发现 val loss 始终很高，用尽了办法也没办法让它下去。train loss 一般都在 0.x - 3 之间，BLEU 也在 80%-90% 之间。但是 val loss 就是大概在 80 以上，而 BLEU">
+<meta property="og:description" content="系统架构 框架 预训练模型">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E8%AE%AD%E7%BB%83%E6%8A%80%E5%B7%A7%EF%BC%88tricks%EF%BC%89/%E5%8A%A0%E5%A4%A7%E6%95%B0%E6%8D%AE%E9%9B%86%E5%90%8E%EF%BC%8Cval_loss%E6%98%8E%E6%98%BE%E4%B8%8B%E9%99%8D.svg">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E8%AE%AD%E7%BB%83%E6%8A%80%E5%B7%A7%EF%BC%88tricks%EF%BC%89/train%20acc%E5%BE%88%E5%A4%A7%EF%BC%8Cgap%E4%B9%9F%E5%BE%88%E5%A4%A7.svg">
-<meta property="article:published_time" content="2020-06-01T02:28:40.000Z">
-<meta property="article:modified_time" content="2020-07-17T15:13:04.393Z">
+<meta property="article:published_time" content="2020-10-18T13:46:24.000Z">
+<meta property="article:modified_time" content="2020-10-18T13:50:31.018Z">
 <meta property="article:author" content="朱冲䶮">
-<meta property="article:tag" content="博客，java，javaWeb，NLP，python，机器学习，深度学习">
+<meta property="article:tag" content="survey">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E8%AE%AD%E7%BB%83%E6%8A%80%E5%B7%A7%EF%BC%88tricks%EF%BC%89/%E5%8A%A0%E5%A4%A7%E6%95%B0%E6%8D%AE%E9%9B%86%E5%90%8E%EF%BC%8Cval_loss%E6%98%8E%E6%98%BE%E4%B8%8B%E9%99%8D.svg">
 
-<link rel="canonical" href="https://yan624.github.io/posts/38ae497e.html">
+<link rel="canonical" href="https://yan624.github.io/posts/efcdf06b.html">
 
 
 <script id="page-configurations">
@@ -52,10 +49,10 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_621sfmh583s.css" />
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
 
 
-  <title>NLP模型训练分析 | 博客</title>
+  <title>构建一个任务完成型对话系统（零）：调研 | 博客</title>
   
 
 
@@ -140,12 +137,7 @@
   </li>
         <li class="menu-item menu-item-时间线">
 
-    <a href="/categories/timeline/" rel="section"><i class="iconfont icon-timeline fa-fw"></i>时间线</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">95</span></a>
+    <a href="/categories/assorted/timeline/" rel="section"><i class="iconfont icon-timeline fa-fw"></i>时间线</a>
 
   </li>
         
@@ -160,7 +152,7 @@
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">168</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">181</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -221,11 +213,13 @@
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     
+    	
+    
 
-    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/38ae497e.html">
+    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/efcdf06b.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
       <meta itemprop="name" content="朱冲䶮">
       <meta itemprop="description" content="记录">
     </span>
@@ -235,7 +229,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          NLP模型训练分析
+          构建一个任务完成型对话系统（零）：调研
         </h1>
 
         <div class="post-meta">
@@ -244,27 +238,17 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-06-01 10:28:40" itemprop="dateCreated datePublished" datetime="2020-06-01T10:28:40+08:00">2020-06-01</time>
+              <time title="创建时间：2020-10-18 21:46:24 / 修改时间：21:50:31" itemprop="dateCreated datePublished" datetime="2020-10-18T21:46:24+08:00">2020-10-18</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-17 23:13:04" itemprop="dateModified" datetime="2020-07-17T23:13:04+08:00">2020-07-17</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/nlp/" itemprop="url" rel="index"><span itemprop="name">nlp</span></a>
+                  <a href="/categories/project/" itemprop="url" rel="index"><span itemprop="name">project</span></a>
                 </span>
             </span>
 
@@ -281,14 +265,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.9k</span>
+              <span>11</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>1 分钟</span>
             </span>
 
         </div>
@@ -300,84 +284,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="拟合异常分析">拟合异常分析</h1>
-<h2 id="val-loss上升val-acc也上升">val loss上升，val acc也上升</h2>
-<div class="note warning"><p>这里的 acc 只是一种比较抽象的说法，换成 BLEU 等指标也是可以的。</p>
-</div>
-<p>使用 seq2seq 训练一个对话模型时，发现 val loss 始终很高，用尽了办法也没办法让它下去。train loss 一般都在 0.x - 3 之间，BLEU 也在 80%-90% 之间。但是 val loss 就是大概在 80 以上，而 BLEU 在 30 % 左右。在下面几个章节的图片中可以明显的看到二者的 gap 非常大。</p>
-<h3 id="参考资料">参考资料</h3>
-<ol type="1">
-<li><a href="https://www.zhihu.com/question/318399418/answer/1202932315" target="_blank" rel="noopener">验证集 loss 上升，准确率却上升该如何理解？</a> <a id="more"></a></li>
-</ol>
-<h2 id="训练集和验证集的性能或者loss相差巨大">训练集和验证集的性能或者loss相差巨大</h2>
-<p>此问题与下一章《train acc很大，gap非常大》的问题类似，或者说完全一样。无论怎么调整参数或者加什么正则化方法，都无法使得验证集 loss 减小，或者准确率上升。这意味着需要增加数据集，其他的方法都不管用。具体看下图，我增加了大约已被数据集后，黄色验证集曲线（7872 条数据）比绿色验证集曲线(4000 条)下降很多。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/加大数据集后，val_loss明显下降.svg" alt="加大数据集后，val_loss明显下降" /></p>
-<h3 id="train-acc很大gap非常大">train acc很大，gap非常大</h3>
-<p>在训练过程中出现了一种情况，train acc 94% 左右，但是 val acc 只有 24% 左右，test acc 也是 24% 左右。很多人认为这是<strong>过拟合</strong>状态，因为模型在训练集上拟合的很好，但在验证集上拟合的不好，这两者之间的 gap 很大。也就是<strong>高方差</strong>。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/train%20acc很大，gap也很大.svg" alt="train acc很大，gap也很大" /></p>
-<p>以下是对此现象的分析： 1. 再增加 <strong>epoch</strong> 已经没用了，因为该模型的参数已经很好的拟合了数据集，使得准确率接近 100%。 <blockquote class="blockquote-center">
-<i class="fa fa-quote-left"></i>
-<p>说明训练集中的几乎所有信息（不论是对泛化有用的信息还是训练集中的噪声）都全部被模型学习到了。（<a href="https://www.zhihu.com/question/65200055" target="_blank" rel="noopener">来源</a>）</p>
-
-<i class="fa fa-quote-right"></i>
-</blockquote></p>
-<ol start="2" type="1">
-<li>改变（无论增大还是缩小） rnn 的<strong>隐藏状态</strong>也不会有很大改善了。比如说此文章的模型，我尝试选择隐藏状态大小为 (100, 115, 125, 128)，结果如下所示，可以看到增加减少隐藏状态大小，对 train acc 根本无影响，对 val acc 也只有一点影响： <blockquote class="blockquote-center">
-<i class="fa fa-quote-left"></i>
-<table>
-<thead>
-<tr class="header">
-<th>hidden size</th>
-<th>batch</th>
-<th>train acc</th>
-<th>val acc</th>
-<th>test acc</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>100</td>
-<td>32</td>
-<td>94.42%</td>
-<td>20.74%</td>
-<td>21.28%</td>
-</tr>
-<tr class="even">
-<td>115</td>
-<td>32</td>
-<td>94.42%</td>
-<td>22.80%</td>
-<td>23.72%</td>
-</tr>
-<tr class="odd">
-<td>125</td>
-<td>32</td>
-<td>94.42%</td>
-<td>24.95%</td>
-<td>24.78%</td>
-</tr>
-<tr class="even">
-<td>128</td>
-<td>32</td>
-<td>94.42%</td>
-<td>21.20%</td>
-<td>22.58%</td>
-</tr>
-<tr class="odd">
-<td>125</td>
-<td>128</td>
-<td>98.47%</td>
-<td>19.13%</td>
-<td>20.37%</td>
-</tr>
-</tbody>
-</table>
-
-<i class="fa fa-quote-right"></i>
-</blockquote> <div class="note info"><p>但是我认为这种情况<strong>不算过拟合</strong>（暂时不看 <code>batch=128</code> 那组）。因为过拟合指的是模型在训练集上过度地拟合了数据特征，于是在验证集上出现个比较离群的数据样本，就会得到很差的结果。 如果把训练集拥有的特征集合定义为 A，验证集拥有的特征集合定义为 B，那么 <span class="math inline">\(C=A \cap B, D = A \cup B - C\)</span>，其中 C 代表的是未被神经网络拟合的很小的一部分特征，D 代表的是已经被神经网络拟合的特征（注：这里的拟合并不一定要完全的拟合，在拟合线的附近即可）。神经网络要做的是同时拟合 A 与 B 的所有特征。 但是随着 epoch 的增加，A 中的所有特征肯定被拟合的越来越好，而 B 中有些已经被拟合的特征却越来越远离拟合线，所以导致了 C 中的特征越来越多。（可以通过逻辑回归来先思考，验证集数据原本在拟合线附近，但是增加 epoch 或者增加网络参数等操作导致过拟合，原本在拟合线附近的数据点反而偏离了） <strong>所以训练集和验证集中的数据的分布应该是这样的：训练集和验证集中有很多数据分布类似（对应即使过拟合 val acc 也不会下降到 0%），但是两个数据集中有些数据只有部分特征的分布是类似的（对应于过拟合），最后两个数据集汇总有一部分数据完全无关联（对应于不管怎么拟合，val acc 始终不可能到 100%）。</strong> 话说回来文中的情况，明显训练集和验证集的 acc 到达顶部之后一直处于平稳的状态，增加 epoch 或者增加网络参数都没有使得 acc 增加或下降，这就意味这 C 中的特征没有变化。 <strong>所以这种情况应该是这样的：训练集和验证集中的数据有少量是类似的（对应于 val acc 拥有 20+%），其余大部分，可能有超过 60% 的数据都没有关联（对应于不管怎么训练 val acc 始终只有 20+%），最后有两个数据集中一小部分数据可能有部分特征重叠（对应于随着 epoch 的增加，val acc 有略微的波动）。</strong></p>
-</div></li>
-</ol>
-<p>对这种情况，一般出现在利用随机采样快速训练模型，只需要加大数据量就行了。所以以后再用小数据量训练时只需要将参数调整到满意的地步就不需要再继续调整了，直接换大数据量。 最后对于 <code>batch = 128</code> 的那组，train acc 上升了，其他的下降了，有过拟合嫌疑，但是幅度不是很大。</p>
-<h1 id="loss与acc之间的关系">loss与acc之间的关系</h1>
-<p><a href="https://www.zhihu.com/question/264892967/answer/833656253" target="_blank" rel="noopener">深度学习中 loss 和 accuracy 的关系？</a></p>
+        <h1 id="系统架构">系统架构</h1>
+<h1 id="框架">框架</h1>
+<h1 id="预训练模型">预训练模型</h1>
+<a id="more"></a>
 
     </div>
 
@@ -408,7 +318,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://yan624.github.io/posts/38ae497e.html" title="NLP模型训练分析">https://yan624.github.io/posts/38ae497e.html</a>
+    <a href="https://yan624.github.io/posts/efcdf06b.html" title="构建一个任务完成型对话系统（零）：调研">https://yan624.github.io/posts/efcdf06b.html</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -418,6 +328,9 @@
 
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/survey/" rel="tag"># survey</a>
+          </div>
 
         
 
@@ -425,12 +338,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/posts/ed3332ae.html" rel="prev" title="李宏毅迁移学习视频笔记">
-      <i class="fa fa-chevron-left"></i> 李宏毅迁移学习视频笔记
+    <a href="/posts/5286f9c6.html" rel="prev" title="DST论文笔记（2020—至今）">
+      <i class="fa fa-chevron-left"></i> DST论文笔记（2020—至今）
     </a></div>
       <div class="post-nav-item">
-    <a href="/posts/f4a0fc2f.html" rel="next" title="NLP疑难杂题总结">
-      NLP疑难杂题总结 <i class="fa fa-chevron-right"></i>
+    <a href="/posts/ceeb7bcc.html" rel="next" title="TOD-BERT: Pre-trained Natural Language Understanding for Task-Oriented Dialogue">
+      TOD-BERT: Pre-trained Natural Language Understanding for Task-Oriented Dialogue <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -490,14 +403,14 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#拟合异常分析"><span class="nav-number">1.</span> <span class="nav-text">拟合异常分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#val-loss上升val-acc也上升"><span class="nav-number">1.1.</span> <span class="nav-text">val loss上升，val acc也上升</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">1.1.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#训练集和验证集的性能或者loss相差巨大"><span class="nav-number">1.2.</span> <span class="nav-text">训练集和验证集的性能或者loss相差巨大</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#train-acc很大gap非常大"><span class="nav-number">1.2.1.</span> <span class="nav-text">train acc很大，gap非常大</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#loss与acc之间的关系"><span class="nav-number">2.</span> <span class="nav-text">loss与acc之间的关系</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#系统架构"><span class="nav-number">1.</span> <span class="nav-text">系统架构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#框架"><span class="nav-number">2.</span> <span class="nav-text">框架</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#预训练模型"><span class="nav-number">3.</span> <span class="nav-text">预训练模型</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="朱冲䶮"
-      src="/images/avatar.jpg">
+      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
   <div class="site-description" itemprop="description">记录</div>
 </div>
@@ -506,24 +419,23 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">168</span>
+          <span class="site-state-item-count">181</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-count">31</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-          
-        <span class="site-state-item-count">95</span>
+        <span class="site-state-item-count">105</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">214.1k</span>
+      	<span class="site-state-item-count">246k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
@@ -592,7 +504,20 @@
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
-  </div>
+  </div><!--
+樱花特效 
+最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
+然后在 github 上搜了一下，发现有个 jquery-sakura，但是这个插件用起来很麻烦，经过测试，我的博客上无法使用。
+后来发现是两个不同的插件，只是刚好特效一样。
+于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
+原地址为：https://cangshui.net/2372.html
+-->
+<script>
+	var pathname = window.location.pathname;
+	if(pathname == '/' || pathname == '/index.html'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+</script>
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script src="/lib/my-utils.js"></script>
 <script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -696,32 +621,11 @@
       quicklink({
         timeout : 3000,
         priority: true,
-        ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/38ae497e.html',]
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/efcdf06b.html',]
       });
       });
   </script>
 <!-- calendar widget -->
-
-    <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-calendar/calendar.min.js"></script>
-    <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-calendar/languages.min.js"></script>
-    <script>
-    $(function() {
-        $('#CloudCalendar').aCalendar('zh-CN',
-            $.extend(
-                '', {
-                    single:true,
-                    root:'/calendar/'
-                }
-            )
-        );
-    });	
-	/*
-	* 2020.08.10: 由本博客博主自定义加入，由于不是很需要日历最下面的前进后退键，其与日历最上方的功能键冲突，所以在此将其删除
-	*/
-	$(function(){
-		$('#CloudCalendar tfoot').remove()
-	})
-	</script>
 
 
 </body>

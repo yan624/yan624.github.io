@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="在 GPU 上训练时，报了这个错。目前为止，始终无法解决。看起来像是数据量大小引起的，之前用小数据训练没问题，改用大数据之后就报错了。但是根据查到的资料，别人在其他的情况下也有这问题。 1RuntimeError: transform: failed to synchronize: cudaErrorIllegalAddress: an illegal memory access was enco">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RuntimeError: CUDA error: n illegal memory access was encountered">
+<meta property="og:url" content="https://yan624.github.io/posts/87554a0.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="在 GPU 上训练时，报了这个错。目前为止，始终无法解决。看起来像是数据量大小引起的，之前用小数据训练没问题，改用大数据之后就报错了。但是根据查到的资料，别人在其他的情况下也有这问题。 1RuntimeError: transform: failed to synchronize: cudaErrorIllegalAddress: an illegal memory access was enco">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-08-19T18:04:12.000Z">
+<meta property="article:modified_time" content="2020-08-20T07:40:08.709Z">
+<meta property="article:author" content="朱冲䶮">
+<meta property="article:tag" content="博客，java，javaWeb，NLP，python，机器学习，深度学习">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://yan624.github.io/posts/87554a0.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<!--阿里云矢量库样式-->
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
+
+
+  <title>RuntimeError: CUDA error: n illegal memory access was encountered | 博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">末流炼丹师</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-常用链接">
+
+    <a href="/%E5%B8%B8%E7%94%A8%E9%93%BE%E6%8E%A5" rel="section"><i class="fas fa-bookmark fa-fw"></i>常用链接</a>
+
+  </li>
+        <li class="menu-item menu-item-时间线">
+
+    <a href="/categories/assorted/timeline/" rel="section"><i class="iconfont icon-timeline fa-fw"></i>时间线</a>
+
+  </li>
+        
+            
+  <li class="menu-item menu-item-博客分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>博客分类</a>
+
+  </li>
+
+
+      
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">181</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    
+
+    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/87554a0.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          RuntimeError: CUDA error: n illegal memory access was encountered
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-08-20 02:04:12 / 修改时间：15:40:08" itemprop="dateCreated datePublished" datetime="2020-08-20T02:04:12+08:00">2020-08-20</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>396</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在 GPU 上训练时，报了这个错。目前为止，始终无法解决。看起来像是数据量大小引起的，之前用小数据训练没问题，改用大数据之后就报错了。但是根据查到的资料，别人在其他的情况下也有这问题。 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">RuntimeError:</span> <span class="string">transform:</span> failed to <span class="string">synchronize:</span> <span class="string">cudaErrorIllegalAddress:</span> an illegal memory access was encountered</span><br></pre></td></tr></table></figure></p>
+<p>后来在网上看到的讨论中，选择了运行：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">CUDA_LAUNCH_BLOCKING</span>=<span class="number">1</span> python train.py</span><br></pre></td></tr></table></figure>
+<p>然而，过了几个 epoch 之后，又报错了。不过加了 <code>CUDA_LAUNCH_BLOCKING=1</code> 之后，报的错更详细了，为： <a id="more"></a> <figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent calls WITHOUT Sacred internals):</span><br><span class="line">  File <span class="string">"train.py"</span>, line <span class="number">98</span>, <span class="keyword">in</span> run</span><br><span class="line">    model(data_loader)</span><br><span class="line">  File <span class="string">"/home/zcy/anaconda3/envs/nlp/lib/python3.7/site-packages/torch/nn/modules/module.py"</span>, line <span class="number">550</span>, <span class="keyword">in</span> __call__</span><br><span class="line">    result = self.forward(*input, **kwargs)</span><br><span class="line">  File <span class="string">"/home/zcy/python_workspace/DSTex/model.py"</span>, line <span class="number">117</span>, <span class="keyword">in</span> forward</span><br><span class="line">    self.train_epoch(pbar_train, cur_epoch, train_batch_num, train_statistics_every)</span><br><span class="line">  File <span class="string">"/home/zcy/python_workspace/DSTex/model.py"</span>, line <span class="number">162</span>, <span class="keyword">in</span> train_epoch</span><br><span class="line">    train_perf = self.train_batch(train_data, cur_epoch)</span><br><span class="line">  File <span class="string">"/home/zcy/python_workspace/DSTex/model.py"</span>, line <span class="number">215</span>, <span class="keyword">in</span> train_batch</span><br><span class="line">    loss.backward()</span><br><span class="line">  File <span class="string">"/home/zcy/anaconda3/envs/nlp/lib/python3.7/site-packages/torch/tensor.py"</span>, line <span class="number">198</span>, <span class="keyword">in</span> backward</span><br><span class="line">    torch.autograd.backward(self, gradient, retain_graph, create_graph)</span><br><span class="line">  File <span class="string">"/home/zcy/anaconda3/envs/nlp/lib/python3.7/site-packages/torch/autograd/__init__.py"</span>, line <span class="number">100</span>, <span class="keyword">in</span> backward</span><br><span class="line">    allow_unreachable=True)  # allow_unreachable flag</span><br><span class="line"><span class="symbol">RuntimeError:</span> CUDA error: an illegal memory access was encountered (copy_device_to_device <span class="meta">at</span> /opt/conda/conda-bld/pytorch_1587428398394/work/aten/src/ATen/native/cuda/Copy.cu:<span class="number">61</span>)</span><br><span class="line">frame #<span class="number">0</span>: c10::Error::Error(c10::SourceLocation, <span class="keyword">std</span>::string const&amp;) + <span class="number">0x4e</span> (<span class="number">0x7f5fc5c77b5e</span> <span class="keyword">in</span> /home/zcy/anaconda3/envs/nlp/lib/python3<span class="meta">.7</span>/site-packages/torch/lib/libc10.so)</span><br><span class="line">frame #<span class="number">1</span>: <span class="meta">at</span>::native::copy_device_to_device(<span class="meta">at</span>::TensorIterator&amp;, bool) + <span class="number">0x861</span> (<span class="number">0x7f5fc82b12b1</span> <span class="keyword">in</span> /home/zcy/anaconda3/envs/nlp/lib/python3<span class="meta">.7</span>/site-packages/torch/lib/libtorch_cuda.so)</span><br><span class="line">frame #<span class="number">2</span>: &lt;unknown function&gt; + <span class="number">0x240f91c</span> (<span class="number">0x7f5fc82b391c</span> <span class="keyword">in</span> /home/zcy/anaconda3/envs/nlp/lib/python3<span class="meta">.7</span>/site-packages/torch/lib/libtorch_cuda.so)</span><br><span class="line">frame #<span class="number">3</span>: &lt;unknown function&gt; + <span class="number">0x9146ac</span> (<span class="number">0x7f5fed76d6ac</span> <span class="keyword">in</span> /home/zcy/anaconda3/envs/nlp/lib/python3<span class="meta">.7</span>/site-packages/torch/lib/libtorch_cpu.so)</span><br><span class="line">frame #<span class="number">4</span>: &lt;unknown function&gt; + <span class="number">0x911d73</span> (<span class="number">0x7f5fed76ad73</span> <span class="keyword">in</span> /home/zcy/anaconda3/envs/nlp/lib/python3<span class="meta">.7</span>/site-packages/torch/lib/libtorch_cpu.so)</span><br><span class="line">frame #<span class="number">5</span>: <span class="meta">at</span>::native::copy_(<span class="meta">at</span>::Tensor&amp;, <span class="meta">at</span>::Tensor const&amp;, bool) + <span class="number">0x44</span> (<span class="number">0x7f5fed76c834</span> <span class="keyword">in</span> /home/zcy/anaconda3/envs/nlp/lib/python3<span class="meta">.7</span>/site-packages/torch/lib/libtorch_cpu.so)</span><br><span class="line">frame #<span class="number">6</span>: <span class="meta">at</span>::native::embedding_dense_backward_cuda(<span class="meta">at</span>::Tensor const&amp;, <span class="meta">at</span>::Tensor const&amp;, long, long, bool) + <span class="number">0x4bd</span> (<span class="number">0x7f5fc83fdbdd</span> <span class="keyword">in</span> /home/zcy/anaconda3/envs/nlp/lib/python3<span class="meta">.7</span>/site-packages/torch/lib/libtorch_cuda.so)</span><br><span class="line">frame #<span class="number">7</span>: &lt;unknown function&gt; + <span class="number">0xde41dc</span> (<span class="number">0x7f5fc6c881dc</span> <span class="keyword">in</span> /home/zcy/anaconda3/envs/nlp/lib/python3<span class="meta">.7</span>/site-packages/torch/lib/libtorch_cuda.so)</span><br><span class="line">frame #<span class="number">8</span>: &lt;unknown function&gt; + <span class="number">0xe2404c</span> (<span class="number">0x7f5fedc7d04c</span> <span class="keyword">in</span> /home/zcy/anaconda3/envs/nlp/lib/python3<span class="meta">.7</span>/site-packages/torch/lib/libtorch_cpu.so)</span><br><span class="line">frame #<span class="number">9</span>: &lt;unknown function&gt; + <span class="number">0x28037f1</span> (<span class="number">0x7f5fef65c7f1</span> <span class="keyword">in</span> /home/zcy/anaconda3/envs/nlp/lib/python3<span class="meta">.7</span>/site-packages/torch/lib/libtorch_cpu.so)</span><br><span class="line">frame #<span class="number">10</span>: &lt;unknown function&gt; + <span class="number">0xe2404c</span> (<span class="number">0x7f5fedc7d04c</span> <span class="keyword">in</span> /home/zcy/anaconda3/envs/nlp/lib/python3<span class="meta">.7</span>/site-packages/torch/lib/libtorch_cpu.so)</span><br><span class="line">frame #<span class="number">11</span>: <span class="meta">at</span>::native::embedding_backward(<span class="meta">at</span>::Tensor const&amp;, <span class="meta">at</span>::Tensor const&amp;, long, long, bool, bool) + <span class="number">0x124</span> (<span class="number">0x7f5fed7ca1a4</span> <span class="keyword">in</span> /home/zcy/anaconda3/envs/nlp/lib/python3<span class="meta">.7</span>/site-packages/torch/lib/libtorch_cpu.so)</span><br><span class="line">frame #<span class="number">12</span>: &lt;unknown function&gt; + <span class="number">0xeaefe0</span> (<span class="number">0x7f5fedd07fe0</span> <span class="keyword">in</span> /home/zcy/anaconda3/envs/nlp/lib/python3<span class="meta">.7</span>/site-packages/torch/lib/libtorch_cpu.so)</span><br><span class="line">frame #<span class="number">13</span>: &lt;unknown function&gt; + <span class="number">0x29acffa</span> (<span class="number">0x7f5fef805ffa</span> <span class="keyword">in</span> /home/zcy/anaconda3/envs/nlp/lib/python3<span class="meta">.7</span>/site-packages/torch/lib/libtorch_cpu.so)</span><br><span class="line">frame #<span class="number">14</span>: &lt;unknown function&gt; + <span class="number">0xee78d9</span> (<span class="number">0x7f5fedd408d9</span> <span class="keyword">in</span> /home/zcy/anaconda3/envs/nlp/lib/python3<span class="meta">.7</span>/site-packages/torch/lib/libtorch_cpu.so)</span><br><span class="line">frame #<span class="number">15</span>: torch::autograd::generated::EmbeddingBackward::apply(<span class="keyword">std</span>::vector&lt;<span class="meta">at</span>::Tensor, <span class="keyword">std</span>::allocator&lt;<span class="meta">at</span>::Tensor&gt; &gt;&amp;&amp;) + <span class="number">0x1cd</span> (<span class="number">0x7f5fef45ef9d</span> <span class="keyword">in</span> /home/zcy/anaconda3/envs/nlp/lib/python3<span class="meta">.7</span>/site-packages/torch/lib/libtorch_cpu.so)</span><br><span class="line">frame #<span class="number">16</span>: &lt;unknown function&gt; + <span class="number">0x2ae8215</span> (<span class="number">0x7f5fef941215</span> <span class="keyword">in</span> /home/zcy/anaconda3/envs/nlp/lib/python3<span class="meta">.7</span>/site-packages/torch/lib/libtorch_cpu.so)</span><br><span class="line">frame #<span class="number">17</span>: torch::autograd::Engine::evaluate_function(<span class="keyword">std</span>::shared_ptr&lt;torch::autograd::GraphTask&gt;&amp;, torch::autograd::Node*, torch::autograd::InputBuffer&amp;) + <span class="number">0x16f3</span> (<span class="number">0x7f5fef93e513</span> <span class="keyword">in</span> /home/zcy/anaconda3/envs/nlp/lib/python3<span class="meta">.7</span>/site-packages/torch/lib/libtorch_cpu.so)</span><br><span class="line">frame #<span class="number">18</span>: torch::autograd::Engine::thread_main(<span class="keyword">std</span>::shared_ptr&lt;torch::autograd::GraphTask&gt; const&amp;, bool) + <span class="number">0x3d2</span> (<span class="number">0x7f5fef93f2f2</span> <span class="keyword">in</span> /home/zcy/anaconda3/envs/nlp/lib/python3<span class="meta">.7</span>/site-packages/torch/lib/libtorch_cpu.so)</span><br><span class="line">frame #<span class="number">19</span>: torch::autograd::Engine::thread_init(<span class="keyword">int</span>) + <span class="number">0x39</span> (<span class="number">0x7f5fef937969</span> <span class="keyword">in</span> /home/zcy/anaconda3/envs/nlp/lib/python3<span class="meta">.7</span>/site-packages/torch/lib/libtorch_cpu.so)</span><br><span class="line">frame #<span class="number">20</span>: torch::autograd::python::PythonEngine::thread_init(<span class="keyword">int</span>) + <span class="number">0x38</span> (<span class="number">0x7f5ff2c7e558</span> <span class="keyword">in</span> /home/zcy/anaconda3/envs/nlp/lib/python3<span class="meta">.7</span>/site-packages/torch/lib/libtorch_python.so)</span><br><span class="line">frame #<span class="number">21</span>: &lt;unknown function&gt; + <span class="number">0xc819d</span> (<span class="number">0x7f5ff56e119d</span> <span class="keyword">in</span> /home/zcy/anaconda3/envs/nlp/lib/python3<span class="meta">.7</span>/site-packages/torch/lib/../../../.././libstdc++.so<span class="meta">.6</span>)</span><br><span class="line">frame #<span class="number">22</span>: &lt;unknown function&gt; + <span class="number">0x76db</span> (<span class="number">0x7f6017a0d6db</span> <span class="keyword">in</span> /lib/x86_64-linux-gnu/libpthread.so<span class="meta">.0</span>)</span><br><span class="line">frame #<span class="number">23</span>: clone + <span class="number">0x3f</span> (<span class="number">0x7f601773688f</span> <span class="keyword">in</span> /lib/x86_64-linux-gnu/libc.so<span class="meta">.6</span>)</span><br></pre></td></tr></table></figure></p>
+<p>看起来有点像是张量在拷贝的时候出的错，回想起之前有人说，改一下代码就解决了，所以打算试一下。 <figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">torch<span class="selector-class">.cuda</span><span class="selector-class">.set_device</span>(&lt;device_num&gt;)</span><br></pre></td></tr></table></figure></p>
+<p>简单来说，就是在你调用 <code>tensor.cuda()</code> 或者 <code>model.to(device)</code> 之后再调用上面的代码即可。<strong>更新</strong>：这方法还是不行，一会之后有报错了。</p>
+<p>后来设置 <code>torch.backends.cudnn.benchmark=False</code>，也是失败了。</p>
+<p>如果还是不行，可以试一下 <a href="https://github.com/pytorch/pytorch/issues/21819" target="_blank" rel="noopener">issue</a> 中各种的玄学方法。。。</p>
+<p>这貌似是一个随机的错误，目前还是无解。。。</p>
+<p><strong>更新</strong>：好像发现为什么了。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    赞赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.gif" alt="朱冲䶮 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>朱冲䶮
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://yan624.github.io/posts/87554a0.html" title="RuntimeError: CUDA error: n illegal memory access was encountered">https://yan624.github.io/posts/87554a0.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/10f07708.html" rel="prev" title="如何缓解类别不平衡">
+      <i class="fa fa-chevron-left"></i> 如何缓解类别不平衡
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/posts/4d5445b6.html" rel="next" title="nlp 领域的一些有用的模型">
+      nlp 领域的一些有用的模型 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+  <p class="site-author-name" itemprop="name">朱冲䶮</p>
+  <div class="site-description" itemprop="description">记录</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">181</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">105</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+      <!-- 不蒜子/busuanzi -->
+      <div class="site-state-item site-state-posts">
+      	<span class="site-state-item-count">246k</span>
+      	<span class="site-state-item-name">总字数</span>
+      </div>
+  </nav>
+</div>
+  <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
+    Chat
+  </a>
+  </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      友链
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+    </ul>
+  </div>
+<!-- CloudCalendar -->
+<div class="widget-wrap" style="width: 90%;margin-left: auto;margin-right: auto; opacity: 0.97;">
+	<div class="widget" id="CloudCalendar"></div>
+</div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div><!--
+樱花特效 
+最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
+然后在 github 上搜了一下，发现有个 jquery-sakura，但是这个插件用起来很麻烦，经过测试，我的博客上无法使用。
+后来发现是两个不同的插件，只是刚好特效一样。
+于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
+原地址为：https://cangshui.net/2372.html
+-->
+<script>
+	var pathname = window.location.pathname;
+	if(pathname == '/' || pathname == '/index.html'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="/lib/my-utils.js"></script>
+<script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<!-- 背景插件 -->
+<script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<!-- 背景图片 -->
+<script>
+	function generateBG(count){
+		var bg_prefix = '/images/background/';
+		var bg =new Array();
+		for(var i = 0; i < count; i++){
+			bg[i] = bg_prefix + i + '.jpg';
+		}
+		bg.shuffle();
+		return bg;
+	}
+	$("body").backstretch(generateBG(10), {
+		duration:90000,//1 min 半一换
+		fade: 1500
+	});
+</script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout : 3000,
+        priority: true,
+        ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/87554a0.html',]
+      });
+      });
+  </script>
+<!-- calendar widget -->
+
+
+</body>
+</html>
