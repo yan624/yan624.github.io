@@ -463,10 +463,16 @@ n = [b_1, b_2, \cdots, b_n] \\
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-10-18 22:10:20 / 修改时间：22:49:55" itemprop="dateCreated datePublished" datetime="2020-10-18T22:10:20+08:00">2020-10-18</time>
+              <time title="创建时间：2020-10-18 22:10:20" itemprop="dateCreated datePublished" datetime="2020-10-18T22:10:20+08:00">2020-10-18</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-10-20 23:15:57" itemprop="dateModified" datetime="2020-10-20T23:15:57+08:00">2020-10-20</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -483,14 +489,14 @@ n = [b_1, b_2, \cdots, b_n] \\
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>617</span>
+              <span>2.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -502,13 +508,25 @@ n = [b_1, b_2, \cdots, b_n] \\
     <div class="post-body" itemprop="articleBody">
 
       
-          <div class="note info"><p>通用文本和任务导向对话之间语言模式的根本差异，导致了现存的预训练语言模型实际上没什么用。本文为语言模型统一了九种人人交互以及多轮的任务导向对话数据集。</p>
+          <div class="note primary"><p>本文总结：</p>
+<ol type="1">
+<li>观点：通用的预训练模型对任务导向的对话任务没什么帮助，故研发了 TOD-BERT</li>
+<li>选择与 BERT 类似的架构预训练 TOD-BERT，即 BERT-base uncased model（12L 12A 768H）</li>
+<li>在 byte-pair embeddings 加入了两个特殊符号：<span class="math inline">\([USR], [SYS]\)</span></li>
+<li>使用 MLM loss 和 RCL 训练模型
+<ul>
+<li>MLM 与 BERT 略有不同，TOD-BERT 会在训练时动态执行掩盖、替换。其他详见下面的章节</li>
+<li>RCL 是一个新颖的做法，详见具体章节</li>
+</ul></li>
+</ol>
+</div>
+<div class="note info"><p>通用文本和任务导向对话之间语言模式的根本差异，导致了现存的预训练语言模型实际上没什么用。本文为语言模型统一了九种人人交互以及多轮的任务导向对话数据集。</p>
 <p>为了在预训练阶段更好地对对话行为进行建模，我们在 MLM（Masked Language Modeling）中引入了“用户”和“系统”符号。</p>
 </div>
 <h1 id="预训练所使用的数据集以及建模方法">预训练所使用的数据集以及建模方法</h1>
 <p>本文的目的是证明以下的假设：对于任务导向的下游任务而言，使用<strong>任务导向语料预训练得到的自监督语言模型</strong>可以比<strong>现存的预训练模型</strong>学到更好的表征。并且需要强调的是：我们最关心的不是 1）我们的预训练模型能否在每个下游任务上得到 SOTA 结果，这是因为目前最好的模型都是建立在预训练模型上（博主注：这些模型可能借助了预训练模型的威力）。2）我们的模型能否简单地替代它们。</p>
 <p>我们收集并整合了九种人人交互以及多轮的任务导向对话语料，以此训练任务导向对话 BERT（Task-oriented Dialog BERT，TOD-BERT）。</p>
-<p>与 BERT 类似的是：我们将 TOD-BERT 定义为 MLM 并且使用 deep bidirectional Transformer 编码器。与 BERT 不同的是：TOD-BERT 为用户和系统引入了两个特殊符号，以此对对应的对话行为建模。在预训练阶段，结合回复选择任务中的 contrastive objective function 捕获回复的相似性。我们选择 BERT 是因为，它是近年来在 NLP 研究中被广泛使用的模型。</p>
+<p>与 BERT 类似的是：我们将 TOD-BERT 定义为 MLM 并且使用 deep bidirectional Transformer 编码器。与 BERT 不同的是：TOD-BERT 为用户和系统引入了两个特殊符号，以此对对应的对话行为建模。在预训练阶段，结合回复选择任务中的 contrastive objective function 捕获回复的相似性。</p>
 <p>九种语料分别为： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/模型/TOD-BERT九种语料.png" alt="TOD-BERT九种语料" /></p>
           <!--noindex-->
             <div class="post-button">
@@ -1005,104 +1023,6 @@ n = [b_1, b_2, \cdots, b_n] \\
     
     	
     
-
-    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/8d66b5f2.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/8d66b5f2.html" class="post-title-link" itemprop="url">栈和队列</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-09-07 00:01:27 / 修改时间：00:50:25" itemprop="dateCreated datePublished" datetime="2020-09-07T00:01:27+08:00">2020-09-07</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/algorithm/" itemprop="url" rel="index"><span itemprop="name">algorithm</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/algorithm/data-structure/" itemprop="url" rel="index"><span itemprop="name">data-structure</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="线性表">线性表</h1>
-<p>此章节为基础。线性表分为顺序表和单链表。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/posts/8d66b5f2.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    
-    	
-    
     	
     
 
@@ -1389,6 +1309,111 @@ n = [b_1, b_2, \cdots, b_n] \\
   
   
 
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    
+    	
+    
+    	
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/4d5445b6.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/4d5445b6.html" class="post-title-link" itemprop="url">nlp 领域的一些有用的模型</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-08-25 23:18:42 / 修改时间：23:21:06" itemprop="dateCreated datePublished" datetime="2020-08-25T23:18:42+08:00">2020-08-25</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/nlp/" itemprop="url" rel="index"><span itemprop="name">nlp</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>120</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="residual-network">Residual Network</h1>
+<h1 id="highway-network">Highway Network</h1>
+<p><a href="https://www.bilibili.com/video/BV1Ux411S7rk?p=6" target="_blank" rel="noopener">李宏毅深度学习(2017)#P6 Highway Network &amp; Grid LSTM</a></p>
+<h1 id="recursive-network">Recursive Network</h1>
+<p><a href="https://www.bilibili.com/video/BV1Ux411S7rk?p=7" target="_blank" rel="noopener">李宏毅深度学习(2017)#P7 Recursive Network</a></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/4d5445b6.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
 
   
   <nav class="pagination">
@@ -1476,7 +1501,7 @@ n = [b_1, b_2, \cdots, b_n] \\
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">246k</span>
+      	<span class="site-state-item-count">247.1k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
@@ -1565,6 +1590,7 @@ n = [b_1, b_2, \cdots, b_n] \\
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
 <!-- 背景图片 -->
+<!--
 <script>
 	function generateBG(count){
 		var bg_prefix = '/images/background/';
@@ -1580,6 +1606,7 @@ n = [b_1, b_2, \cdots, b_n] \\
 		fade: 1500
 	});
 </script>
+-->
 
         
 <div class="busuanzi-count">

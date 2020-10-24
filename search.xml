@@ -172,15 +172,63 @@ A_{3 \times 1} \odot B_{3 \times 1} = C_{3 \times 1} \\
   <entry>
     <title>TOD-BERT: Pre-trained Natural Language Understanding for Task-Oriented Dialogue</title>
     <url>/posts/ceeb7bcc.html</url>
-    <content><![CDATA[<div class="note info"><p>通用文本和任务导向对话之间语言模式的根本差异，导致了现存的预训练语言模型实际上没什么用。本文为语言模型统一了九种人人交互以及多轮的任务导向对话数据集。</p>
+    <content><![CDATA[<div class="note primary"><p>本文总结：</p>
+<ol type="1">
+<li>观点：通用的预训练模型对任务导向的对话任务没什么帮助，故研发了 TOD-BERT</li>
+<li>选择与 BERT 类似的架构预训练 TOD-BERT，即 BERT-base uncased model（12L 12A 768H）</li>
+<li>在 byte-pair embeddings 加入了两个特殊符号：<span class="math inline">\([USR], [SYS]\)</span></li>
+<li>使用 MLM loss 和 RCL 训练模型
+<ul>
+<li>MLM 与 BERT 略有不同，TOD-BERT 会在训练时动态执行掩盖、替换。其他详见下面的章节</li>
+<li>RCL 是一个新颖的做法，详见具体章节</li>
+</ul></li>
+</ol>
+</div>
+<div class="note info"><p>通用文本和任务导向对话之间语言模式的根本差异，导致了现存的预训练语言模型实际上没什么用。本文为语言模型统一了九种人人交互以及多轮的任务导向对话数据集。</p>
 <p>为了在预训练阶段更好地对对话行为进行建模，我们在 MLM（Masked Language Modeling）中引入了“用户”和“系统”符号。</p>
 </div>
 <h1 id="预训练所使用的数据集以及建模方法">预训练所使用的数据集以及建模方法</h1>
 <p>本文的目的是证明以下的假设：对于任务导向的下游任务而言，使用<strong>任务导向语料预训练得到的自监督语言模型</strong>可以比<strong>现存的预训练模型</strong>学到更好的表征。并且需要强调的是：我们最关心的不是 1）我们的预训练模型能否在每个下游任务上得到 SOTA 结果，这是因为目前最好的模型都是建立在预训练模型上（博主注：这些模型可能借助了预训练模型的威力）。2）我们的模型能否简单地替代它们。</p>
 <p>我们收集并整合了九种人人交互以及多轮的任务导向对话语料，以此训练任务导向对话 BERT（Task-oriented Dialog BERT，TOD-BERT）。</p>
-<p>与 BERT 类似的是：我们将 TOD-BERT 定义为 MLM 并且使用 deep bidirectional Transformer 编码器。与 BERT 不同的是：TOD-BERT 为用户和系统引入了两个特殊符号，以此对对应的对话行为建模。在预训练阶段，结合回复选择任务中的 contrastive objective function 捕获回复的相似性。我们选择 BERT 是因为，它是近年来在 NLP 研究中被广泛使用的模型。</p>
+<p>与 BERT 类似的是：我们将 TOD-BERT 定义为 MLM 并且使用 deep bidirectional Transformer 编码器。与 BERT 不同的是：TOD-BERT 为用户和系统引入了两个特殊符号，以此对对应的对话行为建模。在预训练阶段，结合回复选择任务中的 contrastive objective function 捕获回复的相似性。</p>
 <p>九种语料分别为： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/模型/TOD-BERT九种语料.png" alt="TOD-BERT九种语料" /></p>
 <a id="more"></a>
+<h1 id="tod-bert">TOD-BERT</h1>
+<p>我们基于 BERT 的架构使用两种损失函数训练 TOD-BERT，分别为：掩码语言模型（Masked Language Model，MLM）loss 和回复对比损失（response contrastive loss，RCL）。值得注意的是，我们所使用的数据集也可以预训练其他任意的预训练模型结构。<strong>而我们选择 BERT 是因为，它是近年来在 NLP 研究中被广泛使用的模型。</strong>我们使用了 BERT-base uncased model，拥有 12 层和 12 个注意力头架构，以及 768 个隐藏状态。</p>
+<p>为了捕获发言者的信息以及语句中潜在的交互行为，我们在 byte-pair embeddings<span class="citation" data-cites="mrkvsic2016neural">(Mrkšić et al. 2016)</span>中增加了两个特殊符号：<span class="math inline">\([USR], [SYS]\)</span>。我们将二者加在每一句话的前面，然后将所有语句拼接成一句话。</p>
+<p>例如有 <span class="math inline">\(D=\{S_1, U_1, \cdots, S_N, U_N\}\)</span>，那么输入就可以被处理为“<span class="math inline">\([SYS] S_1 [USR] U_1 \cdots\)</span>”。</p>
+<h2 id="mlm">MLM</h2>
+<p>MLM 是类 BERT 架构的通用预训练策略，它随机采样输入序列，并将被选择到的字符替换为特殊符号 <span class="math inline">\([MASK]\)</span>。MLM loss 函数是预测被掩盖符号的交叉熵函数。在原始的实现中，随机掩盖以及替换只在开始被执行一次，并在训练期间一直保持。<strong>然而，我们在进行批训练时动态地执行符号掩盖</strong>。<strong>TOD-BERT 直接被 BERT（一组不错的初始参数）初始化</strong>，然后进一步地在那些任务导向语料上进行微调。MLM loss 函数为：</p>
+<p><span class="math display">\[
+L_{mlm} = - \sum^M_{m=1} \log P(x_m)
+\]</span></p>
+<p>其中 M 是被掩盖字符的数量。<span class="math inline">\(P(x_m)\)</span> 是符号 <span class="math inline">\(x_m\)</span> 在整个词表大小上被预测出的概率。</p>
+<h2 id="response-contrastive-loss">Response contrastive loss</h2>
+<p>RCL 可以被用于对话语言建模上，这是因为它不需要任何额外的人工标注。使用 RCL 预训练有一系列的优势：1）可以学到 <span class="math inline">\([CLS]\)</span> 更好的表征；2）鼓励模型捕捉潜在的对话顺序、结构信息以及回复相似度。</p>
+<p>与原本的 NSP 优化目标不同，我们应用了 dual-encoder 方法并且模拟了多重负采样。</p>
+<ol type="1">
+<li>首先，取出一个批次的对话 <span class="math inline">\({D_1, \cdots, D_b}\)</span>，然后随机选择第 t 轮切分对话。例如，<span class="math inline">\(D_1\)</span> 可以被切为两部分，上下文 <span class="math inline">\(\{S^1_1, U^1_1, \cdots, S^1_t, U^1_t\}\)</span> 和回复 <span class="math inline">\(\{S^1_{t+1}\}\)</span>。最后使用 TOD-BERT 编码所有语句。</li>
+<li>得到上下文矩阵 <span class="math inline">\(C \in \mathbb{R}^{b \times d_B}\)</span> 以及回复矩阵 <span class="math inline">\(R \in \mathbb{R}^{d \times d_B}\)</span>（回复矩阵来自 <span class="math inline">\([CLS]\)</span>）。我们将来自同一批次的其他回复视作被随机选择的负样本。那么 RCL 目标函数为： <span class="math display">\[
+\begin{align}
+ L_{rcl} &amp; = - \sum^b_{i=1} log M_{i,i} \\
+ M &amp; = Softmax(CR^T) \in \mathbb{R}^{b \times b} 
+\end{align}
+\]</span></li>
+<li>增加批次大小到一个量级，会在下游任务上获得更好的性能，尤其是对于回复选择。批次大小是一个超参数，由于可能会受限于硬件，我们还尝试了其他采样策略，但是没有看到明显的提升。</li>
+</ol>
+<h2 id="总览">总览</h2>
+<p>预训练损失函数是 <span class="math inline">\(L_{mlm}\)</span> 和 <span class="math inline">\(L_{rcl}\)</span> 的加权和，在我们的试验里，只是简单地相加。</p>
+<p>我们没有使用 warm-up 直接逐渐减少学习率。</p>
+<p>我们使用 AdamW 并且在所有层以及注意力的权重上加上 0.1 dropout。</p>
+<p>使用了 GELU。</p>
+<h1 id="下游任务">下游任务</h1>
+<h2 id="intent-recognition">Intent recognition</h2>
+<h2 id="dialogue-state-tracking" class="unnumbered">Dialogue state tracking</h2>
+<div id="refs" class="references">
+<div id="ref-mrkvsic2016neural">
+<p>Mrkšić, Nikola, Diarmuid O Séaghdha, Tsung-Hsien Wen, Blaise Thomson, and Steve Young. 2016. “Neural Belief Tracker: Data-Driven Dialogue State Tracking.” <em>arXiv Preprint arXiv:1606.03777</em>.</p>
+</div>
+</div>
 ]]></content>
       <categories>
         <category>paper</category>
@@ -525,70 +573,6 @@ window.onload = function () {
         <category>AI</category>
         <category>nlp</category>
       </categories>
-  </entry>
-  <entry>
-    <title>栈和队列</title>
-    <url>/posts/8d66b5f2.html</url>
-    <content><![CDATA[<h1 id="线性表">线性表</h1>
-<p>此章节为基础。线性表分为顺序表和单链表。 <a id="more"></a></p>
-<h1 id="栈">栈</h1>
-<p>只允许在表的一端就行插入和删除的线性表。栈分为顺序栈和链式栈，以下是它们各个操作的性能对比。</p>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column" style="width: 100%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/algorithm/data-structure/栈和队列/顺序栈各操作性能比较.jpeg" alt="顺序栈各操作性能比较" /></div></div><div class="group-picture-row"><div class="group-picture-column" style="width: 100%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/algorithm/data-structure/栈和队列/链式栈个操作性能的比较.jpeg" alt="链式栈个操作性能的比较" /></div></div></div>
-<h2 id="顺序栈">顺序栈</h2>
-<p>顺序栈指利用一块连续的存储单元作为栈元素的存储空间，只不过借用了数组来实现。设 n 为栈的最大容量，则栈可分为两种形式。</p>
-<ol type="1">
-<li>静态存储结构：预先申请或定义栈的存储空间，也就是说栈空间的容量有限。若栈满，会上溢。<strong>主要定义存储的数组以及当前top的索引位置</strong>。其他无关变量可自行定义，下同。</li>
-<li>动态存储结构：如果栈满可自行扩充栈的大小，其中，原栈A中的内容会全部移植到新栈B。<strong>主要定义存储的数组、top的索引位置以及栈空间最大容量（maxCapacity）</strong>。其中，top 和 maxCapacity 可用来判断栈满栈空等。</li>
-</ol>
-<h2 id="链式栈">链式栈</h2>
-<p>栈的链接存储表示。<strong>主要定义存储数据的变量以及链接下一个节点的变量</strong>。理论上链式栈没有栈满问题，但是它有栈空问题。如下图所示： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/algorithm/data-structure/栈和队列/链式栈.jpeg" alt="链式栈" /></p>
-<h2 id="双栈">双栈</h2>
-<p>双栈共享同一个存储空间：栈0从头部存储，栈1从尾部开始存储，通过标志flag设置0,1等方法判断从头部开始存储还是尾部。两个栈共用一个栈空间，互相调剂，灵活性强。</p>
-<h2 id="栈的混洗">栈的混洗</h2>
-<p>通过控制进栈和推栈的时机，可以得到不同的退栈序列。如进栈顺序为1，2，3，退栈序列有5种：{1,2,3}，{1,3,2}，{2,1,3}，{2,3,1}，{3,2,1}。注意{3,1,2}是不可能的退栈序列。其他数据元素于此类似。</p>
-<h2 id="栈的应用">栈的应用</h2>
-<ul>
-<li>数制转换</li>
-<li>括号匹配</li>
-<li>表达式的计算与优先级处理（一般使用后缀表达式计算表达式）</li>
-<li>递归</li>
-</ul>
-<h1 id="队列">队列</h1>
-<p>只允许在表的一端插入，在另一端删去。允许插入的一端叫队尾（rear），允许删除的一端叫做对头（front）。</p>
-<h2 id="顺序队列">顺序队列</h2>
-<p>就是队列的定义。<strong>主要定义存储数据的数组、rear 以及 front</strong>。它也会有溢出的情况：如图所示，数据A从上部进入，A被放在数组的0索引的位置。由于顺序队列是数组实现，所以当A出队列时，A后面的数据不会往前移动，因为如果移动那就要整体的往前移，太浪费时间了。所以当队列进满时，不管第一个数据前面还有没有空位置，都算溢出了。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/algorithm/data-structure/栈和队列/顺序队列的初始化、插入和删除.jpeg" alt="顺序队列的初始化、插入和删除" /></p>
-<h2 id="循环队列">循环队列</h2>
-<p>解决了顺序队列的溢出问题。主要定义存储数据的数组、rear以及front。循环队列的首位相接，初始状态下，front和rear都指向0，但是当队列撑满时，rear指向的是front的前一格，这样用于区分是队空还是队满。可用取余（%）的计算方式前进1一格。 对头指针进 1：front = (front + 1) % maxSize; 对尾指针进 1：rear = (rear + 1) % maxSize; <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/algorithm/data-structure/栈和队列/循环队列各个操作的性能比较.jpeg" alt="循环队列各个操作的性能比较" /></p>
-<h2 id="链式队列">链式队列</h2>
-<p>基于单链表的队列。主要定义与单链表不同的是，插入和删除仅限于链表的两端。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/algorithm/data-structure/栈和队列/链式队列各个操作的性能比较.jpeg" alt="链式队列各个操作的性能比较" /></p>
-<h2 id="单循环队列">单循环队列</h2>
-<p>毫无意义，单链表本身所在的空间就不受限制。</p>
-<h2 id="队列的应用">队列的应用</h2>
-<p>打印杨辉三角与逐行处理</p>
-<h2 id="双端队列">双端队列</h2>
-<h1 id="杨辉三角队列实现">杨辉三角：队列实现</h1>
-<p>下图为打印杨辉三角的文字说明。图片下面将对该文字进行进一步地解释： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/algorithm/data-structure/栈和队列/杨辉三角解释.jpeg" alt="杨辉三角解释" /></p>
-<ol type="1">
-<li>首先队列是从右往左看的（←），杨辉三角第一个数是1。int s,t。将1放入队尾</li>
-<li>在生成第二行时，首先放入一个0.(放入0的步骤下面细讲)</li>
-<li>令s=0，将1取出，令t=1.s+t=1放入0后面。</li>
-<li>令s=t，将0取出令t=0. s+t=1放入1后面。</li>
-<li>第二行生成完成。</li>
-<li>在生成第三行时。也首先放入一个0.(放入的步骤下面细讲)</li>
-<li>令s=0,将1取出，令t=1.s+t=1放入0后面</li>
-<li>令s=t，将1取出令t=1. s+t=2放入1后面。</li>
-<li>以此类推。</li>
-</ol>
-<p>注：每生成一行之前都需要将s置为0；并且在队列尾部放入一个0，但是这里放一个0只是口头上表示的，实际写代码的时候，由于程序时线性执行的，电脑无法判断什么时候放0.所以需要写条件：当从队列中拿出一个0那么就代表一行生成完毕，所以当一个数与从队列中拿出的0相加时，就可以在队尾加一个0。下图是一个小型的演示。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/algorithm/data-structure/栈和队列/杨辉三角画图解释.jpeg" alt="杨辉三角画图解释" /></p>
-<figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Description:</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* @Auther: zhuchongyan</span></span><br><span class="line"><span class="comment">* @Date: 2018/10/4 22:34</span></span><br><span class="line"><span class="comment">* @Version: 1.0</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="built_in">public</span> <span class="keyword">class</span> YangHuiSanJiao &#123;</span><br><span class="line"></span><br><span class="line">    private <span class="type">int</span> initialValue = <span class="number">1</span>;</span><br><span class="line">    LinkedList&lt;<span class="type">Integer</span>&gt; queue = <span class="built_in">new</span> LinkedList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 初始化</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    &#123;</span><br><span class="line">        queue.<span class="keyword">add</span>(initialValue);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 生成新的一行</span></span><br><span class="line"><span class="comment">    * @param index</span></span><br><span class="line"><span class="comment">    * @return</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="built_in">public</span> <span class="type">int</span> generateNewLine(<span class="type">int</span> <span class="keyword">index</span>)&#123;</span><br><span class="line">        //每次生成新的一行都要在队尾加一个<span class="number">0</span></span><br><span class="line">        queue.<span class="keyword">add</span>(<span class="number">0</span>);</span><br><span class="line">        <span class="type">int</span> s = <span class="number">0</span>, t = <span class="number">0</span>;</span><br><span class="line">        //用<span class="keyword">while</span>循环实现不了，写一年半代码第一次用<span class="keyword">do</span> <span class="keyword">while</span>循环</span><br><span class="line">        <span class="keyword">do</span>&#123;</span><br><span class="line">            t = queue.<span class="keyword">get</span>(<span class="keyword">index</span>);</span><br><span class="line">            queue.<span class="keyword">add</span>(s + t);</span><br><span class="line">            s = t;</span><br><span class="line">            <span class="keyword">index</span>++;</span><br><span class="line">        &#125;<span class="keyword">while</span>(!isZero(<span class="keyword">index</span> - <span class="number">1</span>));//如果是<span class="number">0</span>就要退出循环，因为新的一行已经生成完毕</span><br><span class="line">        //<span class="keyword">return</span>可有可无</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">index</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 这运行</span></span><br><span class="line"><span class="comment">    * @param args</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="built_in">public</span> static <span class="type">void</span> main(String[] args) &#123;</span><br><span class="line">        YangHuiSanJiao yangHuiSanJiao = <span class="built_in">new</span> YangHuiSanJiao();</span><br><span class="line">        Scanner scanner = <span class="built_in">new</span> Scanner(<span class="keyword">System</span>.<span class="keyword">in</span>);</span><br><span class="line">        <span class="keyword">System</span>.<span class="keyword">out</span>.println("请输入杨辉三角行数");</span><br><span class="line">        <span class="type">int</span> <span class="type">line</span> = scanner.nextInt();</span><br><span class="line">        <span class="keyword">if</span>(<span class="type">line</span> &gt;= <span class="number">2</span>)&#123;</span><br><span class="line">            <span class="type">int</span> <span class="keyword">index</span> = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="type">line</span>; i++) &#123;</span><br><span class="line">                <span class="keyword">index</span> = yangHuiSanJiao.generateNewLine(<span class="keyword">index</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        yangHuiSanJiao.print();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //判断该位置的数据是不是<span class="number">0</span></span><br><span class="line">    <span class="built_in">public</span> <span class="type">boolean</span> isZero(<span class="type">int</span> <span class="keyword">index</span>)&#123;</span><br><span class="line">        returnqueue.<span class="keyword">get</span>(<span class="keyword">index</span>) == <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">public</span> <span class="type">void</span> print()&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; queue.size(); i++) &#123;</span><br><span class="line">            <span class="type">Integer</span> data = queue.<span class="keyword">get</span>(i);</span><br><span class="line">            <span class="keyword">if</span>(data == <span class="number">0</span>)&#123;</span><br><span class="line">                <span class="keyword">System</span>.<span class="keyword">out</span>.println();</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="keyword">System</span>.<span class="keyword">out</span>.print(data + "\t");</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>algorithm</category>
-        <category>data-structure</category>
-      </categories>
-      <tags>
-        <tag>4me</tag>
-      </tags>
   </entry>
   <entry>
     <title>Self-paced Curriculum Learning</title>
@@ -1626,7 +1610,9 @@ a = \begin{cases}
   <entry>
     <title>情感计算论文调研</title>
     <url>/posts/db974a7a.html</url>
-    <content><![CDATA[<h1 id="introduction">Introduction</h1>
+    <content><![CDATA[<div class="note warning"><p>2020.10.24 留：本文未完成。</p>
+</div>
+<h1 id="introduction">Introduction</h1>
 <p>情感计算（affective computing），移情计算（empathetic computing）。 <a id="more"></a></p>
 <h1 id="related-work">Related Work</h1>
 <div class="tabs" id="情感计算论文对比"><ul class="nav-tabs"><li class="tab active"><a href="#情感计算论文对比-1">论文介绍</a></li><li class="tab"><a href="#情感计算论文对比-2">论文瑕瑜</a></li></ul><div class="tab-content"><div class="tab-pane active" id="情感计算论文对比-1"><table>
@@ -3320,7 +3306,7 @@ OPT(i) =
 <td><mark class="label primary">BERT</mark></td>
 </tr>
 <tr class="odd">
-<td><a class="btn" href="https://yan624.github.io/posts/81299a9a.html#A-Bi-model-based-RNN-Semantic-Frame-Parsing-Model-for-Intent-Detection-and-Slot-Filling" title="A Bi-model based RNN Semantic Frame Parsing Model for Intent Detection and Slot Filling"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.xilesou.top/pdf/1812.10235.pdf" target="_blank" rel="noopener" title="18.12"><i class="fa fa-"></i>论文</a> <strong><font color='blue'>Wang et al., 2018</font></strong></td>
+<td><a class="btn" href="https://yan624.github.io/posts/81299a9a.html#A-Bi-model-based-RNN-Semantic-Frame-Parsing-Model-for-Intent-Detection-and-Slot-Filling" title="A Bi-model based RNN Semantic Frame Parsing Model for Intent Detection and Slot Filling"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1812.10235.pdf" target="_blank" rel="noopener" title="18.12"><i class="fa fa-"></i>论文</a> <strong><font color='blue'>Wang et al., 2018</font></strong></td>
 <td style="text-align: center;">separate</td>
 <td><mark class="label primary">BiLSTM</mark><br />
 <mark class="label primary">encoder-decoder</mark> <mark class="label info">cross-impact</mark> <mark class="label danger"><strong>hidden state sharing</strong></mark></td>
@@ -3332,7 +3318,7 @@ OPT(i) =
 <mark class="label info">self-attention</mark> <mark class="label success">Intent-Augmented Gating Mechanism</mark></td>
 </tr>
 <tr class="odd">
-<td><a class="btn" href="https://yan624.github.io/posts/81299a9a.html#Attention-Based-Recurrent-Neural-Network-Models-for-Joint-Intent-Detection-and-Slot-Filling" title="Attention-Based Recurrent Neural Network Models for Joint Intent Detection and Slot Filling"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.xilesou.top/pdf/1609.01454.pdf" target="_blank" rel="noopener" title="16.09"><i class="fa fa-"></i>论文</a> Liu and Lane, 2016a</td>
+<td><a class="btn" href="https://yan624.github.io/posts/81299a9a.html#Attention-Based-Recurrent-Neural-Network-Models-for-Joint-Intent-Detection-and-Slot-Filling" title="Attention-Based Recurrent Neural Network Models for Joint Intent Detection and Slot Filling"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1609.01454.pdf" target="_blank" rel="noopener" title="16.09"><i class="fa fa-"></i>论文</a> Liu and Lane, 2016a</td>
 <td style="text-align: center;">joint</td>
 <td><mark class="label primary">BiLSTM</mark><br />
 <mark class="label primary">encoder-decoder</mark> <mark class="label info">attention</mark></td>
@@ -5702,9 +5688,9 @@ P(a &lt; X \leq b) = &amp; F_X(b) - F_X(a) \\
 <li><a href="https://yan624.github.io/categories/assorted/conference/">参加的会议</a></li>
 <li><strong>学习路线</strong>
 <ol type="1">
-<li>【2019-04-12】<a href="https://yan624.github.io/posts/b803ed7e.html">对神经网络整体的理解</a> <div class="note success"><p>通常学习深度学习从一个最简单的神经网络开始，但是由于对深度学习是零基础，所以需要同时学习大量算法以及其原理，比如梯度下降，Momentum，Adam，RMSprop，adagrad等等算法。所以写了一篇文章记录一下大部分的算法以及原理。</p>
+<li>【2019-04-12】<a href="https://yan624.github.io/posts/b803ed7e.html">对神经网络整体的理解</a> <div class="note success"><p>通常学习深度学习从一个最简单的神经网络开始，但是由于是零基础学深度学习，所以需要同时学习大量算法以及其原理，比如梯度下降，Momentum，Adam，RMSprop，adagrad等等算法。所以写了一篇文章记录一下大部分的算法以及原理。</p>
 </div></li>
-<li><strong><a href="https://yan624.github.io/·学习笔记/AI/dl/《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题.html">《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题</a></strong> <div class="note success"><p>由于神经网络中参数太多，而有些参数的表现形式太过复杂， 比如文中权重 <span class="math inline">\(w^l_{ji}\)</span> 有太多上标下标，所以写了一篇文章记录一下。</p>
+<li><a href="https://yan624.github.io/·学习笔记/AI/dl/《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题.html">《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题</a> <div class="note success"><p>由于神经网络中参数太多，而有些参数的表现形式太过复杂， 比如文中权重 <span class="math inline">\(w^l_{ji}\)</span> 有太多上标下标，所以写了一篇文章记录一下。</p>
 </div></li>
 <li><strong><a href="https://yan624.github.io/·zcy/AI/ml/梯度下降算法的推导.html">梯度下降算法的推导</a></strong> <div class="note success"><p>学会了最基本的神经网络之后，开始理解反向传播算法。之前仅仅是在使用，现在想要理解它到底在干什么。所以自己推导了一遍。发现其实就是链式求导。</p>
 </div> <a id="more"></a></li>
@@ -5724,7 +5710,7 @@ P(a &lt; X \leq b) = &amp; F_X(b) - F_X(a) \\
 <li><a href="https://yan624.github.io/AI/nlp/【NLP算法】（零）NLP基础算法.html">【NLP算法】（零）NLP基础算法</a></li>
 <li><a href="https://yan624.github.io/AI/nlp/【NLP算法】（一）word2vec.html">【NLP算法】（一）word2vec</a></li>
 <li><a href="https://yan624.github.io/·zcy/AI/nlp/【NLP算法】（三）条件随机场CRF.html">【NLP算法】（三）条件随机场CRF</a></li>
-<li><a href="https://yan624.github.io/·zcy/AI/KG/【知识图谱】（一）从概念到实战.html">【知识图谱】（一）从概念到实战</a></li>
+<li><a href="https://yan624.github.io/·zcy/AI/KG/【知识图谱】（一）从概念到实战.html">【知识图谱】（一）从概念开始</a></li>
 </ul></li>
 <li>此篇文章已删除，转到《<a href="https://yan624.github.io/·zcy/AI/深度学习500问笔记.html">深度学习500问</a>》笔记中。 <div class="note success"><p>深度学习入门后必然有很多疑问待解答，此篇解决疑问。</p>
 </div></li>
@@ -6466,7 +6452,7 @@ E_{Q|col} = H_Q w
       </tags>
   </entry>
   <entry>
-    <title>【知识图谱】（一）从概念到实战</title>
+    <title>【知识图谱】（一）从概念开始</title>
     <url>/posts/c9c1ae69.html</url>
     <content><![CDATA[<h1 id="知识图谱描述">知识图谱描述</h1>
 <p>知识图谱是一种新型的<strong>数据库</strong>，是一种基于图的数据结构。每个节点表示现实世界中存在的“实体”，每条边为实体与实体之间的“关系”。以下为知识图谱的几点作用： - 从“关系”分析问题 - 把不同种类的信息连接在一起 - 一个关系网络</p>
@@ -6628,8 +6614,8 @@ E_{Q|col} = H_Q w
       </categories>
       <tags>
         <tag>系列</tag>
-        <tag>4me</tag>
         <tag>知识图谱</tag>
+        <tag>4me</tag>
       </tags>
   </entry>
   <entry>
@@ -7837,7 +7823,8 @@ c1(no)->e2(left)->st</textarea><textarea id="flowchart-0-options" style="display
 </del>
 </p>
 <p>2020.06.22 更新：上一段写下约半个礼拜之后，我又去想了一下，如果别人大规模应用这个算法，没道理没效果。所以经过一番代码检查后，我发现了问题。原来之前的代码对于隐藏状态的处理有问题，我将 beam size 大小的预测结果视作了线性的，而不是固定它们的隐藏状态。</p>
-<p>具体来说，例如时间步 <span class="math inline">\(t\)</span> 的预测结果为单词 <span class="math inline">\(I\)</span>，并且隐藏状态为 <span class="math inline">\(h_I\)</span>。接下来假设我们已知下一个时间步的预测结果为 <span class="math inline">\(\{love, hate, told\}\)</span>（注：单词预测结果由 Beam Search 产生，并非词表大小只是 3），则它们的隐藏状态输入都应该是 <span class="math inline">\(h_I\)</span> 才是正确的，但是我将它们的隐藏状态输入分别设置为了 <span class="math inline">\(h_I, h_{love}, h_{hate}\)</span>，其中 <span class="math inline">\(h_{love}, h_{hate}\)</span> 是将 love 和 hate 输入 LSTM 后得到的隐藏状态。所以简单来说就是代码写错了……在循环遍历的时候写错了……实际上大概可以提升 3 个左右的百分点。</p>
+<p>具体来说，例如时间步 <span class="math inline">\(t\)</span> 的预测结果为单词 <span class="math inline">\(I\)</span>，并且隐藏状态为 <span class="math inline">\(h_I\)</span>。接下来假设我们已知下一个时间步的预测结果为 <span class="math inline">\(\{love, hate, told\}\)</span>（注：单词预测结果由 Beam Search 产生，并非词表大小只是 3），则它们的隐藏状态输入都应该是 <span class="math inline">\(h_I\)</span> 才是正确的，但是我将它们的隐藏状态输入分别设置为了 <span class="math inline">\(h_I, h_{love}, h_{hate}\)</span>，其中 <span class="math inline">\(h_{love}, h_{hate}\)</span> 是将 love 和 hate 输入 LSTM 后得到的隐藏状态。</p>
+<p>所以简单来说就是代码写错了……在循环遍历的时候写错了……实际上大概可以提升 3 个左右的百分点。</p>
 </div>
 <h3 id="参考资料-3">参考资料</h3>
 <ol type="1">
@@ -7911,7 +7898,7 @@ h_{t-1} \to a_t \to c_t \to [y_{t-1}; c_t], h_{t-1} \to h_t \to predict &amp; \t
 <p>self-attention 主要应用在 Transformer 中，详见 <a href="https://yan624.github.io/posts/16ad4ed4.html">深度学习算法（四）：Transformer</a>。</p>
 <h2 id="mask">mask</h2>
 <div class="note warning"><p>注意：无论是哪种 attention，它们的本质都是在计算当前词的信息时，去融入其他词的信息。而我们一般都会使用 <code>&lt;PAD&gt;</code> 去补足不等长的序列，并且 <code>&lt;PAD&gt;</code> 符号是没有意义的，所以我们需要在计算 attention score 时，额外地将 <code>&lt;PAD&gt;</code> 位置的 score 置为负无穷。那么该 score 进入 softmax 之后，会被 <span class="math inline">\(e^{-\infty}\)</span> 置为 0。</p>
-在 pytorch 中，一般可以写成像下面的代码一样。其中 context_len 是上下文的长度，一般是 <code>[1, batch_size]</code> 的维度。
+<p>在 pytorch 中，一般可以写成像下面的代码一样。其中 context_len 是上下文的长度，一般是 <code>[1, batch_size]</code> 的维度。</p>
 <figure class="highlight reasonml">
 <table>
 <tr>
@@ -10294,6 +10281,70 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
       </categories>
       <tags>
         <tag>octave</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>栈和队列</title>
+    <url>/posts/8d66b5f2.html</url>
+    <content><![CDATA[<h1 id="线性表">线性表</h1>
+<p>此章节为基础。线性表分为顺序表和单链表。 <a id="more"></a></p>
+<h1 id="栈">栈</h1>
+<p>只允许在表的一端就行插入和删除的线性表。栈分为顺序栈和链式栈，以下是它们各个操作的性能对比。</p>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column" style="width: 100%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/algorithm/data-structure/栈和队列/顺序栈各操作性能比较.jpeg" alt="顺序栈各操作性能比较" /></div></div><div class="group-picture-row"><div class="group-picture-column" style="width: 100%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/algorithm/data-structure/栈和队列/链式栈个操作性能的比较.jpeg" alt="链式栈个操作性能的比较" /></div></div></div>
+<h2 id="顺序栈">顺序栈</h2>
+<p>顺序栈指利用一块连续的存储单元作为栈元素的存储空间，只不过借用了数组来实现。设 n 为栈的最大容量，则栈可分为两种形式。</p>
+<ol type="1">
+<li>静态存储结构：预先申请或定义栈的存储空间，也就是说栈空间的容量有限。若栈满，会上溢。<strong>主要定义存储的数组以及当前top的索引位置</strong>。其他无关变量可自行定义，下同。</li>
+<li>动态存储结构：如果栈满可自行扩充栈的大小，其中，原栈A中的内容会全部移植到新栈B。<strong>主要定义存储的数组、top的索引位置以及栈空间最大容量（maxCapacity）</strong>。其中，top 和 maxCapacity 可用来判断栈满栈空等。</li>
+</ol>
+<h2 id="链式栈">链式栈</h2>
+<p>栈的链接存储表示。<strong>主要定义存储数据的变量以及链接下一个节点的变量</strong>。理论上链式栈没有栈满问题，但是它有栈空问题。如下图所示： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/algorithm/data-structure/栈和队列/链式栈.jpeg" alt="链式栈" /></p>
+<h2 id="双栈">双栈</h2>
+<p>双栈共享同一个存储空间：栈0从头部存储，栈1从尾部开始存储，通过标志flag设置0,1等方法判断从头部开始存储还是尾部。两个栈共用一个栈空间，互相调剂，灵活性强。</p>
+<h2 id="栈的混洗">栈的混洗</h2>
+<p>通过控制进栈和推栈的时机，可以得到不同的退栈序列。如进栈顺序为1，2，3，退栈序列有5种：{1,2,3}，{1,3,2}，{2,1,3}，{2,3,1}，{3,2,1}。注意{3,1,2}是不可能的退栈序列。其他数据元素于此类似。</p>
+<h2 id="栈的应用">栈的应用</h2>
+<ul>
+<li>数制转换</li>
+<li>括号匹配</li>
+<li>表达式的计算与优先级处理（一般使用后缀表达式计算表达式）</li>
+<li>递归</li>
+</ul>
+<h1 id="队列">队列</h1>
+<p>只允许在表的一端插入，在另一端删去。允许插入的一端叫队尾（rear），允许删除的一端叫做对头（front）。</p>
+<h2 id="顺序队列">顺序队列</h2>
+<p>就是队列的定义。<strong>主要定义存储数据的数组、rear 以及 front</strong>。它也会有溢出的情况：如图所示，数据A从上部进入，A被放在数组的0索引的位置。由于顺序队列是数组实现，所以当A出队列时，A后面的数据不会往前移动，因为如果移动那就要整体的往前移，太浪费时间了。所以当队列进满时，不管第一个数据前面还有没有空位置，都算溢出了。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/algorithm/data-structure/栈和队列/顺序队列的初始化、插入和删除.jpeg" alt="顺序队列的初始化、插入和删除" /></p>
+<h2 id="循环队列">循环队列</h2>
+<p>解决了顺序队列的溢出问题。主要定义存储数据的数组、rear以及front。循环队列的首位相接，初始状态下，front和rear都指向0，但是当队列撑满时，rear指向的是front的前一格，这样用于区分是队空还是队满。可用取余（%）的计算方式前进1一格。 对头指针进 1：front = (front + 1) % maxSize; 对尾指针进 1：rear = (rear + 1) % maxSize; <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/algorithm/data-structure/栈和队列/循环队列各个操作的性能比较.jpeg" alt="循环队列各个操作的性能比较" /></p>
+<h2 id="链式队列">链式队列</h2>
+<p>基于单链表的队列。主要定义与单链表不同的是，插入和删除仅限于链表的两端。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/algorithm/data-structure/栈和队列/链式队列各个操作的性能比较.jpeg" alt="链式队列各个操作的性能比较" /></p>
+<h2 id="单循环队列">单循环队列</h2>
+<p>毫无意义，单链表本身所在的空间就不受限制。</p>
+<h2 id="队列的应用">队列的应用</h2>
+<p>打印杨辉三角与逐行处理</p>
+<h2 id="双端队列">双端队列</h2>
+<h1 id="杨辉三角队列实现">杨辉三角：队列实现</h1>
+<p>下图为打印杨辉三角的文字说明。图片下面将对该文字进行进一步地解释： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/algorithm/data-structure/栈和队列/杨辉三角解释.jpeg" alt="杨辉三角解释" /></p>
+<ol type="1">
+<li>首先队列是从右往左看的（←），杨辉三角第一个数是1。int s,t。将1放入队尾</li>
+<li>在生成第二行时，首先放入一个0.(放入0的步骤下面细讲)</li>
+<li>令s=0，将1取出，令t=1.s+t=1放入0后面。</li>
+<li>令s=t，将0取出令t=0. s+t=1放入1后面。</li>
+<li>第二行生成完成。</li>
+<li>在生成第三行时。也首先放入一个0.(放入的步骤下面细讲)</li>
+<li>令s=0,将1取出，令t=1.s+t=1放入0后面</li>
+<li>令s=t，将1取出令t=1. s+t=2放入1后面。</li>
+<li>以此类推。</li>
+</ol>
+<p>注：每生成一行之前都需要将s置为0；并且在队列尾部放入一个0，但是这里放一个0只是口头上表示的，实际写代码的时候，由于程序时线性执行的，电脑无法判断什么时候放0.所以需要写条件：当从队列中拿出一个0那么就代表一行生成完毕，所以当一个数与从队列中拿出的0相加时，就可以在队尾加一个0。下图是一个小型的演示。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/algorithm/data-structure/栈和队列/杨辉三角画图解释.jpeg" alt="杨辉三角画图解释" /></p>
+<figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Description:</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* @Auther: zhuchongyan</span></span><br><span class="line"><span class="comment">* @Date: 2018/10/4 22:34</span></span><br><span class="line"><span class="comment">* @Version: 1.0</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="built_in">public</span> <span class="keyword">class</span> YangHuiSanJiao &#123;</span><br><span class="line"></span><br><span class="line">    private <span class="type">int</span> initialValue = <span class="number">1</span>;</span><br><span class="line">    LinkedList&lt;<span class="type">Integer</span>&gt; queue = <span class="built_in">new</span> LinkedList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 初始化</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    &#123;</span><br><span class="line">        queue.<span class="keyword">add</span>(initialValue);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 生成新的一行</span></span><br><span class="line"><span class="comment">    * @param index</span></span><br><span class="line"><span class="comment">    * @return</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="built_in">public</span> <span class="type">int</span> generateNewLine(<span class="type">int</span> <span class="keyword">index</span>)&#123;</span><br><span class="line">        //每次生成新的一行都要在队尾加一个<span class="number">0</span></span><br><span class="line">        queue.<span class="keyword">add</span>(<span class="number">0</span>);</span><br><span class="line">        <span class="type">int</span> s = <span class="number">0</span>, t = <span class="number">0</span>;</span><br><span class="line">        //用<span class="keyword">while</span>循环实现不了，写一年半代码第一次用<span class="keyword">do</span> <span class="keyword">while</span>循环</span><br><span class="line">        <span class="keyword">do</span>&#123;</span><br><span class="line">            t = queue.<span class="keyword">get</span>(<span class="keyword">index</span>);</span><br><span class="line">            queue.<span class="keyword">add</span>(s + t);</span><br><span class="line">            s = t;</span><br><span class="line">            <span class="keyword">index</span>++;</span><br><span class="line">        &#125;<span class="keyword">while</span>(!isZero(<span class="keyword">index</span> - <span class="number">1</span>));//如果是<span class="number">0</span>就要退出循环，因为新的一行已经生成完毕</span><br><span class="line">        //<span class="keyword">return</span>可有可无</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">index</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 这运行</span></span><br><span class="line"><span class="comment">    * @param args</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="built_in">public</span> static <span class="type">void</span> main(String[] args) &#123;</span><br><span class="line">        YangHuiSanJiao yangHuiSanJiao = <span class="built_in">new</span> YangHuiSanJiao();</span><br><span class="line">        Scanner scanner = <span class="built_in">new</span> Scanner(<span class="keyword">System</span>.<span class="keyword">in</span>);</span><br><span class="line">        <span class="keyword">System</span>.<span class="keyword">out</span>.println("请输入杨辉三角行数");</span><br><span class="line">        <span class="type">int</span> <span class="type">line</span> = scanner.nextInt();</span><br><span class="line">        <span class="keyword">if</span>(<span class="type">line</span> &gt;= <span class="number">2</span>)&#123;</span><br><span class="line">            <span class="type">int</span> <span class="keyword">index</span> = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="type">line</span>; i++) &#123;</span><br><span class="line">                <span class="keyword">index</span> = yangHuiSanJiao.generateNewLine(<span class="keyword">index</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        yangHuiSanJiao.print();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //判断该位置的数据是不是<span class="number">0</span></span><br><span class="line">    <span class="built_in">public</span> <span class="type">boolean</span> isZero(<span class="type">int</span> <span class="keyword">index</span>)&#123;</span><br><span class="line">        returnqueue.<span class="keyword">get</span>(<span class="keyword">index</span>) == <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">public</span> <span class="type">void</span> print()&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; queue.size(); i++) &#123;</span><br><span class="line">            <span class="type">Integer</span> data = queue.<span class="keyword">get</span>(i);</span><br><span class="line">            <span class="keyword">if</span>(data == <span class="number">0</span>)&#123;</span><br><span class="line">                <span class="keyword">System</span>.<span class="keyword">out</span>.println();</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="keyword">System</span>.<span class="keyword">out</span>.print(data + "\t");</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>algorithm</category>
+        <category>data-structure</category>
+      </categories>
+      <tags>
+        <tag>4me</tag>
       </tags>
   </entry>
   <entry>
