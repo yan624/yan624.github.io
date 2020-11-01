@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="zh-CN"><head>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
@@ -8,29 +10,25 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
+<link rel="stylesheet" href="/css/main.css">
 
 
-
-
-  
-  
-  
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="此篇基于 PyDial：A Multi-domain Statistical Dialogue System Toolkit 论文笔记 和 A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management 论文笔记。 PyDial 的官方文档在 此处。
- 
- 语音对话系统架构">
+  <meta name="description" content="此篇基于 PyDial：A Multi-domain Statistical Dialogue System Toolkit 论文笔记 和 A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management 论文笔记。 PyDial 的官方文档在 此处。  语音对话系统架构">
 <meta property="og:type" content="article">
 <meta property="og:title" content="分析PyDial toolkit各个包的功能">
 <meta property="og:url" content="https://yan624.github.io/posts/bc5ab764.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="此篇基于 PyDial：A Multi-domain Statistical Dialogue System Toolkit 论文笔记 和 A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management 论文笔记。 PyDial 的官方文档在 此处。
- 
- 语音对话系统架构">
+<meta property="og:description" content="此篇基于 PyDial：A Multi-domain Statistical Dialogue System Toolkit 论文笔记 和 A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management 论文笔记。 PyDial 的官方文档在 此处。  语音对话系统架构">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/%E5%88%86%E6%9E%90PyDial%20toolkit%E5%90%84%E4%B8%AA%E5%8C%85%E7%9A%84%E5%8A%9F%E8%83%BD/the%20general%20architecture%20of%20PyDial.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/%E5%88%86%E6%9E%90PyDial%20toolkit%E5%90%84%E4%B8%AA%E5%8C%85%E7%9A%84%E5%8A%9F%E8%83%BD/Architecture%20of%20a%20modular%20Spoken%20Dialoug%20System.jpg">
@@ -61,7 +59,7 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
 
 
   <title>分析PyDial toolkit各个包的功能 | 博客</title>
@@ -95,13 +93,13 @@
   </style>
 </noscript>
 
-<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css');loadCss('//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css');loadCss('//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css"></noscript></head>
+</head>
 
-<body itemscope="" itemtype="http://schema.org/WebPage">
+<body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
     <div class="headband"></div>
 
-    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏">
@@ -183,7 +181,9 @@
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
   </div>
   <span class="popup-btn-close">
     <i class="fa fa-times-circle"></i>
@@ -221,20 +221,20 @@
     
   
   
-  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     
     	
     
 
     <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/bc5ab764.html">
 
-    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
       <meta itemprop="name" content="朱冲䶮">
       <meta itemprop="description" content="记录">
     </span>
 
-    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="博客">
     </span>
       <header class="post-header">
@@ -263,7 +263,7 @@
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/project/" itemprop="url" rel="index"><span itemprop="name">project</span></a>
                 </span>
             </span>
@@ -287,7 +287,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-                <span class="post-meta-item-text">阅读时长 ≈</span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
               <span>4 分钟</span>
             </span>
 
@@ -303,9 +303,9 @@
         <div class="note warning"><p>此篇基于 <a href="https://yan624.github.io/·论文笔记/55.%20PyDial：A%20Multi-domain%20Statistical%20Dialogue%20System%20Toolkit.html">PyDial：A Multi-domain Statistical Dialogue System Toolkit 论文笔记</a> 和 <a href="https://yan624.github.io/·论文笔记/dilogue/task-oriented/54.%20A%20Benchmarking%20Environment%20for%20Reinforcement%20Learning%20Based%20Task%20Oriented%20Dialogue%20Management.html">A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management 论文笔记</a>。 PyDial 的官方文档在 <a href="http://www.camdial.org/pydial/Docs/" target="_blank" rel="noopener">此处</a>。</p>
 </div>
 <h1 id="语音对话系统架构">语音对话系统架构</h1>
-<p>PyDial 的论文中已经描述了系统的架构，本文最上面的 alert 中也已经给出了两篇论文笔记。我在这里做个总结： PyDial 的总体架构如下图所示。其中主要组件被称为 <strong>Agent</strong>，它封装了所有对话系统模块，以实现基于文本的交互。对话系统模块依赖于由一个<strong>本体</strong>（<strong>Ontology</strong>）定义的领域规范。为了与环境交互，PyDial 提供了三个接口：<strong>Dialogue Server</strong>【允许语音型交互】、<strong>Texthub</strong>【允许输入型交互】和 <strong>User Simulation system</strong>。交互的性能由<strong>评估</strong>（<strong>Evaluation</strong>）组件监视。 下图总计<strong>四</strong>大部分，将在下面的小节中分别阐述。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/分析PyDial%20toolkit各个包的功能/the%20general%20architecture%20of%20PyDial.jpg" title="The general architecture of PyDial" alt="The general architecture of PyDial"></p>
+<p>PyDial 的论文中已经描述了系统的架构，本文最上面的 alert 中也已经给出了两篇论文笔记。我在这里做个总结： PyDial 的总体架构如下图所示。其中主要组件被称为 <strong>Agent</strong>，它封装了所有对话系统模块，以实现基于文本的交互。对话系统模块依赖于由一个<strong>本体</strong>（<strong>Ontology</strong>）定义的领域规范。为了与环境交互，PyDial 提供了三个接口：<strong>Dialogue Server</strong>【允许语音型交互】、<strong>Texthub</strong>【允许输入型交互】和 <strong>User Simulation system</strong>。交互的性能由<strong>评估</strong>（<strong>Evaluation</strong>）组件监视。 下图总计<strong>四</strong>大部分，将在下面的小节中分别阐述。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/分析PyDial%20toolkit各个包的功能/the%20general%20architecture%20of%20PyDial.jpg" title="The general architecture of PyDial" alt="The general architecture of PyDial" /></p>
 <h2 id="agent">Agent</h2>
-<p>主要关注 <strong>Agent</strong> 部分。Agent 负责对话交互，因此内部的架构类似于下图中的内容。Agent 还维护 dialogue sessions。因此，可以通过实例化多个 agents 来支持多个对话。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/分析PyDial%20toolkit各个包的功能/Architecture%20of%20a%20modular%20Spoken%20Dialoug%20System.jpg" title="Architecture of a modular Spoken Dialoug System" alt="Architecture of a modular Spoken Dialoug System"></p>
+<p>主要关注 <strong>Agent</strong> 部分。Agent 负责对话交互，因此内部的架构类似于下图中的内容。Agent 还维护 dialogue sessions。因此，可以通过实例化多个 agents 来支持多个对话。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/分析PyDial%20toolkit各个包的功能/Architecture%20of%20a%20modular%20Spoken%20Dialoug%20System.jpg" title="Architecture of a modular Spoken Dialoug System" alt="Architecture of a modular Spoken Dialoug System" /></p>
 <ul>
 <li>Semantic Parser/Semantic Decoder：将文本输入转化为一个语义表征。PyDial 提供了一个基于规则（使用正则表达式）的实现，以及一个基于 SVM 的统计模型，即 the Semantic Tuple Classifier。对于后者，只提供了 CamRestaurants 领域的模型</li>
 <li>Belief Tracker：负责维护一个被称为 belief state 的对话状态表征，可用 <strong>the rule-based focus tracker</strong> 实现。该实现与领域无关。所有特定领域的信息都是从本体中提取的</li>
@@ -320,9 +320,9 @@
 <h2 id="ontology">Ontology</h2>
 <p>Ontology 封装了对话域规范以及对后端数据库（例如，一组餐厅及它们的属性）的访问。它被建模为一个全局对象，大多数对话系统模块和用户模拟器使用它来获取用户的相关信息。</p>
 <h1 id="目录">目录</h1>
-<p>按照如下顺序分析： </p><figure class="highlight stylus"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">PyDial</span><br><span class="line">├─belieftracking</span><br><span class="line">├─cedm</span><br><span class="line">├─config</span><br><span class="line">├─curiosity</span><br><span class="line">├─Docs</span><br><span class="line">├─evaluation</span><br><span class="line">├─ontology</span><br><span class="line">├─policy</span><br><span class="line">├─resources</span><br><span class="line">├─scripts</span><br><span class="line">├─semanticbelieftracking</span><br><span class="line">├─semi</span><br><span class="line">├─semo</span><br><span class="line">├─tasks</span><br><span class="line">├─tests</span><br><span class="line">├─topictracking</span><br><span class="line">├─Tutorials</span><br><span class="line">├─usersimulator</span><br><span class="line">├─utils</span><br><span class="line">├─__init__.py</span><br><span class="line">├─Agent.py</span><br><span class="line">├─conf.py</span><br><span class="line">├─DialogueServer.py</span><br><span class="line">├─pydial.py</span><br><span class="line">├─Simulate.py</span><br><span class="line">└─Texthub.py</span><br></pre></td></tr></tbody></table></figure><p></p>
+<p>按照如下顺序分析： <figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">PyDial</span><br><span class="line">├─belieftracking</span><br><span class="line">├─cedm</span><br><span class="line">├─config</span><br><span class="line">├─curiosity</span><br><span class="line">├─Docs</span><br><span class="line">├─evaluation</span><br><span class="line">├─ontology</span><br><span class="line">├─policy</span><br><span class="line">├─resources</span><br><span class="line">├─scripts</span><br><span class="line">├─semanticbelieftracking</span><br><span class="line">├─semi</span><br><span class="line">├─semo</span><br><span class="line">├─tasks</span><br><span class="line">├─tests</span><br><span class="line">├─topictracking</span><br><span class="line">├─Tutorials</span><br><span class="line">├─usersimulator</span><br><span class="line">├─utils</span><br><span class="line">├─__init__.py</span><br><span class="line">├─Agent.py</span><br><span class="line">├─conf.py</span><br><span class="line">├─DialogueServer.py</span><br><span class="line">├─pydial.py</span><br><span class="line">├─Simulate.py</span><br><span class="line">└─Texthub.py</span><br></pre></td></tr></table></figure></p>
 <h1 id="semanticbelieftracking">semanticbelieftracking</h1>
-<p>如果你仔细看过 PyDial 就会发现里面还有一个 <code>semanticbelieftracking</code> 包，两个包有点关联，所以此处将两个包放在一起讲解。 由于 <code>semanticbelieftracking</code> 包相对于 <code>belieftracking</code> 包只是多了一个 semantic，所以我一度认为 <code>semanticbelieftracking</code> 继承自 <code>belieftracking</code>，但是后来发现并不是。<code>semanticbelieftracking</code> 包将 semantic decode 和 belief track 视为两个独立问题。<strong>即 SemanticBeliefTracking 由 semantic decode 和 belief track 两部分组成。</strong> 它们的关系大致如上述所示，但是有一点不太好。PyDial 类与类之间的关系太乱了，明明有一个类可以继承另一个类，非要将这个类重写一遍，导致我在阅读代码时产生了极大的困扰。另外还有一点就是类的命名问题，我真的看不懂。我不知道为啥要叫 <code>semanticbelieftracking</code>。。。 所以两个包的关系大致如下所示： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/分析PyDial%20toolkit各个包的功能/SemanticBeliefTracking.jpg" title="SemanticBeliefTracking.jpg" alt="SemanticBeliefTracking"></p>
+<p>如果你仔细看过 PyDial 就会发现里面还有一个 <code>semanticbelieftracking</code> 包，两个包有点关联，所以此处将两个包放在一起讲解。 由于 <code>semanticbelieftracking</code> 包相对于 <code>belieftracking</code> 包只是多了一个 semantic，所以我一度认为 <code>semanticbelieftracking</code> 继承自 <code>belieftracking</code>，但是后来发现并不是。<code>semanticbelieftracking</code> 包将 semantic decode 和 belief track 视为两个独立问题。<strong>即 SemanticBeliefTracking 由 semantic decode 和 belief track 两部分组成。</strong> 它们的关系大致如上述所示，但是有一点不太好。PyDial 类与类之间的关系太乱了，明明有一个类可以继承另一个类，非要将这个类重写一遍，导致我在阅读代码时产生了极大的困扰。另外还有一点就是类的命名问题，我真的看不懂。我不知道为啥要叫 <code>semanticbelieftracking</code>。。。 所以两个包的关系大致如下所示： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/分析PyDial%20toolkit各个包的功能/SemanticBeliefTracking.jpg" title="SemanticBeliefTracking.jpg" alt="SemanticBeliefTracking" /></p>
 <h1 id="cedm">cedm</h1>
 <p>cedm 的全称是 The Conversational Entity Dialogue Model，是一个新颖的对话模型，旨在<strong>解决传统</strong>的单个/多个领域对话<strong>模型在</strong>对复杂对话结构（如关系，relations）<strong>建模能力上的限制</strong>。详见 <a href="https://arxiv.xilesou.top/abs/1901.01466" target="_blank" rel="noopener">Ultes et al., 2019.1</a>。 请注意，已被设计出来的 CEDM 原型实现，在某种程度上，是在尽可能地利用 PyDial 的结构和实现。因此，在实现上有一些限制，将在未来的版本中解决。 CEDM 默认是关闭的，使用方法详见文档。</p>
 <h1 id="config">config</h1>
@@ -332,19 +332,19 @@
 <h1 id="evaluation-1">evaluation</h1>
 <p>用于评估对话的性能。</p>
 <h1 id="policy">policy</h1>
-<p>policy 是 Agent 中的一部分。 policy 包中包含许多 policy 实现，它们都是历年论文的实现。我估计论文 <strong>《A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management》</strong> 使用这些 policy 实现从而提供了 6 个基准测试环境。 policy 包中的各个类的关系大致如下所示： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/分析PyDial%20toolkit各个包的功能/policy.jpg" title="policy.jpg" alt="policy"></p>
-<p>其中 GPPolicy 的关系如下所示： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/分析PyDial%20toolkit各个包的功能/GPPolicy.jpg" title="GPPolicy.jpg" alt="GPPolicy"></p>
+<p>policy 是 Agent 中的一部分。 policy 包中包含许多 policy 实现，它们都是历年论文的实现。我估计论文 <strong>《A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management》</strong> 使用这些 policy 实现从而提供了 6 个基准测试环境。 policy 包中的各个类的关系大致如下所示： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/分析PyDial%20toolkit各个包的功能/policy.jpg" title="policy.jpg" alt="policy" /></p>
+<p>其中 GPPolicy 的关系如下所示： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/分析PyDial%20toolkit各个包的功能/GPPolicy.jpg" title="GPPolicy.jpg" alt="GPPolicy" /></p>
 <h1 id="semi">semi</h1>
-<p>semi 全名 Semantic input parser。所有的领域都有一个基于规则的 semantic decoder，但是 CamRestaurants 领域有一个基于统计的 decoder，在该包下可以发现一个 <code>SVMSemi.py</code> 文件，所以实际上是基于 SVM 的。 semi 的各类关系大致如下所示： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/分析PyDial%20toolkit各个包的功能/SemI.jpg" title="Semantic input parser/Semantic Decoder" alt="SemI"></p>
+<p>semi 全名 Semantic input parser。所有的领域都有一个基于规则的 semantic decoder，但是 CamRestaurants 领域有一个基于统计的 decoder，在该包下可以发现一个 <code>SVMSemi.py</code> 文件，所以实际上是基于 SVM 的。 semi 的各类关系大致如下所示： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/分析PyDial%20toolkit各个包的功能/SemI.jpg" title="Semantic input parser/Semantic Decoder" alt="SemI" /></p>
 <h1 id="semo">semo</h1>
-<p>semo 全名 Semantic Output。为大多数领域提供了基于模版的语言生成，但是为 CamRestaurants 提供了一个基于 LSTM 的生成器。 semo 的各类关系大致如下所示： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/分析PyDial%20toolkit各个包的功能/SemO.jpg" title="Semantic Output/Language Generator" alt="SemO"></p>
+<p>semo 全名 Semantic Output。为大多数领域提供了基于模版的语言生成，但是为 CamRestaurants 提供了一个基于 LSTM 的生成器。 semo 的各类关系大致如下所示： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/分析PyDial%20toolkit各个包的功能/SemO.jpg" title="Semantic Output/Language Generator" alt="SemO" /></p>
 <h1 id="topictracking">topictracking</h1>
-<p>用于在多领域下追踪主题。各类关系大致如下所示： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/分析PyDial%20toolkit各个包的功能/topictracking.jpg" alt="topictracking"></p>
+<p>用于在多领域下追踪主题。各类关系大致如下所示： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/分析PyDial%20toolkit各个包的功能/topictracking.jpg" alt="topictracking" /></p>
 <h1 id="usersimulator">usersimulator</h1>
 <p>对话模拟。</p>
 <h1 id="总结">总结</h1>
 <p>经过分析发现，所有的模块最终都是由一个 *Manager 的类来管理的。并且在第一节中，我就介绍了 Agent 由 5 个部分组成，即 Semantic Parser/Semantic Decoder(SemI), Belief Tracker, Policy, Semantic Output/Language Generator(SemO), Topic Tracker。在 belieftracking 一节中已经介绍过，SemI 与 belieftracking 已经合并称为 semanticbelieftracking。所以 Agent 实际上只需管理四个 Manager 即可。 正巧，在 pydial 工具包根目录中发现了 Agent.py 模块，那么可想而知该模块就是 Agent 的管理。它管理的 Manager 如下所示： - TopicTrackingManager - SemanticBeliefTrackingManager - PolicyManager - SemOManager - EvaluationManager</p>
-<p>由于需要评估对话，所以多了一个 EvaluationManager。总得来说，agent 中各类的关系如下所示： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/分析PyDial%20toolkit各个包的功能/Agent.jpg" alt="Agent"></p>
+<p>由于需要评估对话，所以多了一个 EvaluationManager。总得来说，agent 中各类的关系如下所示： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/project/分析PyDial%20toolkit各个包的功能/Agent.jpg" alt="Agent" /></p>
 <p>以上已经是 PyDial 所有的功能，观察上图可以发现，所有功能最终的管理者有三类：ConsoleHub、DialogueServer、SimulationSystem。其中 DialogueServer 用于语音输入，SimulationSystem 用于模拟对话，我们暂且不管。 那么最后就只剩下了 ConsoleHub，它用于处理文本型输入。而 ConsoleHub 由 pydial.py 管理，至此 PyDial 的所有模块几乎都已经理清了，还有个别几个模块我没有整理过，但是它们大部分都只有几个类，并且目前暂时用不上，所以先不整理了。</p>
 <h1 id="pydial.py">pydial.py</h1>
 
@@ -417,7 +417,27 @@
           </div>
           
 
-
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
 
         </div>
           
@@ -447,8 +467,9 @@
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="朱冲䶮" src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
   <div class="site-description" itemprop="description">记录</div>
 </div>
@@ -480,17 +501,17 @@
 </div>
   <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
     Chat
-  
+  </a>
   </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
@@ -504,13 +525,13 @@
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io/" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
+          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://smallwhitezzz.gitee.io/blog" title="https://smallwhitezzz.gitee.io/blog" rel="noopener" target="_blank">凯子</a>
+          <a href="https://smallwhitezzz.gitee.io/blog" title="https:&#x2F;&#x2F;smallwhitezzz.gitee.io&#x2F;blog" rel="noopener" target="_blank">凯子</a>
         </li>
     </ul>
   </div>
@@ -537,14 +558,14 @@
 
 <div class="copyright">
   
-  © 2019 – 
+  &copy; 2019 – 
   <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div><!--
 樱花特效 
 最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
@@ -553,9 +574,15 @@
 于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
 原地址为：https://cangshui.net/2372.html
 -->
-
+<script>
+	var pathname = window.location.pathname;
+	// pathname == '/' || pathname == '/index.html'
+	if(pathname == '/categories/assorted/timeline/'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+</script>
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-
+<script src="/lib/my-utils.js"></script>
 <script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
@@ -580,7 +607,7 @@
 
         
 <div class="busuanzi-count">
-  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -612,29 +639,29 @@
   </div>
 
   
-  
+  <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  
-  
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
 
 
+<script src="/js/next-boot.js"></script>
 
-
-
-
-
-
-
-
-
-  
-
-
+<script src="/js/bookmark.js"></script>
 
 
   
 
+
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 
@@ -654,41 +681,7 @@
 
   
   <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
-  
-<!-- calendar widget -->
-
-
-
-
-<script src="/bundle.js"></script><script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-;
-
-	var pathname = window.location.pathname;
-	// pathname == '/' || pathname == '/index.html'
-	if(pathname == '/categories/assorted/timeline/'){
-		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
-	}
-;
-
+  <script>
       window.addEventListener('load', () => {
       quicklink({
         timeout : 3000,
@@ -696,4 +689,9 @@
         ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/bc5ab764.html',]
       });
       });
-  </script></body></html>
+  </script>
+<!-- calendar widget -->
+
+
+</body>
+</html>

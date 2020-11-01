@@ -1,13 +1,126 @@
 /* global NexT, CONFIG, Velocity */
-NexT.boot={},NexT.boot.registerEvents=function(){NexT.utils.registerScrollPercent(),NexT.utils.registerCanIUseTag(),
-// Mobile top menu bar.
-document.querySelector(".site-nav-toggle .toggle").addEventListener("click",e=>{e.currentTarget.classList.toggle("toggle-close");const t=document.querySelector(".site-nav");if(!t)return;const i=t.classList.contains("site-nav-on")?"slideUp":"slideDown";"function"==typeof Velocity?Velocity(t,i,{duration:200,complete:function(){t.classList.toggle("site-nav-on")}}):t.classList.toggle("site-nav-on")});document.querySelectorAll(".sidebar-nav li").forEach((e,t)=>{e.addEventListener("click",e=>{const i=e.currentTarget;if(i.classList.contains("sidebar-nav-active"))return;const o=document.querySelectorAll(".sidebar-panel"),s=o[t],n=o[1-t];window.anime({targets:n,duration:200,easing:"linear",opacity:0,complete:()=>{
-// Prevent adding TOC to Overview if Overview was selected when close & open sidebar.
-n.classList.remove("sidebar-panel-active"),s.style.opacity=0,s.classList.add("sidebar-panel-active"),window.anime({targets:s,duration:200,easing:"linear",opacity:1})}}),[...i.parentNode.children].forEach(e=>{e.classList.toggle("sidebar-nav-active",e===i)})})}),window.addEventListener("resize",NexT.utils.initSidebarDimension),window.addEventListener("hashchange",()=>{const e=location.hash;if(""!==e&&!e.match(/%\S{2}/)){const t=document.querySelector(`.tabs ul.nav-tabs li a[href="${e}"]`);t&&t.click()}}),"Pisces"!==CONFIG.scheme&&"Gemini"!==CONFIG.scheme||(NexT.utils.setAffixParam(),window.matchMedia("(min-width: 992px)").addListener(e=>{e.matches&&NexT.utils.setAffixParam()}))},NexT.boot.refresh=function(){
-/**
+
+NexT.boot = {};
+
+NexT.boot.registerEvents = function() {
+
+  NexT.utils.registerScrollPercent();
+  NexT.utils.registerCanIUseTag();
+
+  // Mobile top menu bar.
+  document.querySelector('.site-nav-toggle .toggle').addEventListener('click', event => {
+    event.currentTarget.classList.toggle('toggle-close');
+    const siteNav = document.querySelector('.site-nav');
+    if (!siteNav) return;
+    const animateAction = siteNav.classList.contains('site-nav-on') ? 'slideUp' : 'slideDown';
+
+    if (typeof Velocity === 'function') {
+      Velocity(siteNav, animateAction, {
+        duration: 200,
+        complete: function() {
+          siteNav.classList.toggle('site-nav-on');
+        }
+      });
+    } else {
+      siteNav.classList.toggle('site-nav-on');
+    }
+  });
+
+  const TAB_ANIMATE_DURATION = 200;
+  document.querySelectorAll('.sidebar-nav li').forEach((element, index) => {
+    element.addEventListener('click', event => {
+      const item = event.currentTarget;
+      const activeTabClassName = 'sidebar-nav-active';
+      const activePanelClassName = 'sidebar-panel-active';
+      if (item.classList.contains(activeTabClassName)) return;
+
+      const targets = document.querySelectorAll('.sidebar-panel');
+      const target = targets[index];
+      const currentTarget = targets[1 - index];
+      window.anime({
+        targets : currentTarget,
+        duration: TAB_ANIMATE_DURATION,
+        easing  : 'linear',
+        opacity : 0,
+        complete: () => {
+          // Prevent adding TOC to Overview if Overview was selected when close & open sidebar.
+          currentTarget.classList.remove(activePanelClassName);
+          target.style.opacity = 0;
+          target.classList.add(activePanelClassName);
+          window.anime({
+            targets : target,
+            duration: TAB_ANIMATE_DURATION,
+            easing  : 'linear',
+            opacity : 1
+          });
+        }
+      });
+
+      [...item.parentNode.children].forEach(element => {
+        element.classList.toggle(activeTabClassName, element === item);
+      });
+    });
+  });
+
+  window.addEventListener('resize', NexT.utils.initSidebarDimension);
+
+  window.addEventListener('hashchange', () => {
+    const tHash = location.hash;
+    if (tHash !== '' && !tHash.match(/%\S{2}/)) {
+      const target = document.querySelector(`.tabs ul.nav-tabs li a[href="${tHash}"]`);
+      target && target.click();
+    }
+  });
+
+  if (CONFIG.scheme === 'Pisces' || CONFIG.scheme === 'Gemini') {
+    NexT.utils.setAffixParam();
+    window.matchMedia('(min-width: 992px)').addListener(event => {
+      if (event.matches) {
+        NexT.utils.setAffixParam();
+      }
+    });
+  }
+};
+
+NexT.boot.refresh = function() {
+
+  /**
    * Register JS handlers by condition option.
    * Need to add config option in Front-End at 'layout/_partials/head.njk' file.
    */
-CONFIG.prism&&window.Prism.highlightAll(),CONFIG.fancybox&&NexT.utils.wrapImageWithFancyBox(),CONFIG.mediumzoom&&window.mediumZoom(".post-body :not(a) > img, .post-body > img",{background:"var(--content-bg-color)"}),CONFIG.lazyload&&window.lozad(".post-body img").observe(),CONFIG.pangu&&window.pangu.spacingPage(),CONFIG.exturl&&NexT.utils.registerExtURL(),NexT.utils.registerCopyCode(),NexT.utils.registerTabsTag(),NexT.utils.registerActiveMenuItem(),NexT.utils.registerLangSelect(),NexT.utils.registerSidebarTOC(),NexT.utils.wrapTableWithBox(),NexT.utils.registerVideoIframe()},NexT.boot.motion=function(){
-// Define Motion Sequence & Bootstrap Motion.
-CONFIG.motion.enable&&NexT.motion.integrator.add(NexT.motion.middleWares.logo).add(NexT.motion.middleWares.menu).add(NexT.motion.middleWares.postList).add(NexT.motion.middleWares.sidebar).bootstrap(),NexT.utils.updateSidebarPosition()},document.addEventListener("DOMContentLoaded",()=>{NexT.boot.registerEvents(),NexT.boot.refresh(),NexT.boot.motion()});
+  CONFIG.prism && window.Prism.highlightAll();
+  CONFIG.fancybox && NexT.utils.wrapImageWithFancyBox();
+  CONFIG.mediumzoom && window.mediumZoom('.post-body :not(a) > img, .post-body > img', {
+    background: 'var(--content-bg-color)'
+  });
+  CONFIG.lazyload && window.lozad('.post-body img').observe();
+  CONFIG.pangu && window.pangu.spacingPage();
+
+  CONFIG.exturl && NexT.utils.registerExtURL();
+  NexT.utils.registerCopyCode();
+  NexT.utils.registerTabsTag();
+  NexT.utils.registerActiveMenuItem();
+  NexT.utils.registerLangSelect();
+  NexT.utils.registerSidebarTOC();
+  NexT.utils.wrapTableWithBox();
+  NexT.utils.registerVideoIframe();
+};
+
+NexT.boot.motion = function() {
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .add(NexT.motion.middleWares.logo)
+      .add(NexT.motion.middleWares.menu)
+      .add(NexT.motion.middleWares.postList)
+      .add(NexT.motion.middleWares.sidebar)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  NexT.boot.registerEvents();
+  NexT.boot.refresh();
+  NexT.boot.motion();
+});

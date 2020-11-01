@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="zh-CN"><head>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
@@ -8,29 +10,25 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
+<link rel="stylesheet" href="/css/main.css">
 
 
-
-
-  
-  
-  
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="论文地址
- 诸如谷歌助手、Alex 以及 Siri 之类的虚拟助手为横跨多个领域的一系列服务或者 API 提供了一个对话接口。这些系统需要支持越来越多的服务，它们可能具有重叠的功能。而且这些服务中的一部分没有可用的训练数据集。现在公开的任务导向对话数据集不足以解决以上挑战，这是因为他们只覆盖了少量的领域，并且假定每个领域都有一个固定的本体。
- 本文提出了 SGD 数据集（16k 条多领对话横跨 1">
+  <meta name="description" content="论文地址 诸如谷歌助手、Alex 以及 Siri 之类的虚拟助手为横跨多个领域的一系列服务或者 API 提供了一个对话接口。这些系统需要支持越来越多的服务，它们可能具有重叠的功能。而且这些服务中的一部分没有可用的训练数据集。现在公开的任务导向对话数据集不足以解决以上挑战，这是因为他们只覆盖了少量的领域，并且假定每个领域都有一个固定的本体。 本文提出了 SGD 数据集（16k 条多领对话横跨 1">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Towards Scalable Multi-Domain Conversational Agents: The Schema-Guided Dataset">
 <meta property="og:url" content="https://yan624.github.io/posts/72340bc.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="论文地址
- 诸如谷歌助手、Alex 以及 Siri 之类的虚拟助手为横跨多个领域的一系列服务或者 API 提供了一个对话接口。这些系统需要支持越来越多的服务，它们可能具有重叠的功能。而且这些服务中的一部分没有可用的训练数据集。现在公开的任务导向对话数据集不足以解决以上挑战，这是因为他们只覆盖了少量的领域，并且假定每个领域都有一个固定的本体。
- 本文提出了 SGD 数据集（16k 条多领对话横跨 1">
+<meta property="og:description" content="论文地址 诸如谷歌助手、Alex 以及 Siri 之类的虚拟助手为横跨多个领域的一系列服务或者 API 提供了一个对话接口。这些系统需要支持越来越多的服务，它们可能具有重叠的功能。而且这些服务中的一部分没有可用的训练数据集。现在公开的任务导向对话数据集不足以解决以上挑战，这是因为他们只覆盖了少量的领域，并且假定每个领域都有一个固定的本体。 本文提出了 SGD 数据集（16k 条多领对话横跨 1">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E8%AE%BA%E6%96%87/%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90%E5%9E%8B%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/SGD%E6%A8%A1%E5%BC%8F%E5%B5%8C%E5%85%A5%E5%BA%8F%E5%88%97%E5%AF%B9.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E8%AE%BA%E6%96%87/%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90%E5%9E%8B%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/BERT%20encoder%E7%BC%96%E7%A0%81SGD%E5%BA%8F%E5%88%97%E5%AF%B9.png">
@@ -54,7 +52,7 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
 
 
   <title>Towards Scalable Multi-Domain Conversational Agents: The Schema-Guided Dataset | 博客</title>
@@ -88,13 +86,13 @@
   </style>
 </noscript>
 
-<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css');loadCss('//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css');loadCss('//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css"></noscript></head>
+</head>
 
-<body itemscope="" itemtype="http://schema.org/WebPage">
+<body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
     <div class="headband"></div>
 
-    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏">
@@ -176,7 +174,9 @@
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
   </div>
   <span class="popup-btn-close">
     <i class="fa fa-times-circle"></i>
@@ -214,18 +214,18 @@
     
   
   
-  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     
 
     <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/72340bc.html">
 
-    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
       <meta itemprop="name" content="朱冲䶮">
       <meta itemprop="description" content="记录">
     </span>
 
-    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="博客">
     </span>
       <header class="post-header">
@@ -254,7 +254,7 @@
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a>
                 </span>
             </span>
@@ -278,7 +278,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-                <span class="post-meta-item-text">阅读时长 ≈</span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
               <span>3 分钟</span>
             </span>
 
@@ -325,7 +325,7 @@
 <h2 id="model">Model</h2>
 <p>我们使用一个模型在所有的服务以及领域中执行预测。我们首先将所有的语句、槽位以及可分类槽位的槽值（模式中所呈现的）编码为嵌入表征。由于不同的模式有不同数量的槽位和意图，所以使用模式元素的嵌入进行预测。这与现存的模型相比有所不同，它们在一个固定的模式上进行预测，并且无法跨领域进行知识共享。它们也无法适应模式的改变，需要使用新的标注数据进行重新训练。</p>
 <ol type="1">
-<li><strong>Schema Embedding</strong> 这个组件用于获取每个服务模式中意图、槽位、可分类槽位的槽值的表征。表 3 展示了用于嵌入的每个元素的序列对。这些序列对被输入进 BERT 中，然后输出值 <span class="math inline">\(u_{CLS}\)</span> 被用作模式的嵌入，如图 6 所示。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/SGD模式嵌入序列对.jpg" alt="SGD模式嵌入序列对"> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/BERT%20encoder编码SGD序列对.png" alt="BERT encoder编码SGD序列对"></li>
+<li><strong>Schema Embedding</strong> 这个组件用于获取每个服务模式中意图、槽位、可分类槽位的槽值的表征。表 3 展示了用于嵌入的每个元素的序列对。这些序列对被输入进 BERT 中，然后输出值 <span class="math inline">\(u_{CLS}\)</span> 被用作模式的嵌入，如图 6 所示。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/SGD模式嵌入序列对.jpg" alt="SGD模式嵌入序列对" /> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/BERT%20encoder编码SGD序列对.png" alt="BERT encoder编码SGD序列对" /></li>
 <li><strong>Utterance Encoding</strong> 与 Chao and Lane (2019)（BERT-DST） 类似，我们使用 BERT 编码用户的语句以及前一条系统语句，以此获得语句对的嵌入表征 <span class="math inline">\(u=u_{CLS}\)</span> 以及字符级的表征 <span class="math inline">\(t_1, t_2, \cdots, t_M\)</span>，其中 <span class="math inline">\(M\)</span> 代表两句的字符总数。通过使用一组投影（projection），语句以及模式的嵌入均被用于进行模型预测。</li>
 <li><strong>Projection</strong> 令 <span class="math inline">\(x, y \in \mathbb{R}^d\)</span>。对于任务 <span class="math inline">\(K\)</span>，定义 <span class="math inline">\(l = \mathcal{F}_K(x,y,p)\)</span> 作为将 <span class="math inline">\(x,y\)</span> 转换为 <span class="math inline">\(l \in \mathbb{R}^p\)</span> 的映射，公式如下所示。其中 <span class="math inline">\(h_1, h_2 \in \mathbb{R}^d\)</span>，<span class="math inline">\(W^K_i\)</span> 和 <span class="math inline">\(b^K_i\)</span> 是可训练的参数。<span class="math inline">\(A\)</span> 是激活函数。我们参考 BERT，使用 <code>gelu</code> 函数。 <span class="math display">\[
 \begin{align}
@@ -423,7 +423,27 @@ l^{j,k}_{end} &amp; = \mathcal{F}_{end}(t_k, s^n_j, 1), \quad 1 \le j \le N, 1 \
           </div>
           
 
-
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
 
         </div>
           
@@ -453,8 +473,9 @@ l^{j,k}_{end} &amp; = \mathcal{F}_{end}(t_k, s^n_j, 1), \quad 1 \le j \le N, 1 \
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="朱冲䶮" src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
   <div class="site-description" itemprop="description">记录</div>
 </div>
@@ -486,17 +507,17 @@ l^{j,k}_{end} &amp; = \mathcal{F}_{end}(t_k, s^n_j, 1), \quad 1 \le j \le N, 1 \
 </div>
   <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
     Chat
-  
+  </a>
   </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
@@ -510,13 +531,13 @@ l^{j,k}_{end} &amp; = \mathcal{F}_{end}(t_k, s^n_j, 1), \quad 1 \le j \le N, 1 \
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io/" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
+          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://smallwhitezzz.gitee.io/blog" title="https://smallwhitezzz.gitee.io/blog" rel="noopener" target="_blank">凯子</a>
+          <a href="https://smallwhitezzz.gitee.io/blog" title="https:&#x2F;&#x2F;smallwhitezzz.gitee.io&#x2F;blog" rel="noopener" target="_blank">凯子</a>
         </li>
     </ul>
   </div>
@@ -543,14 +564,14 @@ l^{j,k}_{end} &amp; = \mathcal{F}_{end}(t_k, s^n_j, 1), \quad 1 \le j \le N, 1 \
 
 <div class="copyright">
   
-  © 2019 – 
+  &copy; 2019 – 
   <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div><!--
 樱花特效 
 最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
@@ -559,9 +580,15 @@ l^{j,k}_{end} &amp; = \mathcal{F}_{end}(t_k, s^n_j, 1), \quad 1 \le j \le N, 1 \
 于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
 原地址为：https://cangshui.net/2372.html
 -->
-
+<script>
+	var pathname = window.location.pathname;
+	// pathname == '/' || pathname == '/index.html'
+	if(pathname == '/categories/assorted/timeline/'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+</script>
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-
+<script src="/lib/my-utils.js"></script>
 <script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
@@ -586,7 +613,7 @@ l^{j,k}_{end} &amp; = \mathcal{F}_{end}(t_k, s^n_j, 1), \quad 1 \le j \le N, 1 \
 
         
 <div class="busuanzi-count">
-  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -618,29 +645,29 @@ l^{j,k}_{end} &amp; = \mathcal{F}_{end}(t_k, s^n_j, 1), \quad 1 \le j \le N, 1 \
   </div>
 
   
-  
+  <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  
-  
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
 
 
+<script src="/js/next-boot.js"></script>
 
-
-
-
-
-
-
-
-
-  
-
-
+<script src="/js/bookmark.js"></script>
 
 
   
 
+
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 
@@ -660,41 +687,7 @@ l^{j,k}_{end} &amp; = \mathcal{F}_{end}(t_k, s^n_j, 1), \quad 1 \le j \le N, 1 \
 
   
   <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
-  
-<!-- calendar widget -->
-
-
-
-
-<script src="/bundle.js"></script><script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-;
-
-	var pathname = window.location.pathname;
-	// pathname == '/' || pathname == '/index.html'
-	if(pathname == '/categories/assorted/timeline/'){
-		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
-	}
-;
-
+  <script>
       window.addEventListener('load', () => {
       quicklink({
         timeout : 3000,
@@ -702,4 +695,9 @@ l^{j,k}_{end} &amp; = \mathcal{F}_{end}(t_k, s^n_j, 1), \quad 1 \le j \le N, 1 \
         ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/72340bc.html',]
       });
       });
-  </script></body></html>
+  </script>
+<!-- calendar widget -->
+
+
+</body>
+</html>

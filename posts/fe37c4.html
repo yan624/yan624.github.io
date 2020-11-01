@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="zh-CN"><head>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
@@ -8,29 +10,25 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
+<link rel="stylesheet" href="/css/main.css">
 
 
-
-
-  
-  
-  
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="本文中文章节地址 本文英文章节地址
- 神经网络中一些符号的定义
- 引用自原文中文翻译 >我们首先给出网络中权重的清晰定义。我们使用\(w^l_{jk}\)表示从 \((l−1)^{th}\) 层的 \(k^{th}\) 个神经元到 \((l)^{th}\) 层的 \(j^{th}\) （注意：这个地方中文文章中写错了，他写成了\(l^{th}\)）个神经元的链接上的权重。例如，下图给出了第二">
+  <meta name="description" content="本文中文章节地址 本文英文章节地址 神经网络中一些符号的定义 引用自原文中文翻译 &gt;我们首先给出网络中权重的清晰定义。我们使用\(w^l_{jk}\)表示从 \((l−1)^{th}\) 层的 \(k^{th}\) 个神经元到 \((l)^{th}\) 层的 \(j^{th}\) （注意：这个地方中文文章中写错了，他写成了\(l^{th}\)）个神经元的链接上的权重。例如，下图给出了第二">
 <meta property="og:type" content="article">
 <meta property="og:title" content="《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题">
 <meta property="og:url" content="https://yan624.github.io/posts/fe37c4.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="本文中文章节地址 本文英文章节地址
- 神经网络中一些符号的定义
- 引用自原文中文翻译 >我们首先给出网络中权重的清晰定义。我们使用\(w^l_{jk}\)表示从 \((l−1)^{th}\) 层的 \(k^{th}\) 个神经元到 \((l)^{th}\) 层的 \(j^{th}\) （注意：这个地方中文文章中写错了，他写成了\(l^{th}\)）个神经元的链接上的权重。例如，下图给出了第二">
+<meta property="og:description" content="本文中文章节地址 本文英文章节地址 神经网络中一些符号的定义 引用自原文中文翻译 &gt;我们首先给出网络中权重的清晰定义。我们使用\(w^l_{jk}\)表示从 \((l−1)^{th}\) 层的 \(k^{th}\) 个神经元到 \((l)^{th}\) 层的 \(j^{th}\) （注意：这个地方中文文章中写错了，他写成了\(l^{th}\)）个神经元的链接上的权重。例如，下图给出了第二">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B8%AD%E7%9A%84%E7%A5%9E%E7%BB%8F%E5%85%83%E9%93%BE%E6%8E%A5%E4%B8%8A%E7%9A%84%E6%9D%83%E9%87%8D%E8%A1%A8%E7%A4%BA%E5%9B%BE%E8%A7%A3.png">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B8%AD%E7%9A%84%E5%81%8F%E5%B7%AE%E5%92%8C%E6%BF%80%E6%B4%BB%E5%80%BC%E5%9B%BE%E8%A7%A3.png">
@@ -55,7 +53,7 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
 
 
   <title>《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题 | 博客</title>
@@ -89,13 +87,13 @@
   </style>
 </noscript>
 
-<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css');loadCss('//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css');loadCss('//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css"></noscript></head>
+</head>
 
-<body itemscope="" itemtype="http://schema.org/WebPage">
+<body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
     <div class="headband"></div>
 
-    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏">
@@ -177,7 +175,9 @@
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
   </div>
   <span class="popup-btn-close">
     <i class="fa fa-times-circle"></i>
@@ -215,28 +215,54 @@
     
   
   
-  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     
     	
     
     	
         <!-- 弹窗插件 -->
-    		
-        
+    		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
+        <script type="text/javascript" src="/lib/spop/spop.min.js"></script>
         <!--判断此文是否为特殊的文章-->
-        
+        <script>
+          var templateSentence = '这是条不可能出现的弹窗提示。';
+          if('学习笔记' == '学习笔记')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记。';
+          else if('学习笔记' == '4me')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
+          spop({
+            template: templateSentence,
+            group: 'tips',
+            position  : 'bottom-center',
+            style: 'success',
+            autoclose: 5500,
+            onOpen: function () {
+              //这里设置灰色背景色
+            },
+            onClose: function() {
+              //这里可以取消背景色
+              /*spop({
+                template: 'ε = = (づ′▽`)づ',
+                group: 'tips',
+                position  : 'bottom-center',
+                style: 'success',
+                autoclose: 1500
+              });*/
+            }
+          });
+        </script>
     	
     
 
     <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/fe37c4.html">
 
-    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
       <meta itemprop="name" content="朱冲䶮">
       <meta itemprop="description" content="记录">
     </span>
 
-    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="博客">
     </span>
       <header class="post-header">
@@ -265,11 +291,11 @@
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
                 </span>
                   ，
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/AI/dl/" itemprop="url" rel="index"><span itemprop="name">dl</span></a>
                 </span>
             </span>
@@ -293,7 +319,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-                <span class="post-meta-item-text">阅读时长 ≈</span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
               <span>3 分钟</span>
             </span>
 
@@ -308,7 +334,7 @@
       
         <p><a href="https://tigerneil.gitbooks.io/neural-networks-and-deep-learning-zh/content/chapter2.html" target="_blank" rel="noopener">本文中文章节地址</a> <a href="http://neuralnetworksanddeeplearning.com/chap2.html" target="_blank" rel="noopener">本文英文章节地址</a></p>
 <h3 id="神经网络中一些符号的定义">神经网络中一些符号的定义</h3>
-<p>引用自<a href="https://tigerneil.gitbooks.io/neural-networks-and-deep-learning-zh/content/chapter2.html#%E7%83%AD%E8%BA%AB%EF%BC%9A%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B8%AD%E4%BD%BF%E7%94%A8%E7%9F%A9%E9%98%B5%E5%BF%AB%E9%80%9F%E8%AE%A1%E7%AE%97%E8%BE%93%E5%87%BA%E7%9A%84%E8%A7%82%E7%82%B9" target="_blank" rel="noopener">原文中文翻译</a> &gt;我们首先给出网络中权重的清晰定义。我们使用<span class="math inline">\(w^l_{jk}\)</span>表示从 <span class="math inline">\((l−1)^{th}\)</span> 层的 <span class="math inline">\(k^{th}\)</span> 个神经元到 <span class="math inline">\((l)^{th}\)</span> 层的 <span class="math inline">\(j^{th}\)</span> （<font style="color:red">注意：这个地方中文文章中写错了</font>，他写成了<span class="math inline">\(l^{th}\)</span>）个神经元的链接上的权重。例如，下图给出了第二隐藏层的第四个神经元到第三隐藏层的第二个神经元的链接上的权重： &gt; <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B8%AD%E7%9A%84%E7%A5%9E%E7%BB%8F%E5%85%83%E9%93%BE%E6%8E%A5%E4%B8%8A%E7%9A%84%E6%9D%83%E9%87%8D%E8%A1%A8%E7%A4%BA%E5%9B%BE%E8%A7%A3.png" alt="神经网络中的神经元链接上的权重表示图解"> &gt; 我们对网络偏差和激活值也会使用类似的表示。显式地，我们使用 <span class="math inline">\(b^l_J\)</span> 表示在 <span class="math inline">\(l^{th}\)</span> 层 <span class="math inline">\(j^{th}\)</span> 个神经元的偏差，使用 <span class="math inline">\(a^l_j\)</span> 表示 <span class="math inline">\(l^{th}\)</span> 层 <span class="math inline">\(j^{th}\)</span> 个神经元的激活值。下面的图清楚地解释了这样表示的含义： &gt; <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B8%AD%E7%9A%84%E5%81%8F%E5%B7%AE%E5%92%8C%E6%BF%80%E6%B4%BB%E5%80%BC%E5%9B%BE%E8%A7%A3.png" alt="神经网络中的偏差和激活值图解"></p>
+<p>引用自<a href="https://tigerneil.gitbooks.io/neural-networks-and-deep-learning-zh/content/chapter2.html#%E7%83%AD%E8%BA%AB%EF%BC%9A%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B8%AD%E4%BD%BF%E7%94%A8%E7%9F%A9%E9%98%B5%E5%BF%AB%E9%80%9F%E8%AE%A1%E7%AE%97%E8%BE%93%E5%87%BA%E7%9A%84%E8%A7%82%E7%82%B9" target="_blank" rel="noopener">原文中文翻译</a> &gt;我们首先给出网络中权重的清晰定义。我们使用<span class="math inline">\(w^l_{jk}\)</span>表示从 <span class="math inline">\((l−1)^{th}\)</span> 层的 <span class="math inline">\(k^{th}\)</span> 个神经元到 <span class="math inline">\((l)^{th}\)</span> 层的 <span class="math inline">\(j^{th}\)</span> （<font style="color:red">注意：这个地方中文文章中写错了</font>，他写成了<span class="math inline">\(l^{th}\)</span>）个神经元的链接上的权重。例如，下图给出了第二隐藏层的第四个神经元到第三隐藏层的第二个神经元的链接上的权重： &gt; <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B8%AD%E7%9A%84%E7%A5%9E%E7%BB%8F%E5%85%83%E9%93%BE%E6%8E%A5%E4%B8%8A%E7%9A%84%E6%9D%83%E9%87%8D%E8%A1%A8%E7%A4%BA%E5%9B%BE%E8%A7%A3.png" alt="神经网络中的神经元链接上的权重表示图解" /> &gt; 我们对网络偏差和激活值也会使用类似的表示。显式地，我们使用 <span class="math inline">\(b^l_J\)</span> 表示在 <span class="math inline">\(l^{th}\)</span> 层 <span class="math inline">\(j^{th}\)</span> 个神经元的偏差，使用 <span class="math inline">\(a^l_j\)</span> 表示 <span class="math inline">\(l^{th}\)</span> 层 <span class="math inline">\(j^{th}\)</span> 个神经元的激活值。下面的图清楚地解释了这样表示的含义： &gt; <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B8%AD%E7%9A%84%E5%81%8F%E5%B7%AE%E5%92%8C%E6%BF%80%E6%B4%BB%E5%80%BC%E5%9B%BE%E8%A7%A3.png" alt="神经网络中的偏差和激活值图解" /></p>
 <a id="more"></a>
 <p>说白了就是<strong>前一层的</strong>的神经元到后一层的神经元上的链接的权重。 这里解释一下，我在<a href="https://www.bilibili.com/video/av9770302" target="_blank" rel="noopener">李宏毅深度学习的视频</a>中，也听到他讲过。<span class="math inline">\(w^l_{jk}\)</span>中的j和k在这个公式中是写反的，可以想想：上文说到<span class="math inline">\(w^l_{jk}\)</span>是代表第k个神经元到第j个神经元链接上的权重，按逻辑来说，似乎写成<span class="math inline">\(w^l_{kj}\)</span>更合理。因为我们说话写字都是按顺序的，没有说是反着来的。 之所以这么反着写，是因为后面在对权重（weight）、激活值（activations）进行向量化时，不需要加一个转置。接下来解释一下为什么不用加： 以上图为例，有如下权重：<span class="math inline">\(w^3_{21}\)</span> <span class="math inline">\(w^3_{22}\)</span> <span class="math inline">\(w^3_{23}\)</span> <span class="math inline">\(w^3_{24}\)</span> 现在将上标3移除组成一个向量——<span class="math inline">\(\begin{pmatrix}w_{21}&amp;w_{22}&amp;w_{23}&amp;w_{24}\end{pmatrix}\)</span>，大家已经发现了吧，我将这个向量横着写的。众所周知，矩阵的下标第一个数字代表矩阵的行，第二个数字代表矩阵的列。所以如果将w这个矩阵补全就是下面这样。 <span class="math display">\[\begin{pmatrix}
 w_{11}&amp;w_{12}&amp;w_{13}&amp;w_{14}\\
@@ -453,7 +479,27 @@ w^3_{42}\\
           </div>
           
 
-
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
 
         </div>
           
@@ -483,8 +529,9 @@ w^3_{42}\\
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="朱冲䶮" src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
   <div class="site-description" itemprop="description">记录</div>
 </div>
@@ -516,17 +563,17 @@ w^3_{42}\\
 </div>
   <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
     Chat
-  
+  </a>
   </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
@@ -540,13 +587,13 @@ w^3_{42}\\
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io/" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
+          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://smallwhitezzz.gitee.io/blog" title="https://smallwhitezzz.gitee.io/blog" rel="noopener" target="_blank">凯子</a>
+          <a href="https://smallwhitezzz.gitee.io/blog" title="https:&#x2F;&#x2F;smallwhitezzz.gitee.io&#x2F;blog" rel="noopener" target="_blank">凯子</a>
         </li>
     </ul>
   </div>
@@ -573,14 +620,14 @@ w^3_{42}\\
 
 <div class="copyright">
   
-  © 2019 – 
+  &copy; 2019 – 
   <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div><!--
 樱花特效 
 最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
@@ -589,9 +636,15 @@ w^3_{42}\\
 于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
 原地址为：https://cangshui.net/2372.html
 -->
-
+<script>
+	var pathname = window.location.pathname;
+	// pathname == '/' || pathname == '/index.html'
+	if(pathname == '/categories/assorted/timeline/'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+</script>
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-
+<script src="/lib/my-utils.js"></script>
 <script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
@@ -616,7 +669,7 @@ w^3_{42}\\
 
         
 <div class="busuanzi-count">
-  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -648,29 +701,29 @@ w^3_{42}\\
   </div>
 
   
-  
+  <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  
-  
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
 
 
+<script src="/js/next-boot.js"></script>
 
-
-
-
-
-
-
-
-
-  
-
-
+<script src="/js/bookmark.js"></script>
 
 
   
 
+
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 
@@ -690,68 +743,7 @@ w^3_{42}\\
 
   
   <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
-  
-<!-- calendar widget -->
-
-
-
-
-<script src="/bundle.js"></script><script>
-          var templateSentence = '这是条不可能出现的弹窗提示。';
-          if('学习笔记' == '学习笔记')
-            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记。';
-          else if('学习笔记' == '4me')
-            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
-          spop({
-            template: templateSentence,
-            group: 'tips',
-            position  : 'bottom-center',
-            style: 'success',
-            autoclose: 5500,
-            onOpen: function () {
-              //这里设置灰色背景色
-            },
-            onClose: function() {
-              //这里可以取消背景色
-              /*spop({
-                template: 'ε = = (づ′▽`)づ',
-                group: 'tips',
-                position  : 'bottom-center',
-                style: 'success',
-                autoclose: 1500
-              });*/
-            }
-          });
-        ;
-
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-;
-
-	var pathname = window.location.pathname;
-	// pathname == '/' || pathname == '/index.html'
-	if(pathname == '/categories/assorted/timeline/'){
-		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
-	}
-;
-
+  <script>
       window.addEventListener('load', () => {
       quicklink({
         timeout : 3000,
@@ -759,4 +751,9 @@ w^3_{42}\\
         ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/fe37c4.html',]
       });
       });
-  </script></body></html>
+  </script>
+<!-- calendar widget -->
+
+
+</body>
+</html>

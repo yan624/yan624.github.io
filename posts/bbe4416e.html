@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="zh-CN"><head>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
@@ -8,39 +10,25 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
+<link rel="stylesheet" href="/css/main.css">
 
 
-
-
-  
-  
-  
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="各种优化算法比较
- 
- Mini-batch梯度下降
- Q：为什么Mini-batch比普通的梯度下降快？
- 
- 普通的梯度下降——vanilla gradient descent，是将整个数据集同时做运算，而Mini-batch梯度下降算法是以一组为单位，分别进行梯度下降，所有组执行完毕后再进行下一次迭代。
- 假设现在有m个样本。 \[
- X = \begin{pmatrix}x^1&amp;x">
+  <meta name="description" content="各种优化算法比较  Mini-batch梯度下降 Q：为什么Mini-batch比普通的梯度下降快？  普通的梯度下降——vanilla gradient descent，是将整个数据集同时做运算，而Mini-batch梯度下降算法是以一组为单位，分别进行梯度下降，所有组执行完毕后再进行下一次迭代。 假设现在有m个样本。 \[ X &#x3D; \begin{pmatrix}x^1&amp;x">
 <meta property="og:type" content="article">
 <meta property="og:title" content="机器学习中各种优化算法的学习笔记">
 <meta property="og:url" content="https://yan624.github.io/posts/bbe4416e.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="各种优化算法比较
- 
- Mini-batch梯度下降
- Q：为什么Mini-batch比普通的梯度下降快？
- 
- 普通的梯度下降——vanilla gradient descent，是将整个数据集同时做运算，而Mini-batch梯度下降算法是以一组为单位，分别进行梯度下降，所有组执行完毕后再进行下一次迭代。
- 假设现在有m个样本。 \[
- X = \begin{pmatrix}x^1&amp;x">
+<meta property="og:description" content="各种优化算法比较  Mini-batch梯度下降 Q：为什么Mini-batch比普通的梯度下降快？  普通的梯度下降——vanilla gradient descent，是将整个数据集同时做运算，而Mini-batch梯度下降算法是以一组为单位，分别进行梯度下降，所有组执行完毕后再进行下一次迭代。 假设现在有m个样本。 \[ X &#x3D; \begin{pmatrix}x^1&amp;x">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E5%90%84%E7%A7%8D%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/Mini-batch%E5%92%8C%E6%99%AE%E9%80%9A%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E7%9A%84%E5%8C%BA%E5%88%AB.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E5%90%84%E7%A7%8D%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/SGD%E5%92%8Cvanilla%20gradient%20descent%E7%9A%84%E5%8C%BA%E5%88%AB.jpg">
@@ -76,7 +64,7 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
 
 
   <title>机器学习中各种优化算法的学习笔记 | 博客</title>
@@ -110,13 +98,13 @@
   </style>
 </noscript>
 
-<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css');loadCss('//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css');loadCss('//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css"></noscript></head>
+</head>
 
-<body itemscope="" itemtype="http://schema.org/WebPage">
+<body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
     <div class="headband"></div>
 
-    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏">
@@ -198,7 +186,9 @@
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
   </div>
   <span class="popup-btn-close">
     <i class="fa fa-times-circle"></i>
@@ -236,22 +226,74 @@
     
   
   
-  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     
     	
         <!-- 弹窗插件 -->
-    		
-        
+    		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
+        <script type="text/javascript" src="/lib/spop/spop.min.js"></script>
         <!--判断此文是否为特殊的文章-->
-        
+        <script>
+          var templateSentence = '这是条不可能出现的弹窗提示。';
+          if('学习笔记' == '学习笔记')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记。';
+          else if('学习笔记' == '4me')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
+          spop({
+            template: templateSentence,
+            group: 'tips',
+            position  : 'bottom-center',
+            style: 'success',
+            autoclose: 5500,
+            onOpen: function () {
+              //这里设置灰色背景色
+            },
+            onClose: function() {
+              //这里可以取消背景色
+              /*spop({
+                template: 'ε = = (づ′▽`)づ',
+                group: 'tips',
+                position  : 'bottom-center',
+                style: 'success',
+                autoclose: 1500
+              });*/
+            }
+          });
+        </script>
     	
     
     	
         <!-- 弹窗插件 -->
-    		
-        
+    		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
+        <script type="text/javascript" src="/lib/spop/spop.min.js"></script>
         <!--判断此文是否为特殊的文章-->
-        
+        <script>
+          var templateSentence = '这是条不可能出现的弹窗提示。';
+          if('4me' == '学习笔记')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记。';
+          else if('4me' == '4me')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
+          spop({
+            template: templateSentence,
+            group: 'tips',
+            position  : 'bottom-center',
+            style: 'success',
+            autoclose: 5500,
+            onOpen: function () {
+              //这里设置灰色背景色
+            },
+            onClose: function() {
+              //这里可以取消背景色
+              /*spop({
+                template: 'ε = = (づ′▽`)づ',
+                group: 'tips',
+                position  : 'bottom-center',
+                style: 'success',
+                autoclose: 1500
+              });*/
+            }
+          });
+        </script>
     	
     
     	
@@ -259,13 +301,13 @@
 
     <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/bbe4416e.html">
 
-    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
       <meta itemprop="name" content="朱冲䶮">
       <meta itemprop="description" content="记录">
     </span>
 
-    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="博客">
     </span>
       <header class="post-header">
@@ -294,11 +336,11 @@
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
                 </span>
                   ，
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/AI/ml/" itemprop="url" rel="index"><span itemprop="name">ml</span></a>
                 </span>
             </span>
@@ -322,7 +364,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-                <span class="post-meta-item-text">阅读时长 ≈</span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
               <span>9 分钟</span>
             </span>
 
@@ -347,10 +389,10 @@ Y = \begin{pmatrix}y^1&amp;y^2&amp;x^3&amp;\cdots&amp;y^m\end{pmatrix}\\
 \]</span> 使用Mini-batch，假设每1000个样本为一组： <span class="math display">\[
 X = \begin{pmatrix}\underbrace{x^1\cdots x^{1000}}_{X^{\{1\}}} &amp; \underbrace{x^{1001}\cdots x^{2000}}_{X^{\{2\}}} &amp; \cdots&amp;\underbrace{\cdots x^m}_{X^{\{t\}}}\end{pmatrix}\\
 Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} &amp; \underbrace{y^{1001}\cdots y^{2000}}_{Y^{\{2\}}} &amp; \cdots&amp;\underbrace{\cdots y^m}_{Y^{\{t\}}}\end{pmatrix}\\
-\]</span> 如果使用代码实现就是类似下面这样的伪代码： </p><figure class="highlight applescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> t = <span class="number">1</span>, ..., t</span><br><span class="line">	forwardprop <span class="keyword">on</span> X^{t}</span><br><span class="line">	compute cost</span><br><span class="line">	backprop <span class="keyword">to</span> compute grads</span><br><span class="line">	update weights <span class="keyword">and</span> bais</span><br></pre></td></tr></tbody></table></figure> for循环完成之后就完成了神经网络的第一次迭代。 <a id="more"></a><p></p>
+\]</span> 如果使用代码实现就是类似下面这样的伪代码： <figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> t = <span class="number">1</span>, ..., t</span><br><span class="line">	forwardprop <span class="keyword">on</span> X^&#123;t&#125;</span><br><span class="line">	compute cost</span><br><span class="line">	backprop <span class="keyword">to</span> compute grads</span><br><span class="line">	update weights <span class="keyword">and</span> bais</span><br></pre></td></tr></table></figure> for循环完成之后就完成了神经网络的第一次迭代。 <a id="more"></a></p>
 <h2 id="理解mini-batch">理解mini-batch</h2>
-<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/机器学习中的各种优化算法/Mini-batch和普通梯度下降的区别.jpg" alt="Mini-batch和普通梯度下降的区别"> 1. 如果将batch设为m，那它就是普通的梯度下降算法。 2. 如果将batch设为1，就叫做随机梯度下降——SGD 3. batch在1到m之间就是mini-batch</p>
-<p>SGD和普通梯度下降的区别，“+”代表代价最小点。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/机器学习中的各种优化算法/SGD和vanilla%20gradient%20descent的区别.jpg" alt="SGD和vanilla gradient descent的区别"> SGD和mini-batch的区别。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/机器学习中的各种优化算法/SGD和mini-batch的区别.jpg" alt="SGD和mini-batch的区别"></p>
+<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/机器学习中的各种优化算法/Mini-batch和普通梯度下降的区别.jpg" alt="Mini-batch和普通梯度下降的区别" /> 1. 如果将batch设为m，那它就是普通的梯度下降算法。 2. 如果将batch设为1，就叫做随机梯度下降——SGD 3. batch在1到m之间就是mini-batch</p>
+<p>SGD和普通梯度下降的区别，“+”代表代价最小点。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/机器学习中的各种优化算法/SGD和vanilla%20gradient%20descent的区别.jpg" alt="SGD和vanilla gradient descent的区别" /> SGD和mini-batch的区别。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/机器学习中的各种优化算法/SGD和mini-batch的区别.jpg" alt="SGD和mini-batch的区别" /></p>
 <p><strong>应该记住的有：</strong></p>
 <ol type="1">
 <li>普通梯度下降、mini-batch和SGD之间的区别就是执行一次参数更新所需的样本数量不同。</li>
@@ -359,8 +401,8 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} &amp; \underbrace
 </ol>
 <h2 id="mini-bacth实现步骤">mini-bacth实现步骤</h2>
 <ol type="1">
-<li>打乱数据。创建一个打乱数据之后的副本，其中X和Y的每一列都代表一个训练样本。注意X和Y是同步地随机打乱样本，即X中第<span class="math inline">\(i^{th}\)</span>个样本和Y中第<span class="math inline">\(i^{th}\)</span>标签在打乱之后还是是对应的。此步骤确保样本被随机地分割到不同的mini-batches中。下图是步骤示意图： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/机器学习中的各种优化算法/mini-batch第一步打乱数据.jpg" alt="mini-batch第一步打乱数据"></li>
-<li>切分。将打乱数据后的XY切分进<code>mini_batch_size</code>大小（下图是64）的mini-batches中。不过注意训练样本的数量并不总能被<code>mini_batch_size</code>整除。最后的mini-batch可能要小点，但是不需要担心这点。使用<code>math.floor()</code>向上取整即可。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/机器学习中的各种优化算法/mini-batch第二步切分.png" alt="mini-batch第二步切分"></li>
+<li>打乱数据。创建一个打乱数据之后的副本，其中X和Y的每一列都代表一个训练样本。注意X和Y是同步地随机打乱样本，即X中第<span class="math inline">\(i^{th}\)</span>个样本和Y中第<span class="math inline">\(i^{th}\)</span>标签在打乱之后还是是对应的。此步骤确保样本被随机地分割到不同的mini-batches中。下图是步骤示意图： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/机器学习中的各种优化算法/mini-batch第一步打乱数据.jpg" alt="mini-batch第一步打乱数据" /></li>
+<li>切分。将打乱数据后的XY切分进<code>mini_batch_size</code>大小（下图是64）的mini-batches中。不过注意训练样本的数量并不总能被<code>mini_batch_size</code>整除。最后的mini-batch可能要小点，但是不需要担心这点。使用<code>math.floor()</code>向上取整即可。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/机器学习中的各种优化算法/mini-batch第二步切分.png" alt="mini-batch第二步切分" /></li>
 </ol>
 <h2 id="一些经验">一些经验</h2>
 <p>如果小数据量（大约小于2000）的话，<strong>只</strong>执行步骤1即可；如果样本数目较大，执行步骤1和步骤2，一般将batch设置在64~512之间，考虑到电脑的内存设置和使用方式，batch的大小设置为2的次方，代码的运行速度会比较快；</p>
@@ -369,19 +411,19 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} &amp; \underbrace
 <p>Exponentially weighted averages，在统计学中被称为指数加权移动平均——Exponentially weighted moving averages。</p>
 <p>指数加权平均有一个公式：<span class="math inline">\(V_t = \beta * V_{t-1} + (1- \beta) * \theta_t\)</span>，<span class="math inline">\(V_0 = 0\)</span>，其目的是使用<span class="math inline">\(V_t\)</span>代替<span class="math inline">\(\theta_t\)</span>。<span class="math inline">\(V_t\)</span>可视为<strong>约等于</strong><span class="math inline">\(\frac{1}{1 - \beta}\)</span>个样本的平均值。这里可能会有疑问，为什么<span class="math inline">\(V_t\)</span>可视为约等于<span class="math inline">\(\frac{1}{1 - \beta}\)</span>个样本的平均值？将 <span class="math inline">\(1 - \beta\)</span> 除到等式左边，可以看到 <span class="math inline">\(\frac{1}{1 - \beta} V_t \approx \theta_t\)</span>。</p>
 <p>下图中的数据为伦敦一年之间的温度，来源于吴恩达的深度学习视频，可以看到其中的数据十分杂乱，也就是常在网络上看到别人所说的“噪点”多。我们可以使用<strong>指数加权平均</strong>来画出一条线，就是下图的红线，来代表温度变化的趋势，这样会使得更容易让人类理解和观察。</p>
-<p>下图中的<span class="math inline">\(\beta\)</span>为0.9。而<span class="math inline">\(\frac{1}{1 - 0.9} = 10\)</span>，所以<span class="math inline">\(V_t\)</span>代表过去<em>十天</em>内的平均温度。如果<span class="math inline">\(\beta\)</span>为0.98，那么<span class="math inline">\(V_t\)</span>代表过去<em>五十</em>天内的平均温度 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/机器学习中的各种优化算法/指数加权平均例子.jpg" alt="指数加权平均例子"> 下图是不同<span class="math inline">\(\beta\)</span>值的对比。注意到一点，绿色（<span class="math inline">\(\beta\)</span>=0.98）的线比红色的线要平坦一点，这是因为你多平均了几天的温度，所以这根线波动更新、更平坦。但是缺点是曲线进一步向右移，拟合的不是很好。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/机器学习中的各种优化算法/不同beta值的对比.jpg" alt="不同beta值的对比"> 现在看到了平均了10天和50天温度的曲线，现在试试<span class="math inline">\(\beta=0.5\)</span>，也就是只平均两天的温度。由于只平均了两天的温度，数据太少，所以曲线有更多的噪声，更有可能出现异常值。但是这个曲线能更快适应温度变化。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/机器学习中的各种优化算法/beta值等于0.5的指数加权平均.jpg" alt="beta值等于0.5的指数加权平均"></p>
+<p>下图中的<span class="math inline">\(\beta\)</span>为0.9。而<span class="math inline">\(\frac{1}{1 - 0.9} = 10\)</span>，所以<span class="math inline">\(V_t\)</span>代表过去<em>十天</em>内的平均温度。如果<span class="math inline">\(\beta\)</span>为0.98，那么<span class="math inline">\(V_t\)</span>代表过去<em>五十</em>天内的平均温度 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/机器学习中的各种优化算法/指数加权平均例子.jpg" alt="指数加权平均例子" /> 下图是不同<span class="math inline">\(\beta\)</span>值的对比。注意到一点，绿色（<span class="math inline">\(\beta\)</span>=0.98）的线比红色的线要平坦一点，这是因为你多平均了几天的温度，所以这根线波动更新、更平坦。但是缺点是曲线进一步向右移，拟合的不是很好。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/机器学习中的各种优化算法/不同beta值的对比.jpg" alt="不同beta值的对比" /> 现在看到了平均了10天和50天温度的曲线，现在试试<span class="math inline">\(\beta=0.5\)</span>，也就是只平均两天的温度。由于只平均了两天的温度，数据太少，所以曲线有更多的噪声，更有可能出现异常值。但是这个曲线能更快适应温度变化。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/机器学习中的各种优化算法/beta值等于0.5的指数加权平均.jpg" alt="beta值等于0.5的指数加权平均" /></p>
 <h2 id="理解其作用">理解其作用</h2>
 <div class="note primary"><p>略。至今看不懂。</p>
 </div>
 <h2 id="偏差修正">偏差修正</h2>
 <p>之前的曲线其实都是理想状态下的，回想绿色的曲线是50天内的温度平均值。但是其实绿色曲线会是紫色曲线那样的轨迹。初始化<span class="math inline">\(V_0=0\)</span>，原数据中<span class="math inline">\(\theta_0 = 40\)</span>，所以其实<span class="math inline">\(V_1 = 0.02 * 40 = 8\)</span>，从而绿色曲线的起点实际上很低。因为起点并没有计算50天内的温度平均，我们默认将<span class="math inline">\(V_0\)</span>初始化为0。</p>
 <p>我们可以用下图右边的公式将其修正。算出<span class="math inline">\(V_t\)</span>后再做如下计算：<span class="math inline">\(\frac{V_t}{1 - \beta^t}\)</span>，其中<span class="math inline">\(\beta\)</span>的上标t是指<strong>t次方</strong>。</p>
-<p>另外由于t越大，<span class="math inline">\(\beta^t\)</span>的值越接近0，所以对后面的值几乎没影响。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/机器学习中的各种优化算法/指数加权平均偏差修正.jpg" alt="指数加权平均偏差修正"></p>
+<p>另外由于t越大，<span class="math inline">\(\beta^t\)</span>的值越接近0，所以对后面的值几乎没影响。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/机器学习中的各种优化算法/指数加权平均偏差修正.jpg" alt="指数加权平均偏差修正" /></p>
 <h1 id="优化算法总结">优化算法总结</h1>
 <table>
 <colgroup>
-<col style="width: 40%">
-<col style="width: 60%">
+<col style="width: 40%" />
+<col style="width: 60%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -395,52 +437,52 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} &amp; \underbrace
 <td>问：为什么 SGD 比 batch gradient descent 快？答：因为 SGD 可以使用极小的 epoch 更新多次权重，而 BGD 必须要大 epoch 才可以。详见<a href="https://www.zhihu.com/question/40892922" target="_blank" rel="noopener">此处</a></td>
 </tr>
 <tr class="even">
-<td>&nbsp;</td>
-<td><strong>优点</strong>：<br> 1）在损失函数是凸函数的情况下能够保证收敛到一个较好的全局最优解；2）数据量过大时，batch 方法可以减少机器压力，从而更快地收敛；3）当训练集有很多冗余时（类似的样本出现多次），batch方法收敛更快。<br> <strong>缺点</strong>：<br>1）<span class="math inline">\(\alpha\)</span> 是一个定值，它的选取直接决定了解的好坏，过小会导致收敛太慢，过大会导致震荡而无法收敛到最优解；2）对于非凸问题，只能收敛到局部最优，并且没有任何摆脱局部最优的能力（一旦梯度为0就不会再有任何变化）；3）更新方向完全依赖当前的 batch</td>
+<td> </td>
+<td><strong>优点</strong>：<br /> 1）在损失函数是凸函数的情况下能够保证收敛到一个较好的全局最优解；2）数据量过大时，batch 方法可以减少机器压力，从而更快地收敛；3）当训练集有很多冗余时（类似的样本出现多次），batch方法收敛更快。<br /> <strong>缺点</strong>：<br />1）<span class="math inline">\(\alpha\)</span> 是一个定值，它的选取直接决定了解的好坏，过小会导致收敛太慢，过大会导致震荡而无法收敛到最优解；2）对于非凸问题，只能收敛到局部最优，并且没有任何摆脱局部最优的能力（一旦梯度为0就不会再有任何变化）；3）更新方向完全依赖当前的 batch</td>
 </tr>
 <tr class="odd">
 <td>Momentum</td>
 <td>累积梯度，充当动量，注：虽然 Momentum 和 RMSprop 类似，但是实际上在计算上并不一样， RMSprop 要多一个除以 <span class="math inline">\(\sqrt{S_{dW}} + \epsilon\)</span> 的步骤，且没有偏差修正这一步骤</td>
 </tr>
 <tr class="even">
-<td>&nbsp;</td>
-<td><strong>优点</strong>：1）一定程度上缓解了 SGD 收敛不稳定的问题，并且有一定的摆脱局部最优的能力（即如同一个滚轮下坡一样，它拥有惯性，在到达鞍点时不会立即停止，会因为惯性再向前一点距离，从而可能离开此鞍点）。<br> <strong>缺点</strong>：1）多了一个超参数需要调整，它的选取同样会影响到结果。</td>
+<td> </td>
+<td><strong>优点</strong>：1）一定程度上缓解了 SGD 收敛不稳定的问题，并且有一定的摆脱局部最优的能力（即如同一个滚轮下坡一样，它拥有惯性，在到达鞍点时不会立即停止，会因为惯性再向前一点距离，从而可能离开此鞍点）。<br /> <strong>缺点</strong>：1）多了一个超参数需要调整，它的选取同样会影响到结果。</td>
 </tr>
 <tr class="odd">
 <td>RMSprop</td>
 <td>通过除以 <span class="math inline">\(\sqrt{S_{dW}} + \epsilon\)</span> 减小波动幅度从而收敛更快</td>
 </tr>
 <tr class="even">
-<td>&nbsp;</td>
+<td> </td>
 <td><strong>优点</strong>：1）不需要手动调整学习率，可以自动调整。</td>
 </tr>
 <tr class="odd">
 <td>Adam</td>
-<td><strong>优点</strong>：1）结合 Momentum 和 RMSProp，稳定性好，同时相比于 Adagrad 不用存储全局所有的梯度，适合处理大规模数据。<br> <strong>缺点</strong>：1）有三个超参数需要调整</td>
+<td><strong>优点</strong>：1）结合 Momentum 和 RMSProp，稳定性好，同时相比于 Adagrad 不用存储全局所有的梯度，适合处理大规模数据。<br /> <strong>缺点</strong>：1）有三个超参数需要调整</td>
 </tr>
 <tr class="even">
 <td>Adagrad</td>
-<td>RMSProp 的简化版<br> <strong>适用场景</strong>：Adagrad非常适合处理稀疏数据（如 one-hot）</td>
+<td>RMSProp 的简化版<br /> <strong>适用场景</strong>：Adagrad非常适合处理稀疏数据（如 one-hot）</td>
 </tr>
 <tr class="odd">
-<td>&nbsp;</td>
-<td><strong>优点</strong>：1）不需要手动调节 <span class="math inline">\(\alpha\)</span>，它会发生自适应的变化。<br> <strong>缺点</strong>：1）学习率单调递减，在迭代后期可能导致学习率变得特别小而导致收敛及其缓慢。</td>
+<td> </td>
+<td><strong>优点</strong>：1）不需要手动调节 <span class="math inline">\(\alpha\)</span>，它会发生自适应的变化。<br /> <strong>缺点</strong>：1）学习率单调递减，在迭代后期可能导致学习率变得特别小而导致收敛及其缓慢。</td>
 </tr>
 <tr class="even">
 <td>Adadelta</td>
 <td>Adadelta 是 Adagrad 的一种扩展算法，以处理Adagrad学习速率单调递减的问题。RMSprop 可以算作 Adadelta 的一个特例</td>
 </tr>
 <tr class="odd">
-<td>&nbsp;</td>
-<td><strong>优点</strong>：1）不需要手动调整学习率，可以自动调整；2）不需要手动设置<strong>初始</strong> <span class="math inline">\(\alpha\)</span>。<br> <strong>缺点</strong>：1）后期容易在小范围内产生震荡</td>
+<td> </td>
+<td><strong>优点</strong>：1）不需要手动调整学习率，可以自动调整；2）不需要手动设置<strong>初始</strong> <span class="math inline">\(\alpha\)</span>。<br /> <strong>缺点</strong>：1）后期容易在小范围内产生震荡</td>
 </tr>
 <tr class="even">
 <td>-----------</td>
-<td><a href="https://blog.csdn.net/gangyin5071/article/details/81810358#11-sgd" target="_blank" rel="noopener">机器学习各优化算法的简单总结</a><br> <a href="http://ruder.io/optimizing-gradient-descent/" target="_blank" rel="noopener">An overview of gradient descent optimization algorithms</a> <br> <a href="https://arxiv.org/abs/1609.04747" target="_blank" rel="noopener">An overview of gradient descent optimization algorithms ARXIV</a> <br> <a href="https://blog.csdn.net/google19890102/article/details/69942970" target="_blank" rel="noopener">An overview of gradient descent optimization algorithms 中文翻译</a></td>
+<td><a href="https://blog.csdn.net/gangyin5071/article/details/81810358#11-sgd" target="_blank" rel="noopener">机器学习各优化算法的简单总结</a><br /> <a href="http://ruder.io/optimizing-gradient-descent/" target="_blank" rel="noopener">An overview of gradient descent optimization algorithms</a> <br /> <a href="https://arxiv.org/abs/1609.04747" target="_blank" rel="noopener">An overview of gradient descent optimization algorithms ARXIV</a> <br /> <a href="https://blog.csdn.net/google19890102/article/details/69942970" target="_blank" rel="noopener">An overview of gradient descent optimization algorithms 中文翻译</a></td>
 </tr>
 </tbody>
 </table>
-<p>凸优化与非凸优化： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/机器学习中的各种优化算法/凸优化与非凸优化.jpg" alt="凸优化与非凸优化"></p>
+<p>凸优化与非凸优化： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/机器学习中的各种优化算法/凸优化与非凸优化.jpg" alt="凸优化与非凸优化" /></p>
 <h1 id="动量梯度下降momentum">动量梯度下降——Momentum</h1>
 <p>Momentum改进自SGD，让每一次的参数更新方向不仅取决于当前位置的梯度，还受到上一次参数更新方向的影响。 不管是普通的梯度下降、mini-batch、SGD 还是其他的什么，都是通过 <span class="math inline">\(W -= \alpha * dW\)</span> 来更新权重。但是在动量梯度下降中，使用到了<strong>指数加权平均</strong>。尤其是针对mini-batch算法，因为mini-batch算法抖动过大，上面的章节介绍了mini-batch的梯度下降误差曲线，指数加权平均正好可以解决。 可以观察下图发现，梯度下降的波动比较大，也就是噪点较多，我们可以使用指数加权平均来减少噪点。下面的公式就是用其减少了梯度dW和db。下式中还对指数加权平均进行了优化，使用了<strong>偏差修正</strong>。 <span class="math display">\[
     \begin{cases}
@@ -450,12 +492,12 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} &amp; \underbrace
         W -= \alpha * V^{corrected}_{dW}\\
         b -= \alpha * V^{corrected}_{db}\\
     \end{cases}
-\]</span> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/机器学习中的各种优化算法/梯度下降示意图.jpg" alt="梯度下降示意图"></p>
+\]</span> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/机器学习中的各种优化算法/梯度下降示意图.jpg" alt="梯度下降示意图" /></p>
 <p>在梯度下降时的这种波动减慢了下降的速度，无法使用更大的学习速率。因为梯度已经很大了，如果使用更大的学习速率，可能梯度直接爆炸了，直接无法收敛。为了避免摆动过大需要使用较小的学习速率。 还可以从另一种角度看待。我们希望在纵轴上学习的慢点，我们希望摆动小点，不就是希望纵轴小点吗。而在横轴上我们又希望学习的快点，因为我们希望越快接近中心越好。 这个<a href="https://www.bilibili.com/video/av10590361/?p=18" target="_blank" rel="noopener">视频</a>讲的直观一点，可以参考一下，从36:00开始看，虽然讲的是RMSprop但是讲的原理跟Momentum的原理一样。</p>
 <h2 id="补充">补充</h2>
-<p>在课后练习中有更详细的说明，在此补充一下。 &gt;Because mini-batch gradient descent makes a parameter update after seeing just a subset of examples, the direction of the update has some variance, and so the path taken by mini-batch gradient descent will "oscillate" toward convergence. Using momentum can reduce these oscillations.</p>
+<p>在课后练习中有更详细的说明，在此补充一下。 &gt;Because mini-batch gradient descent makes a parameter update after seeing just a subset of examples, the direction of the update has some variance, and so the path taken by mini-batch gradient descent will &quot;oscillate&quot; toward convergence. Using momentum can reduce these oscillations.</p>
 <p>大致意思就是使用Momentum可以使得mini-batch的振荡更小，观察下图。。。说实话我并没有观察出什么，不知道Coursera是怎么想的。我把此图的提示贴出来： &gt;Figure 3: The red arrows shows the direction taken by one step of mini-batch gradient descent with momentum. The blue points show the direction of the gradient (with respect to the current mini-batch) on each step. Rather than just following the gradient, we let the gradient influence v and then take a step in the direction of v .</p>
-<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/机器学习中的各种优化算法/mini-batch使用Momentum后.png" alt="mini-batch使用Momentum后"> &gt;Momentum takes into account the past gradients to smooth out the update. We will store the 'direction' of the previous gradients in the variable v . Formally, this will be the exponentially weighted average of the gradient on previous steps. You can also think of v as the "velocity" of a ball rolling downhill, building up speed (and momentum) according to the direction of the gradient/slope of the hill.</p>
+<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/机器学习中的各种优化算法/mini-batch使用Momentum后.png" alt="mini-batch使用Momentum后" /> &gt;Momentum takes into account the past gradients to smooth out the update. We will store the 'direction' of the previous gradients in the variable v . Formally, this will be the exponentially weighted average of the gradient on previous steps. You can also think of v as the &quot;velocity&quot; of a ball rolling downhill, building up speed (and momentum) according to the direction of the gradient/slope of the hill.</p>
 <p>Momentum考虑到了之前的梯度，从而用其来缓和参数更新。我们将前一次梯度的“方向”存进变量v。后续不翻译了。</p>
 <h1 id="均方根传播rmsprop">均方根传播——RMSprop</h1>
 <div class="note primary"><p>问题：对梯度做平方，且 <span class="math inline">\(S_{dW}\)</span> 的计算公式是加法（即修改过的指数加权平均），那么 <span class="math inline">\(S_{dW}\)</span> 岂不是会越来越大？不就意味着动量越来越大，到最后停不下来了？</p>
@@ -482,12 +524,12 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} &amp; \underbrace
         b -= \alpha * \frac{db}{\sqrt{S_{db}} + \epsilon}\\
     \end{cases}
 \]</span> 在更新 W 和 b 时的算法与之前的 Momentum 算法略微不同。另外为了防止 dW 和 db 等于 0，导致分母为 0，所以在分母加了一个极小值<span class="math inline">\(\epsilon\)</span>，在 Keras 中取了 1e-7， 吴恩达老师说 1e-8 是个不错的选择。</p>
-<p><strong>RMSprop 算法也是使用了指数加权平均算法。</strong>并且还结合了 Adagrad。 </p><div class="note info"><p>对于理解 RMSprop。<strong>可以观察出 RMSprop 和 Momentum 长得有点像，但是这两个算法的具体关系暂时不清楚</strong>。并且 RMSprop 其实还有简化版的算法，叫做 Adagrad。之前对这些优化算法（Momentum, RMSprop, Adam 等）的理解都是<em>改变 W 和 b 的大小从而使得梯度下降更快</em>。但是又今天看了一遍<a href="https://www.bilibili.com/video/av10590361/?p=18" target="_blank" rel="noopener">李宏毅老师的视频</a>，发现还有其他的理解。其实这些算法都在<strong>改变学习速率的大小</strong>。</p>
+<p><strong>RMSprop 算法也是使用了指数加权平均算法。</strong>并且还结合了 Adagrad。 <div class="note info"><p>对于理解 RMSprop。<strong>可以观察出 RMSprop 和 Momentum 长得有点像，但是这两个算法的具体关系暂时不清楚</strong>。并且 RMSprop 其实还有简化版的算法，叫做 Adagrad。之前对这些优化算法（Momentum, RMSprop, Adam 等）的理解都是<em>改变 W 和 b 的大小从而使得梯度下降更快</em>。但是又今天看了一遍<a href="https://www.bilibili.com/video/av10590361/?p=18" target="_blank" rel="noopener">李宏毅老师的视频</a>，发现还有其他的理解。其实这些算法都在<strong>改变学习速率的大小</strong>。</p>
 <p>比如 RMSprop 算法，观察<span class="math inline">\(W -= \alpha * \frac{dW}{\sqrt{S_{dW}} + \epsilon}\)</span>，我们可以改写成<span class="math inline">\(W = W - \frac{\alpha}{\sqrt{S_{dW}} + \epsilon} * dW\)</span>。看dW之前的那项<span class="math inline">\(\frac{\alpha}{\sqrt{S_{dW}} + \epsilon}\)</span>实际上就是对学习速率<span class="math inline">\(\alpha\)</span>乘上了<span class="math inline">\(\frac{1}{\sqrt{S_{dW}} + \epsilon}\)</span>。</p>
 <p>所以对RMSprop的理解是：<strong>如果梯度过大<span class="math inline">\(\frac{\alpha}{\sqrt{S_{dW}} + \epsilon}\)</span>就会相对减小，如果梯度过小<span class="math inline">\(\frac{\alpha}{\sqrt{S_{dW}} + \epsilon}\)</span>就会相对增大</strong>。因为其实<span class="math inline">\(S_{dW}\)</span>就是 dW 算出来的，而梯度过大就是 dW 过大，dW过大就是<span class="math inline">\(S_{dW}\)</span>过大。一个很大的数取倒数，这个数就变很小了。梯度过小同理。</p>
 <p>而为什么梯度过大就要是学习速率<span class="math inline">\(\alpha\)</span>变小呢？因为梯度过大就是说梯度较为陡峭，可以想象一座陡峭的山，如果跨一大步是不是直接掉下去了？而掉在哪是未知的，很有可能掉到最低点的前面，这样大概率是回不到最低点的（或者是极小值点）。而如果<span class="math inline">\(\alpha\)</span>小点就很好了，因为可以一小步一小步的走，最终可能会走到极小值点（或者最小值点）。梯度过小同理。平原地方肯定要大跨步走，你小步伐走要走到什么时候才能走到极小值点？</p>
 <p><strong>另外 RMSprop 可以算是 Adagrad 算法的改进版，但是这二者的具体关系未知。</strong></p>
-</div><p></p>
+</div></p>
 <h1 id="优化算法历史介绍">优化算法历史介绍</h1>
 <blockquote>
 <p>在深度学习的历史中，有不少学者，包括许多知名学者，提出了优化算法并解决了一些问题。但之后这些算法被指出并不能一般化，并不能适用于多种神经网络。</p>
@@ -559,7 +601,9 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} &amp; \underbrace
 <li><a href="https://zhuanlan.zhihu.com/p/32338983" target="_blank" rel="noopener">Adam 那么棒，为什么还对 SGD 念念不忘 (3)—— 优化算法的选择与使用策略</a></li>
 </ol>
 <!-- hexo-renderer-pandoc 有问题，如果表格中的内容过多，会自动生成 colgroup 标签 -->
-
+<script>
+    $('colgroup').remove()
+</script>
 
     </div>
 
@@ -632,7 +676,27 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} &amp; \underbrace
           </div>
           
 
-
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
 
         </div>
           
@@ -662,8 +726,9 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} &amp; \underbrace
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="朱冲䶮" src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
   <div class="site-description" itemprop="description">记录</div>
 </div>
@@ -695,17 +760,17 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} &amp; \underbrace
 </div>
   <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
     Chat
-  
+  </a>
   </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
@@ -719,13 +784,13 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} &amp; \underbrace
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io/" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
+          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://smallwhitezzz.gitee.io/blog" title="https://smallwhitezzz.gitee.io/blog" rel="noopener" target="_blank">凯子</a>
+          <a href="https://smallwhitezzz.gitee.io/blog" title="https:&#x2F;&#x2F;smallwhitezzz.gitee.io&#x2F;blog" rel="noopener" target="_blank">凯子</a>
         </li>
     </ul>
   </div>
@@ -752,14 +817,14 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} &amp; \underbrace
 
 <div class="copyright">
   
-  © 2019 – 
+  &copy; 2019 – 
   <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div><!--
 樱花特效 
 最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
@@ -768,9 +833,15 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} &amp; \underbrace
 于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
 原地址为：https://cangshui.net/2372.html
 -->
-
+<script>
+	var pathname = window.location.pathname;
+	// pathname == '/' || pathname == '/index.html'
+	if(pathname == '/categories/assorted/timeline/'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+</script>
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-
+<script src="/lib/my-utils.js"></script>
 <script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
@@ -795,7 +866,7 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} &amp; \underbrace
 
         
 <div class="busuanzi-count">
-  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -827,29 +898,29 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} &amp; \underbrace
   </div>
 
   
-  
+  <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  
-  
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
 
 
+<script src="/js/next-boot.js"></script>
 
-
-
-
-
-
-
-
-
-  
-
-
+<script src="/js/bookmark.js"></script>
 
 
   
 
+
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 
@@ -869,98 +940,7 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} &amp; \underbrace
 
   
   <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
-  
-<!-- calendar widget -->
-
-
-
-
-<script src="/bundle.js"></script><script>
-          var templateSentence = '这是条不可能出现的弹窗提示。';
-          if('学习笔记' == '学习笔记')
-            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记。';
-          else if('学习笔记' == '4me')
-            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
-          spop({
-            template: templateSentence,
-            group: 'tips',
-            position  : 'bottom-center',
-            style: 'success',
-            autoclose: 5500,
-            onOpen: function () {
-              //这里设置灰色背景色
-            },
-            onClose: function() {
-              //这里可以取消背景色
-              /*spop({
-                template: 'ε = = (づ′▽`)づ',
-                group: 'tips',
-                position  : 'bottom-center',
-                style: 'success',
-                autoclose: 1500
-              });*/
-            }
-          });
-        ;
-
-          var templateSentence = '这是条不可能出现的弹窗提示。';
-          if('4me' == '学习笔记')
-            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记。';
-          else if('4me' == '4me')
-            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
-          spop({
-            template: templateSentence,
-            group: 'tips',
-            position  : 'bottom-center',
-            style: 'success',
-            autoclose: 5500,
-            onOpen: function () {
-              //这里设置灰色背景色
-            },
-            onClose: function() {
-              //这里可以取消背景色
-              /*spop({
-                template: 'ε = = (づ′▽`)づ',
-                group: 'tips',
-                position  : 'bottom-center',
-                style: 'success',
-                autoclose: 1500
-              });*/
-            }
-          });
-        ;
-
-    $('colgroup').remove()
-;
-
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-;
-
-	var pathname = window.location.pathname;
-	// pathname == '/' || pathname == '/index.html'
-	if(pathname == '/categories/assorted/timeline/'){
-		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
-	}
-;
-
+  <script>
       window.addEventListener('load', () => {
       quicklink({
         timeout : 3000,
@@ -968,4 +948,9 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} &amp; \underbrace
         ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/bbe4416e.html',]
       });
       });
-  </script></body></html>
+  </script>
+<!-- calendar widget -->
+
+
+</body>
+</html>

@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="zh-CN"><head>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
@@ -8,35 +10,25 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
+<link rel="stylesheet" href="/css/main.css">
 
 
-
-
-  
-  
-  
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="pytorch zero grad 改变tensor形状 矩阵乘法 loss function pytorch nn 操作张量
- 
- 本文只记录框架层面的使用。关于深度学习层面的研究记录在 神经网络训练技巧（tricks）。
- 
- view、reshape和resize_
- 结论写在前面：张量连续，使用 view()（此为多数情况）；张量不连续，则使用 reshape()。resize_() 最好">
+  <meta name="description" content="pytorch zero grad 改变tensor形状 矩阵乘法 loss function pytorch nn 操作张量  本文只记录框架层面的使用。关于深度学习层面的研究记录在 神经网络训练技巧（tricks）。  view、reshape和resize_ 结论写在前面：张量连续，使用 view()（此为多数情况）；张量不连续，则使用 reshape()。resize_() 最好">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一些常用的pytorch技巧">
 <meta property="og:url" content="https://yan624.github.io/posts/6e48825d.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="pytorch zero grad 改变tensor形状 矩阵乘法 loss function pytorch nn 操作张量
- 
- 本文只记录框架层面的使用。关于深度学习层面的研究记录在 神经网络训练技巧（tricks）。
- 
- view、reshape和resize_
- 结论写在前面：张量连续，使用 view()（此为多数情况）；张量不连续，则使用 reshape()。resize_() 最好">
+<meta property="og:description" content="pytorch zero grad 改变tensor形状 矩阵乘法 loss function pytorch nn 操作张量  本文只记录框架层面的使用。关于深度学习层面的研究记录在 神经网络训练技巧（tricks）。  view、reshape和resize_ 结论写在前面：张量连续，使用 view()（此为多数情况）；张量不连续，则使用 reshape()。resize_() 最好">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-04-24T08:29:42.000Z">
 <meta property="article:modified_time" content="2020-10-30T01:38:35.228Z">
@@ -58,7 +50,7 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
 
 
   <title>一些常用的pytorch技巧 | 博客</title>
@@ -92,13 +84,13 @@
   </style>
 </noscript>
 
-<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css');loadCss('//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css');loadCss('//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css"></noscript></head>
+</head>
 
-<body itemscope="" itemtype="http://schema.org/WebPage">
+<body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
     <div class="headband"></div>
 
-    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏">
@@ -180,7 +172,9 @@
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
   </div>
   <span class="popup-btn-close">
     <i class="fa fa-times-circle"></i>
@@ -218,28 +212,54 @@
     
   
   
-  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     
     	
     
     	
         <!-- 弹窗插件 -->
-    		
-        
+    		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
+        <script type="text/javascript" src="/lib/spop/spop.min.js"></script>
         <!--判断此文是否为特殊的文章-->
-        
+        <script>
+          var templateSentence = '这是条不可能出现的弹窗提示。';
+          if('4me' == '学习笔记')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记。';
+          else if('4me' == '4me')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
+          spop({
+            template: templateSentence,
+            group: 'tips',
+            position  : 'bottom-center',
+            style: 'success',
+            autoclose: 5500,
+            onOpen: function () {
+              //这里设置灰色背景色
+            },
+            onClose: function() {
+              //这里可以取消背景色
+              /*spop({
+                template: 'ε = = (づ′▽`)づ',
+                group: 'tips',
+                position  : 'bottom-center',
+                style: 'success',
+                autoclose: 1500
+              });*/
+            }
+          });
+        </script>
     	
     
 
     <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/6e48825d.html">
 
-    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
       <meta itemprop="name" content="朱冲䶮">
       <meta itemprop="description" content="记录">
     </span>
 
-    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="博客">
     </span>
       <header class="post-header">
@@ -268,11 +288,11 @@
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/IT-stuff/" itemprop="url" rel="index"><span itemprop="name">IT-stuff</span></a>
                 </span>
                   ，
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/IT-stuff/pytorch/" itemprop="url" rel="index"><span itemprop="name">pytorch</span></a>
                 </span>
             </span>
@@ -296,7 +316,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-                <span class="post-meta-item-text">阅读时长 ≈</span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
               <span>5 分钟</span>
             </span>
 
@@ -322,11 +342,11 @@
 </div> <a id="more"></a></li>
 </ol>
 <h2 id="不连续的张量的说明">不连续的张量的说明</h2>
-<p>如果对 tensor 使用 <code>transpose</code>，<code>permute</code> 等操作会使该 tensor 在内存中变得不再连续。例如，以下代码在使用 <code>view()</code> 方法后会报出 <code>RuntimeError: view size is not compatible with input tensor's size and stride (at least one dimension spans across two contiguous subspaces). Use .reshape(...) instead.</code> 的错误。 </p><div class="note info"><p>至于为什么 pytorch 有这种“连续的”设定，这就要从 pytorch 的底层讲起了，又是要几条博客才能解释（ps：关键是我也不懂），不过可以参考《<a href="https://zhuanlan.zhihu.com/p/64551412" target="_blank" rel="noopener">PyTorch 中的 contiguous</a>》。</p>
-</div><p></p>
-<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">tensor = torch.Tensor([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">8</span>, <span class="number">9</span>, <span class="number">0</span>]])</span><br><span class="line"># 正常输出</span><br><span class="line">print(tensor.transpose(<span class="number">1</span>, <span class="number">0</span>).reshape(<span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line">print(tensor.permute(<span class="number">1</span>, <span class="number">0</span>).reshape(<span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line">print(tensor.T.reshape(<span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line"># 报错</span><br><span class="line">print(tensor.transpose(<span class="number">1</span>, <span class="number">0</span>).view(<span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line">print(tensor.permute(<span class="number">1</span>, <span class="number">0</span>).view(<span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line">print(tensor.T.view(<span class="number">2</span>, <span class="number">3</span>))</span><br></pre></td></tr></tbody></table></figure>
+<p>如果对 tensor 使用 <code>transpose</code>，<code>permute</code> 等操作会使该 tensor 在内存中变得不再连续。例如，以下代码在使用 <code>view()</code> 方法后会报出 <code>RuntimeError: view size is not compatible with input tensor's size and stride (at least one dimension spans across two contiguous subspaces). Use .reshape(...) instead.</code> 的错误。 <div class="note info"><p>至于为什么 pytorch 有这种“连续的”设定，这就要从 pytorch 的底层讲起了，又是要几条博客才能解释（ps：关键是我也不懂），不过可以参考《<a href="https://zhuanlan.zhihu.com/p/64551412" target="_blank" rel="noopener">PyTorch 中的 contiguous</a>》。</p>
+</div></p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">tensor = torch.Tensor([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">8</span>, <span class="number">9</span>, <span class="number">0</span>]])</span><br><span class="line"># 正常输出</span><br><span class="line">print(tensor.transpose(<span class="number">1</span>, <span class="number">0</span>).reshape(<span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line">print(tensor.permute(<span class="number">1</span>, <span class="number">0</span>).reshape(<span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line">print(tensor.T.reshape(<span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line"># 报错</span><br><span class="line">print(tensor.transpose(<span class="number">1</span>, <span class="number">0</span>).view(<span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line">print(tensor.permute(<span class="number">1</span>, <span class="number">0</span>).view(<span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line">print(tensor.T.view(<span class="number">2</span>, <span class="number">3</span>))</span><br></pre></td></tr></table></figure>
 <h2 id="contiguous的解释">contiguous()的解释</h2>
-<p>此外，运行以下代码可以得出非连续张量在使用 <code>contiguous()</code> 后会返回一个新的张量，它会重新开辟一块内存，并按照行优先一维展开顺序重新存储原张量。取自 <a href="https://zhuanlan.zhihu.com/p/64551412" target="_blank" rel="noopener">PyTorch 中的 contiguous#为什么需要 contiguous ？</a>。 </p><figure class="highlight autohotkey"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">tensor1 = torch.Tensor([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">8</span>, <span class="number">9</span>, <span class="number">0</span>]])</span><br><span class="line">tensor2 = tensor1.transpose(<span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line"># 转置前后，张量并无区别</span><br><span class="line">print(tensor1.dat<span class="built_in">a_ptr</span>() == tensor2.dat<span class="built_in">a_ptr</span>())# <span class="literal">True</span></span><br><span class="line"># 对连续张量（tensor1）使用 contiguous() 是无意义的，无论是否转置都是同一个张量</span><br><span class="line">tensor3 = tensor1.contiguous()</span><br><span class="line">print(tensor3.dat<span class="built_in">a_ptr</span>() == tensor2.dat<span class="built_in">a_ptr</span>(), tensor3.dat<span class="built_in">a_ptr</span>() == tensor1.dat<span class="built_in">a_ptr</span>())# <span class="literal">True</span> <span class="literal">True</span></span><br><span class="line"># 对非连续张量（tensor2）使用会返回一个新的张量，无论是否转置都不是同一个张量</span><br><span class="line">tensor4 = tensor2.contiguous()</span><br><span class="line">print(tensor4.dat<span class="built_in">a_ptr</span>() == tensor2.dat<span class="built_in">a_ptr</span>(), tensor4.dat<span class="built_in">a_ptr</span>() == tensor1.dat<span class="built_in">a_ptr</span>())# <span class="literal">False</span> <span class="literal">False</span></span><br></pre></td></tr></tbody></table></figure><p></p>
+<p>此外，运行以下代码可以得出非连续张量在使用 <code>contiguous()</code> 后会返回一个新的张量，它会重新开辟一块内存，并按照行优先一维展开顺序重新存储原张量。取自 <a href="https://zhuanlan.zhihu.com/p/64551412" target="_blank" rel="noopener">PyTorch 中的 contiguous#为什么需要 contiguous ？</a>。 <figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">tensor1 = torch.Tensor([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">8</span>, <span class="number">9</span>, <span class="number">0</span>]])</span><br><span class="line">tensor2 = tensor1.transpose(<span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line"># 转置前后，张量并无区别</span><br><span class="line">print(tensor1.dat<span class="built_in">a_ptr</span>() == tensor2.dat<span class="built_in">a_ptr</span>())# <span class="literal">True</span></span><br><span class="line"># 对连续张量（tensor1）使用 contiguous() 是无意义的，无论是否转置都是同一个张量</span><br><span class="line">tensor3 = tensor1.contiguous()</span><br><span class="line">print(tensor3.dat<span class="built_in">a_ptr</span>() == tensor2.dat<span class="built_in">a_ptr</span>(), tensor3.dat<span class="built_in">a_ptr</span>() == tensor1.dat<span class="built_in">a_ptr</span>())# <span class="literal">True</span> <span class="literal">True</span></span><br><span class="line"># 对非连续张量（tensor2）使用会返回一个新的张量，无论是否转置都不是同一个张量</span><br><span class="line">tensor4 = tensor2.contiguous()</span><br><span class="line">print(tensor4.dat<span class="built_in">a_ptr</span>() == tensor2.dat<span class="built_in">a_ptr</span>(), tensor4.dat<span class="built_in">a_ptr</span>() == tensor1.dat<span class="built_in">a_ptr</span>())# <span class="literal">False</span> <span class="literal">False</span></span><br></pre></td></tr></table></figure></p>
 <h2 id="参考资料">参考资料</h2>
 <ol type="1">
 <li><a href="https://blog.csdn.net/qq_39507748/article/details/105381089" target="_blank" rel="noopener">pytorch 学习笔记五：pytorch 中 reshape、view 以及 resize 之间的区别</a></li>
@@ -387,8 +407,8 @@ crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i)
 <p>首先我要解释一点 CrossEntropyLoss 是 LogSoftmax 和 NLLLoss 两个步骤之和，之前说的“+”号，并非是数学意义上的加号。也就是说，CrossEntropyLoss 就比 NLLLoss 多做了一步 LogSoftmax（<strong>博主注</strong>：<em>个人认为实际上只是多做了一步 softmax，说多做了一步 log_softmax，是因为站在 pytorch 框架的角度</em>）。</p>
 <p>其次，对于真实输出值 y 来说，无非就是 0 和 1（注意多元分类也只有 0 和 1），并且根据上述 crossentropy 的公式。实际上公式可以化简为以下所示，其中的 m 代表真实值为 1 的索引。 <span class="math display">\[
 crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)
-\]</span> 请注意这里的 <span class="math inline">\(pred_m\)</span>。我们都知道在进行分类问题时，我们需要将输出结果置于 0-1 之间，对于二元分类我们使用 sigmoid 函数，对于多元分类我们使用 softmax（到这开始有内味了）。由于分类问题都是要这么做的，所以将 softmax 这个函数放到公式 <span class="math inline">\(crossentropy\_loss = -log(pred_m)\)</span> 中，我们惊奇的发现 crossentropy 函数变成了 log_softmax（最前面的负号暂时不看）。即 crossentropy + softmax = -log_softmax。 </p><div class="note warning"><p>请始终留意，pred 是一个向量通过 softmax/log_softmax 计算之后的值。</p>
-</div><p></p>
+\]</span> 请注意这里的 <span class="math inline">\(pred_m\)</span>。我们都知道在进行分类问题时，我们需要将输出结果置于 0-1 之间，对于二元分类我们使用 sigmoid 函数，对于多元分类我们使用 softmax（到这开始有内味了）。由于分类问题都是要这么做的，所以将 softmax 这个函数放到公式 <span class="math inline">\(crossentropy\_loss = -log(pred_m)\)</span> 中，我们惊奇的发现 crossentropy 函数变成了 log_softmax（最前面的负号暂时不看）。即 crossentropy + softmax = -log_softmax。 <div class="note warning"><p>请始终留意，pred 是一个向量通过 softmax/log_softmax 计算之后的值。</p>
+</div></p>
 <p>最后你会发现这样还是不对。<span class="math inline">\(nll\_loss = -log(pred)\)</span>，之前说 CrossEntropyLoss = <strong>LogSoftmax</strong> + NLLLoss，我把 log_softmax 放到 nll 里，变成了 <span class="math inline">\(LogSoftmax + NLLLoss = -log(log(pred))\)</span>，怎么多了一个 log？实际上 nll 的公式应该以 <span class="math inline">\(nll\_loss = -pred[class]\)</span> 为准，你会发现这个公式中没有 log 函数。这样将 logsoftmax 放入 nll loss 中，就正好是 crossentropy 了。</p>
 <p>那么你就会问 nll 明明是 Negative Log Liklihood，log 不见了，这不就是名存实亡了？</p>
 <p><strong>这可能是因为 pytorch 想要简化操作，才这么设置的，别的框架可能并不是这样。简而言之，pytorch 框架中，nll loss 的公式是 -pred。crossentropy 的公式是 logsoftmax + nll loss，即 nll(log_softmax(output))</strong></p>
@@ -404,10 +424,10 @@ crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)
 </ol>
 <h1 id="pytorch中的神经网络">pytorch中的神经网络</h1>
 <h2 id="lstm">LSTM</h2>
-<p>关于 nn.LSTM 的用法：如果不想手动初始化隐藏状态，而是想让 pytorch 帮你初始化，那么就只需要填入输入值即可。举个例子，下面代码框中的代码所输入的自然语句是 ['how are you', 'i'm fine']。 其中输入值 x 的形状为 (seq_len, batch_size, input_size)，对应上面的例子就是 (3, 2, 300)，代表序列长度为 3（因为上面的两句话的最大长度为 3），批量大小为 2，词向量维度为 300。需要注意的是：<strong>pytorch 会根据你输入的序列长度</strong>（输入的张量必须是一样长的，参差不齐的张量无法输入，当然了，你也无法创建出这样的张量）<strong>自动地在时间步上做计算，不需要你写一个循环，然后依次输入每一个单词的词向量。</strong> </p><figure class="highlight reasonml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cell = nn.<span class="constructor">LSTM(<span class="params">input_size</span>, <span class="params">hidden_size</span>, <span class="params">num_layers</span>)</span></span><br><span class="line">output, (a, m) = cell(x)</span><br></pre></td></tr></tbody></table></figure><p></p>
+<p>关于 nn.LSTM 的用法：如果不想手动初始化隐藏状态，而是想让 pytorch 帮你初始化，那么就只需要填入输入值即可。举个例子，下面代码框中的代码所输入的自然语句是 ['how are you', 'i'm fine']。 其中输入值 x 的形状为 (seq_len, batch_size, input_size)，对应上面的例子就是 (3, 2, 300)，代表序列长度为 3（因为上面的两句话的最大长度为 3），批量大小为 2，词向量维度为 300。需要注意的是：<strong>pytorch 会根据你输入的序列长度</strong>（输入的张量必须是一样长的，参差不齐的张量无法输入，当然了，你也无法创建出这样的张量）<strong>自动地在时间步上做计算，不需要你写一个循环，然后依次输入每一个单词的词向量。</strong> <figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cell = nn.<span class="constructor">LSTM(<span class="params">input_size</span>, <span class="params">hidden_size</span>, <span class="params">num_layers</span>)</span></span><br><span class="line">output, (a, m) = cell(x)</span><br></pre></td></tr></table></figure></p>
 <h1 id="张量操作">张量操作</h1>
 <h2 id="expand">expand()</h2>
-<p><code>expand()</code> 函数按照你想要的大小扩充 tensor，并且<strong>返回一个新的 tensor</strong>。注意它是 tensor 的成员方法，并且你所想要新 tensor 的维度必须与原 tensor 的维度相同。例如，原 tensor.shape=(3, 1)，那么你可以扩大为 (3, 4)，但是你不能扩大为 (3, 1, 1)，当然更不能为 (3, 1, 4)。举个例子： </p><figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">x = torch.Tensor([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>]])</span><br><span class="line"># (<span class="number">3</span>, <span class="number">1</span>)</span><br><span class="line">print(x.shape)</span><br><span class="line">y = x.expand(<span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line"># (<span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line">print(y.shape)</span><br><span class="line"># error</span><br><span class="line">x.expand(<span class="number">3</span>, <span class="number">1</span>, <span class="number">1</span>)</span><br></pre></td></tr></tbody></table></figure><p></p>
+<p><code>expand()</code> 函数按照你想要的大小扩充 tensor，并且<strong>返回一个新的 tensor</strong>。注意它是 tensor 的成员方法，并且你所想要新 tensor 的维度必须与原 tensor 的维度相同。例如，原 tensor.shape=(3, 1)，那么你可以扩大为 (3, 4)，但是你不能扩大为 (3, 1, 1)，当然更不能为 (3, 1, 4)。举个例子： <figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">x = torch.Tensor([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>]])</span><br><span class="line"># (<span class="number">3</span>, <span class="number">1</span>)</span><br><span class="line">print(x.shape)</span><br><span class="line">y = x.expand(<span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line"># (<span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line">print(y.shape)</span><br><span class="line"># error</span><br><span class="line">x.expand(<span class="number">3</span>, <span class="number">1</span>, <span class="number">1</span>)</span><br></pre></td></tr></table></figure></p>
 <h1 id="optimizer.zero_grad">optimizer.zero_grad()</h1>
 <p>在 pytorch 中，为什么要在每个循环之初调用这个方法？因为 pytorch 把计算的每个梯度都累加起来，并不会每迭代一次就将梯度清零。这样做看起来令人费解，并反常理。但是实际上这样做可以做更多神奇的操作，比如</p>
 <ul>
@@ -488,7 +508,27 @@ crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)
           </div>
           
 
-
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
 
         </div>
           
@@ -518,8 +558,9 @@ crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="朱冲䶮" src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
   <div class="site-description" itemprop="description">记录</div>
 </div>
@@ -551,17 +592,17 @@ crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)
 </div>
   <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
     Chat
-  
+  </a>
   </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
@@ -575,13 +616,13 @@ crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io/" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
+          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://smallwhitezzz.gitee.io/blog" title="https://smallwhitezzz.gitee.io/blog" rel="noopener" target="_blank">凯子</a>
+          <a href="https://smallwhitezzz.gitee.io/blog" title="https:&#x2F;&#x2F;smallwhitezzz.gitee.io&#x2F;blog" rel="noopener" target="_blank">凯子</a>
         </li>
     </ul>
   </div>
@@ -608,14 +649,14 @@ crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)
 
 <div class="copyright">
   
-  © 2019 – 
+  &copy; 2019 – 
   <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div><!--
 樱花特效 
 最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
@@ -624,9 +665,15 @@ crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)
 于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
 原地址为：https://cangshui.net/2372.html
 -->
-
+<script>
+	var pathname = window.location.pathname;
+	// pathname == '/' || pathname == '/index.html'
+	if(pathname == '/categories/assorted/timeline/'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+</script>
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-
+<script src="/lib/my-utils.js"></script>
 <script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
@@ -651,7 +698,7 @@ crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)
 
         
 <div class="busuanzi-count">
-  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -683,29 +730,29 @@ crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)
   </div>
 
   
-  
+  <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  
-  
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
 
 
+<script src="/js/next-boot.js"></script>
 
-
-
-
-
-
-
-
-
-  
-
-
+<script src="/js/bookmark.js"></script>
 
 
   
 
+
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 
@@ -725,68 +772,7 @@ crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)
 
   
   <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
-  
-<!-- calendar widget -->
-
-
-
-
-<script src="/bundle.js"></script><script>
-          var templateSentence = '这是条不可能出现的弹窗提示。';
-          if('4me' == '学习笔记')
-            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记。';
-          else if('4me' == '4me')
-            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
-          spop({
-            template: templateSentence,
-            group: 'tips',
-            position  : 'bottom-center',
-            style: 'success',
-            autoclose: 5500,
-            onOpen: function () {
-              //这里设置灰色背景色
-            },
-            onClose: function() {
-              //这里可以取消背景色
-              /*spop({
-                template: 'ε = = (づ′▽`)づ',
-                group: 'tips',
-                position  : 'bottom-center',
-                style: 'success',
-                autoclose: 1500
-              });*/
-            }
-          });
-        ;
-
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-;
-
-	var pathname = window.location.pathname;
-	// pathname == '/' || pathname == '/index.html'
-	if(pathname == '/categories/assorted/timeline/'){
-		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
-	}
-;
-
+  <script>
       window.addEventListener('load', () => {
       quicklink({
         timeout : 3000,
@@ -794,4 +780,9 @@ crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)
         ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/6e48825d.html',]
       });
       });
-  </script></body></html>
+  </script>
+<!-- calendar widget -->
+
+
+</body>
+</html>

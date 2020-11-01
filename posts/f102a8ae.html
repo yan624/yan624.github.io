@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="zh-CN"><head>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
@@ -8,31 +10,25 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
+<link rel="stylesheet" href="/css/main.css">
 
 
-
-
-  
-  
-  
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="论文地址，作者是 Nikola Mrkšić，发表于 2016 年。
- 
- 摘要
- 现代口语对话系统的核心组成部分之一是 belief tracker，它可以在对话的每一步估计用户的目标。然而，目前大多数方法难以扩展到更大、更复杂的对话领域。这是由于他们依赖：a）口语理解（Spoken Language Understanding，SLU）模型，需要大量注释的训练数据；或者 b）手工制作的词汇表，">
+  <meta name="description" content="论文地址，作者是 Nikola Mrkšić，发表于 2016 年。  摘要 现代口语对话系统的核心组成部分之一是 belief tracker，它可以在对话的每一步估计用户的目标。然而，目前大多数方法难以扩展到更大、更复杂的对话领域。这是由于他们依赖：a）口语理解（Spoken Language Understanding，SLU）模型，需要大量注释的训练数据；或者 b）手工制作的词汇表，">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Neural Belief Tracker: Data-Driven Dialogue State Tracking">
 <meta property="og:url" content="https://yan624.github.io/posts/f102a8ae.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="论文地址，作者是 Nikola Mrkšić，发表于 2016 年。
- 
- 摘要
- 现代口语对话系统的核心组成部分之一是 belief tracker，它可以在对话的每一步估计用户的目标。然而，目前大多数方法难以扩展到更大、更复杂的对话领域。这是由于他们依赖：a）口语理解（Spoken Language Understanding，SLU）模型，需要大量注释的训练数据；或者 b）手工制作的词汇表，">
+<meta property="og:description" content="论文地址，作者是 Nikola Mrkšić，发表于 2016 年。  摘要 现代口语对话系统的核心组成部分之一是 belief tracker，它可以在对话的每一步估计用户的目标。然而，目前大多数方法难以扩展到更大、更复杂的对话领域。这是由于他们依赖：a）口语理解（Spoken Language Understanding，SLU）模型，需要大量注释的训练数据；或者 b）手工制作的词汇表，">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-02-09T13:48:38.000Z">
 <meta property="article:modified_time" content="2020-10-08T15:36:09.184Z">
@@ -53,7 +49,7 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
 
 
   <title>Neural Belief Tracker: Data-Driven Dialogue State Tracking | 博客</title>
@@ -87,13 +83,13 @@
   </style>
 </noscript>
 
-<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css');loadCss('//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css');loadCss('//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css"></noscript></head>
+</head>
 
-<body itemscope="" itemtype="http://schema.org/WebPage">
+<body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
     <div class="headband"></div>
 
-    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏">
@@ -175,7 +171,9 @@
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
   </div>
   <span class="popup-btn-close">
     <i class="fa fa-times-circle"></i>
@@ -213,20 +211,20 @@
     
   
   
-  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     
     	
     
 
     <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/f102a8ae.html">
 
-    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
       <meta itemprop="name" content="朱冲䶮">
       <meta itemprop="description" content="记录">
     </span>
 
-    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="博客">
     </span>
       <header class="post-header">
@@ -255,7 +253,7 @@
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a>
                 </span>
             </span>
@@ -279,7 +277,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-                <span class="post-meta-item-text">阅读时长 ≈</span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
               <span>6 分钟</span>
             </span>
 
@@ -347,7 +345,7 @@ d = r \otimes c
 <p>如果我们使马尔科夫决策只考虑最后一组 system act，我们就可以将 context modelling 纳入 NBT 中。使 <span class="math inline">\(t_q\)</span> 和 (<span class="math inline">\(t_s, t_v\)</span>) 作为 system request 和 confirm acts 的参数的词向量（如果没有，则为零向量）。该模型计算 system acts、候选对（<span class="math inline">\(c_s, c_v\)</span>）和 utterance 表征 <strong>r</strong> 之间的相似性，衡量标准如下所示： <span class="math display">\[
 m_r = (c_s \cdot t_q) r \\
 m_c = (c_s \cdot t_s) (c_v \cdot t_v) r
-\]</span> 其中 <span class="math inline">\(\cdot\)</span> 表示 dot product。计算出的相似度项作为 <strong>gating mechanisms</strong>，<strong>只有当系统询问当前的候选 slot 或 slot-value pair 时，该机制才传递 utterance 表征</strong>。<font color="red"><strong>这种类型的交互对于确认 system act 特别有用：如果系统要求用户确认，用户可能不会提到任何 slot values，而只是肯定或否定。这意味着模型必须考虑 utterance，候选 slot-value pair 和系统提供的 slot value pair 三者之间的交互，如果（且仅当）后两者相同，二元决策才认为用户同意。</strong></font></p>
+\]</span> 其中 <span class="math inline">\(\cdot\)</span> 表示 dot product。计算出的相似度项作为 <strong>gating mechanisms</strong>，<strong>只有当系统询问当前的候选 slot 或 slot-value pair 时，该机制才传递 utterance 表征</strong>。<font color='red'><strong>这种类型的交互对于确认 system act 特别有用：如果系统要求用户确认，用户可能不会提到任何 slot values，而只是肯定或否定。这意味着模型必须考虑 utterance，候选 slot-value pair 和系统提供的 slot value pair 三者之间的交互，如果（且仅当）后两者相同，二元决策才认为用户同意。</strong></font></p>
 <div class="note primary"><ol type="1">
 <li>比如系统询问：“你觉得中餐怎么样？”，用户回复：“可以。”。那么系统的 slot-value 就是 <code>food=chinese</code>，显而易见只有当<strong>候选</strong> slot-value 等于 <code>food=chinese</code> 时（<strong>博主注</strong>：NBT 模型的做法是迭代所有预定义的 slot-value 对），<span class="math inline">\((c_s \cdot t_s) (c_v \cdot t_v)\)</span> 的积才是最大的，所以语句“可以。”得以传入到二元决策层。在此可能有疑惑，电脑怎么知道“可以。”代表同意呢？实际上就是词向量那一套，在不断的训练之中，“可以。”就含有了同意的意思。</li>
 <li>如果系统询问：“你觉得中餐怎么样？”，用户回复：“不行，我要吃意大利菜。”。逻辑是一样的，当<strong>候选</strong> slot-value 等于 <code>food=chinese</code> 时，才允许“不行，我要吃西餐。”通过。但是不要忘了用户的语句也要与候选 slot-value 进行计算。虽然 <span class="math inline">\(m_c\)</span> 蕴含了信息，但是 d 却匹配不通过，d 的 slot-value 必须是 <code>food=italian</code>。因此 <code>food=chinese</code> 二元决策输出“否”，即 <code>food=chinese</code> 不是当前对话状态的一部分。</li>
@@ -443,7 +441,27 @@ V^t_s = \{v \in V_s | \mathbb{P}(s,v | h^{1:t},sys^{1:t-1}) \geq 0.5\}
           </div>
           
 
-
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
 
         </div>
           
@@ -468,13 +486,14 @@ V^t_s = \{v \in V_s | \mathbb{P}(s,v | h^{1:t},sys^{1:t-1}) \geq 0.5\}
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#摘要"><span class="nav-number">1.</span> <span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">2.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#背景"><span class="nav-number">3.</span> <span class="nav-text">背景</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#separate-slu"><span class="nav-number">3.1.</span> <span class="nav-text">Separate SLU</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#joint-sludst"><span class="nav-number">3.2.</span> <span class="nav-text">Joint SLU/DST</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#neural-belief-tracker"><span class="nav-number">4.</span> <span class="nav-text">Neural Belief Tracker</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#representation-learning"><span class="nav-number">4.1.</span> <span class="nav-text">Representation Learning</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#semantic-decoding"><span class="nav-number">4.2.</span> <span class="nav-text">Semantic Decoding</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#context-modelling"><span class="nav-number">4.3.</span> <span class="nav-text">Context Modelling</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#binary-decision-maker"><span class="nav-number">4.3.1.</span> <span class="nav-text">Binary Decision Maker</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#belief-state-update-mechanism"><span class="nav-number">5.</span> <span class="nav-text">Belief State Update Mechanism</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#摘要"><span class="nav-number">1.</span> <span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#引言"><span class="nav-number">2.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#背景"><span class="nav-number">3.</span> <span class="nav-text">背景</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#separate-slu"><span class="nav-number">3.1.</span> <span class="nav-text">Separate SLU</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#joint-sludst"><span class="nav-number">3.2.</span> <span class="nav-text">Joint SLU&#x2F;DST</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#neural-belief-tracker"><span class="nav-number">4.</span> <span class="nav-text">Neural Belief Tracker</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#representation-learning"><span class="nav-number">4.1.</span> <span class="nav-text">Representation Learning</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#semantic-decoding"><span class="nav-number">4.2.</span> <span class="nav-text">Semantic Decoding</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#context-modelling"><span class="nav-number">4.3.</span> <span class="nav-text">Context Modelling</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#binary-decision-maker"><span class="nav-number">4.3.1.</span> <span class="nav-text">Binary Decision Maker</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#belief-state-update-mechanism"><span class="nav-number">5.</span> <span class="nav-text">Belief State Update Mechanism</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="朱冲䶮" src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
   <div class="site-description" itemprop="description">记录</div>
 </div>
@@ -506,17 +525,17 @@ V^t_s = \{v \in V_s | \mathbb{P}(s,v | h^{1:t},sys^{1:t-1}) \geq 0.5\}
 </div>
   <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
     Chat
-  
+  </a>
   </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
@@ -530,13 +549,13 @@ V^t_s = \{v \in V_s | \mathbb{P}(s,v | h^{1:t},sys^{1:t-1}) \geq 0.5\}
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io/" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
+          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://smallwhitezzz.gitee.io/blog" title="https://smallwhitezzz.gitee.io/blog" rel="noopener" target="_blank">凯子</a>
+          <a href="https://smallwhitezzz.gitee.io/blog" title="https:&#x2F;&#x2F;smallwhitezzz.gitee.io&#x2F;blog" rel="noopener" target="_blank">凯子</a>
         </li>
     </ul>
   </div>
@@ -563,14 +582,14 @@ V^t_s = \{v \in V_s | \mathbb{P}(s,v | h^{1:t},sys^{1:t-1}) \geq 0.5\}
 
 <div class="copyright">
   
-  © 2019 – 
+  &copy; 2019 – 
   <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div><!--
 樱花特效 
 最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
@@ -579,9 +598,15 @@ V^t_s = \{v \in V_s | \mathbb{P}(s,v | h^{1:t},sys^{1:t-1}) \geq 0.5\}
 于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
 原地址为：https://cangshui.net/2372.html
 -->
-
+<script>
+	var pathname = window.location.pathname;
+	// pathname == '/' || pathname == '/index.html'
+	if(pathname == '/categories/assorted/timeline/'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+</script>
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-
+<script src="/lib/my-utils.js"></script>
 <script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
@@ -606,7 +631,7 @@ V^t_s = \{v \in V_s | \mathbb{P}(s,v | h^{1:t},sys^{1:t-1}) \geq 0.5\}
 
         
 <div class="busuanzi-count">
-  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -638,29 +663,29 @@ V^t_s = \{v \in V_s | \mathbb{P}(s,v | h^{1:t},sys^{1:t-1}) \geq 0.5\}
   </div>
 
   
-  
+  <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  
-  
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
 
 
+<script src="/js/next-boot.js"></script>
 
-
-
-
-
-
-
-
-
-  
-
-
+<script src="/js/bookmark.js"></script>
 
 
   
 
+
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 
@@ -680,41 +705,7 @@ V^t_s = \{v \in V_s | \mathbb{P}(s,v | h^{1:t},sys^{1:t-1}) \geq 0.5\}
 
   
   <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
-  
-<!-- calendar widget -->
-
-
-
-
-<script src="/bundle.js"></script><script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-;
-
-	var pathname = window.location.pathname;
-	// pathname == '/' || pathname == '/index.html'
-	if(pathname == '/categories/assorted/timeline/'){
-		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
-	}
-;
-
+  <script>
       window.addEventListener('load', () => {
       quicklink({
         timeout : 3000,
@@ -722,4 +713,9 @@ V^t_s = \{v \in V_s | \mathbb{P}(s,v | h^{1:t},sys^{1:t-1}) \geq 0.5\}
         ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/f102a8ae.html',]
       });
       });
-  </script></body></html>
+  </script>
+<!-- calendar widget -->
+
+
+</body>
+</html>

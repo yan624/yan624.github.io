@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="zh-CN"><head>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
@@ -8,33 +10,25 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
+<link rel="stylesheet" href="/css/main.css">
 
 
-
-
-  
-  
-  
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="目前所记录的论文，只截止到 2020 年。
- 
- Towards Persona-Based Empathetic Conversational Models
- 
- 论文笔记">
+  <meta name="description" content="目前所记录的论文，只截止到 2020 年。  Towards Persona-Based Empathetic Conversational Models  论文笔记">
 <meta property="og:type" content="article">
 <meta property="og:title" content="情感计算论文笔记">
 <meta property="og:url" content="https://yan624.github.io/posts/ebc36368.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="目前所记录的论文，只截止到 2020 年。
- 
- Towards Persona-Based Empathetic Conversational Models
- 
- 论文笔记">
+<meta property="og:description" content="目前所记录的论文，只截止到 2020 年。  Towards Persona-Based Empathetic Conversational Models  论文笔记">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E8%AE%BA%E6%96%87/%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/CoBERT.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E8%AE%BA%E6%96%87/%E6%83%85%E6%84%9F%E8%AE%A1%E7%AE%97%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/EmpTransfo.jpg">
@@ -65,7 +59,7 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
 
 
   <title>情感计算论文笔记 | 博客</title>
@@ -99,13 +93,13 @@
   </style>
 </noscript>
 
-<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css');loadCss('//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css');loadCss('//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css"></noscript></head>
+</head>
 
-<body itemscope="" itemtype="http://schema.org/WebPage">
+<body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
     <div class="headband"></div>
 
-    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏">
@@ -187,7 +181,9 @@
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
   </div>
   <span class="popup-btn-close">
     <i class="fa fa-times-circle"></i>
@@ -225,14 +221,40 @@
     
   
   
-  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     
     	
         <!-- 弹窗插件 -->
-    		
-        
+    		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
+        <script type="text/javascript" src="/lib/spop/spop.min.js"></script>
         <!--判断此文是否为特殊的文章-->
-        
+        <script>
+          var templateSentence = '这是条不可能出现的弹窗提示。';
+          if('4me' == '学习笔记')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记。';
+          else if('4me' == '4me')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
+          spop({
+            template: templateSentence,
+            group: 'tips',
+            position  : 'bottom-center',
+            style: 'success',
+            autoclose: 5500,
+            onOpen: function () {
+              //这里设置灰色背景色
+            },
+            onClose: function() {
+              //这里可以取消背景色
+              /*spop({
+                template: 'ε = = (づ′▽`)づ',
+                group: 'tips',
+                position  : 'bottom-center',
+                style: 'success',
+                autoclose: 1500
+              });*/
+            }
+          });
+        </script>
     	
     
     	
@@ -240,13 +262,13 @@
 
     <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/ebc36368.html">
 
-    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
       <meta itemprop="name" content="朱冲䶮">
       <meta itemprop="description" content="记录">
     </span>
 
-    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="博客">
     </span>
       <header class="post-header">
@@ -275,7 +297,7 @@
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a>
                 </span>
             </span>
@@ -299,7 +321,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-                <span class="post-meta-item-text">阅读时长 ≈</span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
               <span>4 分钟</span>
             </span>
 
@@ -316,14 +338,14 @@
 </div>
 <h1 id="towards-persona-based-empathetic-conversational-models">Towards Persona-Based Empathetic Conversational Models</h1>
 <ul>
-<li><a href="https://yan624.github.io/posts/3b2a2032.html">论文笔记</a> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/CoBERT.jpg" alt="CoBERT 结构图"> <a id="more"></a></li>
+<li><a href="https://yan624.github.io/posts/3b2a2032.html">论文笔记</a> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/CoBERT.jpg" alt="CoBERT 结构图" /> <a id="more"></a></li>
 </ul>
 <h1 id="emptransfo-a-multi-head-transformer-architecture-for-creating-empathetic-dialog-systems">EmpTransfo: A Multi-head Transformer Architecture for Creating Empathetic Dialog Systems</h1>
 <ul>
-<li><a href="https://yan624.github.io/posts/b764c538.html">论文笔记</a> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/EmpTransfo.jpg" alt="EmpTransfo"></li>
+<li><a href="https://yan624.github.io/posts/b764c538.html">论文笔记</a> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/EmpTransfo.jpg" alt="EmpTransfo" /></li>
 </ul>
 <h1 id="caire-an-empathetic-neural-chatbot">CAiRE: An Empathetic Neural Chatbot</h1>
-<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/CAiRE.jpg" title="CAiRE"></p>
+<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/CAiRE.jpg" title="CAiRE" /></p>
 <ul>
 <li><strong>Language Model Pre-training</strong>：使用 GPT，在大型文本语料库 BooksCorpus 上进行预训练，可以使得模型能够捕获对话跨度足够大的上下文信息。</li>
 <li><strong>Persona Dialogue Pre-training</strong>：现存的移情对话数据集相对较小，仅在这数据集上进行微调可能会限制模型在闲聊时的所拥有的话题。为了增强 CAiRE 在闲聊时的能力，参照 Wolf et al., 2019 的迁移学习策略，我们先在 PersonaChat 上对模型进行预训练。该预训练步骤给予 CAiRE 一个 persona，因此提高了模型的参与度和一致性。</li>
@@ -331,7 +353,7 @@
 <ul>
 <li><strong>Fine-tuning Detail</strong>
 <ul>
-<li>为了完全利用在 PersonaChat 上预训练的效果，我们自定义了 CAiRE 的 persona 语句：<em>"my name is caire", "i want to help humans to make a better world", "i am a good friend of humans"</em>（<strong>博主注</strong>：<em>这些语句代表着 CAiRE 的人物定位</em>）。照着 Wolf et al., 2019 的微调协议，我们首先拼接了自定义 persona，对话历史以及回复（distractor）。使用了特殊符号，并且所有的嵌入都是由位置嵌入，词嵌入和对话状态嵌入相加而成。前两个是 Transformer 所需，对话状态嵌入帮助 CAiRE 对对话的体系结构建模，同时用于区分 persona 语句，对话上下文语句和回复。表征输入进 Transformer 后生成上下文表征，我们将最后一个符号定义为 <span class="math inline">\(SEN\)</span>，回复（distractor）之前的符号定义为 <span class="math inline">\(EMO\)</span>。</li>
+<li>为了完全利用在 PersonaChat 上预训练的效果，我们自定义了 CAiRE 的 persona 语句：<em>&quot;my name is caire&quot;, &quot;i want to help humans to make a better world&quot;, &quot;i am a good friend of humans&quot;</em>（<strong>博主注</strong>：<em>这些语句代表着 CAiRE 的人物定位</em>）。照着 Wolf et al., 2019 的微调协议，我们首先拼接了自定义 persona，对话历史以及回复（distractor）。使用了特殊符号，并且所有的嵌入都是由位置嵌入，词嵌入和对话状态嵌入相加而成。前两个是 Transformer 所需，对话状态嵌入帮助 CAiRE 对对话的体系结构建模，同时用于区分 persona 语句，对话上下文语句和回复。表征输入进 Transformer 后生成上下文表征，我们将最后一个符号定义为 <span class="math inline">\(SEN\)</span>，回复（distractor）之前的符号定义为 <span class="math inline">\(EMO\)</span>。</li>
 <li>为了<strong>优化回复预测的目标对象</strong>，在每一个训练步，我们从其他对话中采样出一个 distractor 来对抗真实的回复。然后将 SEN 表征输入一个线性层，区分是否为真实的回复，然后得到 cross-entropy <span class="math inline">\(\mathcal{L}_S\)</span>。</li>
 <li>为了<strong>优化回复的语言模型的目标对象</strong>，我们用真实回复的上下文表征去预测下一个回复的符号，然后使用 cross-entropy 计算语言模型的 loss <span class="math inline">\(\mathcal{L}_L\)</span>。</li>
 <li>为了<strong>使 CAiRE 探测到对话伙伴的情绪</strong>，我们在训练阶段新增了一个对话情绪探测优化目标。我们将 EMO 作为当前对话状态的摘要，然后将其输入进线性映射层，去预测 32 个情绪的分数。cross-entropy 被用于计算情绪类别的 loss <span class="math inline">\(\mathcal{L}_E\)</span></li>
@@ -340,7 +362,7 @@
 </ul></li>
 </ul>
 <h1 id="moel-mixture-of-empathetic-listeners">MoEL: Mixture of Empathetic Listeners</h1>
-<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/MoLE.jpg" title="MoLE"></p>
+<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/MoLE.jpg" title="MoLE" /></p>
 <ul>
 <li>以前的移情对话系统研究大多数关注的是给定某个情绪，生成一个回复。然而要使得系统具有移情能力，更重要的是需要理解用户的情绪以及合适的回复。本文提出一个 end-to-end 方法，用于对移情对话系统建模，即 Mixture of Empathetic Listeners（<strong>MoEL</strong>）。我们的模型<strong>首次捕获了用户的情绪并且输出一个情绪分布</strong>。
 <ul>
@@ -360,7 +382,7 @@
 </ul></li>
 </ul>
 <h1 id="i-kown-the-feeling-learning-to-converse-with-empathy">~I kown the feeling: Learning to converse with empathy</h1>
-<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/ED.png" title="ED"></p>
+<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/ED.png" title="ED" /></p>
 <ul>
 <li><a href="https://yan624.github.io/posts/bfd3a550.html">论文笔记</a></li>
 </ul>
@@ -368,12 +390,12 @@
 <p>同上一篇论文，它们是一样的。</p>
 <h1 id="emotional-chatting-machine-emotional-conversation-generation-with-internal-and-external-memory">Emotional Chatting Machine: Emotional Conversation Generation with Internal and External Memory</h1>
 <ul>
-<li><a href="https://yan624.github.io/posts/e5ce1f40.html">论文笔记</a> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/ECM.jpg" alt="ECM"></li>
+<li><a href="https://yan624.github.io/posts/e5ce1f40.html">论文笔记</a> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/ECM.jpg" alt="ECM" /></li>
 <li>他们的模型定义为 <span class="math inline">\(P(Y|X, e) = \prod^m_{t=1} P(y_t | y_{&lt;t}, X, e)\)</span>，Y 是回复，X 是用户输入，e 是情绪类别的嵌入（<strong>该论文假定 e 已经预先给定</strong>）。直观来说就是在给定用户输入语句和<strong>待生成回复</strong>的情绪类别（emotion categories）的条件下，生成回复（<em>当然这几乎是不切实际的，因为你无法预先知道机器的回复需要附带什么样的情绪，所以这个类别 <span class="math inline">\(e\)</span> 我该分配什么情绪？《Affective Neural Response Generation》也这么认为</em>）。</li>
 <li>ECM 的工作流程是：<strong>1）</strong>在训练步骤，将语料输入情绪分类器，得到情绪，于是原语料变为 (post, response, emtion) 形式的三元组；<strong>2）</strong>在推理过程中，post 被输入进 ECM 以生成给予不同情绪类别的回复（<strong>博主注</strong>：此文章不可控制生成回复的情绪类别，只能为每一种情绪类别都生成一句合适的回复。比如说现在系统中定义了 5 种情绪类别，现在用户很悲伤，需要机器生成“安慰”的语句。但是 ECM 做不到，它只能遍历所有的情绪类别，然后为每一种类别生成一句回复）。</li>
 <li><strong>Emotion Category Embedding</strong> 提取情绪类别的嵌入。</li>
-<li><strong>Internal Memory</strong> 使用词向量，GRU 隐藏状态和上下文向量的拼接版进行计算。先使用 sigmoid 函数分别计算 read gate 和 write gate 的状态 <span class="math inline">\(g^r_t \, g^w_t\)</span>，然后 <span class="math inline">\(g^r_t\)</span> 使用<strong>对应元素相乘的乘法（element-wise multiplication）</strong>从 Internal Memory <span class="math inline">\(M^I_{e,t}\)</span> 中提取一定量的记忆 <span class="math inline">\(M^I_{r,t}\)</span>（都是玄学，意会就行，不用试图理解），<span class="math inline">\(M^I_{r,t}\)</span> 将与拼接版向量同时被喂入 GRU。最后 GRU 生成的隐藏状态 <span class="math inline">\(s_t\)</span> 通过 <span class="math inline">\(g^w_t\)</span> 提取出一定的记忆 <span class="math inline">\(M^I_{e,t+1}\)</span> 写入 Internal Memory。受到心理学上的启发，情绪化回应是相对短暂的，所以<strong>凭借此 Internal Memory 记录用户交谈过程中的短暂情绪变化</strong>。之前说到该记忆状态 <span class="math inline">\(M^I\)</span> 会与拼接后的向量同时输入进 GRU，这就意味着<strong>该情绪记忆会影响解码过程</strong>。特别地，该记忆模块不同于其他的记忆模块，如 LSTM，当解码过程结束后，<strong>记忆模块中的状态应该衰减至 0</strong>，这代表着情绪被机器完全地表达出来。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/ECM：Internal%20Memory.jpg" alt="Internal Memory"></li>
-<li><strong>External Memory</strong> 通过 GRU 的隐藏状态 <span class="math inline">\(s_t\)</span> 计算下一个单词概率。单词的概率分布由两部分组成，一是情绪词表的概率分布，二是通用词表的概率分布，二者拼接后通过此拼接的概率分布计算下一个单词的概率。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/ECM：External%20Memory.jpg" alt="External Memory"></li>
+<li><strong>Internal Memory</strong> 使用词向量，GRU 隐藏状态和上下文向量的拼接版进行计算。先使用 sigmoid 函数分别计算 read gate 和 write gate 的状态 <span class="math inline">\(g^r_t \, g^w_t\)</span>，然后 <span class="math inline">\(g^r_t\)</span> 使用<strong>对应元素相乘的乘法（element-wise multiplication）</strong>从 Internal Memory <span class="math inline">\(M^I_{e,t}\)</span> 中提取一定量的记忆 <span class="math inline">\(M^I_{r,t}\)</span>（都是玄学，意会就行，不用试图理解），<span class="math inline">\(M^I_{r,t}\)</span> 将与拼接版向量同时被喂入 GRU。最后 GRU 生成的隐藏状态 <span class="math inline">\(s_t\)</span> 通过 <span class="math inline">\(g^w_t\)</span> 提取出一定的记忆 <span class="math inline">\(M^I_{e,t+1}\)</span> 写入 Internal Memory。受到心理学上的启发，情绪化回应是相对短暂的，所以<strong>凭借此 Internal Memory 记录用户交谈过程中的短暂情绪变化</strong>。之前说到该记忆状态 <span class="math inline">\(M^I\)</span> 会与拼接后的向量同时输入进 GRU，这就意味着<strong>该情绪记忆会影响解码过程</strong>。特别地，该记忆模块不同于其他的记忆模块，如 LSTM，当解码过程结束后，<strong>记忆模块中的状态应该衰减至 0</strong>，这代表着情绪被机器完全地表达出来。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/ECM：Internal%20Memory.jpg" alt="Internal Memory" /></li>
+<li><strong>External Memory</strong> 通过 GRU 的隐藏状态 <span class="math inline">\(s_t\)</span> 计算下一个单词概率。单词的概率分布由两部分组成，一是情绪词表的概率分布，二是通用词表的概率分布，二者拼接后通过此拼接的概率分布计算下一个单词的概率。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/情感计算论文笔记/ECM：External%20Memory.jpg" alt="External Memory" /></li>
 </ul>
 <h1 id="transfertransfo-a-transfer-learning-approach-for-neural-network-based-conversational-agents">TransferTransfo: A Transfer Learning Approach for Neural Network Based Conversational Agents</h1>
 <div class="note warning"><p>此论文不算是情感计算的论文，由于上述有几篇论文用到了这论文的一些方法，所以这里也加进去了。</p>
@@ -449,7 +471,27 @@
           </div>
           
 
-
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
 
         </div>
           
@@ -479,8 +521,9 @@
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="朱冲䶮" src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
   <div class="site-description" itemprop="description">记录</div>
 </div>
@@ -512,17 +555,17 @@
 </div>
   <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
     Chat
-  
+  </a>
   </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
@@ -536,13 +579,13 @@
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io/" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
+          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://smallwhitezzz.gitee.io/blog" title="https://smallwhitezzz.gitee.io/blog" rel="noopener" target="_blank">凯子</a>
+          <a href="https://smallwhitezzz.gitee.io/blog" title="https:&#x2F;&#x2F;smallwhitezzz.gitee.io&#x2F;blog" rel="noopener" target="_blank">凯子</a>
         </li>
     </ul>
   </div>
@@ -569,14 +612,14 @@
 
 <div class="copyright">
   
-  © 2019 – 
+  &copy; 2019 – 
   <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div><!--
 樱花特效 
 最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
@@ -585,9 +628,15 @@
 于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
 原地址为：https://cangshui.net/2372.html
 -->
-
+<script>
+	var pathname = window.location.pathname;
+	// pathname == '/' || pathname == '/index.html'
+	if(pathname == '/categories/assorted/timeline/'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+</script>
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-
+<script src="/lib/my-utils.js"></script>
 <script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
@@ -612,7 +661,7 @@
 
         
 <div class="busuanzi-count">
-  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -644,29 +693,29 @@
   </div>
 
   
-  
+  <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  
-  
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
 
 
+<script src="/js/next-boot.js"></script>
 
-
-
-
-
-
-
-
-
-  
-
-
+<script src="/js/bookmark.js"></script>
 
 
   
 
+
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 
@@ -686,68 +735,7 @@
 
   
   <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
-  
-<!-- calendar widget -->
-
-
-
-
-<script src="/bundle.js"></script><script>
-          var templateSentence = '这是条不可能出现的弹窗提示。';
-          if('4me' == '学习笔记')
-            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记。';
-          else if('4me' == '4me')
-            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
-          spop({
-            template: templateSentence,
-            group: 'tips',
-            position  : 'bottom-center',
-            style: 'success',
-            autoclose: 5500,
-            onOpen: function () {
-              //这里设置灰色背景色
-            },
-            onClose: function() {
-              //这里可以取消背景色
-              /*spop({
-                template: 'ε = = (づ′▽`)づ',
-                group: 'tips',
-                position  : 'bottom-center',
-                style: 'success',
-                autoclose: 1500
-              });*/
-            }
-          });
-        ;
-
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-;
-
-	var pathname = window.location.pathname;
-	// pathname == '/' || pathname == '/index.html'
-	if(pathname == '/categories/assorted/timeline/'){
-		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
-	}
-;
-
+  <script>
       window.addEventListener('load', () => {
       quicklink({
         timeout : 3000,
@@ -755,4 +743,9 @@
         ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/ebc36368.html',]
       });
       });
-  </script></body></html>
+  </script>
+<!-- calendar widget -->
+
+
+</body>
+</html>

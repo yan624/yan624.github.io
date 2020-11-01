@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="zh-CN"><head>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
@@ -8,31 +10,25 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
+<link rel="stylesheet" href="/css/main.css">
 
 
-
-
-  
-  
-  
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="写在前面
- 此论文为 2015 年的论文。 本文会出现一个名为谓语序列（predicate sequence）的名词，论文中没有详细说明。但是估计就是：一个实体至另一个实体的有向路径上的所有谓语的连接形式。如下文第一张图 Family Guy->cvt1->Mila Kunis 的谓语序列就是 cast-actor。
- 论文概要
- 论文地址 节选自摘要部分： > 论文提出了一个基">
+  <meta name="description" content="写在前面 此论文为 2015 年的论文。 本文会出现一个名为谓语序列（predicate sequence）的名词，论文中没有详细说明。但是估计就是：一个实体至另一个实体的有向路径上的所有谓语的连接形式。如下文第一张图 Family Guy-&gt;cvt1-&gt;Mila Kunis 的谓语序列就是 cast-actor。 论文概要 论文地址 节选自摘要部分： &gt; 论文提出了一个基">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Semantic Parsing via Staged Query Graph Generation Question Answering with Knowledge Base">
 <meta property="og:url" content="https://yan624.github.io/posts/5c4e57cd.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="写在前面
- 此论文为 2015 年的论文。 本文会出现一个名为谓语序列（predicate sequence）的名词，论文中没有详细说明。但是估计就是：一个实体至另一个实体的有向路径上的所有谓语的连接形式。如下文第一张图 Family Guy->cvt1->Mila Kunis 的谓语序列就是 cast-actor。
- 论文概要
- 论文地址 节选自摘要部分： > 论文提出了一个基">
+<meta property="og:description" content="写在前面 此论文为 2015 年的论文。 本文会出现一个名为谓语序列（predicate sequence）的名词，论文中没有详细说明。但是估计就是：一个实体至另一个实体的有向路径上的所有谓语的连接形式。如下文第一张图 Family Guy-&gt;cvt1-&gt;Mila Kunis 的谓语序列就是 cast-actor。 论文概要 论文地址 节选自摘要部分： &gt; 论文提出了一个基">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic%20Parsing%20via%20Staged%20Query%20Graph%20Generation%20Question%20Answering%20with%20Knowledge%20Base/Freebase%20subgraph%20of%20Family%20Guy.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic%20Parsing%20via%20Staged%20Query%20Graph%20Generation%20Question%20Answering%20with%20Knowledge%20Base/Query%20graph%20that%20represents%20the%20question%20%E2%80%9CWho%20first%20voiced%20Meg%20on%20Family%20Guy%EF%BC%9F%E2%80%9D.jpg">
@@ -62,7 +58,7 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
 
 
   <title>Semantic Parsing via Staged Query Graph Generation Question Answering with Knowledge Base | 博客</title>
@@ -96,13 +92,13 @@
   </style>
 </noscript>
 
-<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css');loadCss('//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css');loadCss('//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css"></noscript></head>
+</head>
 
-<body itemscope="" itemtype="http://schema.org/WebPage">
+<body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
     <div class="headband"></div>
 
-    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏">
@@ -184,7 +180,9 @@
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
   </div>
   <span class="popup-btn-close">
     <i class="fa fa-times-circle"></i>
@@ -222,7 +220,7 @@
     
   
   
-  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     
     	
     
@@ -233,13 +231,13 @@
 
     <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/5c4e57cd.html">
 
-    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
       <meta itemprop="name" content="朱冲䶮">
       <meta itemprop="description" content="记录">
     </span>
 
-    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="博客">
     </span>
       <header class="post-header">
@@ -268,7 +266,7 @@
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a>
                 </span>
             </span>
@@ -292,7 +290,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-                <span class="post-meta-item-text">阅读时长 ≈</span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
               <span>5 分钟</span>
             </span>
 
@@ -322,32 +320,32 @@
 <li>Sec. 6: 总结。</li>
 </ol>
 <h1 id="knowledge-base">Knowledge Base</h1>
-<p>论文中的知识库 K 是一个包含主语、谓语、宾语的三元组（e1, p, e2）的集合，其中 e1 和 e2<span class="math inline">\(\in\)</span>E，是一个实体。p<span class="math inline">\(\in\)</span>P，是一个谓语。这种形式的知识库通常称为知识图谱。每一个实体是一个节点，两个相关联的实体由谓语标记的有向边连接，边的方向是从主语实体到宾语实体。如下图就是一个 Freebase 的子图： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic%20Parsing%20via%20Staged%20Query%20Graph%20Generation%20Question%20Answering%20with%20Knowledge%20Base/Freebase%20subgraph%20of%20Family%20Guy.jpg" alt="Freebase subgraph of Family Guy"></p>
+<p>论文中的知识库 K 是一个包含主语、谓语、宾语的三元组（e1, p, e2）的集合，其中 e1 和 e2<span class="math inline">\(\in\)</span>E，是一个实体。p<span class="math inline">\(\in\)</span>P，是一个谓语。这种形式的知识库通常称为知识图谱。每一个实体是一个节点，两个相关联的实体由谓语标记的有向边连接，边的方向是从主语实体到宾语实体。如下图就是一个 Freebase 的子图： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic%20Parsing%20via%20Staged%20Query%20Graph%20Generation%20Question%20Answering%20with%20Knowledge%20Base/Freebase%20subgraph%20of%20Family%20Guy.jpg" alt="Freebase subgraph of Family Guy" /></p>
 <div class="note info"><p>Freebase 中有一个叫 <a href="https://developers.google.com/freebase/guide/basic_concepts#cvts" target="_blank" rel="noopener">CVT</a>（此链接需要翻墙访问） 的特殊实体类型，它不是一个真正的实体，而是用于收集事件或特殊的关联的多个字段。</p>
 </div>
 <h1 id="query-graph">Query graph</h1>
 <h2 id="概念">概念</h2>
-<p>给定一个知识图谱。执行逻辑形式的查询等价于寻找一个子图，该子图的表现形式可以映射到查询动作。之后解析绑定的变量。 </p><div class="note warning"><p>接下来，以实体这个属性来表示真实世界的实体和 CVT 实体以及日期或高度等属性，这些实体之间的区别对于论文中的方法来说并不重要。</p>
-</div> 就像知识图谱一样，查询图中的相关节点也是通过有向边连接，并用 K 中的谓语标记。查询图由四中类型的节点组成： 1. grounded entity：圆角矩形表示。grounded entity 是在知识库 K 中已存的实体。 2. existential variable：圆形表示。existential variable 是 un-grounded entity。 3. lambda variable：阴影圆形表示。lambda variable 是 un-grounded entity。尤其，该论文表示希望<strong>检索</strong>能够映射到 lambda variable 的所有实体<strong>作为</strong>最终答案。其也被称为<strong>answer 节点</strong>。 4. aggregation function：菱形表示。aggregation function 被用于操作特定的实体，该实体通常具有一些数值属性。<p></p>
-<p>下图展示了一个查询图： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic%20Parsing%20via%20Staged%20Query%20Graph%20Generation%20Question%20Answering%20with%20Knowledge%20Base/Query%20graph%20that%20represents%20the%20question%20“Who%20first%20voiced%20Meg%20on%20Family%20Guy？”.jpg" alt="Query graph that represents the question “Who first voiced Meg on Family Guy？”"></p>
-<p>上图是“谁第一次为 Family Guy 中的 Meg 配音？”的问题。MegGriffin 和 FamilyGuy 由圆角矩形表示，圆圈节点 y 表示应该存在一个实体来描述扮演关系，比如角色、演员和开始饰演此角色的时间。阴影圆圈节点也被称为 <strong>answer 节点</strong>。菱形节点 argmin 限制答案必须是扮演此角色的最早的演员。同样不含聚合函数的<span class="math inline">\(\lambda-calculus\)</span>逻辑形式查询为$x.y.cast(FamilyGuy,y) actor(y,x) character(y,MegGriffin) $。在使用聚合函数之前，对 K 运行此查询图会匹配 LaceyChabert 以及 MilaKunis，请看第一张图。但是只有 LaceyChabert 是正确答案，因为是她最早开始扮演这个角色。 </p><div class="note info"><p>查询图的设计灵感来源于（Reddyet al., 2014），但是他的查询图是从问题的 CCG 解析中映射出来的，在映射到子图前还需要进一步的转换。从语义上来说，该论文的查询图更像简单的 <span class="math inline">\(\lambda-DCS\)</span>。</p>
-</div><p></p>
+<p>给定一个知识图谱。执行逻辑形式的查询等价于寻找一个子图，该子图的表现形式可以映射到查询动作。之后解析绑定的变量。 <div class="note warning"><p>接下来，以实体这个属性来表示真实世界的实体和 CVT 实体以及日期或高度等属性，这些实体之间的区别对于论文中的方法来说并不重要。</p>
+</div> 就像知识图谱一样，查询图中的相关节点也是通过有向边连接，并用 K 中的谓语标记。查询图由四中类型的节点组成： 1. grounded entity：圆角矩形表示。grounded entity 是在知识库 K 中已存的实体。 2. existential variable：圆形表示。existential variable 是 un-grounded entity。 3. lambda variable：阴影圆形表示。lambda variable 是 un-grounded entity。尤其，该论文表示希望<strong>检索</strong>能够映射到 lambda variable 的所有实体<strong>作为</strong>最终答案。其也被称为<strong>answer 节点</strong>。 4. aggregation function：菱形表示。aggregation function 被用于操作特定的实体，该实体通常具有一些数值属性。</p>
+<p>下图展示了一个查询图： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic%20Parsing%20via%20Staged%20Query%20Graph%20Generation%20Question%20Answering%20with%20Knowledge%20Base/Query%20graph%20that%20represents%20the%20question%20“Who%20first%20voiced%20Meg%20on%20Family%20Guy？”.jpg" alt="Query graph that represents the question “Who first voiced Meg on Family Guy？”" /></p>
+<p>上图是“谁第一次为 Family Guy 中的 Meg 配音？”的问题。MegGriffin 和 FamilyGuy 由圆角矩形表示，圆圈节点 y 表示应该存在一个实体来描述扮演关系，比如角色、演员和开始饰演此角色的时间。阴影圆圈节点也被称为 <strong>answer 节点</strong>。菱形节点 argmin 限制答案必须是扮演此角色的最早的演员。同样不含聚合函数的<span class="math inline">\(\lambda-calculus\)</span>逻辑形式查询为$x.y.cast(FamilyGuy,y) actor(y,x) character(y,MegGriffin) $。在使用聚合函数之前，对 K 运行此查询图会匹配 LaceyChabert 以及 MilaKunis，请看第一张图。但是只有 LaceyChabert 是正确答案，因为是她最早开始扮演这个角色。 <div class="note info"><p>查询图的设计灵感来源于（Reddyet al., 2014），但是他的查询图是从问题的 CCG 解析中映射出来的，在映射到子图前还需要进一步的转换。从语义上来说，该论文的查询图更像简单的 <span class="math inline">\(\lambda-DCS\)</span>。</p>
+</div></p>
 <h2 id="生成">生成</h2>
-<p><strong>首先</strong>树图（tree graph）的根由一个实体节点组成，称为主题实体（topic entity）。<strong>其次</strong>，只有一个 lambda 变量 x 作为答案节点，从根到 x 有一个定向路径，其中含有 0 个或多个 existential variables。论文中将此路径称为图的核心推理链，因为它描述了答案和主题实体之间的主要关系。这个链除了根节点外只有变量节点。<strong>最后</strong>，可以将 0 个或多个实体或者聚合函数节点附加到每个变量节点，包括 answer 节点。例如，上图 Family Guy 是根，而 Family Guy-&gt;y-&gt;x 是核心推理链，分支 y-&gt;MegGriffin 阐述了角色，而 y-&gt;argmin 限制答案必须是该角色最早的参与者。 定义状态（state）集合<span class="math inline">\(S = \{\phi, S_e, S_p, S_c\}\)</span>，其中每个状态可以是一个空的图（<span class="math inline">\(\phi\)</span>），一个主题实体的单节点图（<span class="math inline">\(S_e\)</span>），一个核心推理链（<span class="math inline">\(S_p\)</span>）或者带有额外约束的更复杂的查询图（<span class="math inline">\(S_c\)</span>）。 定义动作（action）集合<span class="math inline">\(A = \{A_e, A_p, A_c, A_a\}\)</span>，其中<span class="math inline">\(A_e\)</span>选取实体节点，<span class="math inline">\(A_p\)</span>确定核心推理链，<span class="math inline">\(A_c\)</span>和<span class="math inline">\(A_a\)</span>分别约束和聚合节点。 给出一个示例<span class="math inline">\(q_{ex}\)</span> = "Who first voiced Meg of Family Guy?"。</p>
+<p><strong>首先</strong>树图（tree graph）的根由一个实体节点组成，称为主题实体（topic entity）。<strong>其次</strong>，只有一个 lambda 变量 x 作为答案节点，从根到 x 有一个定向路径，其中含有 0 个或多个 existential variables。论文中将此路径称为图的核心推理链，因为它描述了答案和主题实体之间的主要关系。这个链除了根节点外只有变量节点。<strong>最后</strong>，可以将 0 个或多个实体或者聚合函数节点附加到每个变量节点，包括 answer 节点。例如，上图 Family Guy 是根，而 Family Guy-&gt;y-&gt;x 是核心推理链，分支 y-&gt;MegGriffin 阐述了角色，而 y-&gt;argmin 限制答案必须是该角色最早的参与者。 定义状态（state）集合<span class="math inline">\(S = \{\phi, S_e, S_p, S_c\}\)</span>，其中每个状态可以是一个空的图（<span class="math inline">\(\phi\)</span>），一个主题实体的单节点图（<span class="math inline">\(S_e\)</span>），一个核心推理链（<span class="math inline">\(S_p\)</span>）或者带有额外约束的更复杂的查询图（<span class="math inline">\(S_c\)</span>）。 定义动作（action）集合<span class="math inline">\(A = \{A_e, A_p, A_c, A_a\}\)</span>，其中<span class="math inline">\(A_e\)</span>选取实体节点，<span class="math inline">\(A_p\)</span>确定核心推理链，<span class="math inline">\(A_c\)</span>和<span class="math inline">\(A_a\)</span>分别约束和聚合节点。 给出一个示例<span class="math inline">\(q_{ex}\)</span> = &quot;Who first voiced Meg of Family Guy?&quot;。</p>
 <h3 id="链接主题实体">链接主题实体</h3>
-<p>从初始状态<span class="math inline">\(S_0\)</span>开始，正确的操作是创建一个与给定问题中的主题实体相对应单节点图。例如，<span class="math inline">\(q_{ex}\)</span>中可能的主题实体是 Family Guy 和 MegGriffin，如下图所示。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic%20Parsing%20via%20Staged%20Query%20Graph%20Generation%20Question%20Answering%20with%20Knowledge%20Base/Two%20possible%20topic%20entity%20linking%20actionsapplied%20to%20an%20empty%20graph,%20for%20question%20“Who%20firstvoiced%5BMeg%5Don%5BFamily%20Guy%5D？”.jpg" alt="Two possible topic entity linking actionsapplied to an empty graph, for question “Who firstvoiced[Meg]on[Family Guy]？”"></p>
+<p>从初始状态<span class="math inline">\(S_0\)</span>开始，正确的操作是创建一个与给定问题中的主题实体相对应单节点图。例如，<span class="math inline">\(q_{ex}\)</span>中可能的主题实体是 Family Guy 和 MegGriffin，如下图所示。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic%20Parsing%20via%20Staged%20Query%20Graph%20Generation%20Question%20Answering%20with%20Knowledge%20Base/Two%20possible%20topic%20entity%20linking%20actionsapplied%20to%20an%20empty%20graph,%20for%20question%20“Who%20firstvoiced%5BMeg%5Don%5BFamily%20Guy%5D？”.jpg" alt="Two possible topic entity linking actionsapplied to an empty graph, for question “Who firstvoiced[Meg]on[Family Guy]？”" /></p>
 <p>使用的<strong>实体链接系统</strong>是专为短且有噪声的文本设计的，源于（<a href="https://arxiv.org/pdf/1609.08075.pdf" target="_blank" rel="noopener">Yang and Chang, 2015</a>）。具体不做赘述，详情可参考相关论文。</p>
 <h3 id="确定核心推理链">确定核心推理链</h3>
-<p>给定与主题实体 e 对应的单节点图的状态 s，扩展该图的正确操作是确定核心推理链，即主题实体和答案之间的关系。下图展示了扩展<span class="math inline">\(s_1\)</span>中的单节点图的三个可能的链。具体做法是，当中间的 existential variable 链接 CVT 时，探索长度为 2 的所有路径，如果没有链接，则探索长度为 1 的路径。 </p><div class="note primary"><p>本节主要描述了如何确定核心推理链，不过上文一段先描述了如何确定候选的核心推理链。具体做法上一段也已经给出，但是由于原论文讲的也有点不清楚，此处加以说明，以下只是推测。 1. 扩展主题节点 Family Guy 的三个可能的核心推理链，应该是从知识库 K 中入手。请看第一张图，它是知识库 K 中的一张子图。从 Family Guy 中开始可以看到有三条边，两条边上是 cast，一条边上是 writer。由于两条边相同，于是就融为了一条推理链。至于最后一条推理链的谓语是 genre，可能是第一张图的子图中没有标出造成的。总而言之，那三条推理链就是从知识库 K 中获取。 2. existential variable 即 y，lambda variable 即 x。可以把知识库 K 中的 CVT 节点看作是 y，答案看作是 x。</p>
-</div> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic%20Parsing%20via%20Staged%20Query%20Graph%20Generation%20Question%20Answering%20with%20Knowledge%20Base/Candidate%20core%20inferential%20chains%20start%20from%20the%20entity%20FamilyGuy.jpg" alt="Candidate core inferential chains start from the entity FamilyGuy"><p></p>
+<p>给定与主题实体 e 对应的单节点图的状态 s，扩展该图的正确操作是确定核心推理链，即主题实体和答案之间的关系。下图展示了扩展<span class="math inline">\(s_1\)</span>中的单节点图的三个可能的链。具体做法是，当中间的 existential variable 链接 CVT 时，探索长度为 2 的所有路径，如果没有链接，则探索长度为 1 的路径。 <div class="note primary"><p>本节主要描述了如何确定核心推理链，不过上文一段先描述了如何确定候选的核心推理链。具体做法上一段也已经给出，但是由于原论文讲的也有点不清楚，此处加以说明，以下只是推测。 1. 扩展主题节点 Family Guy 的三个可能的核心推理链，应该是从知识库 K 中入手。请看第一张图，它是知识库 K 中的一张子图。从 Family Guy 中开始可以看到有三条边，两条边上是 cast，一条边上是 writer。由于两条边相同，于是就融为了一条推理链。至于最后一条推理链的谓语是 genre，可能是第一张图的子图中没有标出造成的。总而言之，那三条推理链就是从知识库 K 中获取。 2. existential variable 即 y，lambda variable 即 x。可以把知识库 K 中的 CVT 节点看作是 y，答案看作是 x。</p>
+</div> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic%20Parsing%20via%20Staged%20Query%20Graph%20Generation%20Question%20Answering%20with%20Knowledge%20Base/Candidate%20core%20inferential%20chains%20start%20from%20the%20entity%20FamilyGuy.jpg" alt="Candidate core inferential chains start from the entity FamilyGuy" /></p>
 <p>这样做的目的是将自然表达映射到正确的谓语序列上。对于问题“Who first voiced Meg on [Family Guy]?”，需要衡量的是在{cast-actor, writer-start, genre}中每个序列（<em>注：这个元组就是上图的三个候选核心推理链上的谓语</em>）正确捕捉 Family Guy 和 Who 之间关系的可能性。因此将这个问题简化为使用神经网络测量语义相似度。</p>
 <h4 id="deep-convolutional-neural-networks">Deep Convolutional Neural Networks</h4>
-<p>虽然是陈述一个相同的问题，但是以语义等价的方式来重新表达该问题仍旧拥有巨大的多样性。并且还存在自然语言表达与知识库中的谓语不匹配的情况。<strong>为了处理上述两个问题</strong>，论文建议使用 Siamese neural networks（<a href="http://papers.nips.cc/paper/769-signature-verification-using-a-siamese-time-delay-neural-network.pdf" target="_blank" rel="noopener">Bromley et al., 1993</a>）来识别核心推理链（暹（xiān）罗神经网络，也可以叫连体神经网络。看见这个中文就很好理解了。Siamese neural networks 可以进行语义相似度分析，QA 的匹配等操作。详情可以先看看<a href="https://www.jianshu.com/p/92d7f6eaacf5" target="_blank" rel="noopener">这篇</a>博客）。注：由于上图可以得知一个问题可以获得几个候选得到核心推理链，这就是因为语言的多样性造成的，所以需要一个方法来识别一条最核心的推理链。 例如，将一个问题映射到一种<strong>模式</strong>上，方法是将实体替换为通用符号 &lt;e&gt;，然后将其与<strong>候选链</strong>比较。比如问题“who first voiced meg on &lt;e&gt;”和 cast-actor。该模型由两个神经网络组成，一个处理<strong>模式</strong>，一个处理<strong>核心推理链</strong>（这个模型说白了就是 Siamese neural networks）。两个神经网络都映射到 k 维向量作为网络的输出，最后使用距离函数（如余弦相似度）计算语义相似度。 </p><div class="note info"><p>该论文处理<strong>匹配问题</strong>使用了 CNN 模型。你可能会有点疑惑<strong>匹配问题</strong>是什么问题，前面压根就没提到过。是的，论文里也没说过，我只能猜测，这里的 CNN 其实就是上述模型的两个神经网络的具体实现。处理模型和处理核心推理链可能都用了 CNN 模型。另外论文中也没有说如何将核心推理链送入 CNN 中。论文中倒是稍微提了一下如何将问题送入 CNN 中，使用 word hashing 技术（<a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/cikm2013_DSSM_fullversion.pdf" target="_blank" rel="noopener">Huang et al., 2013</a>）。</p>
-</div> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic%20Parsing%20via%20Staged%20Query%20Graph%20Generation%20Question%20Answering%20with%20Knowledge%20Base/CNN架构.jpg" alt="CNN架构"><p></p>
+<p>虽然是陈述一个相同的问题，但是以语义等价的方式来重新表达该问题仍旧拥有巨大的多样性。并且还存在自然语言表达与知识库中的谓语不匹配的情况。<strong>为了处理上述两个问题</strong>，论文建议使用 Siamese neural networks（<a href="http://papers.nips.cc/paper/769-signature-verification-using-a-siamese-time-delay-neural-network.pdf" target="_blank" rel="noopener">Bromley et al., 1993</a>）来识别核心推理链（暹（xiān）罗神经网络，也可以叫连体神经网络。看见这个中文就很好理解了。Siamese neural networks 可以进行语义相似度分析，QA 的匹配等操作。详情可以先看看<a href="https://www.jianshu.com/p/92d7f6eaacf5" target="_blank" rel="noopener">这篇</a>博客）。注：由于上图可以得知一个问题可以获得几个候选得到核心推理链，这就是因为语言的多样性造成的，所以需要一个方法来识别一条最核心的推理链。 例如，将一个问题映射到一种<strong>模式</strong>上，方法是将实体替换为通用符号 &lt;e&gt;，然后将其与<strong>候选链</strong>比较。比如问题“who first voiced meg on &lt;e&gt;”和 cast-actor。该模型由两个神经网络组成，一个处理<strong>模式</strong>，一个处理<strong>核心推理链</strong>（这个模型说白了就是 Siamese neural networks）。两个神经网络都映射到 k 维向量作为网络的输出，最后使用距离函数（如余弦相似度）计算语义相似度。 <div class="note info"><p>该论文处理<strong>匹配问题</strong>使用了 CNN 模型。你可能会有点疑惑<strong>匹配问题</strong>是什么问题，前面压根就没提到过。是的，论文里也没说过，我只能猜测，这里的 CNN 其实就是上述模型的两个神经网络的具体实现。处理模型和处理核心推理链可能都用了 CNN 模型。另外论文中也没有说如何将核心推理链送入 CNN 中。论文中倒是稍微提了一下如何将问题送入 CNN 中，使用 word hashing 技术（<a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/cikm2013_DSSM_fullversion.pdf" target="_blank" rel="noopener">Huang et al., 2013</a>）。</p>
+</div> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic%20Parsing%20via%20Staged%20Query%20Graph%20Generation%20Question%20Answering%20with%20Knowledge%20Base/CNN架构.jpg" alt="CNN架构" /></p>
 <h3 id="增加约束和聚合函数">增加约束和聚合函数</h3>
 <h3 id="训练过程">训练过程</h3>
 <p><strong>Topic Entity</strong>：由实体链接系统返回的分数直接作为特征。 <strong>Core Inferential Chain</strong>：使用不同的 CNN 模型的相似度分数来衡量核心推理链的质量，以下为 3 个模型。 - <strong>PatChain</strong>：比较模式和谓语序列。 - <strong>QuesEP</strong>：将主题实体的名称与谓语序列拼接完成之后，将其与原问题比较。 - <strong>ClueWeb</strong>：使用 ClueWeb 语料库的 Freebase 注释训练 ClueWeb 模型</p>
-<p><strong>Constraints &amp; Aggregations</strong>：当查询图中有约束节点，使用一些简单的特征来检查问题中是否存在单词可以与约束实体或者属性相关联。相似地，也可以使用一些预定义的关键字，比如“first”、“current”或者“latest”作为 argmin 节点的特征。 <strong>Overall</strong>：回答节点的个数和总节点个数也都作为特征。 比如下图，（1）属于 Topic Entity，（2）（3）（4）属于 Core Inferential Chain，（5）（6）（7）属于 Constraints &amp; Aggregations，（8）（9）属于 Overall： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic%20Parsing%20via%20Staged%20Query%20Graph%20Generation%20Question%20Answering%20with%20Knowledge%20Base/特征举例.jpg" alt="特征举例"></p>
+<p><strong>Constraints &amp; Aggregations</strong>：当查询图中有约束节点，使用一些简单的特征来检查问题中是否存在单词可以与约束实体或者属性相关联。相似地，也可以使用一些预定义的关键字，比如“first”、“current”或者“latest”作为 argmin 节点的特征。 <strong>Overall</strong>：回答节点的个数和总节点个数也都作为特征。 比如下图，（1）属于 Topic Entity，（2）（3）（4）属于 Core Inferential Chain，（5）（6）（7）属于 Constraints &amp; Aggregations，（8）（9）属于 Overall： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/Semantic%20Parsing%20via%20Staged%20Query%20Graph%20Generation%20Question%20Answering%20with%20Knowledge%20Base/特征举例.jpg" alt="特征举例" /></p>
 <h1 id="实验">实验</h1>
 <p>使用 WEBQUESTIONS 数据集，评价指标有：precision，recall 和 F1。其中 F1 的平均值作为主要的评价指标。</p>
 <h1 id="其他参考资料">其他参考资料</h1>
@@ -424,7 +422,27 @@
           </div>
           
 
-
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
 
         </div>
           
@@ -454,8 +472,9 @@
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="朱冲䶮" src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
   <div class="site-description" itemprop="description">记录</div>
 </div>
@@ -487,17 +506,17 @@
 </div>
   <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
     Chat
-  
+  </a>
   </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
@@ -511,13 +530,13 @@
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io/" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
+          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://smallwhitezzz.gitee.io/blog" title="https://smallwhitezzz.gitee.io/blog" rel="noopener" target="_blank">凯子</a>
+          <a href="https://smallwhitezzz.gitee.io/blog" title="https:&#x2F;&#x2F;smallwhitezzz.gitee.io&#x2F;blog" rel="noopener" target="_blank">凯子</a>
         </li>
     </ul>
   </div>
@@ -544,14 +563,14 @@
 
 <div class="copyright">
   
-  © 2019 – 
+  &copy; 2019 – 
   <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div><!--
 樱花特效 
 最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
@@ -560,9 +579,15 @@
 于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
 原地址为：https://cangshui.net/2372.html
 -->
-
+<script>
+	var pathname = window.location.pathname;
+	// pathname == '/' || pathname == '/index.html'
+	if(pathname == '/categories/assorted/timeline/'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+</script>
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-
+<script src="/lib/my-utils.js"></script>
 <script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
@@ -587,7 +612,7 @@
 
         
 <div class="busuanzi-count">
-  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -619,29 +644,29 @@
   </div>
 
   
-  
+  <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  
-  
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
 
 
+<script src="/js/next-boot.js"></script>
 
-
-
-
-
-
-
-
-
-  
-
-
+<script src="/js/bookmark.js"></script>
 
 
   
 
+
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 
@@ -661,41 +686,7 @@
 
   
   <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
-  
-<!-- calendar widget -->
-
-
-
-
-<script src="/bundle.js"></script><script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-;
-
-	var pathname = window.location.pathname;
-	// pathname == '/' || pathname == '/index.html'
-	if(pathname == '/categories/assorted/timeline/'){
-		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
-	}
-;
-
+  <script>
       window.addEventListener('load', () => {
       quicklink({
         timeout : 3000,
@@ -703,4 +694,9 @@
         ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/5c4e57cd.html',]
       });
       });
-  </script></body></html>
+  </script>
+<!-- calendar widget -->
+
+
+</body>
+</html>

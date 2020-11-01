@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="zh-CN"><head>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
@@ -8,31 +10,25 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
+<link rel="stylesheet" href="/css/main.css">
 
 
-
-
-  
-  
-  
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="论文地址，论文作者 Rico Sennrich 等，发表于 2015 年。 注：本文解决的是机器翻译问题。
- 
- 论文摘要翻译
- 神经机器翻译（NMT）模型通常使用固定的词表，但是翻译是一个开放词表的问题。以前的工作是 backing off to a dictionary 来解决 OOV 词的翻译问题。本文介绍了一种新的方法，即 BPE。这是基于这样一种直觉：不同的词类（word classes">
+  <meta name="description" content="论文地址，论文作者 Rico Sennrich 等，发表于 2015 年。 注：本文解决的是机器翻译问题。  论文摘要翻译 神经机器翻译（NMT）模型通常使用固定的词表，但是翻译是一个开放词表的问题。以前的工作是 backing off to a dictionary 来解决 OOV 词的翻译问题。本文介绍了一种新的方法，即 BPE。这是基于这样一种直觉：不同的词类（word classes">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Neural Machine Translation of Rare Words with Subword Units">
 <meta property="og:url" content="https://yan624.github.io/posts/5fe678d1.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="论文地址，论文作者 Rico Sennrich 等，发表于 2015 年。 注：本文解决的是机器翻译问题。
- 
- 论文摘要翻译
- 神经机器翻译（NMT）模型通常使用固定的词表，但是翻译是一个开放词表的问题。以前的工作是 backing off to a dictionary 来解决 OOV 词的翻译问题。本文介绍了一种新的方法，即 BPE。这是基于这样一种直觉：不同的词类（word classes">
+<meta property="og:description" content="论文地址，论文作者 Rico Sennrich 等，发表于 2015 年。 注：本文解决的是机器翻译问题。  论文摘要翻译 神经机器翻译（NMT）模型通常使用固定的词表，但是翻译是一个开放词表的问题。以前的工作是 backing off to a dictionary 来解决 OOV 词的翻译问题。本文介绍了一种新的方法，即 BPE。这是基于这样一种直觉：不同的词类（word classes">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2019-12-14T15:10:47.000Z">
 <meta property="article:modified_time" content="2020-07-17T15:13:05.465Z">
@@ -53,7 +49,7 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
 
 
   <title>Neural Machine Translation of Rare Words with Subword Units | 博客</title>
@@ -87,13 +83,13 @@
   </style>
 </noscript>
 
-<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css');loadCss('//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css');loadCss('//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css"></noscript></head>
+</head>
 
-<body itemscope="" itemtype="http://schema.org/WebPage">
+<body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
     <div class="headband"></div>
 
-    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏">
@@ -175,7 +171,9 @@
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
   </div>
   <span class="popup-btn-close">
     <i class="fa fa-times-circle"></i>
@@ -213,20 +211,20 @@
     
   
   
-  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     
     	
     
 
     <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/5fe678d1.html">
 
-    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
       <meta itemprop="name" content="朱冲䶮">
       <meta itemprop="description" content="记录">
     </span>
 
-    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="博客">
     </span>
       <header class="post-header">
@@ -255,7 +253,7 @@
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a>
                 </span>
             </span>
@@ -279,7 +277,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-                <span class="post-meta-item-text">阅读时长 ≈</span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
               <span>2 分钟</span>
             </span>
 
@@ -295,8 +293,8 @@
         <div class="note info"><p><a href="https://arxiv.org/abs/1508.07909" target="_blank" rel="noopener">论文地址</a>，论文作者 Rico Sennrich 等，发表于 2015 年。 注：本文解决的是机器翻译问题。</p>
 </div>
 <h1 id="论文摘要翻译">论文摘要翻译</h1>
-<p>神经机器翻译（NMT）模型通常使用固定的词表，但是翻译是一个开放词表的问题。以前的工作是 <strong>backing off to a dictionary</strong> 来解决 OOV 词的翻译问题。本文介绍了一种新的方法，即 <strong>BPE</strong>。这是<strong>基于这样一种直觉：不同的<a href="http://www.bing.com/dict/word%20classes" target="_blank" rel="noopener">词类</a>（word classes）可以通过使用比该词更小的单元进行翻译，例如姓名（通过字符复制或音译）、复合词（通过构词翻译）以及同源词和外来词（通过语音和形态转换）。</strong> 本文讨论了不同的分词技巧的实用性，包括简单的 <strong>character n-gram</strong> 模型（fasttext 就是用的这个）和基于 <strong>BPE</strong> 压缩算法模型。最终实验证明在 WMT 15 英-&gt;德和英-&gt;法 翻译任务上， subword 模型（character n-gram 和 BPE）比 back-off dictionary 各自提高了 1.1 和 1.3 BELU 分数。 </p><div class="note warning"><p>接下来的 <strong>Introduction</strong> 和 <strong>Neural Machine Translation</strong> 章节暂且略过。</p>
-</div><p></p>
+<p>神经机器翻译（NMT）模型通常使用固定的词表，但是翻译是一个开放词表的问题。以前的工作是 <strong>backing off to a dictionary</strong> 来解决 OOV 词的翻译问题。本文介绍了一种新的方法，即 <strong>BPE</strong>。这是<strong>基于这样一种直觉：不同的<a href="http://www.bing.com/dict/word%20classes" target="_blank" rel="noopener">词类</a>（word classes）可以通过使用比该词更小的单元进行翻译，例如姓名（通过字符复制或音译）、复合词（通过构词翻译）以及同源词和外来词（通过语音和形态转换）。</strong> 本文讨论了不同的分词技巧的实用性，包括简单的 <strong>character n-gram</strong> 模型（fasttext 就是用的这个）和基于 <strong>BPE</strong> 压缩算法模型。最终实验证明在 WMT 15 英-&gt;德和英-&gt;法 翻译任务上， subword 模型（character n-gram 和 BPE）比 back-off dictionary 各自提高了 1.1 和 1.3 BELU 分数。 <div class="note warning"><p>接下来的 <strong>Introduction</strong> 和 <strong>Neural Machine Translation</strong> 章节暂且略过。</p>
+</div></p>
 <a id="more"></a>
 <h1 id="子词翻译">子词翻译</h1>
 <p>很多单词都能够使用单词的 subword 单元进行翻译。</p>
@@ -308,8 +306,8 @@
 </ul>
 <h2 id="byte-pair-encodingbpe">※ Byte Pair Encoding(BPE)</h2>
 <p>BPE(Gage, 1994) 是一个简单的数据压缩技巧，其迭代地使用单个、未被使用的 byte 替换在一个序列中出现最频繁的 pair of bytes（<strong>博主注：此为 1994 年 Gage 论文中的算法步骤，无法理解就跳过吧，有兴趣的看<a href="https://blog.csdn.net/qq_27590277/article/details/88343988" target="_blank" rel="noopener">这篇</a></strong>）。我们将这种算法引入进子词中。<strong>Instead of merging frequent pairs of bytes, we merge characters or character sequences</strong>. 1. 首先我们使用字符级的词表初始化符号词表，将每个单词表示为一个字符序列（<strong>如 'word' 表示为 'w o r d'</strong>），外加一个特殊的单词结尾符号“·”，这允许我们在翻译后恢复原始的分词。 2. 我们迭代地计算所有符号对，并用新的符号“AB”替换最常出现的符号对('A', 'B')。每次合并操作都产生一个以 character n-gram 表示的新符号。高频的 character n-grams（或整个单词）最终合并为单个符号，因此 BPE 不需要 shorlist（这里的 shortlist 应该指的是 1994 年论文中的 single and unused byte，即单个未被使用过的 byte）。 3. 最终符号词表的大小等于<strong>最初词表的大小加上合并操作的数量</strong>，后者是算法的唯一超参数。</p>
-<p>举个例子，以此辅助理解第一步。如下所示，有一个 vocab 其中包含四个单词 'low', 'lower', 'newest', 'widest'，它们的词频分别为 5 2 6 3。 </p><figure class="highlight ini"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">vocab</span> = {<span class="string">'l o w &lt;/w&gt;'</span> : <span class="number">5</span>, <span class="string">'l o w e r &lt;/w&gt;'</span> : <span class="number">2</span>,<span class="string">'n e w e s t &lt;/w&gt;'</span>:<span class="number">6</span>, <span class="string">'w i d e s t &lt;/w&gt;'</span>:<span class="number">3</span>}</span><br></pre></td></tr></tbody></table></figure> 将单词分割，使得当前单词 <span class="math inline">\(w_i\)</span> 和下一个单词 <span class="math inline">\(w_{i+1}\)</span> 组成一对（pair），并记录 pairs 的词频。其中符号 <code>&lt;/w&gt;</code> 其实就是 <code>·</code>，代表一个单词的结束。 <figure class="highlight clean"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">{(<span class="string">'l'</span>, <span class="string">'o'</span>): <span class="number">7</span>, (<span class="string">'o'</span>, <span class="string">'w'</span>): <span class="number">7</span>, (<span class="string">'w'</span>, <span class="string">'&lt;/w&gt;'</span>): <span class="number">5</span>, ...}</span><br></pre></td></tr></tbody></table></figure> <div class="note info"><p>完整的代码在论文中就有，这里就不加赘述了。代码很短。</p>
-</div> 为了提高效率，我们并不考虑跨单词边界（cross word boundaries）的 pairs（博主注：这个 cross word boundaries 可能指一个 pair 中的两个符号来源于不同单词）。实际上，我们通过对所有的 pairs 进行索引操作从而提高了效率。<p></p>
+<p>举个例子，以此辅助理解第一步。如下所示，有一个 vocab 其中包含四个单词 'low', 'lower', 'newest', 'widest'，它们的词频分别为 5 2 6 3。 <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">vocab</span> = &#123;<span class="string">'l o w &lt;/w&gt;'</span> : <span class="number">5</span>, <span class="string">'l o w e r &lt;/w&gt;'</span> : <span class="number">2</span>,<span class="string">'n e w e s t &lt;/w&gt;'</span>:<span class="number">6</span>, <span class="string">'w i d e s t &lt;/w&gt;'</span>:<span class="number">3</span>&#125;</span><br></pre></td></tr></table></figure> 将单词分割，使得当前单词 <span class="math inline">\(w_i\)</span> 和下一个单词 <span class="math inline">\(w_{i+1}\)</span> 组成一对（pair），并记录 pairs 的词频。其中符号 <code>&lt;/w&gt;</code> 其实就是 <code>·</code>，代表一个单词的结束。 <figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;(<span class="string">'l'</span>, <span class="string">'o'</span>): <span class="number">7</span>, (<span class="string">'o'</span>, <span class="string">'w'</span>): <span class="number">7</span>, (<span class="string">'w'</span>, <span class="string">'&lt;/w&gt;'</span>): <span class="number">5</span>, ...&#125;</span><br></pre></td></tr></table></figure> <div class="note info"><p>完整的代码在论文中就有，这里就不加赘述了。代码很短。</p>
+</div> 为了提高效率，我们并不考虑跨单词边界（cross word boundaries）的 pairs（博主注：这个 cross word boundaries 可能指一个 pair 中的两个符号来源于不同单词）。实际上，我们通过对所有的 pairs 进行索引操作从而提高了效率。</p>
 <h2 id="joint-bpe">joint BPE</h2>
 <p>我们以两种方式应用 BPE： 1. 学习两个独立的编码，一个对应 source 词表，一个对应 target 词表； 2. 关联两个词表进行学习，称之为 joint BPE。</p>
 <p><strong>实际上 joint BPE 只是简单地将训练集的 source 词表和 target 词表连接起来，以学习 joint BPE。</strong> &gt; The former has the advantage of being more compact in terms of text and vocabulary size, and having stronger guarantees that each subword unit has been seen in the training text of the respective language, whereas the latter improves consistency between the source and the target segmentation. &gt; If we apply BPE independently, the same name may be segmented differently in the two languages, which makes it harder for the neural models to learn a mapping between the subword units. To increase the consistency between English and Russian segmentation despite the differing alphabets, we transliterate the Russian vocabulary into Latin characters with ISO-9 to learn the joint BPE encoding, then transliterate the BPE merge operations back into Cyrillic to apply them to the Russian training text.</p>
@@ -384,7 +382,27 @@
           </div>
           
 
-
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
 
         </div>
           
@@ -414,8 +432,9 @@
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="朱冲䶮" src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
   <div class="site-description" itemprop="description">记录</div>
 </div>
@@ -447,17 +466,17 @@
 </div>
   <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
     Chat
-  
+  </a>
   </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
@@ -471,13 +490,13 @@
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io/" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
+          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://smallwhitezzz.gitee.io/blog" title="https://smallwhitezzz.gitee.io/blog" rel="noopener" target="_blank">凯子</a>
+          <a href="https://smallwhitezzz.gitee.io/blog" title="https:&#x2F;&#x2F;smallwhitezzz.gitee.io&#x2F;blog" rel="noopener" target="_blank">凯子</a>
         </li>
     </ul>
   </div>
@@ -504,14 +523,14 @@
 
 <div class="copyright">
   
-  © 2019 – 
+  &copy; 2019 – 
   <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div><!--
 樱花特效 
 最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
@@ -520,9 +539,15 @@
 于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
 原地址为：https://cangshui.net/2372.html
 -->
-
+<script>
+	var pathname = window.location.pathname;
+	// pathname == '/' || pathname == '/index.html'
+	if(pathname == '/categories/assorted/timeline/'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+</script>
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-
+<script src="/lib/my-utils.js"></script>
 <script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
@@ -547,7 +572,7 @@
 
         
 <div class="busuanzi-count">
-  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -579,29 +604,29 @@
   </div>
 
   
-  
+  <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  
-  
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
 
 
+<script src="/js/next-boot.js"></script>
 
-
-
-
-
-
-
-
-
-  
-
-
+<script src="/js/bookmark.js"></script>
 
 
   
 
+
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 
@@ -621,41 +646,7 @@
 
   
   <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
-  
-<!-- calendar widget -->
-
-
-
-
-<script src="/bundle.js"></script><script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-;
-
-	var pathname = window.location.pathname;
-	// pathname == '/' || pathname == '/index.html'
-	if(pathname == '/categories/assorted/timeline/'){
-		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
-	}
-;
-
+  <script>
       window.addEventListener('load', () => {
       quicklink({
         timeout : 3000,
@@ -663,4 +654,9 @@
         ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/5fe678d1.html',]
       });
       });
-  </script></body></html>
+  </script>
+<!-- calendar widget -->
+
+
+</body>
+</html>

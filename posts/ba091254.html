@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="zh-CN"><head>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
@@ -8,35 +10,25 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
+<link rel="stylesheet" href="/css/main.css">
 
 
-
-
-  
-  
-  
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="《Python深度学习》第6章预测imdb的影评
- imdb影评代码
- 第五课第二周作业：Emojify
- 本文实现吴恩达深度学习第五课第二周的Emojify作业。目的是了解一个小型nlp系统的构建流程。 首先需要导入以下模块。由于在Jupyter中打开的ipynb文件全是英文，所以本文的大部分标题也用英文，方便ctrl F。 Emojifier-V1略。
- 代码
- 加了很多注释，但是代码的顺序我">
+  <meta name="description" content="《Python深度学习》第6章预测imdb的影评 imdb影评代码 第五课第二周作业：Emojify 本文实现吴恩达深度学习第五课第二周的Emojify作业。目的是了解一个小型nlp系统的构建流程。 首先需要导入以下模块。由于在Jupyter中打开的ipynb文件全是英文，所以本文的大部分标题也用英文，方便ctrl F。 Emojifier-V1略。 代码 加了很多注释，但是代码的顺序我">
 <meta property="og:type" content="article">
 <meta property="og:title" content="练习Keras RNN的代码">
 <meta property="og:url" content="https://yan624.github.io/posts/ba091254.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="《Python深度学习》第6章预测imdb的影评
- imdb影评代码
- 第五课第二周作业：Emojify
- 本文实现吴恩达深度学习第五课第二周的Emojify作业。目的是了解一个小型nlp系统的构建流程。 首先需要导入以下模块。由于在Jupyter中打开的ipynb文件全是英文，所以本文的大部分标题也用英文，方便ctrl F。 Emojifier-V1略。
- 代码
- 加了很多注释，但是代码的顺序我">
+<meta property="og:description" content="《Python深度学习》第6章预测imdb的影评 imdb影评代码 第五课第二周作业：Emojify 本文实现吴恩达深度学习第五课第二周的Emojify作业。目的是了解一个小型nlp系统的构建流程。 首先需要导入以下模块。由于在Jupyter中打开的ipynb文件全是英文，所以本文的大部分标题也用英文，方便ctrl F。 Emojifier-V1略。 代码 加了很多注释，但是代码的顺序我">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2019-04-27T07:28:20.000Z">
 <meta property="article:modified_time" content="2020-06-14T10:53:52.137Z">
@@ -57,7 +49,7 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
 
 
   <title>练习Keras RNN的代码 | 博客</title>
@@ -91,13 +83,13 @@
   </style>
 </noscript>
 
-<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css');loadCss('//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css');loadCss('//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css"></noscript></head>
+</head>
 
-<body itemscope="" itemtype="http://schema.org/WebPage">
+<body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
     <div class="headband"></div>
 
-    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏">
@@ -179,7 +171,9 @@
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
   </div>
   <span class="popup-btn-close">
     <i class="fa fa-times-circle"></i>
@@ -217,26 +211,52 @@
     
   
   
-  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     
     	
         <!-- 弹窗插件 -->
-    		
-        
+    		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
+        <script type="text/javascript" src="/lib/spop/spop.min.js"></script>
         <!--判断此文是否为特殊的文章-->
-        
+        <script>
+          var templateSentence = '这是条不可能出现的弹窗提示。';
+          if('学习笔记' == '学习笔记')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记。';
+          else if('学习笔记' == '4me')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
+          spop({
+            template: templateSentence,
+            group: 'tips',
+            position  : 'bottom-center',
+            style: 'success',
+            autoclose: 5500,
+            onOpen: function () {
+              //这里设置灰色背景色
+            },
+            onClose: function() {
+              //这里可以取消背景色
+              /*spop({
+                template: 'ε = = (づ′▽`)づ',
+                group: 'tips',
+                position  : 'bottom-center',
+                style: 'success',
+                autoclose: 1500
+              });*/
+            }
+          });
+        </script>
     	
     
 
     <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/ba091254.html">
 
-    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
       <meta itemprop="name" content="朱冲䶮">
       <meta itemprop="description" content="记录">
     </span>
 
-    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="博客">
     </span>
       <header class="post-header">
@@ -265,11 +285,11 @@
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
                 </span>
                   ，
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/AI/dl/" itemprop="url" rel="index"><span itemprop="name">dl</span></a>
                 </span>
             </span>
@@ -293,7 +313,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-                <span class="post-meta-item-text">阅读时长 ≈</span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
               <span>1 分钟</span>
             </span>
 
@@ -314,13 +334,13 @@
 <p>加了很多注释，但是代码的顺序我做了很大的改动。下面博客里面的代码，是作业里面的代码，基本没改几个字。 <a href="https://github.com/yan624/deep-learning-notes/tree/master/RNN_learning/emojify" target="_blank" rel="noopener">emojify_V2代码</a> <a id="more"></a></p>
 <h2 id="emojifier-v2-using-lstms-in-keras">Emojifier-V2: Using LSTMs in Keras</h2>
 <h3 id="初始化">初始化</h3>
-<figure class="highlight stylus"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line">np<span class="selector-class">.random</span><span class="selector-class">.seed</span>(<span class="number">0</span>)</span><br><span class="line">from keras<span class="selector-class">.models</span> import Model</span><br><span class="line">from keras<span class="selector-class">.layers</span> import Dense, Input, Dropout, LSTM, Activation</span><br><span class="line">from keras<span class="selector-class">.layers</span><span class="selector-class">.embeddings</span> import Embedding</span><br><span class="line">from keras<span class="selector-class">.preprocessing</span> import sequence</span><br><span class="line">np<span class="selector-class">.random</span><span class="selector-class">.seed</span>(<span class="number">1</span>)</span><br></pre></td></tr></tbody></table></figure>
-<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.initializers <span class="keyword">import</span> glorot_uniform</span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line">np<span class="selector-class">.random</span><span class="selector-class">.seed</span>(<span class="number">0</span>)</span><br><span class="line">from keras<span class="selector-class">.models</span> import Model</span><br><span class="line">from keras<span class="selector-class">.layers</span> import Dense, Input, Dropout, LSTM, Activation</span><br><span class="line">from keras<span class="selector-class">.layers</span><span class="selector-class">.embeddings</span> import Embedding</span><br><span class="line">from keras<span class="selector-class">.preprocessing</span> import sequence</span><br><span class="line">np<span class="selector-class">.random</span><span class="selector-class">.seed</span>(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> keras.initializers <span class="keyword">import</span> glorot_uniform</span><br></pre></td></tr></table></figure>
 <h3 id="overview-of-the-model">Overview of the model</h3>
 <h3 id="keras-and-mini-batching">Keras and mini-batching</h3>
-<p>本练习中，我们使用mini-batch算法训练Kears。大部分深度学习框架要求在相同的mini-batch中所有序列都要等长。这使得可以执行向量化，如果你有一个3个单词的句子和一个4个单词的句子，它们之间的计算会不同（一个需要3个timestep，一个需要4个timestep，也就是说需要的LSTM个数不同），所有同时计算它们是不可能的，即无法向量化。 通用的解决办法是使用padding。具体来说，设置一个序列的最大长度，然后使其他的序列都与该长度等长。比如序列的最大长度是20，那么将其他的序列在后面补充0，知道长度等于20。所以句子“I love you”会在“you”后面被补充17个0。即<span class="math inline">\(\begin{pmatrix}e_i &amp; e_{love} &amp; e_{you} &amp; \overrightarrow{0} &amp; \overrightarrow{0} &amp; \cdots &amp; \overrightarrow{0}\end{pmatrix}\)</span>，e代表词向量。如果长度大于20的话会被裁剪。 以下代码实现将句子转换为句子中的每个单词转为索引，这个索引是GloVe词嵌入的，每一个单词对应一个id。id就是索引。 </p><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GRADED FUNCTION: sentences_to_indices</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将句子转为索引形式，短于max_len的句子后面补充0，长于max_len的句子直接截断</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sentences_to_indices</span><span class="params">(X, word_to_index, max_len)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Converts an array of sentences (strings) into an array of indices corresponding to words in the sentences.</span></span><br><span class="line"><span class="string">    The output shape should be such that it can be given to `Embedding()` (described in Figure 4). </span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Arguments:</span></span><br><span class="line"><span class="string">    X -- array of sentences (strings), of shape (m, 1)</span></span><br><span class="line"><span class="string">    word_to_index -- a dictionary containing the each word mapped to its index</span></span><br><span class="line"><span class="string">    max_len -- maximum number of words in a sentence. You can assume every sentence in X is no longer than this. </span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">    X_indices -- array of indices corresponding to words in the sentences from X, of shape (m, max_len)</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    </span><br><span class="line">    m = X.shape[<span class="number">0</span>]                                   <span class="comment"># number of training examples</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">### START CODE HERE ###</span></span><br><span class="line">    <span class="comment"># Initialize X_indices as a numpy matrix of zeros and the correct shape</span></span><br><span class="line">    X_indices = np.zeros((m, max_len))</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(m):                               <span class="comment"># loop over training examples</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># Convert the ith training sentence in lower case and split is into words. You should get a list of words.</span></span><br><span class="line">        sentence_words = X[i].lower().split()</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># Initialize j to 0</span></span><br><span class="line">        j = <span class="number">0</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># Loop over the words of sentence_words</span></span><br><span class="line">        <span class="keyword">for</span> w <span class="keyword">in</span> sentence_words:</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># Set the (i,j)th entry of X_indices to the index of the correct word.</span></span><br><span class="line">            X_indices[i, j] =word_to_index[w]</span><br><span class="line">            <span class="comment"># Increment j to j + 1</span></span><br><span class="line">            j = j + <span class="number">1</span></span><br><span class="line">            </span><br><span class="line">    <span class="comment">### END CODE HERE ###</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> X_indices</span><br></pre></td></tr></tbody></table></figure> 以下设计Embedding层，使用keras的Embedding类。 <figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GRADED FUNCTION: pretrained_embedding_layer</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 此方法创建了一个Embedding层</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pretrained_embedding_layer</span><span class="params">(word_to_vec_map, word_to_index)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Creates a Keras Embedding() layer and loads in pre-trained GloVe 50-dimensional vectors.</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Arguments:</span></span><br><span class="line"><span class="string">    word_to_vec_map -- dictionary mapping words to their GloVe vector representation.</span></span><br><span class="line"><span class="string">    word_to_index -- dictionary mapping from words to their indices in the vocabulary (400,001 words)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">    embedding_layer -- pretrained layer Keras instance</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># GloVe的总单词数量</span></span><br><span class="line">    vocab_len = len(word_to_index) + <span class="number">1</span>                  <span class="comment"># adding 1 to fit Keras embedding (requirement)</span></span><br><span class="line">    emb_dim = word_to_vec_map[<span class="string">"cucumber"</span>].shape[<span class="number">0</span>]      <span class="comment"># define dimensionality of your GloVe word vectors (= 50)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">### START CODE HERE ###</span></span><br><span class="line">    <span class="comment"># Initialize the embedding matrix as a numpy array of zeros of shape (vocab_len, dimensions of word vectors = emb_dim)</span></span><br><span class="line">    <span class="comment"># 词嵌入矩阵，之前V1压根没用词嵌入矩阵，将这个矩阵放入Embedding层中供keras使用</span></span><br><span class="line">    emb_matrix = np.zeros((vocab_len, emb_dim))</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Set each row "index" of the embedding matrix to be the word vector representation of the "index"th word of the vocabulary</span></span><br><span class="line">    <span class="keyword">for</span> word, index <span class="keyword">in</span> word_to_index.items():</span><br><span class="line">        emb_matrix[index, :] = word_to_vec_map[word]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Define Keras embedding layer with the correct output/input sizes, make it trainable.</span></span><br><span class="line">    <span class="comment"># Use Embedding(...). Make sure to set trainable=False.</span></span><br><span class="line">    embedding_layer = Embedding(vocab_len, emb_dim, trainable=<span class="keyword">False</span>)</span><br><span class="line">    <span class="comment">### END CODE HERE ###</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Build the embedding layer, it is required before setting the weights of the embedding layer. Do not modify the "None".</span></span><br><span class="line">    embedding_layer.build((<span class="keyword">None</span>,))</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Set the weights of the embedding layer to the embedding matrix. Your layer is now pretrained.</span></span><br><span class="line">    embedding_layer.set_weights([emb_matrix])</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> embedding_layer</span><br></pre></td></tr></tbody></table></figure><p></p>
+<p>本练习中，我们使用mini-batch算法训练Kears。大部分深度学习框架要求在相同的mini-batch中所有序列都要等长。这使得可以执行向量化，如果你有一个3个单词的句子和一个4个单词的句子，它们之间的计算会不同（一个需要3个timestep，一个需要4个timestep，也就是说需要的LSTM个数不同），所有同时计算它们是不可能的，即无法向量化。 通用的解决办法是使用padding。具体来说，设置一个序列的最大长度，然后使其他的序列都与该长度等长。比如序列的最大长度是20，那么将其他的序列在后面补充0，知道长度等于20。所以句子“I love you”会在“you”后面被补充17个0。即<span class="math inline">\(\begin{pmatrix}e_i &amp; e_{love} &amp; e_{you} &amp; \overrightarrow{0} &amp; \overrightarrow{0} &amp; \cdots &amp; \overrightarrow{0}\end{pmatrix}\)</span>，e代表词向量。如果长度大于20的话会被裁剪。 以下代码实现将句子转换为句子中的每个单词转为索引，这个索引是GloVe词嵌入的，每一个单词对应一个id。id就是索引。 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GRADED FUNCTION: sentences_to_indices</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将句子转为索引形式，短于max_len的句子后面补充0，长于max_len的句子直接截断</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sentences_to_indices</span><span class="params">(X, word_to_index, max_len)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Converts an array of sentences (strings) into an array of indices corresponding to words in the sentences.</span></span><br><span class="line"><span class="string">    The output shape should be such that it can be given to `Embedding()` (described in Figure 4). </span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Arguments:</span></span><br><span class="line"><span class="string">    X -- array of sentences (strings), of shape (m, 1)</span></span><br><span class="line"><span class="string">    word_to_index -- a dictionary containing the each word mapped to its index</span></span><br><span class="line"><span class="string">    max_len -- maximum number of words in a sentence. You can assume every sentence in X is no longer than this. </span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">    X_indices -- array of indices corresponding to words in the sentences from X, of shape (m, max_len)</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    </span><br><span class="line">    m = X.shape[<span class="number">0</span>]                                   <span class="comment"># number of training examples</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">### START CODE HERE ###</span></span><br><span class="line">    <span class="comment"># Initialize X_indices as a numpy matrix of zeros and the correct shape</span></span><br><span class="line">    X_indices = np.zeros((m, max_len))</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(m):                               <span class="comment"># loop over training examples</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># Convert the ith training sentence in lower case and split is into words. You should get a list of words.</span></span><br><span class="line">        sentence_words = X[i].lower().split()</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># Initialize j to 0</span></span><br><span class="line">        j = <span class="number">0</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># Loop over the words of sentence_words</span></span><br><span class="line">        <span class="keyword">for</span> w <span class="keyword">in</span> sentence_words:</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># Set the (i,j)th entry of X_indices to the index of the correct word.</span></span><br><span class="line">            X_indices[i, j] =word_to_index[w]</span><br><span class="line">            <span class="comment"># Increment j to j + 1</span></span><br><span class="line">            j = j + <span class="number">1</span></span><br><span class="line">            </span><br><span class="line">    <span class="comment">### END CODE HERE ###</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> X_indices</span><br></pre></td></tr></table></figure> 以下设计Embedding层，使用keras的Embedding类。 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GRADED FUNCTION: pretrained_embedding_layer</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 此方法创建了一个Embedding层</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pretrained_embedding_layer</span><span class="params">(word_to_vec_map, word_to_index)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Creates a Keras Embedding() layer and loads in pre-trained GloVe 50-dimensional vectors.</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Arguments:</span></span><br><span class="line"><span class="string">    word_to_vec_map -- dictionary mapping words to their GloVe vector representation.</span></span><br><span class="line"><span class="string">    word_to_index -- dictionary mapping from words to their indices in the vocabulary (400,001 words)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">    embedding_layer -- pretrained layer Keras instance</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># GloVe的总单词数量</span></span><br><span class="line">    vocab_len = len(word_to_index) + <span class="number">1</span>                  <span class="comment"># adding 1 to fit Keras embedding (requirement)</span></span><br><span class="line">    emb_dim = word_to_vec_map[<span class="string">"cucumber"</span>].shape[<span class="number">0</span>]      <span class="comment"># define dimensionality of your GloVe word vectors (= 50)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">### START CODE HERE ###</span></span><br><span class="line">    <span class="comment"># Initialize the embedding matrix as a numpy array of zeros of shape (vocab_len, dimensions of word vectors = emb_dim)</span></span><br><span class="line">    <span class="comment"># 词嵌入矩阵，之前V1压根没用词嵌入矩阵，将这个矩阵放入Embedding层中供keras使用</span></span><br><span class="line">    emb_matrix = np.zeros((vocab_len, emb_dim))</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Set each row "index" of the embedding matrix to be the word vector representation of the "index"th word of the vocabulary</span></span><br><span class="line">    <span class="keyword">for</span> word, index <span class="keyword">in</span> word_to_index.items():</span><br><span class="line">        emb_matrix[index, :] = word_to_vec_map[word]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Define Keras embedding layer with the correct output/input sizes, make it trainable.</span></span><br><span class="line">    <span class="comment"># Use Embedding(...). Make sure to set trainable=False.</span></span><br><span class="line">    embedding_layer = Embedding(vocab_len, emb_dim, trainable=<span class="keyword">False</span>)</span><br><span class="line">    <span class="comment">### END CODE HERE ###</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Build the embedding layer, it is required before setting the weights of the embedding layer. Do not modify the "None".</span></span><br><span class="line">    embedding_layer.build((<span class="keyword">None</span>,))</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Set the weights of the embedding layer to the embedding matrix. Your layer is now pretrained.</span></span><br><span class="line">    embedding_layer.set_weights([emb_matrix])</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> embedding_layer</span><br></pre></td></tr></table></figure></p>
 <h3 id="building-the-emojifier-v2">Building the Emojifier-V2</h3>
-<p>以下代码完成Emojify。主要是keras代码。 </p><figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GRADED FUNCTION: Emojify_V2</span></span><br><span class="line"></span><br><span class="line"><span class="attr">def</span> <span class="string">Emojify_V2(input_shape, word_to_vec_map, word_to_index):</span></span><br><span class="line">    <span class="attr">"""</span></span><br><span class="line">    <span class="attr">Function</span> <span class="string">creating the Emojify-v2 model's graph.</span></span><br><span class="line">    </span><br><span class="line">    <span class="attr">Arguments</span>:<span class="string"></span></span><br><span class="line">    <span class="attr">input_shape</span> <span class="string">-- shape of the input, usually (max_len,)</span></span><br><span class="line">    <span class="attr">word_to_vec_map</span> <span class="string">-- dictionary mapping every word in a vocabulary into its 50-dimensional vector representation</span></span><br><span class="line">    <span class="attr">word_to_index</span> <span class="string">-- dictionary mapping from words to their indices in the vocabulary (400,001 words)</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">Returns</span>:<span class="string"></span></span><br><span class="line">    <span class="attr">model</span> <span class="string">-- a model instance in Keras</span></span><br><span class="line">    <span class="attr">"""</span></span><br><span class="line">    </span><br><span class="line"><span class="comment">    ### START CODE HERE ###</span></span><br><span class="line"><span class="comment">    # Define sentence_indices as the input of the graph, it should be of shape input_shape and dtype 'int32' (as it contains indices).</span></span><br><span class="line">    <span class="attr">sentence_indices</span> = <span class="string">Input(input_shape, dtype='int32')</span></span><br><span class="line">    </span><br><span class="line"><span class="comment">    # Create the embedding layer pretrained with GloVe Vectors (≈1 line)</span></span><br><span class="line">    <span class="attr">embedding_layer</span> = <span class="string">pretrained_embedding_layer(word_to_vec_map, word_to_index)</span></span><br><span class="line">    </span><br><span class="line"><span class="comment">    # Propagate sentence_indices through your embedding layer, you get back the embeddings</span></span><br><span class="line">    <span class="attr">embeddings</span> = <span class="string">embedding_layer(sentence_indices)   </span></span><br><span class="line">    </span><br><span class="line"><span class="comment">    # Propagate the embeddings through an LSTM layer with 128-dimensional hidden state</span></span><br><span class="line"><span class="comment">    # Be careful, the returned output should be a batch of sequences.</span></span><br><span class="line"><span class="comment">    # 这个128是神经元的个数</span></span><br><span class="line">    <span class="attr">X</span> = <span class="string">LSTM(128, return_sequences=True)(embeddings)</span></span><br><span class="line"><span class="comment">    # Add dropout with a probability of 0.5</span></span><br><span class="line">    <span class="attr">X</span> = <span class="string">Dropout(0.5)(X)</span></span><br><span class="line"><span class="comment">    # Propagate X trough another LSTM layer with 128-dimensional hidden state</span></span><br><span class="line"><span class="comment">    # Be careful, the returned output should be a single hidden state, not a batch of sequences.</span></span><br><span class="line">    <span class="attr">X</span> = <span class="string">LSTM(128, return_sequences=False)(X)</span></span><br><span class="line"><span class="comment">    # Add dropout with a probability of 0.5</span></span><br><span class="line">    <span class="attr">X</span> = <span class="string">Dropout(0.5)(X)</span></span><br><span class="line"><span class="comment">    # Propagate X through a Dense layer with softmax activation to get back a batch of 5-dimensional vectors.</span></span><br><span class="line">    <span class="attr">X</span> = <span class="string">Dense(5)(X)</span></span><br><span class="line"><span class="comment">    # Add a softmax activation</span></span><br><span class="line">    <span class="attr">X</span> = <span class="string">Activation('softmax')(X)</span></span><br><span class="line">    </span><br><span class="line"><span class="comment">    # Create Model instance which converts sentence_indices into X.</span></span><br><span class="line">    <span class="attr">model</span> = <span class="string">Model(inputs=sentence_indices, outputs=X)</span></span><br><span class="line">    </span><br><span class="line"><span class="comment">    ### END CODE HERE ###</span></span><br><span class="line">    </span><br><span class="line">    <span class="attr">return</span> <span class="string">model</span></span><br></pre></td></tr></tbody></table></figure><p></p>
+<p>以下代码完成Emojify。主要是keras代码。 <figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GRADED FUNCTION: Emojify_V2</span></span><br><span class="line"></span><br><span class="line"><span class="attr">def</span> <span class="string">Emojify_V2(input_shape, word_to_vec_map, word_to_index):</span></span><br><span class="line">    <span class="attr">"""</span></span><br><span class="line">    <span class="attr">Function</span> <span class="string">creating the Emojify-v2 model's graph.</span></span><br><span class="line">    </span><br><span class="line">    <span class="attr">Arguments</span>:<span class="string"></span></span><br><span class="line">    <span class="attr">input_shape</span> <span class="string">-- shape of the input, usually (max_len,)</span></span><br><span class="line">    <span class="attr">word_to_vec_map</span> <span class="string">-- dictionary mapping every word in a vocabulary into its 50-dimensional vector representation</span></span><br><span class="line">    <span class="attr">word_to_index</span> <span class="string">-- dictionary mapping from words to their indices in the vocabulary (400,001 words)</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">Returns</span>:<span class="string"></span></span><br><span class="line">    <span class="attr">model</span> <span class="string">-- a model instance in Keras</span></span><br><span class="line">    <span class="attr">"""</span></span><br><span class="line">    </span><br><span class="line"><span class="comment">    ### START CODE HERE ###</span></span><br><span class="line"><span class="comment">    # Define sentence_indices as the input of the graph, it should be of shape input_shape and dtype 'int32' (as it contains indices).</span></span><br><span class="line">    <span class="attr">sentence_indices</span> = <span class="string">Input(input_shape, dtype='int32')</span></span><br><span class="line">    </span><br><span class="line"><span class="comment">    # Create the embedding layer pretrained with GloVe Vectors (≈1 line)</span></span><br><span class="line">    <span class="attr">embedding_layer</span> = <span class="string">pretrained_embedding_layer(word_to_vec_map, word_to_index)</span></span><br><span class="line">    </span><br><span class="line"><span class="comment">    # Propagate sentence_indices through your embedding layer, you get back the embeddings</span></span><br><span class="line">    <span class="attr">embeddings</span> = <span class="string">embedding_layer(sentence_indices)   </span></span><br><span class="line">    </span><br><span class="line"><span class="comment">    # Propagate the embeddings through an LSTM layer with 128-dimensional hidden state</span></span><br><span class="line"><span class="comment">    # Be careful, the returned output should be a batch of sequences.</span></span><br><span class="line"><span class="comment">    # 这个128是神经元的个数</span></span><br><span class="line">    <span class="attr">X</span> = <span class="string">LSTM(128, return_sequences=True)(embeddings)</span></span><br><span class="line"><span class="comment">    # Add dropout with a probability of 0.5</span></span><br><span class="line">    <span class="attr">X</span> = <span class="string">Dropout(0.5)(X)</span></span><br><span class="line"><span class="comment">    # Propagate X trough another LSTM layer with 128-dimensional hidden state</span></span><br><span class="line"><span class="comment">    # Be careful, the returned output should be a single hidden state, not a batch of sequences.</span></span><br><span class="line">    <span class="attr">X</span> = <span class="string">LSTM(128, return_sequences=False)(X)</span></span><br><span class="line"><span class="comment">    # Add dropout with a probability of 0.5</span></span><br><span class="line">    <span class="attr">X</span> = <span class="string">Dropout(0.5)(X)</span></span><br><span class="line"><span class="comment">    # Propagate X through a Dense layer with softmax activation to get back a batch of 5-dimensional vectors.</span></span><br><span class="line">    <span class="attr">X</span> = <span class="string">Dense(5)(X)</span></span><br><span class="line"><span class="comment">    # Add a softmax activation</span></span><br><span class="line">    <span class="attr">X</span> = <span class="string">Activation('softmax')(X)</span></span><br><span class="line">    </span><br><span class="line"><span class="comment">    # Create Model instance which converts sentence_indices into X.</span></span><br><span class="line">    <span class="attr">model</span> = <span class="string">Model(inputs=sentence_indices, outputs=X)</span></span><br><span class="line">    </span><br><span class="line"><span class="comment">    ### END CODE HERE ###</span></span><br><span class="line">    </span><br><span class="line">    <span class="attr">return</span> <span class="string">model</span></span><br></pre></td></tr></table></figure></p>
 <h2 id="系统整体流程">系统整体流程</h2>
 <p>RNN 1. 读取GloVe文件和训练数据 2. 将训练数据的label转为one hot表示 3. 求出所有训练数据中最长句子的长度，该长度就是LSTM的个数。由于向量化的要求，LSTM的个数需要相同，以最长长度作为LSTM的个数，当然并不需要每个项目都这么设置，完全可以自己选，随便举几个例子比如20,50，100等。 4. 设计Embedding层 5. 建立神经网络模型 6. 将每句话转换为索引表示，如果长度不够就填0，够了就截断。《Python深度学习》中使用了pad_sequences类 7. 使用模型预测，第6条就是输入的训练数据，第2条就是输入的标签</p>
 <p>Embedding层需要输入一个词嵌入矩阵，就是一个二维数组。每行代表一个单词的特征向量，行数就是单词的索引。而输入的训练数据被处理成单词的索引形式。如一组训练样本，每个单词被替换成唯一的索引。 Embedding层太过复杂，故不作详解。第一章的代码中全部有注释。</p>
@@ -395,7 +415,27 @@
           </div>
           
 
-
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
 
         </div>
           
@@ -425,8 +465,9 @@
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="朱冲䶮" src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
   <div class="site-description" itemprop="description">记录</div>
 </div>
@@ -458,17 +499,17 @@
 </div>
   <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
     Chat
-  
+  </a>
   </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
@@ -482,13 +523,13 @@
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io/" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
+          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://smallwhitezzz.gitee.io/blog" title="https://smallwhitezzz.gitee.io/blog" rel="noopener" target="_blank">凯子</a>
+          <a href="https://smallwhitezzz.gitee.io/blog" title="https:&#x2F;&#x2F;smallwhitezzz.gitee.io&#x2F;blog" rel="noopener" target="_blank">凯子</a>
         </li>
     </ul>
   </div>
@@ -515,14 +556,14 @@
 
 <div class="copyright">
   
-  © 2019 – 
+  &copy; 2019 – 
   <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div><!--
 樱花特效 
 最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
@@ -531,9 +572,15 @@
 于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
 原地址为：https://cangshui.net/2372.html
 -->
-
+<script>
+	var pathname = window.location.pathname;
+	// pathname == '/' || pathname == '/index.html'
+	if(pathname == '/categories/assorted/timeline/'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+</script>
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-
+<script src="/lib/my-utils.js"></script>
 <script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
@@ -558,7 +605,7 @@
 
         
 <div class="busuanzi-count">
-  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -590,29 +637,29 @@
   </div>
 
   
-  
+  <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  
-  
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
 
 
+<script src="/js/next-boot.js"></script>
 
-
-
-
-
-
-
-
-
-  
-
-
+<script src="/js/bookmark.js"></script>
 
 
   
 
+
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 
@@ -632,68 +679,7 @@
 
   
   <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
-  
-<!-- calendar widget -->
-
-
-
-
-<script src="/bundle.js"></script><script>
-          var templateSentence = '这是条不可能出现的弹窗提示。';
-          if('学习笔记' == '学习笔记')
-            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记。';
-          else if('学习笔记' == '4me')
-            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
-          spop({
-            template: templateSentence,
-            group: 'tips',
-            position  : 'bottom-center',
-            style: 'success',
-            autoclose: 5500,
-            onOpen: function () {
-              //这里设置灰色背景色
-            },
-            onClose: function() {
-              //这里可以取消背景色
-              /*spop({
-                template: 'ε = = (づ′▽`)づ',
-                group: 'tips',
-                position  : 'bottom-center',
-                style: 'success',
-                autoclose: 1500
-              });*/
-            }
-          });
-        ;
-
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-;
-
-	var pathname = window.location.pathname;
-	// pathname == '/' || pathname == '/index.html'
-	if(pathname == '/categories/assorted/timeline/'){
-		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
-	}
-;
-
+  <script>
       window.addEventListener('load', () => {
       quicklink({
         timeout : 3000,
@@ -701,4 +687,9 @@
         ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/ba091254.html',]
       });
       });
-  </script></body></html>
+  </script>
+<!-- calendar widget -->
+
+
+</body>
+</html>

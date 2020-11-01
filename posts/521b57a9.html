@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="zh-CN"><head>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
@@ -8,31 +10,25 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
+<link rel="stylesheet" href="/css/main.css">
 
 
-
-
-  
-  
-  
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="论文概要
- 论文地址，发表于 2016 年。
- 
- 语义分析的目的是将自然语言映射到机器可解释的有意义表示。传统的方法依赖于高质量的词汇、人工构建的模板以及特定领域或特定表示的语言特征，本文提出了一种注意力增强的 encoder-decoder 通用模型。将输入的话表示为向量形式，并通过调节输出序列或者树生成逻辑形式（总结来说，就是将话语转为逻辑形式，详情请看图 1）。 下图将一句话转为了逻辑形式">
+  <meta name="description" content="论文概要 论文地址，发表于 2016 年。  语义分析的目的是将自然语言映射到机器可解释的有意义表示。传统的方法依赖于高质量的词汇、人工构建的模板以及特定领域或特定表示的语言特征，本文提出了一种注意力增强的 encoder-decoder 通用模型。将输入的话表示为向量形式，并通过调节输出序列或者树生成逻辑形式（总结来说，就是将话语转为逻辑形式，详情请看图 1）。 下图将一句话转为了逻辑形式">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Language to Logical Form with Neural Attention">
 <meta property="og:url" content="https://yan624.github.io/posts/521b57a9.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="论文概要
- 论文地址，发表于 2016 年。
- 
- 语义分析的目的是将自然语言映射到机器可解释的有意义表示。传统的方法依赖于高质量的词汇、人工构建的模板以及特定领域或特定表示的语言特征，本文提出了一种注意力增强的 encoder-decoder 通用模型。将输入的话表示为向量形式，并通过调节输出序列或者树生成逻辑形式（总结来说，就是将话语转为逻辑形式，详情请看图 1）。 下图将一句话转为了逻辑形式">
+<meta property="og:description" content="论文概要 论文地址，发表于 2016 年。  语义分析的目的是将自然语言映射到机器可解释的有意义表示。传统的方法依赖于高质量的词汇、人工构建的模板以及特定领域或特定表示的语言特征，本文提出了一种注意力增强的 encoder-decoder 通用模型。将输入的话表示为向量形式，并通过调节输出序列或者树生成逻辑形式（总结来说，就是将话语转为逻辑形式，详情请看图 1）。 下图将一句话转为了逻辑形式">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0%EF%BC%9ALanguage%20to%20Logical%20Form%20with%20Neural%20Attention/%E8%AF%AD%E5%8F%A5%E8%BD%AC%E4%B8%BA%E9%80%BB%E8%BE%91%E5%BD%A2%E5%BC%8F.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0%EF%BC%9ALanguage%20to%20Logical%20Form%20with%20Neural%20Attention/Seq2Seq.jpg">
@@ -61,7 +57,7 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
 
 
   <title>Language to Logical Form with Neural Attention | 博客</title>
@@ -95,13 +91,13 @@
   </style>
 </noscript>
 
-<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css');loadCss('//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css');loadCss('//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css"></noscript></head>
+</head>
 
-<body itemscope="" itemtype="http://schema.org/WebPage">
+<body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
     <div class="headband"></div>
 
-    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏">
@@ -183,7 +179,9 @@
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
   </div>
   <span class="popup-btn-close">
     <i class="fa fa-times-circle"></i>
@@ -221,7 +219,7 @@
     
   
   
-  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     
     	
     
@@ -232,13 +230,13 @@
 
     <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/521b57a9.html">
 
-    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
       <meta itemprop="name" content="朱冲䶮">
       <meta itemprop="description" content="记录">
     </span>
 
-    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="博客">
     </span>
       <header class="post-header">
@@ -267,7 +265,7 @@
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a>
                 </span>
             </span>
@@ -291,7 +289,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-                <span class="post-meta-item-text">阅读时长 ≈</span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
               <span>4 分钟</span>
             </span>
 
@@ -307,7 +305,7 @@
         <h1 id="论文概要">论文概要</h1>
 <div class="note info"><p><a href="https://arxiv.org/pdf/1601.01280.pdf" target="_blank" rel="noopener">论文地址</a>，发表于 2016 年。</p>
 </div>
-<p>语义分析的目的是将自然语言映射到机器可解释的有意义表示。传统的方法依赖于高质量的词汇、人工构建的模板以及特定领域或特定表示的语言特征，本文提出了一种注意力增强的 encoder-decoder 通用模型。将输入的话表示为向量形式，并通过调节输出序列或者树生成逻辑形式（总结来说，就是<strong>将话语转为逻辑形式</strong>，详情请看图 1）。 下图将一句话转为了逻辑形式，不同于以前的方法，它是通过神经网络生成的，而以前的方法依赖于手写的规则。图片取自 <a href="https://www.aclweb.org/anthology/W00-1317" target="_blank" rel="noopener" title="Automated construction ofdatabase interfaces: Intergrating statistical and rela-tional learning for semantic parsing">Tang and Mooney200</a>。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language%20to%20Logical%20Form%20with%20Neural%20Attention/语句转为逻辑形式.jpg" alt="语句转为逻辑形式"></p>
+<p>语义分析的目的是将自然语言映射到机器可解释的有意义表示。传统的方法依赖于高质量的词汇、人工构建的模板以及特定领域或特定表示的语言特征，本文提出了一种注意力增强的 encoder-decoder 通用模型。将输入的话表示为向量形式，并通过调节输出序列或者树生成逻辑形式（总结来说，就是<strong>将话语转为逻辑形式</strong>，详情请看图 1）。 下图将一句话转为了逻辑形式，不同于以前的方法，它是通过神经网络生成的，而以前的方法依赖于手写的规则。图片取自 <a href="https://www.aclweb.org/anthology/W00-1317" target="_blank" rel="noopener" title="Automated construction ofdatabase interfaces: Intergrating statistical and rela-tional learning for semantic parsing">Tang and Mooney200</a>。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language%20to%20Logical%20Form%20with%20Neural%20Attention/语句转为逻辑形式.jpg" alt="语句转为逻辑形式" /></p>
 <p>基于 RNN 的 encoder-decoder 已成功应用于各种 NLP 任务，图 1 中使用了 LSTM，我们的做法是提出了两个变体模型。<strong>第一个模型</strong>将语义解析视为普通的序列转换任务，<strong>第二个模型</strong>配备了层次树解码器，该解码器明确地捕获逻辑形式的组合结构。我们还引入了<strong>注意力机制</strong>，并提出一个识别步骤来<strong>识别很少提到的实体</strong>和<strong>数字</strong>。 对<strong>四个数据集</strong>的实验结果表明，我们的方法在不使用人工设计特征的情况下具有竞争力，并且易于迁移。 我们的工作综合了两种标准研究，即<strong>语义分析</strong>和 <strong>encoder-decoder 架构的神经网络</strong>。 <a id="more"></a></p>
 <h1 id="相关工作">相关工作</h1>
 <p>学习语义解析器的问题引起了广泛的关注，可以追溯到 Woods（1973年）。。。。</p>
@@ -323,17 +321,17 @@
 \begin{align}
     h^l_t = \text{LSTM}(h^l_{t-1},h^{l-1}_t) \tag 2
 \end{align}
-\]</span> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language%20to%20Logical%20Form%20with%20Neural%20Attention/Seq2Seq.jpg" alt="Seq2Seq"> 在实验中，遵循 <a href="https://arxiv.org/pdf/1409.2329.pdf" target="_blank" rel="noopener" title="RECURRENT NEURAL NETWORK REGULARIZATION">Zaremba et al. 2015</a> 提出的架构。不过，使用其他类型的门控激活函数也是可以的（例如<a href="https://arxiv.org/pdf/1406.1078.pdf" target="_blank" rel="noopener" title="Learning phrase representations using RNN encoder-decoder for statistical machine translation">Cho et al. 2014</a>）。<strong>对于 encoder</strong>，<span class="math inline">\(h^0_t = W_qe(x_t)\)</span>（注：此公式是第 0 层的运算步骤，即输入层）是 RNN 中输入的词向量，<span class="math inline">\(W_q \in \mathbb{R}^{n \times |V_q|}\)</span> 代表输入层的权重值矩阵，e(·) 代表对应 token 的索引。<strong>对于 decoder</strong>，<span class="math inline">\(h^0_t = W_ae(y_{t-1})\)</span> 代表前一个预测词的词向量，其中 <span class="math inline">\(W_a \in \mathbb{R}^{n \times |V_a|}\)</span>。接下来，最后的 LSTM <span class="math inline">\(h^L_t\)</span> 被用于预测 <span class="math inline">\(t\)</span>-th 输出 token，计算公式为： <span class="math display">\[
+\]</span> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language%20to%20Logical%20Form%20with%20Neural%20Attention/Seq2Seq.jpg" alt="Seq2Seq" /> 在实验中，遵循 <a href="https://arxiv.org/pdf/1409.2329.pdf" target="_blank" rel="noopener" title="RECURRENT NEURAL NETWORK REGULARIZATION">Zaremba et al. 2015</a> 提出的架构。不过，使用其他类型的门控激活函数也是可以的（例如<a href="https://arxiv.org/pdf/1406.1078.pdf" target="_blank" rel="noopener" title="Learning phrase representations using RNN encoder-decoder for statistical machine translation">Cho et al. 2014</a>）。<strong>对于 encoder</strong>，<span class="math inline">\(h^0_t = W_qe(x_t)\)</span>（注：此公式是第 0 层的运算步骤，即输入层）是 RNN 中输入的词向量，<span class="math inline">\(W_q \in \mathbb{R}^{n \times |V_q|}\)</span> 代表输入层的权重值矩阵，e(·) 代表对应 token 的索引。<strong>对于 decoder</strong>，<span class="math inline">\(h^0_t = W_ae(y_{t-1})\)</span> 代表前一个预测词的词向量，其中 <span class="math inline">\(W_a \in \mathbb{R}^{n \times |V_a|}\)</span>。接下来，最后的 LSTM <span class="math inline">\(h^L_t\)</span> 被用于预测 <span class="math inline">\(t\)</span>-th 输出 token，计算公式为： <span class="math display">\[
 \begin{align}
     p(y_t|y_t,q) = softmax(W_oh^L_t)^T e(y_t) \tag 3
 \end{align}
 \]</span> <strong>该公式用于预测每一个 token</strong>。另外补充一点，增加了 “start-of-sequence” <code>&lt;s&gt;</code> 和 “end-of-sequence” <code>&lt;/s&gt;</code>。 该模型总的来说，就是 LSTM 的计算方法，也没什么好说的。</p>
 <h2 id="seq2tree">Seq2Tree</h2>
-<p>Seq2Seq 模型有一个<strong>缺点</strong>就是它<strong>忽略了逻辑形式的层次结构</strong>。所以，要改良的话，它需要记住各种辅助信息（比如括号对），以此生成格式良好的输出。如下图 3 所示，是一个层次树 decoder： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language%20to%20Logical%20Form%20with%20Neural%20Attention/Seq2Tree模型.jpg" alt="Seq2Tree模型"></p>
+<p>Seq2Seq 模型有一个<strong>缺点</strong>就是它<strong>忽略了逻辑形式的层次结构</strong>。所以，要改良的话，它需要记住各种辅助信息（比如括号对），以此生成格式良好的输出。如下图 3 所示，是一个层次树 decoder： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language%20to%20Logical%20Form%20with%20Neural%20Attention/Seq2Tree模型.jpg" alt="Seq2Tree模型" /></p>
 <p>Seq2Tree 与 Seq2Seq 的编码器类似，不同的是解码器。Seq2Tree 以自上而下的方式生成逻辑，为了定义树结构，我们定义了一个表示子树的 “nonterminal” <code>&lt;n&gt;</code> 标记。如图 3 所示，将<strong><em>逻辑形式 “lambda $0 e (and (&gt;(departure_time $0) 1600:ti) (from $0 dallas:ci))”</em></strong>预处理为树，方法是<strong>用 nonterminal 替换括号对之间的标记</strong>（token）。<strong>特殊记号 <code>&lt;s&gt;</code> 和 <code>&lt;(&gt;</code> 分别表示序列和 nonterminal 序列的开头</strong>（由于缺少空间，图3中省略了），<strong>记号 <code>&lt;/s&gt;</code> 代表序列结束</strong>。具体步骤是： 1. 编码输入值 q； 2. 层次树解码器使用 RNN 在逻辑形式 a（在<strong>任务定义</strong>中已经说明了 q 和 a 的含义）的对应部分的子树中生成 tokens（注意这里的 token 带了 s）； 3. 如果预测的 token 为 <code>&lt;n&gt;</code>，则通过调节 nonterminal 的隐藏向量来解码序列。（博主注：举个例子理解一下：看图 3 的第一层，先是使用 encoder 进行编码，接着开始对逻辑形式进行解码，逻辑形式就是上面的斜体部分。接下来预测到了 token<code>&lt;n&gt;</code> 于是调用 nonterminal 的隐藏向量来进行解码，即生成一棵子树。以此类推，碰到 toekn <code>&lt;n&gt;</code> 就开始解码） 4. 与 Seq2Seq 解码器不同，当前的隐藏状态不仅仅取决于上一个时间步，为了更好地利用 parent nonterminal 的信息，我们引入了一个 parent-feeding 的连接，其中 parent nonterminal 的隐藏向量与输入连接（concatenated）并喂入 LSTM。</p>
 <p>再举个例子帮助理解一下，如图 4 所示。逻辑形式为 <strong><em>A B (C)</em></strong>，其中 <span class="math inline">\(y_1 \dots y_6\)</span> 代表不同的时间步，<strong><em>(C)</em></strong> 对应子树。解码一共有<strong>两个步骤</strong>：一旦输入值 q 被编码，首先在深度为 1 处生成 <span class="math inline">\(y_1 \dots y_4\)</span>，直到 token <code>&lt;/s&gt;</code> 被预测到；接下来通过调节 nonterminal <span class="math inline">\(t_3\)</span> 的隐藏向量来生成 <span class="math inline">\(y_5, y_6\)</span>，<span class="math inline">\(p(a|q)\)</span> 的概率是这<strong>两个序列解码步骤</strong>的乘积： <span class="math display">\[
 p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)
-\]</span> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language%20to%20Logical%20Form%20with%20Neural%20Attention/一个简单的Seq2Tree的例子.jpg" alt="一个简单的Seq2Tree的例子"></p>
+\]</span> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language%20to%20Logical%20Form%20with%20Neural%20Attention/一个简单的Seq2Tree的例子.jpg" alt="一个简单的Seq2Tree的例子" /></p>
 <h2 id="attention-机制">Attention 机制</h2>
 <p><strong><em>Attention 的原理</em></strong>。</p>
 <h2 id="训练模型">训练模型</h2>
@@ -347,7 +345,7 @@ p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)
 <h1 id="实验">实验</h1>
 <p>我们将我们的方法在四个数据集上分别与以前的多个系统进行比较，下面将描述这些数据集。代码可在此处获得<a href="https://github.com/donglixp/lang2logic" target="_blank" rel="noopener" class="uri">https://github.com/donglixp/lang2logic</a>（lua 版，官方），<a href="https://github.com/Alex-Fabbri/lang2logic-PyTorch" target="_blank" rel="noopener" class="uri">https://github.com/Alex-Fabbri/lang2logic-PyTorch</a>（python 版，非官方）。</p>
 <h2 id="数据集">数据集</h2>
-<p><strong>JOBS</strong> 工作 <strong>GEO</strong> Geoquery data <strong>ATIS</strong> Airline Travel Information System（航空旅行信息系统） <strong>IFTTT</strong> if this then that（<a href="https://ifttt.com/" target="_blank" rel="noopener">地址</a> <a href="https://baike.baidu.com/item/ifttt/8378533" target="_blank" rel="noopener">百度百科介绍</a>），<a href="https://www.aclweb.org/anthology/P15-1085" target="_blank" rel="noopener">Quirk et al.2015</a> 从 IFTTT 网站提取大量的 if-this-then-that 来创建此数据库 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language%20to%20Logical%20Form%20with%20Neural%20Attention/数据集介绍.jpg" alt="数据集介绍"></p>
+<p><strong>JOBS</strong> 工作 <strong>GEO</strong> Geoquery data <strong>ATIS</strong> Airline Travel Information System（航空旅行信息系统） <strong>IFTTT</strong> if this then that（<a href="https://ifttt.com/" target="_blank" rel="noopener">地址</a> <a href="https://baike.baidu.com/item/ifttt/8378533" target="_blank" rel="noopener">百度百科介绍</a>），<a href="https://www.aclweb.org/anthology/P15-1085" target="_blank" rel="noopener">Quirk et al.2015</a> 从 IFTTT 网站提取大量的 if-this-then-that 来创建此数据库 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Language%20to%20Logical%20Form%20with%20Neural%20Attention/数据集介绍.jpg" alt="数据集介绍" /></p>
 <h2 id="设置">设置</h2>
 <p>自然语言语句是小写的，并且使用基于维基百科的常见拼写错误列表来纠正拼写错误。使用 NLTK 来限制词汇（[Bird et al.2009] Natural Language Processing with Python. O’Reilly Media.），对于 IFTTT 过滤了在训练集中出现少于五次的 token，channels 和 functions。对于其他数据集，过滤了在训练集中至少两次没有出现的输入词，但保留了逻辑形式中的所有 token。并且使用了<strong>参数识别</strong>，当然也可以使用更复杂的办法。 超参数在 JOBS 和 GEO 上使用了交叉验证，使用了 ATIS 和 IFTTT 作为标准开发集（就是验证集，不同的叫法而已 development/validation）。 - <strong>RMSProp</strong>：batch size = 20；parameter = 0.95； - <strong>梯度修剪</strong>为 5 以缓解梯度爆炸（<a href="http://proceedings.mlr.press/v28/pascanu13.pdf" target="_blank" rel="noopener">Pascanu et al.2013</a>）； - <strong>参数</strong>从均匀分布 <span class="math inline">\(U(-0.08, 0.08)\)</span> 中随机初始化； - 两层 <strong>LSTM</strong> 用于 IFTTT，单层 LSTM 用于其他数据集； - <strong>dropout</strong> <span class="math inline">\(\in\)</span> {0.2,0.3,0.4,0.5}； - 隐藏向量和词嵌入<strong>维度</strong>从 {150, 200, 250} 选择； - <strong>early stopping</strong>； - 输入句子在进入编码器之前被反转（<a href="http://papers.nips.cc/paper/5346-sequence-to-sequence-learning-with-neural-networks.pdf" target="_blank" rel="noopener">Sutskever et al.2014</a>）； - <strong>贪婪搜索</strong>生成逻辑形式； - <strong>softmax</strong> 用于分类。</p>
 <h2 id="结果">结果</h2>
@@ -428,7 +426,27 @@ p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)
           </div>
           
 
-
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
 
         </div>
           
@@ -458,8 +476,9 @@ p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="朱冲䶮" src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
   <div class="site-description" itemprop="description">记录</div>
 </div>
@@ -491,17 +510,17 @@ p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)
 </div>
   <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
     Chat
-  
+  </a>
   </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
@@ -515,13 +534,13 @@ p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io/" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
+          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://smallwhitezzz.gitee.io/blog" title="https://smallwhitezzz.gitee.io/blog" rel="noopener" target="_blank">凯子</a>
+          <a href="https://smallwhitezzz.gitee.io/blog" title="https:&#x2F;&#x2F;smallwhitezzz.gitee.io&#x2F;blog" rel="noopener" target="_blank">凯子</a>
         </li>
     </ul>
   </div>
@@ -548,14 +567,14 @@ p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)
 
 <div class="copyright">
   
-  © 2019 – 
+  &copy; 2019 – 
   <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div><!--
 樱花特效 
 最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
@@ -564,9 +583,15 @@ p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)
 于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
 原地址为：https://cangshui.net/2372.html
 -->
-
+<script>
+	var pathname = window.location.pathname;
+	// pathname == '/' || pathname == '/index.html'
+	if(pathname == '/categories/assorted/timeline/'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+</script>
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-
+<script src="/lib/my-utils.js"></script>
 <script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
@@ -591,7 +616,7 @@ p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)
 
         
 <div class="busuanzi-count">
-  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -623,29 +648,29 @@ p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)
   </div>
 
   
-  
+  <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  
-  
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
 
 
+<script src="/js/next-boot.js"></script>
 
-
-
-
-
-
-
-
-
-  
-
-
+<script src="/js/bookmark.js"></script>
 
 
   
 
+
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 
@@ -665,41 +690,7 @@ p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)
 
   
   <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
-  
-<!-- calendar widget -->
-
-
-
-
-<script src="/bundle.js"></script><script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-;
-
-	var pathname = window.location.pathname;
-	// pathname == '/' || pathname == '/index.html'
-	if(pathname == '/categories/assorted/timeline/'){
-		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
-	}
-;
-
+  <script>
       window.addEventListener('load', () => {
       quicklink({
         timeout : 3000,
@@ -707,4 +698,9 @@ p(a|q) = p(y_1 y_2 y_3 y_4 | q) p(y_5 y_6 | y_{\leq 3},q)
         ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/521b57a9.html',]
       });
       });
-  </script></body></html>
+  </script>
+<!-- calendar widget -->
+
+
+</body>
+</html>

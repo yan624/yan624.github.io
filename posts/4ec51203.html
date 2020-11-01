@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="zh-CN"><head>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
@@ -8,31 +10,25 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
+<link rel="stylesheet" href="/css/main.css">
 
 
-
-
-  
-  
-  
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="本文续任务完成型对话系统论文调研（一）。
- 
- 引言
- 任务完成型对话系统的难点比起之前已经有所改变。在 (Xu and Hu 2018) 提出使用 Ptr 缓解低频槽值提取的问题之后，两年之内涌现了许多有突破性的论文。变化的槽值已经不再是难点。">
+  <meta name="description" content="本文续任务完成型对话系统论文调研（一）。  引言 任务完成型对话系统的难点比起之前已经有所改变。在 (Xu and Hu 2018) 提出使用 Ptr 缓解低频槽值提取的问题之后，两年之内涌现了许多有突破性的论文。变化的槽值已经不再是难点。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="任务完成型对话系统论文调研（二）">
 <meta property="og:url" content="https://yan624.github.io/posts/4ec51203.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="本文续任务完成型对话系统论文调研（一）。
- 
- 引言
- 任务完成型对话系统的难点比起之前已经有所改变。在 (Xu and Hu 2018) 提出使用 Ptr 缓解低频槽值提取的问题之后，两年之内涌现了许多有突破性的论文。变化的槽值已经不再是难点。">
+<meta property="og:description" content="本文续任务完成型对话系统论文调研（一）。  引言 任务完成型对话系统的难点比起之前已经有所改变。在 (Xu and Hu 2018) 提出使用 Ptr 缓解低频槽值提取的问题之后，两年之内涌现了许多有突破性的论文。变化的槽值已经不再是难点。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-09-07T06:09:19.000Z">
 <meta property="article:modified_time" content="2020-10-24T07:55:21.929Z">
@@ -53,7 +49,7 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
 
 
   <title>任务完成型对话系统论文调研（二） | 博客</title>
@@ -87,13 +83,13 @@
   </style>
 </noscript>
 
-<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css');loadCss('//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css');loadCss('//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css"></noscript></head>
+</head>
 
-<body itemscope="" itemtype="http://schema.org/WebPage">
+<body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
     <div class="headband"></div>
 
-    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏">
@@ -175,7 +171,9 @@
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
   </div>
   <span class="popup-btn-close">
     <i class="fa fa-times-circle"></i>
@@ -213,18 +211,18 @@
     
   
   
-  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     
 
     <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/4ec51203.html">
 
-    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
       <meta itemprop="name" content="朱冲䶮">
       <meta itemprop="description" content="记录">
     </span>
 
-    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="博客">
     </span>
       <header class="post-header">
@@ -253,11 +251,11 @@
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
                 </span>
                   ，
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/AI/nlp/" itemprop="url" rel="index"><span itemprop="name">nlp</span></a>
                 </span>
             </span>
@@ -281,7 +279,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-                <span class="post-meta-item-text">阅读时长 ≈</span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
               <span>4 分钟</span>
             </span>
 
@@ -323,8 +321,8 @@
 </table>
 <div class="tabs" id="dst论文对比"><ul class="nav-tabs"><li class="tab active"><a href="#dst论文对比-1">论文介绍</a></li><li class="tab"><a href="#dst论文对比-2">论文瑕瑜</a></li></ul><div class="tab-content"><div class="tab-pane active" id="dst论文对比-1"><table>
 <colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
+<col style="width: 50%" />
+<col style="width: 50%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -334,13 +332,13 @@
 </thead>
 <tbody>
 <tr class="odd">
-<td><a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#dialogue-state-tracking-with-explicit-slot-connection-modeling" title="Dialogue State Tracking with Explicit Slot Connection Modeling"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://www.aclweb.org/anthology/2020.acl-main.5/" target="_blank" rel="noopener" title="20.07"><i class="fa fa-"></i>论文</a> <br> Ouyang et al., 2020</td>
-<td><mark class="label primary"><strong>BiGRU</strong></mark><br>
+<td><a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#dialogue-state-tracking-with-explicit-slot-connection-modeling" title="Dialogue State Tracking with Explicit Slot Connection Modeling"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://www.aclweb.org/anthology/2020.acl-main.5/" target="_blank" rel="noopener" title="20.07"><i class="fa fa-"></i>论文</a> <br /> Ouyang et al., 2020</td>
+<td><mark class="label primary"><strong>BiGRU</strong></mark><br />
 <mark class="label success"><strong>DST-SC</strong></mark> <mark class="label info">slot connection mechanism</mark></td>
 </tr>
 <tr class="even">
-<td><a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#efficient-context-and-schema-fusion-networks-for-multi-domain-dialogue-state-tracking" title="Efficient Context and Schema Fusion Networks for Multi-Domain Dialogue State Tracking"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/2004.03386.pdf" target="_blank" rel="noopener" title="20.04"><i class="fa fa-"></i>论文</a> <br> Zhu et al. 2020</td>
-<td><mark class="label primary"><strong>CSFN</strong></mark><br>
+<td><a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#efficient-context-and-schema-fusion-networks-for-multi-domain-dialogue-state-tracking" title="Efficient Context and Schema Fusion Networks for Multi-Domain Dialogue State Tracking"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/2004.03386.pdf" target="_blank" rel="noopener" title="20.04"><i class="fa fa-"></i>论文</a> <br /> Zhu et al. 2020</td>
+<td><mark class="label primary"><strong>CSFN</strong></mark><br />
 <mark class="label success"><strong>CSFN-DST</strong></mark> <mark class="label primary">Schema Grapha</mark> <mark class="label info">Graph-based Multi-head Attention</mark></td>
 </tr>
 </tbody>
@@ -392,7 +390,7 @@
 <p>本节介绍 DSTC1-DSTC8 数据集。</p>
 <h2 id="相关工作">相关工作</h2>
 <ol type="1">
-<li><span class="citation" data-cites="zhu2020efficient">(Zhu et al. 2020)</span> 提出了 CSFN-DST（Context and Schema Fusion Network）。主要思想是将冗长的上下文改为：当前系统回复 <span class="math inline">\(A_t\)</span>，用户输入 <span class="math inline">\(U_t\)</span> 以及上一轮的对话状态 <span class="math inline">\(B_{t-1}\)</span>。作者将上一轮的对话状态视为对话历史的抽象表征，在训练时使用真实的对话状态，<font color="red"><strong>在推理阶段使用预测出的对话状态</strong></font>。此外，还将领域 <span class="math inline">\(D\)</span>，槽位 <span class="math inline">\(S\)</span> 以及域槽对 <span class="math inline">\(O\)</span> 表示图结构，并称之为协议图（schema graph）或者模式图。使用了 Graph-based Multi-head Attention 编码该协议图，实际上就是使用 mask 而已。详见论文笔记。<br>
+<li><span class="citation" data-cites="zhu2020efficient">(Zhu et al. 2020)</span> 提出了 CSFN-DST（Context and Schema Fusion Network）。主要思想是将冗长的上下文改为：当前系统回复 <span class="math inline">\(A_t\)</span>，用户输入 <span class="math inline">\(U_t\)</span> 以及上一轮的对话状态 <span class="math inline">\(B_{t-1}\)</span>。作者将上一轮的对话状态视为对话历史的抽象表征，在训练时使用真实的对话状态，<font color="red"><strong>在推理阶段使用预测出的对话状态</strong></font>。此外，还将领域 <span class="math inline">\(D\)</span>，槽位 <span class="math inline">\(S\)</span> 以及域槽对 <span class="math inline">\(O\)</span> 表示图结构，并称之为协议图（schema graph）或者模式图。使用了 Graph-based Multi-head Attention 编码该协议图，实际上就是使用 mask 而已。详见论文笔记。<br />
 可以<strong>将其视为一种全新的域槽对表示方式</strong>，其它的方式可以参考 DS-DST<span class="citation" data-cites="zhang2019find">(Zhang et al. 2019)</span>。不过我觉得这好像没有利用到知识图谱的优势。此外虽然作者列出了 <strong>Graph Neural Network</strong> 的相关工作，但是并没有使用 GNN 去提取特征。</li>
 <li><span class="citation" data-cites="ouyang-etal-2020-dialogue">(Ouyang et al. 2020)</span>提出了 slot connection mechanism 用于处理省略、共指的难题，思想与 TripPy 类似，但是做法不同。具体不做阐述了。</li>
 </ol>
@@ -403,8 +401,70 @@
 <h1 id="结果对比">结果对比</h1>
 <div id="dst-multiwoz2.1" style="width: 100%;height: 350px;margin: 0 auto"></div>
 <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.0.0-alpha.2/echarts.common.min.js"></script>
-
-
+<script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('dst-multiwoz2.1'));
+        // 指定图表的配置项和数据
+        var option = {
+	title: {text: 'MultiWOZ 2.1 结果对比'},
+	tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
+	legend: {
+		type: 'scroll',
+		data: ['Ouyang et al.', 'Zhu et al.'],
+		top: 25,
+	},
+	toolbox: {
+		orient: 'vertical',
+		left: 'right',
+		top: 'center',
+		feature: {
+			dataView: {show: true},
+			magicType: {show: true, type: ['bar', 'tiled']},
+			restore: {show: true},
+			saveAsImage: {show: true, pixelRatio: 2}
+		}
+	},
+    xAxis: {type: 'category', name: '<--年份--', data: ['Goals/Joint Accuracy']},
+    yAxis: {
+		type: 'value',
+		min: function (value) {
+			_min = value.min - 20;
+			if(_min < 0) return 0;
+			else return Math.floor(_min);
+		},
+		max: 100
+	},
+    series: [{ 
+            name: 'Ouyang et al.',
+            type: 'bar',
+            data: [49.58],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'DST-SC', offset: [0, 10]}
+			}
+		},{ 
+            name: 'Zhu et al.',
+            type: 'bar',
+            data: [50.81],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'CSFN-DST', offset: [0, 10]}
+			}
+		},{ 
+            name: 'Zhu et al.',
+            type: 'bar',
+            data: [52.88],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'+BERT', offset: [0, 10]}
+			}
+		}]
+};
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+</script>
+<script>
+window.onload = function () {
+    $('colgroup').remove()
+    }
+</script>
 <h1 id="bibliography" class="unnumbered">参考文献</h1>
 <div id="refs" class="references">
 <div id="ref-budzianowski2018multiwoz">
@@ -511,7 +571,27 @@
           </div>
           
 
-
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
 
         </div>
           
@@ -541,8 +621,9 @@
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="朱冲䶮" src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
+      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
   <div class="site-description" itemprop="description">记录</div>
 </div>
@@ -574,17 +655,17 @@
 </div>
   <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
     Chat
-  
+  </a>
   </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
@@ -598,13 +679,13 @@
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io/" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
+          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://smallwhitezzz.gitee.io/blog" title="https://smallwhitezzz.gitee.io/blog" rel="noopener" target="_blank">凯子</a>
+          <a href="https://smallwhitezzz.gitee.io/blog" title="https:&#x2F;&#x2F;smallwhitezzz.gitee.io&#x2F;blog" rel="noopener" target="_blank">凯子</a>
         </li>
     </ul>
   </div>
@@ -631,14 +712,14 @@
 
 <div class="copyright">
   
-  © 2019 – 
+  &copy; 2019 – 
   <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div><!--
 樱花特效 
 最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
@@ -647,9 +728,15 @@
 于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
 原地址为：https://cangshui.net/2372.html
 -->
-
+<script>
+	var pathname = window.location.pathname;
+	// pathname == '/' || pathname == '/index.html'
+	if(pathname == '/categories/assorted/timeline/'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+</script>
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-
+<script src="/lib/my-utils.js"></script>
 <script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
@@ -674,7 +761,7 @@
 
         
 <div class="busuanzi-count">
-  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -706,29 +793,29 @@
   </div>
 
   
-  
+  <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  
-  
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
 
 
+<script src="/js/next-boot.js"></script>
 
-
-
-
-
-
-
-
-
-  
-
-
+<script src="/js/bookmark.js"></script>
 
 
   
 
+
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 
@@ -748,105 +835,7 @@
 
   
   <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
-  
-<!-- calendar widget -->
-
-
-
-
-<script src="/bundle.js"></script><script>
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('dst-multiwoz2.1'));
-        // 指定图表的配置项和数据
-        var option = {
-	title: {text: 'MultiWOZ 2.1 结果对比'},
-	tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
-	legend: {
-		type: 'scroll',
-		data: ['Ouyang et al.', 'Zhu et al.'],
-		top: 25,
-	},
-	toolbox: {
-		orient: 'vertical',
-		left: 'right',
-		top: 'center',
-		feature: {
-			dataView: {show: true},
-			magicType: {show: true, type: ['bar', 'tiled']},
-			restore: {show: true},
-			saveAsImage: {show: true, pixelRatio: 2}
-		}
-	},
-    xAxis: {type: 'category', name: '<--年份--', data: ['Goals/Joint Accuracy']},
-    yAxis: {
-		type: 'value',
-		min: function (value) {
-			_min = value.min - 20;
-			if(_min < 0) return 0;
-			else return Math.floor(_min);
-		},
-		max: 100
-	},
-    series: [{ 
-            name: 'Ouyang et al.',
-            type: 'bar',
-            data: [49.58],
-			label: {
-				normal: {show: true, textBorderColor: 'black', formatter:'DST-SC', offset: [0, 10]}
-			}
-		},{ 
-            name: 'Zhu et al.',
-            type: 'bar',
-            data: [50.81],
-			label: {
-				normal: {show: true, textBorderColor: 'black', formatter:'CSFN-DST', offset: [0, 10]}
-			}
-		},{ 
-            name: 'Zhu et al.',
-            type: 'bar',
-            data: [52.88],
-			label: {
-				normal: {show: true, textBorderColor: 'black', formatter:'+BERT', offset: [0, 10]}
-			}
-		}]
-};
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
-;
-
-window.onload = function () {
-    $('colgroup').remove()
-    }
-;
-
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-;
-
-	var pathname = window.location.pathname;
-	// pathname == '/' || pathname == '/index.html'
-	if(pathname == '/categories/assorted/timeline/'){
-		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
-	}
-;
-
+  <script>
       window.addEventListener('load', () => {
       quicklink({
         timeout : 3000,
@@ -854,4 +843,9 @@ window.onload = function () {
         ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/4ec51203.html',]
       });
       });
-  </script></body></html>
+  </script>
+<!-- calendar widget -->
+
+
+</body>
+</html>
