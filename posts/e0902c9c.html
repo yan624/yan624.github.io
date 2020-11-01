@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
+<!DOCTYPE html><html lang="zh-CN"><head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
@@ -10,28 +8,30 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-<link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
-  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
-  <script src="/lib/pace/pace.min.js"></script>
+
+
+  
+  
+  
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="由于该领域涉及太多知识点，本文只涉及 task-oriented dialog system 四大组件之二：SLU 和 DST。其余两项组件 DPL 以及 NLG 将在 xxxx 中给出。值得一提的是，这四个组件也可以两两融合，正好可以分成两部分。但是由 DST 和 DPL 组成的对话管理（Dialog Manager，DM）只能拆开来讲了。 本文是系列文章的第一篇，一开始架构文章的时候没有考虑">
+  <meta name="description" content="由于该领域涉及太多知识点，本文只涉及 task-oriented dialog system 四大组件之二：SLU 和 DST。其余两项组件 DPL 以及 NLG 将在 xxxx 中给出。值得一提的是，这四个组件也可以两两融合，正好可以分成两部分。但是由 DST 和 DPL 组成的对话管理（Dialog Manager，DM）只能拆开来讲了。
+ 本文是系列文章的第一篇，一开始架构文章的时候没有考虑">
 <meta property="og:type" content="article">
 <meta property="og:title" content="任务完成型对话系统论文调研（一）">
 <meta property="og:url" content="https://yan624.github.io/posts/e0902c9c.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="由于该领域涉及太多知识点，本文只涉及 task-oriented dialog system 四大组件之二：SLU 和 DST。其余两项组件 DPL 以及 NLG 将在 xxxx 中给出。值得一提的是，这四个组件也可以两两融合，正好可以分成两部分。但是由 DST 和 DPL 组成的对话管理（Dialog Manager，DM）只能拆开来讲了。 本文是系列文章的第一篇，一开始架构文章的时候没有考虑">
+<meta property="og:description" content="由于该领域涉及太多知识点，本文只涉及 task-oriented dialog system 四大组件之二：SLU 和 DST。其余两项组件 DPL 以及 NLG 将在 xxxx 中给出。值得一提的是，这四个组件也可以两两融合，正好可以分成两部分。但是由 DST 和 DPL 组成的对话管理（Dialog Manager，DM）只能拆开来讲了。
+ 本文是系列文章的第一篇，一开始架构文章的时候没有考虑">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-02-26T16:21:08.000Z">
-<meta property="article:modified_time" content="2020-10-24T07:50:46.710Z">
+<meta property="article:modified_time" content="2020-11-01T12:15:05.763Z">
 <meta property="article:author" content="朱冲䶮">
 <meta property="article:tag" content="dialogue system">
 <meta name="twitter:card" content="summary">
@@ -49,7 +49,7 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
+
 
 
   <title>任务完成型对话系统论文调研（一） | 博客</title>
@@ -83,13 +83,13 @@
   </style>
 </noscript>
 
-</head>
+<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css');loadCss('//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css');loadCss('//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css"></noscript></head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
+<body itemscope="" itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
     <div class="headband"></div>
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏">
@@ -152,7 +152,7 @@
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">181</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">182</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -171,9 +171,7 @@
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
-           placeholder="搜索..." spellcheck="false"
-           type="search" class="search-input">
+    <input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
   </div>
   <span class="popup-btn-close">
     <i class="fa fa-times-circle"></i>
@@ -211,20 +209,20 @@
     
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     
     	
     
 
     <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/e0902c9c.html">
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
       <meta itemprop="name" content="朱冲䶮">
       <meta itemprop="description" content="记录">
     </span>
 
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="博客">
     </span>
       <header class="post-header">
@@ -246,18 +244,18 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-10-24 15:50:46" itemprop="dateModified" datetime="2020-10-24T15:50:46+08:00">2020-10-24</time>
+                <time title="修改时间：2020-11-01 20:15:05" itemprop="dateModified" datetime="2020-11-01T20:15:05+08:00">2020-11-01</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
                   <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
                 </span>
                   ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
                   <a href="/categories/AI/nlp/" itemprop="url" rel="index"><span itemprop="name">nlp</span></a>
                 </span>
             </span>
@@ -281,7 +279,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                <span class="post-meta-item-text">阅读时长 ≈</span>
               <span>14 分钟</span>
             </span>
 
@@ -310,9 +308,9 @@
 <p><strong>值得注意的是，对话状态由槽值对组成，对话动作也由槽值对组成。但是对话状态保存的是对话历史中提到的所有槽值对，而对话动作只保存当前轮提到的若干槽值对。</strong></p>
 <a id="more"></a>
 <p>举个例子，用户：“请帮我预定一个在市中心的餐厅，四人桌，大概晚上 6:30 到。”则对话动作为：</p>
-<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attribute">intention</span>: <span class="string">'inform'</span>,</span><br><span class="line">  <span class="attribute">sv</span>: &#123;</span><br><span class="line">    <span class="attribute">location</span>: <span class="string">'市中心'</span>,</span><br><span class="line">    <span class="attribute">time</span>: <span class="string">'晚上 6:30'</span>,</span><br><span class="line">    <span class="attribute">num_people</span>: <span class="number">4</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight less"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">  <span class="attribute">intention</span>: <span class="string">'inform'</span>,</span><br><span class="line">  <span class="attribute">sv</span>: {</span><br><span class="line">    <span class="attribute">location</span>: <span class="string">'市中心'</span>,</span><br><span class="line">    <span class="attribute">time</span>: <span class="string">'晚上 6:30'</span>,</span><br><span class="line">    <span class="attribute">num_people</span>: <span class="number">4</span></span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <p>如果系统回复：“那么，您需要什么口味呢？”此时系统也拥有对话状态和对话动作，但是暂且不做解释，目前只讲解<strong>用户相关</strong>的对话状态和对话动作。用户回复：“我们吃浙菜。”则此时的对话动作为：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attribute">intention</span>: <span class="string">'inform'</span>,</span><br><span class="line">  sv: &#123;</span><br><span class="line">    food_type: <span class="string">'浙菜'</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight css"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">  <span class="attribute">intention</span>: <span class="string">'inform'</span>,</span><br><span class="line">  sv: {</span><br><span class="line">    food_type: <span class="string">'浙菜'</span></span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <p>此时，系统可能就可以根据以上的条件，到数据库中检索出一个合适的餐厅返回给用户。通过上述的例子可以观察到，我们追踪到的只是用户的动作。然而，其实可以很容易地取出槽值对，从而形成对话状态。那么为什么要多次一举呢？有了对话动作，还要有对话状态。首先，这还是历史遗留问题。一般而言，以前，对话动作都从 SLU 模块获取，然后将其输入进 DST。但是近几年，许多模型都将该模块并入 DST 模块，导致对话动作没什么发挥的空间。其次，在对话状态中可以保存当前轮的对话动作，乍一听这没什么用！但是遇到需要更新槽值的情况时，就有用了。</p>
 <p>例如，当前的对话动作是 <code>inform(food_type='浙菜')</code>，那么我们可以得到对话状态 <code>food_type='浙菜'</code>。但是，如果在后面几轮中，用户突然改变了用餐的类型呢？那么我们的对话状态就是 <code>food_type='*'</code>，而之前的对话动作还是成立的，只不过是用户改了想法而已。如果以后还需要使用到很久以前用户做出的决策，那么就可以用到之前所保存的动作了。<strong>所以这也是对话动作和对话状态之间的一个区别。</strong></p>
 <p>最后需要说明的是，以上提到的名词在不同的框架或者论文中还有不同的叫法。例如，intention 被称为动作；对话动作被称为语义框架（Semantic Frame）等。</p>
@@ -324,11 +322,11 @@
 <p><strong>口语理解</strong>（Spoken language Understanding，<strong>SLU</strong>）是 SDS 的重要组成部分。其共由两项任务组成，分别是<strong>意图检测</strong>（Intent detection，<strong>ID</strong>）与<strong>槽填充</strong>（slot-filling，<strong>SF</strong>）。在实际操作中，ID 可以被视为句子分类任务，SF 可以被视为序列标注任务。需要注意的是，有些作者也将 SLU 称为自然语言理解（Natural Language Understanding，NLU），但是由于 NLU 本身在自然语言处理中就是一项比较重要的任务，难免会产生歧义，所以下文统称为 SLU。另外，有时意图检测也被称为<strong>意图识别</strong>（Intent Determination，<strong>ID</strong>）。</p>
 <p>SLU 的实现大致分为两种：1）独立模型（separate models）：训练两个独立的神经网络，一个用于 ID 任务，另一个用于 SF 任务；2）联合模型（joint model）：使用一个神经网络对两个任务进行联合训练，它旨在共享两个任务所捕获的信息。</p>
 <p><em>突然发现已经有人对比过很多论文，详见<a href="https://blog.csdn.net/black_soil/article/details/90405098" target="_blank" rel="noopener">【综述】对话系统中的口语理解技术</a>，就不重复造轮子了。以下大部分都是该文未统计的论文，一般是 2018 年以后的论文。</em></p>
-<p>以下论文按发表时间（或提交到 arxiv 的时间）排序： <div class="tabs" id="slu论文对比"><ul class="nav-tabs"><li class="tab"><a href="#slu论文对比-1">论文介绍</a></li><li class="tab"><a href="#slu论文对比-2">论文瑕瑜</a></li><li class="tab"><a href="#slu论文对比-3">数据集评估对比</a></li></ul><div class="tab-content"><div class="tab-pane" id="slu论文对比-1"><table>
+<p>以下论文按发表时间（或提交到 arxiv 的时间）排序： </p><div class="tabs" id="slu论文对比"><ul class="nav-tabs"><li class="tab"><a href="#slu论文对比-1">论文介绍</a></li><li class="tab"><a href="#slu论文对比-2">论文瑕瑜</a></li><li class="tab"><a href="#slu论文对比-3">数据集评估对比</a></li></ul><div class="tab-content"><div class="tab-pane" id="slu论文对比-1"><table>
 <colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -349,33 +347,33 @@
 <td><mark class="label primary">BERT</mark></td>
 </tr>
 <tr class="odd">
-<td><a class="btn" href="https://yan624.github.io/posts/81299a9a.html#A-Bi-model-based-RNN-Semantic-Frame-Parsing-Model-for-Intent-Detection-and-Slot-Filling" title="A Bi-model based RNN Semantic Frame Parsing Model for Intent Detection and Slot Filling"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1812.10235.pdf" target="_blank" rel="noopener" title="18.12"><i class="fa fa-"></i>论文</a> <strong><font color='blue'>Wang et al., 2018</font></strong></td>
+<td><a class="btn" href="https://yan624.github.io/posts/81299a9a.html#A-Bi-model-based-RNN-Semantic-Frame-Parsing-Model-for-Intent-Detection-and-Slot-Filling" title="A Bi-model based RNN Semantic Frame Parsing Model for Intent Detection and Slot Filling"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1812.10235.pdf" target="_blank" rel="noopener" title="18.12"><i class="fa fa-"></i>论文</a> <strong><font color="blue">Wang et al., 2018</font></strong></td>
 <td style="text-align: center;">separate</td>
-<td><mark class="label primary">BiLSTM</mark><br />
+<td><mark class="label primary">BiLSTM</mark><br>
 <mark class="label primary">encoder-decoder</mark> <mark class="label info">cross-impact</mark> <mark class="label danger"><strong>hidden state sharing</strong></mark></td>
 </tr>
 <tr class="even">
 <td><a class="btn" href="https://yan624.github.io/posts/81299a9a.html#A-Self-Attentive-Model-with-Gate-Mechanism-for-Spoken-Language-Understanding" title="A Self-Attentive Model with Gate Mechanism for Spoken Language Understanding"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://www.aclweb.org/anthology/D18-1417.pdf" target="_blank" rel="noopener" title="18.11"><i class="fa fa-"></i>论文</a> <strong>Li et al., 2018</strong></td>
 <td style="text-align: center;">joint</td>
-<td><mark class="label primary">BiLSTM</mark><br />
+<td><mark class="label primary">BiLSTM</mark><br>
 <mark class="label info">self-attention</mark> <mark class="label success">Intent-Augmented Gating Mechanism</mark></td>
 </tr>
 <tr class="odd">
 <td><a class="btn" href="https://yan624.github.io/posts/81299a9a.html#Attention-Based-Recurrent-Neural-Network-Models-for-Joint-Intent-Detection-and-Slot-Filling" title="Attention-Based Recurrent Neural Network Models for Joint Intent Detection and Slot Filling"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1609.01454.pdf" target="_blank" rel="noopener" title="16.09"><i class="fa fa-"></i>论文</a> Liu and Lane, 2016a</td>
 <td style="text-align: center;">joint</td>
-<td><mark class="label primary">BiLSTM</mark><br />
+<td><mark class="label primary">BiLSTM</mark><br>
 <mark class="label primary">encoder-decoder</mark> <mark class="label info">attention</mark></td>
 </tr>
 <tr class="even">
 <td><a class="btn" href="https://yan624.github.io/posts/81299a9a.html#Encoder-decoder-with-focus-mechanism-for-sequence-labelling-based-spoken-language-understanding" title="Encoder-decoder with focus-mechanism for sequence labelling based spoken language understanding"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1608.02097.pdf" target="_blank" rel="noopener" title="16.08"><i class="fa fa-"></i>论文</a> Zhu and Yu, 2017</td>
 <td style="text-align: center;">separate</td>
-<td><mark class="label primary">BiLSTM</mark><br />
+<td><mark class="label primary">BiLSTM</mark><br>
 <mark class="label primary">encoder-decoder</mark> <mark class="label info">focus mechanism</mark></td>
 </tr>
 <tr class="odd">
 <td><a class="btn" href="https://yan624.github.io/posts/81299a9a.html#A-Joint-Model-of-Intent-Determination-and-Slot-Filling-for-Spoken-Language-Understanding" title="A Joint Model of Intent Determination and Slot Filling for Spoken Language Understanding"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://pdfs.semanticscholar.org/1f9e/2d6df1eaaf04aebf428d9fa9a9ffc89e373c.pdf" target="_blank" rel="noopener" title="16"><i class="fa fa-"></i>论文</a> <strong>Zhang and Wang, 2016</strong></td>
 <td style="text-align: center;">joint</td>
-<td><mark class="label primary">Bi-GRU</mark><br />
+<td><mark class="label primary">Bi-GRU</mark><br>
 <mark class="label primary">contextual word embedding</mark></td>
 </tr>
 <tr class="even">
@@ -424,7 +422,7 @@
 <td>斜体代表在以后的论文中此缺点大致已被解决</td>
 </tr>
 </tbody>
-</table></div><div class="tab-pane" id="slu论文对比-3"><p><a class="btn" href="#slu-atis"><i class="fa fa-"></i>ATIS</a></p></div></div></div></p>
+</table></div><div class="tab-pane" id="slu论文对比-3"><p><a class="btn" href="#slu-atis"><i class="fa fa-"></i>ATIS</a></p></div></div></div><p></p>
 <h2 id="难点未来的工作">难点/未来的工作</h2>
 <p>大多数模型都假定用户的语句只有一个意图分类，但是现实并不是如此。而且在系统覆盖多个领域时，ID 模型的决策空间变得过大。如果以后要新增一个意图，必须重新训练整个模型。</p>
 <p>此外任务完成型对话系统很难找到现成的数据，因为完成任务的系统动作有时可能并不是语言，而是数据库查询语句或是其他动作，这就使得难以界定任务是否完成，导致数据难以爬取。综上所述，SLU 的难点大致如下所示：</p>
@@ -503,8 +501,8 @@
 </table>
 <div class="tabs" id="dst论文对比"><ul class="nav-tabs"><li class="tab active"><a href="#dst论文对比-1">论文介绍</a></li><li class="tab"><a href="#dst论文对比-2">论文瑕瑜</a></li><li class="tab"><a href="#dst论文对比-3">重要思想</a></li><li class="tab"><a href="#dst论文对比-4">数据集评估对比</a></li></ul><div class="tab-content"><div class="tab-pane active" id="dst论文对比-1"><table>
 <colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
+<col style="width: 50%">
+<col style="width: 50%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -514,48 +512,48 @@
 </thead>
 <tbody>
 <tr class="odd">
-<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#trippy-a-triple-copy-strategy-for-value-independent-neural-dialog-state-tracking" title="TripPy: A Triple Copy Strategy for Value Independent Neural Dialog State Tracking"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/2005.02877.pdf" target="_blank" rel="noopener" title="20.05"><i class="fa fa-"></i>论文</a> <br /> Heck et al., 2020</td>
-<td><mark class="label primary"><strong>BERT</strong></mark> <mark class="label warning"><strong>处理变化的槽值</strong></mark><br />
+<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#trippy-a-triple-copy-strategy-for-value-independent-neural-dialog-state-tracking" title="TripPy: A Triple Copy Strategy for Value Independent Neural Dialog State Tracking"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/2005.02877.pdf" target="_blank" rel="noopener" title="20.05"><i class="fa fa-"></i>论文</a> <br> Heck et al., 2020</td>
+<td><mark class="label primary"><strong>BERT</strong></mark> <mark class="label warning"><strong>处理变化的槽值</strong></mark><br>
 <mark class="label success"><strong>TripPy</strong></mark> <mark class="label warning">Context Encoder</mark> <mark class="label primary">Slot Gate</mark> <mark class="label primary">Boolean slot</mark> <mark class="label success">System Inform Memory</mark> <mark class="label info">DS Memory</mark> <mark class="label danger">Auxiliary Features</mark></td>
 </tr>
 <tr class="even">
-<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#Find-or-Classify-Dual-Strategy-for-Slot-Value-Predictions-on-Multi-Domain-Dialog-State-Tracking" title="Find or Classify? Dual Strategy for Slot-Value Predictions on Multi-Domain Dialog State Tracking"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1910.03544.pdf" target="_blank" rel="noopener" title="19.10"><i class="fa fa-"></i>论文</a> <br /> Zhang et al., 2019</td>
-<td><mark class="label primary"><strong>BERT</strong></mark> <mark class="label warning"><strong>处理变化的槽值</strong></mark><br />
+<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#Find-or-Classify-Dual-Strategy-for-Slot-Value-Predictions-on-Multi-Domain-Dialog-State-Tracking" title="Find or Classify? Dual Strategy for Slot-Value Predictions on Multi-Domain Dialog State Tracking"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1910.03544.pdf" target="_blank" rel="noopener" title="19.10"><i class="fa fa-"></i>论文</a> <br> Zhang et al., 2019</td>
+<td><mark class="label primary"><strong>BERT</strong></mark> <mark class="label warning"><strong>处理变化的槽值</strong></mark><br>
 <mark class="label success"><strong><a href="https://github.com/gusalsdmlwlq/DS-DST" target="_blank" rel="noopener">DS-DST</a></strong></mark> <mark class="label success"><strong>DST-Picklist</strong></mark> <mark class="label info">Slot-Context Encoder</mark> <mark class="label danger">Slot-Gate</mark> <mark class="label default">拼接词向量</mark></td>
 </tr>
 <tr class="odd">
-<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#btn"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1907.03040.pdf" target="_blank" rel="noopener" title="19.07"><i class="fa fa-"></i>论文</a> <br /> Chao et al., 2019</td>
-<td><mark class="label primary"><strong>BERT</strong></mark><br />
+<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#btn"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1907.03040.pdf" target="_blank" rel="noopener" title="19.07"><i class="fa fa-"></i>论文</a> <br> Chao et al., 2019</td>
+<td><mark class="label primary"><strong>BERT</strong></mark><br>
 <mark class="label success"><strong><a href="https://github.com/guanlinchao/bert-dst" target="_blank" rel="noopener">BERT-DST</a></strong></mark> <mark class="label info">turn level ds</mark></td>
 </tr>
 <tr class="even">
-<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#Transferable-Multi-Domain-State-Generator-for-Task-Oriented-Dialogue-Systems" title="Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1905.08743.pdf" target="_blank" rel="noopener" title="19.05"><i class="fa fa-"></i>论文</a> <br /> Wu, Chien-Sheng et al., 2019</td>
-<td><mark class="label primary"><strong>BiGRU</strong></mark> <mark class="label warning"><strong>处理变化的槽值</strong></mark><br />
+<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#Transferable-Multi-Domain-State-Generator-for-Task-Oriented-Dialogue-Systems" title="Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1905.08743.pdf" target="_blank" rel="noopener" title="19.05"><i class="fa fa-"></i>论文</a> <br> Wu, Chien-Sheng et al., 2019</td>
+<td><mark class="label primary"><strong>BiGRU</strong></mark> <mark class="label warning"><strong>处理变化的槽值</strong></mark><br>
 <mark class="label success"><strong><a href="https://github.com/jasonwu0731/trade-dst" target="_blank" rel="noopener">TRADE</a></strong></mark> <mark class="label info">Utterance Encoder</mark> <mark class="label primary">State Generator</mark> <mark class="label danger">Slot Gate</mark> <mark class="label warning">soft-gated copy</mark></td>
 </tr>
 <tr class="odd">
-<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#Global-Locally-Self-Attentive-Dialogue-State-Tracker" title="Global-Locally Self-Attentive Dialogue State Tracker"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1805.09655.pdf" target="_blank" rel="noopener" title="18.05"><i class="fa fa-"></i>论文</a> <br /> Zhong et al. 2018</td>
-<td><mark class="label primary"><strong>BiLSTM</strong></mark> <mark class="label warning"><strong>处理变化的槽值</strong></mark> <mark class="label warning"><strong>处理低频槽值</strong></mark><br />
+<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#Global-Locally-Self-Attentive-Dialogue-State-Tracker" title="Global-Locally Self-Attentive Dialogue State Tracker"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1805.09655.pdf" target="_blank" rel="noopener" title="18.05"><i class="fa fa-"></i>论文</a> <br> Zhong et al. 2018</td>
+<td><mark class="label primary"><strong>BiLSTM</strong></mark> <mark class="label warning"><strong>处理变化的槽值</strong></mark> <mark class="label warning"><strong>处理低频槽值</strong></mark><br>
 <mark class="label success"><strong><a href="https://github.com/salesforce/glad" target="_blank" rel="noopener">GLAD</a></strong></mark> <mark class="label primary">global-locally</mark></td>
 </tr>
 <tr class="even">
-<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#Scalable-multi-domain-dialogue-state-tracking" title="Scalable multi-domain dialogue state tracking"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1712.10224.pdf" target="_blank" rel="noopener" title="17.12"><i class="fa fa-"></i>论文</a> <br /> Rastogi A et al., 2017</td>
-<td><mark class="label primary"><strong>2 layer BiGRU</strong></mark> <mark class="label warning"><strong>处理变化的槽值</strong></mark> <mark class="label info"><strong>classify</strong></mark><br />
+<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#Scalable-multi-domain-dialogue-state-tracking" title="Scalable multi-domain dialogue state tracking"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1712.10224.pdf" target="_blank" rel="noopener" title="17.12"><i class="fa fa-"></i>论文</a> <br> Rastogi A et al., 2017</td>
+<td><mark class="label primary"><strong>2 layer BiGRU</strong></mark> <mark class="label warning"><strong>处理变化的槽值</strong></mark> <mark class="label info"><strong>classify</strong></mark><br>
 <mark class="label primary">使用有限候选集</mark> <mark class="label warning">delexicalisation</mark> <mark class="label danger">迁移到其他领域</mark></td>
 </tr>
 <tr class="odd">
-<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#Neural-Belief-Tracker-Data-Driven-Dialogue-State-Tracking" title="Neural Belief Tracker: Data-Driven Dialogue State Tracking"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/abs/1606.03777" target="_blank" rel="noopener" title="16.06"><i class="fa fa-"></i>论文</a> <br /> <font color='blue'>Mrkšić N et al., 2016</font></td>
-<td><mark class="label primary"><strong>simpleNN</strong></mark> <mark class="label default"><strong>摆脱人工构建的词表</strong></mark><br />
+<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#Neural-Belief-Tracker-Data-Driven-Dialogue-State-Tracking" title="Neural Belief Tracker: Data-Driven Dialogue State Tracking"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/abs/1606.03777" target="_blank" rel="noopener" title="16.06"><i class="fa fa-"></i>论文</a> <br> <font color="blue">Mrkšić N et al., 2016</font></td>
+<td><mark class="label primary"><strong>simpleNN</strong></mark> <mark class="label default"><strong>摆脱人工构建的词表</strong></mark><br>
 <mark class="label success"><strong>NBT-DNN</strong></mark> <mark class="label success"><strong>NBT-CNN</strong></mark> <mark class="label warning">Semantic Decoding</mark> <mark class="label primary">Context Modelling</mark> <mark class="label default">二元决策</mark> <mark class="label danger">Belief State Update Mechanism</mark></td>
 </tr>
 <tr class="even">
-<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#Incremental-LSTM-based-dialog-state-tracker" title="Incremental LSTM-based dialog state tracker"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1507.03471.pdf" target="_blank" rel="noopener" title="15.07"><i class="fa fa-"></i>论文</a> <br /> Zilka and Jurcicek, 2015</td>
-<td><mark class="label primary"><strong>LSTM</strong></mark> <mark class="label default"><strong>摆脱人工构建的词表</strong></mark> <mark class="label info"><strong>classify</strong></mark><br />
+<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#Incremental-LSTM-based-dialog-state-tracker" title="Incremental LSTM-based dialog state tracker"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/1507.03471.pdf" target="_blank" rel="noopener" title="15.07"><i class="fa fa-"></i>论文</a> <br> Zilka and Jurcicek, 2015</td>
+<td><mark class="label primary"><strong>LSTM</strong></mark> <mark class="label default"><strong>摆脱人工构建的词表</strong></mark> <mark class="label info"><strong>classify</strong></mark><br>
 <mark class="label success"><strong>LecTrack</strong></mark> <mark class="label danger">结合置信度分数</mark> <mark class="label success">无需遍历槽值</mark> <mark class="label primary">低频词抽象化</mark> <mark class="label info">Model Averaging</mark></td>
 </tr>
 <tr class="odd">
-<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#Word-Based-Dialog-State-Tracking-with-Recurrent-Neural-Networks" title="Word-Based Dialog State Tracking with Recurrent Neural Networks"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://www.aclweb.org/anthology/W14-4340.pdf" target="_blank" rel="noopener" title="14.06"><i class="fa fa-"></i>论文</a> <br /> Henderson et al., 2014d</td>
-<td><mark class="label primary"><strong>RNN</strong></mark> <mark class="label default"><strong>省略SLU，但需要词汇表</strong></mark> <mark class="label info"><strong>classify</strong></mark><br />
+<td><a class="btn" href="https://yan624.github.io/posts/89f2cf08.html#Word-Based-Dialog-State-Tracking-with-Recurrent-Neural-Networks" title="Word-Based Dialog State Tracking with Recurrent Neural Networks"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://www.aclweb.org/anthology/W14-4340.pdf" target="_blank" rel="noopener" title="14.06"><i class="fa fa-"></i>论文</a> <br> Henderson et al., 2014d</td>
+<td><mark class="label primary"><strong>RNN</strong></mark> <mark class="label default"><strong>省略SLU，但需要词汇表</strong></mark> <mark class="label info"><strong>classify</strong></mark><br>
 <mark class="label info">delexicalisation</mark> <mark class="label primary">n-gram</mark></td>
 </tr>
 <tr class="even">
@@ -565,9 +563,9 @@
 </tbody>
 </table></div><div class="tab-pane" id="dst论文对比-2"><table>
 <colgroup>
-<col style="width: 23%" />
-<col style="width: 52%" />
-<col style="width: 23%" />
+<col style="width: 23%">
+<col style="width: 52%">
+<col style="width: 23%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -618,16 +616,16 @@
 <td><strong>1）</strong>需要为每个槽位都训练一个模型，在确定<strong>槽值</strong>是否出现在语句中时，需要遍历所有<strong>槽位</strong>的模型；<em>2）还是需要人工构建的词汇表</em>。</td>
 </tr>
 <tr class="odd">
-<td style="text-align: center;"><span style="display:block; width:9em"></td>
+<td style="text-align: center;"><span style="display:block; width:9em"></span></td>
 <td>粗体代表不错的想法</td>
 <td>斜体代表在以后的论文中此缺点大致已被解决</td>
 </tr>
 </tbody>
 </table></div><div class="tab-pane" id="dst论文对比-3"><table>
 <colgroup>
-<col style="width: 42%" />
-<col style="width: 31%" />
-<col style="width: 26%" />
+<col style="width: 42%">
+<col style="width: 31%">
+<col style="width: 26%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -654,7 +652,7 @@
 </tr>
 <tr class="even">
 <td>--</td>
-<td><span style="display:block; width:5em"></td>
+<td><span style="display:block; width:5em"></span></td>
 <td>此处只记录突破性的思想</td>
 </tr>
 </tbody>
@@ -705,12 +703,12 @@
 <p>早年（最初-2014 年左右），由于深度学习以及基于深度学习的自然语言处理技术才刚开始起步，并没有词向量作为支撑，大多数模型都需要采用一个<strong>人工构建的词汇表</strong>，这是一个相当费时费力的工作。由于近几年的工作已经抛弃这一做法，所以可能有部分人都无法理解这个词汇表到底代表什么意思。接下来本文将举例介绍一下它。简单来说，它其实就是一个同义词表。</p>
 <p>例如某人告知系统，心仪的餐厅位置是“the center of town”，直观来说模型可以提取出槽值对“area=center”，但是对于值“center”，它还有其他的变体词汇，如 [center, downtown, central, city centre, midtown, town centre...] [<a href="https://arxiv.org/abs/1606.03777" target="_blank" rel="noopener" title="Neural Belief Tracker: Data-Driven Dialogue State Tracking">2</a>]。这就使得模型很难提取出确切的词汇，因此如上所述，系统需要维护一个人工构建的词汇表，将所有的同义词都替换为同一个单词。</p>
 <h3 id="传统模型">传统模型</h3>
-<p>传统 DST 模型的做法大都结合 SLU 模块。一般的做法是：使用从 SLU 模块提取出的语义信息，例如意图以及槽值对，去估计当前的对话状态。 <blockquote class="blockquote-center">
+<p>传统 DST 模型的做法大都结合 SLU 模块。一般的做法是：使用从 SLU 模块提取出的语义信息，例如意图以及槽值对，去估计当前的对话状态。 </p><blockquote class="blockquote-center">
 <i class="fa fa-quote-left"></i>
 <p>传统 DST 模型具有如下几项缺点：<strong>1）</strong>依赖人工制作的特征；<strong>2）</strong>需要复杂的特定于领域的词汇表（本体除外）；<strong>3）</strong>很难扩展以及灵活调整到新的领域 [<a href="https://arxiv.xilesou.top/pdf/1905.08743.pdf" target="_blank" rel="noopener" title="Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems">3</a>]；<strong>4）</strong>需要显式语义表征以及在 SLU 阶段可能存在信息误差 [<a href="https://www.aclweb.org/anthology/W14-4340.pdf" target="_blank" rel="noopener" title="Word-Based Dialog State Tracking with Recurrent Neural Networks">5</a>]，这些误差将传播到 DST 模型上，使得误差累积；<strong>5）</strong>并未解决上述 DST 模型所拥有的难点。</p>
 
 <i class="fa fa-quote-right"></i>
-</blockquote></p>
+</blockquote><p></p>
 <p>由于时代过于久远，本节不做深度展开。</p>
 <h3 id="可扩展性">可扩展性</h3>
 <p>近年（<strong>2014 年左右</strong>起）的工作试图<strong>1）</strong>摒弃复杂、高人力成本且难以维护的词汇表；<strong>2）</strong>直接从用户的语句中提取对话状态而不是从 SLU 的输出中。具体做法是使用词向量去匹配用户语句与槽值对之间的关系，例如对于单词“centre”和“center”都是“中心”的意思，虽然它们在单词的形态上不同，但是在词向量空间中的距离却很接近。这避免了显式语义表征的需要以及在 SLU 阶段可能的信息误差 [<a href="https://www.aclweb.org/anthology/W14-4340.pdf" target="_blank" rel="noopener">5</a>]。不过这些工作大都是在单领域之中。<strong>2018 年开始，渐渐地有人开始考虑多领域 DST 的问题。</strong></p>
@@ -730,10 +728,10 @@
 <ol type="1">
 <li><a href="https://arxiv.org/pdf/1712.10224.pdf" target="_blank" rel="noopener"><span class="citation" data-cites="rastogi2017scalable">(Rastogi, Hakkani-Tür, and Heck 2017)</span></a> <strong>1）</strong>提出一个多领域模型，它使用两层的 Bi-GRU。虽然它不再需要枚举所有的槽值对组合，而是转用一个候选集（因为某些槽位不可能出现在用户语句中，在预测时并不需要它），但是它依赖 delexicalisation 来提取特征；<strong>2）</strong>并且它是利用 SLU 模块提取出槽值，从而将此槽值替换成一个特殊的符号，所以<strong>它不算是一个联合模型</strong>；<strong>3）</strong>另外它还是不可避免地需要遍历所有的槽位，对于槽值，由于有候选集，所以只需要枚举槽值即可；<strong>4）</strong>最后评分函数中的参数，每个槽位都有特定的一组，但是 GRU 中的参数都是为一整个领域定义的，因此它可以轻松地被迁移到新的领域之中。</li>
 <li>无论是传统模型，还是近年使用的深度学习模型，都不可避免地需要使用本体，其定义了槽值对。<a href="https://arxiv.org/pdf/1905.08743.pdf" target="_blank" rel="noopener" title="Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems"><span class="citation" data-cites="wu2019transferable">(Wu et al. 2019)</span></a> 认为一个完整的本体很难获取，即使存在这么一个本体，槽值对的数量也会极其的庞大。此外，由于 <span class="citation" data-cites="budzianowski2018multiwoz">(Budzianowski et al. 2018)</span> 提出了多领域对话数据集 MultiWOZ，将 DST 迁移到多领域内势在必行。<span class="citation" data-cites="wu2019transferable">(Wu et al. 2019)</span><strong>1）</strong>提出将原先的 (slot, value) 二元组修改为 (domain, slot, value) 的三元组形式，并且槽值不再预定义于本体之中，而是使用 Pointer Network 直接从用户的语句中提取而出；<strong>2）</strong>另外他们强调要共享知识，因为一个槽位可能会出现在多个领域之内；<strong>3）</strong>zero-shot。</li>
-<li><a href="https://arxiv.org/pdf/1910.03544.pdf" target="_blank" rel="noopener"><span class="citation" data-cites="zhang2019find">(Zhang et al. 2019)</span></a> 认为当前基于神经网络的对话系统大致可以分为两类：<strong>1）</strong>picklist-based；<strong>2）</strong>span-based。picklist-based 讲究从预定义的槽值中选取最可能的值，span-based 讲究使用 Ptr 直接从用户语句中生成槽值，它由 <a href="https://www.aclweb.org/anthology/P18-1134/" target="_blank" rel="noopener"><span class="citation" data-cites="xu-hu-2018-end">(Xu and Hu 2018)</span></a> 首次提出。作者认为二者各有优缺点，picklist-based 方法太麻烦，而 span-based 方法中，由于用户语言的多样性，有些槽值并不会出现在上下文中（如，回答有关“是否”的问题，它拥有一个包含两个元素的 picklist 就可以解决，不需要 Ptr 生成）。所以作者将二者结合起来，提出了 DS-DST。<br />
+<li><a href="https://arxiv.org/pdf/1910.03544.pdf" target="_blank" rel="noopener"><span class="citation" data-cites="zhang2019find">(Zhang et al. 2019)</span></a> 认为当前基于神经网络的对话系统大致可以分为两类：<strong>1）</strong>picklist-based；<strong>2）</strong>span-based。picklist-based 讲究从预定义的槽值中选取最可能的值，span-based 讲究使用 Ptr 直接从用户语句中生成槽值，它由 <a href="https://www.aclweb.org/anthology/P18-1134/" target="_blank" rel="noopener"><span class="citation" data-cites="xu-hu-2018-end">(Xu and Hu 2018)</span></a> 首次提出。作者认为二者各有优缺点，picklist-based 方法太麻烦，而 span-based 方法中，由于用户语言的多样性，有些槽值并不会出现在上下文中（如，回答有关“是否”的问题，它拥有一个包含两个元素的 picklist 就可以解决，不需要 Ptr 生成）。所以作者将二者结合起来，提出了 DS-DST。<br>
 由于模型中会出现多个句子或者符号，比如说对于 picklist-based 方法，一个 picklist 中有多个槽值，那么该怎么处理它们？作者直接用了<strong>拼接</strong>的方式。用户的多轮对话语句，域槽对都是使用此方法。</li>
-<li><span class="citation" data-cites="heck2020trippy">(Heck et al. 2020)</span> 提出 TripPy，其包含三种拷贝机制，即<strong>1）</strong>Ptr；<strong>2）</strong>from System Inform Memory（SIM）；<strong>3）</strong>from Dialog State Memory（DSM）。TripPy 主要通过一个 Slot Gate 判断使用哪种拷贝机制，与 TRADE 等模型类似。具体来讲，模型的运行流程为：使用 BERT 对上下文建模，然后将 BERT 的特殊符号 <span class="math inline">\([CLS]\)</span> 输入 Slot Gate 进行五元分类，即 <span class="math inline">\(\{none, dontcare, span, inform, refer\}\)</span>，然后执行对应的拷贝机制。以下将介绍三种机制的具体实现。 <mark class="label danger">但是没说怎么追踪 system inform，猜测是生成自 DPL。</mark><br />
-<strong>1）</strong>Ptr 为 span-based 方法，即从用户的语句中直接提取槽值，具体公式略，可参考原文。此外，对于特殊的 Boolean Slot，他们的做法与 DS-DST 类似，DS-DST 采用 picklist-based 方法，而 TripPy 将 Slot Gate 改为四元分类，即 <span class="math inline">\(\{none, dontcare, true, false\}\)</span>。<strong>2）</strong>SIM 记录被系统提及到的槽值，如果用户引用了它，则直接从 SIM 中拷贝，而不使用 Ptr（例，“<font color='red'>xx酒店</font>不错”；“那就<font color='red'>它</font>了”）。<strong>3）</strong>DSM 用于共指解析（个人认为，SIM 也算共指解析）。假设槽位 A 的槽值已在上文中被提及，如果槽位 B 在当前轮被触发，且槽值与槽位 A 相同，那么直接引用槽位 A 的槽值，而不使用 Ptr（例，订餐的酒店地址和用餐后打的的乘车地址）。</li>
+<li><span class="citation" data-cites="heck2020trippy">(Heck et al. 2020)</span> 提出 TripPy，其包含三种拷贝机制，即<strong>1）</strong>Ptr；<strong>2）</strong>from System Inform Memory（SIM）；<strong>3）</strong>from Dialog State Memory（DSM）。TripPy 主要通过一个 Slot Gate 判断使用哪种拷贝机制，与 TRADE 等模型类似。具体来讲，模型的运行流程为：使用 BERT 对上下文建模，然后将 BERT 的特殊符号 <span class="math inline">\([CLS]\)</span> 输入 Slot Gate 进行五元分类，即 <span class="math inline">\(\{none, dontcare, span, inform, refer\}\)</span>，然后执行对应的拷贝机制。以下将介绍三种机制的具体实现。 <mark class="label danger">但是没说怎么追踪 system inform，猜测是生成自 DPL。</mark><br>
+<strong>1）</strong>Ptr 为 span-based 方法，即从用户的语句中直接提取槽值，具体公式略，可参考原文。此外，对于特殊的 Boolean Slot，他们的做法与 DS-DST 类似，DS-DST 采用 picklist-based 方法，而 TripPy 将 Slot Gate 改为四元分类，即 <span class="math inline">\(\{none, dontcare, true, false\}\)</span>。<strong>2）</strong>SIM 记录被系统提及到的槽值，如果用户引用了它，则直接从 SIM 中拷贝，而不使用 Ptr（例，“<font color="red">xx酒店</font>不错”；“那就<font color="red">它</font>了”）。<strong>3）</strong>DSM 用于共指解析（个人认为，SIM 也算共指解析）。假设槽位 A 的槽值已在上文中被提及，如果槽位 B 在当前轮被触发，且槽值与槽位 A 相同，那么直接引用槽位 A 的槽值，而不使用 Ptr（例，订餐的酒店地址和用餐后打的的乘车地址）。</li>
 </ol>
 <h3 id="计算复杂度高">计算复杂度高</h3>
 <p><span class="citation" data-cites="Ren_2019">(Ren, Ni, and McAuley 2019)</span> 认为以往的 DST 模型依赖一个预定义的本体，其包含一系列的潜在的槽值对。这些模型在单领域上已经取得了不错的性能，但是它们都一直遭受着计算复杂度的问题。这个问题在多领域中将更为严重，因为多领域中的槽值对是单领域的数倍之多。<span class="citation" data-cites="Ren_2019">(Ren, Ni, and McAuley 2019)</span>提出以往算法的推理时间复杂度（Inference Time Complexity，<strong>ITC</strong>）为 <span class="math inline">\(O(mn)\)</span> 或 <span class="math inline">\(O(n)\)</span>，他们提出的模型则是 <span class="math inline">\(O(1)\)</span>。<strong>为了解决以上的问题</strong>，他们提出了 <strong>COMER</strong> 模型，抛弃了传统的模型架构，即将槽值的识别或者生成视为一个二元分类问题，而是转用了 seqseq 模型。</p>
@@ -753,299 +751,22 @@
 <h2 id="slu模块结果对比">SLU模块结果对比</h2>
 <div id="slu-atis" style="width: 100%;height: 350px;margin: 0 auto"></div>
 <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.0.0-alpha.2/echarts.common.min.js"></script>
-<script type="text/javascript">
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('slu-atis'));
-        // 指定图表的配置项和数据
-        var option = {
-	title: {text: 'ATIS 结果对比'},
-	tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
-	legend: {
-		type: 'scroll',
-		data: ['Zhang et al.', 'Chen et al.', 'Wang et al.', 'Li et al.', 'Liu and Lane, 2016a', 'Zhu and Yu', 'Zhang and Wang'],
-		top: 25,
-	},
-	toolbox: {
-		orient: 'vertical',
-		left: 'right',
-		top: 'center',
-		feature: {
-			dataView: {show: true},
-			magicType: {show: true, type: ['bar', 'tiled']},
-			restore: {show: true},
-			saveAsImage: {show: true, pixelRatio: 2}
-		}
-	},
-	xAxis: {type: 'category', name: '<--年份--', nameLocation: 'middle', data: ['Slot(F1)', 'Intent(Acc)']},
-	yAxis: {
-		type: 'value',
-		min: function (value) {
-			_min = value.min - 20;
-			if(_min < 0) return 0;
-			else return Math.floor(_min);
-		},
-		max: 100
-	},
-	series: [{
-			name: 'Zhang et al.',
-			type: 'bar',
-			data: [98.75, 99.76],
-			label: {
-				normal: {show: true, textBorderColor: 'black', formatter:'BERT-SLU',}
-			},
-		},{
-			name: 'Chen et al.',
-			type: 'bar',
-			data: [96, 97.9],
-			label: {
-				normal: {show: true, textBorderColor: 'black', formatter:'BERT + CRF', offset: [0, 20]}
-			},
-		},{
-			name: 'Wang et al.',
-			type: 'bar',
-			data: [96.89, 98.99],
-			label: {
-				normal: {show: true, textBorderColor: 'black', formatter:'with dec', }
-			},
-		},{
-			name: 'Li et al.',
-			type: 'bar',
-			data: [96.52, 98.77],
-		},{
-			name: 'Liu and Lane, 2016a',
-			type: 'bar',
-			data: [95.98, 98.21],
-		},{
-			name: 'Zhu and Yu',
-			type: 'bar',
-			data: [95.79],
-			label: {
-				normal: {show: true, textBorderColor: 'black', formatter:'focus', }
-			},
-		},{
-			name: 'Zhang and Wang',
-			type: 'bar',
-			data: [95.49, 98.1],
-			label: {
-				normal: {show: true, textBorderColor: 'black', formatter:'W', }
-			},
-		},]
-};
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
-</script>
+
 <h2 id="dst模块结果对比">DST模块结果对比</h2>
 <div id="dst-dstc2" style="width: 100%;height: 350px;margin: 0 auto"></div>
 <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.0.0-alpha.2/echarts.common.min.js"></script>
-<script type="text/javascript">
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('dst-dstc2'));
-        // 指定图表的配置项和数据
-        var option = {
-	title: {text: 'DSTC2 结果对比'},
-	tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
-	legend: {
-		type: 'scroll',
-		data: ['Wu, Chien-Sheng et al.', 'Zhong et al.', 'Rastogi A et al.', 'Mrkšić N et al.', 'Zilka and Jurcicek', 'Henderson et al., 2014d'],
-		top: 25,
-	},
-	toolbox: {
-		orient: 'vertical',
-		left: 'right',
-		top: 'center',
-		feature: {
-			dataView: {show: true},
-			magicType: {show: true, type: ['bar', 'tiled']},
-			restore: {show: true},
-			saveAsImage: {show: true, pixelRatio: 2}
-		}
-	},
-    xAxis: {type: 'category', name: '<--年份--', nameLocation: 'middle', data: ['Goals', 'Requests']},
-    yAxis: {
-    	type: 'value',
-		min: function (value) {
-			_min = value.min - 20;
-			if(_min < 0) return 0;
-			else return Math.floor(_min);
-		},
-    	max: 100
-    },
-    series: [{
-            name: 'Zhong et al.',
-            type: 'bar',
-            data: [74.5, 97.5],
-        },{
-            name: 'Rastogi A et al.',
-            type: 'bar',
-            data: [70.3],
-			label: {
-				normal: {show: true, textBorderColor: 'black', formatter:'shared', }
-			},
-        },{ 
-            name: 'Mrkšić N et al.',
-            type: 'bar',
-            data: [72.6, 96.4],
-			label: {
-				normal: { show: true, textBorderColor: 'black', formatter:'NBT-DNN', offset: [0, 30]
-				}
-			},
-        },{
-            name: 'Mrkšić N et al.',
-            type: 'bar',
-            data: [73.4, 96.5],
-			label: {
-				normal: {show: true, textBorderColor: 'black', formatter:'NBT-CNN'}
-			},
-        },{
-            name: 'Zilka and Jurcicek',
-            type: 'bar',
-            data: [72, 97],
-			label: {
-				normal: {show: true, textBorderColor: 'black', formatter:'model avg', offset: [0, 15]}
-			},
-        },{
-            name: 'Henderson et al., 2014d',
-            type: 'bar',
-            data: [76.8, 97.8],
-			label: {
-				normal: {show: true, textBorderColor: 'black', formatter:'include h',}
-			},
-        }]
-};
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
-</script>
+
 <div id="dst-woz2.0" style="width: 100%;height: 350px;margin: 0 auto"></div>
 <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.0.0-alpha.2/echarts.common.min.js"></script>
-<script type="text/javascript">
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('dst-woz2.0'));
-        // 指定图表的配置项和数据
-        var option = {
-	title: {text: 'WOZ 2.0 结果对比'},
-	tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
-	legend: {
-		type: 'scroll',
-		data: ['Heck et al.', 'Wu, Chien-Sheng et al.', 'Zhong et al.', 'Rastogi A et al.', 'Mrkšić N et al.', 'Zilka and Jurcicek', 'Henderson et al., 2014d'],
-		top: 25,
-	},
-	toolbox: {
-		orient: 'vertical',
-		left: 'right',
-		top: 'center',
-		feature: {
-			dataView: {show: true},
-			magicType: {show: true, type: ['bar', 'tiled']},
-			restore: {show: true},
-			saveAsImage: {show: true, pixelRatio: 2}
-		}
-	},
-    xAxis: {type: 'category', name: '<--年份--', nameLocation: 'middle', data: ['Goals/Joint Accuracy', 'Requests']},
-    yAxis: {
-		type: 'value',
-		min: function (value) {
-			_min = value.min - 20;
-			if(_min < 0) return 0;
-			else return Math.floor(_min);
-		},
-		max: 100
-	},
-    series: [{
-            name: 'Heck et al.',
-            type: 'bar',
-            data: [92.7],
-			label: {
-				normal: {show: true, textBorderColor: 'black', formatter:'TripPy', offset: [0, 30]}
-			},
-        },{
-            name: 'Zhong et al.',
-            type: 'bar',
-            data: [88.1, 97.1],
-        },{ 
-            name: 'Mrkšić N et al.',
-            type: 'bar',
-            data: [84.4, 91.2],
-			label: {
-				normal: {show: true, textBorderColor: 'black', formatter:'NBT-DNN', offset: [0, 30]}
-			},
-        },{
-            name: 'Mrkšić N et al.',
-            type: 'bar',
-            data: [84.2, 91.6],
-			label: {
-				normal: {show: true, textBorderColor: 'black', formatter:'NBT-CNN'}
-			},
-        }]
-};
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
-</script>
+
 <div id="dst-multiwoz2.1" style="width: 100%;height: 350px;margin: 0 auto"></div>
 <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.0.0-alpha.2/echarts.common.min.js"></script>
-<script type="text/javascript">
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('dst-multiwoz2.1'));
-        // 指定图表的配置项和数据
-        var option = {
-	title: {text: 'MultiWOZ 2.1 结果对比'},
-	tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
-	legend: {
-		type: 'scroll',
-		data: ['Heck et al.', 'Zhang et al.', 'Wu, Chien-Sheng et al.',],
-		top: 25,
-	},
-	toolbox: {
-		orient: 'vertical',
-		left: 'right',
-		top: 'center',
-		feature: {
-			dataView: {show: true},
-			magicType: {show: true, type: ['bar', 'tiled']},
-			restore: {show: true},
-			saveAsImage: {show: true, pixelRatio: 2}
-		}
-	},
-    xAxis: {type: 'category', name: '<--年份--', data: ['Goals/Joint Accuracy']},
-    yAxis: {
-		type: 'value',
-		min: function (value) {
-			_min = value.min - 20;
-			if(_min < 0) return 0;
-			else return Math.floor(_min);
-		},
-		max: 100
-	},
-    series: [{ 
-            name: 'Heck et al.',
-            type: 'bar',
-            data: [55.29],
-			label: {
-				normal: {show: true, textBorderColor: 'black', formatter:'TripPy', offset: [0, 10]}
-			}
-		},{ 
-            name: 'Zhang et al.',
-            type: 'bar',
-            data: [53.3],
-			label: {
-				normal: {show: true, textBorderColor: 'black', formatter:'DST-Picklist', offset: [0, 10]}
-			}
-		},{ 
-			name: 'Wu, Chien-Sheng et al.',
-			type: 'bar',
-			data: [45.6],
-			label: {
-				normal: {show: true, textBorderColor: 'black', formatter:'TRADE', offset: [0, 10]}
-			}
-		}]
-};
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
-</script>
+
 <h1 id="名词">名词</h1>
 <table>
 <colgroup>
-<col style="width: 33%" />
-<col style="width: 66%" />
+<col style="width: 33%">
+<col style="width: 66%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -1064,7 +785,7 @@
 </tr>
 <tr class="odd">
 <td>槽值对</td>
-<td>slot-value / slot value / slot value pair<br />
+<td>slot-value / slot value / slot value pair<br>
 （有时为了简便，可能会直接称之为“槽值”，但是本文中如此称呼有歧义，所以几乎不会出现这种情况）</td>
 </tr>
 <tr class="even">
@@ -1077,11 +798,7 @@
 </tr>
 </tbody>
 </table>
-<script>
-window.onload = function () {
-    $('colgroup').remove()
-    }
-</script>
+
 <h1 id="bibliography" class="unnumbered">参考文献</h1>
 <div id="refs" class="references">
 <div id="ref-budzianowski2018multiwoz">
@@ -1209,27 +926,7 @@ window.onload = function () {
           </div>
           
 
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
+
 
         </div>
           
@@ -1254,14 +951,13 @@ window.onload = function () {
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#任务完成型对话系统"><span class="nav-number">1.</span> <span class="nav-text">任务完成型对话系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#对话状态与对话动作"><span class="nav-number">1.1.</span> <span class="nav-text">对话状态与对话动作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#系统动作"><span class="nav-number">1.2.</span> <span class="nav-text">系统动作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#slu"><span class="nav-number">2.</span> <span class="nav-text">SLU</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#难点未来的工作"><span class="nav-number">2.1.</span> <span class="nav-text">难点&#x2F;未来的工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关工作"><span class="nav-number">2.2.</span> <span class="nav-text">相关工作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#独立模型"><span class="nav-number">2.2.1.</span> <span class="nav-text">独立模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#联合模型"><span class="nav-number">2.2.2.</span> <span class="nav-text">联合模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#论文笔记"><span class="nav-number">2.3.</span> <span class="nav-text">论文笔记</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#引用"><span class="nav-number">2.4.</span> <span class="nav-text">引用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#dst"><span class="nav-number">3.</span> <span class="nav-text">DST</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#独立模型与联合模型"><span class="nav-number">3.1.</span> <span class="nav-text">独立模型与联合模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#难点未来的工作-1"><span class="nav-number">3.2.</span> <span class="nav-text">难点&#x2F;未来的工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关工作-1"><span class="nav-number">3.3.</span> <span class="nav-text">相关工作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#传统模型"><span class="nav-number">3.3.1.</span> <span class="nav-text">传统模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可扩展性"><span class="nav-number">3.3.2.</span> <span class="nav-text">可扩展性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#单领域dst"><span class="nav-number">3.3.2.1.</span> <span class="nav-text">单领域DST</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#多领域dst"><span class="nav-number">3.3.2.2.</span> <span class="nav-text">多领域DST</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算复杂度高"><span class="nav-number">3.3.3.</span> <span class="nav-text">计算复杂度高</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#论文笔记-1"><span class="nav-number">3.4.</span> <span class="nav-text">论文笔记</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#引用-1"><span class="nav-number">3.5.</span> <span class="nav-text">引用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结果对比"><span class="nav-number">4.</span> <span class="nav-text">结果对比</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#slu模块结果对比"><span class="nav-number">4.1.</span> <span class="nav-text">SLU模块结果对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dst模块结果对比"><span class="nav-number">4.2.</span> <span class="nav-text">DST模块结果对比</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#名词"><span class="nav-number">5.</span> <span class="nav-text">名词</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bibliography"><span class="nav-number">6.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#任务完成型对话系统"><span class="nav-number">1.</span> <span class="nav-text">任务完成型对话系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#对话状态与对话动作"><span class="nav-number">1.1.</span> <span class="nav-text">对话状态与对话动作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#系统动作"><span class="nav-number">1.2.</span> <span class="nav-text">系统动作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#slu"><span class="nav-number">2.</span> <span class="nav-text">SLU</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#难点未来的工作"><span class="nav-number">2.1.</span> <span class="nav-text">难点/未来的工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关工作"><span class="nav-number">2.2.</span> <span class="nav-text">相关工作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#独立模型"><span class="nav-number">2.2.1.</span> <span class="nav-text">独立模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#联合模型"><span class="nav-number">2.2.2.</span> <span class="nav-text">联合模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#论文笔记"><span class="nav-number">2.3.</span> <span class="nav-text">论文笔记</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#引用"><span class="nav-number">2.4.</span> <span class="nav-text">引用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#dst"><span class="nav-number">3.</span> <span class="nav-text">DST</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#独立模型与联合模型"><span class="nav-number">3.1.</span> <span class="nav-text">独立模型与联合模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#难点未来的工作-1"><span class="nav-number">3.2.</span> <span class="nav-text">难点/未来的工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关工作-1"><span class="nav-number">3.3.</span> <span class="nav-text">相关工作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#传统模型"><span class="nav-number">3.3.1.</span> <span class="nav-text">传统模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可扩展性"><span class="nav-number">3.3.2.</span> <span class="nav-text">可扩展性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#单领域dst"><span class="nav-number">3.3.2.1.</span> <span class="nav-text">单领域DST</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#多领域dst"><span class="nav-number">3.3.2.2.</span> <span class="nav-text">多领域DST</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算复杂度高"><span class="nav-number">3.3.3.</span> <span class="nav-text">计算复杂度高</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#论文笔记-1"><span class="nav-number">3.4.</span> <span class="nav-text">论文笔记</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#引用-1"><span class="nav-number">3.5.</span> <span class="nav-text">引用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结果对比"><span class="nav-number">4.</span> <span class="nav-text">结果对比</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#slu模块结果对比"><span class="nav-number">4.1.</span> <span class="nav-text">SLU模块结果对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dst模块结果对比"><span class="nav-number">4.2.</span> <span class="nav-text">DST模块结果对比</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#名词"><span class="nav-number">5.</span> <span class="nav-text">名词</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bibliography"><span class="nav-number">6.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
-      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮" src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
   <div class="site-description" itemprop="description">记录</div>
 </div>
@@ -1270,40 +966,40 @@ window.onload = function () {
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">181</span>
+          <span class="site-state-item-count">182</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-count">32</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">105</span>
+        <span class="site-state-item-count">104</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">247k</span>
+      	<span class="site-state-item-count">250.8k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
 </div>
   <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
     Chat
-  </a>
+  
   </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
@@ -1317,10 +1013,13 @@ window.onload = function () {
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+          <a href="http://huaguoguo.gitee.io/" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://smallwhitezzz.gitee.io/blog" title="https://smallwhitezzz.gitee.io/blog" rel="noopener" target="_blank">凯子</a>
         </li>
     </ul>
   </div>
@@ -1347,14 +1046,14 @@ window.onload = function () {
 
 <div class="copyright">
   
-  &copy; 2019 – 
+  © 2019 – 
   <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div><!--
 樱花特效 
 最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
@@ -1363,15 +1062,9 @@ window.onload = function () {
 于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
 原地址为：https://cangshui.net/2372.html
 -->
-<script>
-	var pathname = window.location.pathname;
-	// pathname == '/' || pathname == '/index.html'
-	if(pathname == '/categories/assorted/timeline/'){
-		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
-	}
-</script>
+
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-<script src="/lib/my-utils.js"></script>
+
 <script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
@@ -1396,7 +1089,7 @@ window.onload = function () {
 
         
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -1428,20 +1121,20 @@ window.onload = function () {
   </div>
 
   
-  <script src="/lib/anime.min.js"></script>
+  
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
+  
+  
 
 
-<script src="/js/next-boot.js"></script>
 
-<script src="/js/bookmark.js"></script>
+
+
+
+
+
+
 
 
   
@@ -1450,7 +1143,7 @@ window.onload = function () {
 
 
   
-<script src="/js/local-search.js"></script>
+
 
 
 
@@ -1470,7 +1163,327 @@ window.onload = function () {
 
   
   <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
-  <script>
+  
+<!-- calendar widget -->
+
+
+
+
+<script src="/bundle.js"></script><script>
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('slu-atis'));
+        // 指定图表的配置项和数据
+        var option = {
+	title: {text: 'ATIS 结果对比'},
+	tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
+	legend: {
+		type: 'scroll',
+		data: ['Zhang et al.', 'Chen et al.', 'Wang et al.', 'Li et al.', 'Liu and Lane, 2016a', 'Zhu and Yu', 'Zhang and Wang'],
+		top: 25,
+	},
+	toolbox: {
+		orient: 'vertical',
+		left: 'right',
+		top: 'center',
+		feature: {
+			dataView: {show: true},
+			magicType: {show: true, type: ['bar', 'tiled']},
+			restore: {show: true},
+			saveAsImage: {show: true, pixelRatio: 2}
+		}
+	},
+	xAxis: {type: 'category', name: '<--年份--', nameLocation: 'middle', data: ['Slot(F1)', 'Intent(Acc)']},
+	yAxis: {
+		type: 'value',
+		min: function (value) {
+			_min = value.min - 20;
+			if(_min < 0) return 0;
+			else return Math.floor(_min);
+		},
+		max: 100
+	},
+	series: [{
+			name: 'Zhang et al.',
+			type: 'bar',
+			data: [98.75, 99.76],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'BERT-SLU',}
+			},
+		},{
+			name: 'Chen et al.',
+			type: 'bar',
+			data: [96, 97.9],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'BERT + CRF', offset: [0, 20]}
+			},
+		},{
+			name: 'Wang et al.',
+			type: 'bar',
+			data: [96.89, 98.99],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'with dec', }
+			},
+		},{
+			name: 'Li et al.',
+			type: 'bar',
+			data: [96.52, 98.77],
+		},{
+			name: 'Liu and Lane, 2016a',
+			type: 'bar',
+			data: [95.98, 98.21],
+		},{
+			name: 'Zhu and Yu',
+			type: 'bar',
+			data: [95.79],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'focus', }
+			},
+		},{
+			name: 'Zhang and Wang',
+			type: 'bar',
+			data: [95.49, 98.1],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'W', }
+			},
+		},]
+};
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+;
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('dst-dstc2'));
+        // 指定图表的配置项和数据
+        var option = {
+	title: {text: 'DSTC2 结果对比'},
+	tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
+	legend: {
+		type: 'scroll',
+		data: ['Wu, Chien-Sheng et al.', 'Zhong et al.', 'Rastogi A et al.', 'Mrkšić N et al.', 'Zilka and Jurcicek', 'Henderson et al., 2014d'],
+		top: 25,
+	},
+	toolbox: {
+		orient: 'vertical',
+		left: 'right',
+		top: 'center',
+		feature: {
+			dataView: {show: true},
+			magicType: {show: true, type: ['bar', 'tiled']},
+			restore: {show: true},
+			saveAsImage: {show: true, pixelRatio: 2}
+		}
+	},
+    xAxis: {type: 'category', name: '<--年份--', nameLocation: 'middle', data: ['Goals', 'Requests']},
+    yAxis: {
+    	type: 'value',
+		min: function (value) {
+			_min = value.min - 20;
+			if(_min < 0) return 0;
+			else return Math.floor(_min);
+		},
+    	max: 100
+    },
+    series: [{
+            name: 'Zhong et al.',
+            type: 'bar',
+            data: [74.5, 97.5],
+        },{
+            name: 'Rastogi A et al.',
+            type: 'bar',
+            data: [70.3],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'shared', }
+			},
+        },{ 
+            name: 'Mrkšić N et al.',
+            type: 'bar',
+            data: [72.6, 96.4],
+			label: {
+				normal: { show: true, textBorderColor: 'black', formatter:'NBT-DNN', offset: [0, 30]
+				}
+			},
+        },{
+            name: 'Mrkšić N et al.',
+            type: 'bar',
+            data: [73.4, 96.5],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'NBT-CNN'}
+			},
+        },{
+            name: 'Zilka and Jurcicek',
+            type: 'bar',
+            data: [72, 97],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'model avg', offset: [0, 15]}
+			},
+        },{
+            name: 'Henderson et al., 2014d',
+            type: 'bar',
+            data: [76.8, 97.8],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'include h',}
+			},
+        }]
+};
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+;
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('dst-woz2.0'));
+        // 指定图表的配置项和数据
+        var option = {
+	title: {text: 'WOZ 2.0 结果对比'},
+	tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
+	legend: {
+		type: 'scroll',
+		data: ['Heck et al.', 'Wu, Chien-Sheng et al.', 'Zhong et al.', 'Rastogi A et al.', 'Mrkšić N et al.', 'Zilka and Jurcicek', 'Henderson et al., 2014d'],
+		top: 25,
+	},
+	toolbox: {
+		orient: 'vertical',
+		left: 'right',
+		top: 'center',
+		feature: {
+			dataView: {show: true},
+			magicType: {show: true, type: ['bar', 'tiled']},
+			restore: {show: true},
+			saveAsImage: {show: true, pixelRatio: 2}
+		}
+	},
+    xAxis: {type: 'category', name: '<--年份--', nameLocation: 'middle', data: ['Goals/Joint Accuracy', 'Requests']},
+    yAxis: {
+		type: 'value',
+		min: function (value) {
+			_min = value.min - 20;
+			if(_min < 0) return 0;
+			else return Math.floor(_min);
+		},
+		max: 100
+	},
+    series: [{
+            name: 'Heck et al.',
+            type: 'bar',
+            data: [92.7],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'TripPy', offset: [0, 30]}
+			},
+        },{
+            name: 'Zhong et al.',
+            type: 'bar',
+            data: [88.1, 97.1],
+        },{ 
+            name: 'Mrkšić N et al.',
+            type: 'bar',
+            data: [84.4, 91.2],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'NBT-DNN', offset: [0, 30]}
+			},
+        },{
+            name: 'Mrkšić N et al.',
+            type: 'bar',
+            data: [84.2, 91.6],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'NBT-CNN'}
+			},
+        }]
+};
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+;
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('dst-multiwoz2.1'));
+        // 指定图表的配置项和数据
+        var option = {
+	title: {text: 'MultiWOZ 2.1 结果对比'},
+	tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
+	legend: {
+		type: 'scroll',
+		data: ['Heck et al.', 'Zhang et al.', 'Wu, Chien-Sheng et al.',],
+		top: 25,
+	},
+	toolbox: {
+		orient: 'vertical',
+		left: 'right',
+		top: 'center',
+		feature: {
+			dataView: {show: true},
+			magicType: {show: true, type: ['bar', 'tiled']},
+			restore: {show: true},
+			saveAsImage: {show: true, pixelRatio: 2}
+		}
+	},
+    xAxis: {type: 'category', name: '<--年份--', data: ['Goals/Joint Accuracy']},
+    yAxis: {
+		type: 'value',
+		min: function (value) {
+			_min = value.min - 20;
+			if(_min < 0) return 0;
+			else return Math.floor(_min);
+		},
+		max: 100
+	},
+    series: [{ 
+            name: 'Heck et al.',
+            type: 'bar',
+            data: [55.29],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'TripPy', offset: [0, 10]}
+			}
+		},{ 
+            name: 'Zhang et al.',
+            type: 'bar',
+            data: [53.3],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'DST-Picklist', offset: [0, 10]}
+			}
+		},{ 
+			name: 'Wu, Chien-Sheng et al.',
+			type: 'bar',
+			data: [45.6],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'TRADE', offset: [0, 10]}
+			}
+		}]
+};
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+;
+
+window.onload = function () {
+    $('colgroup').remove()
+    }
+;
+
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+;
+
+	var pathname = window.location.pathname;
+	// pathname == '/' || pathname == '/index.html'
+	if(pathname == '/categories/assorted/timeline/'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+;
+
       window.addEventListener('load', () => {
       quicklink({
         timeout : 3000,
@@ -1478,9 +1491,4 @@ window.onload = function () {
         ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/e0902c9c.html',]
       });
       });
-  </script>
-<!-- calendar widget -->
-
-
-</body>
-</html>
+  </script></body></html>

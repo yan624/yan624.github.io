@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
+<!DOCTYPE html><html lang="zh-CN"><head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
@@ -10,25 +8,27 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-<link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
-  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
-  <script src="/lib/pace/pace.min.js"></script>
+
+
+  
+  
+  
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="论文概要 提出一个结构感知的神经架构，将语义解析过程分解为如下两个步骤：给定一个输入语句，1）首先生成它含义的粗略草图（a rough sketch of its meaning），其中低级信息被掩盖（如变量名和参数）。2）然后考虑输入本身和草图来填充丢失的细节。 RNN 在多种 NLP 任务中的成功应用对 seq2seq 的语义解析产生了强大的冲击力，如Jia and Liang, 2016;">
+  <meta name="description" content="论文概要
+ 提出一个结构感知的神经架构，将语义解析过程分解为如下两个步骤：给定一个输入语句，1）首先生成它含义的粗略草图（a rough sketch of its meaning），其中低级信息被掩盖（如变量名和参数）。2）然后考虑输入本身和草图来填充丢失的细节。 RNN 在多种 NLP 任务中的成功应用对 seq2seq 的语义解析产生了强大的冲击力，如Jia and Liang, 2016;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Coarse-to-Fine Decoding for Neural Semantic Parsing">
 <meta property="og:url" content="https://yan624.github.io/posts/2b05bdcf.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="论文概要 提出一个结构感知的神经架构，将语义解析过程分解为如下两个步骤：给定一个输入语句，1）首先生成它含义的粗略草图（a rough sketch of its meaning），其中低级信息被掩盖（如变量名和参数）。2）然后考虑输入本身和草图来填充丢失的细节。 RNN 在多种 NLP 任务中的成功应用对 seq2seq 的语义解析产生了强大的冲击力，如Jia and Liang, 2016;">
+<meta property="og:description" content="论文概要
+ 提出一个结构感知的神经架构，将语义解析过程分解为如下两个步骤：给定一个输入语句，1）首先生成它含义的粗略草图（a rough sketch of its meaning），其中低级信息被掩盖（如变量名和参数）。2）然后考虑输入本身和草图来填充丢失的细节。 RNN 在多种 NLP 任务中的成功应用对 seq2seq 的语义解析产生了强大的冲击力，如Jia and Liang, 2016;">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0%EF%BC%9ACoarse-to-Fine%20Decoding%20for%20Neural%20Semantic%20Parsing/Coarse2Fine%E6%9E%B6%E6%9E%84.jpg">
 <meta property="article:published_time" content="2019-08-10T06:32:43.000Z">
@@ -53,7 +53,7 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
+
 
 
   <title>Coarse-to-Fine Decoding for Neural Semantic Parsing | 博客</title>
@@ -87,13 +87,13 @@
   </style>
 </noscript>
 
-</head>
+<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css');loadCss('//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css');loadCss('//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css"></noscript></head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
+<body itemscope="" itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
     <div class="headband"></div>
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏">
@@ -156,7 +156,7 @@
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">181</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">182</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -175,9 +175,7 @@
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
-           placeholder="搜索..." spellcheck="false"
-           type="search" class="search-input">
+    <input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
   </div>
   <span class="popup-btn-close">
     <i class="fa fa-times-circle"></i>
@@ -215,7 +213,7 @@
     
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     
     	
     
@@ -226,13 +224,13 @@
 
     <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/2b05bdcf.html">
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
       <meta itemprop="name" content="朱冲䶮">
       <meta itemprop="description" content="记录">
     </span>
 
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="博客">
     </span>
       <header class="post-header">
@@ -261,7 +259,7 @@
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
                   <a href="/categories/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a>
                 </span>
             </span>
@@ -285,7 +283,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                <span class="post-meta-item-text">阅读时长 ≈</span>
               <span>1 分钟</span>
             </span>
 
@@ -301,7 +299,7 @@
         <h1 id="论文概要">论文概要</h1>
 <p>提出一个结构感知的神经架构，将语义解析过程分解为如下两个步骤：给定一个输入语句，1）首先生成它含义的粗略草图（a rough sketch of its meaning），其中低级信息<strong>被掩盖</strong>（如<strong>变量名和参数</strong>）。2）然后考虑输入本身和草图来填充丢失的细节。 RNN 在多种 NLP 任务中的成功应用对 seq2seq 的语义解析产生了强大的冲击力，如<a href="https://arxiv.org/pdf/1606.03622.pdf" target="_blank" rel="noopener" title="Data recombination for neural semantic parsing">Jia and Liang, 2016</a>; Dong and Lapata, 2016; <a href="https://arxiv.org/pdf/1603.06744.pdf" target="_blank" rel="noopener" title="Latent predictor networks for code generation">Ling et al., 2016</a>。 我们认为，这种方法至少有三个优点。首先，分解步骤<strong>将高级语义信息与低级语义信息分离开来</strong>，使译码器能够在不同的粒度级别对语义进行建模。其次，模型可以明确地为具有相同草图（即基本含义）的示例共享粗糙结构的知识，即使它们的实际含义表示不同（例如，由于不同的细节）。第三，在生成草图后，解码器知道语句的基本含义是什么，<strong>模型可以将其作为全局上下文来改进对最终细节的预测</strong>。 使用如下数据集： 1. GEO 2. ATIS 3. DJANGO 4. WikiSQL <a id="more"></a></p>
 <h1 id="问题阐释">问题阐释</h1>
-<p>定义 <span class="math inline">\(x = x_1 \dots x_{|x|}\)</span> 为自然语句，<span class="math inline">\(y = y_1 \dots y_{|y|}\)</span>为意义表示，<span class="math inline">\(a = a_1 \dots a_{|a|}\)</span>为 sketch 表示。<del>注意 <strong>sketch 的定义为</strong>：一个中间变量，如将自然语句转化为 Logical Form，Source Code，SQL，noSQL，SPARQL等表示，这些表示都算是一个 sketch。</del>下图论文架构： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Coarse-to-Fine%20Decoding%20for%20Neural%20Semantic%20Parsing/Coarse2Fine架构.jpg" alt="Coarse2Fine架构" /></p>
+<p>定义 <span class="math inline">\(x = x_1 \dots x_{|x|}\)</span> 为自然语句，<span class="math inline">\(y = y_1 \dots y_{|y|}\)</span>为意义表示，<span class="math inline">\(a = a_1 \dots a_{|a|}\)</span>为 sketch 表示。<del>注意 <strong>sketch 的定义为</strong>：一个中间变量，如将自然语句转化为 Logical Form，Source Code，SQL，noSQL，SPARQL等表示，这些表示都算是一个 sketch。</del>下图论文架构： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文笔记：Coarse-to-Fine%20Decoding%20for%20Neural%20Semantic%20Parsing/Coarse2Fine架构.jpg" alt="Coarse2Fine架构"></p>
 <h2 id="sketch-generation">Sketch Generation</h2>
 <p>encoder 将自然语句编码为向量，decoder 去计算 <span class="math inline">\(p(a|x)\)</span> 从而通过encoding 向量 生成 sketch a。具体来讲，<strong>Input Decoder</strong> 将字转为词向量，并使用 Bi-LSTM 训练。<strong>Coarse Meaning Decoder</strong> 生成 sketch a，也使用 LSTM 并且加上 attention 机制。</p>
 <h2 id="meaning-representation-generation">Meaning Representation Generation</h2>
@@ -383,27 +381,7 @@
           </div>
           
 
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
+
 
         </div>
           
@@ -433,9 +411,8 @@
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
-      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮" src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
   <div class="site-description" itemprop="description">记录</div>
 </div>
@@ -444,40 +421,40 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">181</span>
+          <span class="site-state-item-count">182</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-count">32</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">105</span>
+        <span class="site-state-item-count">104</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">247k</span>
+      	<span class="site-state-item-count">250.8k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
 </div>
   <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
     Chat
-  </a>
+  
   </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
@@ -491,10 +468,13 @@
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+          <a href="http://huaguoguo.gitee.io/" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://smallwhitezzz.gitee.io/blog" title="https://smallwhitezzz.gitee.io/blog" rel="noopener" target="_blank">凯子</a>
         </li>
     </ul>
   </div>
@@ -521,14 +501,14 @@
 
 <div class="copyright">
   
-  &copy; 2019 – 
+  © 2019 – 
   <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div><!--
 樱花特效 
 最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
@@ -537,15 +517,9 @@
 于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
 原地址为：https://cangshui.net/2372.html
 -->
-<script>
-	var pathname = window.location.pathname;
-	// pathname == '/' || pathname == '/index.html'
-	if(pathname == '/categories/assorted/timeline/'){
-		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
-	}
-</script>
+
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-<script src="/lib/my-utils.js"></script>
+
 <script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
@@ -570,7 +544,7 @@
 
         
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -602,20 +576,20 @@
   </div>
 
   
-  <script src="/lib/anime.min.js"></script>
+  
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
+  
+  
 
 
-<script src="/js/next-boot.js"></script>
 
-<script src="/js/bookmark.js"></script>
+
+
+
+
+
+
 
 
   
@@ -624,7 +598,7 @@
 
 
   
-<script src="/js/local-search.js"></script>
+
 
 
 
@@ -644,7 +618,41 @@
 
   
   <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
-  <script>
+  
+<!-- calendar widget -->
+
+
+
+
+<script src="/bundle.js"></script><script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+;
+
+	var pathname = window.location.pathname;
+	// pathname == '/' || pathname == '/index.html'
+	if(pathname == '/categories/assorted/timeline/'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+;
+
       window.addEventListener('load', () => {
       quicklink({
         timeout : 3000,
@@ -652,9 +660,4 @@
         ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/2b05bdcf.html',]
       });
       });
-  </script>
-<!-- calendar widget -->
-
-
-</body>
-</html>
+  </script></body></html>

@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
+<!DOCTYPE html><html lang="zh-CN"><head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
@@ -10,25 +8,31 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-<link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
-  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
-  <script src="/lib/pace/pace.min.js"></script>
+
+
+  
+  
+  
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="论文地址，作者是 Yu Wang et.al.，发表于 2018 年 12 月。  摘要翻译 意图检测和 slot filling 是构建 SLU 的两个主要任务。现在，多个基于深度学习的模型在这些任务上都取得了良好的效果。最有效的算法是基于 seq2seq（or encoder-decoder）的结构，并使用单独或联合的模型生成意图和语义标记（semantic tags）。然而，以往的研究">
+  <meta name="description" content="论文地址，作者是 Yu Wang et.al.，发表于 2018 年 12 月。
+ 
+ 摘要翻译
+ 意图检测和 slot filling 是构建 SLU 的两个主要任务。现在，多个基于深度学习的模型在这些任务上都取得了良好的效果。最有效的算法是基于 seq2seq（or encoder-decoder）的结构，并使用单独或联合的模型生成意图和语义标记（semantic tags）。然而，以往的研究">
 <meta property="og:type" content="article">
 <meta property="og:title" content="A Bi-model based RNN Semantic Frame Parsing Model for Intent Detection and Slot Filling">
 <meta property="og:url" content="https://yan624.github.io/posts/1dc2c7cd.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="论文地址，作者是 Yu Wang et.al.，发表于 2018 年 12 月。  摘要翻译 意图检测和 slot filling 是构建 SLU 的两个主要任务。现在，多个基于深度学习的模型在这些任务上都取得了良好的效果。最有效的算法是基于 seq2seq（or encoder-decoder）的结构，并使用单独或联合的模型生成意图和语义标记（semantic tags）。然而，以往的研究">
+<meta property="og:description" content="论文地址，作者是 Yu Wang et.al.，发表于 2018 年 12 月。
+ 
+ 摘要翻译
+ 意图检测和 slot filling 是构建 SLU 的两个主要任务。现在，多个基于深度学习的模型在这些任务上都取得了良好的效果。最有效的算法是基于 seq2seq（or encoder-decoder）的结构，并使用单独或联合的模型生成意图和语义标记（semantic tags）。然而，以往的研究">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-02-15T17:31:40.000Z">
 <meta property="article:modified_time" content="2020-07-17T15:13:05.339Z">
@@ -49,7 +53,7 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
+
 
 
   <title>A Bi-model based RNN Semantic Frame Parsing Model for Intent Detection and Slot Filling | 博客</title>
@@ -83,13 +87,13 @@
   </style>
 </noscript>
 
-</head>
+<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css');loadCss('//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css');loadCss('//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css"></noscript></head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
+<body itemscope="" itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
     <div class="headband"></div>
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏">
@@ -152,7 +156,7 @@
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">181</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">182</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -171,9 +175,7 @@
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
-           placeholder="搜索..." spellcheck="false"
-           type="search" class="search-input">
+    <input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
   </div>
   <span class="popup-btn-close">
     <i class="fa fa-times-circle"></i>
@@ -211,52 +213,26 @@
     
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     
     	
         <!-- 弹窗插件 -->
-    		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
-        <script type="text/javascript" src="/lib/spop/spop.min.js"></script>
+    		
+        
         <!--判断此文是否为特殊的文章-->
-        <script>
-          var templateSentence = '这是条不可能出现的弹窗提示。';
-          if('4me' == '学习笔记')
-            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记。';
-          else if('4me' == '4me')
-            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
-          spop({
-            template: templateSentence,
-            group: 'tips',
-            position  : 'bottom-center',
-            style: 'success',
-            autoclose: 5500,
-            onOpen: function () {
-              //这里设置灰色背景色
-            },
-            onClose: function() {
-              //这里可以取消背景色
-              /*spop({
-                template: 'ε = = (づ′▽`)づ',
-                group: 'tips',
-                position  : 'bottom-center',
-                style: 'success',
-                autoclose: 1500
-              });*/
-            }
-          });
-        </script>
+        
     	
     
 
     <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/1dc2c7cd.html">
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
       <meta itemprop="name" content="朱冲䶮">
       <meta itemprop="description" content="记录">
     </span>
 
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="博客">
     </span>
       <header class="post-header">
@@ -285,7 +261,7 @@
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
                   <a href="/categories/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a>
                 </span>
             </span>
@@ -309,7 +285,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                <span class="post-meta-item-text">阅读时长 ≈</span>
               <span>2 分钟</span>
             </span>
 
@@ -337,8 +313,8 @@
 <p>Bi-model structure with a decoder 如图 1a 所示，架构中有两个互联的 Bi-LSTMs(BLSTMs)，一个用于意图检测，一个用于 slot filling。每个 BLSTM 分别正向和反向地在输入语句序列（<span class="math inline">\(x_1, x_2, \cdots, x_n\)</span>）上读取信息，并且生成两个隐藏状态序列 <span class="math inline">\(hf_t\)</span> 和 <span class="math inline">\(hb_t\)</span>。然后将 <span class="math inline">\(hf_t\)</span> 和 <span class="math inline">\(hb_t\)</span> 拼接成在第 t 个时间步上的最终 BLSTM state <span class="math inline">\(h_t = [hf_t, hb_t]\)</span>。因此我们的双向 LSTM <span class="math inline">\(f_i(\cdot)\)</span> 生成了一个隐藏状态序列 <span class="math inline">\((h^i_1, h^i_2, \cdots, h^i_n)\)</span>，其中 i=1 对应神经网络的意图检测任务，i = 2 对应 slot filling 任务。 为了进行意图检测，隐藏状态 <span class="math inline">\(h^1_t\)</span> 与 slot filling 任务中 由<span class="math inline">\(f_2(\cdot)\)</span> 产生的 <span class="math inline">\(h^2_t\)</span> 组合在一起，以生成在第 t 个时间步由 <span class="math inline">\(g_1(\cdot)\)</span> 产生的状态 <span class="math inline">\(s^1_t\)</span>： <span class="math display">\[
 s^1_t = \Phi(s^1_{t-1}, h^1_{n-1}, h^2_{n-1})\\
 y^1_{intent} = \arg\max_{\hat{y}^1_n} P(\hat{y}^1_n | s^1_{n-1}, h^1_{n-1}, h^2_{n-1})
-\]</span> 其中 <span class="math inline">\(\hat{y}^1_n\)</span> 包含在最后一个时间步 t 的所有意图标签的预测概率。 对于 slot filling 任务类似。 <div class="note danger"><p><span class="math inline">\(g_1(\cdot)\)</span> 和 <span class="math inline">\(g_2(\cdot)\)</span> 实际上就是 <strong>decoder</strong>。</p>
-</div></p>
+\]</span> 其中 <span class="math inline">\(\hat{y}^1_n\)</span> 包含在最后一个时间步 t 的所有意图标签的预测概率。 对于 slot filling 任务类似。 </p><div class="note danger"><p><span class="math inline">\(g_1(\cdot)\)</span> 和 <span class="math inline">\(g_2(\cdot)\)</span> 实际上就是 <strong>decoder</strong>。</p>
+</div><p></p>
 <h3 id="bi-model-structure-without-a-decoder">Bi-Model structure without a decoder</h3>
 <p>就是没有 <span class="math inline">\(g(\cdot)\)</span> 产生的 s。</p>
 <h3 id="asynchronous-training">Asynchronous training</h3>
@@ -412,27 +388,7 @@ y^1_{intent} = \arg\max_{\hat{y}^1_n} P(\hat{y}^1_n | s^1_{n-1}, h^1_{n-1}, h^2_
           </div>
           
 
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
+
 
         </div>
           
@@ -462,9 +418,8 @@ y^1_{intent} = \arg\max_{\hat{y}^1_n} P(\hat{y}^1_n | s^1_{n-1}, h^1_{n-1}, h^2_
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
-      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮" src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
   <div class="site-description" itemprop="description">记录</div>
 </div>
@@ -473,40 +428,40 @@ y^1_{intent} = \arg\max_{\hat{y}^1_n} P(\hat{y}^1_n | s^1_{n-1}, h^1_{n-1}, h^2_
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">181</span>
+          <span class="site-state-item-count">182</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-count">32</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">105</span>
+        <span class="site-state-item-count">104</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">247k</span>
+      	<span class="site-state-item-count">250.8k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
 </div>
   <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
     Chat
-  </a>
+  
   </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
@@ -520,10 +475,13 @@ y^1_{intent} = \arg\max_{\hat{y}^1_n} P(\hat{y}^1_n | s^1_{n-1}, h^1_{n-1}, h^2_
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+          <a href="http://huaguoguo.gitee.io/" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://smallwhitezzz.gitee.io/blog" title="https://smallwhitezzz.gitee.io/blog" rel="noopener" target="_blank">凯子</a>
         </li>
     </ul>
   </div>
@@ -550,14 +508,14 @@ y^1_{intent} = \arg\max_{\hat{y}^1_n} P(\hat{y}^1_n | s^1_{n-1}, h^1_{n-1}, h^2_
 
 <div class="copyright">
   
-  &copy; 2019 – 
+  © 2019 – 
   <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div><!--
 樱花特效 
 最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
@@ -566,15 +524,9 @@ y^1_{intent} = \arg\max_{\hat{y}^1_n} P(\hat{y}^1_n | s^1_{n-1}, h^1_{n-1}, h^2_
 于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
 原地址为：https://cangshui.net/2372.html
 -->
-<script>
-	var pathname = window.location.pathname;
-	// pathname == '/' || pathname == '/index.html'
-	if(pathname == '/categories/assorted/timeline/'){
-		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
-	}
-</script>
+
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-<script src="/lib/my-utils.js"></script>
+
 <script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
@@ -599,7 +551,7 @@ y^1_{intent} = \arg\max_{\hat{y}^1_n} P(\hat{y}^1_n | s^1_{n-1}, h^1_{n-1}, h^2_
 
         
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -631,20 +583,20 @@ y^1_{intent} = \arg\max_{\hat{y}^1_n} P(\hat{y}^1_n | s^1_{n-1}, h^1_{n-1}, h^2_
   </div>
 
   
-  <script src="/lib/anime.min.js"></script>
+  
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
+  
+  
 
 
-<script src="/js/next-boot.js"></script>
 
-<script src="/js/bookmark.js"></script>
+
+
+
+
+
+
 
 
   
@@ -653,7 +605,7 @@ y^1_{intent} = \arg\max_{\hat{y}^1_n} P(\hat{y}^1_n | s^1_{n-1}, h^1_{n-1}, h^2_
 
 
   
-<script src="/js/local-search.js"></script>
+
 
 
 
@@ -673,7 +625,68 @@ y^1_{intent} = \arg\max_{\hat{y}^1_n} P(\hat{y}^1_n | s^1_{n-1}, h^1_{n-1}, h^2_
 
   
   <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
-  <script>
+  
+<!-- calendar widget -->
+
+
+
+
+<script src="/bundle.js"></script><script>
+          var templateSentence = '这是条不可能出现的弹窗提示。';
+          if('4me' == '学习笔记')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记。';
+          else if('4me' == '4me')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
+          spop({
+            template: templateSentence,
+            group: 'tips',
+            position  : 'bottom-center',
+            style: 'success',
+            autoclose: 5500,
+            onOpen: function () {
+              //这里设置灰色背景色
+            },
+            onClose: function() {
+              //这里可以取消背景色
+              /*spop({
+                template: 'ε = = (づ′▽`)づ',
+                group: 'tips',
+                position  : 'bottom-center',
+                style: 'success',
+                autoclose: 1500
+              });*/
+            }
+          });
+        ;
+
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+;
+
+	var pathname = window.location.pathname;
+	// pathname == '/' || pathname == '/index.html'
+	if(pathname == '/categories/assorted/timeline/'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+;
+
       window.addEventListener('load', () => {
       quicklink({
         timeout : 3000,
@@ -681,9 +694,4 @@ y^1_{intent} = \arg\max_{\hat{y}^1_n} P(\hat{y}^1_n | s^1_{n-1}, h^1_{n-1}, h^2_
         ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/1dc2c7cd.html',]
       });
       });
-  </script>
-<!-- calendar widget -->
-
-
-</body>
-</html>
+  </script></body></html>

@@ -1,172 +1,287 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>一些常用的pytorch技巧</title>
-    <url>/posts/6e48825d.html</url>
-    <content><![CDATA[<div class="note default"><p><mark class="label info">pytorch</mark> <mark class="label warning">zero grad</mark> <mark class="label success">改变tensor形状</mark> <mark class="label primary">矩阵乘法</mark> <mark class="label info">loss function</mark> <mark class="label danger">pytorch nn</mark> <mark class="label success">操作张量</mark></p>
+    <title>构建一个任务完成型对话系统（零）：调研</title>
+    <url>/posts/efcdf06b.html</url>
+    <content><![CDATA[<h1 id="数据集">数据集</h1>
+<table>
+<thead>
+<tr class="header">
+<th>名称</th>
+<th>数据集地址</th>
+<th>论文笔记</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="https://arxiv.org/pdf/1810.00278.pdf" target="_blank" rel="noopener">MultiWOZ2.0</a> <a href="https://openreview.net/forum?id=Cd2icZgvbxD" target="_blank" rel="noopener">2.1</a> <a href="https://arxiv.org/pdf/2007.12720" target="_blank" rel="noopener">2.2</a> <a href="https://arxiv.org/pdf/2010.05594.pdf" target="_blank" rel="noopener">2.3</a></td>
+<td><a href="https://github.com/budzianowski/multiwoz" target="_blank" rel="noopener">github</a></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><a href="https://arxiv.org/pdf/1909.05855.pdf" target="_blank" rel="noopener">SGD dataset and baseline</a> <a href="https://arxiv.org/pdf/2002.01359.pdf" target="_blank" rel="noopener">DSTC8</a></td>
+<td><a href="https://github.com/google-research-datasets/dstc8-schema-guided-dialogue" target="_blank" rel="noopener">github</a></td>
+<td><a href="https://yan624.github.io/posts/72340bc.html">笔记</a></td>
+</tr>
+</tbody>
+</table>
+<p>随着近几年虚拟助理对多领域对话的需求，目前已经有多个团队发布了诸多多领域的任务对话数据集。其中，MultiWOZ<span class="citation" data-cites="budzianowski2018multiwoz eric2019multiwoz">(Budzianowski et al. 2018; Eric et al. 2019)</span>（谷歌团队）是最先被提出的。其它的多领域数据集还有：M2M、Taskmaster、CrossWOZ(cn)。<mark class="label default">多领域数据集</mark></p>
+<p>任务导向型对话系统在经过几年的发展（2018-2019）后，由于谷歌团队认为当前对话系统还具有以下的一些挑战，他们在 2019 年又提出模式引导的多领域任务对话数据集（The Schema-Guided Dialogue Dataset，<strong>SGD</strong>）<span class="citation" data-cites="rastogi2019towards">(Rastogi et al. 2019)</span>。<mark class="label primary">SGD</mark> <a id="more"></a></p>
+<blockquote><p>虚拟助理（谷歌助手、Alex、Siri）需要为横跨多个领域的一系列服务或者 api 提供一个对话接口，其所支持的服务可能具有重叠的功能，并且还有部分服务可能没有训练数据。而现有公开的任务导向对话数据集还不足以解决以上的挑战，这主要是因为这些数据集只覆盖了少量的领域，且假定每个领域都有一个静态的本体。</p>
+</blockquote>
+<p>谷歌团队在 2020 年（7 月左右）发布了 MultiWOZ2.2<span class="citation" data-cites="zang2020multiwoz">(Zang et al. 2020)</span>，它是一个改进的版本，Zang 等人<span class="citation" data-cites="zang2020multiwoz">(Zang et al. 2020)</span>在 MultiWOZ2.1 上识别并修正了 17.3% 的对话状态标注错误（四种不同类型的误差以及状态更新的不一致）。同时，他们使用任务导向对话模式<span class="citation" data-cites="rastogi2019towards">(Rastogi et al. 2019)</span>重新定义了本体，将槽位分为可分类以及不可分类两种类别，对于不可分类槽位不再提供候选值，例如酒店名称，火车出发时间。此外，为了使得模型能够处理不可分类槽位，并且为了符合近期所提出模型的规范，还引入跨度（span）标签。这些模型以前通常使用字符串在用户语句中探测它的跨度，导致增加了数据处理的成本。<mark class="label success">MultiWOZ2.2</mark></p>
+<p>其中 5 个领域（hotel，train，restaurant，attraction，taxi）<span class="citation" data-cites="wu2019transferable">(Wu et al. 2019)</span>包含大量对话，其它的领域只具有少量的对话，并且其中有 2 个领域（hospital，police）只出现在训练集中。</p>
+<p>最后他们还提出了三个基线模型，分别为：TRADE、SGD-baseline 以及 DS-DST。</p>
+<p>2020 年 10 月 又发布了 MultiWOZ2.3<span class="citation" data-cites="han2020multiwoz">(Han et al. 2020)</span>。</p>
+<h1 id="预训练模型">预训练模型</h1>
+<p>预训练模型凭借着海量的训练数据，可以获得不错的单词表征。在众多任务中取得了不错的成绩。</p>
+<p>近几年，在任务导向对话系统中也有不少的研究人员使用预训练模型，例如 BERT，XLNet 等。</p>
+<p>经过调研后，我们打算使用 TOD-BERT<span class="citation" data-cites="wu2020tod">(Wu et al. 2020)</span>，一个专用于提取任务导向对话的预训练模型。有兴趣的可以查阅<a href="https://arxiv.org/abs/2004.06871" target="_blank" rel="noopener">论文</a>或者<a href="https://yan624.github.io/posts/ceeb7bcc.html">论文笔记</a>。简单来说，该模型在训练时，使用两个额外的符号明确地表示人机交互的过程，即 <span class="math inline">\([USR], [SYS]\)</span>。这是因为人机对话与网络上的通用文本有很明显的区别，人机对话的特征是在一轮对话中包括一条用户语句以及一条系统回复。</p>
+<p>DialoGLUE 中有写到两个专用于对话的预训练模型。</p>
+<h1 id="系统架构">系统架构</h1>
+<h1 id="框架" class="unnumbered">框架</h1>
+<div id="refs" class="references">
+<div id="ref-budzianowski2018multiwoz">
+<p>Budzianowski, Pawel, Tsung-Hsien Wen, Bo-Hsiang Tseng, Inigo Casanueva, Stefan Ultes, Osman Ramadan, and Milica Gašić. 2018. “Multiwoz-a Large-Scale Multi-Domain Wizard-of-Oz Dataset for Task-Oriented Dialogue Modelling.” <em>arXiv Preprint arXiv:1810.00278</em>.</p>
 </div>
-<div class="note warning"><p>本文只记录框架层面的使用。关于深度学习层面的研究记录在 <a href="https://yan624.github.io/·zcy/AI/nlp/神经网络训练技巧（tricks）.html">神经网络训练技巧（tricks）</a>。</p>
+<div id="ref-eric2019multiwoz">
+<p>Eric, Mihail, Rahul Goel, Shachi Paul, Abhishek Sethi, Sanchit Agarwal, Shuyang Gao, and Dilek Hakkani-Tür. 2019. “Multiwoz 2.1: Multi-Domain Dialogue State Corrections and State Tracking Baselines.”</p>
 </div>
-<h1 id="viewreshape和resize_">view、reshape和resize_</h1>
-<p><strong>结论写在前面</strong>：张量连续，使用 <code>view()</code>（此为多数情况）；张量不连续，则使用 <code>reshape()</code>。<code>resize_()</code> 最好不要使用。注意，在张量不连续的情况下，非要使用 <code>view()</code> 也可以，但是要先调用 <code>contiguous()</code> 方法，使得张量连续，但是此方法会返回一个新的张量，浪费时间空间。 <strong>共同点</strong>：这些方法都可以改变 pytorch 中 tensor 的形状，但是它们略有不同。</p>
-<ol type="1">
-<li>view()：只能改变连续的（contiguous）张量，且返回的张量与原张量的数据是共享的。在张量不连续的情况下，硬要使用此方法，需要在使用之前使用 <code>tensor.contiguous()</code>。</li>
-<li>reshape()：对张量是否连续无要求，且<strong>可能</strong>返回的原张量的拷贝（这个“可能”是字面意思，开发者指出，你永远无法预先知道返回的张量是否为拷贝版本。参考 <a href="https://stackoverflow.com/questions/49643225/whats-the-difference-between-reshape-and-view-in-pytorch?utm_medium=organic&amp;utm_source=google_rich_qa&amp;utm_campaign=google_rich_qa" target="_blank" rel="noopener">stackoverflow 回答</a>）。</li>
-<li>resize_()：与上述二者有较大差别，此方法可以无视原张量的形状，进行随意变化。如果元素的数量大于原张量的元素数量，那么底层的存储大小会进行调整，即会进行扩容。小于，则存储空间不做变化。参考《<a href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor.resize_" target="_blank" rel="noopener">pytorch 文档</a>》。 <div class="note warning"><p>这是一个底层的方法，大多数情况可以使用 <code>view()</code> 或者 <code>reshape()</code>。想要使用自定义步长改变张量内置的大小，请使用 <code>set_()</code>。总而言之，就是最好不要用这个方法。</p>
-</div> <a id="more"></a></li>
-</ol>
-<h2 id="不连续的张量的说明">不连续的张量的说明</h2>
-<p>如果对 tensor 使用 <code>transpose</code>，<code>permute</code> 等操作会使该 tensor 在内存中变得不再连续。例如，以下代码在使用 <code>view()</code> 方法后会报出 <code>RuntimeError: view size is not compatible with input tensor's size and stride (at least one dimension spans across two contiguous subspaces). Use .reshape(...) instead.</code> 的错误。 <div class="note info"><p>至于为什么 pytorch 有这种“连续的”设定，这就要从 pytorch 的底层讲起了，又是要几条博客才能解释（ps：关键是我也不懂），不过可以参考《<a href="https://zhuanlan.zhihu.com/p/64551412" target="_blank" rel="noopener">PyTorch 中的 contiguous</a>》。</p>
-</div></p>
-<figure class="highlight angelscript"><table><tr><td class="code"><pre><span class="line">tensor = torch.Tensor([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">8</span>, <span class="number">9</span>, <span class="number">0</span>]])</span><br><span class="line"># 正常输出</span><br><span class="line">print(tensor.transpose(<span class="number">1</span>, <span class="number">0</span>).reshape(<span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line">print(tensor.permute(<span class="number">1</span>, <span class="number">0</span>).reshape(<span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line">print(tensor.T.reshape(<span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line"># 报错</span><br><span class="line">print(tensor.transpose(<span class="number">1</span>, <span class="number">0</span>).view(<span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line">print(tensor.permute(<span class="number">1</span>, <span class="number">0</span>).view(<span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line">print(tensor.T.view(<span class="number">2</span>, <span class="number">3</span>))</span><br></pre></td></tr></table></figure>
-<h2 id="contiguous的解释">contiguous()的解释</h2>
-<p>此外，运行以下代码可以得出非连续张量在使用 <code>contiguous()</code> 后会返回一个新的张量，它会重新开辟一块内存，并按照行优先一维展开顺序重新存储原张量。取自 <a href="https://zhuanlan.zhihu.com/p/64551412" target="_blank" rel="noopener">PyTorch 中的 contiguous#为什么需要 contiguous ？</a>。 <figure class="highlight autohotkey"><table><tr><td class="code"><pre><span class="line">tensor1 = torch.Tensor([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">8</span>, <span class="number">9</span>, <span class="number">0</span>]])</span><br><span class="line">tensor2 = tensor1.transpose(<span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line"># 转置前后，张量并无区别</span><br><span class="line">print(tensor1.dat<span class="built_in">a_ptr</span>() == tensor2.dat<span class="built_in">a_ptr</span>())# <span class="literal">True</span></span><br><span class="line"># 对连续张量（tensor1）使用 contiguous() 是无意义的，无论是否转置都是同一个张量</span><br><span class="line">tensor3 = tensor1.contiguous()</span><br><span class="line">print(tensor3.dat<span class="built_in">a_ptr</span>() == tensor2.dat<span class="built_in">a_ptr</span>(), tensor3.dat<span class="built_in">a_ptr</span>() == tensor1.dat<span class="built_in">a_ptr</span>())# <span class="literal">True</span> <span class="literal">True</span></span><br><span class="line"># 对非连续张量（tensor2）使用会返回一个新的张量，无论是否转置都不是同一个张量</span><br><span class="line">tensor4 = tensor2.contiguous()</span><br><span class="line">print(tensor4.dat<span class="built_in">a_ptr</span>() == tensor2.dat<span class="built_in">a_ptr</span>(), tensor4.dat<span class="built_in">a_ptr</span>() == tensor1.dat<span class="built_in">a_ptr</span>())# <span class="literal">False</span> <span class="literal">False</span></span><br></pre></td></tr></table></figure></p>
-<h2 id="参考资料">参考资料</h2>
-<ol type="1">
-<li><a href="https://blog.csdn.net/qq_39507748/article/details/105381089" target="_blank" rel="noopener">pytorch 学习笔记五：pytorch 中 reshape、view 以及 resize 之间的区别</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/64551412" target="_blank" rel="noopener">PyTorch 中的 contiguous</a></li>
-<li><a href="https://stackoverflow.com/questions/49643225/whats-the-difference-between-reshape-and-view-in-pytorch?utm_medium=organic&amp;utm_source=google_rich_qa&amp;utm_campaign=google_rich_qa" target="_blank" rel="noopener">What's the difference between reshape and view in pytorch?</a></li>
-</ol>
-<h1 id="矩阵乘法">矩阵乘法</h1>
-<p>pytorch 拥有多种矩阵乘法计算的函数，包括但不限于 <code>torch.mul()</code>，<code>torch.dot()</code>，<code>torch.mm()</code>，<code>torch.bmm()</code>，<code>torch.matmul()</code>。</p>
-<h2 id="矩阵相乘">矩阵相乘</h2>
-<p><code>torch.dot()</code> 属于向量点积。</p>
-<p><code>torch.mm()</code>，<code>torch.bmm()</code>，<code>torch.matmul()</code> 都属于矩阵相乘。</p>
-<ol type="1">
-<li>torch.mm()：二维矩阵相乘，它只能处理二维矩阵，对于其它维度需要使用 <code>torch.matmul()</code>。注意：如果你需要计算一个矩阵和一个向量的乘法，那么这个向量在框架角度来讲要是二维的。也就是说向量的 shape=(x, 1)，而不能是 shape=(x, )。</li>
-<li>torch.bmm()：与 <code>torch.mm()</code> 一样，只能处理二维矩阵，但是它被用于计算具有批次这个维度的矩阵，也就是说相乘的两个矩阵实际上是三维的。例如矩阵 <span class="math inline">\(A_{32 \times 3 \times 4}\)</span> 和 <span class="math inline">\(B_{32 \times 4 \times 3}\)</span>，其中 32 是它们的批次大小，32 之后的维度还是要按照矩阵相乘的规则。<strong>它在神经网络计算中被频繁使用，因为数据通常都是被一批一批得输入进神经网络。注意，<code>torch.bmm()</code> 只是一个特例（带有批次属性的二维矩阵），如果需要计算高维矩阵的相乘，必须使用 <code>torch.matmul()</code>。</strong> <div class="note info"><p>注意，<code>torch.bmm()</code> 的输入只能是 3 维，它不能进行广播。广播矩阵相乘请使用 <code>torch.matmul()</code>。</p>
-</div></li>
-<li>torch.matmul()：执行的乘法操作取决于输入张量的维度。
-<ol type="1">
-<li>如果都是 1 维，则点乘；</li>
-<li>如果都是 2 维，则计算二维矩阵相乘；</li>
-<li>如果第一个张量是 1 维，第二个是 2 维，则广播第一个张量，进行二维矩阵相乘计算；</li>
-<li>如果第一个张量是 2 维，第二个是 1 维，则计算矩阵 * 向量；</li>
-<li>如果二者至少都是 1 维，且至少一个参数是 N 维（N &gt; 2）。非矩阵的维度将被广播，矩阵维度一般指每个张量的最后一至两位。如 shape=(1, 2, 3, 4) 和 shape=(1, 4, 3)，最后两位是矩阵维度；shape=(1, 2, 3, 4) 和 shape=(4)，第一个张量的最后两位和第二个张量的最后一位就是矩阵维度。</li>
-</ol></li>
-</ol>
-<p>综上，其实没有高维矩阵相乘的概念，一直都是在做矩阵-矩阵/向量乘法，张量中其他的维度只被用于广播。</p>
-<h2 id="矩阵对应元素相乘">矩阵对应元素相乘</h2>
-<p><code>torch.mul()</code> 是对应元素的乘法，例如 <span class="math inline">\(\begin{pmatrix}1\end{pmatrix}\)</span>。它主要分为两种情况：</p>
-<ol type="1">
-<li>张量乘标量：这个很好理解，就是一个张量乘上一个数字。</li>
-<li>张量乘张量：对应元素相乘，<strong>如果两个张量的形状不同，则需要满足能够广播的前提</strong>。如果不满足，则报错。张量广播的机制具体看下面的章节。</li>
-</ol>
-<h2 id="广播机制">广播机制</h2>
-<p>设现有张量 A，B。广播机制分为两种情况：1）张量的维度不同；2）张量的维度相同。</p>
-<p>本来想写的，但是博客<a href="https://blog.csdn.net/littlehaes/article/details/103807303" target="_blank" rel="noopener">《pytorch 中的广播机制》</a>中已经写明白了。此外这些都是经验之说，我在实践过程中发现 A.ndim &lt; B.ndim 也可以进行计算。以后看比较权威的书之后，再来更新吧。</p>
-<p>但是有一点比较清楚，广播机制只有 <code>torch.mat.mul()</code> 支持。</p>
-<h2 id="参考资料-1">参考资料</h2>
-<ol type="1">
-<li><a href="https://pytorch.org/docs/stable/torch.html" target="_blank" rel="noopener">pytorch 官方文档</a></li>
-<li><a href="https://pytorch.org/docs/stable/torch.html" target="_blank" rel="noopener">pytorch 中的广播机制</a></li>
-</ol>
-<h1 id="pytorch-loss-function">pytorch loss function</h1>
-<p>pytorch 的多元分类 loss 有 CrossEntropyLoss 和 NLLLoss。NLLLoss 全称 Negative Log Likelihood Loss，说白了就是求对数概率并取负，我们从函数图像就可以理解。模型输出的概率分布在 0-1 之间，log 函数的 0-1 区间正好全是负数，所以要加上一个负号，让 loss 值为正数。显而易见，概率越接近 1，loss 值越小。接下来描述一下这两个函数。 1. CrossEntropyLoss = LogSoftmax + NLLLoss； 2. CrossEntropyLoss 中已经附带了 log_softmax 操作，所以如果你想省事，那么直接将输出向量输入 CrossEntropyLoss 即可； 3. 如果使用 NLLLoss，那么在使用 NLLLoss 之前，还需要经过一层 LogSoftmax。</p>
-<p>需要注意一点，我感觉网上很多人也没有理解什么是 CrossEntropyLoss，导致很多人都被误导了。首先 nll 的公式如下：</p>
-<p><span class="math display">\[
-nll\_loss = -\log(pred)
-\]</span></p>
-<div class="note warning"><p>nll loss 可以有多种表达方式，我把在网上看到的公式都罗列一下。</p>
-<p>以下的公式与 crossentropy 一样。（实际上公式就是一样的，只不过在概念上有点不同，由于输出值 y 是 one hot 形式，为 0 时，就相当于没有加，最后的结果就是上面的公式） <span class="math display">\[
-nll\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred)
-\]</span> 这里的 class 就是指第几个标签，它不是 one hot 表示形式。大家会发现这里少了一个 log 函数，实际上 pred 是使用 log_softmax 函数计算之后的结果。 <span class="math display">\[
-nll\_loss = -pred[class]
-\]</span></p>
+<div id="ref-han2020multiwoz">
+<p>Han, Ting, Ximing Liu, Ryuichi Takanobu, Yixin Lian, Chongxuan Huang, Wei Peng, and Minlie Huang. 2020. “MultiWOZ 2.3: A Multi-Domain Task-Oriented Dataset Enhanced with Annotation Corrections and Co-Reference Annotation.” <em>arXiv Preprint arXiv:2010.05594</em>.</p>
 </div>
-<p>CrossEntropyLoss 公式如下： <span class="math display">\[
-crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i)
-\]</span> <del>无法理解的原因之一是，在学机器学习的时候，大家都知道啥是 crossentropy，后来在学多元分类时，开始分 binary_crossentropy 和 crossentropy。这点大家都能理解，但是到看到 NLLLoss 时，就开始懵逼了。</del></p>
-<p><del>由于 CrossEntropyLoss = LogSoftmax + NLLLoss，在 crossentropy 的公式中貌似没有出现 softmax（更没有 log_softmax），所以开始懵了，无法理解其中的 LogSoftmax 是干啥的。</del></p>
-<p>首先我要解释一点 CrossEntropyLoss 是 LogSoftmax 和 NLLLoss 两个步骤之和，之前说的“+”号，并非是数学意义上的加号。也就是说，CrossEntropyLoss 就比 NLLLoss 多做了一步 LogSoftmax（<strong>博主注</strong>：<em>个人认为实际上只是多做了一步 softmax，说多做了一步 log_softmax，是因为站在 pytorch 框架的角度</em>）。</p>
-<p>其次，对于真实输出值 y 来说，无非就是 0 和 1（注意多元分类也只有 0 和 1），并且根据上述 crossentropy 的公式。实际上公式可以化简为以下所示，其中的 m 代表真实值为 1 的索引。 <span class="math display">\[
-crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)
-\]</span> 请注意这里的 <span class="math inline">\(pred_m\)</span>。我们都知道在进行分类问题时，我们需要将输出结果置于 0-1 之间，对于二元分类我们使用 sigmoid 函数，对于多元分类我们使用 softmax（到这开始有内味了）。由于分类问题都是要这么做的，所以将 softmax 这个函数放到公式 <span class="math inline">\(crossentropy\_loss = -log(pred_m)\)</span> 中，我们惊奇的发现 crossentropy 函数变成了 log_softmax（最前面的负号暂时不看）。即 crossentropy + softmax = -log_softmax。 <div class="note warning"><p>请始终留意，pred 是一个向量通过 softmax/log_softmax 计算之后的值。</p>
-</div></p>
-<p>最后你会发现这样还是不对。<span class="math inline">\(nll\_loss = -log(pred)\)</span>，之前说 CrossEntropyLoss = <strong>LogSoftmax</strong> + NLLLoss，我把 log_softmax 放到 nll 里，变成了 <span class="math inline">\(LogSoftmax + NLLLoss = -log(log(pred))\)</span>，怎么多了一个 log？实际上 nll 的公式应该以 <span class="math inline">\(nll\_loss = -pred[class]\)</span> 为准，你会发现这个公式中没有 log 函数。这样将 logsoftmax 放入 nll loss 中，就正好是 crossentropy 了。</p>
-<p>那么你就会问 nll 明明是 Negative Log Liklihood，log 不见了，这不就是名存实亡了？</p>
-<p><strong>这可能是因为 pytorch 想要简化操作，才这么设置的，别的框架可能并不是这样。简而言之，pytorch 框架中，nll loss 的公式是 -pred。crossentropy 的公式是 logsoftmax + nll loss，即 nll(log_softmax(output))</strong></p>
-<p><strong>也就是说，如果神经网络的最后一层输出是 logsoftmax，那么就使用 nll loss（上一段 nll loss 那个 pred 就是通过 log_softmax 的输出值）。如果最后一层只是输出，偷懒不想写 logsoftmax，那么就使用 crossentropy loss（上一段 crossentropy 中的 output 就是一个普通的神经网络输出）。</strong></p>
-<h2 id="顺便一提kldivloss">顺便一提KLDivLoss</h2>
-<p><a href="https://www.cnblogs.com/charlotte77/p/5392052.html" target="_blank" rel="noopener">【原】浅谈KL散度（相对熵）在用户画像中的应用</a> 暂时还没用过这个 loss，简单来说，是用来比较两个概率分布之间的信息熵差异，如 AB 两组群体，有对某一商品的总消费分布 P 和群体人数的分布 Q，可以计算 PQ 之间的信息熵差异，从而获得 AB 两组群体对该商品的偏爱程度。</p>
-<h2 id="参考资料-2">参考资料</h2>
-<ol type="1">
-<li><a href="http://blog.leanote.com/post/lee-romantic/crossentry" target="_blank" rel="noopener">CrossEntropyLoss和NLLLoss的理解</a></li>
-<li><a href="https://www.cnblogs.com/ranjiewen/p/10059490.html" target="_blank" rel="noopener">Pytorch之CrossEntropyLoss() 与 NLLLoss() 的区别</a></li>
-<li><a href="https://blog.csdn.net/m0_38133212/article/details/88087206" target="_blank" rel="noopener">CrossEntropyLoss与NLLLoss的总结</a></li>
-<li><a href="https://www.cnblogs.com/marsggbo/p/10401215.html" target="_blank" rel="noopener">Pytorch里的CrossEntropyLoss详解</a></li>
-</ol>
-<h1 id="pytorch中的神经网络">pytorch中的神经网络</h1>
-<h2 id="lstm">LSTM</h2>
-<p>关于 nn.LSTM 的用法：如果不想手动初始化隐藏状态，而是想让 pytorch 帮你初始化，那么就只需要填入输入值即可。举个例子，下面代码框中的代码所输入的自然语句是 ['how are you', 'i'm fine']。 其中输入值 x 的形状为 (seq_len, batch_size, input_size)，对应上面的例子就是 (3, 2, 300)，代表序列长度为 3（因为上面的两句话的最大长度为 3），批量大小为 2，词向量维度为 300。需要注意的是：<strong>pytorch 会根据你输入的序列长度</strong>（输入的张量必须是一样长的，参差不齐的张量无法输入，当然了，你也无法创建出这样的张量）<strong>自动地在时间步上做计算，不需要你写一个循环，然后依次输入每一个单词的词向量。</strong> <figure class="highlight reasonml"><table><tr><td class="code"><pre><span class="line">cell = nn.<span class="constructor">LSTM(<span class="params">input_size</span>, <span class="params">hidden_size</span>, <span class="params">num_layers</span>)</span></span><br><span class="line">output, (a, m) = cell(x)</span><br></pre></td></tr></table></figure></p>
-<h1 id="张量操作">张量操作</h1>
-<h2 id="expand">expand()</h2>
-<p><code>expand()</code> 函数按照你想要的大小扩充 tensor，并且<strong>返回一个新的 tensor</strong>。注意它是 tensor 的成员方法，并且你所想要新 tensor 的维度必须与原 tensor 的维度相同。例如，原 tensor.shape=(3, 1)，那么你可以扩大为 (3, 4)，但是你不能扩大为 (3, 1, 1)，当然更不能为 (3, 1, 4)。举个例子： <figure class="highlight angelscript"><table><tr><td class="code"><pre><span class="line">x = torch.Tensor([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>]])</span><br><span class="line"># (<span class="number">3</span>, <span class="number">1</span>)</span><br><span class="line">print(x.shape)</span><br><span class="line">y = x.expand(<span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line"># (<span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line">print(y.shape)</span><br><span class="line"># error</span><br><span class="line">x.expand(<span class="number">3</span>, <span class="number">1</span>, <span class="number">1</span>)</span><br></pre></td></tr></table></figure></p>
-<h1 id="optimizer.zero_grad">optimizer.zero_grad()</h1>
-<p>在 pytorch 中，为什么要在每个循环之初调用这个方法？因为 pytorch 把计算的每个梯度都累加起来，并不会每迭代一次就将梯度清零。这样做看起来令人费解，并反常理。但是实际上这样做可以做更多神奇的操作，比如</p>
-<ul>
-<li><a href="https://www.zhihu.com/question/303070254" target="_blank" rel="noopener" class="uri">https://www.zhihu.com/question/303070254</a></li>
-</ul>
-<p>还有，试想本来你想运行 batch_size=1024，但是由于电脑太差，只能运行 batch_size=256 的批次数据。那么只需要每循环两次调用一次 zero_grad() 即可。 参考：</p>
-<ol type="1">
-<li><a href="https://blog.csdn.net/u011959041/article/details/102760868" target="_blank" rel="noopener">pytorch中为什么要用 zero_grad() 将梯度清零</a></li>
-</ol>
+<div id="ref-rastogi2019towards">
+<p>Rastogi, Abhinav, Xiaoxue Zang, Srinivas Sunkara, Raghav Gupta, and Pranav Khaitan. 2019. “Towards Scalable Multi-Domain Conversational Agents: The Schema-Guided Dialogue Dataset.” <em>arXiv Preprint arXiv:1909.05855</em>.</p>
+</div>
+<div id="ref-wu2020tod">
+<p>Wu, Chien-Sheng, Steven Hoi, Richard Socher, and Caiming Xiong. 2020. “Tod-Bert: Pre-Trained Natural Language Understanding for Task-Oriented Dialogues.” <em>arXiv Preprint arXiv:2004.06871</em>.</p>
+</div>
+<div id="ref-wu2019transferable">
+<p>Wu, Chien-Sheng, Andrea Madotto, Ehsan Hosseini-Asl, Caiming Xiong, Richard Socher, and Pascale Fung. 2019. “Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems.” <em>arXiv Preprint arXiv:1905.08743</em>.</p>
+</div>
+<div id="ref-zang2020multiwoz">
+<p>Zang, Xiaoxue, Abhinav Rastogi, Srinivas Sunkara, Raghav Gupta, Jianguo Zhang, and Jindong Chen. 2020. “Multiwoz 2.2: A Dialogue Dataset with Additional Annotation Corrections and State Tracking Baselines.” <em>arXiv Preprint arXiv:2007.12720</em>.</p>
+</div>
+</div>
 ]]></content>
       <categories>
-        <category>IT-stuff</category>
-        <category>pytorch</category>
+        <category>project</category>
       </categories>
       <tags>
-        <tag>pytorch</tag>
-        <tag>4me</tag>
+        <tag>survey</tag>
       </tags>
   </entry>
   <entry>
-    <title>各种乘法的表示符号</title>
-    <url>/posts/c05e7547.html</url>
-    <content><![CDATA[<p>设 <span class="math display">\[
-m = [a_1, a_2, \cdots, a_n] \\
-n = [b_1, b_2, \cdots, b_n] \\
-\]</span> 设 f(x)，g(x) 是 <span class="math inline">\(R_1\)</span> 上的两个可积函数。</p>
-<h1 id="向量点积">向量点积</h1>
-<p>英文中叫做 dot product，又被称为<strong>点乘</strong>、<strong>内积</strong>、<strong>数量积</strong>。</p>
-<p>则 <span class="math inline">\(m \cdot n = a_1 * b_1 + a_2 * b_2 + \cdots a_n * b_n\)</span>。</p>
-<p>也可以写作<span class="math inline">\(m \bullet n = a_1 * b_1 + a_2 * b_2 + \cdots a_n * b_n\)</span>。 <a id="more"></a></p>
-<h1 id="向量叉乘">向量叉乘</h1>
-<p>又叫<strong>向量积</strong>、<strong>外积</strong>、<strong>叉积</strong>。 <span class="math display">\[
-m \times n = 
-\]</span></p>
-<h1 id="矩阵相乘">矩阵相乘</h1>
-<p>矩阵相乘可以省略乘号： <span class="math display">\[A_{3 \times 4}B_{4 \times 100} = C_{3 \times 100}
-\]</span></p>
-<h1 id="矩阵对应元素相乘">矩阵对应元素相乘</h1>
-<p>英语中叫做 <strong>element-wise multiplication</strong>，也被称为 Hadamard 乘积（Hadamard product）。有以下几种符号表示： <span class="math display">\[
-A_{3 \times 1} \circ B_{3 \times 1} = C_{3 \times 1} \\
-A_{3 \times 4} \circ B_{3 \times 4} = C_{3 \times 4} \\
-A_{3 \times 1} \odot B_{3 \times 1} = C_{3 \times 1} \\
-\]</span></p>
-<h1 id="张量积">张量积</h1>
-<p>英语中叫做 tensor product，对于向量而言张量积与外积等价。有以下符号表示： <span class="math display">\[A_{4 \times 1} \otimes B_{1 \times 3} = C_{4 \times 3}
-\]</span></p>
-<h2 id="克罗内克积">克罗内克积</h2>
-<p>英语中叫做 Kronecker product，克罗内克积是张量积的特殊形式。表示为： <span class="math display">\[A_{m \times n} \otimes B_{p \times q} = C_{mp \times nq}
-\]</span></p>
-<h1 id="卷积">卷积</h1>
-<p>英语中叫做 convolution。表示为： <span class="math display">\[h(x)=(f \ast g)(x) = \int^{\infty}_{-\infty} f(\tau)g(x - \tau)d\tau
-\]</span></p>
-<h1 id="参考资料">参考资料</h1>
-<ol type="1">
-<li><a href="https://blog.csdn.net/jdbc/article/details/82753391" target="_blank" rel="noopener">【收藏】各种乘法的区别 “点积、外积、数乘...等”</a></li>
-<li><a href="https://blog.csdn.net/dcrmg/article/details/52416832" target="_blank" rel="noopener">向量点乘（内积）和叉乘（外积、向量积）概念及几何意义解读</a></li>
-<li><a href="https://baike.baidu.com/item/%E5%90%91%E9%87%8F%E7%A7%AF?fromtitle=cross+product&amp;fromid=18082286" target="_blank" rel="noopener">向量积</a></li>
-<li><a href="https://baike.baidu.com/item/%E5%93%88%E8%BE%BE%E7%8E%9B%E7%A7%AF/18894493?fr=aladdin" target="_blank" rel="noopener">哈达玛积</a></li>
-<li><a href="https://baike.baidu.com/item/%E5%BC%A0%E9%87%8F%E7%A7%AF/7540845?fr=aladdin" target="_blank" rel="noopener">张量积</a></li>
-<li><a href="https://baike.baidu.com/item/%E5%85%8B%E7%BD%97%E5%86%85%E5%85%8B%E7%A7%AF/6282573?fr=aladdin" target="_blank" rel="noopener">克罗内克积</a></li>
-<li><a href="https://www.zhihu.com/question/22298352/answer/637156871" target="_blank" rel="noopener">如何通俗易懂地解释卷积？</a></li>
+    <title>hexo博客插件安装</title>
+    <url>/posts/ca8a0039.html</url>
+    <content><![CDATA[<h1 id="安装的插件">安装的插件</h1>
+<p>打开 git，将当前目录切换到你的博客目录。使用 <code>npm ls -dept 0</code> 即可查看，所有你安装的 hexo 插件。但是以防万一，我还是在下面记录了一下（<strong>主要是我自己下载的插件，hexo 自带的不算</strong>）。</p>
+<table>
+<thead>
+<tr class="header">
+<th>插件名</th>
+<th>版本号</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><em>hexo-cli</em></td>
+<td>3.1.0</td>
+<td>必装插件</td>
+</tr>
+<tr class="even">
+<td>hexo-abbrlink</td>
+<td>2.0.5</td>
+<td>-</td>
+</tr>
+<tr class="odd">
+<td>hexo-filter-flowchart</td>
+<td>1.0.4</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td>hexo-filter-mermaid-diagrams</td>
+<td>1.0.5</td>
+<td>-</td>
+</tr>
+<tr class="odd">
+<td>hexo-generator-calendar</td>
+<td>0.01</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td>hexo-optimize</td>
+<td>2.5.1</td>
+<td>优化网页加载速度</td>
+</tr>
+<tr class="odd">
+<td><em>hexo-renderer-kramed</em></td>
+<td>-</td>
+<td>已废弃</td>
+</tr>
+<tr class="even">
+<td>hexo-renderer-mathjax</td>
+<td>0.6.0</td>
+<td>-</td>
+</tr>
+<tr class="odd">
+<td>hexo-renderer-pandoc</td>
+<td>0.3.0</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td>hexo-symbols-count-time</td>
+<td>0.7.0</td>
+<td>-</td>
+</tr>
+<tr class="odd">
+<td>hexo-tag-echarts3</td>
+<td>1.1.2</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td><em>hexo-wordcount</em></td>
+<td>6.0.1</td>
+<td>已废弃</td>
+</tr>
+</tbody>
+</table>
+<a id="more"></a>
+<h1 id="开启mathjax插件">开启mathjax插件</h1>
+<p>百度了一圈最后还是没有解决问题，因为其他的博客都说要去<code>/node_modules/hexo-renderer-kramed/lib/renderer.js</code>文件修改源代码，但是我压根没有这个文件，hexo-renderer-kramed这个文件夹不存在。</p>
+<p>最后还是自己试出来了，步骤如下： 1. 安装kramed。hexo 默认的渲染引擎是 marked，但是 marked 不支持 mathjax。所以要卸载它。 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">npm <span class="keyword">uninstall</span> hexo-renderer-marked <span class="comment">--save</span></span><br><span class="line">npm <span class="keyword">install</span> hexo-renderer-kramed <span class="comment">--save</span></span><br></pre></td></tr></table></figure> <!-- more --></p>
+<ol start="2" type="1">
+<li><p>停用hexo-math，然后安装 hexo-renderer-mathjax 包。其实我也不知道怎么判断自己有没有在使用hexo-math。总而言之卸载就行了，管它存不存在。 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">npm <span class="keyword">uninstall</span> hexo-math <span class="comment">--save</span></span><br><span class="line">npm <span class="keyword">install</span> hexo-renderer-mathjax <span class="comment">--save</span></span><br></pre></td></tr></table></figure></p></li>
+<li><p>开启mathjax，在next主题文件夹里，具体路径：/themes/next/_config.yml 你只需要把enable属性改为true即可 <figure class="highlight oxygene"><table><tr><td class="code"><pre><span class="line"># Math Equations Render Support</span><br><span class="line">math:</span><br><span class="line">  enable: <span class="keyword">true</span></span><br><span class="line"></span><br><span class="line">  # <span class="keyword">Default</span>(<span class="keyword">true</span>) will load mathjax/katex script <span class="keyword">on</span> demand</span><br><span class="line">  # That <span class="keyword">is</span> it only render those page who <span class="keyword">has</span> `mathjax: <span class="keyword">true</span>` <span class="keyword">in</span> Front Matter.</span><br><span class="line">  # <span class="keyword">If</span> you <span class="keyword">set</span> it <span class="keyword">to</span> <span class="keyword">false</span>, it will load mathjax/katex srcipt EVERY PAGE.</span><br><span class="line">  per_page: <span class="keyword">true</span></span><br><span class="line"></span><br><span class="line">  engine: mathjax</span><br><span class="line">  #engine: katex</span><br><span class="line"></span><br><span class="line">  # hexo-rendering-pandoc (<span class="keyword">or</span> hexo-renderer-kramed) needed <span class="keyword">to</span> full MathJax support.</span><br><span class="line">  mathjax:</span><br><span class="line">    enable: <span class="keyword">true</span></span><br><span class="line">    # Use <span class="number">2.7</span>.<span class="number">1</span> <span class="keyword">as</span> <span class="keyword">default</span>, jsdelivr <span class="keyword">as</span> <span class="keyword">default</span> CDN, works everywhere even <span class="keyword">in</span> China</span><br><span class="line">    cdn: <span class="comment">//cdn.jsdelivr.net/npm/mathjax@2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML</span></span><br><span class="line">    # <span class="keyword">For</span> direct link <span class="keyword">to</span> MathJax.js <span class="keyword">with</span> CloudFlare CDN (cdnjs.cloudflare.com)</span><br><span class="line">    #cdn: <span class="comment">//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML</span></span><br><span class="line"></span><br><span class="line">    # See: https:<span class="comment">//mhchem.github.io/MathJax-mhchem/</span></span><br><span class="line">    #mhchem: <span class="comment">//cdn.jsdelivr.net/npm/mathjax-mhchem@3</span></span><br><span class="line">    #mhchem: <span class="comment">//cdnjs.cloudflare.com/ajax/libs/mathjax-mhchem/3.3.0</span></span><br><span class="line"></span><br><span class="line">  # hexo-renderer-markdown-it-plus (<span class="keyword">or</span> hexo-renderer-markdown-it <span class="keyword">with</span> markdown-it-katex plugin) needed <span class="keyword">to</span> full Katex support.</span><br><span class="line">  katex:</span><br><span class="line">    # Use <span class="number">0.7</span>.<span class="number">1</span> <span class="keyword">as</span> <span class="keyword">default</span>, jsdelivr <span class="keyword">as</span> <span class="keyword">default</span> CDN, works everywhere even <span class="keyword">in</span> China</span><br><span class="line">    cdn: <span class="comment">//cdn.jsdelivr.net/npm/katex@0.7.1/dist/katex.min.css</span></span><br><span class="line">    # CDNJS, provided <span class="keyword">by</span> cloudflare, maybe the best CDN, but <span class="keyword">not</span> works <span class="keyword">in</span> China</span><br><span class="line">    #cdn: <span class="comment">//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css</span></span><br><span class="line"></span><br><span class="line">    copy_tex:</span><br><span class="line">      # See: https:<span class="comment">//github.com/KaTeX/KaTeX/tree/master/contrib/copy-tex</span></span><br><span class="line">      enable: <span class="keyword">false</span></span><br><span class="line">      copy_tex_js: <span class="comment">//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.js</span></span><br><span class="line">      copy_tex_css: <span class="comment">//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.css</span></span><br></pre></td></tr></table></figure></p></li>
+<li>最后一步，修改/themes/next/layout/_layou.swig文件 将如下代码添加到该文件
+</body>
+<p>标签的上面一行 <figure class="highlight dts"><table><tr><td class="code"><pre><span class="line"><span class="params">&lt;script type="text/x-mathjax-config"&gt;</span></span><br><span class="line">MathJax.Hub.Config(&#123;</span><br><span class="line">	<span class="comment">//下面的HTML-CSS和SVG用于在小屏幕上，数学公式可以自动换行，我测试过后发现无效，但是貌似有人可以。</span></span><br><span class="line">	<span class="string">"HTML-CSS"</span>: &#123; </span><br><span class="line"><span class="symbol">		linebreaks:</span> &#123; </span><br><span class="line"><span class="symbol">			automatic:</span> true </span><br><span class="line">		&#125; </span><br><span class="line">	&#125;,SVG: &#123;</span><br><span class="line"><span class="symbol">		linebreaks:</span> &#123; </span><br><span class="line"><span class="symbol">			automatic:</span> true </span><br><span class="line">		&#125;</span><br><span class="line">	&#125;,menuSettings: &#123;</span><br><span class="line"><span class="symbol">		zoom:</span> <span class="string">"None"</span></span><br><span class="line">	&#125;,</span><br><span class="line"><span class="symbol">	showMathMenu:</span> false,</span><br><span class="line"><span class="symbol">	jax:</span> [<span class="string">"input/TeX"</span>,<span class="string">"output/CommonHTML"</span>],</span><br><span class="line"><span class="symbol">	extensions:</span> [<span class="string">"tex2jax.js"</span>],</span><br><span class="line"><span class="symbol">	TeX:</span> &#123;</span><br><span class="line"><span class="symbol">		extensions:</span> [<span class="string">"AMSmath.js"</span>,<span class="string">"AMSsymbols.js"</span>],</span><br><span class="line"><span class="symbol">		equationNumbers:</span> &#123;</span><br><span class="line"><span class="symbol">			autoNumber:</span> <span class="string">"AMS"</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;,tex2jax: &#123;</span><br><span class="line"><span class="symbol">		inlineMath:</span> [[<span class="string">"\\("</span>, <span class="string">"\\)"</span>]],</span><br><span class="line"><span class="symbol">		displayMath:</span> [[<span class="string">"\\["</span>, <span class="string">"\\]"</span>]]</span><br><span class="line">	&#125;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="params">&lt;/script&gt;</span></span><br><span class="line"><span class="params">&lt;script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/<span class="number">2.7</span><span class="number">.1</span>/MathJax.js?config=TeX-MML-AM_CHTML"&gt;</span><span class="params">&lt;/script&gt;</span></span><br></pre></td></tr></table></figure></p></li>
 </ol>
+<p>1-3步参考<a href="https://www.jianshu.com/p/523e806d6681" target="_blank" rel="noopener">如何在hexo中支持Mathjax</a> 4步参考<a href="http://npm.taobao.org/package/hexo-renderer-kramed" target="_blank" rel="noopener">hexo-renderer-kramed</a></p>
+<ol start="5" type="1">
+<li>2020.06.14 更新：注意，NexT v8 声明 hexo-renderer-kramed 已经停止维护，所以可以改用 hexo-renderer-pandoc，具体可以参考官方文档。</li>
+</ol>
+<h1 id="开启流程图插件">开启流程图插件</h1>
+<p>hexo 本身不支持绘制流程图，但是可以使用以下命令安装插件来实现此功能。 <figure class="highlight processing"><table><tr><td class="code"><pre><span class="line">npm install --<span class="built_in">save</span> hexo-<span class="built_in">filter</span>-flowchart</span><br></pre></td></tr></table></figure></p>
+<p><a href="https://github.com/bubkoo/hexo-filter-flowchart" target="_blank" rel="noopener">插件地址</a>，语法可以<a href="https://cloud.tencent.com/developer/article/1142260" target="_blank" rel="noopener">在这</a>找到，一个简单的例子： <figure class="highlight coq"><table><tr><td class="code"><pre><span class="line">(\`乘<span class="number">3</span>)flow</span><br><span class="line">st=&gt;start: Start|<span class="type">past</span>:&gt;http://www.google.com[blank]</span><br><span class="line">e=&gt;<span class="keyword">end</span>: <span class="keyword">End</span>:&gt;http://www.google.com</span><br><span class="line">op1=&gt;operation: My Operation|<span class="type">past</span></span><br><span class="line">op2=&gt;operation: Stuff|<span class="type">current</span></span><br><span class="line">sub1=&gt;subroutine: My Subroutine|<span class="type">invalid</span></span><br><span class="line">cond=&gt;condition: Yes</span><br><span class="line">or No?|<span class="type">approved</span>:&gt;http://www.google.com</span><br><span class="line">c2=&gt;condition: Good idea|<span class="type">rejected</span></span><br><span class="line">io=&gt;inputoutput: catch something...|<span class="type">request</span></span><br><span class="line"></span><br><span class="line">st-&gt;op1(<span class="built_in">right</span>)-&gt;cond</span><br><span class="line">cond(yes, <span class="built_in">right</span>)-&gt;c2</span><br><span class="line">cond(no)-&gt;sub1(<span class="built_in">left</span>)-&gt;op1</span><br><span class="line">c2(yes)-&gt;io-&gt;e</span><br><span class="line">c2(no)-&gt;op2-&gt;e</span><br><span class="line">(\`乘<span class="number">3</span>)</span><br></pre></td></tr></table></figure></p>
+<h1 id="开启echarts插件">开启echarts插件</h1>
+<p>详见教程<a href="https://kchen.cc/2016/11/05/echarts-in-hexo/" target="_blank" rel="noopener">在 Hexo 中插入 ECharts 动态图表</a> 由于特殊需要，要给 echarts 添加一个 id，所以需要改一下源码。 找到 <code>node_modules/hexo-tag-echarts3/index.js</code>。将 <code>echartsMaps()</code> 函数改为： <figure class="highlight maxima"><table><tr><td class="code"><pre><span class="line">function echartsMaps(<span class="built_in">args</span>, <span class="built_in">content</span>) &#123;</span><br><span class="line">    <span class="built_in">var</span> template = fs.readFileSync(filePath).toString(),</span><br><span class="line">        options = &#123;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">content</span>.<span class="built_in">length</span>) &#123;</span><br><span class="line">        <span class="built_in">var</span> options = <span class="built_in">content</span>;</span><br><span class="line">    &#125;</span><br><span class="line">	_id = <span class="built_in">args</span>[<span class="number">0</span>] || 'echarts' + ((Math.<span class="built_in">random</span>() * <span class="number">9999</span>) | <span class="number">0</span>)</span><br><span class="line">    <span class="built_in">return</span> <span class="symbol">_</span>.template(template)(&#123;</span><br><span class="line">        id: _id,</span><br><span class="line">        option: options,</span><br><span class="line">        <span class="built_in">height</span>: <span class="built_in">args</span>[<span class="number">1</span>] || <span class="number">400</span>,</span><br><span class="line">        <span class="built_in">width</span>: <span class="built_in">args</span>[<span class="number">2</span>] || '<span class="number">85</span><span class="symbol">%</span>'</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure> 然后在写代码时，只需要这样 <code>{百分号 echarts id 400 '85%' 百分号}</code> 写就行了。</p>
+<h1 id="页面加载速度优化">页面加载速度优化</h1>
+<p>使用 <a href="https://github.com/next-theme/hexo-optimize" target="_blank" rel="noopener">hexo-optimize</a> 可以极大地提升页面加载速度，但是有个缺点，页面中的 icon 可能会加载失败。</p>
+<p>解决办法可以参考 <a href="https://github.com/theme-next/hexo-filter-optimize/issues/2" target="_blank" rel="noopener">github issue</a>。但是总的来说，目前并没有自动化的解决办法。</p>
+<p>在使用 hexo g 等操作时，该插件会导致运行异常缓慢。此外，在本地服务器打开时修改博客，博客刷新的速度也会异常缓慢。</p>
+<p>解决办法依旧在上面提到的 issue 中有过讨论，后来官方也给出了解决办法：设置 <code>export NODE_ENV=development</code>。</p>
+<p>具体来说，在本地调试时，开启 <code>export NODE_ENV=development</code> 从而设置为开发环境，此时 hexo-optimize 将被禁用。注意该 <code>NODE_ENV</code> 是一个临时变量，如果需要部署到云端，只需要将 git 终端关闭，再重新打开即可取消开发环境的设置。</p>
+<p>可以使用以下代码测试是否开启开发环境。 <figure class="highlight crmsh"><table><tr><td class="code"><pre><span class="line"><span class="number">1</span>. <span class="keyword">node</span> <span class="title"></span></span><br><span class="line"><span class="title">2</span>. console.log(process.env.NODE_ENV)</span><br></pre></td></tr></table></figure></p>
+<p>正常情况应该会输出： <figure class="highlight actionscript"><table><tr><td class="code"><pre><span class="line">development</span><br><span class="line"><span class="literal">undefined</span></span><br></pre></td></tr></table></figure></p>
 ]]></content>
       <categories>
         <category>assorted</category>
+        <category>next</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>hexo博客优化</title>
+    <url>/posts/83186147.html</url>
+    <content><![CDATA[<a id="more"></a>
+]]></content>
+      <categories>
+        <category>assorted</category>
+        <category>next</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>hexo博客美化</title>
+    <url>/posts/a3e48ca.html</url>
+    <content><![CDATA[<h1 id="修改博客透明度">修改博客透明度</h1>
+<p>一般来说大家都在博客里放一个背景图片，但是大部分时候博文都是很长的，导致背景图片无法全部地显示出来。所以很有必要为博文设置一个透明度，使得背景图片若隐若现。</p>
+<p>在博客根目录的 <code>_data</code> 文件夹中，新建 <code>styles.styl</code> 在其中写入：</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* 上半部分的侧边栏 */</span></span><br><span class="line"><span class="selector-class">.header-inner</span>&#123;</span><br><span class="line">	<span class="attribute">background</span>: <span class="built_in">rgba</span>(255, 255, 255, 0.82)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* 下半部分的侧边栏 */</span></span><br><span class="line"><span class="selector-class">.sidebar-inner</span>&#123;</span><br><span class="line">	<span class="attribute">background</span>: <span class="built_in">rgba</span>(255, 255, 255, 0.82)</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.content-wrap</span>&#123;</span><br><span class="line">	<span class="attribute">background</span>: <span class="built_in">rgba</span>(255, 255, 255, 0.779);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果你没有下半部分的侧边栏（next 主题好像可以选择关闭），那么可以删除 <code>.sidebar-inner</code>。</p>
+<h1 id="樱花特效">樱花特效</h1>
+<p>详见 <a href="https://cangshui.net/2372.html" target="_blank" rel="noopener">网页樱花飘落特效（JS 实现）</a></p>
+<div class="note danger"><p><strong>注意</strong>：此特效与不蒜子插件在某些特殊情况下存在冲突。目前 Next 支持将自定义的文件提取出来放在 <code>_data</code> 文件夹中。如果把加载樱花特效的 js 代码放在 <code>_data/footer.swig</code> 文件的末尾，则处于页脚部分的不蒜子统计不显示。</p>
+<p><strong>解决办法</strong>：那行代码别放在文件的末尾就行了。</p>
+</div>
+<a id="more"></a>
+]]></content>
+      <categories>
+        <category>assorted</category>
+        <category>next</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Towards Scalable Multi-Domain Conversational Agents: The Schema-Guided Dataset</title>
+    <url>/posts/72340bc.html</url>
+    <content><![CDATA[<div class="note info"><p><a href="https://arxiv.org/pdf/1909.05855.pdf" target="_blank" rel="noopener">论文地址</a></p>
+<p>诸如谷歌助手、Alex 以及 Siri 之类的虚拟助手为横跨多个领域的一系列服务或者 API 提供了一个对话接口。这些系统需要支持越来越多的服务，它们可能具有重叠的功能。而且这些服务中的一部分没有可用的训练数据集。<strong>现在公开的任务导向对话数据集不足以解决以上挑战，这是因为他们只覆盖了少量的领域，并且假定每个领域都有一个固定的本体。</strong></p>
+<p>本文提出了 SGD 数据集（16k 条多领对话横跨 16 个领域）。我们的数据集<strong>在规模上超过了现存的所有任务导向对话语料库</strong>，同时也强调了与构建大规模虚拟助手相关的挑战。它为<strong>语言理解、槽填充、对话状态追踪以及回复生成</strong>提供了一个具有挑战的测试平台。</p>
+<p>同时，我们<strong>为任务导向对话提出了一个模式引导的范式</strong>。其中，模型在一组<strong>动态的</strong>意图和槽位上进行预测，使用它们的自然语言描述作为输入。这使得单个对话系统可以轻松地支持多种服务，并且有助于不依赖额外的训练数据整合新的服务。</p>
+<p>在此范式基础上，我们发布了一个对话状态追踪模型，该模型能够在新的 APIs 上进行 zero-shot 泛化，并且在常规的配置中具有竞争力。</p>
+</div>
+<h1 id="the-schema-guided-dialogue-dataset">The Schema-Guided Dialogue Dataset</h1>
+<p>在训练集、验证集以及测试集中有包含 20 个领域，具体信息罗列在表 2 中。我们在这些领域上创建总计 45 个服务或 api 的综合实现。我们的模拟器框架与这些服务进行交互以此生成对话大纲，它是对话语义的结构化表征。然后我们使用了众包的步骤来解释这些大纲的自然语言语句。我们新颖的众包步骤保留了从模拟器获得的所有标注，并且在对话收集之后不需要任何额外的标注。本节，我们将描述详细的步骤，然后对收集的数据进行分析。 <a id="more"></a></p>
+<div class="note info"><p>此节是描述数据收集的步骤，不做翻译。下面做简要的概述。</p>
+</div>
+<ol type="1">
+<li>Services and APIs：定义一个服务的协议（模式）由意图和槽位及其额外约束组成。
+<ul>
+<li>使用 SQL 引擎实现所有服务。为了反映现实世界中的服务以及 api 中的约束，我们施加了一些限制：
+<ol type="1">
+<li>不暴露某些槽位的所有候选值，例如日期、时间，将它们定义为<strong>不可分类槽位</strong>。</li>
+<li>并且确保验证集中有相当一部分<strong>槽值</strong>不存在于训练集中，以此评估模型处理新槽值的能力。（博主注：这是否意味着不可分类槽位也可以使用分类模型？而不是指针神经网络？因为可分类槽位的槽值都很具体，例如性别只有男女，不需要进行隐藏）</li>
+<li>某些槽位被视作<strong>可分类槽位</strong>，例如性别、人数、一周的天数。</li>
+</ol></li>
+<li><strong>服务调用限制</strong>：现实世界中用户只能调用有限的槽位组合，例如在“预定酒店”这项服务中，用户不被允许使用日期搜索酒店，他最少提供一个酒店的地址。然而现存的数据集允许使用任意组合的槽位调用服务，从而产生实际服务或者 api 不支持的流程。</li>
+</ul></li>
+<li>Dialogue Simulator Framework：生成对话大纲</li>
+<li>Dialogue Paraphrasing：对话翻译</li>
+</ol>
+<h2 id="数据集分析">数据集分析</h2>
+<h1 id="the-schema-guided-approach">The Schema-Guided Approach</h1>
+<p>虚拟助理旨在支持网络上的大量服务。一个可行的方式是为助理定义一个巨大的统一模式，使得可以集成不同的服务供应商。<strong>然而，很难提出一个覆盖所有案例的通用模式。</strong>拥有一个通用的模式也会使开发人员集成有限服务变得复杂。<strong>我们建议使用模式引导的方法作为一种替代方案，以便新服务和 api 的集成。</strong></p>
+<p>在我们提出的方法中，每一项服务都提供了一种模式，其中罗列了支持的槽位和意图，以及它们的自然语言描述（图 1 展示了一个例子）。这些描述被用于获取模式中元素的语义表征。基于这些模式元素，助理使用一个统一的模型进行预测，其中不包含特定领域或者服务的参数。</p>
+<p>使用单个模型有助于在有关联的服务之间获得更好的表征以及传递公共知识。<strong>这是因为模型使用模式元素的语义表征作为输入</strong>，它可以与未经训练的未知服务或者 api 之间建立连接。同时它也能灵活地适应诸如新增意图或者槽位之类的更改。</p>
+<h1 id="zero-shot-dialogue-state-tracking">Zero-shot Dialogue State Tracking</h1>
+<p>我们为 zero-shot schema-guided DST 提出一个基于模式以及预训练模型的简易原型模型。</p>
+<h2 id="model">Model</h2>
+<p>我们使用一个模型在所有的服务以及领域中执行预测。我们首先将所有的语句、槽位以及可分类槽位的槽值（模式中所呈现的）编码为嵌入表征。由于不同的模式有不同数量的槽位和意图，所以使用模式元素的嵌入进行预测。这与现存的模型相比有所不同，它们在一个固定的模式上进行预测，并且无法跨领域进行知识共享。它们也无法适应模式的改变，需要使用新的标注数据进行重新训练。</p>
+<ol type="1">
+<li><strong>Schema Embedding</strong> 这个组件用于获取每个服务模式中意图、槽位、可分类槽位的槽值的表征。表 3 展示了用于嵌入的每个元素的序列对。这些序列对被输入进 BERT 中，然后输出值 <span class="math inline">\(u_{CLS}\)</span> 被用作模式的嵌入，如图 6 所示。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/SGD模式嵌入序列对.jpg" alt="SGD模式嵌入序列对" /> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/BERT%20encoder编码SGD序列对.png" alt="BERT encoder编码SGD序列对" /></li>
+<li><strong>Utterance Encoding</strong> 与 Chao and Lane (2019)（BERT-DST） 类似，我们使用 BERT 编码用户的语句以及前一条系统语句，以此获得语句对的嵌入表征 <span class="math inline">\(u=u_{CLS}\)</span> 以及字符级的表征 <span class="math inline">\(t_1, t_2, \cdots, t_M\)</span>，其中 <span class="math inline">\(M\)</span> 代表两句的字符总数。通过使用一组投影（projection），语句以及模式的嵌入均被用于进行模型预测。</li>
+<li><strong>Projection</strong> 令 <span class="math inline">\(x, y \in \mathbb{R}^d\)</span>。对于任务 <span class="math inline">\(K\)</span>，定义 <span class="math inline">\(l = \mathcal{F}_K(x,y,p)\)</span> 作为将 <span class="math inline">\(x,y\)</span> 转换为 <span class="math inline">\(l \in \mathbb{R}^p\)</span> 的映射，公式如下所示。其中 <span class="math inline">\(h_1, h_2 \in \mathbb{R}^d\)</span>，<span class="math inline">\(W^K_i\)</span> 和 <span class="math inline">\(b^K_i\)</span> 是可训练的参数。<span class="math inline">\(A\)</span> 是激活函数。我们参考 BERT，使用 <code>gelu</code> 函数。 <span class="math display">\[
+\begin{align}
+ h_1 &amp; = A(W^K_1 x + b^K_1) \\
+ h_2 &amp; = A(W^K_2 (y \oplus h_1) + b^K_2) \\
+ l &amp; = W^K_3 h_2 + b^K_3 \\
+\end{align}
+\]</span></li>
+<li><strong>Active Intent</strong> 对于一个给定的服务，active intent 代表用户请求以及系统正在实现的意图。如果服务当前没有在处理意图，那么为值为 <code>NONE</code>。令 <span class="math inline">\(i_0 \in \mathbb{R}^d\)</span> 为“NONE”意图的可训练参数。我们定义意图网络为： <span class="math display">\[
+l^j_{int} = \mathcal{F}_{int}(u, i_j, 1), \quad 0 \le j \le I
+\]</span> 使用一个 softmax 将 <span class="math inline">\(l^j_{int}\)</span> 归一化为在所有 <span class="math inline">\(I\)</span> 个意图以及“NONE”意图上的概率分布。<strong>在推理阶段，我们预测最大概率的意图是 active intent。</strong></li>
+<li><strong>Requested Slots</strong> 对于有些槽位，用户会在当前语句中请求它们的槽值。映射函数 <span class="math inline">\(\mathcal{F}_{req}\)</span> 预测第 <span class="math inline">\(j^{th}\)</span> 个槽位的 <span class="math inline">\(l^j_{req}\)</span>，它被 sigmoid 归一化到 <span class="math inline">\([0,1]\)</span> 之间。在推理阶段，所有分数 <span class="math inline">\(&gt; 0.5\)</span> 的槽位被预测为 requested： <span class="math display">\[
+l^j_{req} = \mathcal{F}_{req}(u, s_j, 1), \quad 1 \le j \le S
+\]</span></li>
+<li><strong>User Goals</strong> 我们将用户目标定义为<strong>对话上下文中的用户约束，上下文中包含从第一轮到当前轮为止的语句</strong>。与在每轮用户语句之后预测全部的用户目标不同，我们预测当前轮和前一轮用户目标的差集。在推理阶段，对预测出的结果更新至用户目标中，以生成最新的用户目标。 我们将预测步骤分为两步：首先对于每个槽位，使用 softmax 归一化得到一个大小为 3 的分布，其代表槽位的状态，分别为 <span class="math inline">\(none, dontcare, active\)</span>。<span class="math inline">\(none\)</span> 代表值不改变，<span class="math inline">\(dontcare\)</span> 代表槽位填入特殊值 <span class="math inline">\(dontcare\)</span>，<span class="math inline">\(active\)</span> 代表进入第二步。 在第二步中，公式 7 计算可分类槽位的槽值。对于不可分类的槽位，使用公式 8 和 9 生成跨度（span）。 <span class="math display">\[
+\begin{align}
+l^j_{status} &amp; = \mathcal{F}_{status}(u, s_j, 3), \quad 1 \le j \le S &amp; \tag{6} \\
+l^{j,k}_{value} &amp; = \mathcal{F}_{value}(u, v^k_j, 1), \quad 1 \le j \le V^k, 1 \le k \le C &amp; \tag{7} \\
+l^{j,k}_{start} &amp; = \mathcal{F}_{start}(t_k, s^n_j, 1), \quad 1 \le j \le N, 1 \le k \le M &amp; \tag{8} \\
+l^{j,k}_{end} &amp; = \mathcal{F}_{end}(t_k, s^n_j, 1), \quad 1 \le j \le N, 1 \le k \le M &amp; \tag{9} \\
+\end{align}
+\]</span></li>
+</ol>
+<h2 id="evaluation">Evaluation</h2>
+<ol type="1">
+<li>Active Intent Accuracy</li>
+<li>Requested Slot F1</li>
+<li>Average Goal Accuracy</li>
+<li>Joint Goal Accuracy</li>
+</ol>
+]]></content>
+      <categories>
+        <category>paper</category>
       </categories>
   </entry>
   <entry>
@@ -177,7 +292,7 @@ A_{3 \times 1} \odot B_{3 \times 1} = C_{3 \times 1} \\
 <li>观点：通用的预训练模型对任务导向的对话任务没什么帮助，故研发了 TOD-BERT</li>
 <li>选择与 BERT 类似的架构预训练 TOD-BERT，即 BERT-base uncased model（12L 12A 768H）</li>
 <li>在 byte-pair embeddings 加入了两个特殊符号：<span class="math inline">\([USR], [SYS]\)</span></li>
-<li>使用 MLM loss 和 RCL 训练模型
+<li>使用 MLM loss 和 RCL 两个函数训练模型
 <ul>
 <li>MLM 与 BERT 略有不同，TOD-BERT 会在训练时动态执行掩盖、替换。其他详见下面的章节</li>
 <li>RCL 是一个新颖的做法，详见具体章节</li>
@@ -187,12 +302,12 @@ A_{3 \times 1} \odot B_{3 \times 1} = C_{3 \times 1} \\
 <div class="note info"><p>通用文本和任务导向对话之间语言模式的根本差异，导致了现存的预训练语言模型实际上没什么用。本文为语言模型统一了九种人人交互以及多轮的任务导向对话数据集。</p>
 <p>为了在预训练阶段更好地对对话行为进行建模，我们在 MLM（Masked Language Modeling）中引入了“用户”和“系统”符号。</p>
 </div>
+<a id="more"></a>
 <h1 id="预训练所使用的数据集以及建模方法">预训练所使用的数据集以及建模方法</h1>
 <p>本文的目的是证明以下的假设：对于任务导向的下游任务而言，使用<strong>任务导向语料预训练得到的自监督语言模型</strong>可以比<strong>现存的预训练模型</strong>学到更好的表征。并且需要强调的是：我们最关心的不是 1）我们的预训练模型能否在每个下游任务上得到 SOTA 结果，这是因为目前最好的模型都是建立在预训练模型上（博主注：这些模型可能借助了预训练模型的威力）。2）我们的模型能否简单地替代它们。</p>
 <p>我们收集并整合了九种人人交互以及多轮的任务导向对话语料，以此训练任务导向对话 BERT（Task-oriented Dialog BERT，TOD-BERT）。</p>
 <p>与 BERT 类似的是：我们将 TOD-BERT 定义为 MLM 并且使用 deep bidirectional Transformer 编码器。与 BERT 不同的是：TOD-BERT 为用户和系统引入了两个特殊符号，以此对对应的对话行为建模。在预训练阶段，结合回复选择任务中的 contrastive objective function 捕获回复的相似性。</p>
 <p>九种语料分别为： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/模型/TOD-BERT九种语料.png" alt="TOD-BERT九种语料" /></p>
-<a id="more"></a>
 <h1 id="tod-bert">TOD-BERT</h1>
 <p>我们基于 BERT 的架构使用两种损失函数训练 TOD-BERT，分别为：掩码语言模型（Masked Language Model，MLM）loss 和回复对比损失（response contrastive loss，RCL）。值得注意的是，我们所使用的数据集也可以预训练其他任意的预训练模型结构。<strong>而我们选择 BERT 是因为，它是近年来在 NLP 研究中被广泛使用的模型。</strong>我们使用了 BERT-base uncased model，拥有 12 层和 12 个注意力头架构，以及 768 个隐藏状态。</p>
 <p>为了捕获发言者的信息以及语句中潜在的交互行为，我们在 byte-pair embeddings<span class="citation" data-cites="mrkvsic2016neural">(Mrkšić et al. 2016)</span>中增加了两个特殊符号：<span class="math inline">\([USR], [SYS]\)</span>。我们将二者加在每一句话的前面，然后将所有语句拼接成一句话。</p>
@@ -222,8 +337,20 @@ L_{mlm} = - \sum^M_{m=1} \log P(x_m)
 <p>我们使用 AdamW 并且在所有层以及注意力的权重上加上 0.1 dropout。</p>
 <p>使用了 GELU。</p>
 <h1 id="下游任务">下游任务</h1>
-<h2 id="intent-recognition">Intent recognition</h2>
-<h2 id="dialogue-state-tracking" class="unnumbered">Dialogue state tracking</h2>
+<p>在本文中，我们关心的是与 BERT 相比，使用 TOD-BERT 是否能够展示出任意的优势。所以在下游任务上微调时，我们避免在结构的顶层加上过多的额外组件。并且为了公平起见，我们使用同样的结构以及类似的参数量。</p>
+<p>我们选择了几项重要的任务导向下游任务用于评估，分别为：intent recognition, dialogue state tracking, dialogue act prediction, and response selection。</p>
+<div class="note info"><p>以下只介绍对话状态追踪</p>
+</div>
+<h2 id="dialogue-state-tracking">Dialogue state tracking</h2>
+<div class="note "><p>此节不做翻译，以下为博主的理解。</p>
+<p>TOD-BERT 所使用的对话状态追踪算法应该属于 NBT 那类，让第 <span class="math inline">\(j\)</span> 个槽位的所有槽值与用户语句进行一一判别，以此判断该槽位的槽值有没有被用户提及。他们没有用到近几年提出的 span 方法。</p>
+<p>那么生成第 <span class="math inline">\(j\)</span> 个槽位的第 <span class="math inline">\(i\)</span> 个槽值的概率的公式为：</p>
+<p><span class="math display">\[
+S^j_i = Sim(G_j(F(X)), F(v^j_i)) \in \mathbb{R}^1
+\]</span></p>
+<p>其中 <span class="math inline">\(Sim\)</span> 代表余弦相似度函数，<span class="math inline">\(G_j\)</span> 代表第 <span class="math inline">\(j\)</span> 个槽位的映射函数，<span class="math inline">\(F\)</span> 代表预训练模型，<span class="math inline">\(v^j_i\)</span> 代表第 <span class="math inline">\(j\)</span> 个槽位的第 <span class="math inline">\(i\)</span> 个槽值。此外，使用 <span class="math inline">\([CLS]\)</span> 的表征作为函数 <span class="math inline">\(F\)</span> 的输出。</p>
+</div>
+<h1 id="bibliography" class="unnumbered">参考文献</h1>
 <div id="refs" class="references">
 <div id="ref-mrkvsic2016neural">
 <p>Mrkšić, Nikola, Diarmuid O Séaghdha, Tsung-Hsien Wen, Blaise Thomson, and Steve Young. 2016. “Neural Belief Tracker: Data-Driven Dialogue State Tracking.” <em>arXiv Preprint arXiv:1606.03777</em>.</p>
@@ -238,27 +365,12 @@ L_{mlm} = - \sum^M_{m=1} \log P(x_m)
       </tags>
   </entry>
   <entry>
-    <title>构建一个任务完成型对话系统（零）：调研</title>
-    <url>/posts/efcdf06b.html</url>
-    <content><![CDATA[<h1 id="系统架构">系统架构</h1>
-<h1 id="框架">框架</h1>
-<h1 id="预训练模型">预训练模型</h1>
-<a id="more"></a>
-]]></content>
-      <categories>
-        <category>project</category>
-      </categories>
-      <tags>
-        <tag>survey</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>DST论文笔记（2020—至今）</title>
     <url>/posts/5286f9c6.html</url>
-    <content><![CDATA[<a id="more"></a>
-<h1 id="credit-coarse-to-fine-sequence-generation-for-dialogue-state-tracking">CREDIT: Coarse-to-Fine Sequence Generation for Dialogue State Tracking</h1>
+    <content><![CDATA[<h1 id="credit-coarse-to-fine-sequence-generation-for-dialogue-state-tracking">CREDIT: Coarse-to-Fine Sequence Generation for Dialogue State Tracking</h1>
 <div class="note info"><p>提出了 CoaRsE-to-fine DIalogue state Tracking(CREDIT) 模型。以前的方法通常将对话状态定义为独立的三元组 <span class="math inline">\((domain, slot, value)\)</span>，而本文将 DST 转化为序列生成问题。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/CREDIT模型架构.png" alt="CREDIT模型架构" /></p>
 </div>
+<a id="more"></a>
 <h1 id="dialogue-state-tracking-with-explicit-slot-connection-modeling">Dialogue State Tracking with Explicit Slot Connection Modeling</h1>
 <div class="note info"><p>在多领域场景下，用户经常通过省略（ellipsis）、指代（reference）来表达某些其它领域槽位提到的槽值。为了解决这种现象，我们提出了 DST-SC（Dialogue State Tracking with Slot Connections）模型。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/DST-SC模型架构.png" alt="DST-SC模型架构" /></p>
 </div>
@@ -593,7 +705,7 @@ window.onload = function () {
 <p>CL 的<strong>优点</strong>是整合不同来源的先验知识的灵活性，<strong>缺点</strong>是课程的设计已经被决定，于后续的学习无关。SPL <strong>受限于</strong>没有将先验知识整合进训练过程，导致它易于过拟合。由于它们各自都有优点，实际上很难判断谁更好。<mark class="label info">Introduction</mark></p>
 <p>这些学习范式已经从经验上被证明有助于避免不良的局部极小值，并取得更好的泛化结果。（作者贴了三篇论文）<mark class="label info">Introduction</mark></p>
 <p>确实。一条样本如果要简单，那么它的优化过程可能相对来说要简单。那么再优化难的样本可能就只需要花更少的时间。<mark class="label default">博主瞎猜</mark></p>
-<p>关于 CL 和 SPL 具体的算法实现，可以阅读对应的论文，此处不再深入。</p>
+<p>关于 CL 和 SPL 具体的算法实现，可以阅读对应的论文，此处不再深入。 <a id="more"></a></p>
 <h1 id="研究目标">研究目标</h1>
 <h2 id="具体问题陈述">具体问题陈述</h2>
 <p>作者认为 SPL 无法处理先验知识，容易造成过拟合。论文中，作者发现了 CL 和 SPL 之间缺少的连接，并且提出了一个统一的自步课程学习（self-pace curriculum learning，SPCL）框架。SPCL 是一个简明的优化问题，它既考虑了训练前的先验知识，又考虑了训练中的学习进度。与人类教育相比，SPCL 类似于“师生协作”模式，而不是 CL 的“教师驱动”或者 SPL 的“学生驱动”。<mark class="label info">Abstract</mark> <mark class="label info">Intro</mark></p>
@@ -634,7 +746,6 @@ window.onload = function () {
 <p>其中 <span class="math inline">\(v^* = \arg\min_{v \in [0,1]^n} \sum v_i \mathcal{l}_i + f(v; \lambda)\)</span></p>
 <h1 id="评估">评估</h1>
 <h1 id="结论">结论</h1>
-<a id="more"></a>
 ]]></content>
       <categories>
         <category>paper</category>
@@ -2247,6 +2358,127 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
       </tags>
   </entry>
   <entry>
+    <title>一些常用的pytorch技巧</title>
+    <url>/posts/6e48825d.html</url>
+    <content><![CDATA[<div class="note default"><p><mark class="label info">pytorch</mark> <mark class="label warning">zero grad</mark> <mark class="label success">改变tensor形状</mark> <mark class="label primary">矩阵乘法</mark> <mark class="label info">loss function</mark> <mark class="label danger">pytorch nn</mark> <mark class="label success">操作张量</mark></p>
+</div>
+<div class="note warning"><p>本文只记录框架层面的使用。关于深度学习层面的研究记录在 <a href="https://yan624.github.io/·zcy/AI/nlp/神经网络训练技巧（tricks）.html">神经网络训练技巧（tricks）</a>。</p>
+</div>
+<h1 id="viewreshape和resize_">view、reshape和resize_</h1>
+<p><strong>结论写在前面</strong>：张量连续，使用 <code>view()</code>（此为多数情况）；张量不连续，则使用 <code>reshape()</code>。<code>resize_()</code> 最好不要使用。注意，在张量不连续的情况下，非要使用 <code>view()</code> 也可以，但是要先调用 <code>contiguous()</code> 方法，使得张量连续，但是此方法会返回一个新的张量，浪费时间空间。 <strong>共同点</strong>：这些方法都可以改变 pytorch 中 tensor 的形状，但是它们略有不同。</p>
+<ol type="1">
+<li>view()：只能改变连续的（contiguous）张量，且返回的张量与原张量的数据是共享的。在张量不连续的情况下，硬要使用此方法，需要在使用之前使用 <code>tensor.contiguous()</code>。</li>
+<li>reshape()：对张量是否连续无要求，且<strong>可能</strong>返回的原张量的拷贝（这个“可能”是字面意思，开发者指出，你永远无法预先知道返回的张量是否为拷贝版本。参考 <a href="https://stackoverflow.com/questions/49643225/whats-the-difference-between-reshape-and-view-in-pytorch?utm_medium=organic&amp;utm_source=google_rich_qa&amp;utm_campaign=google_rich_qa" target="_blank" rel="noopener">stackoverflow 回答</a>）。</li>
+<li>resize_()：与上述二者有较大差别，此方法可以无视原张量的形状，进行随意变化。如果元素的数量大于原张量的元素数量，那么底层的存储大小会进行调整，即会进行扩容。小于，则存储空间不做变化。参考《<a href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor.resize_" target="_blank" rel="noopener">pytorch 文档</a>》。 <div class="note warning"><p>这是一个底层的方法，大多数情况可以使用 <code>view()</code> 或者 <code>reshape()</code>。想要使用自定义步长改变张量内置的大小，请使用 <code>set_()</code>。总而言之，就是最好不要用这个方法。</p>
+</div> <a id="more"></a></li>
+</ol>
+<h2 id="不连续的张量的说明">不连续的张量的说明</h2>
+<p>如果对 tensor 使用 <code>transpose</code>，<code>permute</code> 等操作会使该 tensor 在内存中变得不再连续。例如，以下代码在使用 <code>view()</code> 方法后会报出 <code>RuntimeError: view size is not compatible with input tensor's size and stride (at least one dimension spans across two contiguous subspaces). Use .reshape(...) instead.</code> 的错误。 <div class="note info"><p>至于为什么 pytorch 有这种“连续的”设定，这就要从 pytorch 的底层讲起了，又是要几条博客才能解释（ps：关键是我也不懂），不过可以参考《<a href="https://zhuanlan.zhihu.com/p/64551412" target="_blank" rel="noopener">PyTorch 中的 contiguous</a>》。</p>
+</div></p>
+<figure class="highlight angelscript"><table><tr><td class="code"><pre><span class="line">tensor = torch.Tensor([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">8</span>, <span class="number">9</span>, <span class="number">0</span>]])</span><br><span class="line"># 正常输出</span><br><span class="line">print(tensor.transpose(<span class="number">1</span>, <span class="number">0</span>).reshape(<span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line">print(tensor.permute(<span class="number">1</span>, <span class="number">0</span>).reshape(<span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line">print(tensor.T.reshape(<span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line"># 报错</span><br><span class="line">print(tensor.transpose(<span class="number">1</span>, <span class="number">0</span>).view(<span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line">print(tensor.permute(<span class="number">1</span>, <span class="number">0</span>).view(<span class="number">2</span>, <span class="number">3</span>))</span><br><span class="line">print(tensor.T.view(<span class="number">2</span>, <span class="number">3</span>))</span><br></pre></td></tr></table></figure>
+<h2 id="contiguous的解释">contiguous()的解释</h2>
+<p>此外，运行以下代码可以得出非连续张量在使用 <code>contiguous()</code> 后会返回一个新的张量，它会重新开辟一块内存，并按照行优先一维展开顺序重新存储原张量。取自 <a href="https://zhuanlan.zhihu.com/p/64551412" target="_blank" rel="noopener">PyTorch 中的 contiguous#为什么需要 contiguous ？</a>。 <figure class="highlight autohotkey"><table><tr><td class="code"><pre><span class="line">tensor1 = torch.Tensor([[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">8</span>, <span class="number">9</span>, <span class="number">0</span>]])</span><br><span class="line">tensor2 = tensor1.transpose(<span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line"># 转置前后，张量并无区别</span><br><span class="line">print(tensor1.dat<span class="built_in">a_ptr</span>() == tensor2.dat<span class="built_in">a_ptr</span>())# <span class="literal">True</span></span><br><span class="line"># 对连续张量（tensor1）使用 contiguous() 是无意义的，无论是否转置都是同一个张量</span><br><span class="line">tensor3 = tensor1.contiguous()</span><br><span class="line">print(tensor3.dat<span class="built_in">a_ptr</span>() == tensor2.dat<span class="built_in">a_ptr</span>(), tensor3.dat<span class="built_in">a_ptr</span>() == tensor1.dat<span class="built_in">a_ptr</span>())# <span class="literal">True</span> <span class="literal">True</span></span><br><span class="line"># 对非连续张量（tensor2）使用会返回一个新的张量，无论是否转置都不是同一个张量</span><br><span class="line">tensor4 = tensor2.contiguous()</span><br><span class="line">print(tensor4.dat<span class="built_in">a_ptr</span>() == tensor2.dat<span class="built_in">a_ptr</span>(), tensor4.dat<span class="built_in">a_ptr</span>() == tensor1.dat<span class="built_in">a_ptr</span>())# <span class="literal">False</span> <span class="literal">False</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="参考资料">参考资料</h2>
+<ol type="1">
+<li><a href="https://blog.csdn.net/qq_39507748/article/details/105381089" target="_blank" rel="noopener">pytorch 学习笔记五：pytorch 中 reshape、view 以及 resize 之间的区别</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/64551412" target="_blank" rel="noopener">PyTorch 中的 contiguous</a></li>
+<li><a href="https://stackoverflow.com/questions/49643225/whats-the-difference-between-reshape-and-view-in-pytorch?utm_medium=organic&amp;utm_source=google_rich_qa&amp;utm_campaign=google_rich_qa" target="_blank" rel="noopener">What's the difference between reshape and view in pytorch?</a></li>
+</ol>
+<h1 id="矩阵乘法">矩阵乘法</h1>
+<p>pytorch 拥有多种矩阵乘法计算的函数，包括但不限于 <code>torch.mul()</code>，<code>torch.dot()</code>，<code>torch.mm()</code>，<code>torch.bmm()</code>，<code>torch.matmul()</code>。</p>
+<h2 id="矩阵相乘">矩阵相乘</h2>
+<p><code>torch.dot()</code> 属于向量点积。</p>
+<p><code>torch.mm()</code>，<code>torch.bmm()</code>，<code>torch.matmul()</code> 都属于矩阵相乘。</p>
+<ol type="1">
+<li>torch.mm()：二维矩阵相乘，它只能处理二维矩阵，对于其它维度需要使用 <code>torch.matmul()</code>。注意：如果你需要计算一个矩阵和一个向量的乘法，那么这个向量在框架角度来讲要是二维的。也就是说向量的 shape=(x, 1)，而不能是 shape=(x, )。</li>
+<li>torch.bmm()：与 <code>torch.mm()</code> 一样，只能处理二维矩阵，但是它被用于计算具有批次这个维度的矩阵，也就是说相乘的两个矩阵实际上是三维的。例如矩阵 <span class="math inline">\(A_{32 \times 3 \times 4}\)</span> 和 <span class="math inline">\(B_{32 \times 4 \times 3}\)</span>，其中 32 是它们的批次大小，32 之后的维度还是要按照矩阵相乘的规则。<strong>它在神经网络计算中被频繁使用，因为数据通常都是被一批一批得输入进神经网络。注意，<code>torch.bmm()</code> 只是一个特例（带有批次属性的二维矩阵），如果需要计算高维矩阵的相乘，必须使用 <code>torch.matmul()</code>。</strong> <div class="note info"><p>注意，<code>torch.bmm()</code> 的输入只能是 3 维，它不能进行广播。广播矩阵相乘请使用 <code>torch.matmul()</code>。</p>
+</div></li>
+<li>torch.matmul()：执行的乘法操作取决于输入张量的维度。
+<ol type="1">
+<li>如果都是 1 维，则点乘；</li>
+<li>如果都是 2 维，则计算二维矩阵相乘；</li>
+<li>如果第一个张量是 1 维，第二个是 2 维，则广播第一个张量，进行二维矩阵相乘计算；</li>
+<li>如果第一个张量是 2 维，第二个是 1 维，则计算矩阵 * 向量；</li>
+<li>如果二者至少都是 1 维，且至少一个参数是 N 维（N &gt; 2）。非矩阵的维度将被广播，矩阵维度一般指每个张量的最后一至两位。如 shape=(1, 2, 3, 4) 和 shape=(1, 4, 3)，最后两位是矩阵维度；shape=(1, 2, 3, 4) 和 shape=(4)，第一个张量的最后两位和第二个张量的最后一位就是矩阵维度。</li>
+</ol></li>
+</ol>
+<p>综上，其实没有高维矩阵相乘的概念，一直都是在做矩阵-矩阵/向量乘法，张量中其他的维度只被用于广播。</p>
+<h2 id="矩阵对应元素相乘">矩阵对应元素相乘</h2>
+<p><code>torch.mul()</code> 是对应元素的乘法，例如 <span class="math inline">\(\begin{pmatrix}1\end{pmatrix}\)</span>。它主要分为两种情况：</p>
+<ol type="1">
+<li>张量乘标量：这个很好理解，就是一个张量乘上一个数字。</li>
+<li>张量乘张量：对应元素相乘，<strong>如果两个张量的形状不同，则需要满足能够广播的前提</strong>。如果不满足，则报错。张量广播的机制具体看下面的章节。</li>
+</ol>
+<h2 id="广播机制">广播机制</h2>
+<p>设现有张量 A，B。广播机制分为两种情况：1）张量的维度不同；2）张量的维度相同。</p>
+<p>本来想写的，但是博客<a href="https://blog.csdn.net/littlehaes/article/details/103807303" target="_blank" rel="noopener">《pytorch 中的广播机制》</a>中已经写明白了。此外这些都是经验之说，我在实践过程中发现 A.ndim &lt; B.ndim 也可以进行计算。以后看比较权威的书之后，再来更新吧。</p>
+<p>但是有一点比较清楚，广播机制只有 <code>torch.mat.mul()</code> 支持。</p>
+<h2 id="参考资料-1">参考资料</h2>
+<ol type="1">
+<li><a href="https://pytorch.org/docs/stable/torch.html" target="_blank" rel="noopener">pytorch 官方文档</a></li>
+<li><a href="https://pytorch.org/docs/stable/torch.html" target="_blank" rel="noopener">pytorch 中的广播机制</a></li>
+</ol>
+<h1 id="pytorch-loss-function">pytorch loss function</h1>
+<p>pytorch 的多元分类 loss 有 CrossEntropyLoss 和 NLLLoss。NLLLoss 全称 Negative Log Likelihood Loss，说白了就是求对数概率并取负，我们从函数图像就可以理解。模型输出的概率分布在 0-1 之间，log 函数的 0-1 区间正好全是负数，所以要加上一个负号，让 loss 值为正数。显而易见，概率越接近 1，loss 值越小。接下来描述一下这两个函数。 1. CrossEntropyLoss = LogSoftmax + NLLLoss； 2. CrossEntropyLoss 中已经附带了 log_softmax 操作，所以如果你想省事，那么直接将输出向量输入 CrossEntropyLoss 即可； 3. 如果使用 NLLLoss，那么在使用 NLLLoss 之前，还需要经过一层 LogSoftmax。</p>
+<p>需要注意一点，我感觉网上很多人也没有理解什么是 CrossEntropyLoss，导致很多人都被误导了。首先 nll 的公式如下：</p>
+<p><span class="math display">\[
+nll\_loss = -\log(pred)
+\]</span></p>
+<div class="note warning"><p>nll loss 可以有多种表达方式，我把在网上看到的公式都罗列一下。</p>
+<p>以下的公式与 crossentropy 一样。（实际上公式就是一样的，只不过在概念上有点不同，由于输出值 y 是 one hot 形式，为 0 时，就相当于没有加，最后的结果就是上面的公式） <span class="math display">\[
+nll\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred)
+\]</span> 这里的 class 就是指第几个标签，它不是 one hot 表示形式。大家会发现这里少了一个 log 函数，实际上 pred 是使用 log_softmax 函数计算之后的结果。 <span class="math display">\[
+nll\_loss = -pred[class]
+\]</span></p>
+</div>
+<p>CrossEntropyLoss 公式如下： <span class="math display">\[
+crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i)
+\]</span> <del>无法理解的原因之一是，在学机器学习的时候，大家都知道啥是 crossentropy，后来在学多元分类时，开始分 binary_crossentropy 和 crossentropy。这点大家都能理解，但是到看到 NLLLoss 时，就开始懵逼了。</del></p>
+<p><del>由于 CrossEntropyLoss = LogSoftmax + NLLLoss，在 crossentropy 的公式中貌似没有出现 softmax（更没有 log_softmax），所以开始懵了，无法理解其中的 LogSoftmax 是干啥的。</del></p>
+<p>首先我要解释一点 CrossEntropyLoss 是 LogSoftmax 和 NLLLoss 两个步骤之和，之前说的“+”号，并非是数学意义上的加号。也就是说，CrossEntropyLoss 就比 NLLLoss 多做了一步 LogSoftmax（<strong>博主注</strong>：<em>个人认为实际上只是多做了一步 softmax，说多做了一步 log_softmax，是因为站在 pytorch 框架的角度</em>）。</p>
+<p>其次，对于真实输出值 y 来说，无非就是 0 和 1（注意多元分类也只有 0 和 1），并且根据上述 crossentropy 的公式。实际上公式可以化简为以下所示，其中的 m 代表真实值为 1 的索引。 <span class="math display">\[
+crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)
+\]</span> 请注意这里的 <span class="math inline">\(pred_m\)</span>。我们都知道在进行分类问题时，我们需要将输出结果置于 0-1 之间，对于二元分类我们使用 sigmoid 函数，对于多元分类我们使用 softmax（到这开始有内味了）。由于分类问题都是要这么做的，所以将 softmax 这个函数放到公式 <span class="math inline">\(crossentropy\_loss = -log(pred_m)\)</span> 中，我们惊奇的发现 crossentropy 函数变成了 log_softmax（最前面的负号暂时不看）。即 crossentropy + softmax = -log_softmax。 <div class="note warning"><p>请始终留意，pred 是一个向量通过 softmax/log_softmax 计算之后的值。</p>
+</div></p>
+<p>最后你会发现这样还是不对。<span class="math inline">\(nll\_loss = -log(pred)\)</span>，之前说 CrossEntropyLoss = <strong>LogSoftmax</strong> + NLLLoss，我把 log_softmax 放到 nll 里，变成了 <span class="math inline">\(LogSoftmax + NLLLoss = -log(log(pred))\)</span>，怎么多了一个 log？实际上 nll 的公式应该以 <span class="math inline">\(nll\_loss = -pred[class]\)</span> 为准，你会发现这个公式中没有 log 函数。这样将 logsoftmax 放入 nll loss 中，就正好是 crossentropy 了。</p>
+<p>那么你就会问 nll 明明是 Negative Log Liklihood，log 不见了，这不就是名存实亡了？</p>
+<p><strong>这可能是因为 pytorch 想要简化操作，才这么设置的，别的框架可能并不是这样。简而言之，pytorch 框架中，nll loss 的公式是 -pred。crossentropy 的公式是 logsoftmax + nll loss，即 nll(log_softmax(output))</strong></p>
+<p><strong>也就是说，如果神经网络的最后一层输出是 logsoftmax，那么就使用 nll loss（上一段 nll loss 那个 pred 就是通过 log_softmax 的输出值）。如果最后一层只是输出，偷懒不想写 logsoftmax，那么就使用 crossentropy loss（上一段 crossentropy 中的 output 就是一个普通的神经网络输出）。</strong></p>
+<h2 id="顺便一提kldivloss">顺便一提KLDivLoss</h2>
+<p><a href="https://www.cnblogs.com/charlotte77/p/5392052.html" target="_blank" rel="noopener">【原】浅谈KL散度（相对熵）在用户画像中的应用</a> 暂时还没用过这个 loss，简单来说，是用来比较两个概率分布之间的信息熵差异，如 AB 两组群体，有对某一商品的总消费分布 P 和群体人数的分布 Q，可以计算 PQ 之间的信息熵差异，从而获得 AB 两组群体对该商品的偏爱程度。</p>
+<h2 id="参考资料-2">参考资料</h2>
+<ol type="1">
+<li><a href="http://blog.leanote.com/post/lee-romantic/crossentry" target="_blank" rel="noopener">CrossEntropyLoss和NLLLoss的理解</a></li>
+<li><a href="https://www.cnblogs.com/ranjiewen/p/10059490.html" target="_blank" rel="noopener">Pytorch之CrossEntropyLoss() 与 NLLLoss() 的区别</a></li>
+<li><a href="https://blog.csdn.net/m0_38133212/article/details/88087206" target="_blank" rel="noopener">CrossEntropyLoss与NLLLoss的总结</a></li>
+<li><a href="https://www.cnblogs.com/marsggbo/p/10401215.html" target="_blank" rel="noopener">Pytorch里的CrossEntropyLoss详解</a></li>
+</ol>
+<h1 id="pytorch中的神经网络">pytorch中的神经网络</h1>
+<h2 id="lstm">LSTM</h2>
+<p>关于 nn.LSTM 的用法：如果不想手动初始化隐藏状态，而是想让 pytorch 帮你初始化，那么就只需要填入输入值即可。举个例子，下面代码框中的代码所输入的自然语句是 ['how are you', 'i'm fine']。 其中输入值 x 的形状为 (seq_len, batch_size, input_size)，对应上面的例子就是 (3, 2, 300)，代表序列长度为 3（因为上面的两句话的最大长度为 3），批量大小为 2，词向量维度为 300。需要注意的是：<strong>pytorch 会根据你输入的序列长度</strong>（输入的张量必须是一样长的，参差不齐的张量无法输入，当然了，你也无法创建出这样的张量）<strong>自动地在时间步上做计算，不需要你写一个循环，然后依次输入每一个单词的词向量。</strong> <figure class="highlight reasonml"><table><tr><td class="code"><pre><span class="line">cell = nn.<span class="constructor">LSTM(<span class="params">input_size</span>, <span class="params">hidden_size</span>, <span class="params">num_layers</span>)</span></span><br><span class="line">output, (a, m) = cell(x)</span><br></pre></td></tr></table></figure></p>
+<h1 id="张量操作">张量操作</h1>
+<h2 id="expand">expand()</h2>
+<p><code>expand()</code> 函数按照你想要的大小扩充 tensor，并且<strong>返回一个新的 tensor</strong>。注意它是 tensor 的成员方法，并且你所想要新 tensor 的维度必须与原 tensor 的维度相同。例如，原 tensor.shape=(3, 1)，那么你可以扩大为 (3, 4)，但是你不能扩大为 (3, 1, 1)，当然更不能为 (3, 1, 4)。举个例子： <figure class="highlight angelscript"><table><tr><td class="code"><pre><span class="line">x = torch.Tensor([[<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>]])</span><br><span class="line"># (<span class="number">3</span>, <span class="number">1</span>)</span><br><span class="line">print(x.shape)</span><br><span class="line">y = x.expand(<span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line"># (<span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line">print(y.shape)</span><br><span class="line"># error</span><br><span class="line">x.expand(<span class="number">3</span>, <span class="number">1</span>, <span class="number">1</span>)</span><br></pre></td></tr></table></figure></p>
+<h1 id="optimizer.zero_grad">optimizer.zero_grad()</h1>
+<p>在 pytorch 中，为什么要在每个循环之初调用这个方法？因为 pytorch 把计算的每个梯度都累加起来，并不会每迭代一次就将梯度清零。这样做看起来令人费解，并反常理。但是实际上这样做可以做更多神奇的操作，比如</p>
+<ul>
+<li><a href="https://www.zhihu.com/question/303070254" target="_blank" rel="noopener" class="uri">https://www.zhihu.com/question/303070254</a></li>
+</ul>
+<p>还有，试想本来你想运行 batch_size=1024，但是由于电脑太差，只能运行 batch_size=256 的批次数据。那么只需要每循环两次调用一次 zero_grad() 即可。 参考：</p>
+<ol type="1">
+<li><a href="https://blog.csdn.net/u011959041/article/details/102760868" target="_blank" rel="noopener">pytorch中为什么要用 zero_grad() 将梯度清零</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>IT-stuff</category>
+        <category>pytorch</category>
+      </categories>
+      <tags>
+        <tag>pytorch</tag>
+        <tag>4me</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>科研中用到的python技巧</title>
     <url>/posts/119cad78.html</url>
     <content><![CDATA[<h1 id="迭代器">迭代器</h1>
@@ -3160,7 +3392,10 @@ OPT(i) =
 <li>但是假设数组中并不是总是存在“多数”，则该算法实际上是错误的。 <figure class="highlight vim"><table><tr><td class="code"><pre><span class="line">class Solution:</span><br><span class="line">    def majorityElement(self, num<span class="variable">s:</span> List[<span class="keyword">int</span>]) -&gt; in<span class="variable">t:</span></span><br><span class="line">        def <span class="keyword">rec</span>(low, high):</span><br><span class="line">            <span class="keyword">if</span> high - low &lt;= <span class="number">1</span>:</span><br><span class="line">                <span class="keyword">return</span> nums[low]</span><br><span class="line">            </span><br><span class="line">            mid = (high + low) // <span class="number">2</span></span><br><span class="line">            <span class="keyword">left</span> = <span class="keyword">rec</span>(low, mid)</span><br><span class="line">            <span class="keyword">right</span> = <span class="keyword">rec</span>(mid, high)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">left</span> == righ<span class="variable">t:</span></span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">left</span></span><br><span class="line">            <span class="keyword">a</span> = sum(<span class="number">1</span> <span class="keyword">for</span> item in nums[<span class="keyword">lo</span><span class="variable">w:</span> high] <span class="keyword">if</span> item == <span class="keyword">left</span>)</span><br><span class="line">            <span class="keyword">b</span> = sum(<span class="number">1</span> <span class="keyword">for</span> item in nums[<span class="keyword">lo</span><span class="variable">w:</span> high] <span class="keyword">if</span> item == <span class="keyword">right</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">left</span> <span class="keyword">if</span> <span class="keyword">a</span> &gt;= <span class="keyword">b</span> <span class="keyword">else</span> <span class="keyword">right</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">rec</span>(<span class="number">0</span>, <span class="built_in">len</span>(nums))</span><br></pre></td></tr></table></figure></li>
 </ol></li>
 </ol>
-<h1 id="剑指offer-40.-最小的k个数">剑指offer 40. 最小的k个数</h1>
+<h1 id="剑指offer-40.-最小的k个数面试题-17.14.-最小-k-个数">剑指offer 40. 最小的k个数/面试题 17.14. 最小 K 个数</h1>
+<p>思想：取出左边的 k 个最小值，再取出右边的 k 个最小值。最后合并取 k 个最小值。<mark class="label success">简单</mark> <mark class="label warning">中等</mark></p>
+<figure class="highlight vim"><table><tr><td class="code"><pre><span class="line">class Solution:</span><br><span class="line">    def getLeastNumbers(self, arr: List[<span class="keyword">int</span>], <span class="keyword">k</span>: <span class="keyword">int</span>) -&gt; List[<span class="keyword">int</span>]:</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">k</span> == <span class="number">0</span>: <span class="keyword">return</span> []</span><br><span class="line">        def <span class="keyword">rec</span>(start, end):</span><br><span class="line">            <span class="keyword">if</span> end - start &lt;= <span class="keyword">k</span>:</span><br><span class="line">                <span class="keyword">return</span> arr[<span class="keyword">star</span><span class="variable">t:</span> end]</span><br><span class="line">            </span><br><span class="line">            mid = (start + end) // <span class="number">2</span></span><br><span class="line">            <span class="keyword">left</span> = <span class="keyword">rec</span>(start, mid)</span><br><span class="line">            <span class="keyword">right</span> = <span class="keyword">rec</span>(mid, end)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">left</span>.<span class="built_in">extend</span>(<span class="keyword">right</span>)</span><br><span class="line">            <span class="keyword">left</span>.<span class="keyword">sort</span>()</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">left</span>[: <span class="keyword">k</span>]</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">rec</span>(<span class="number">0</span>, <span class="built_in">len</span>(arr))</span><br></pre></td></tr></table></figure>
+<h1 id="漂亮数组">932. 漂亮数组</h1>
 ]]></content>
       <categories>
         <category>algorithm</category>
@@ -4265,83 +4500,62 @@ window.onload = function () {
       </tags>
   </entry>
   <entry>
-    <title>记录：hexo next主题的改动以安装的插件</title>
+    <title>记录：hexo next主题的改动</title>
     <url>/posts/5d62ca7e.html</url>
-    <content><![CDATA[<p><a href="https://github.com/theme-next/hexo-theme-next" target="_blank" rel="noopener">hexo-theme-next</a> 主题的 github 页面中提到了如何更新的问题。他们在教程中指出，在更新的过程中可能会遇到 <code>Commit your changes or stash them before you can merge</code> 的问题，其实这就是代表你修改过主题中的源码文件，所以不允许对 next 主题进行更新。这里的源码文件指代比较宽泛，大家最常改的应该是 <code>_config.yml</code> 文件。 以下将介绍如何处理。 1. <strong>前置操作：将自己的博客复制一份，以免修改错。</strong> 2. 使用 <code>git pull</code> 命令，如果出现问题，那就代表你更新成功了。如果出现了上面的 <code>Commit your changes or stash them before you can merge</code> 问题，那就往下看。 3. 使用 <code>git stash</code>，重置自己的修改，再次使用 <code>git pull</code>，更新完成。 4. <strong>hexo next 主题更新完成后，就代表你之前所有的自定义配置都没了。</strong>所以接下来的内容是将它们改回来。</p>
+    <content><![CDATA[<p><a href="https://github.com/theme-next/hexo-theme-next" target="_blank" rel="noopener">hexo-theme-next</a> 主题的 github 页面中提到了如何更新的问题。他们在教程中指出，在更新的过程中可能会遇到 <code>Commit your changes or stash them before you can merge</code> 的问题，其实这就是代表你修改过主题中的源码文件，所以不允许对 next 主题进行更新。这里的源码文件指代比较宽泛，大家最常改的应该是 <code>_config.yml</code> 文件。以下将介绍如何处理：</p>
+<ol type="1">
+<li><strong>前置操作：将自己的博客复制一份，以免修改错。</strong></li>
+<li>使用 <code>git pull</code> 命令，如果出现问题，那就代表你更新成功了。如果出现了上面的 <code>Commit your changes or stash them before you can merge</code> 问题，那就往下看。</li>
+<li>使用 <code>git stash</code>，重置自己的修改，再次使用 <code>git pull</code>，更新完成。</li>
+<li><strong>hexo next 主题更新完成后，就代表你之前所有的自定义配置都没了。</strong>所以接下来的内容是将它们改回来。</li>
+</ol>
 <p>博客的路径如下所示： <figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">D:.</span><br><span class="line">├─blog</span><br><span class="line">│  ├─.deploy_git</span><br><span class="line">│  ├─node_modules</span><br><span class="line">│  ├─...</span><br><span class="line">│  ├─source</span><br><span class="line">│  ├─themes</span><br><span class="line">│  │  ├─next</span><br><span class="line">│  │  │  ├─source</span><br><span class="line">│  │  │  ├─...</span><br><span class="line">│  │  │  ├─_config.yml</span><br><span class="line">│  ├─_config.yml</span><br><span class="line">├─blog_bakup</span><br></pre></td></tr></table></figure> <a id="more"></a></p>
-<h1 id="安装的插件">安装的插件</h1>
-<p>打开 git，将当前目录切换到你的博客目录。使用 <code>npm ls -dept 0</code> 即可查看，所有你安装的 hexo 插件。但是以防万一，我还是在下面记录了一下（<strong>主要是我自己下载的插件，hexo 自带的不算</strong>）。</p>
-<table>
-<thead>
-<tr class="header">
-<th>插件名</th>
-<th>版本号</th>
-<th>状态</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><em>hexo-cli</em></td>
-<td>3.1.0</td>
-<td>必装插件</td>
-</tr>
-<tr class="even">
-<td>hexo-abbrlink</td>
-<td>2.0.5</td>
-<td>-</td>
-</tr>
-<tr class="odd">
-<td>hexo-filter-flowchart</td>
-<td>1.0.4</td>
-<td>-</td>
-</tr>
-<tr class="even">
-<td>hexo-filter-mermaid-diagrams</td>
-<td>1.0.5</td>
-<td>-</td>
-</tr>
-<tr class="odd">
-<td>hexo-generator-calendar</td>
-<td>0.01</td>
-<td>-</td>
-</tr>
-<tr class="even">
-<td><em>hexo-renderer-kramed</em></td>
-<td>-</td>
-<td>已废弃</td>
-</tr>
-<tr class="odd">
-<td>hexo-renderer-mathjax</td>
-<td>0.6.0</td>
-<td>-</td>
-</tr>
-<tr class="even">
-<td>hexo-renderer-pandoc</td>
-<td>0.3.0</td>
-<td>-</td>
-</tr>
-<tr class="odd">
-<td>hexo-symbols-count-time</td>
-<td>0.7.0</td>
-<td>-</td>
-</tr>
-<tr class="even">
-<td>hexo-tag-echarts3</td>
-<td>1.1.2</td>
-<td>-</td>
-</tr>
-<tr class="odd">
-<td><em>hexo-wordcount</em></td>
-<td>6.0.1</td>
-<td>已废弃</td>
-</tr>
-</tbody>
-</table>
 <h1 id="config.yml-的处理">_config.yml 的处理</h1>
 <p>如果自己改过 <code>_config.yml</code> 文件，更新之后，维护起来就比较麻烦了。我们可以使用 next 提供的方法来管理 <code>_config.yml</code> 中的配置信息。</p>
 <p>首先在 <code>blog/source</code> 中创建 <code>_data</code> 文件，再在其中创建 <code>next.yml</code> 文件。</p>
 <p>分别打开 blog 中 next 主题的 <code>_config.yml</code> 文件和 blog_backup 中的 next 主题的 <code>_config.yml</code> 文件。</p>
 <p>blog_backup 中的配置文件是你之前自定义的配置，对照两份文件（或者如果自己有印象，可以不用对照）。将自定义的配置移入到 <code>blog/source/next.yml</code> 文件中。注意只需要移入更改过的配置即可，比如如下配置： <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">footer:</span></span><br><span class="line"><span class="attr">  since:</span> <span class="number">2015</span></span><br><span class="line"><span class="attr">  icon:</span></span><br><span class="line">	<span class="attr">name:</span> <span class="string">user</span></span><br><span class="line">	<span class="attr">animated:</span> <span class="literal">false</span></span><br><span class="line">	<span class="attr">color:</span> <span class="string">"#808080"</span></span><br><span class="line"><span class="attr">creative_commons:</span></span><br><span class="line"><span class="attr">  license:</span> <span class="string">by-nc-sa</span></span><br><span class="line"><span class="attr">  sidebar:</span> <span class="literal">false</span></span><br><span class="line"><span class="attr">  post:</span> <span class="literal">false</span></span><br><span class="line"><span class="attr">  language:</span></span><br></pre></td></tr></table></figure> 如果你只更改过 <code>since</code> 的配置，将其改为 2018。那么在 <code>blog/source/next.yml</code> 文件中，应该像下面这么写： <figure class="highlight dts"><table><tr><td class="code"><pre><span class="line"><span class="symbol">footer:</span></span><br><span class="line"><span class="symbol">  since:</span> <span class="number">2018</span></span><br></pre></td></tr></table></figure> 其他的配置不需要更改。<a href="https://github.com/theme-next/hexo-theme-next/blob/master/docs/DATA-FILES.md" target="_blank" rel="noopener">此处</a>是官方文档，还有不懂的，可以去看文档。</p>
+<h1 id="自定义代码">自定义代码</h1>
+<h2 id="添加弹窗提示功能">添加弹窗提示功能</h2>
+<p>首先下载一个自己喜欢的弹窗插件，可以去<a href="http://www.jq22.com/" target="_blank" rel="noopener">jQuery插件库</a>找。然后将css和js放在next主题下的source文件夹中，如下图所示： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/hexo/next%E4%B8%BB%E9%A2%98%E7%9B%AE%E5%BD%95.jpg" alt="next主题目录" /></p>
+<p>css文件放入css文件，js文件放入js文件夹。我自己创了一个spop的文件夹，用于单独放置我的弹窗插件。</p>
+<p>在 <code>themes/next/layout/_macro/post.swig</code> 中找到代码：<code>&lt;article itemscope itemtype=&quot;http://schema.org/Article&quot; class=&quot;post-block [% if is_index %]home[% endif %]&quot; lang=&quot;[[ post.lang or post.language or config.language ]]&quot;&gt;</code>，其实就在第 2 行。</p>
+<p>在此行下面插入以下代码： <figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line">[% <span class="keyword">for</span> tag <span class="keyword">in</span> post.tags.toArray() %]</span><br><span class="line">	[% <span class="keyword">if</span> tag.name == <span class="string">'学习笔记'</span> <span class="keyword">and</span> <span class="keyword">not</span> is_home() %]</span><br><span class="line">	&lt;link rel="stylesheet" <span class="keyword">type</span>="text/css" href="/lib/spop/spop.min.css"&gt;</span><br><span class="line">	《script <span class="keyword">type</span>="text/javascript" src="/lib/spop/spop.min.js"&gt;&lt;/script&gt;</span><br><span class="line">	&lt;!<span class="comment">--判断该文章是否为学习笔记--&gt;</span></span><br><span class="line">	《script&gt;</span><br><span class="line">	  spop(&#123;</span><br><span class="line">		<span class="keyword">template</span>: <span class="string">'&lt;h4 class="spop-title"&gt;注意&lt;/h4&gt;此文章仅为博主的学习笔记，并非教学，其中可能含有理论错误。'</span>,</span><br><span class="line">		<span class="keyword">group</span>: <span class="string">'tips'</span>,</span><br><span class="line">		position  : <span class="string">'bottom-center'</span>,</span><br><span class="line">		style: <span class="string">'success'</span>,</span><br><span class="line">		autoclose: <span class="number">5500</span>,</span><br><span class="line">		onOpen: <span class="keyword">function</span> () &#123;</span><br><span class="line">		  //这里设置灰色背景色</span><br><span class="line">		&#125;,</span><br><span class="line">		onClose: <span class="keyword">function</span>() &#123;</span><br><span class="line">		  //这里可以取消背景色</span><br><span class="line">		  spop(&#123;</span><br><span class="line">			<span class="keyword">template</span>: <span class="string">'ε = = (づ′▽`)づ'</span>,</span><br><span class="line">			<span class="keyword">group</span>: <span class="string">'tips'</span>,</span><br><span class="line">			position  : <span class="string">'bottom-center'</span>,</span><br><span class="line">			style: <span class="string">'success'</span>,</span><br><span class="line">			autoclose: <span class="number">1500</span></span><br><span class="line">		  &#125;);</span><br><span class="line">		&#125;</span><br><span class="line">	  &#125;);</span><br><span class="line">	&lt;/script&gt;</span><br><span class="line">	[% endif %]</span><br><span class="line">[% endfor %]</span><br></pre></td></tr></table></figure></p>
+<p>其中相应的 css/js 文件需要自己去下载，并放入到 <code>themes/next/source/lib/</code> 文件夹下。</p>
+<p>is_home()是next主题的方法，用于判断当前页面是否在主页。因为主页一次性加载了所有的文章，如果不加这个方法，会在主页弹出无数个弹窗。最终效果如下图所示： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/hexo/%E6%8F%90%E7%A4%BA%E5%BC%B9%E7%AA%97%E6%95%88%E6%9E%9C%E5%9B%BE.jpg" alt="提示弹窗效果图" /></p>
+<h2 id="为学习笔记添加不同的颜色">为学习笔记添加不同的颜色</h2>
+<p>如果需要为不同类型的博客在博客时间线中显示不同的颜色，可以做如下更改，在 <code>themes/next/layout/_macro/post-collapse.swig</code> 中，找到 <code>&lt;a class=&quot;post-title-link&quot; href=&quot;[[ url_for(post.path) ]]&quot; itemprop=&quot;url&quot;&gt;</code>，在 <code>&lt;a&gt;&lt;/a&gt;</code> 标签下面插入以下代码： <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 如果博文是学习笔记的话，后面加个小图标 --&gt;</span></span><br><span class="line">[% for tag in post.tags.toArray() %]</span><br><span class="line">	[% if tag.name == '学习笔记'%]</span><br><span class="line">		<span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">"notes-tag fas fa-book-reader"</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span></span><br><span class="line">		《script&gt;</span><br><span class="line">			window.onload = function()&#123;</span><br><span class="line">				var notes = $('.notes-tag');</span><br><span class="line">				//碧螺春绿</span><br><span class="line">				notes.prev().children('span').css('color', '#867018');</span><br><span class="line">			&#125;</span><br><span class="line">		<span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">	[% endif %]</span><br><span class="line">[% endfor %]</span><br></pre></td></tr></table></figure></p>
+<h2 id="开启不蒜子">开启不蒜子</h2>
+<p>开启不蒜子。在 <code>source/_data/next.yml</code> 中设置如下属性，就算开启了： <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">busuanzi_count:</span></span><br><span class="line"><span class="attr">  enable:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure> 开启之后，它默认只会显示三个统计数据，即总浏览量、文章浏览量和访客数量。它们的代码在 <code>themes/next/layout/_layout.swig</code> 的 footer 中，文章浏览量的代码在 <code>_macro/post.swig</code> 中。 如果要显示更多，可以在 <code>themes/next/layout/_partials/sidebar/site-overview.swig</code> 中修改代码（这个 <code>site-overview.swig</code> 是由 <code>themes/next/layout/_macro/sidebar.swig</code> 加载）。 <figure class="highlight cs"><table><tr><td class="code"><pre><span class="line">[<span class="meta">%- if theme.site_state %</span>]</span><br><span class="line">&lt;div <span class="keyword">class</span>=<span class="string">"site-state-wrap motion-element"</span>&gt;</span><br><span class="line">  &lt;nav <span class="keyword">class</span>=<span class="string">"site-state"</span>&gt;</span><br><span class="line">    ...</span><br><span class="line">	&lt;code&gt;</span><br><span class="line">  &lt;/nav&gt;</span><br><span class="line">&lt;div&gt;</span><br><span class="line">[<span class="meta">%- endif %</span>]</span><br></pre></td></tr></table></figure> 在文件中找到上面的代码，<code>&lt;nav&gt;&lt;/nav&gt;</code> 标签中有很多代码，将下面的代码添加到 <code>&lt;nav&gt;&lt;/nav&gt;</code> 标签内部的最后一行，即上面代码的 <code>&lt;code&gt;</code> 位置。 <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">[%- if theme.busuanzi_count.enable %]</span><br><span class="line">  <span class="comment">&lt;!-- 不蒜子/busuanzi --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"site-state-item site-state-posts"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"site-state-item-count"</span>&gt;</span>[[totalcount(site)]]<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"site-state-item-name"</span>&gt;</span>总字数<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">[%- endif %]</span><br></pre></td></tr></table></figure></p>
+<h2 id="添加置顶标签">添加置顶标签</h2>
+<p>不知道为什么 next 主题居然不为置顶文章添加置顶标签。如果不加这个标签，就无法察觉到此文章与其他文章有何区别，会造成一定的困扰。 可以搜索 <code>&lt;div class=&quot;post-meta&quot;&gt;</code> 快速定位到添加置顶标签的位置，在该代码下面添加以下代码，其中最上面三行代码是本来就存在的。 <figure class="highlight twig"><table><tr><td class="code"><pre><span class="line"><span class="xml"></span><span class="template-tag">&#123;%- <span class="name"><span class="keyword">set</span></span> date_diff = <span class="name">date</span><span class="params">(post.date)</span> != <span class="name">date</span><span class="params">(post.updated)</span> %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;%- <span class="name"><span class="keyword">set</span></span> time_diff = time(post.date) != time(post.updated) %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;%- <span class="name"><span class="keyword">set</span></span> datetime_diff = date_diff or time_diff %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;%- <span class="name"><span class="keyword">if</span></span> post.top &gt; 1 %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">	<span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">"fas fa-thumbtack"</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span></span></span><br><span class="line"><span class="xml">	<span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"post-meta-item-text"</span>&gt;</span>top<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line"><span class="xml">	<span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"post-meta-divider"</span>&gt;</span>|<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="keyword">endif</span></span> %&#125;</span><span class="xml"></span></span><br></pre></td></tr></table></figure></p>
+<h2 id="更自由地使用font-awesome">更自由地使用Font Awesome</h2>
+<div class="note danger"><p><strong>2020.06.14 更新：注意：NexT v8 已经将 Font Awesome 升级，本节的全部设置均可以作废。</strong></p>
+<p>原文：</p>
+<p><em>慎重修改，更改之后可能导致其他未被考虑到的地方出现无法显示 icons 的问题。</em></p>
+</div>
+<h3 id="修改sidebar的代码">修改sidebar的代码</h3>
+<p>在 <code>themes/next/layout/_partials/sidebar/site-overview.swig</code> 中将 social icon 的代码进行替换，大约在 85 行的位置：<code>【%-set sidebarIcon = '&lt;i class=&quot;fa fa-fw fa-' + link.split('||')[1] | trim + '&quot;&gt;&lt;/i&gt;' %}</code>，<code>ctrl f</code> 搜索 <code>fa fa-fw fa-</code> 应该就能找到了。将其替换为： <figure class="highlight mel"><table><tr><td class="code"><pre><span class="line">【%-set sidebarIcon = <span class="string">'&lt;i class="'</span> + link.split(<span class="string">'||'</span>)[<span class="number">1</span>] | <span class="keyword">trim</span> + <span class="string">'"&gt;&lt;/i&gt;'</span> %&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="修改categories的代码">修改categories的代码</h3>
+<p>为了更自由地使用 Font Awesome，在 <code>themes/next/layout/_partials/header/menu-item.swig</code> 中，将第 11 行的 <figure class="highlight mel"><table><tr><td class="code"><pre><span class="line">[%- <span class="keyword">if</span> theme.menu_settings.icons %]</span><br><span class="line">  [%- set menuIcon = <span class="string">'&lt;i class="fa fa-fw fa-'</span> + value.split(<span class="string">'||'</span>)[<span class="number">1</span>] | <span class="keyword">trim</span> + <span class="string">'"&gt;&lt;/i&gt;'</span> %]</span><br><span class="line">[%- endif %]</span><br></pre></td></tr></table></figure> 修改为 <figure class="highlight mel"><table><tr><td class="code"><pre><span class="line">[%- <span class="keyword">if</span> theme.menu_settings.icons %]</span><br><span class="line">  [%- set menuIcon = <span class="string">'&lt;i class="'</span> + value.split(<span class="string">'||'</span>)[<span class="number">1</span>] | <span class="keyword">trim</span> + <span class="string">'"&gt;&lt;/i&gt;'</span> %]</span><br><span class="line">[%- endif %]</span><br></pre></td></tr></table></figure></p>
+<h3 id="将fontawesome的版本更至最新">将fontawesome的版本更至最新</h3>
+<p>由于在后续又发现在其他地方也用到了icon，所以需要大量更改配置。<strong>如果不会写程序的还是别改了。</strong></p>
+<p>next的fontawesome默认版本是4.6.2，在写本文时，fontawesome的最新版本是5.8.1。貌似fontawesome在5.0.0版本之后改版了。总之一直出现方框乱码。</p>
+<p>后来发现，现在的fontawesome链接已经跟以前不一样了，它现在分为3大类别。</p>
+<p>现在的使用方法是：在next主题的_config.xml中搜索fontawesome，并更改属性<code>fontawesome: //cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css</code>，注意里面的文件是all.min.css，而不是font-awesom.min.css。（v7.7.1 可以在 <code>next.yml</code> 中修改 <code>vendors:  fontawesome:</code>）</p>
+<p>但是这样更改之后还是会出现方框乱码，原因是next默认使用的fa的类，而有时候我们需要使用fab或其他的类。所以需要修改一下源代码。</p>
+<p>找到layout/_macro/menu/menu-item.swig，定位class=&quot;menu-item-icon，将后面的“fa fa-fw fa-”删去。以后再修改icon不能只加一个名字了。可以像我这样修改：<code>assorted: /assorted || fa fa-fw fa-layer-group</code>。</p>
+<p>可以看到我将icon的名称补全了。如果想用fab的类，可以像这样修改：<code>python: /python || fab fa-fw fa-python</code>。以此类推。</p>
+<p>这样修改以后，如果不想用fontawesome了，想用其他的icon库，改起来也很方便。</p>
+<p>layout/_macro/menu/menu-item.swig被layout/_partials/header/sub-menu.swig引用。</p>
+<p>另外由于fontawesome版本改动，社交软件的icon也需要更改，在_config.xml中搜索github，将icon改为<code>fab fa-fw fa-github</code>。找到ayout/_macro/siderbar.swig，搜索fa fa-fw fa-，看看定位的地点上面是不是<code>{百分号  if theme.social_icons.enable 百分号}</code>。是的话将fa fa-fw fa-删除。</p>
+<h1 id="注入代码">注入代码</h1>
+<p>Next 支持将自定义的内容交给 Next 渲染。详见 <a href="https://theme-next.js.org/docs/theme-settings/custom-files.html" target="_blank" rel="noopener">官方文档</a>。简单来说，就是在 <code>_data</code> 文件夹中新建几个文件，然后添加想要的代码即可。一般来说，此项功能仅支持较为简单的自定义代码。例如在页脚加入几行文字，或者加入几行 js 代码。下一段介绍的内容可以支持更高难度的操作。</p>
+<p>Next 还支持将自定义内容注入 next 源码中，这与上节所作的事类似，但是最大的不同是此节的做法类似于直接编写代码，甚至可以设置变量，例如 list。如果不懂编程，那么还是跳过这节吧。详见<a href="https://theme-next.js.org/docs/advanced-settings.html#Injects" target="_blank" rel="noopener">官方文档</a>。</p>
+<h1 id="更新至next-v8">更新至next v8</h1>
+<p>NexT 前段时间更新了一个大版本，不过由于组织内部问题，可能这次更新没以前那么简单。不过对于我来说好像没遇到什么大问题，总而言之，在 hexo 文件夹下使用 <code>git clone https://github.com/next-theme/hexo-theme-next themes/next-v8</code>，clone v8 版本，然后再到 hexo 的配置文件 <code>_config.yml</code> 中更改 next 主题为 next-v8 主题。 最后要做的是仅仅将以前改动过的文件，在 v8 中再进行改动一次即可。我这篇文章本身就是记录 NexT 主题的改动记录的，所以也没什么大问题。</p>
+<h2 id="改用hexo-renderer-pandoc">改用hexo-renderer-pandoc</h2>
+<p>NexT v8 声明 hexo-renderer-kramed 已经停止维护，现在推荐使用 hexo-renderer-pandoc。可以在 github 搜索 hexo-renderer-pandoc，它会教你怎么做。另外，由于我以前就在用 pandoc，但是我用的是可执行程序来运行 pandoc，所以文档里让我安装 pandoc，我有点懵逼。怎么安装？不是一个可执行程序吗？其实 pandoc 也是有安装版的，只需要在 pandoc 官网下载 msi 安装包就行了。</p>
 <h1 id="出现的bug">出现的bug</h1>
 <ol type="1">
 <li>更新至最新版（v7.7.1）之后，<code>/categories</code> 路径失效了，我只要在 <code>menu</code> 中添加一条 <code>categories</code>，整个博客就无法运行。搞了一下午才试出来，只要不取 <code>categories</code> 这个名字即可，我将其改为 <code>分类</code>。</li>
@@ -4350,44 +4564,6 @@ window.onload = function () {
 <li>由于博客本身的限制，请将“【】”替换为“{}”。</li>
 </ul></li>
 </ol>
-<h1 id="自定义代码">自定义代码</h1>
-<h2 id="更自由地使用font-awesome">更自由地使用Font Awesome</h2>
-<div class="note danger"><p><strong>2020.06.14 更新：注意：NexT v8 已经将 Font Awesome 升级，本节的全部设置均可以作废。</strong> <em>慎重修改，更改之后可能导致其他未被考虑到的地方出现无法显示 icons 的问题。</em></p>
-</div>
-<h3 id="修改sidebar的代码">修改sidebar的代码</h3>
-<p>在 <code>themes/next/layout/_partials/sidebar/site-overview.swig</code> 中将 social icon 的代码进行替换，大约在 85 行的位置：<code>【%-set sidebarIcon = '&lt;i class=&quot;fa fa-fw fa-' + link.split('||')[1] | trim + '&quot;&gt;&lt;/i&gt;' %}</code>，<code>ctrl f</code> 搜索 <code>fa fa-fw fa-</code> 应该就能找到了。将其替换为： <figure class="highlight mel"><table><tr><td class="code"><pre><span class="line">【%-set sidebarIcon = <span class="string">'&lt;i class="'</span> + link.split(<span class="string">'||'</span>)[<span class="number">1</span>] | <span class="keyword">trim</span> + <span class="string">'"&gt;&lt;/i&gt;'</span> %&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="修改categories的代码">修改categories的代码</h3>
-<p>为了更自由地使用 Font Awesome，在 <code>themes/next/layout/_partials/header/menu-item.swig</code> 中，将第 11 行的 <figure class="highlight mel"><table><tr><td class="code"><pre><span class="line">[%- <span class="keyword">if</span> theme.menu_settings.icons %]</span><br><span class="line">  [%- set menuIcon = <span class="string">'&lt;i class="fa fa-fw fa-'</span> + value.split(<span class="string">'||'</span>)[<span class="number">1</span>] | <span class="keyword">trim</span> + <span class="string">'"&gt;&lt;/i&gt;'</span> %]</span><br><span class="line">[%- endif %]</span><br></pre></td></tr></table></figure> 修改为 <figure class="highlight mel"><table><tr><td class="code"><pre><span class="line">[%- <span class="keyword">if</span> theme.menu_settings.icons %]</span><br><span class="line">  [%- set menuIcon = <span class="string">'&lt;i class="'</span> + value.split(<span class="string">'||'</span>)[<span class="number">1</span>] | <span class="keyword">trim</span> + <span class="string">'"&gt;&lt;/i&gt;'</span> %]</span><br><span class="line">[%- endif %]</span><br></pre></td></tr></table></figure></p>
-<h3 id="将fontawesome的版本更至最新">将fontawesome的版本更至最新</h3>
-<p>由于在后续又发现在其他地方也用到了icon，所以需要大量更改配置。<strong>如果不会写程序的还是别改了。</strong> next的fontawesome默认版本是4.6.2，在写本文时，fontawesome的最新版本是5.8.1。貌似fontawesome在5.0.0版本之后改版了。总之一直出现方框乱码。 后来发现，现在的fontawesome链接已经跟以前不一样了，它现在分为3大类别。 现在的使用方法是：在next主题的_config.xml中搜索fontawesome，并更改属性<code>fontawesome: //cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css</code>，注意里面的文件是all.min.css，而不是font-awesom.min.css。（v7.7.1 可以在 <code>next.yml</code> 中修改 <code>vendors:  fontawesome:</code>） 但是这样更改之后还是会出现方框乱码，原因是next默认使用的fa的类，而有时候我们需要使用fab或其他的类。所以需要修改一下源代码。 找到layout/_macro/menu/menu-item.swig，定位class=&quot;menu-item-icon，将后面的“fa fa-fw fa-”删去。以后再修改icon不能只加一个名字了。可以像我这样修改：<code>assorted: /assorted || fa fa-fw fa-layer-group</code>。 可以看到我将icon的名称补全了。如果想用fab的类，可以像这样修改：<code>python: /python || fab fa-fw fa-python</code>。以此类推。 这样修改以后，如果不想用fontawesome了，想用其他的icon库，改起来也很方便。 layout/_macro/menu/menu-item.swig被layout/_partials/header/sub-menu.swig引用。 另外由于fontawesome版本改动，社交软件的icon也需要更改，在_config.xml中搜索github，将icon改为<code>fab fa-fw fa-github</code>。找到ayout/_macro/siderbar.swig，搜索fa fa-fw fa-，看看定位的地点上面是不是<code>{百分号  if theme.social_icons.enable 百分号}</code>。是的话将fa fa-fw fa-删除。</p>
-<h2 id="添加弹窗提示功能">添加弹窗提示功能</h2>
-<p>在 <code>themes/next/layout/_macro/post.swig</code> 中找到代码：<code>&lt;article itemscope itemtype=&quot;http://schema.org/Article&quot; class=&quot;post-block [% if is_index %]home[% endif %]&quot; lang=&quot;[[ post.lang or post.language or config.language ]]&quot;&gt;</code>，其实就在第 2 行。 在此行下面插入以下代码： <figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line">[% <span class="keyword">for</span> tag <span class="keyword">in</span> post.tags.toArray() %]</span><br><span class="line">	[% <span class="keyword">if</span> tag.name == <span class="string">'学习笔记'</span> <span class="keyword">and</span> <span class="keyword">not</span> is_home() %]</span><br><span class="line">	&lt;link rel="stylesheet" <span class="keyword">type</span>="text/css" href="/lib/spop/spop.min.css"&gt;</span><br><span class="line">	《script <span class="keyword">type</span>="text/javascript" src="/lib/spop/spop.min.js"&gt;&lt;/script&gt;</span><br><span class="line">	&lt;!<span class="comment">--判断该文章是否为学习笔记--&gt;</span></span><br><span class="line">	《script&gt;</span><br><span class="line">	  spop(&#123;</span><br><span class="line">		<span class="keyword">template</span>: <span class="string">'&lt;h4 class="spop-title"&gt;注意&lt;/h4&gt;此文章仅为博主的学习笔记，并非教学，其中可能含有理论错误。'</span>,</span><br><span class="line">		<span class="keyword">group</span>: <span class="string">'tips'</span>,</span><br><span class="line">		position  : <span class="string">'bottom-center'</span>,</span><br><span class="line">		style: <span class="string">'success'</span>,</span><br><span class="line">		autoclose: <span class="number">5500</span>,</span><br><span class="line">		onOpen: <span class="keyword">function</span> () &#123;</span><br><span class="line">		  //这里设置灰色背景色</span><br><span class="line">		&#125;,</span><br><span class="line">		onClose: <span class="keyword">function</span>() &#123;</span><br><span class="line">		  //这里可以取消背景色</span><br><span class="line">		  spop(&#123;</span><br><span class="line">			<span class="keyword">template</span>: <span class="string">'ε = = (づ′▽`)づ'</span>,</span><br><span class="line">			<span class="keyword">group</span>: <span class="string">'tips'</span>,</span><br><span class="line">			position  : <span class="string">'bottom-center'</span>,</span><br><span class="line">			style: <span class="string">'success'</span>,</span><br><span class="line">			autoclose: <span class="number">1500</span></span><br><span class="line">		  &#125;);</span><br><span class="line">		&#125;</span><br><span class="line">	  &#125;);</span><br><span class="line">	&lt;/script&gt;</span><br><span class="line">	[% endif %]</span><br><span class="line">[% endfor %]</span><br></pre></td></tr></table></figure> 其中相应的 css/js 文件需要自己去下载，并放入到 <code>themes/next/source/lib/</code> 文件夹下。</p>
-<h2 id="为学习笔记添加不同的颜色">为学习笔记添加不同的颜色</h2>
-<p>如果需要为不同类型的博客在博客时间线中显示不同的颜色，可以做如下更改，在 <code>themes/next/layout/_macro/post-collapse.swig</code> 中，找到 <code>&lt;a class=&quot;post-title-link&quot; href=&quot;[[ url_for(post.path) ]]&quot; itemprop=&quot;url&quot;&gt;</code>，在 <code>&lt;a&gt;&lt;/a&gt;</code> 标签下面插入以下代码： <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 如果博文是学习笔记的话，后面加个小图标 --&gt;</span></span><br><span class="line">[% for tag in post.tags.toArray() %]</span><br><span class="line">	[% if tag.name == '学习笔记'%]</span><br><span class="line">		<span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">"notes-tag fas fa-book-reader"</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span></span><br><span class="line">		《script&gt;</span><br><span class="line">			window.onload = function()&#123;</span><br><span class="line">				var notes = $('.notes-tag');</span><br><span class="line">				//碧螺春绿</span><br><span class="line">				notes.prev().children('span').css('color', '#867018');</span><br><span class="line">			&#125;</span><br><span class="line">		<span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">	[% endif %]</span><br><span class="line">[% endfor %]</span><br></pre></td></tr></table></figure></p>
-<h2 id="开启不蒜子">开启不蒜子</h2>
-<p>开启不蒜子。在 <code>source/_data/next.yml</code> 中设置如下属性，就算开启了： <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">busuanzi_count:</span></span><br><span class="line"><span class="attr">  enable:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure> 开启之后，它默认只会显示三个统计数据，即总浏览量、文章浏览量和访客数量。它们的代码在 <code>themes/next/layout/_layout.swig</code> 的 footer 中，文章浏览量的代码在 <code>_macro/post.swig</code> 中。 如果要显示更多，可以在 <code>themes/next/layout/_partials/sidebar/site-overview.swig</code> 中修改代码（这个 <code>site-overview.swig</code> 是由 <code>themes/next/layout/_macro/sidebar.swig</code> 加载）。 <figure class="highlight cs"><table><tr><td class="code"><pre><span class="line">[<span class="meta">%- if theme.site_state %</span>]</span><br><span class="line">&lt;div <span class="keyword">class</span>=<span class="string">"site-state-wrap motion-element"</span>&gt;</span><br><span class="line">  &lt;nav <span class="keyword">class</span>=<span class="string">"site-state"</span>&gt;</span><br><span class="line">    ...</span><br><span class="line">	&lt;code&gt;</span><br><span class="line">  &lt;/nav&gt;</span><br><span class="line">&lt;div&gt;</span><br><span class="line">[<span class="meta">%- endif %</span>]</span><br></pre></td></tr></table></figure> 在文件中找到上面的代码，<code>&lt;nav&gt;&lt;/nav&gt;</code> 标签中有很多代码，将下面的代码添加到 <code>&lt;nav&gt;&lt;/nav&gt;</code> 标签内部的最后一行，即上面代码的 <code>&lt;code&gt;</code> 位置。 <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">[%- if theme.busuanzi_count.enable %]</span><br><span class="line">  <span class="comment">&lt;!-- 不蒜子/busuanzi --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"site-state-item site-state-posts"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"site-state-item-count"</span>&gt;</span>[[totalcount(site)]]<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"site-state-item-name"</span>&gt;</span>总字数<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">[%- endif %]</span><br></pre></td></tr></table></figure></p>
-<h2 id="开启echarts插件">开启echarts插件</h2>
-<p>详见教程<a href="https://kchen.cc/2016/11/05/echarts-in-hexo/" target="_blank" rel="noopener">在 Hexo 中插入 ECharts 动态图表</a> 由于特殊需要，要给 echarts 添加一个 id，所以需要改一下源码。 找到 <code>node_modules/hexo-tag-echarts3/index.js</code>。将 <code>echartsMaps()</code> 函数改为： <figure class="highlight maxima"><table><tr><td class="code"><pre><span class="line">function echartsMaps(<span class="built_in">args</span>, <span class="built_in">content</span>) &#123;</span><br><span class="line">    <span class="built_in">var</span> template = fs.readFileSync(filePath).toString(),</span><br><span class="line">        options = &#123;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">content</span>.<span class="built_in">length</span>) &#123;</span><br><span class="line">        <span class="built_in">var</span> options = <span class="built_in">content</span>;</span><br><span class="line">    &#125;</span><br><span class="line">	_id = <span class="built_in">args</span>[<span class="number">0</span>] || 'echarts' + ((Math.<span class="built_in">random</span>() * <span class="number">9999</span>) | <span class="number">0</span>)</span><br><span class="line">    <span class="built_in">return</span> <span class="symbol">_</span>.template(template)(&#123;</span><br><span class="line">        id: _id,</span><br><span class="line">        option: options,</span><br><span class="line">        <span class="built_in">height</span>: <span class="built_in">args</span>[<span class="number">1</span>] || <span class="number">400</span>,</span><br><span class="line">        <span class="built_in">width</span>: <span class="built_in">args</span>[<span class="number">2</span>] || '<span class="number">85</span><span class="symbol">%</span>'</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure> 然后在写代码时，只需要这样 <code>{百分号 echarts id 400 '85%' 百分号}</code> 写就行了。</p>
-<h2 id="添加置顶标签">添加置顶标签</h2>
-<p>不知道为什么 next 主题居然不为置顶文章添加置顶标签。如果不加这个标签，就无法察觉到此文章与其他文章有何区别，会造成一定的困扰。 可以搜索 <code>&lt;div class=&quot;post-meta&quot;&gt;</code> 快速定位到添加置顶标签的位置，在该代码下面添加以下代码，其中最上面三行代码是本来就存在的。 <figure class="highlight twig"><table><tr><td class="code"><pre><span class="line"><span class="xml"></span><span class="template-tag">&#123;%- <span class="name"><span class="keyword">set</span></span> date_diff = <span class="name">date</span><span class="params">(post.date)</span> != <span class="name">date</span><span class="params">(post.updated)</span> %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;%- <span class="name"><span class="keyword">set</span></span> time_diff = time(post.date) != time(post.updated) %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;%- <span class="name"><span class="keyword">set</span></span> datetime_diff = date_diff or time_diff %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;%- <span class="name"><span class="keyword">if</span></span> post.top &gt; 1 %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">	<span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">"fas fa-thumbtack"</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span></span></span><br><span class="line"><span class="xml">	<span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"post-meta-item-text"</span>&gt;</span>top<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line"><span class="xml">	<span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"post-meta-divider"</span>&gt;</span>|<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="keyword">endif</span></span> %&#125;</span><span class="xml"></span></span><br></pre></td></tr></table></figure></p>
-<h1 id="注入代码">注入代码</h1>
-<p>Next 支持将自定义的内容交给 Next 渲染。详见 <a href="https://theme-next.js.org/docs/theme-settings/custom-files.html" target="_blank" rel="noopener">官方文档</a>。简单来说，就是在 <code>_data</code> 文件夹中新建几个文件，然后添加想要的代码即可。一般来说，此项功能仅支持较为简单的自定义代码。例如在页脚加入几行文字，或者加入几行 js 代码。下一段介绍的内容可以支持更高难度的操作。</p>
-<p>Next 还支持将自定义内容注入 next 源码中，这与上节所作的事类似，但是最大的不同是此节的做法类似于直接编写代码，甚至可以设置变量，例如 list。如果不懂编程，那么还是跳过这节吧。详见<a href="https://theme-next.js.org/docs/advanced-settings.html#Injects" target="_blank" rel="noopener">官方文档</a>。</p>
-<h1 id="美化">美化</h1>
-<h2 id="修改博客透明度">修改博客透明度</h2>
-<p>一般来说大家都在博客里放一个背景图片，但是大部分时候博文都是很长的，导致背景图片无法全部地显示出来。所以很有必要为博文设置一个透明度，使得背景图片若隐若现。</p>
-<p>在博客根目录的 <code>_data</code> 文件夹中，新建 <code>styles.styl</code> 在其中写入：</p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* 上半部分的侧边栏 */</span></span><br><span class="line"><span class="selector-class">.header-inner</span>&#123;</span><br><span class="line">	<span class="attribute">background</span>: <span class="built_in">rgba</span>(255, 255, 255, 0.82)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* 下半部分的侧边栏 */</span></span><br><span class="line"><span class="selector-class">.sidebar-inner</span>&#123;</span><br><span class="line">	<span class="attribute">background</span>: <span class="built_in">rgba</span>(255, 255, 255, 0.82)</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.content-wrap</span>&#123;</span><br><span class="line">	<span class="attribute">background</span>: <span class="built_in">rgba</span>(255, 255, 255, 0.779);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>如果你没有下半部分的侧边栏（next 主题好像可以选择关闭），那么可以删除 <code>.sidebar-inner</code>。</p>
-<h2 id="樱花特效">樱花特效</h2>
-<p>详见 <a href="https://cangshui.net/2372.html" target="_blank" rel="noopener">网页樱花飘落特效（JS 实现）</a></p>
-<div class="note danger"><p><strong>注意</strong>：此特效与不蒜子插件在某些特殊情况下存在冲突。目前 Next 支持将自定义的文件提取出来放在 <code>_data</code> 文件夹中。如果把加载樱花特效的 js 代码放在 <code>_data/footer.swig</code> 文件的末尾，则处于页脚部分的不蒜子统计不显示。</p>
-<p><strong>解决办法</strong>：那行代码别放在文件的末尾就行了。</p>
-</div>
-<h1 id="更新至next-v8">更新至next v8</h1>
-<p>NexT 前段时间更新了一个大版本，不过由于组织内部问题，可能这次更新没以前那么简单。不过对于我来说好像没遇到什么大问题，总而言之，在 hexo 文件夹下使用 <code>git clone https://github.com/next-theme/hexo-theme-next themes/next-v8</code>，clone v8 版本，然后再到 hexo 的配置文件 <code>_config.yml</code> 中更改 next 主题为 next-v8 主题。 最后要做的是仅仅将以前改动过的文件，在 v8 中再进行改动一次即可。我这篇文章本身就是记录 NexT 主题的改动记录的，所以也没什么大问题。</p>
-<h2 id="改用hexo-renderer-pandoc">改用hexo-renderer-pandoc</h2>
-<p>NexT v8 声明 hexo-renderer-kramed 已经停止维护，现在推荐使用 hexo-renderer-pandoc。可以在 github 搜索 hexo-renderer-pandoc，它会教你怎么做。另外，由于我以前就在用 pandoc，但是我用的是可执行程序来运行 pandoc，所以文档里让我安装 pandoc，我有点懵逼。怎么安装？不是一个可执行程序吗？其实 pandoc 也是有安装版的，只需要在 pandoc 官网下载 msi 安装包就行了。</p>
 ]]></content>
       <categories>
         <category>assorted</category>
@@ -5388,6 +5564,51 @@ P(a &lt; X \leq b) = &amp; F_X(b) - F_X(a) \\
       </tags>
   </entry>
   <entry>
+    <title>各种乘法的表示符号</title>
+    <url>/posts/c05e7547.html</url>
+    <content><![CDATA[<p>设 <span class="math display">\[
+m = [a_1, a_2, \cdots, a_n] \\
+n = [b_1, b_2, \cdots, b_n] \\
+\]</span> 设 f(x)，g(x) 是 <span class="math inline">\(R_1\)</span> 上的两个可积函数。</p>
+<h1 id="向量点积">向量点积</h1>
+<p>英文中叫做 dot product，又被称为<strong>点乘</strong>、<strong>内积</strong>、<strong>数量积</strong>。</p>
+<p>则 <span class="math inline">\(m \cdot n = a_1 * b_1 + a_2 * b_2 + \cdots a_n * b_n\)</span>。</p>
+<p>也可以写作<span class="math inline">\(m \bullet n = a_1 * b_1 + a_2 * b_2 + \cdots a_n * b_n\)</span>。 <a id="more"></a></p>
+<h1 id="向量叉乘">向量叉乘</h1>
+<p>又叫<strong>向量积</strong>、<strong>外积</strong>、<strong>叉积</strong>。 <span class="math display">\[
+m \times n = 
+\]</span></p>
+<h1 id="矩阵相乘">矩阵相乘</h1>
+<p>矩阵相乘可以省略乘号： <span class="math display">\[A_{3 \times 4}B_{4 \times 100} = C_{3 \times 100}
+\]</span></p>
+<h1 id="矩阵对应元素相乘">矩阵对应元素相乘</h1>
+<p>英语中叫做 <strong>element-wise multiplication</strong>，也被称为 Hadamard 乘积（Hadamard product）。有以下几种符号表示： <span class="math display">\[
+A_{3 \times 1} \circ B_{3 \times 1} = C_{3 \times 1} \\
+A_{3 \times 4} \circ B_{3 \times 4} = C_{3 \times 4} \\
+A_{3 \times 1} \odot B_{3 \times 1} = C_{3 \times 1} \\
+\]</span></p>
+<h1 id="张量积">张量积</h1>
+<p>英语中叫做 tensor product，对于向量而言张量积与外积等价。有以下符号表示： <span class="math display">\[A_{4 \times 1} \otimes B_{1 \times 3} = C_{4 \times 3}
+\]</span></p>
+<h2 id="克罗内克积">克罗内克积</h2>
+<p>英语中叫做 Kronecker product，克罗内克积是张量积的特殊形式。表示为： <span class="math display">\[A_{m \times n} \otimes B_{p \times q} = C_{mp \times nq}
+\]</span></p>
+<h1 id="卷积">卷积</h1>
+<p>英语中叫做 convolution。表示为： <span class="math display">\[h(x)=(f \ast g)(x) = \int^{\infty}_{-\infty} f(\tau)g(x - \tau)d\tau
+\]</span></p>
+<h1 id="参考资料">参考资料</h1>
+<ol type="1">
+<li><a href="https://blog.csdn.net/jdbc/article/details/82753391" target="_blank" rel="noopener">【收藏】各种乘法的区别 “点积、外积、数乘...等”</a></li>
+<li><a href="https://blog.csdn.net/dcrmg/article/details/52416832" target="_blank" rel="noopener">向量点乘（内积）和叉乘（外积、向量积）概念及几何意义解读</a></li>
+<li><a href="https://baike.baidu.com/item/%E5%90%91%E9%87%8F%E7%A7%AF?fromtitle=cross+product&amp;fromid=18082286" target="_blank" rel="noopener">向量积</a></li>
+<li><a href="https://baike.baidu.com/item/%E5%93%88%E8%BE%BE%E7%8E%9B%E7%A7%AF/18894493?fr=aladdin" target="_blank" rel="noopener">哈达玛积</a></li>
+<li><a href="https://baike.baidu.com/item/%E5%BC%A0%E9%87%8F%E7%A7%AF/7540845?fr=aladdin" target="_blank" rel="noopener">张量积</a></li>
+<li><a href="https://baike.baidu.com/item/%E5%85%8B%E7%BD%97%E5%86%85%E5%85%8B%E7%A7%AF/6282573?fr=aladdin" target="_blank" rel="noopener">克罗内克积</a></li>
+<li><a href="https://www.zhihu.com/question/22298352/answer/637156871" target="_blank" rel="noopener">如何通俗易懂地解释卷积？</a></li>
+</ol>
+]]></content>
+  </entry>
+  <entry>
     <title>李宏毅预训练模型学习笔记</title>
     <url>/posts/77a5bc5a.html</url>
     <content><![CDATA[<div class="note info"><p>视频来自 <a href="https://www.bilibili.com/video/av56235038" target="_blank" rel="noopener">此处</a>，或者 <a href="https://www.bilibili.com/video/av46561029?p=61" target="_blank" rel="noopener">此处</a>，<a href="https://www.bilibili.com/video/BV1MZ4y1W7mw" target="_blank" rel="noopener">此处</a>是一个讲解得更详细的视频。</p>
@@ -5570,6 +5791,41 @@ P(a &lt; X \leq b) = &amp; F_X(b) - F_X(a) \\
       </tags>
   </entry>
   <entry>
+    <title>PyDial: A Multi-domain Statistical Dialogue System Toolkit</title>
+    <url>/posts/65623ba8.html</url>
+    <content><![CDATA[<div class="note info"><p><a href="https://www.aclweb.org/anthology/P17-4013/" target="_blank" rel="noopener">论文地址</a>，论文作者 S Ultes 等，发表于 2017 年。 此文中出现了许多专业名词，可参考 <a href="https://yan624.github.io/·论文笔记/dilogue/task-oriented/54.%20A%20Benchmarking%20Environment%20for%20Reinforcement%20Learning%20Based%20Task%20Oriented%20Dialogue%20Management.html">此处</a> 加以理解。</p>
+</div>
+<h1 id="摘要翻译">摘要翻译</h1>
+<p>统计口语对话系统（<em>Statistical Spoken Dialogue Systems, Statistical SDS, 统计 SDS</em>）已经存在多年了。然而，访问这些系统一直很困难，因为仍然没有公开的端到端系统实现。为了缓解这个问题，我们提出了 PyDial，一个开源的端到端统计语音对话系统工具包，它为<strong>所有对话系统模块</strong>提供<strong>统计方法</strong>的实现。此外，它还被扩展为提供多领域会话功能。它提供了各个对话系统模块的简单配置、易扩展性和域无关（<em>domain-independent</em>）的实现。该工具包可在 Apache2.0 许可下下载。</p>
+<h1 id="引言">1 引言</h1>
+<p>针对机器去设计语音接口（凭此人机交互）是多年来的研究热点。这些语音对话系统（SDSs）通常<strong>基于模块化的架构</strong>，包括<strong>语音识别</strong>（<em>speech recognition</em>）和<strong>语义解码</strong>（<em>semantic decoding</em>）的<strong>输入处理模块</strong>（<em>input processing modules</em>）、<strong>信念跟踪</strong>（<em>belief tracking</em>）和<strong>策略</strong>（<em>policy</em>）的<strong>对话管理模块</strong>（<em>dialogue management modules</em>）、<strong>语言生成</strong>（<em>language generation</em>）和<strong>语音合成</strong>（<em>speech synthesis</em>）的<strong>输出处理模块</strong>（<em>output processing modules</em>）（见图 1）。 <div class="note success"><p>以上介绍了 SDS 的架构。下一段介绍了一些 SDS 中不同组件的统计方法示例。</p>
+</div></p>
+<p>统计 SDS 是一个语音接口，其中所有 SDS 模块都基于统计模型（从数据中学习）（与人工规则相比）。对话系统中<strong>不同组件的统计方法</strong>例子可以在以下中找到： - ……（若干论文），详见原论文 Introduction 第二段。 <a id="more"></a></p>
+<p>尽管对统计 SDS 的研究非常丰富，但是仍然没有通用的平台和开放的工具包。其他工具包实现通常集中在单个模块上（例如：<em>略，详见论文</em>）。提供专门针对统计对话系统（<em>statistical dialogue systems</em>）的工具包将使新进入该领域的人员能够更容易地参与进来，结果更容易比较，研究人员能够专注于他们的特定研究问题，而不是重新实现算法（例如，评估（<em>v.</em>）交互功能中的理解或生成组件的性能）。 因此，为了促进研究，以及使人们更容易参与统计口语对话系统的研究，我们提出了一个多领域统计口语对话系统工具包 <strong>PyDial</strong>。PyDial 是用 Python 实现的，剑桥对话系统团队（<em>Cambridge Dialogue Systems Group</em>）正在积极使用它。 <div class="note default"><p>那么什么是 PyDial 呢？</p>
+</div></p>
+<p>PyDial 支持多领域的应用程序，在这些应用程序中，对话可能涉及多个不同的主题。这引入了许多新的研究课题，包括广义信念跟踪（<em>generalised belief tracking</em>）（论文略），<em>rapid policy adaptation and parallel learning</em> 和自然语言生成（<em>natural language generation</em>）。 论文的余下部分安排如下： 1. 第 2 节介绍了 PyDial 的总体架构（并且将 SDS 架构扩展到多个领域）和 PyDial 的主要应用规范； 2. 第 3 节包含各个对话系统模块的实现细节； 3. 第 4 节列出了可用的领域，其中有两个领域用于第5节中的示例交互； 4. 第 6 节总结了该工具包的主要贡献。</p>
+<h1 id="pydial-架构">2 PyDial 架构</h1>
+<p>本节介绍 PyDial 的结构及其与环境的接口方式。随后，描述了在单个领域上功能的扩展，以允许在多个领域上进行对话。最后，我们讨论了 PyDial 设计的三个关键原则。</p>
+<h2 id="总体系统架构">2.1 总体系统架构</h2>
+<p>PyDial 的总体架构如图 2 所示。其中主要组件被称为 <strong>Agent</strong>，它位于系统的核心。它封装了所有对话系统模块，以实现基于文本的交互，即输入和输出。对话系统模块依赖于由一个<strong>本体</strong>（<strong>Ontology</strong>）定义的领域规范。为了与环境交互（<strong>博主注</strong>：这里的“与环境交互”应该指的是机器与外部环境交互，如机器与餐厅环境交互、与旅游环境交互、与服装商场进行交互等），PyDial 提供了三个接口：<strong>Dialogue Server</strong>【允许语音型交互】、<strong>Texthub</strong>【允许输入型交互】和 <strong>User Simulation system</strong>。交互的性能由<strong>评估</strong>（<strong>Evaluation</strong>）组件监视。 - Agent：负责对话交互，因此内部的架构类似于图 1 中的内容。<strong>Agent</strong> 还维护 dialogue sessions，即确保每个输入都<u>发送到</u>（<em>is routed to</em>）正确的对话。因此，<strong>可以通过实例化多个 agents 来支持多个对话</strong>。 1. semantic parser：将文本输入转化为一个语义表征 2. belief tracker：负责维护一个被称为 <strong>belief state</strong> 的对话状态表征（<em>dialogue state representation</em>） 3. policy：将 <strong>belief state</strong> 映射到适合的 <strong>system dialogue act</strong> 4. semantic output：将 <strong>system dialogue act</strong> 转化为文本表示 5. topic tracker：对于多域功能，需要 <strong>topic tracker</strong>，其功能将在第 2.2 节中解释 - User Simulation：支持在语义层面进行对话模拟，即不使用任何语义解析器或语言生成。这是一种广泛应用于训练和评估基于强化学习算法的技术，因为它避免了昂贵的数据收集练习（<em>data collection exercises</em>）和用户试验（<em>user trials</em>）。它当然只提供了一个近似的真实用户行为，所以通过模拟获得的结果应该谨慎看待！ - 与环境交互：为了使 Agent 能够与其环境进行通信，PyDial 提供了两种模式：语音和文本 + Texthub：只需将 Agent 连接到终端 + Dialogue Server：要启用基于语音的对话，<strong>Dialogue Server</strong> 允许连接到外部语音客户端。此客户端负责使用 ASR 将输入语音信号映射到文本，并使用语音合成将输出文本映射到语音（<em>text to speech</em>, <strong>TTS</strong>）。语音客户端通过 HTTP 交换 JSON 消息连接到对话服务器。请注意，语音客户端不是 PyDial 的一部分。基于云的 ASR 和 TTS 服务可以从 <a href="https://cloud.google.com/speech" target="_blank" rel="noopener">Google</a>、<a href="https://www.microsoft.com/cognitive-services/en-us/speech-api" target="_blank" rel="noopener">Microsoft</a>或 <a href="http://www.ibm.com/watson/developercloud/speech-to-text.html" target="_blank" rel="noopener">IBM</a>等提供商处获得。PyDial 目前连接到 DialPort（Zhao等人，2016），其允许基于语音的交互。 - Ontology：除了 <strong>Agent</strong> 和接口组件之外，还有 <strong>Ontology</strong>，Ontology 封装了对话域规范以及对后端数据库（例如，一组餐厅及它们的属性）的访问。它被建模为一个全局对象，大多数对话系统模块和用户模拟器使用它来获取有关用户 <em>actions, slots, slot values, and system actions</em> 的相关信息。 - Evaluation：用于计算对话的评估度量（例如 <strong>Task Success</strong>）。对于基于强化学习的对话模块来说，评估组件还负责提供 <em>reward</em></p>
+<h2 id="多领域对话系统架构">2.2 多领域对话系统架构</h2>
+<p>Agent -&gt; <strong>topic tracker</strong></p>
+<h2 id="主要原则">2.3 主要原则</h2>
+<p>为了使 PyDial 能够轻松地应用于新问题，PyDial 体系结构的设计支持三个关键原则： - Domain Independence - Easy Configurability - Extensibility</p>
+<h1 id="实现">3 实现</h1>
+<p>PyDial 工具包是一个不断开发的研究系统。可从Apache2.0许可下的<a href="http://pydial.org" target="_blank" rel="noopener">网站</a>免费下载。在最初的版本中可以使用以下各种系统模块的实现，不过，到时候会有更多的实现。 - <strong>Semantic Decoder</strong>：为了对输入语句（或n个最佳语句列表，or n-best-list of sentences）进行语义解码，PyDial 提供了一个基于规则（使用正则表达式）的实现，以及一个基于 SVM 的统计模型，即 the Semantic Tuple Classifier（Mairess et al., 2009）。对于后者，只提供了 CamRestaurants 领域的模型。 - <strong>Belief Tracker</strong>：为了跟踪 belief state，可用 <strong>the rule-based focus tracker</strong>（Henderson et al., 2014）。该实现与领域无关。所有特定领域的信息都是从本体中提取的。 - <strong>Policy</strong>：负责 policy 的决定执行模块有两种实现方式：<strong>1）</strong>人工制定的策略（应该适用于所有领域）；<strong>2）</strong>Gaussian process (GP) reinforcement learning policy（Gasic and Young, 2014）。对于多领域对话，策略管理器可以像处理所有其他模块一样处理策略。给定每个用户的输入的领域，然后选择相应的领域策略。 此外，还可以选择 Gasic et al.(2015b) 提出的 Bayesian committee machine(BCM) 处理程序：<strong>当处理一个领域的 belief state 时，参考其他领域的策略来选择最终的系统操作</strong>。为了实现这一点，belief state 被映射到一个抽象表示，然后允许所有策略访问它。在 PyDial 中，经过训练的策略可以在 committee-based handler 和 standard policy manager handler 之间移动。即在 committee 外部（在单域或多域设置中）接受训练的策略可以在 committee 内部使用，反之亦然。 - <strong>Language Generator</strong>：为了将 semantic system action 映射为文本，PyDial 提供了两个实现组件：<strong>1）</strong>对于所有领域来说，提供了一个基于模板（定义规则）的语言生成；<strong>2）</strong>此外 Wen et al. (2015) 提出了基于 LSTM 的语言生成器，里面包含了 CamRestaurants 领域的预训练模型 - <strong>Topic Tracker</strong>：PyDial 提供了一个基于关键字的 Topic Tracker 实现。如果 Topic Tracker 已为某些用户输入标识了领域，那么它将继续使用该领域，直到识别了新的领域。<strong>因此，并非每个用户输入都必须包含相关关键字</strong>。如果 Topic Tracker <strong>无法在开始时识别领域</strong>，那么它将创建与用户的 meta-dialogue，直到确定初始领域或达到最大重试次数。 - <strong>Evaluation</strong>：为了评估对话，目前已经实现了两个 success-based 模块。（下面的话部分看不懂，索性不翻了--） &gt; The objective task success evaluator compares the constraints and requests the system identifies with the true values. The latter may either be derived from the user simulator or, in real dialogues, by specifying a predefined task. For real dialogues, a subjective task success evaluator may also be applied which queries the user about the outcome of the dialogue. - <strong>User Simulation</strong>：模拟用户的实现使用 agenda-based 用户模拟器（Schatzmann et al., 2006）。该模拟器包含 user model 和 error model，从而创建 a n-best-list of user acts 来模拟噪声语音信道。通过使用一组普遍适用的参数，模拟器可以应用于所有领域。领域特定的信息取自本体。</p>
+<h1 id="一些领域">4 一些领域</h1>
+<p><strong>PyDial 的主要关注的是面向任务的对话，即根据一些约束条件用户必定找到其匹配的实体</strong>。找到实体后，用户可以请求其他信息。为应付这些场景，PyDial 预先加载了总共十个不同复杂度的领域： - 略</p>
+<p>如前所述，所有 <strong>policy</strong> 实现以及 <strong>belief tracker</strong> 和 <strong>user simulator</strong> 的实现都独立于领域之外。因此，在<strong>所有领域</strong>都可以进行交互的模拟。此外，<strong>semantic decoder</strong> 和 <strong>language generator</strong> 在某种程度上依赖于特定领域的实现。PyDial 包含用于<strong>所有领域</strong>的基于规则的 <strong>semantic decoder</strong> 和一个用于 <strong>CamRestaurants</strong> 的统计解码器（<em>statistical decoder</em>）。此外，PyDial 还为<strong>大多数领域</strong>提供了基于模板的语言生成，并为 <strong>CamRestaurants</strong> 提供了基于 LSTM 的生成器。因此，在 CamRestaurants 领域，实现统计对话完全有可能。</p>
+]]></content>
+      <categories>
+        <category>paper</category>
+      </categories>
+      <tags>
+        <tag>pydial</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management</title>
     <url>/posts/65cbbd31.html</url>
     <content><![CDATA[<div class="note info"><p><a href="https://arxiv.xilesou.top/pdf/1711.11023.pdf" target="_blank" rel="noopener">论文地址</a>，论文作者 Casanueva I 等，发表于 2017 年。 此论文基于 PyDial，所以可能需要先看 <a href="https://yan624.github.io/·论文笔记/55.%20PyDial：A%20Multi-domain%20Statistical%20Dialogue%20System%20Toolkit.html">这篇</a>博文。</p>
@@ -5642,41 +5898,6 @@ P(a &lt; X \leq b) = &amp; F_X(b) - F_X(a) \\
       <tags>
         <tag>pydial</tag>
         <tag>benchmarking environment</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PyDial: A Multi-domain Statistical Dialogue System Toolkit</title>
-    <url>/posts/65623ba8.html</url>
-    <content><![CDATA[<div class="note info"><p><a href="https://www.aclweb.org/anthology/P17-4013/" target="_blank" rel="noopener">论文地址</a>，论文作者 S Ultes 等，发表于 2017 年。 此文中出现了许多专业名词，可参考 <a href="https://yan624.github.io/·论文笔记/dilogue/task-oriented/54.%20A%20Benchmarking%20Environment%20for%20Reinforcement%20Learning%20Based%20Task%20Oriented%20Dialogue%20Management.html">此处</a> 加以理解。</p>
-</div>
-<h1 id="摘要翻译">摘要翻译</h1>
-<p>统计口语对话系统（<em>Statistical Spoken Dialogue Systems, Statistical SDS, 统计 SDS</em>）已经存在多年了。然而，访问这些系统一直很困难，因为仍然没有公开的端到端系统实现。为了缓解这个问题，我们提出了 PyDial，一个开源的端到端统计语音对话系统工具包，它为<strong>所有对话系统模块</strong>提供<strong>统计方法</strong>的实现。此外，它还被扩展为提供多领域会话功能。它提供了各个对话系统模块的简单配置、易扩展性和域无关（<em>domain-independent</em>）的实现。该工具包可在 Apache2.0 许可下下载。</p>
-<h1 id="引言">1 引言</h1>
-<p>针对机器去设计语音接口（凭此人机交互）是多年来的研究热点。这些语音对话系统（SDSs）通常<strong>基于模块化的架构</strong>，包括<strong>语音识别</strong>（<em>speech recognition</em>）和<strong>语义解码</strong>（<em>semantic decoding</em>）的<strong>输入处理模块</strong>（<em>input processing modules</em>）、<strong>信念跟踪</strong>（<em>belief tracking</em>）和<strong>策略</strong>（<em>policy</em>）的<strong>对话管理模块</strong>（<em>dialogue management modules</em>）、<strong>语言生成</strong>（<em>language generation</em>）和<strong>语音合成</strong>（<em>speech synthesis</em>）的<strong>输出处理模块</strong>（<em>output processing modules</em>）（见图 1）。 <div class="note success"><p>以上介绍了 SDS 的架构。下一段介绍了一些 SDS 中不同组件的统计方法示例。</p>
-</div></p>
-<p>统计 SDS 是一个语音接口，其中所有 SDS 模块都基于统计模型（从数据中学习）（与人工规则相比）。对话系统中<strong>不同组件的统计方法</strong>例子可以在以下中找到： - ……（若干论文），详见原论文 Introduction 第二段。 <a id="more"></a></p>
-<p>尽管对统计 SDS 的研究非常丰富，但是仍然没有通用的平台和开放的工具包。其他工具包实现通常集中在单个模块上（例如：<em>略，详见论文</em>）。提供专门针对统计对话系统（<em>statistical dialogue systems</em>）的工具包将使新进入该领域的人员能够更容易地参与进来，结果更容易比较，研究人员能够专注于他们的特定研究问题，而不是重新实现算法（例如，评估（<em>v.</em>）交互功能中的理解或生成组件的性能）。 因此，为了促进研究，以及使人们更容易参与统计口语对话系统的研究，我们提出了一个多领域统计口语对话系统工具包 <strong>PyDial</strong>。PyDial 是用 Python 实现的，剑桥对话系统团队（<em>Cambridge Dialogue Systems Group</em>）正在积极使用它。 <div class="note default"><p>那么什么是 PyDial 呢？</p>
-</div></p>
-<p>PyDial 支持多领域的应用程序，在这些应用程序中，对话可能涉及多个不同的主题。这引入了许多新的研究课题，包括广义信念跟踪（<em>generalised belief tracking</em>）（论文略），<em>rapid policy adaptation and parallel learning</em> 和自然语言生成（<em>natural language generation</em>）。 论文的余下部分安排如下： 1. 第 2 节介绍了 PyDial 的总体架构（并且将 SDS 架构扩展到多个领域）和 PyDial 的主要应用规范； 2. 第 3 节包含各个对话系统模块的实现细节； 3. 第 4 节列出了可用的领域，其中有两个领域用于第5节中的示例交互； 4. 第 6 节总结了该工具包的主要贡献。</p>
-<h1 id="pydial-架构">2 PyDial 架构</h1>
-<p>本节介绍 PyDial 的结构及其与环境的接口方式。随后，描述了在单个领域上功能的扩展，以允许在多个领域上进行对话。最后，我们讨论了 PyDial 设计的三个关键原则。</p>
-<h2 id="总体系统架构">2.1 总体系统架构</h2>
-<p>PyDial 的总体架构如图 2 所示。其中主要组件被称为 <strong>Agent</strong>，它位于系统的核心。它封装了所有对话系统模块，以实现基于文本的交互，即输入和输出。对话系统模块依赖于由一个<strong>本体</strong>（<strong>Ontology</strong>）定义的领域规范。为了与环境交互（<strong>博主注</strong>：这里的“与环境交互”应该指的是机器与外部环境交互，如机器与餐厅环境交互、与旅游环境交互、与服装商场进行交互等），PyDial 提供了三个接口：<strong>Dialogue Server</strong>【允许语音型交互】、<strong>Texthub</strong>【允许输入型交互】和 <strong>User Simulation system</strong>。交互的性能由<strong>评估</strong>（<strong>Evaluation</strong>）组件监视。 - Agent：负责对话交互，因此内部的架构类似于图 1 中的内容。<strong>Agent</strong> 还维护 dialogue sessions，即确保每个输入都<u>发送到</u>（<em>is routed to</em>）正确的对话。因此，<strong>可以通过实例化多个 agents 来支持多个对话</strong>。 1. semantic parser：将文本输入转化为一个语义表征 2. belief tracker：负责维护一个被称为 <strong>belief state</strong> 的对话状态表征（<em>dialogue state representation</em>） 3. policy：将 <strong>belief state</strong> 映射到适合的 <strong>system dialogue act</strong> 4. semantic output：将 <strong>system dialogue act</strong> 转化为文本表示 5. topic tracker：对于多域功能，需要 <strong>topic tracker</strong>，其功能将在第 2.2 节中解释 - User Simulation：支持在语义层面进行对话模拟，即不使用任何语义解析器或语言生成。这是一种广泛应用于训练和评估基于强化学习算法的技术，因为它避免了昂贵的数据收集练习（<em>data collection exercises</em>）和用户试验（<em>user trials</em>）。它当然只提供了一个近似的真实用户行为，所以通过模拟获得的结果应该谨慎看待！ - 与环境交互：为了使 Agent 能够与其环境进行通信，PyDial 提供了两种模式：语音和文本 + Texthub：只需将 Agent 连接到终端 + Dialogue Server：要启用基于语音的对话，<strong>Dialogue Server</strong> 允许连接到外部语音客户端。此客户端负责使用 ASR 将输入语音信号映射到文本，并使用语音合成将输出文本映射到语音（<em>text to speech</em>, <strong>TTS</strong>）。语音客户端通过 HTTP 交换 JSON 消息连接到对话服务器。请注意，语音客户端不是 PyDial 的一部分。基于云的 ASR 和 TTS 服务可以从 <a href="https://cloud.google.com/speech" target="_blank" rel="noopener">Google</a>、<a href="https://www.microsoft.com/cognitive-services/en-us/speech-api" target="_blank" rel="noopener">Microsoft</a>或 <a href="http://www.ibm.com/watson/developercloud/speech-to-text.html" target="_blank" rel="noopener">IBM</a>等提供商处获得。PyDial 目前连接到 DialPort（Zhao等人，2016），其允许基于语音的交互。 - Ontology：除了 <strong>Agent</strong> 和接口组件之外，还有 <strong>Ontology</strong>，Ontology 封装了对话域规范以及对后端数据库（例如，一组餐厅及它们的属性）的访问。它被建模为一个全局对象，大多数对话系统模块和用户模拟器使用它来获取有关用户 <em>actions, slots, slot values, and system actions</em> 的相关信息。 - Evaluation：用于计算对话的评估度量（例如 <strong>Task Success</strong>）。对于基于强化学习的对话模块来说，评估组件还负责提供 <em>reward</em></p>
-<h2 id="多领域对话系统架构">2.2 多领域对话系统架构</h2>
-<p>Agent -&gt; <strong>topic tracker</strong></p>
-<h2 id="主要原则">2.3 主要原则</h2>
-<p>为了使 PyDial 能够轻松地应用于新问题，PyDial 体系结构的设计支持三个关键原则： - Domain Independence - Easy Configurability - Extensibility</p>
-<h1 id="实现">3 实现</h1>
-<p>PyDial 工具包是一个不断开发的研究系统。可从Apache2.0许可下的<a href="http://pydial.org" target="_blank" rel="noopener">网站</a>免费下载。在最初的版本中可以使用以下各种系统模块的实现，不过，到时候会有更多的实现。 - <strong>Semantic Decoder</strong>：为了对输入语句（或n个最佳语句列表，or n-best-list of sentences）进行语义解码，PyDial 提供了一个基于规则（使用正则表达式）的实现，以及一个基于 SVM 的统计模型，即 the Semantic Tuple Classifier（Mairess et al., 2009）。对于后者，只提供了 CamRestaurants 领域的模型。 - <strong>Belief Tracker</strong>：为了跟踪 belief state，可用 <strong>the rule-based focus tracker</strong>（Henderson et al., 2014）。该实现与领域无关。所有特定领域的信息都是从本体中提取的。 - <strong>Policy</strong>：负责 policy 的决定执行模块有两种实现方式：<strong>1）</strong>人工制定的策略（应该适用于所有领域）；<strong>2）</strong>Gaussian process (GP) reinforcement learning policy（Gasic and Young, 2014）。对于多领域对话，策略管理器可以像处理所有其他模块一样处理策略。给定每个用户的输入的领域，然后选择相应的领域策略。 此外，还可以选择 Gasic et al.(2015b) 提出的 Bayesian committee machine(BCM) 处理程序：<strong>当处理一个领域的 belief state 时，参考其他领域的策略来选择最终的系统操作</strong>。为了实现这一点，belief state 被映射到一个抽象表示，然后允许所有策略访问它。在 PyDial 中，经过训练的策略可以在 committee-based handler 和 standard policy manager handler 之间移动。即在 committee 外部（在单域或多域设置中）接受训练的策略可以在 committee 内部使用，反之亦然。 - <strong>Language Generator</strong>：为了将 semantic system action 映射为文本，PyDial 提供了两个实现组件：<strong>1）</strong>对于所有领域来说，提供了一个基于模板（定义规则）的语言生成；<strong>2）</strong>此外 Wen et al. (2015) 提出了基于 LSTM 的语言生成器，里面包含了 CamRestaurants 领域的预训练模型 - <strong>Topic Tracker</strong>：PyDial 提供了一个基于关键字的 Topic Tracker 实现。如果 Topic Tracker 已为某些用户输入标识了领域，那么它将继续使用该领域，直到识别了新的领域。<strong>因此，并非每个用户输入都必须包含相关关键字</strong>。如果 Topic Tracker <strong>无法在开始时识别领域</strong>，那么它将创建与用户的 meta-dialogue，直到确定初始领域或达到最大重试次数。 - <strong>Evaluation</strong>：为了评估对话，目前已经实现了两个 success-based 模块。（下面的话部分看不懂，索性不翻了--） &gt; The objective task success evaluator compares the constraints and requests the system identifies with the true values. The latter may either be derived from the user simulator or, in real dialogues, by specifying a predefined task. For real dialogues, a subjective task success evaluator may also be applied which queries the user about the outcome of the dialogue. - <strong>User Simulation</strong>：模拟用户的实现使用 agenda-based 用户模拟器（Schatzmann et al., 2006）。该模拟器包含 user model 和 error model，从而创建 a n-best-list of user acts 来模拟噪声语音信道。通过使用一组普遍适用的参数，模拟器可以应用于所有领域。领域特定的信息取自本体。</p>
-<h1 id="一些领域">4 一些领域</h1>
-<p><strong>PyDial 的主要关注的是面向任务的对话，即根据一些约束条件用户必定找到其匹配的实体</strong>。找到实体后，用户可以请求其他信息。为应付这些场景，PyDial 预先加载了总共十个不同复杂度的领域： - 略</p>
-<p>如前所述，所有 <strong>policy</strong> 实现以及 <strong>belief tracker</strong> 和 <strong>user simulator</strong> 的实现都独立于领域之外。因此，在<strong>所有领域</strong>都可以进行交互的模拟。此外，<strong>semantic decoder</strong> 和 <strong>language generator</strong> 在某种程度上依赖于特定领域的实现。PyDial 包含用于<strong>所有领域</strong>的基于规则的 <strong>semantic decoder</strong> 和一个用于 <strong>CamRestaurants</strong> 的统计解码器（<em>statistical decoder</em>）。此外，PyDial 还为<strong>大多数领域</strong>提供了基于模板的语言生成，并为 <strong>CamRestaurants</strong> 提供了基于 LSTM 的生成器。因此，在 CamRestaurants 领域，实现统计对话完全有可能。</p>
-]]></content>
-      <categories>
-        <category>paper</category>
-      </categories>
-      <tags>
-        <tag>pydial</tag>
       </tags>
   </entry>
   <entry>
@@ -7540,21 +7761,6 @@ S(q,t) = f(q)^Tg(t)
       </tags>
   </entry>
   <entry>
-    <title>在hexo中添加绘制流程图及其他图的功能</title>
-    <url>/posts/d7f69175.html</url>
-    <content><![CDATA[<p>hexo 本身不支持绘制流程图，但是可以使用以下命令安装插件来实现此功能。 <figure class="highlight processing"><table><tr><td class="code"><pre><span class="line">npm install --<span class="built_in">save</span> hexo-<span class="built_in">filter</span>-flowchart</span><br></pre></td></tr></table></figure></p>
-<p><a href="https://github.com/bubkoo/hexo-filter-flowchart" target="_blank" rel="noopener">插件地址</a> 语法可以<a href="https://cloud.tencent.com/developer/article/1142260" target="_blank" rel="noopener">在这</a>找 一个简单的例子 (`乘3)flow st=&gt;start: Start|past:&gt;http://www.google.com[blank] e=&gt;end: End:&gt;http://www.google.com op1=&gt;operation: My Operation|past op2=&gt;operation: Stuff|current sub1=&gt;subroutine: My Subroutine|invalid cond=&gt;condition: Yes or No?|approved:&gt;http://www.google.com c2=&gt;condition: Good idea|rejected io=&gt;inputoutput: catch something...|request</p>
-<p>st-&gt;op1(right)-&gt;cond cond(yes, right)-&gt;c2 cond(no)-&gt;sub1(left)-&gt;op1 c2(yes)-&gt;io-&gt;e c2(no)-&gt;op2-&gt;e (`乘3) <a id="more"></a></p>
-]]></content>
-      <categories>
-        <category>assorted</category>
-        <category>hexo</category>
-      </categories>
-      <tags>
-        <tag>hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>机器学习算法（七）：K-NN</title>
     <url>/posts/be345b28.html</url>
     <content><![CDATA[<h1 id="概念">概念</h1>
@@ -8581,8 +8787,8 @@ w^2_{21} &amp; w^2_{22} &amp; w^2_{23}\\
       </categories>
       <tags>
         <tag>系列</tag>
-        <tag>深度学习算法</tag>
         <tag>simple NN</tag>
+        <tag>深度学习算法</tag>
       </tags>
   </entry>
   <entry>
@@ -9235,21 +9441,6 @@ window.onload = function () {
       </tags>
   </entry>
   <entry>
-    <title>运用其他的插件，在hexo中添加提示弹窗</title>
-    <url>/posts/f7e9f2f8.html</url>
-    <content><![CDATA[<p>由于我写了很多学习记录，但是这些都是自己看书或者看视频学来的。万一有错误的地方正好被人看见，他又是新手，误以为我的是对的，这样就不好了。所以准备做一个提示弹窗，在所有的带有“学习笔记”的标签的文章中自动弹出提示。</p>
-<ol type="1">
-<li>下载一个自己喜欢的弹窗插件，可以去<a href="http://www.jq22.com/" target="_blank" rel="noopener">jQuery插件库</a>找。</li>
-<li>将css和js放在next主题下的source文件夹中，如下图 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/hexo/next%E4%B8%BB%E9%A2%98%E7%9B%AE%E5%BD%95.jpg" alt="next主题目录" /> css文件放入css文件，js文件放入js文件夹。我自己创了一个spop的文件夹，用于单独放置我的弹窗插件。</li>
-<li>打开layout文件夹，进入_macro文件夹，找到post.swig文件。搜索class=&quot;post-block&quot;，这个标签的位置在下图箭头所指的地方： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/hexo/%E5%BC%B9%E7%AA%97%E6%8F%92%E4%BB%B6%E4%BB%A3%E7%A0%81%E5%86%99%E5%85%A5%E7%9A%84%E4%BD%8D%E7%BD%AE.png" alt="弹窗插件代码写入的位置" /> 如果打开了这个文件，找了post-block标签，可以看到标签内部第一行代码为<code>&lt;link itemprop=&quot;mainEntityOfPage&quot; href=&quot;{ config.url }{ url_for(post.path) }&quot;/&gt;</code>。由于hexo渲染问题我将href属性里的值去掉了一对{}。 <a id="more"></a> 将下面的代码放在上述代码上面或者下面即可。 <figure class="highlight django"><table><tr><td class="code"><pre><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">for</span></span> tag <span class="keyword">in</span> post.tags %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">	<span class="comment">&lt;!--判断该文章是否为学习笔记--&gt;</span></span></span><br><span class="line"><span class="xml">	</span><span class="template-tag">&#123;% <span class="name"><span class="name">if</span></span> tag.name == '学习笔记' and !is_home() %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml">  		<span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">type</span>=<span class="string">"text/css"</span> <span class="attr">href</span>=<span class="string">"/css/spop/spop.min.css"</span>&gt;</span></span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span> <span class="attr">src</span>=<span class="string">"/js/spop/spop.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span></span></span><br><span class="line"><span class="xml">			spop(&#123;</span></span><br><span class="line"><span class="xml">				template: '<span class="tag">&lt;<span class="name">h4</span> <span class="attr">class</span>=<span class="string">"spop-title"</span>&gt;</span>注意<span class="tag">&lt;/<span class="name">h4</span>&gt;</span>此文章仅为博主的学习笔记，其中可能含有极大的理论错误。',</span></span><br><span class="line"><span class="xml">				group: 'tips',</span></span><br><span class="line"><span class="xml">				position  : 'bottom-center',</span></span><br><span class="line"><span class="xml">				style: 'success',</span></span><br><span class="line"><span class="xml">				autoclose: 5500,</span></span><br><span class="line"><span class="xml">				onOpen: function () &#123;</span></span><br><span class="line"><span class="xml">					//这里设置灰色背景色</span></span><br><span class="line"><span class="xml">				&#125;,</span></span><br><span class="line"><span class="xml">				onClose: function() &#123;</span></span><br><span class="line"><span class="xml">					//这里可以取消背景色</span></span><br><span class="line"><span class="xml">					spop(&#123;</span></span><br><span class="line"><span class="xml">						template: 'ε = = (づ′▽`)づ',</span></span><br><span class="line"><span class="xml">						group: 'tips',</span></span><br><span class="line"><span class="xml">						position  : 'bottom-center',</span></span><br><span class="line"><span class="xml">						style: 'success',</span></span><br><span class="line"><span class="xml">						autoclose: 1500</span></span><br><span class="line"><span class="xml">					&#125;);</span></span><br><span class="line"><span class="xml">				&#125;</span></span><br><span class="line"><span class="xml">			&#125;);</span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line"><span class="xml">	</span><span class="template-tag">&#123;% <span class="name"><span class="name">endif</span></span> %&#125;</span><span class="xml"></span></span><br><span class="line"><span class="xml"></span><span class="template-tag">&#123;% <span class="name"><span class="name">endfor</span></span> %&#125;</span><span class="xml"></span></span><br></pre></td></tr></table></figure> is_home()是next主题的方法，用于判断当前页面是否在主页。因为主页一次性加载了所有的文章，如果不加这个方法，会在主页弹出无数个弹窗。 最终效果如下图所示： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/hexo/%E6%8F%90%E7%A4%BA%E5%BC%B9%E7%AA%97%E6%95%88%E6%9E%9C%E5%9B%BE.jpg" alt="提示弹窗效果图" /> <!-- more --></li>
-</ol>
-]]></content>
-      <categories>
-        <category>assorted</category>
-        <category>hexo</category>
-      </categories>
-  </entry>
-  <entry>
     <title>Android开发，使用腾讯云的API请求对象存储中的资源始终失败</title>
     <url>/posts/f076a4cb.html</url>
     <content><![CDATA[<ol type="1">
@@ -9716,41 +9907,15 @@ A：[深度学习500问笔记#Dropout-系列问题](https://yan624.github.io/·z
       </categories>
       <tags>
         <tag>学习笔记</tag>
-        <tag>simple NN</tag>
         <tag>back propagation</tag>
         <tag>gradient descent</tag>
+        <tag>simple NN</tag>
         <tag>bias</tag>
         <tag>variance</tag>
         <tag>regularization</tag>
         <tag>dropout</tag>
         <tag>early stopping</tag>
         <tag>激活函数</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>next主题中使用Mathjax</title>
-    <url>/posts/617a0ce.html</url>
-    <content><![CDATA[<p>百度了一圈最后还是没有解决问题，因为其他的博客都说要去<code>/node_modules/hexo-renderer-kramed/lib/renderer.js</code>文件修改源代码，但是我压根没有这个文件，hexo-renderer-kramed这个文件夹不存在。</p>
-<p>最后还是自己试出来了，步骤如下： 1. 安装kramed。hexo 默认的渲染引擎是 marked，但是 marked 不支持 mathjax。所以要卸载它。 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">npm <span class="keyword">uninstall</span> hexo-renderer-marked <span class="comment">--save</span></span><br><span class="line">npm <span class="keyword">install</span> hexo-renderer-kramed <span class="comment">--save</span></span><br></pre></td></tr></table></figure> <a id="more"></a></p>
-<ol start="2" type="1">
-<li><p>停用hexo-math，然后安装 hexo-renderer-mathjax 包。其实我也不知道怎么判断自己有没有在使用hexo-math。总而言之卸载就行了，管它存不存在。 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">npm <span class="keyword">uninstall</span> hexo-math <span class="comment">--save</span></span><br><span class="line">npm <span class="keyword">install</span> hexo-renderer-mathjax <span class="comment">--save</span></span><br></pre></td></tr></table></figure></p></li>
-<li><p>开启mathjax，在next主题文件夹里，具体路径：/themes/next/_config.yml 你只需要把enable属性改为true即可 <figure class="highlight oxygene"><table><tr><td class="code"><pre><span class="line"># Math Equations Render Support</span><br><span class="line">math:</span><br><span class="line">  enable: <span class="keyword">true</span></span><br><span class="line"></span><br><span class="line">  # <span class="keyword">Default</span>(<span class="keyword">true</span>) will load mathjax/katex script <span class="keyword">on</span> demand</span><br><span class="line">  # That <span class="keyword">is</span> it only render those page who <span class="keyword">has</span> `mathjax: <span class="keyword">true</span>` <span class="keyword">in</span> Front Matter.</span><br><span class="line">  # <span class="keyword">If</span> you <span class="keyword">set</span> it <span class="keyword">to</span> <span class="keyword">false</span>, it will load mathjax/katex srcipt EVERY PAGE.</span><br><span class="line">  per_page: <span class="keyword">true</span></span><br><span class="line"></span><br><span class="line">  engine: mathjax</span><br><span class="line">  #engine: katex</span><br><span class="line"></span><br><span class="line">  # hexo-rendering-pandoc (<span class="keyword">or</span> hexo-renderer-kramed) needed <span class="keyword">to</span> full MathJax support.</span><br><span class="line">  mathjax:</span><br><span class="line">    enable: <span class="keyword">true</span></span><br><span class="line">    # Use <span class="number">2.7</span>.<span class="number">1</span> <span class="keyword">as</span> <span class="keyword">default</span>, jsdelivr <span class="keyword">as</span> <span class="keyword">default</span> CDN, works everywhere even <span class="keyword">in</span> China</span><br><span class="line">    cdn: <span class="comment">//cdn.jsdelivr.net/npm/mathjax@2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML</span></span><br><span class="line">    # <span class="keyword">For</span> direct link <span class="keyword">to</span> MathJax.js <span class="keyword">with</span> CloudFlare CDN (cdnjs.cloudflare.com)</span><br><span class="line">    #cdn: <span class="comment">//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML</span></span><br><span class="line"></span><br><span class="line">    # See: https:<span class="comment">//mhchem.github.io/MathJax-mhchem/</span></span><br><span class="line">    #mhchem: <span class="comment">//cdn.jsdelivr.net/npm/mathjax-mhchem@3</span></span><br><span class="line">    #mhchem: <span class="comment">//cdnjs.cloudflare.com/ajax/libs/mathjax-mhchem/3.3.0</span></span><br><span class="line"></span><br><span class="line">  # hexo-renderer-markdown-it-plus (<span class="keyword">or</span> hexo-renderer-markdown-it <span class="keyword">with</span> markdown-it-katex plugin) needed <span class="keyword">to</span> full Katex support.</span><br><span class="line">  katex:</span><br><span class="line">    # Use <span class="number">0.7</span>.<span class="number">1</span> <span class="keyword">as</span> <span class="keyword">default</span>, jsdelivr <span class="keyword">as</span> <span class="keyword">default</span> CDN, works everywhere even <span class="keyword">in</span> China</span><br><span class="line">    cdn: <span class="comment">//cdn.jsdelivr.net/npm/katex@0.7.1/dist/katex.min.css</span></span><br><span class="line">    # CDNJS, provided <span class="keyword">by</span> cloudflare, maybe the best CDN, but <span class="keyword">not</span> works <span class="keyword">in</span> China</span><br><span class="line">    #cdn: <span class="comment">//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css</span></span><br><span class="line"></span><br><span class="line">    copy_tex:</span><br><span class="line">      # See: https:<span class="comment">//github.com/KaTeX/KaTeX/tree/master/contrib/copy-tex</span></span><br><span class="line">      enable: <span class="keyword">false</span></span><br><span class="line">      copy_tex_js: <span class="comment">//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.js</span></span><br><span class="line">      copy_tex_css: <span class="comment">//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.css</span></span><br></pre></td></tr></table></figure></p></li>
-<li>最后一步，修改/themes/next/layout/_layou.swig文件 将如下代码添加到该文件
-</body>
-<p>标签的上面一行 <figure class="highlight dts"><table><tr><td class="code"><pre><span class="line"><span class="params">&lt;script type="text/x-mathjax-config"&gt;</span></span><br><span class="line">MathJax.Hub.Config(&#123;</span><br><span class="line">	<span class="comment">//下面的HTML-CSS和SVG用于在小屏幕上，数学公式可以自动换行，我测试过后发现无效，但是貌似有人可以。</span></span><br><span class="line">	<span class="string">"HTML-CSS"</span>: &#123; </span><br><span class="line"><span class="symbol">		linebreaks:</span> &#123; </span><br><span class="line"><span class="symbol">			automatic:</span> true </span><br><span class="line">		&#125; </span><br><span class="line">	&#125;,SVG: &#123;</span><br><span class="line"><span class="symbol">		linebreaks:</span> &#123; </span><br><span class="line"><span class="symbol">			automatic:</span> true </span><br><span class="line">		&#125;</span><br><span class="line">	&#125;,menuSettings: &#123;</span><br><span class="line"><span class="symbol">		zoom:</span> <span class="string">"None"</span></span><br><span class="line">	&#125;,</span><br><span class="line"><span class="symbol">	showMathMenu:</span> false,</span><br><span class="line"><span class="symbol">	jax:</span> [<span class="string">"input/TeX"</span>,<span class="string">"output/CommonHTML"</span>],</span><br><span class="line"><span class="symbol">	extensions:</span> [<span class="string">"tex2jax.js"</span>],</span><br><span class="line"><span class="symbol">	TeX:</span> &#123;</span><br><span class="line"><span class="symbol">		extensions:</span> [<span class="string">"AMSmath.js"</span>,<span class="string">"AMSsymbols.js"</span>],</span><br><span class="line"><span class="symbol">		equationNumbers:</span> &#123;</span><br><span class="line"><span class="symbol">			autoNumber:</span> <span class="string">"AMS"</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;,tex2jax: &#123;</span><br><span class="line"><span class="symbol">		inlineMath:</span> [[<span class="string">"\\("</span>, <span class="string">"\\)"</span>]],</span><br><span class="line"><span class="symbol">		displayMath:</span> [[<span class="string">"\\["</span>, <span class="string">"\\]"</span>]]</span><br><span class="line">	&#125;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="params">&lt;/script&gt;</span></span><br><span class="line"><span class="params">&lt;script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/<span class="number">2.7</span><span class="number">.1</span>/MathJax.js?config=TeX-MML-AM_CHTML"&gt;</span><span class="params">&lt;/script&gt;</span></span><br></pre></td></tr></table></figure></p></li>
-</ol>
-<p>1-3步参考<a href="https://www.jianshu.com/p/523e806d6681" target="_blank" rel="noopener">如何在hexo中支持Mathjax</a> 4步参考<a href="http://npm.taobao.org/package/hexo-renderer-kramed" target="_blank" rel="noopener">hexo-renderer-kramed</a></p>
-<ol start="5" type="1">
-<li>2020.06.14 更新：注意，NexT v8 声明 hexo-renderer-kramed 已经停止维护，所以可以改用 hexo-renderer-pandoc，具体可以参考官方文档。</li>
-</ol>
-]]></content>
-      <categories>
-        <category>assorted</category>
-        <category>hexo</category>
-      </categories>
-      <tags>
-        <tag>hexo</tag>
-        <tag>mathjax</tag>
       </tags>
   </entry>
   <entry>
@@ -10351,7 +10516,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
       </tags>
   </entry>
   <entry>
-    <title>Hello World</title>
+    <title>Hello Hexo</title>
     <url>/posts/4a17b156.html</url>
     <content><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>. <a id="more"></a></p>
 <h2 id="quick-start">Quick Start</h2>

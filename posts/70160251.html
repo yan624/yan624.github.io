@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
+<!DOCTYPE html><html lang="zh-CN"><head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
@@ -10,25 +8,35 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-<link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
-  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
-  <script src="/lib/pace/pace.min.js"></script>
+
+
+  
+  
+  
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="本文名词参考 名词参考 一章。 本文还在不定时地更新中。。。  梦开始的地方 one hot 编码，词袋模型（BOW）。 可以参考文章 【NLP算法】（零）NLP基础算法 大致了解其概念。">
+  <meta name="description" content="本文名词参考 名词参考 一章。
+ 本文还在不定时地更新中。。。
+ 
+ 梦开始的地方
+ one hot 编码，词袋模型（BOW）。
+ 可以参考文章 【NLP算法】（零）NLP基础算法 大致了解其概念。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="NLP中的各种套路（技术）">
 <meta property="og:url" content="https://yan624.github.io/posts/70160251.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="本文名词参考 名词参考 一章。 本文还在不定时地更新中。。。  梦开始的地方 one hot 编码，词袋模型（BOW）。 可以参考文章 【NLP算法】（零）NLP基础算法 大致了解其概念。">
+<meta property="og:description" content="本文名词参考 名词参考 一章。
+ 本文还在不定时地更新中。。。
+ 
+ 梦开始的地方
+ one hot 编码，词袋模型（BOW）。
+ 可以参考文章 【NLP算法】（零）NLP基础算法 大致了解其概念。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/NLP%E4%B8%AD%E7%9A%84%E5%90%84%E7%A7%8D%E5%A5%97%E8%B7%AF%EF%BC%88%E6%8A%80%E6%9C%AF%EF%BC%89/%E9%A9%AC%E5%B0%94%E7%A7%91%E5%A4%AB%E9%93%BE.jpg">
 <meta property="article:published_time" content="2020-03-23T16:57:46.000Z">
@@ -51,7 +59,7 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
+
 
 
   <title>NLP中的各种套路（技术） | 博客</title>
@@ -85,13 +93,13 @@
   </style>
 </noscript>
 
-</head>
+<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css');loadCss('//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css');loadCss('//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css"></noscript></head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
+<body itemscope="" itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
     <div class="headband"></div>
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏">
@@ -154,7 +162,7 @@
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">181</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">182</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -173,9 +181,7 @@
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
-           placeholder="搜索..." spellcheck="false"
-           type="search" class="search-input">
+    <input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
   </div>
   <span class="popup-btn-close">
     <i class="fa fa-times-circle"></i>
@@ -213,18 +219,18 @@
     
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     
 
     <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/70160251.html">
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
       <meta itemprop="name" content="朱冲䶮">
       <meta itemprop="description" content="记录">
     </span>
 
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="博客">
     </span>
       <header class="post-header">
@@ -253,11 +259,11 @@
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
                   <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
                 </span>
                   ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
                   <a href="/categories/AI/nlp/" itemprop="url" rel="index"><span itemprop="name">nlp</span></a>
                 </span>
             </span>
@@ -281,7 +287,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                <span class="post-meta-item-text">阅读时长 ≈</span>
               <span>6 分钟</span>
             </span>
 
@@ -338,10 +344,10 @@ P(w_1, w_2, \cdots, w_n)
     &amp; = P(w_1) \cdot P(w_2 | w_1) \cdots P(w_n | w_1, w_2, \cdots, w_{n-1}) \\
     &amp; = \prod^n_{i=1} P(w_i | w_1, w_2, \cdots, w_{i-1}) \tag{1}\\
 \end{align}
-\]</span> <div class="note info"><p>上式很容易得到，但是为了照顾不会概率论的童鞋，我还是略微地推导一下。假设我们将 <span class="math inline">\(P(S)\)</span> 简化一下，修改为 <span class="math inline">\(P(ABCD)\)</span>，则根据条件概率公式 <span class="math inline">\(P(X|Y) = \frac{P(XY)}{P(Y)} \implies P(XY) = P(X|Y) \cdot P(Y)\)</span>，同理也可以计算出： <span class="math display">\[P(ABCD) = P(D|ABC) \cdot P(ABC) = P(D|ABC) \cdot \underbrace{P(C|AB) \cdot P(AB)}_{P(ABC)} = \cdots
+\]</span> </p><div class="note info"><p>上式很容易得到，但是为了照顾不会概率论的童鞋，我还是略微地推导一下。假设我们将 <span class="math inline">\(P(S)\)</span> 简化一下，修改为 <span class="math inline">\(P(ABCD)\)</span>，则根据条件概率公式 <span class="math inline">\(P(X|Y) = \frac{P(XY)}{P(Y)} \implies P(XY) = P(X|Y) \cdot P(Y)\)</span>，同理也可以计算出： <span class="math display">\[P(ABCD) = P(D|ABC) \cdot P(ABC) = P(D|ABC) \cdot \underbrace{P(C|AB) \cdot P(AB)}_{P(ABC)} = \cdots
 \]</span></p>
 <p>这里可能有人会有疑惑，为什么是 <span class="math inline">\(P(ABCD) = P(D|ABC) \cdot P(ABC)\)</span> 呢？而不是 <span class="math inline">\(P(ABCD) = P(A|BCD) \cdot P(BCD)\)</span> 或者 <span class="math inline">\(P(ABCD) = P(ABC|D) \cdot P(D)\)</span> 等其他公式。还记得我们在做自然语言处理吗？例如 <code>S = “我喜欢你” = ABCD</code>，在“我喜欢”（ABC）的条件下，计算“你”（D）的概率是有意义的。但是在“喜欢你”（BCD）的条件下，计算“我”（A），或者在“你”（D）的条件下，计算“我喜欢”（ABC）的概率都是完全没意义的。因为语言是线性的，你说一句话，永远都是按“我喜欢你”的顺序说。而不会先说“你”，再说“我喜欢”。</p>
-</div></p>
+</div><p></p>
 <p>继续。显然这样的方法已经从人肉穷举法，转换为了数学上的公式。但是现在有一个问题，计算 <span class="math inline">\(w_n\)</span> 的概率需要依赖前 <span class="math inline">\(n-1\)</span> 个单词，这其实还是需要用人肉穷举法。那么有没有一个办法，可以使得使用穷举法时，更加方便点呢？</p>
 <p>上上个世纪有一个人叫马尔可夫，他提出了一个方法，说穿了就不值钱了。就是偷个懒，在计算单词 <span class="math inline">\(w_i\)</span> 的条件概率时，不考虑前 <span class="math inline">\(i-1\)</span> 个词，只考虑前<strong>一个</strong>单词 <span class="math inline">\(w_{i-1}\)</span>。那么上式（1）就转换成了： <span class="math display">\[
 \begin{align}
@@ -394,8 +400,8 @@ P(w_i | w_{i-1}) = \frac{P(w_{i-1} w_i)}{P(w_{i-1})} \approx \frac{f(w_{i-1} w_i
 <h1 id="词向量横空出世技惊四座">词向量：横空出世，技惊四座</h1>
 <p>2013 年谷歌发布了一个名为 Word2Vec 的工具包，标志着 NLP 领域正式走进了预训练词向量的时代。其实早在 2012 年，CV 领域就已经。。。（待补充）</p>
 <h2 id="word2vec">word2vec</h2>
-<p><a href="https://yan624.github.io/posts/efe82fde.html">【NLP算法】（一）word2vec</a> <div class="note info"><p>我发现网上已经有一篇文章对 word2vec 进行了详尽的讲述，故上方的链接只是那篇文章的一个小型总结。</p>
-</div></p>
+<p><a href="https://yan624.github.io/posts/efe82fde.html">【NLP算法】（一）word2vec</a> </p><div class="note info"><p>我发现网上已经有一篇文章对 word2vec 进行了详尽的讲述，故上方的链接只是那篇文章的一个小型总结。</p>
+</div><p></p>
 <h2 id="glove">GloVe</h2>
 <h2 id="fasttext">fasttext</h2>
 <h1 id="特征提取器双月同天必有大乱">特征提取器：双月同天，必有大乱</h1>
@@ -428,13 +434,13 @@ P(w_i | w_{i-1}) = \frac{P(w_{i-1} w_i)}{P(w_{i-1})} \approx \frac{f(w_{i-1} w_i
 <p><a href="https://yan624.github.io/posts/460dff7.html">深度学习算法（五）：预训练模型</a></p>
 <h1 id="其他的模型出来混口饭吃">其他的模型：出来混口饭吃</h1>
 <p><a href="https://yan624.github.io/posts/4d5445b6.html">nlp 领域的一些有用的模型</a></p>
-<hr />
+<hr>
 <p>以上大致为 NLP 近年模型的发展路线，下面将介绍 NLP 领域中其他比较重要的技术或者 trick。</p>
-<hr />
+<hr>
 <h1 id="概率图模型">概率图模型</h1>
 <h2 id="马尔可夫模型">马尔可夫模型</h2>
 <h3 id="马尔可夫链">马尔可夫链</h3>
-<p>有时也称为<strong>显马尔科夫模型</strong>（observed Markov model）。是一个随机过程模型，它表述了一系列可能的事件，在这个系列当中每一个事件的概率仅依赖于前一个事件。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/NLP中的各种套路（技术）/马尔科夫链.jpg" title="马尔科夫链例图" alt="马尔科夫链例图" /></p>
+<p>有时也称为<strong>显马尔科夫模型</strong>（observed Markov model）。是一个随机过程模型，它表述了一系列可能的事件，在这个系列当中每一个事件的概率仅依赖于前一个事件。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/NLP中的各种套路（技术）/马尔科夫链.jpg" title="马尔科夫链例图" alt="马尔科夫链例图"></p>
 <p>类似马尔可夫链的随机现象遵守<strong><font color="red">马尔可夫性</font></strong>（或<strong><font color="red">无后效性</font></strong>），即：过程在时刻 <span class="math inline">\(t_0\)</span> 所处的状态为已知条件的情况下，过程在时刻 <span class="math inline">\(t &gt; t_0\)</span> 所处的状态的条件分布与时刻 <span class="math inline">\(t_0\)</span> 之前所处的状态无关。说白了就是，<strong>在已知“现在”的条件下，“未来”不依赖“过去”</strong>。这里面“状态”的概念可能有点难理解，其实“状态”可以理解为“事件发生的各种可能”。例如预测天气这一事件中，状态为“晴”，“阴”，“雨”。</p>
 <p>这里有一个比较纠结的地方在于，马尔可夫性为什么要这么规定</p>
 <p>用<strong>分布函数</strong>来表述马尔可夫性。设随机过程 <span class="math inline">\(\{X(t), t\in T\}\)</span> 的状态空间为 <span class="math inline">\(I\)</span>。如果对事件 <span class="math inline">\(t\)</span> 的<strong>任意</strong> <span class="math inline">\(n\)</span> 个数值 <span class="math inline">\(t_1 &lt; t_2 &lt; \cdots &lt; t_n, n \ge 3, t_i \in T\)</span>，在条件 <span class="math inline">\(X(t_i) = x_i, x_i \in I, x=1, 2, \cdots, n-1\)</span> 下，<strong>{<span class="math inline">\(X(t_n)\)</span> 的条件分布函数}</strong>恰等于<strong>{在条件 <span class="math inline">\(X(t_{n-1}) = x_{n-1}\)</span> 下 <span class="math inline">\(X(t_n)\)</span> 的条件分布函数}</strong>，即 <span class="math display">\[
@@ -480,9 +486,9 @@ P(w_i | w_{i-1}) = \frac{P(w_{i-1} w_i)}{P(w_{i-1})} \approx \frac{f(w_{i-1} w_i
 <h1 id="名词参考">名词参考</h1>
 <table style="width:100%;">
 <colgroup>
-<col style="width: 34%" />
-<col style="width: 43%" />
-<col style="width: 21%" />
+<col style="width: 34%">
+<col style="width: 43%">
+<col style="width: 21%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -571,27 +577,7 @@ P(w_i | w_{i-1}) = \frac{P(w_{i-1} w_i)}{P(w_{i-1})} \approx \frac{f(w_{i-1} w_i
           </div>
           
 
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
+
 
         </div>
           
@@ -621,9 +607,8 @@ P(w_i | w_{i-1}) = \frac{P(w_{i-1} w_i)}{P(w_{i-1})} \approx \frac{f(w_{i-1} w_i
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
-      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮" src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
   <div class="site-description" itemprop="description">记录</div>
 </div>
@@ -632,40 +617,40 @@ P(w_i | w_{i-1}) = \frac{P(w_{i-1} w_i)}{P(w_{i-1})} \approx \frac{f(w_{i-1} w_i
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">181</span>
+          <span class="site-state-item-count">182</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-count">32</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">105</span>
+        <span class="site-state-item-count">104</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">247k</span>
+      	<span class="site-state-item-count">250.8k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
 </div>
   <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
     Chat
-  </a>
+  
   </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
@@ -679,10 +664,13 @@ P(w_i | w_{i-1}) = \frac{P(w_{i-1} w_i)}{P(w_{i-1})} \approx \frac{f(w_{i-1} w_i
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+          <a href="http://huaguoguo.gitee.io/" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://smallwhitezzz.gitee.io/blog" title="https://smallwhitezzz.gitee.io/blog" rel="noopener" target="_blank">凯子</a>
         </li>
     </ul>
   </div>
@@ -709,14 +697,14 @@ P(w_i | w_{i-1}) = \frac{P(w_{i-1} w_i)}{P(w_{i-1})} \approx \frac{f(w_{i-1} w_i
 
 <div class="copyright">
   
-  &copy; 2019 – 
+  © 2019 – 
   <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div><!--
 樱花特效 
 最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
@@ -725,15 +713,9 @@ P(w_i | w_{i-1}) = \frac{P(w_{i-1} w_i)}{P(w_{i-1})} \approx \frac{f(w_{i-1} w_i
 于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
 原地址为：https://cangshui.net/2372.html
 -->
-<script>
-	var pathname = window.location.pathname;
-	// pathname == '/' || pathname == '/index.html'
-	if(pathname == '/categories/assorted/timeline/'){
-		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
-	}
-</script>
+
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-<script src="/lib/my-utils.js"></script>
+
 <script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
@@ -758,7 +740,7 @@ P(w_i | w_{i-1}) = \frac{P(w_{i-1} w_i)}{P(w_{i-1})} \approx \frac{f(w_{i-1} w_i
 
         
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -790,20 +772,20 @@ P(w_i | w_{i-1}) = \frac{P(w_{i-1} w_i)}{P(w_{i-1})} \approx \frac{f(w_{i-1} w_i
   </div>
 
   
-  <script src="/lib/anime.min.js"></script>
+  
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
+  
+  
 
 
-<script src="/js/next-boot.js"></script>
 
-<script src="/js/bookmark.js"></script>
+
+
+
+
+
+
 
 
   
@@ -812,7 +794,7 @@ P(w_i | w_{i-1}) = \frac{P(w_{i-1} w_i)}{P(w_{i-1})} \approx \frac{f(w_{i-1} w_i
 
 
   
-<script src="/js/local-search.js"></script>
+
 
 
 
@@ -832,7 +814,41 @@ P(w_i | w_{i-1}) = \frac{P(w_{i-1} w_i)}{P(w_{i-1})} \approx \frac{f(w_{i-1} w_i
 
   
   <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
-  <script>
+  
+<!-- calendar widget -->
+
+
+
+
+<script src="/bundle.js"></script><script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+;
+
+	var pathname = window.location.pathname;
+	// pathname == '/' || pathname == '/index.html'
+	if(pathname == '/categories/assorted/timeline/'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+;
+
       window.addEventListener('load', () => {
       quicklink({
         timeout : 3000,
@@ -840,9 +856,4 @@ P(w_i | w_{i-1}) = \frac{P(w_{i-1} w_i)}{P(w_{i-1})} \approx \frac{f(w_{i-1} w_i
         ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/70160251.html',]
       });
       });
-  </script>
-<!-- calendar widget -->
-
-
-</body>
-</html>
+  </script></body></html>

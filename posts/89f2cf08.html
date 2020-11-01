@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
+<!DOCTYPE html><html lang="zh-CN"><head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
@@ -10,25 +8,29 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-<link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
-  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
-  <script src="/lib/pace/pace.min.js"></script>
+
+
+  
+  
+  
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="TripPy: A Triple Copy Strategy for Value Independent Neural Dialog State Tracking 模型的计算方法与 DS-DST 几乎完全一致，只不过补充了几点 slot gate 的类型。 唯一不同的在特征提取这块。DS-DST 将 CLS，一个域槽对和对话上下文拼接起来。由于所有域槽对的词向量是不同的，则可以凭此遍历所有的域">
+  <meta name="description" content="TripPy: A Triple Copy Strategy for Value Independent Neural Dialog State Tracking
+ 模型的计算方法与 DS-DST 几乎完全一致，只不过补充了几点 slot gate 的类型。
+ 唯一不同的在特征提取这块。DS-DST 将 CLS，一个域槽对和对话上下文拼接起来。由于所有域槽对的词向量是不同的，则可以凭此遍历所有的域">
 <meta property="og:type" content="article">
 <meta property="og:title" content="DST论文笔记（？-2019）">
 <meta property="og:url" content="https://yan624.github.io/posts/89f2cf08.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="TripPy: A Triple Copy Strategy for Value Independent Neural Dialog State Tracking 模型的计算方法与 DS-DST 几乎完全一致，只不过补充了几点 slot gate 的类型。 唯一不同的在特征提取这块。DS-DST 将 CLS，一个域槽对和对话上下文拼接起来。由于所有域槽对的词向量是不同的，则可以凭此遍历所有的域">
+<meta property="og:description" content="TripPy: A Triple Copy Strategy for Value Independent Neural Dialog State Tracking
+ 模型的计算方法与 DS-DST 几乎完全一致，只不过补充了几点 slot gate 的类型。
+ 唯一不同的在特征提取这块。DS-DST 将 CLS，一个域槽对和对话上下文拼接起来。由于所有域槽对的词向量是不同的，则可以凭此遍历所有的域">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E8%AE%BA%E6%96%87/%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90%E5%9E%8B%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/TripPy.png">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E8%AE%BA%E6%96%87/%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90%E5%9E%8B%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/TRADE.png">
@@ -53,7 +55,7 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
+
 
 
   <title>DST论文笔记（？-2019） | 博客</title>
@@ -87,13 +89,13 @@
   </style>
 </noscript>
 
-</head>
+<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css');loadCss('//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css');loadCss('//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css"></noscript></head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
+<body itemscope="" itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
     <div class="headband"></div>
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏">
@@ -156,7 +158,7 @@
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">181</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">182</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -175,9 +177,7 @@
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
-           placeholder="搜索..." spellcheck="false"
-           type="search" class="search-input">
+    <input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
   </div>
   <span class="popup-btn-close">
     <i class="fa fa-times-circle"></i>
@@ -215,40 +215,14 @@
     
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     
     	
         <!-- 弹窗插件 -->
-    		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
-        <script type="text/javascript" src="/lib/spop/spop.min.js"></script>
+    		
+        
         <!--判断此文是否为特殊的文章-->
-        <script>
-          var templateSentence = '这是条不可能出现的弹窗提示。';
-          if('4me' == '学习笔记')
-            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记。';
-          else if('4me' == '4me')
-            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
-          spop({
-            template: templateSentence,
-            group: 'tips',
-            position  : 'bottom-center',
-            style: 'success',
-            autoclose: 5500,
-            onOpen: function () {
-              //这里设置灰色背景色
-            },
-            onClose: function() {
-              //这里可以取消背景色
-              /*spop({
-                template: 'ε = = (づ′▽`)づ',
-                group: 'tips',
-                position  : 'bottom-center',
-                style: 'success',
-                autoclose: 1500
-              });*/
-            }
-          });
-        </script>
+        
     	
     
     	
@@ -256,13 +230,13 @@
 
     <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/89f2cf08.html">
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
       <meta itemprop="name" content="朱冲䶮">
       <meta itemprop="description" content="记录">
     </span>
 
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="博客">
     </span>
       <header class="post-header">
@@ -291,7 +265,7 @@
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
                   <a href="/categories/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a>
                 </span>
             </span>
@@ -315,7 +289,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                <span class="post-meta-item-text">阅读时长 ≈</span>
               <span>14 分钟</span>
             </span>
 
@@ -335,7 +309,7 @@
 <p>所以，我认为在 dst 模型上，还是 TRADE 模型设计的更合理，它是采用了 attention 的机制。<strong>相比于 DS-DST 和 TripPy，参数量大大地减少，并且可以向量化。</strong></p>
 </div>
 <figure>
-<img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/TripPy.png" title="TripPy" alt="图 TripPy" /><figcaption>图 TripPy</figcaption>
+<img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/TripPy.png" title="TripPy" alt="图 TripPy"><figcaption>图 TripPy</figcaption>
 </figure>
 <p>本文提出三种复制机制：<strong>1）</strong>从用户语句中直接提取出槽值的跨度预测（span prediction）；<strong>2）</strong>从 system inform memory 中复制出槽值，其为系统回复操作的追踪；<strong>3）</strong>从对话状态历史中复制槽值。</p>
 <p>令 <span class="math inline">\(X = \{(U_1, M_1), \cdots, (U_T, M_T)\}\)</span>，<span class="math inline">\(U_t\)</span> 是 <span class="math inline">\(t\)</span> 轮时的用户语句，<span class="math inline">\(M_t\)</span> 是 <span class="math inline">\(t\)</span> 轮时的回复语句。模型的任务是 <strong>1）</strong>决定每轮是否提到了 <span class="math inline">\(S = \{S_1, \cdots, S_N\}\)</span> 中的 <span class="math inline">\(N\)</span> 个域槽对；<strong>2）</strong>预测每个 <span class="math inline">\(S_n\)</span> 的槽值；<strong>3）</strong>追踪整场对话过程中的对话状态。</p>
@@ -410,7 +384,7 @@
 <i class="fa fa-quote-right"></i>
 </blockquote>
 <figure>
-<img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/TRADE.png" alt="图 TRADE" /><figcaption>图 TRADE</figcaption>
+<img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/TRADE.png" alt="图 TRADE"><figcaption>图 TRADE</figcaption>
 </figure>
 <h1 id="global-locally-self-attentive-dialogue-state-tracker">Global-Locally Self-Attentive Dialogue State Tracker</h1>
 <p><strong>作者：Zhong et al. 2018。</strong></p>
@@ -491,15 +465,15 @@
 </ul></li>
 <li>dialogue sate
 <ul>
-<li><strong>Candidate Set</strong>：令 <span class="math inline">\(C^t_s\)</span> 代表领域 D 中，第 t 轮对话，槽位 s 的候选集。对话初始，对于每个槽位，<span class="math inline">\(C^0_s\)</span> 都是空的。令 <span class="math inline">\(|C^t_s| \le K\)</span> 以限制候选集的上限（博主吐槽：这跟前人的工作有锤子区别，不还是假定槽值已知）。<span class="math inline">\(C^t_s\)</span> 由用户语句，前一轮的系统语句以及先前的候选集初始化，初始化的内容来自 LU 模块，一般 K 取 7。如果初始化完毕后，候选集溢出，则根据分数排序，并从后往前开始删除候选值；<br />
+<li><strong>Candidate Set</strong>：令 <span class="math inline">\(C^t_s\)</span> 代表领域 D 中，第 t 轮对话，槽位 s 的候选集。对话初始，对于每个槽位，<span class="math inline">\(C^0_s\)</span> 都是空的。令 <span class="math inline">\(|C^t_s| \le K\)</span> 以限制候选集的上限（博主吐槽：这跟前人的工作有锤子区别，不还是假定槽值已知）。<span class="math inline">\(C^t_s\)</span> 由用户语句，前一轮的系统语句以及先前的候选集初始化，初始化的内容来自 LU 模块，一般 K 取 7。如果初始化完毕后，候选集溢出，则根据分数排序，并从后往前开始删除候选值；<br>
 有两点需要说明：<strong>1）</strong>初始化步骤很容易拓展到诸如 ASR 或者来自后端（API）的响应；<strong>2）</strong>候选集的最大容量必须最够大以确保可能的值不会被冲洗掉。</li>
-<li><strong>State Representation</strong>：在第 t 轮上使用 <span class="math inline">\({V&#39;}^t_s = C^t_s \cup \{\delta_s, \phi_s\}\)</span> 限制分布的大小，以此代替 <span class="math inline">\(V_s\)</span> 上的分布。<span class="math inline">\(V_s\)</span> 代表槽位 s 所有可能的值，<span class="math inline">\(C^t_s\)</span> 表示第 t 轮，槽位 s 生成的候选值，<span class="math inline">\(\delta_s, \phi_s\)</span> 分别表示 don't care（即对于槽位 s，用户不关心值是什么）和 null value（即用户所表达的语句中不包含任何槽位 s）。这样表示会更好，因为对话中未被提到的槽值，它们的概率只会接近 0。<br />
-为了保持分布的大小，在 <span class="math inline">\({V&#39;}^t_s\)</span> 加入了 <span class="math inline">\(K - |C^t_s|\)</span> 个 <code>PAD</code> 符号，使其为一个定值 <code>K + 2</code>。此外，对于大多数槽位， <span class="math inline">\(|{V&#39;}_s| = K + 2 \ll |V_s|\)</span>。</li>
+<li><strong>State Representation</strong>：在第 t 轮上使用 <span class="math inline">\({V'}^t_s = C^t_s \cup \{\delta_s, \phi_s\}\)</span> 限制分布的大小，以此代替 <span class="math inline">\(V_s\)</span> 上的分布。<span class="math inline">\(V_s\)</span> 代表槽位 s 所有可能的值，<span class="math inline">\(C^t_s\)</span> 表示第 t 轮，槽位 s 生成的候选值，<span class="math inline">\(\delta_s, \phi_s\)</span> 分别表示 don't care（即对于槽位 s，用户不关心值是什么）和 null value（即用户所表达的语句中不包含任何槽位 s）。这样表示会更好，因为对话中未被提到的槽值，它们的概率只会接近 0。<br>
+为了保持分布的大小，在 <span class="math inline">\({V'}^t_s\)</span> 加入了 <span class="math inline">\(K - |C^t_s|\)</span> 个 <code>PAD</code> 符号，使其为一个定值 <code>K + 2</code>。此外，对于大多数槽位， <span class="math inline">\(|{V'}_s| = K + 2 \ll |V_s|\)</span>。</li>
 </ul></li>
 <li>dialogue state tracking
 <ul>
-<li><strong>Model Description</strong>：是一个辨别式模型，用每个槽位的候选值集合作为输入，并更新候选值的分数。它也可识别 <span class="math inline">\(\delta_s\)</span> 或 <span class="math inline">\(\phi_s\)</span>。<br />
-在用户轮数 t，DST 使用前一轮的候选集合 <span class="math inline">\(C^{t-1}_s\)</span> 及其分数，最近的用户/系统语句和它们的对话状态，去提取语句相关（<span class="math inline">\(r^t_{utt}\)</span>），槽相关（<span class="math inline">\(r^t_{slot}(s)\)</span>），候选值相关（<span class="math inline">\(r^t_{cand}(c^t_{s,i})\)</span>）的特征。候选集 <span class="math inline">\(\alpha \in {V&#39;}^t_s = C^t_s \cap \{\delta_s, \phi_s\}\)</span> 的分数 <span class="math inline">\(p^t_{\alpha}\)</span> <strong>更新公式</strong>如下所示，其中 <span class="math inline">\(\oplus\)</span> 代表向量拼接，图 2 描述了模型的架构： <span class="math display">\[
+<li><strong>Model Description</strong>：是一个辨别式模型，用每个槽位的候选值集合作为输入，并更新候选值的分数。它也可识别 <span class="math inline">\(\delta_s\)</span> 或 <span class="math inline">\(\phi_s\)</span>。<br>
+在用户轮数 t，DST 使用前一轮的候选集合 <span class="math inline">\(C^{t-1}_s\)</span> 及其分数，最近的用户/系统语句和它们的对话状态，去提取语句相关（<span class="math inline">\(r^t_{utt}\)</span>），槽相关（<span class="math inline">\(r^t_{slot}(s)\)</span>），候选值相关（<span class="math inline">\(r^t_{cand}(c^t_{s,i})\)</span>）的特征。候选集 <span class="math inline">\(\alpha \in {V'}^t_s = C^t_s \cap \{\delta_s, \phi_s\}\)</span> 的分数 <span class="math inline">\(p^t_{\alpha}\)</span> <strong>更新公式</strong>如下所示，其中 <span class="math inline">\(\oplus\)</span> 代表向量拼接，图 2 描述了模型的架构： <span class="math display">\[
   \begin{align}
   g^t_s &amp; = r^t_{utt} \oplus r^t_{slot}(s) \\
   f^t_{c_{s,i}} &amp; = g^t_s \oplus r^t_{cand}(c^t_{s,i}) \\
@@ -509,12 +483,12 @@
   p^t_{\alpha} &amp; = \frac{\exp(l^t_{\alpha})}{\exp(l^t_{\phi_s}) + \exp(l^t_{\delta_s}) + \Sigma_i \exp(l^t_{c_{s,i}})} \tag{3} \\
   \end{align}
   \]</span> 其中 <span class="math inline">\(l_{\phi_s}, W^s_k, b^s_k\)</span> 都是可训练的模型参数，接下来描述特征 <span class="math inline">\(r^t_{utt}, r^t_{slot}(s), r^t_{cand}(c^t_{s,i})\)</span> 是如何背计算出来的。</li>
-<li><strong>Feature Extraction</strong>：使用一个特殊的符号替换所有的槽值，这些槽值由 SLU 模块识别出来，<strong>所以并不需要知道槽位关联的所有槽值或是人工构建的词表</strong>。需要注意的是只替换槽值，并不替换槽位。最后使用一个两层 Bi-GRU 处理被 delexicalisation 的语句。<br />
-除了为槽位的所有槽值打上标签之外，SLU 还预测用户语句对应的动作，如 <code>affirm, negate(time)</code> 等。<br />
+<li><strong>Feature Extraction</strong>：使用一个特殊的符号替换所有的槽值，这些槽值由 SLU 模块识别出来，<strong>所以并不需要知道槽位关联的所有槽值或是人工构建的词表</strong>。需要注意的是只替换槽值，并不替换槽位。最后使用一个两层 Bi-GRU 处理被 delexicalisation 的语句。<br>
+除了为槽位的所有槽值打上标签之外，SLU 还预测用户语句对应的动作，如 <code>affirm, negate(time)</code> 等。<br>
 此外对于系统的语句也是类似操作。
 <ul>
-<li>语句特征：<span class="math inline">\(r^t_{utt} = c^t \oplus a^t_u \oplus {c&#39;}^t \oplus {a&#39;}^t_u\)</span>，其中 <span class="math inline">\(c^t\)</span> 代表语句的表征，来自 Bi-GRU 的隐藏状态；<span class="math inline">\(a^t_u\)</span> 代表动作表征，由 SLU 模块产生；<span class="math inline">\({c&#39;}^t\)</span> 和 <span class="math inline">\({a&#39;}^t_u\)</span> 表示用户语句之前的系统语句所对应的特征。</li>
-<li>槽特征：<span class="math inline">\(r^t_{slot}(s) = a^t_u(s) \oplus {a&#39;}^t_s(s) \oplus p^{t-1}_{\delta_s} \oplus p^{t-1}_{\phi_s}\)</span>，其中 <span class="math inline">\(p^{t-1}_{\delta_s}\)</span> 和 <span class="math inline">\(p^{t-1}_{\phi_s}\)</span> 代表特殊值 <code>dontcare</code> 和 <code>null</code> 在前一轮 DST 输出中的分数；<span class="math inline">\(a^t_s(s)\)</span> 是带参对话动作的二维向量，如 <code>request(s), deny(s)</code>；<span class="math inline">\({a&#39;}^t_s\)</span> 是系统动作对应的二维向量。</li>
+<li>语句特征：<span class="math inline">\(r^t_{utt} = c^t \oplus a^t_u \oplus {c'}^t \oplus {a'}^t_u\)</span>，其中 <span class="math inline">\(c^t\)</span> 代表语句的表征，来自 Bi-GRU 的隐藏状态；<span class="math inline">\(a^t_u\)</span> 代表动作表征，由 SLU 模块产生；<span class="math inline">\({c'}^t\)</span> 和 <span class="math inline">\({a'}^t_u\)</span> 表示用户语句之前的系统语句所对应的特征。</li>
+<li>槽特征：<span class="math inline">\(r^t_{slot}(s) = a^t_u(s) \oplus {a'}^t_s(s) \oplus p^{t-1}_{\delta_s} \oplus p^{t-1}_{\phi_s}\)</span>，其中 <span class="math inline">\(p^{t-1}_{\delta_s}\)</span> 和 <span class="math inline">\(p^{t-1}_{\phi_s}\)</span> 代表特殊值 <code>dontcare</code> 和 <code>null</code> 在前一轮 DST 输出中的分数；<span class="math inline">\(a^t_s(s)\)</span> 是带参对话动作的二维向量，如 <code>request(s), deny(s)</code>；<span class="math inline">\({a'}^t_s\)</span> 是系统动作对应的二维向量。</li>
 <li>候选值特征：</li>
 </ul></li>
 </ul></li>
@@ -539,8 +513,8 @@
   q_t &amp; = Enc(u, q_{t-1}) \\
   p_t &amp; = C(h_t) \\
 \end{align}
-\]</span> 其中单词 a 与其 ASR 置信度分数 r 的联合表征为 u，LSTM decoder 使用 u 以及前一时间步的隐藏状态 <span class="math inline">\(q_{t-1} = (c_{t-1}, h_{t-1})\)</span> 计算出当前隐藏状态 <span class="math inline">\(q_t\)</span>，C 代表 softmax 层，将隐藏状态映射为各个可能值的分布。<br />
-注意，虽然论文中没有明确写出，但是对于最后一个公式 <span class="math inline">\(p_t = C(h_t)\)</span>，它可能需要<strong>为每一个槽位都设计一个函数</strong>。这个公式应该是这样的：<span class="math inline">\(p^j_t = C(h_t), \forall j \in 1, \cdots, k\)</span>，j 代表槽位索引，t 代表单词在句子中的索引。<br />
+\]</span> 其中单词 a 与其 ASR 置信度分数 r 的联合表征为 u，LSTM decoder 使用 u 以及前一时间步的隐藏状态 <span class="math inline">\(q_{t-1} = (c_{t-1}, h_{t-1})\)</span> 计算出当前隐藏状态 <span class="math inline">\(q_t\)</span>，C 代表 softmax 层，将隐藏状态映射为各个可能值的分布。<br>
+注意，虽然论文中没有明确写出，但是对于最后一个公式 <span class="math inline">\(p_t = C(h_t)\)</span>，它可能需要<strong>为每一个槽位都设计一个函数</strong>。这个公式应该是这样的：<span class="math inline">\(p^j_t = C(h_t), \forall j \in 1, \cdots, k\)</span>，j 代表槽位索引，t 代表单词在句子中的索引。<br>
 </li>
 <li><strong>Improvements</strong>：1）包括了 ASR 置信度分数；2）将训练集中的 Transcriptions 加入训练；3）多个模型取均值；4）低频词抽象化</li>
 </ul>
@@ -561,12 +535,12 @@
 <p><strong>Model Definition</strong>：</p>
 <ol type="1">
 <li>RNN 拥有一个内部的记忆 <span class="math inline">\(m \in \mathbb{R}^{N_{mem}}\)</span>。如果对于槽位 s 有 N 个槽值，那么概率分布输出 <span class="math inline">\(p \in \mathbb{R}^{N+1}\)</span>，其中最后一个成分 <span class="math inline">\(P|_N\)</span> 代表 None。图 2 解释了 p 和 m 在某一轮中是如何被更新为 p' 和 m' 的。</li>
-<li>神经网络的一部分结构用于学习将 untagged input, memory, previous state 映射为向量 <span class="math inline">\(h \in \mathbb{R}^N\)</span>，它将直接参与 <span class="math inline">\(p&#39;\)</span> 的计算。公式为：<span class="math inline">\(h=NNet(f \oplus p \oplus m) \in \mathbb{R}^N\)</span>。（<strong>博主注</strong>：h 学习将 lexical n-grams 映射为特定的槽值对，<strong>此步可能对 domain-independent 具有一定的影响</strong>，故<a href="https://arxiv.org/pdf/1506.07190.pdf" target="_blank" rel="noopener">这篇论文</a>移除了这部分的网络）</li>
+<li>神经网络的一部分结构用于学习将 untagged input, memory, previous state 映射为向量 <span class="math inline">\(h \in \mathbb{R}^N\)</span>，它将直接参与 <span class="math inline">\(p'\)</span> 的计算。公式为：<span class="math inline">\(h=NNet(f \oplus p \oplus m) \in \mathbb{R}^N\)</span>。（<strong>博主注</strong>：h 学习将 lexical n-grams 映射为特定的槽值对，<strong>此步可能对 domain-independent 具有一定的影响</strong>，故<a href="https://arxiv.org/pdf/1506.07190.pdf" target="_blank" rel="noopener">这篇论文</a>移除了这部分的网络）</li>
 <li>本文 <span class="math inline">\(NNet(\cdot)\)</span> 均代表激活函数为 sigmoid 的隐藏层</li>
 <li>其次，由于 h 的计算需要使用训练集中每一个槽值的样本，所以泛化性并不好。<strong>通过 g</strong>，采用 tagged feature 作为输入，<strong>可能可以提高泛化性</strong>。对于一个槽位的槽值 v，计算公式为：<span class="math inline">\(g|_v = NNet(f \oplus f_s \oplus f_v \oplus \{p|_v, P|_N\} \oplus m) \in \mathbb{R}\)</span>。此结构的网络能够处理未见或者不频繁的 dailogue state</li>
 <li><strong>博主注</strong>：不同的槽位拥有不同模型，即其中的每个 p 都不同</li>
-<li>new belief <span class="math inline">\(p&#39;\)</span> 的更新公式为：<span class="math inline">\(p&#39; = softmax([h+g] \oplus \{B\}) \in \mathbb{R}^{N+1}\)</span>，其中 B 是 RNN 的一个参数，有助于 None 的假设的估计</li>
-<li>最后 memory 的更新公式为：<span class="math inline">\(m&#39; = \sigma(W_{m0}f + W_{m1}m) \in \mathbb{R}^{N_{mem}}\)</span>，其中 <span class="math inline">\(W_{mi}\)</span> 是 RNN 的参数</li>
+<li>new belief <span class="math inline">\(p'\)</span> 的更新公式为：<span class="math inline">\(p' = softmax([h+g] \oplus \{B\}) \in \mathbb{R}^{N+1}\)</span>，其中 B 是 RNN 的一个参数，有助于 None 的假设的估计</li>
+<li>最后 memory 的更新公式为：<span class="math inline">\(m' = \sigma(W_{m0}f + W_{m1}m) \in \mathbb{R}^{N_{mem}}\)</span>，其中 <span class="math inline">\(W_{mi}\)</span> 是 RNN 的参数</li>
 </ol>
 
     </div>
@@ -639,27 +613,7 @@
           </div>
           
 
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
+
 
         </div>
           
@@ -689,9 +643,8 @@
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
-      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮" src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
   <div class="site-description" itemprop="description">记录</div>
 </div>
@@ -700,40 +653,40 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">181</span>
+          <span class="site-state-item-count">182</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-count">32</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">105</span>
+        <span class="site-state-item-count">104</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">247k</span>
+      	<span class="site-state-item-count">250.8k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
 </div>
   <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
     Chat
-  </a>
+  
   </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
@@ -747,10 +700,13 @@
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+          <a href="http://huaguoguo.gitee.io/" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://smallwhitezzz.gitee.io/blog" title="https://smallwhitezzz.gitee.io/blog" rel="noopener" target="_blank">凯子</a>
         </li>
     </ul>
   </div>
@@ -777,14 +733,14 @@
 
 <div class="copyright">
   
-  &copy; 2019 – 
+  © 2019 – 
   <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div><!--
 樱花特效 
 最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
@@ -793,15 +749,9 @@
 于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
 原地址为：https://cangshui.net/2372.html
 -->
-<script>
-	var pathname = window.location.pathname;
-	// pathname == '/' || pathname == '/index.html'
-	if(pathname == '/categories/assorted/timeline/'){
-		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
-	}
-</script>
+
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-<script src="/lib/my-utils.js"></script>
+
 <script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
@@ -826,7 +776,7 @@
 
         
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -858,20 +808,20 @@
   </div>
 
   
-  <script src="/lib/anime.min.js"></script>
+  
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
+  
+  
 
 
-<script src="/js/next-boot.js"></script>
 
-<script src="/js/bookmark.js"></script>
+
+
+
+
+
+
 
 
   
@@ -880,7 +830,7 @@
 
 
   
-<script src="/js/local-search.js"></script>
+
 
 
 
@@ -900,7 +850,68 @@
 
   
   <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
-  <script>
+  
+<!-- calendar widget -->
+
+
+
+
+<script src="/bundle.js"></script><script>
+          var templateSentence = '这是条不可能出现的弹窗提示。';
+          if('4me' == '学习笔记')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记。';
+          else if('4me' == '4me')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
+          spop({
+            template: templateSentence,
+            group: 'tips',
+            position  : 'bottom-center',
+            style: 'success',
+            autoclose: 5500,
+            onOpen: function () {
+              //这里设置灰色背景色
+            },
+            onClose: function() {
+              //这里可以取消背景色
+              /*spop({
+                template: 'ε = = (づ′▽`)づ',
+                group: 'tips',
+                position  : 'bottom-center',
+                style: 'success',
+                autoclose: 1500
+              });*/
+            }
+          });
+        ;
+
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+;
+
+	var pathname = window.location.pathname;
+	// pathname == '/' || pathname == '/index.html'
+	if(pathname == '/categories/assorted/timeline/'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+;
+
       window.addEventListener('load', () => {
       quicklink({
         timeout : 3000,
@@ -908,9 +919,4 @@
         ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/89f2cf08.html',]
       });
       });
-  </script>
-<!-- calendar widget -->
-
-
-</body>
-</html>
+  </script></body></html>

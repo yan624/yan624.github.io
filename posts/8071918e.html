@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
+<!DOCTYPE html><html lang="zh-CN"><head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
@@ -10,25 +8,31 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-<link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
-  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
-  <script src="/lib/pace/pace.min.js"></script>
+
+
+  
+  
+  
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="gradient clipping learning rate decay dropout tensorboardX 过拟合&#x2F;欠拟合  技巧 (Jozefowicz, Zaremba, and Sutskever 2015) 发现在 LSTM 的 forget gate 上的 bais 设置为 1，可以缩小 LSTM 和 GRU 之间的差距。（题外话：该论文还很好地解释了梯度消失出现的原因）">
+  <meta name="description" content="gradient clipping learning rate decay dropout tensorboardX 过拟合/欠拟合
+ 
+ 技巧
+ (Jozefowicz, Zaremba, and Sutskever 2015) 发现在 LSTM 的 forget gate 上的 bais 设置为 1，可以缩小 LSTM 和 GRU 之间的差距。（题外话：该论文还很好地解释了梯度消失出现的原因）">
 <meta property="og:type" content="article">
 <meta property="og:title" content="神经网络训练技巧（tricks）">
 <meta property="og:url" content="https://yan624.github.io/posts/8071918e.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="gradient clipping learning rate decay dropout tensorboardX 过拟合&#x2F;欠拟合  技巧 (Jozefowicz, Zaremba, and Sutskever 2015) 发现在 LSTM 的 forget gate 上的 bais 设置为 1，可以缩小 LSTM 和 GRU 之间的差距。（题外话：该论文还很好地解释了梯度消失出现的原因）">
+<meta property="og:description" content="gradient clipping learning rate decay dropout tensorboardX 过拟合/欠拟合
+ 
+ 技巧
+ (Jozefowicz, Zaremba, and Sutskever 2015) 发现在 LSTM 的 forget gate 上的 bais 设置为 1，可以缩小 LSTM 和 GRU 之间的差距。（题外话：该论文还很好地解释了梯度消失出现的原因）">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E8%AE%AD%E7%BB%83%E6%8A%80%E5%B7%A7%EF%BC%88tricks%EF%BC%89/%E4%B8%8D%E5%90%8C%E8%B6%85%E5%8F%82%E6%95%B0%E4%B9%8B%E9%97%B4%EF%BC%8C%E6%80%A7%E8%83%BD%E7%9A%84%E5%AF%B9%E6%AF%94.svg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E8%AE%AD%E7%BB%83%E6%8A%80%E5%B7%A7%EF%BC%88tricks%EF%BC%89/%E4%B8%8D%E5%90%8C%E8%B6%85%E5%8F%82%E6%95%B0%E4%B9%8B%E9%97%B4%EF%BC%8C%E6%80%A7%E8%83%BD%E7%9A%84%E5%AF%B9%E6%AF%942.svg">
@@ -62,7 +66,7 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
+
 
 
   <title>神经网络训练技巧（tricks） | 博客</title>
@@ -96,13 +100,13 @@
   </style>
 </noscript>
 
-</head>
+<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css');loadCss('//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css');loadCss('//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css"></noscript></head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
+<body itemscope="" itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
     <div class="headband"></div>
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏">
@@ -165,7 +169,7 @@
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">181</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">182</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -184,9 +188,7 @@
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
-           placeholder="搜索..." spellcheck="false"
-           type="search" class="search-input">
+    <input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
   </div>
   <span class="popup-btn-close">
     <i class="fa fa-times-circle"></i>
@@ -224,52 +226,26 @@
     
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     
     	
         <!-- 弹窗插件 -->
-    		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
-        <script type="text/javascript" src="/lib/spop/spop.min.js"></script>
+    		
+        
         <!--判断此文是否为特殊的文章-->
-        <script>
-          var templateSentence = '这是条不可能出现的弹窗提示。';
-          if('4me' == '学习笔记')
-            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记。';
-          else if('4me' == '4me')
-            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
-          spop({
-            template: templateSentence,
-            group: 'tips',
-            position  : 'bottom-center',
-            style: 'success',
-            autoclose: 5500,
-            onOpen: function () {
-              //这里设置灰色背景色
-            },
-            onClose: function() {
-              //这里可以取消背景色
-              /*spop({
-                template: 'ε = = (づ′▽`)づ',
-                group: 'tips',
-                position  : 'bottom-center',
-                style: 'success',
-                autoclose: 1500
-              });*/
-            }
-          });
-        </script>
+        
     	
     
 
     <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/8071918e.html">
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
       <meta itemprop="name" content="朱冲䶮">
       <meta itemprop="description" content="记录">
     </span>
 
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="博客">
     </span>
       <header class="post-header">
@@ -298,11 +274,11 @@
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
                   <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
                 </span>
                   ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
                   <a href="/categories/AI/liandan/" itemprop="url" rel="index"><span itemprop="name">liandan</span></a>
                 </span>
             </span>
@@ -326,7 +302,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                <span class="post-meta-item-text">阅读时长 ≈</span>
               <span>9 分钟</span>
             </span>
 
@@ -364,14 +340,14 @@
 <p>首先你需要固定自己的 epoch 以及 batch size，然后使用尽可能大的学习率（learning rate，lr），使得你的模型在训练集上拟合的不错，即 loss 值达到可以接受的程度，并且准确率或者你的其他指标达到不错的水平。<strong>一般我将 batch size 选为 128，epoch 选为 100。</strong>如果初步调试后无法得到一个好的结果，可以根据需求略微地调整这三个参数。<mark class="label danger">三个最重要的参数</mark></p>
 <p>得到一个不错的效果意味着你的模型本身没有存在很大的问题。<strong>但是</strong>由于取的是尽可能大的 lr，那么你的模型在验证集上的结果可能差的离谱！这不要紧，因为之后还要调整各个超参数，此步仅仅是找 lr。最后有一点，如果经过长期调试，在训练集上均无法得到一个好的结果，那么得检查一下代码或者数据处理的是否有问题。<mark class="label primary">验证模型是否有问题，同时得到合适的学习率</mark></p>
 <p>要牢记一点，<strong>超参数的好坏一定要在验证集上做评定，并且最好保证在训练集上的性能不受太大影响</strong>。此外，<strong>在尝试合适的学习率时，可以把验证步骤关了，因为此时的验证精度没什么用。这样做可以加快训练速度。</strong><mark class="label info">一些小技巧</mark></p>
-<p>现在假设你最终使用一套 <code>(lr, epoch, batch_size)</code> 的超参数，在训练集上得到一个还不错的结果。那么可以进行下一阶段，选取合适的 batch size（<em>注意此步《最初的超参数》是用来选择 lr 的，epoch 和 batch size 仅仅是一个根据经验固定的值</em>）。详见下节《<a href="#batch-size的选择">batch size的选择</a>》。 <div class="note warning"><p>如果在训练集上的结果还不错，那么在验证集上的结果应该不会差到训练不起来的地步。此时可以通过调整上述三个超参数使性能提高，注意，稍微调一下就行。一般来说应该不需要调整。</p>
-</div></p>
+<p>现在假设你最终使用一套 <code>(lr, epoch, batch_size)</code> 的超参数，在训练集上得到一个还不错的结果。那么可以进行下一阶段，选取合适的 batch size（<em>注意此步《最初的超参数》是用来选择 lr 的，epoch 和 batch size 仅仅是一个根据经验固定的值</em>）。详见下节《<a href="#batch-size的选择">batch size的选择</a>》。 </p><div class="note warning"><p>如果在训练集上的结果还不错，那么在验证集上的结果应该不会差到训练不起来的地步。此时可以通过调整上述三个超参数使性能提高，注意，稍微调一下就行。一般来说应该不需要调整。</p>
+</div><p></p>
 <h2 id="batch-size的选择">batch size的选择</h2>
 <p>在看了参考文献 1 之后，我对目前我正在做的模型做了几个小实验。我以前以为 batch size 对模型的影响不大，我认为只要 batch size 设置得足够大，只要有足够大的 epoch，模型总能收敛。但是在做了这几个实验之后，我发现 batch size 似乎能够影响模型的性能。</p>
 <h3 id="几个小实验">几个小实验</h3>
 <p>下图是几个实验的结果，图有点乱，但是其实很好分析。只需要记住一点，曲线在上方的都是 train BLEU，曲线在下方的都是 val BLEU。训练集上的性能比验证集上的高，这很正常。</p>
-<p>此实验，其他超参数均固定，epoch 可以暂且无视。先看上方的三条线，灰色的超参数为 <code>(lr, epoch, batch_size) = (0.001, ?, 64)</code>，而蓝红分别为 <code>(0.0003, ?, 32)</code> 和 <code>(0.0003, ?, 16)</code>。可见 batch size 为 64 的模型训练集上的 BLEU 指标比不上其它的模型。下方的验证集同理。还有一点，图中 batch size 为 32 的模型收敛要慢，这是因为 lr 不合理，设置为 0.0005 可能更合理。那么对于此任务来说，这两组参数可能都是一个不错的选择。但是我倾向于 <code>batch size=32</code> 的，因为它训练的速度更快，毕竟时间就是生命。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/不同超参数之间，性能的对比.svg" alt="不同超参数之间，性能的对比" /></p>
-<p>下面给出所有实验的对比，发现还是那两组的性能最好。橙色那条线是 <code>(0.001, ?, 128)</code>。此外我还试了 <code>(0.002, ?, 128)</code>，但是这组实验直接烂掉了，模型早早地拟合完毕，但是训练集上的 BLEU 连 50% 都没。由于已知增加 batch size 的同时需要加大 lr，由上述的两种实验可知，该任务参数的上限可能就是 <code>(0.001, ?, 128)</code>。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/不同超参数之间，性能的对比2.svg" alt="不同超参数之间，性能的对比2" /></p>
+<p>此实验，其他超参数均固定，epoch 可以暂且无视。先看上方的三条线，灰色的超参数为 <code>(lr, epoch, batch_size) = (0.001, ?, 64)</code>，而蓝红分别为 <code>(0.0003, ?, 32)</code> 和 <code>(0.0003, ?, 16)</code>。可见 batch size 为 64 的模型训练集上的 BLEU 指标比不上其它的模型。下方的验证集同理。还有一点，图中 batch size 为 32 的模型收敛要慢，这是因为 lr 不合理，设置为 0.0005 可能更合理。那么对于此任务来说，这两组参数可能都是一个不错的选择。但是我倾向于 <code>batch size=32</code> 的，因为它训练的速度更快，毕竟时间就是生命。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/不同超参数之间，性能的对比.svg" alt="不同超参数之间，性能的对比"></p>
+<p>下面给出所有实验的对比，发现还是那两组的性能最好。橙色那条线是 <code>(0.001, ?, 128)</code>。此外我还试了 <code>(0.002, ?, 128)</code>，但是这组实验直接烂掉了，模型早早地拟合完毕，但是训练集上的 BLEU 连 50% 都没。由于已知增加 batch size 的同时需要加大 lr，由上述的两种实验可知，该任务参数的上限可能就是 <code>(0.001, ?, 128)</code>。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/不同超参数之间，性能的对比2.svg" alt="不同超参数之间，性能的对比2"></p>
 <p>由上述实验可知，batch size 和 lr 还是对模型的性能有影响的。并且二者对模型的影响是具有相互作用的。这是因为在 loss function 中，唯二的超参数就是 batch size 和 lr【<a href="https://zhuanlan.zhihu.com/p/64864995" target="_blank" rel="noopener">1</a>】，其他的超参数是都在神经网络里。上述的实验只是一个大概的实验，其中的变化太多，无法选择到一组完美的组合，但是还是可以有经验可循的。<strong>加大 batch size 就要加大 lr，减小 batch size 就要减小 lr，而且可以以对应倍数进行改变</strong>【<a href="https://zhuanlan.zhihu.com/p/64864995" target="_blank" rel="noopener">1</a>，<a href="https://arxiv.org/pdf/1706.02677.pdf" target="_blank" rel="noopener">2</a>，<a href="https://arxiv.org/pdf/1705.08741.pdf" target="_blank" rel="noopener">3</a>】。</p>
 <p>假设经过《<a href="#调参的步骤以及经验">调参的步骤以及经验</a>》之后，现在你的超参数为 <code>(0.001, 100, 64)</code>。那么你接下来可选的超参数组合为：<code>(0.002, 100, 128), (0.0005, 100, 32), (0.00025, 100, 16)</code>。具体的参数值可以按照自己的习惯进行改写，例如 0.00025 可以改成 0.0003。</p>
 <p>总而言之，知道这一点之后，有关 lr 和 batch size 的调整就不需要像无头苍蝇一样乱调了。可以选定大概 5 组参数，直接放在服务器上训练。然后选择一个最合适的范围，再进行微小的调整。或者如果嫌麻烦，可以直接选择 5 组里最好的。</p>
@@ -420,9 +396,9 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
 </div>
 <p>当过拟合时，可以考虑以下的方法，过拟合的另一种说法是高方差（high variance）。</p>
 <h2 id="增加数据集的大小">增加数据集的大小</h2>
-<p>如下图所示，紫红色和蓝色曲线是验证集上的 loss。蓝色曲线意味着我从 4400 条数据增加到了 6600 条。明显可以看到过拟合略有缓解。但是训练集上的 loss 增加了，灰色那条线是增加数据量后的训练集 loss。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/add_more_data.svg" title="增加更多的数据" alt="增加更多的数据" /></p>
-<p>下图也是一个例子，相比于上个模型还训练的有问题，这个模型已经训练的还可以了。可以看到红色曲线比蓝色的要平缓一点，因为数据集增加，训练集上的 loss 会相应增加。再看上面的橙色和深蓝色，深蓝色是增加数据量之后的 loss 曲线，略微降低。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/add%20more%20data2.svg" alt="增加更多的数据2" /> ## 加大批次大小或减小模型复杂度 如下图所示，中间的两条橙色和蓝色曲线是批次大小从 128 增加到 224 的结果。橙色曲线为 val loss，可以看到橙色曲线相比于上面那条蓝色的 val loss，已经略有下降，这代表着过拟合的程度略有降低。而中间的蓝色曲线代表 train loss，相比于下面的灰色 train loss 曲线有些许上升，这代表着模型在训练集上的泛化能力有所下降。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/more_larger_batch_size.svg" alt="加大批次大小" /></p>
-<p>下图为减小隐藏状态的例子，中间的绿色以及红色曲线是隐藏状态从 512 减到 400 的结果，可以看到验证集上的 loss 略有下降（略微的缓解过拟合），训练集上的 loss 略有上升。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/reduce_hidden_size.svg" alt="减小隐藏状态大小" /></p>
+<p>如下图所示，紫红色和蓝色曲线是验证集上的 loss。蓝色曲线意味着我从 4400 条数据增加到了 6600 条。明显可以看到过拟合略有缓解。但是训练集上的 loss 增加了，灰色那条线是增加数据量后的训练集 loss。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/add_more_data.svg" title="增加更多的数据" alt="增加更多的数据"></p>
+<p>下图也是一个例子，相比于上个模型还训练的有问题，这个模型已经训练的还可以了。可以看到红色曲线比蓝色的要平缓一点，因为数据集增加，训练集上的 loss 会相应增加。再看上面的橙色和深蓝色，深蓝色是增加数据量之后的 loss 曲线，略微降低。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/add%20more%20data2.svg" alt="增加更多的数据2"> ## 加大批次大小或减小模型复杂度 如下图所示，中间的两条橙色和蓝色曲线是批次大小从 128 增加到 224 的结果。橙色曲线为 val loss，可以看到橙色曲线相比于上面那条蓝色的 val loss，已经略有下降，这代表着过拟合的程度略有降低。而中间的蓝色曲线代表 train loss，相比于下面的灰色 train loss 曲线有些许上升，这代表着模型在训练集上的泛化能力有所下降。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/more_larger_batch_size.svg" alt="加大批次大小"></p>
+<p>下图为减小隐藏状态的例子，中间的绿色以及红色曲线是隐藏状态从 512 减到 400 的结果，可以看到验证集上的 loss 略有下降（略微的缓解过拟合），训练集上的 loss 略有上升。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/reduce_hidden_size.svg" alt="减小隐藏状态大小"></p>
 <h2 id="learning-rate-decay">learning rate decay</h2>
 <p>Q：在什么时候需要使用 learning rate decay？</p>
 <p>A：网上资源不多，还是自己总结吧。在此实验中，加入 learning rate decay 后，准确率略有提升。</p>
@@ -446,15 +422,15 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
 <li><a href="https://www.zhihu.com/question/318399418/answer/1202932315" target="_blank" rel="noopener">验证集 loss 上升，准确率却上升该如何理解？</a> <a id="more"></a></li>
 </ol>
 <h3 id="训练集和验证集的性能或者loss相差巨大">训练集和验证集的性能或者loss相差巨大</h3>
-<p>此问题与下一章《train acc很大，gap非常大》的问题类似，或者说完全一样。无论怎么调整参数或者加什么正则化方法，都无法使得验证集 loss 减小，或者准确率上升。这意味着需要增加数据集，其他的方法都不管用。具体看下图，我增加了大约已被数据集后，黄色验证集曲线（7872 条数据）比绿色验证集曲线(4000 条)下降很多。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/加大数据集后，val_loss明显下降.svg" alt="加大数据集后，val_loss明显下降" /></p>
+<p>此问题与下一章《train acc很大，gap非常大》的问题类似，或者说完全一样。无论怎么调整参数或者加什么正则化方法，都无法使得验证集 loss 减小，或者准确率上升。这意味着需要增加数据集，其他的方法都不管用。具体看下图，我增加了大约已被数据集后，黄色验证集曲线（7872 条数据）比绿色验证集曲线(4000 条)下降很多。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/加大数据集后，val_loss明显下降.svg" alt="加大数据集后，val_loss明显下降"></p>
 <h4 id="train-acc很大gap非常大">train acc很大，gap非常大</h4>
-<p>在训练过程中出现了一种情况，train acc 94% 左右，但是 val acc 只有 24% 左右，test acc 也是 24% 左右。很多人认为这是<strong>过拟合</strong>状态，因为模型在训练集上拟合的很好，但在验证集上拟合的不好，这两者之间的 gap 很大。也就是<strong>高方差</strong>。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/train%20acc很大，gap也很大.svg" alt="train acc很大，gap也很大" /></p>
-<p>以下是对此现象的分析： 1. 再增加 <strong>epoch</strong> 已经没用了，因为该模型的参数已经很好的拟合了数据集，使得准确率接近 100%。 <blockquote class="blockquote-center">
+<p>在训练过程中出现了一种情况，train acc 94% 左右，但是 val acc 只有 24% 左右，test acc 也是 24% 左右。很多人认为这是<strong>过拟合</strong>状态，因为模型在训练集上拟合的很好，但在验证集上拟合的不好，这两者之间的 gap 很大。也就是<strong>高方差</strong>。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/train%20acc很大，gap也很大.svg" alt="train acc很大，gap也很大"></p>
+<p>以下是对此现象的分析： 1. 再增加 <strong>epoch</strong> 已经没用了，因为该模型的参数已经很好的拟合了数据集，使得准确率接近 100%。 </p><blockquote class="blockquote-center">
 <i class="fa fa-quote-left"></i>
 <p>说明训练集中的几乎所有信息（不论是对泛化有用的信息还是训练集中的噪声）都全部被模型学习到了。（<a href="https://www.zhihu.com/question/65200055" target="_blank" rel="noopener">来源</a>）</p>
 
 <i class="fa fa-quote-right"></i>
-</blockquote></p>
+</blockquote><p></p>
 <ol start="2" type="1">
 <li>改变（无论增大还是缩小） rnn 的<strong>隐藏状态</strong>也不会有很大改善了。比如说此文章的模型，我尝试选择隐藏状态大小为 (100, 115, 125, 128)，结果如下所示，可以看到增加减少隐藏状态大小，对 train acc 根本无影响，对 val acc 也只有一点影响： <blockquote class="blockquote-center">
 <i class="fa fa-quote-left"></i>
@@ -515,11 +491,11 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
 <h2 id="loss与acc之间的关系">loss与acc之间的关系</h2>
 <p><a href="https://www.zhihu.com/question/264892967/answer/833656253" target="_blank" rel="noopener">深度学习中 loss 和 accuracy 的关系？</a></p>
 <h2 id="关于epoch">关于epoch</h2>
-<p>如果你调试了很多参数之后，模型在<strong>训练集</strong>上的性能没有很大改善，<strong>可以尝试大幅度增加 epoch</strong>。当然你也可以在一开始就使用很大的 epoch。因为有些模型很奇怪，可能 loss 曲线已经很平滑了，但是在某个 epoch 之后，loss 值突然暴跌。例如，下图是训练了一段时间的 loss 值，我卡了四五天，一直以为 loss 不会下降了。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/smooth_loss.svg" alt="smooth loss" /></p>
-<p>但是当你加大 epoch 之后，突然发现它又开始下降了。（注：这两条曲线有点不一样，是因为我略微地调整了代码，但是这已经足够说明问题了。经过我的实验，这里的 loss 值下降与我的代码调整无关） <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/slumping_loss.svg" alt="slumping loss" /></p>
-<p>这可能不太明显，我们把它缩放一下，发现真的又开始下降了。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/scaled_slumping_loss.svg" alt="scaled slumping loss" /></p>
+<p>如果你调试了很多参数之后，模型在<strong>训练集</strong>上的性能没有很大改善，<strong>可以尝试大幅度增加 epoch</strong>。当然你也可以在一开始就使用很大的 epoch。因为有些模型很奇怪，可能 loss 曲线已经很平滑了，但是在某个 epoch 之后，loss 值突然暴跌。例如，下图是训练了一段时间的 loss 值，我卡了四五天，一直以为 loss 不会下降了。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/smooth_loss.svg" alt="smooth loss"></p>
+<p>但是当你加大 epoch 之后，突然发现它又开始下降了。（注：这两条曲线有点不一样，是因为我略微地调整了代码，但是这已经足够说明问题了。经过我的实验，这里的 loss 值下降与我的代码调整无关） <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/slumping_loss.svg" alt="slumping loss"></p>
+<p>这可能不太明显，我们把它缩放一下，发现真的又开始下降了。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/scaled_slumping_loss.svg" alt="scaled slumping loss"></p>
 <h2 id="加大lrtrain-loss不一定更快收敛">加大lr，train loss不一定更快收敛</h2>
-<p>我有碰到一个情况，<strong>加大学习率后，训练集上的 loss 反而下降的更慢了！</strong>图片我放在了下面，其中深蓝色的曲线代表着学习率是要大的那个模型。我的猜测是，学习率加大后，在某一个时间段的 epoch 中，模型一直在尝试走到山底，但是由于学习率过大，导致它一直来回振荡。而学习率小点，就正好一脚跨下去了。从图中也可以发现，在一开始，大学习率的模型确实要下降的快点，但是后来被小学习率的模型反超了。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/增加lr，loss反而下降更慢.svg" alt="增加 lr，loss 反而下降更慢" /></p>
+<p>我有碰到一个情况，<strong>加大学习率后，训练集上的 loss 反而下降的更慢了！</strong>图片我放在了下面，其中深蓝色的曲线代表着学习率是要大的那个模型。我的猜测是，学习率加大后，在某一个时间段的 epoch 中，模型一直在尝试走到山底，但是由于学习率过大，导致它一直来回振荡。而学习率小点，就正好一脚跨下去了。从图中也可以发现，在一开始，大学习率的模型确实要下降的快点，但是后来被小学习率的模型反超了。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/神经网络训练技巧（tricks）/增加lr，loss反而下降更慢.svg" alt="增加 lr，loss 反而下降更慢"></p>
 <h1 id="bibliography" class="unnumbered">参考文献</h1>
 <div id="refs" class="references">
 <div id="ref-jozefowicz2015empirical">
@@ -596,27 +572,7 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
           </div>
           
 
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
+
 
         </div>
           
@@ -646,9 +602,8 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
-      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮" src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
   <div class="site-description" itemprop="description">记录</div>
 </div>
@@ -657,40 +612,40 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">181</span>
+          <span class="site-state-item-count">182</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-count">32</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">105</span>
+        <span class="site-state-item-count">104</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">247k</span>
+      	<span class="site-state-item-count">250.8k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
 </div>
   <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
     Chat
-  </a>
+  
   </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
@@ -704,10 +659,13 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+          <a href="http://huaguoguo.gitee.io/" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://smallwhitezzz.gitee.io/blog" title="https://smallwhitezzz.gitee.io/blog" rel="noopener" target="_blank">凯子</a>
         </li>
     </ul>
   </div>
@@ -734,14 +692,14 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
 
 <div class="copyright">
   
-  &copy; 2019 – 
+  © 2019 – 
   <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div><!--
 樱花特效 
 最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
@@ -750,15 +708,9 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
 于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
 原地址为：https://cangshui.net/2372.html
 -->
-<script>
-	var pathname = window.location.pathname;
-	// pathname == '/' || pathname == '/index.html'
-	if(pathname == '/categories/assorted/timeline/'){
-		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
-	}
-</script>
+
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-<script src="/lib/my-utils.js"></script>
+
 <script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
@@ -783,7 +735,7 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
 
         
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -815,20 +767,20 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
   </div>
 
   
-  <script src="/lib/anime.min.js"></script>
+  
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
+  
+  
 
 
-<script src="/js/next-boot.js"></script>
 
-<script src="/js/bookmark.js"></script>
+
+
+
+
+
+
 
 
   
@@ -837,7 +789,7 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
 
 
   
-<script src="/js/local-search.js"></script>
+
 
 
 
@@ -857,7 +809,68 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
 
   
   <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
-  <script>
+  
+<!-- calendar widget -->
+
+
+
+
+<script src="/bundle.js"></script><script>
+          var templateSentence = '这是条不可能出现的弹窗提示。';
+          if('4me' == '学习笔记')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记。';
+          else if('4me' == '4me')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
+          spop({
+            template: templateSentence,
+            group: 'tips',
+            position  : 'bottom-center',
+            style: 'success',
+            autoclose: 5500,
+            onOpen: function () {
+              //这里设置灰色背景色
+            },
+            onClose: function() {
+              //这里可以取消背景色
+              /*spop({
+                template: 'ε = = (づ′▽`)づ',
+                group: 'tips',
+                position  : 'bottom-center',
+                style: 'success',
+                autoclose: 1500
+              });*/
+            }
+          });
+        ;
+
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+;
+
+	var pathname = window.location.pathname;
+	// pathname == '/' || pathname == '/index.html'
+	if(pathname == '/categories/assorted/timeline/'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+;
+
       window.addEventListener('load', () => {
       quicklink({
         timeout : 3000,
@@ -865,9 +878,4 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
         ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/8071918e.html',]
       });
       });
-  </script>
-<!-- calendar widget -->
-
-
-</body>
-</html>
+  </script></body></html>

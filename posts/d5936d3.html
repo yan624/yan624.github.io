@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
+<!DOCTYPE html><html lang="zh-CN"><head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
@@ -10,25 +8,45 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-<link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
-  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
-  <script src="/lib/pace/pace.min.js"></script>
+
+
+  
+  
+  
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="Exposure Bias 主要机制  GRU 参考资料  人人都能看懂的GRU 吴恩达李宏毅综合学习笔记：RNN入门#GRU单元——Gate Recurrent Unit  LSTM 该博客中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。 下图是吴恩达深度学习第五">
+  <meta name="description" content="Exposure Bias 主要机制
+ 
+ GRU
+ 参考资料
+ 
+ 人人都能看懂的GRU
+ 吴恩达李宏毅综合学习笔记：RNN入门#GRU单元——Gate Recurrent Unit
+ 
+ LSTM
+ 该博客中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。
+ 下图是吴恩达深度学习第五">
 <meta property="og:type" content="article">
 <meta property="og:title" content="深度学习算法（三）：RNN 各种机制">
 <meta property="og:url" content="https://yan624.github.io/posts/d5936d3.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="Exposure Bias 主要机制  GRU 参考资料  人人都能看懂的GRU 吴恩达李宏毅综合学习笔记：RNN入门#GRU单元——Gate Recurrent Unit  LSTM 该博客中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。 下图是吴恩达深度学习第五">
+<meta property="og:description" content="Exposure Bias 主要机制
+ 
+ GRU
+ 参考资料
+ 
+ 人人都能看懂的GRU
+ 吴恩达李宏毅综合学习笔记：RNN入门#GRU单元——Gate Recurrent Unit
+ 
+ LSTM
+ 该博客中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。
+ 下图是吴恩达深度学习第五">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9ARNN%20%E5%90%84%E7%A7%8D%E6%9C%BA%E5%88%B6/LSTM%20cell.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9ARNN%20%E5%90%84%E7%A7%8D%E6%9C%BA%E5%88%B6/%E5%A4%9A%E4%B8%AA%20LSTM.jpg">
@@ -63,7 +81,7 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
+
 
 
   <title>深度学习算法（三）：RNN 各种机制 | 博客</title>
@@ -97,13 +115,13 @@
   </style>
 </noscript>
 
-</head>
+<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css');loadCss('//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css');loadCss('//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css"></noscript></head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
+<body itemscope="" itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
     <div class="headband"></div>
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏">
@@ -166,7 +184,7 @@
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">181</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">182</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -185,9 +203,7 @@
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
-           placeholder="搜索..." spellcheck="false"
-           type="search" class="search-input">
+    <input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
   </div>
   <span class="popup-btn-close">
     <i class="fa fa-times-circle"></i>
@@ -225,7 +241,7 @@
     
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     
     	
     
@@ -240,13 +256,13 @@
 
     <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/d5936d3.html">
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
       <meta itemprop="name" content="朱冲䶮">
       <meta itemprop="description" content="记录">
     </span>
 
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="博客">
     </span>
       <header class="post-header">
@@ -275,11 +291,11 @@
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
                   <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
                 </span>
                   ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
                   <a href="/categories/AI/dl/" itemprop="url" rel="index"><span itemprop="name">dl</span></a>
                 </span>
             </span>
@@ -303,7 +319,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                <span class="post-meta-item-text">阅读时长 ≈</span>
               <span>15 分钟</span>
             </span>
 
@@ -326,7 +342,7 @@
 </ol>
 <h1 id="lstm">LSTM</h1>
 <p>该<a href="https://yan624.github.io/posts/5e27260b.html#长短期记忆——Long-Short-term-Memory-LSTM">博客</a>中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。</p>
-<p>下图是吴恩达深度学习第五周作业中的图片，是一个 LSTM 单元。<strong>与李宏毅老师做的图有略微不同，并且在下图中将 input gate 称为了 update gate，并且在李宏毅老师所提供的图片中，g(z) 是由 sigmoid 函数计算出来的，而这里是由 tanh 计算出来的，即下图 update gate 旁边的函数</strong>。另外在李宏毅老师提供的图片中，为了简便，并没有使用上个时间步的激活值。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/LSTM%20cell.jpg" alt="LSTM cell" /></p>
+<p>下图是吴恩达深度学习第五周作业中的图片，是一个 LSTM 单元。<strong>与李宏毅老师做的图有略微不同，并且在下图中将 input gate 称为了 update gate，并且在李宏毅老师所提供的图片中，g(z) 是由 sigmoid 函数计算出来的，而这里是由 tanh 计算出来的，即下图 update gate 旁边的函数</strong>。另外在李宏毅老师提供的图片中，为了简便，并没有使用上个时间步的激活值。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/LSTM%20cell.jpg" alt="LSTM cell"></p>
 <ol type="1">
 <li>首先是<strong>输入的问题</strong>。一般来说一个 LSTM 的输入是前一<strong>个</strong> LSTM 的输出值 <span class="math inline">\(a\)</span> 以及输入值 <span class="math inline">\(x\)</span>（此外对于第 2 层的 LSTM 的 输入值就是前一<strong>层</strong>的输出值）。但是众所周知，<strong>LSTM 每个门的输入肯定只有一个向量，<span class="math inline">\(a\)</span> 和 <span class="math inline">\(x\)</span> 是两个向量，那么如何处理呢？</strong>
 <ul>
@@ -338,16 +354,16 @@
 <li>记忆单元（下图中的 c，也可以称作 memory(m)）中的数据也可以随机初始化或者直接为 0。</li>
 <li>每一层的 LSTM 都权重共享。意思是每一层都有多个 LSTM，里面的权重值其实是同一份。</li>
 </ol>
-<p>下图是多个 LSTM 运行的示意图。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/多个%20LSTM.jpg" alt="多个 LSTM" /></p>
-<p>下图是 LSTM 的反向传播，被称为 BPTT（backpropagation through time）。由于还没遇到过，并且 pytorch 都已经是自动求导，所以目前处于待补充状态。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/LSTM反向传播.jpg" alt="LSTM反向传播" /></p>
+<p>下图是多个 LSTM 运行的示意图。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/多个%20LSTM.jpg" alt="多个 LSTM"></p>
+<p>下图是 LSTM 的反向传播，被称为 BPTT（backpropagation through time）。由于还没遇到过，并且 pytorch 都已经是自动求导，所以目前处于待补充状态。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/LSTM反向传播.jpg" alt="LSTM反向传播"></p>
 <h1 id="seq2seq">Seq2Seq</h1>
-<p>Seq2Seq 模型于 2014 年由 Bengio 团队<a href="https://arxiv.org/pdf/1406.1078.pdf" target="_blank" rel="noopener" title="Learning Phrase Representations using RNN Encoder–Decoder for Statistical Machine Translation"><span class="citation" data-cites="Cho_2014">(Cho et al. 2014)</span></a>首先提出，同年，大概三个月后，google 团队<a href="https://arxiv.org/pdf/1409.3215.pdf" target="_blank" rel="noopener" title="Sequence to Sequence Learning with Neural Networks"><span class="citation" data-cites="sutskever2014sequence">(Sutskever, Vinyals, and Le 2014)</span></a>对此做出了改进。总得来说，seq2seq 架构中所使用的的神经网络可以是任意的神经网络，例如上面提到的 GRU 和 LSTM，甚至还可以是 CNN。它们的具体架构分别如下二图所示： <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/Cho%20seq2seq.png" title="Cho seq2seq" alt="Cho seq2seq" /></div><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/Sutskever%20seq2seq.png" title="Sutskever seq2seq" alt="Sutskever seq2seq" /></div></div></div></p>
+<p>Seq2Seq 模型于 2014 年由 Bengio 团队<a href="https://arxiv.org/pdf/1406.1078.pdf" target="_blank" rel="noopener" title="Learning Phrase Representations using RNN Encoder–Decoder for Statistical Machine Translation"><span class="citation" data-cites="Cho_2014">(Cho et al. 2014)</span></a>首先提出，同年，大概三个月后，google 团队<a href="https://arxiv.org/pdf/1409.3215.pdf" target="_blank" rel="noopener" title="Sequence to Sequence Learning with Neural Networks"><span class="citation" data-cites="sutskever2014sequence">(Sutskever, Vinyals, and Le 2014)</span></a>对此做出了改进。总得来说，seq2seq 架构中所使用的的神经网络可以是任意的神经网络，例如上面提到的 GRU 和 LSTM，甚至还可以是 CNN。它们的具体架构分别如下二图所示： </p><div class="group-picture"><div class="group-picture-row"><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/Cho%20seq2seq.png" title="Cho seq2seq" alt="Cho seq2seq"></div><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/Sutskever%20seq2seq.png" title="Sutskever seq2seq" alt="Sutskever seq2seq"></div></div></div><p></p>
 <p>正如上图所示，它们是 seq2seq 两种不同的架构，<strong>现在我们常用的架构是由 google 团队 Sutskever 等人提出的架构</strong>。实际上，它们在 encoder 部分是一样的，只是在 decoder 部分有所不同。对于第一种架构，decoder 的每一个时间步都需要接收 encoder 最后一个时间步的隐藏状态。对于第二种架构，每一个时间步只是接收上一个时间步的隐藏状态。</p>
 <p>那么这两种做法在直觉上来看有什么区别呢？（os：<em>没办法从理论上看啊！我们在炼丹啊</em>）实际上，有一点光看图就可以看到区别。<strong>首先</strong>，第一个架构中，一个时间步的输入一共有三项，而第二个架构只有两项。多出来的一项是 encoder 最后的输出。<strong>其次</strong>，第一个架构是用 simple RNN 做的，第二个架构是用 LSTM 做的。RNN 的缺点大家都知道，不过我好奇的是这篇论文发表的时候，LSTM 应该是流行的啊，为什么不用 LSTM 呢？</p>
 <p>不过这算是远古时代的论文了，也没兴趣再复现一遍了。<em>貌似目前没看到有人讲解过，加不加那个 c 到底有什么区别。</em></p>
 <p>除了这些，我倒是还有一个看法。将 Cho seq2seq，Sutskever seq2seq 和 attention 三者进行比较，我发现 Sutskever seq2seq 并没有做出多大的改进，顶多就是将 simple RNN 替换成了 4-layer LSTM，并使用了逆序的 trick。仔细观察可以发现，<strong>Cho seq2seq 和 attention 一样除了隐藏状态 h 和输入值 x 之后，都还需要一个上下文向量 c。只不过 Cho seq2seq 的 c 是 encoder 的最后一个隐藏状态，而 attention 的 c 是 encoder 各个时间步输出的加权和平均</strong>。而将它们的模型去掉这个上下文 c 就变成了 Sutskever seq2seq。因此我认为由于以前不用 attention 机制，并且 Cho 的 seq2seq 确实会有一些问题，所以大家默认还是使用 Sutskever seq2seq。</p>
 <h2 id="free-running和teacher-forcing">free-running和teacher-forcing</h2>
-<p>按照国（Ge）际（Ren）惯例，结论写在前面。可以看完下面的文章之后，再回来看图，或者边看文章边看图。如下图所示，左边就是 free-running 形式的 seq2seq，是不是很熟悉？因为这是我们经常使用的结构。右图就是 teacher-forcing seq2seq，实际上二者并没有特别大的区别。 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/free-running-seq2seq.gif" alt="free-running-seq2seq" /></div><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/teacher-forcing-seq2seq.gif" alt="teacher-forcing-seq2seq" /></div></div></div></p>
+<p>按照国（Ge）际（Ren）惯例，结论写在前面。可以看完下面的文章之后，再回来看图，或者边看文章边看图。如下图所示，左边就是 free-running 形式的 seq2seq，是不是很熟悉？因为这是我们经常使用的结构。右图就是 teacher-forcing seq2seq，实际上二者并没有特别大的区别。 </p><div class="group-picture"><div class="group-picture-row"><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/free-running-seq2seq.gif" alt="free-running-seq2seq"></div><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/teacher-forcing-seq2seq.gif" alt="teacher-forcing-seq2seq"></div></div></div><p></p>
 <p>大部分教程之中只介绍了如何训练一个 seq2seq 模型，但是并没有讲如何测试。这对于前馈神经网络或者 CNN 来说可能没什么区别，但是对于 seq2seq 来说却有很大区别。</p>
 <p>其实 seq2seq 拥有两种训练方式：<strong>1）</strong>free-running 方法；<strong>2）</strong>teacher-forcing 方法。<strong>其中我们熟知的以及教程上讲的，通常是第一种 free-running</strong>。该方法的思路是，将上一个时间步的预测结果输入进当前时间步的 RNN，以此循环往复，直至预测出结束符 <code>&lt;EOS&gt;</code> 或者循环到一个给定的次数（<em>例如解码 90 次</em>），程序才会结束。而由于第一个时间步的特殊性，所以第一个时间步的输入是起始符 <code>&lt;SOS&gt;</code>。</p>
 <p>但是这其实是比较理想的情况。首先在训练时，target（即 y）是已知的，所以没必要等到预测出 <code>&lt;EOS&gt;</code> 才结束，我们完全可以根据 target 的长度（<em>例如一句话长 20 个字</em>）进行控制。此外由于该方法，RNN 的输入是上一个 RNN 的输出（预测值），所以可以用一句话概括这种情况，即“一步错，步步错”。只要预测错一步，那么后面的部分肯定都是错的。因此使用 <strong>free-running</strong> 训练会产生以下几项问题【<a href="https://machinelearningmastery.com/teacher-forcing-for-recurrent-neural-networks/" target="_blank" rel="noopener">2</a>】：</p>
@@ -386,7 +402,7 @@
 <p>国内关于 beam search 的资料比较少，我搜寻了一番大都数都在知乎，它上面有些许讲解。据<span class="citation" data-cites="Freitag_2017">(Freitag and Al-Onaizan 2017)</span>论文中所述，beam search 首先由<span class="citation" data-cites="graves2012sequence boulanger2013audio">(Graves 2012; Boulanger-Lewandowski, Bengio, and Vincent 2013)</span>为 seq2seq 模型提出，此后在机器翻译领域由<span class="citation" data-cites="sutskever2014sequence">(Sutskever, Vinyals, and Le 2014)</span>首次提出。下面给出 wikipedia 上的描述，这是<a href="https://en.wikipedia.org/wiki/Beam_search" target="_blank" rel="noopener">原链接</a>（<em>需番蔷</em>）有兴趣可以去网站上看全文。</p>
 <blockquote>
 <p>In computer science, beam search is a heuristic search algorithm that explores a graph by expanding the most promising node in a limited set. Beam search is an optimization of best-first search that reduces its memory requirements. Best-first search is a graph search which orders all partial solutions (states) according to some heuristic. But in beam search, only a predetermined number of best partial solutions are kept as candidates.[1] It is thus a greedy algorithm.</p>
-<p>The term &quot;beam search&quot; was coined by Raj Reddy of Carnegie Mellon University in 1977.[2]</p>
+<p>The term "beam search" was coined by Raj Reddy of Carnegie Mellon University in 1977.[2]</p>
 </blockquote>
 <p>相较于 beam search 算法，还有两类算法，即贪婪搜索（greedy search）和穷举搜索（exhaustive search）。<strong>穷举搜索可以确保生成的结果是全局最优的</strong>，但是它的搜索空间非常大，可能是个天文数字。<em>Q：为什么是全局最优的？A：废话，都穷举每一个可能了，还不是全局最优？</em>而<strong>贪婪搜索只能确保局部最优</strong>，它的思想是，在每一个解码步，只取概率最大的那个字。</p>
 <p>需要注意的是，每次取概率最大的字并不是最优的。举个简单的例子。<strong>1）</strong>使用贪婪搜索，取 A，B 两个字，概率分别为 0.5 和 0.6，则 AB 的概率为 0.3；<strong>2）</strong>现在使用 beam search，取 C，D 两个字，概率分别为 0.4 和 0.9，则 AB 的概率为 0.36。可以看到在使用 beam search 算法时，第一个字并没有选择概率最大的 A，而是选择了第二大的 C，但是最终结果却是 beam search 要好。这是由于第二个字的概率是不同的。<em>注意：AC两字的概率之和小于 1，BD 两字的概率之和大于 1。这是因为 BD 二字不在同一个 beam 上，而 AC 在。</em></p>
@@ -426,7 +442,7 @@
 </ol>
 <h1 id="attention">Attention</h1>
 <p>按照国（Ge）际（Ren）惯例，结论写在前面。下面几张图片分别是 Bahdanau attention、Luong attention（global attention + input-feeding） 以及 local attention 的执行步骤。（注：下面两幅图可能画有点问题，2020.08.24 留）</p>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/bahdanau-attention.gif" title="bahdanau attention" alt="bahdanau attention" /></div><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/global-attention.gif" title="global attention" alt="global attention" /></div></div></div>
+<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/bahdanau-attention.gif" title="bahdanau attention" alt="bahdanau attention"></div><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/global-attention.gif" title="global attention" alt="global attention"></div></div></div>
 <p>Attention 机制由 Bahdanau 在 2015 年，首次由<a href="https://arxiv.org/pdf/1409.0473.pdf" target="_blank" rel="noopener" title="Neural Machine Translation by Jointly Learning to Align and Translate"><span class="citation" data-cites="bahdanau2014neural">(Bahdanau, Cho, and Bengio 2014)</span></a>提出，它是机器翻译领域第一篇应用 attention 机制的论文，应该也是在 NLP 领域中，所有应用 attention 机制的论文中最有名的（<em>事实上 attention 机制早就有人提出了</em>）。RNN 领域的第一篇文章为《Recurrent Models of Visual Attention》。</p>
 <p>在此论文中 Attention 机制基于 encoder-decoder 模型（<em>现在已经不止于此了，有多种变体</em>）。本人的理解是 encoder-decoder 模型是一种范式，它主要由两个部分组成，即 encoder 和 decoder。encoder 负责提取输入的特征，decoder 负责运用提取出的特征并且生成（v.）任务所需要的目标。而在 NLP 领域之中，由于输入以及输出都是一段序列，所以又可以被称为 Sequence-to-Sequence 模型，简写为 Seq2Seq。所以 encoder-decoder 其实还可以有其他的变体，例如在图像描述（Image Caption）生成领域，encoder 就是一个 CNN，decoder 是一个 RNN。</p>
 <p><span class="citation" data-cites="xu2015show">(Xu et al. 2015)</span>在论文中提出 <strong>soft/hard attention</strong> 的概念。</p>
@@ -477,7 +493,7 @@ h_{t-1} \to a_t \to c_t \to [y_{t-1}; c_t], h_{t-1} \to h_t \to predict &amp; \t
 <p>在 pytorch 中，一般可以写成像下面的代码一样。其中 context_len 是上下文的长度，一般是 <code>[1, batch_size]</code> 的维度。</p>
 <figure class="highlight reasonml">
 <table>
-<tr>
+<tbody><tr>
 <td class="gutter">
 <pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre>
 </td>
@@ -485,7 +501,7 @@ h_{t-1} \to a_t \to c_t \to [y_{t-1}; c_t], h_{t-1} \to h_t \to predict &amp; \t
 <pre><span class="line">def get<span class="constructor">_mask(<span class="params">self</span>, <span class="params">context_len</span>)</span>:</span><br><span class="line">    max_len = torch.max(context_len)</span><br><span class="line">    mask = <span class="literal">[[<span class="number">1</span> <span class="identifier">for</span> <span class="identifier">_</span> <span class="identifier">in</span> <span class="identifier">range</span>(<span class="identifier">max_len</span>)]</span> for _ <span class="keyword">in</span> context_len]</span><br><span class="line">    mask = torch.<span class="constructor">BoolTensor(<span class="params">mask</span>)</span></span><br><span class="line">    for which_batch, seq_len <span class="keyword">in</span> enumerate(context_len):</span><br><span class="line">        mask<span class="literal">[<span class="identifier">which_batch</span>, : <span class="identifier">seq_len</span>]</span> = <span class="number">0</span></span><br><span class="line">    <span class="keyword">if</span> torch.cuda.is<span class="constructor">_available()</span>:</span><br><span class="line">        mask = mask.cuda<span class="literal">()</span></span><br><span class="line">    return mask</span><br><span class="line"></span><br><span class="line">score.masked<span class="constructor">_fill_(<span class="params">mask</span>=<span class="params">self</span>.<span class="params">get_mask</span>(<span class="params">context_len</span>)</span>, value=<span class="built_in">float</span>('-inf'))</span><br><span class="line">softmax_score = <span class="module-access"><span class="module"><span class="identifier">F</span>.</span></span>softmax(score, dim=<span class="number">2</span>)</span><br></pre>
 </td>
 </tr>
-</table>
+</tbody></table>
 </figure>
 <p>如果你想试验一下，可以自己初始化一下 score 和 context_len。</p>
 </div>
@@ -671,27 +687,7 @@ h_{t-1} \to a_t \to c_t \to [y_{t-1}; c_t], h_{t-1} \to h_t \to predict &amp; \t
           </div>
           
 
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
+
 
         </div>
           
@@ -721,9 +717,8 @@ h_{t-1} \to a_t \to c_t \to [y_{t-1}; c_t], h_{t-1} \to h_t \to predict &amp; \t
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
-      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮" src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
   <div class="site-description" itemprop="description">记录</div>
 </div>
@@ -732,40 +727,40 @@ h_{t-1} \to a_t \to c_t \to [y_{t-1}; c_t], h_{t-1} \to h_t \to predict &amp; \t
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">181</span>
+          <span class="site-state-item-count">182</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-count">32</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">105</span>
+        <span class="site-state-item-count">104</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">247k</span>
+      	<span class="site-state-item-count">250.8k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
 </div>
   <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
     Chat
-  </a>
+  
   </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
@@ -779,10 +774,13 @@ h_{t-1} \to a_t \to c_t \to [y_{t-1}; c_t], h_{t-1} \to h_t \to predict &amp; \t
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+          <a href="http://huaguoguo.gitee.io/" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://smallwhitezzz.gitee.io/blog" title="https://smallwhitezzz.gitee.io/blog" rel="noopener" target="_blank">凯子</a>
         </li>
     </ul>
   </div>
@@ -809,14 +807,14 @@ h_{t-1} \to a_t \to c_t \to [y_{t-1}; c_t], h_{t-1} \to h_t \to predict &amp; \t
 
 <div class="copyright">
   
-  &copy; 2019 – 
+  © 2019 – 
   <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div><!--
 樱花特效 
 最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
@@ -825,15 +823,9 @@ h_{t-1} \to a_t \to c_t \to [y_{t-1}; c_t], h_{t-1} \to h_t \to predict &amp; \t
 于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
 原地址为：https://cangshui.net/2372.html
 -->
-<script>
-	var pathname = window.location.pathname;
-	// pathname == '/' || pathname == '/index.html'
-	if(pathname == '/categories/assorted/timeline/'){
-		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
-	}
-</script>
+
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-<script src="/lib/my-utils.js"></script>
+
 <script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
@@ -858,7 +850,7 @@ h_{t-1} \to a_t \to c_t \to [y_{t-1}; c_t], h_{t-1} \to h_t \to predict &amp; \t
 
         
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -890,20 +882,20 @@ h_{t-1} \to a_t \to c_t \to [y_{t-1}; c_t], h_{t-1} \to h_t \to predict &amp; \t
   </div>
 
   
-  <script src="/lib/anime.min.js"></script>
+  
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
+  
+  
 
 
-<script src="/js/next-boot.js"></script>
 
-<script src="/js/bookmark.js"></script>
+
+
+
+
+
+
 
 
   
@@ -912,7 +904,7 @@ h_{t-1} \to a_t \to c_t \to [y_{t-1}; c_t], h_{t-1} \to h_t \to predict &amp; \t
 
 
   
-<script src="/js/local-search.js"></script>
+
 
 
 
@@ -932,7 +924,41 @@ h_{t-1} \to a_t \to c_t \to [y_{t-1}; c_t], h_{t-1} \to h_t \to predict &amp; \t
 
   
   <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
-  <script>
+  
+<!-- calendar widget -->
+
+
+
+
+<script src="/bundle.js"></script><script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+;
+
+	var pathname = window.location.pathname;
+	// pathname == '/' || pathname == '/index.html'
+	if(pathname == '/categories/assorted/timeline/'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+;
+
       window.addEventListener('load', () => {
       quicklink({
         timeout : 3000,
@@ -940,9 +966,4 @@ h_{t-1} \to a_t \to c_t \to [y_{t-1}; c_t], h_{t-1} \to h_t \to predict &amp; \t
         ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/d5936d3.html',]
       });
       });
-  </script>
-<!-- calendar widget -->
-
-
-</body>
-</html>
+  </script></body></html>

@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
+<!DOCTYPE html><html lang="zh-CN"><head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
@@ -10,25 +8,75 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-<link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
-  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css">
-  <script src="/lib/pace/pace.min.js"></script>
+
+
+  
+  
+  
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="本文虽然理了一遍神经网络的知识点，但还是有些地方不明白，文中对此进行了提问。  大纲    序号 描述的内容     2~4 神经网络和深度学习的发展史。   5 从二元分类开始。   6~10 浅层神经网络的介绍。如神经网络中一些参数代表的意思、激活函数、梯度下降、随机初始化。   11~15 深层神经网络的介绍。正向传播和反向传播中向量化后的计">
+  <meta name="description" content="本文虽然理了一遍神经网络的知识点，但还是有些地方不明白，文中对此进行了提问。
+ 
+ 大纲
+ 
+ 
+ 
+ 序号
+ 描述的内容
+ 
+ 
+ 
+ 
+ 2~4
+ 神经网络和深度学习的发展史。
+ 
+ 
+ 5
+ 从二元分类开始。
+ 
+ 
+ 6~10
+ 浅层神经网络的介绍。如神经网络中一些参数代表的意思、激活函数、梯度下降、随机初始化。
+ 
+ 
+ 11~15
+ 深层神经网络的介绍。正向传播和反向传播中向量化后的计">
 <meta property="og:type" content="article">
 <meta property="og:title" content="对神经网络整体的理解">
 <meta property="og:url" content="https://yan624.github.io/posts/b803ed7e.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="本文虽然理了一遍神经网络的知识点，但还是有些地方不明白，文中对此进行了提问。  大纲    序号 描述的内容     2~4 神经网络和深度学习的发展史。   5 从二元分类开始。   6~10 浅层神经网络的介绍。如神经网络中一些参数代表的意思、激活函数、梯度下降、随机初始化。   11~15 深层神经网络的介绍。正向传播和反向传播中向量化后的计">
+<meta property="og:description" content="本文虽然理了一遍神经网络的知识点，但还是有些地方不明白，文中对此进行了提问。
+ 
+ 大纲
+ 
+ 
+ 
+ 序号
+ 描述的内容
+ 
+ 
+ 
+ 
+ 2~4
+ 神经网络和深度学习的发展史。
+ 
+ 
+ 5
+ 从二元分类开始。
+ 
+ 
+ 6~10
+ 浅层神经网络的介绍。如神经网络中一些参数代表的意思、激活函数、梯度下降、随机初始化。
+ 
+ 
+ 11~15
+ 深层神经网络的介绍。正向传播和反向传播中向量化后的计">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84%E5%8E%9F%E5%9B%BE.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84%E5%9B%BE.jpg">
@@ -50,9 +98,9 @@
 <meta property="article:modified_time" content="2020-08-18T04:03:53.279Z">
 <meta property="article:author" content="朱冲䶮">
 <meta property="article:tag" content="学习笔记">
-<meta property="article:tag" content="simple NN">
 <meta property="article:tag" content="back propagation">
 <meta property="article:tag" content="gradient descent">
+<meta property="article:tag" content="simple NN">
 <meta property="article:tag" content="bias">
 <meta property="article:tag" content="variance">
 <meta property="article:tag" content="regularization">
@@ -75,7 +123,7 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css" />
+
 
 
   <title>对神经网络整体的理解 | 博客</title>
@@ -109,13 +157,13 @@
   </style>
 </noscript>
 
-</head>
+<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css');loadCss('//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css');loadCss('//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_g2j7b1y4jgc.css"></noscript></head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
+<body itemscope="" itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
     <div class="headband"></div>
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏">
@@ -178,7 +226,7 @@
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">181</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">182</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -197,9 +245,7 @@
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
-           placeholder="搜索..." spellcheck="false"
-           type="search" class="search-input">
+    <input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input">
   </div>
   <span class="popup-btn-close">
     <i class="fa fa-times-circle"></i>
@@ -237,40 +283,14 @@
     
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     
     	
         <!-- 弹窗插件 -->
-    		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
-        <script type="text/javascript" src="/lib/spop/spop.min.js"></script>
+    		
+        
         <!--判断此文是否为特殊的文章-->
-        <script>
-          var templateSentence = '这是条不可能出现的弹窗提示。';
-          if('学习笔记' == '学习笔记')
-            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记。';
-          else if('学习笔记' == '4me')
-            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
-          spop({
-            template: templateSentence,
-            group: 'tips',
-            position  : 'bottom-center',
-            style: 'success',
-            autoclose: 5500,
-            onOpen: function () {
-              //这里设置灰色背景色
-            },
-            onClose: function() {
-              //这里可以取消背景色
-              /*spop({
-                template: 'ε = = (づ′▽`)づ',
-                group: 'tips',
-                position  : 'bottom-center',
-                style: 'success',
-                autoclose: 1500
-              });*/
-            }
-          });
-        </script>
+        
     	
     
     	
@@ -294,13 +314,13 @@
 
     <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/b803ed7e.html">
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
       <meta itemprop="name" content="朱冲䶮">
       <meta itemprop="description" content="记录">
     </span>
 
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="博客">
     </span>
       <header class="post-header">
@@ -329,11 +349,11 @@
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
                   <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
                 </span>
                   ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
                   <a href="/categories/AI/dl/" itemprop="url" rel="index"><span itemprop="name">dl</span></a>
                 </span>
             </span>
@@ -357,7 +377,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                <span class="post-meta-item-text">阅读时长 ≈</span>
               <span>14 分钟</span>
             </span>
 
@@ -458,7 +478,7 @@
 \end{pmatrix}
 \]</span></p>
 <figure>
-<img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84%E5%8E%9F%E5%9B%BE.jpg" alt="神经网络架构原图" /><figcaption>神经网络架构原图</figcaption>
+<img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84%E5%8E%9F%E5%9B%BE.jpg" alt="神经网络架构原图"><figcaption>神经网络架构原图</figcaption>
 </figure>
 <h2 id="神经网络中神经元的一些参数的含义特别解释w的含义">神经网络中神经元的一些参数的含义，特别解释w的含义</h2>
 <p>hidden layer和output layer的每个神经元都有几个参数。分别为<span class="math inline">\(w^l\ b^l\)</span>，对照上图，这里的<span class="math inline">\(w^l\)</span>是一个(4,3)的矩阵，<span class="math inline">\(b^l\)</span>是一个(4,1)的向量。解释如下： <span class="math display">\[
@@ -468,7 +488,7 @@
     z^1_3 = a^0_1 * w^1_{31} + a^0_2 * w^1_{32} + a^0_3 * w^1_{33} + b^1_3\\
     z^1_4 = a^0_1 * w^1_{41} + a^0_2 * w^1_{42} + a^0_3 * w^1_{43} + b^1_4\\
 \end{cases}
-\]</span> 可以看到一个公式中有三个w和一个b，一共有四个公式。<span class="math inline">\(w^l_{ij}\)</span>代表第l-1层的第j个神经元到第l层的第i个神经元上的w。如<span class="math inline">\(w^1_{12}\)</span>代表第0层的第2个神经元到第1层的第1个神经元上的w。注意这里的i和j实际上是与直觉相反的，也就是说按直觉来看应该是<span class="math inline">\(w^l_{ji}\)</span>才正常。如果对w的表示有疑惑的，可以看<a href="https://yan624.github.io/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E3%80%8A%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B8%8E%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E3%80%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9A%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95%E4%B8%ADweight%E7%9A%84%E8%A1%A8%E7%A4%BA%E9%97%AE%E9%A2%98.html">这篇</a>。 注意下这里的z是<strong>输出值</strong>，之前一直在说hidden layer中的值是a——激活值，其实a就是将z放到一个<strong>激活函数</strong>（activation function）中得到的一个值，这个激活函数是随用户挑选的，如果不能理解激活函数是什么，就暂时理解为激活函数自己想设成什么就设成什么。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84%E5%9B%BE.jpg" alt="神经网络架构图" /></p>
+\]</span> 可以看到一个公式中有三个w和一个b，一共有四个公式。<span class="math inline">\(w^l_{ij}\)</span>代表第l-1层的第j个神经元到第l层的第i个神经元上的w。如<span class="math inline">\(w^1_{12}\)</span>代表第0层的第2个神经元到第1层的第1个神经元上的w。注意这里的i和j实际上是与直觉相反的，也就是说按直觉来看应该是<span class="math inline">\(w^l_{ji}\)</span>才正常。如果对w的表示有疑惑的，可以看<a href="https://yan624.github.io/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E3%80%8A%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B8%8E%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E3%80%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%9A%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95%E4%B8%ADweight%E7%9A%84%E8%A1%A8%E7%A4%BA%E9%97%AE%E9%A2%98.html">这篇</a>。 注意下这里的z是<strong>输出值</strong>，之前一直在说hidden layer中的值是a——激活值，其实a就是将z放到一个<strong>激活函数</strong>（activation function）中得到的一个值，这个激活函数是随用户挑选的，如果不能理解激活函数是什么，就暂时理解为激活函数自己想设成什么就设成什么。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84%E5%9B%BE.jpg" alt="神经网络架构图"></p>
 <h1 id="神经网络中的输出是怎么计算的">神经网络中的输出是怎么计算的</h1>
 <h2 id="以一个样本为例">以一个样本为例</h2>
 <p>第0层是输入层，所以是不需要计算的，x我本来就有，我还计算什么？对吧。从hidden layer1开始到output layer每一层都需要计算一连串的值，下面给出第一层的计算公式： <span class="math display">\[
@@ -567,8 +587,8 @@
 <p><a href="https://blog.csdn.net/program_developer/article/details/78704224" target="_blank" rel="noopener">神经网络激活函数的作用是什么？</a></p>
 <table>
 <colgroup>
-<col style="width: 57%" />
-<col style="width: 42%" />
+<col style="width: 57%">
+<col style="width: 42%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -579,15 +599,15 @@
 <tbody>
 <tr class="odd">
 <td>sigmoid</td>
-<td><strong>输出层</strong>为<strong>二元分类</strong>时选用。对于隐藏层来说，基本不会用 sigmoid 函数，因为现在已经有更好的激活函数<br /> <strong>缺点</strong>：1）会产生梯度消失/弥散（<strong>注：sigmoid 不会导致梯度爆炸</strong>），详见下面的 Sigmoid 章节；2）不是原点对称；3）计算 exp 较耗时。</td>
+<td><strong>输出层</strong>为<strong>二元分类</strong>时选用。对于隐藏层来说，基本不会用 sigmoid 函数，因为现在已经有更好的激活函数<br> <strong>缺点</strong>：1）会产生梯度消失/弥散（<strong>注：sigmoid 不会导致梯度爆炸</strong>），详见下面的 Sigmoid 章节；2）不是原点对称；3）计算 exp 较耗时。</td>
 </tr>
 <tr class="even">
 <td>tanh</td>
-<td><strong>优点</strong>：1）原点对称；2）比 sigmoid 快。<br /> <strong>缺点</strong>：1）还是有梯度消失</td>
+<td><strong>优点</strong>：1）原点对称；2）比 sigmoid 快。<br> <strong>缺点</strong>：1）还是有梯度消失</td>
 </tr>
 <tr class="odd">
 <td><strong>ReLU</strong></td>
-<td>首选 ReLU，如果 ReLU 不行，再换其他形式的 ReLU。<a href="https://github.com/llSourcell/Which-Activation-Function-Should-I-Use" target="_blank" rel="noopener">观点来源</a><br /> <strong>优点</strong>：1）解决了部分梯度消失问题；2）收敛速度更快。<br /> <strong>缺点</strong>：1）梯度消失的问题没有完全解决，在激活函数（-）部分相当于让神经元死亡，且无法复活。</td>
+<td>首选 ReLU，如果 ReLU 不行，再换其他形式的 ReLU。<a href="https://github.com/llSourcell/Which-Activation-Function-Should-I-Use" target="_blank" rel="noopener">观点来源</a><br> <strong>优点</strong>：1）解决了部分梯度消失问题；2）收敛速度更快。<br> <strong>缺点</strong>：1）梯度消失的问题没有完全解决，在激活函数（-）部分相当于让神经元死亡，且无法复活。</td>
 </tr>
 <tr class="even">
 <td>Leaky ReLU</td>
@@ -629,10 +649,10 @@
 </table>
 <h2 id="sigmoid">Sigmoid</h2>
 <p>上文中我们一直假设使用 sigmoid function 作为激活函数。但是事实上还有很多其他选择，甚至其他的激活函数比sigmoid funtion效果要更好。 上面讲过<span class="math inline">\(\sigma(z)\)</span>特指 sigmoid function，现在我们将表达式改为：<span class="math inline">\(a = g(z)\)</span>，用g来表示激活函数，它可以是线性的，也可以是非线性的。 引用吴恩达在深度学习视频中的话： &gt; 有一个函数总是比 sigmoid function 表现得更好，就是tanh函数或者叫双曲正切函数，公式为：<span class="math inline">\(\frac{e^z-e^{-z}}{e^z+e^{-z}}, \, x\in(-1,1)\)</span>，在数学上实际是<span class="math inline">\(\sigma\)</span>函数平移后的版本。 &gt; <strong>事实证明，如果将<span class="math inline">\(g(z)\)</span>选为 tanh 函数，效果几乎总比 <span class="math inline">\(\sigma(z)\)</span> 函数要好。</strong></p>
-<p>有一个例外是 output layer，它还是使用 sigmoid funtion，因为 output layer 跟普通的分类问题没什么区别，它要得到0~1之间的一个概率。 sigmoid function 的值总是位于 0~1 之间，tanh function 的值总是位于 -1~1 之间。 <div class="note warning"><p>在 CNN 中 ReLu 激活函数可能是首选，但是对于 RNN 来说，首选是 tanh，而不是 relu。</p>
-</div></p>
+<p>有一个例外是 output layer，它还是使用 sigmoid funtion，因为 output layer 跟普通的分类问题没什么区别，它要得到0~1之间的一个概率。 sigmoid function 的值总是位于 0~1 之间，tanh function 的值总是位于 -1~1 之间。 </p><div class="note warning"><p>在 CNN 中 ReLu 激活函数可能是首选，但是对于 RNN 来说，首选是 tanh，而不是 relu。</p>
+</div><p></p>
 <h3 id="缺陷">缺陷</h3>
-<p>Sigmoid 函数将导致梯度消失。梯度的问题，在下面的章节（21 章左右）中会有讲到，但是此部分只讲 sigmoid 函数的梯度消失问题。 首先我们脑中大概有个 sigmoid 函数的图像，这应该很简单。注意函数的两边，我们发现函数曲线在 <span class="math inline">\(-\infty\)</span> 方向越来越接近 0，在 <span class="math inline">\(\infty\)</span> 方向越来越接近 1。以正方向为例，我们可以得知输入 sigmoid 的值越大，sigmoid 的输出值越接近 1。 做一个小小的测试，当输入值为 3 时，输出值为 0.9526，当输入值为 9 时，输出值为 0.9999。可以观察发现，输入值相差巨大的情况下，输出值居然相差无几。当然如果举一个更极端的例子，比如输入 20 和 2000，就会发现输出值都非常接近 1，详见下图。也就是说，输入值相差巨大，但是经过 sigmoid 之后，输出值居然相差无几。<strong>换句话说就是一个值在经过 sigmoid 之后被衰减了</strong>。通俗来讲，我管你是 2000 还是 20000000，只要经过我 sigmoid，你输出就只能是一个接近 1 的数。这样就是被衰减了。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/对神经网络整体的理解/sigmoid梯度消失.jpg" alt="sigmoid梯度消失" /></p>
+<p>Sigmoid 函数将导致梯度消失。梯度的问题，在下面的章节（21 章左右）中会有讲到，但是此部分只讲 sigmoid 函数的梯度消失问题。 首先我们脑中大概有个 sigmoid 函数的图像，这应该很简单。注意函数的两边，我们发现函数曲线在 <span class="math inline">\(-\infty\)</span> 方向越来越接近 0，在 <span class="math inline">\(\infty\)</span> 方向越来越接近 1。以正方向为例，我们可以得知输入 sigmoid 的值越大，sigmoid 的输出值越接近 1。 做一个小小的测试，当输入值为 3 时，输出值为 0.9526，当输入值为 9 时，输出值为 0.9999。可以观察发现，输入值相差巨大的情况下，输出值居然相差无几。当然如果举一个更极端的例子，比如输入 20 和 2000，就会发现输出值都非常接近 1，详见下图。也就是说，输入值相差巨大，但是经过 sigmoid 之后，输出值居然相差无几。<strong>换句话说就是一个值在经过 sigmoid 之后被衰减了</strong>。通俗来讲，我管你是 2000 还是 20000000，只要经过我 sigmoid，你输出就只能是一个接近 1 的数。这样就是被衰减了。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/对神经网络整体的理解/sigmoid梯度消失.jpg" alt="sigmoid梯度消失"></p>
 <p>其次我们又知道对于一个神经网络而言，它一般会叠的很深，四五层都很常见。有了以上两个基础，下面举个具体的例子。 我们知道梯度下降算法的公式是 <span class="math inline">\(W = W - \alpha \Delta W\)</span>，在进行一次梯度下降后，对于 W 来说，<strong>变化</strong>就是 <span class="math inline">\(\alpha \Delta W\)</span>，不严格的说其实只有 <span class="math inline">\(\Delta W\)</span>。然后将新的 W 传入 sigmoid 函数，我们就会发现 <span class="math inline">\(\Delta W\)</span> 被衰减了（为什么会衰减上面已经说过了）。而 <span class="math inline">\(\Delta W\)</span> 其实是<strong>梯度</strong>，也就是说梯度被衰减了，然后再经过多层神经网络之后，梯度被一减再减。 综上所述，梯度在第一层可能很大，在经过几层 sigmoid 函数之后，可能就<strong>减</strong>没了。 <strong>不过，由于 sigmoid 导数的取值范围是 (0, 0.25)，所以梯度也不会很大，但是这仍然架不住多层的神经网络</strong>。</p>
 <h2 id="relu">ReLU</h2>
 <p>但是不管是<span class="math inline">\(\sigma\)</span>或者tanh函数都一个缺点，那就是当z非常大或者非常小时，函数的斜率（导数的梯度）很小。这样会拖慢梯度下降。在机器学习中还有一个函数，即ReLU函数——Rectified Linear Unit，表达式为<span class="math inline">\(max(0, z)\)</span>。 所以在选择激活函数时有一些经验法则： 1. 如果你的输出值是0或1，那么<span class="math inline">\(\sigma\)</span>函数很适合做output layer的激活函数，非二元分类的情况下使用tanh函数几乎都比<span class="math inline">\(\sigma\)</span>优越。藏层单元全用ReLU函数，现在ReLU函数已经是隐藏层的默认激活函数了，大多数人都这么做。 2. 还有个叫Leaky ReLU的函数比ReLU稍微好点，但是目前暂时不是很多人用。</p>
@@ -641,7 +661,7 @@
 Z^L = W^L * A^{L-1} + b^L\\
 t = e^{Z^L}\\
 A^L = \frac{e^{Z^L}}{\sum^n_{i=1}t_i},\quad A^L_i = \frac{t_i}{\sum^n_{i=1}t_i}\\
-\]</span> 多元分类中每一个神经元代表对应标签的概率是多少，并且将概率相加等于1。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/softmax%E4%BE%8B%E5%AD%90.jpg" alt="softmax例子" /></p>
+\]</span> 多元分类中每一个神经元代表对应标签的概率是多少，并且将概率相加等于1。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/softmax%E4%BE%8B%E5%AD%90.jpg" alt="softmax例子"></p>
 <h2 id="为什么需要非线性激活函数">为什么需要非线性激活函数</h2>
 <div class="note info"><p>为什么<span class="math inline">\(w*x+b=z\)</span>之后，需要使用一个激活函数<span class="math inline">\(a = \sigma(z)\)</span>？不能不加这个激活函数吗？权重值乘上输入值加上偏差之后直接输出就行了，何必再带入激活函数中？</p>
 </div>
@@ -652,14 +672,14 @@ A^L = \frac{e^{Z^L}}{\sum^n_{i=1}t_i},\quad A^L_i = \frac{t_i}{\sum^n_{i=1}t_i}\
         a^2 = w^2 * a^1 + b^2 \qquad这是计算第二次的激活值，也没有使用激活函数。\\
         a^2 = w^2 * (w^1 * a^0 + b^1) + b^2 \qquad消掉a^1，两式合并之后\\
         a^2 = w^2 * w^1 * a^0 + w^2 * b^1 + b^2 \qquad合并同类项后\\
-        a^2 = w&#39; * a^0 + b&#39; \qquad由于w和b只是一堆常数，所以将w&#39;代替w^2 * w^1，b&#39;同理
+        a^2 = w' * a^0 + b' \qquad由于w和b只是一堆常数，所以将w'代替w^2 * w^1，b'同理
     \end{array}
 \right. 
-\]</span> 通过上面几个式子发现，我们计算了第一层和第二层之后，结果居然还是一个线性的式子，和最初的输入没有什么差别，也就是说你无论叠了几层hidden layer最后输出还是类似<span class="math inline">\(a^2 = w&#39; * a^0 + b&#39;\)</span>的式子，那么深度学习的意义在哪呢？还不如直接把hidden layer去掉。所以重点就是线性的hidden layer没有任何用处，因为两个线性方程的组合结果还是线性方程。 只有在一个地方可以使用线性方程，那就是回归问题——线性回归。</p>
+\]</span> 通过上面几个式子发现，我们计算了第一层和第二层之后，结果居然还是一个线性的式子，和最初的输入没有什么差别，也就是说你无论叠了几层hidden layer最后输出还是类似<span class="math inline">\(a^2 = w' * a^0 + b'\)</span>的式子，那么深度学习的意义在哪呢？还不如直接把hidden layer去掉。所以重点就是线性的hidden layer没有任何用处，因为两个线性方程的组合结果还是线性方程。 只有在一个地方可以使用线性方程，那就是回归问题——线性回归。</p>
 <h1 id="梯度下降反向传播算法backpropagation解析">梯度下降，反向传播算法——backpropagation解析</h1>
 <div class="note primary"><p>Q：首先虽然全部的过程已经理清，但是还有几个问题：为什么要对w求导？梯度下降的意义是什么？为什么使用梯度下降就可以解决误差问题？ A：（2020.2.21） 1. <a href="https://yan624.github.io/·zcy/AI/ml/梯度下降算法的推导.html">梯度下降算法的推导</a> 2. <a href="https://yan624.github.io/·zcy/AI/深度学习500问笔记.html#词向量乘上权重以及做梯度下降有什么意义">深度学习500问笔记#词向量乘上权重以及做梯度下降有什么意义</a></p>
 </div>
-<p>本节的示例均建立在一个样本的情况下，如果是多个样本经过神经网络，可能略微不同。我看了吴恩达老师的深度学习课程，发现多个样本与一个样本的区别，可能只在偏差b那里会有点不同。 下图以一个三层神经网络为例，说明正向与反向传播过程。由于神经元之间的链接太多会导致混乱，所以下图只链接了第一个神经元。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E4%BD%BF%E7%94%A8%E5%AF%BC%E6%95%B0%E8%A7%A3%E9%87%8A%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95.jpg" alt="使用导数解释反向传播算法" /> 下图略微简化一下反向传播算法中的导数项，并且完成了最后的权重值优化。值得注意的是：如果cost function不同，下面求导结果会略微不同，本文统一使用<span class="math inline">\(cost = \frac{1}{m} * \sum{(\hat{y} - y)^2}\)</span>，但是神经网络一般是使用<strong>交叉熵</strong>——crossentropy，其公式为：<span class="math inline">\(cost = -\frac{1}{m} * (y * log(\hat{y}) + (1 - y) * log(1 - \hat{y}))\)</span>。使用前者，<span class="math inline">\(\frac{\partial{J}}{\partial{z^{(3)}}} = (a^{(3)} - y) * g&#39;(z^{(3)})\)</span>；如果使用后者，<span class="math inline">\(\frac{\partial{J}}{\partial{z^{(3)}}} = a^{(3)} - y\)</span>。可以看到使用两个不同的代价函数，会有不同的结果，这是因为两个函数求导的结果不一样。而两者对表达式<span class="math inline">\(\frac{\partial{J}}{\partial{z^{(3)}}}\)</span>的结果只差了一个<span class="math inline">\(g&#39;(z^{(3)})\)</span>，这完全是巧合罢了。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E7%AE%80%E5%8C%96%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95.jpg" alt="简化反向传播算法" /> <strong>另外再提醒一下自己，这里全是以一个样本为例。但是仅仅这样权重已经是一个二维矩阵了，要是如果传入多个样本，权重岂不是是一个三维矩阵？然而不管传入几个样本权重实际上对于不同的样本是没有变化的，所以还是二维矩阵。</strong></p>
+<p>本节的示例均建立在一个样本的情况下，如果是多个样本经过神经网络，可能略微不同。我看了吴恩达老师的深度学习课程，发现多个样本与一个样本的区别，可能只在偏差b那里会有点不同。 下图以一个三层神经网络为例，说明正向与反向传播过程。由于神经元之间的链接太多会导致混乱，所以下图只链接了第一个神经元。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E4%BD%BF%E7%94%A8%E5%AF%BC%E6%95%B0%E8%A7%A3%E9%87%8A%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95.jpg" alt="使用导数解释反向传播算法"> 下图略微简化一下反向传播算法中的导数项，并且完成了最后的权重值优化。值得注意的是：如果cost function不同，下面求导结果会略微不同，本文统一使用<span class="math inline">\(cost = \frac{1}{m} * \sum{(\hat{y} - y)^2}\)</span>，但是神经网络一般是使用<strong>交叉熵</strong>——crossentropy，其公式为：<span class="math inline">\(cost = -\frac{1}{m} * (y * log(\hat{y}) + (1 - y) * log(1 - \hat{y}))\)</span>。使用前者，<span class="math inline">\(\frac{\partial{J}}{\partial{z^{(3)}}} = (a^{(3)} - y) * g'(z^{(3)})\)</span>；如果使用后者，<span class="math inline">\(\frac{\partial{J}}{\partial{z^{(3)}}} = a^{(3)} - y\)</span>。可以看到使用两个不同的代价函数，会有不同的结果，这是因为两个函数求导的结果不一样。而两者对表达式<span class="math inline">\(\frac{\partial{J}}{\partial{z^{(3)}}}\)</span>的结果只差了一个<span class="math inline">\(g'(z^{(3)})\)</span>，这完全是巧合罢了。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E7%AE%80%E5%8C%96%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95.jpg" alt="简化反向传播算法"> <strong>另外再提醒一下自己，这里全是以一个样本为例。但是仅仅这样权重已经是一个二维矩阵了，要是如果传入多个样本，权重岂不是是一个三维矩阵？然而不管传入几个样本权重实际上对于不同的样本是没有变化的，所以还是二维矩阵。</strong></p>
 <h1 id="随机初始化">※ 随机初始化</h1>
 <p>对于逻辑回归可以将<strong>权重</strong>（weight）全部初始化为0，但是对于神经网络来说，将个权重初始化为0，再使用梯度下降会完全无效。实际上将偏差b初始化为0是可以的，但是权重不行。 解释起来太麻烦，详情看吴恩达深度学习——01神经网络和深度学习第三周浅层神经网络，3.11随机初始化。吴恩达老师解释地还是很清楚的。 可以像以下这样设置weight：<span class="math inline">\(w^l = np.random.randn((2, 2)) * 0.01\)</span>//这可以产生参数为(2, 2)的高斯分布随机变量，后面再成一个很小的数，比如0.01。而对于b，之前说了初始化为0也可以。 对于上式的0.01可能会感到很疑惑，为什么要乘这么一个值。因为我们一般将weight初始化为很小的值，如果weight值很大，最终导致z也很大，那么会落在sigmoid function或者tanh function的平缓部分，会使梯度的写了很小，意味着梯度下降算法会非常慢，所以学习得很慢。</p>
 <h2 id="初始化补充">初始化补充</h2>
@@ -690,12 +710,12 @@ A^L = \frac{e^{Z^L}}{\sum^n_{i=1}t_i},\quad A^L_i = \frac{t_i}{\sum^n_{i=1}t_i}\
 </tr>
 </tbody>
 </table>
-<p>其中&quot;He initialization&quot;最近（论文是2015年的）新搞出来得初始化算法，现在推荐使用此算法进行初始化。</p>
+<p>其中"He initialization"最近（论文是2015年的）新搞出来得初始化算法，现在推荐使用此算法进行初始化。</p>
 <h1 id="核对矩阵维数">核对矩阵维数</h1>
 <p>w的维数应该与dw的维数相同。b和db的维数相同</p>
 <h1 id="为什么使用深度表示why-deep-representations">为什么使用深度表示——Why deep representations</h1>
 <p>引用在2017course深度学习课程上吴恩达老师的话 &gt;深度神经网络能解决很多问题，其实并不需要很大的神经网络，但是得有深度。得有比较多的隐藏层。</p>
-<p>为什么深度神经网络会很好用？ 1. 深度神经网络到底在计算什么？假设现在在做一个人脸识别系统。那么神经网络的第一层会去找照片里的边缘部分；第二层会去识别人类的特征，比如耳朵，鼻子，嘴巴；第三层会去识别不同的人脸。如下图： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E6%B7%B1%E5%BA%A6%E8%A1%A8%E7%A4%BA%E7%9A%84%E7%9B%B4%E8%A7%82%E6%98%A0%E5%83%8F.jpg" alt="深度表示的直观映像" /> 这种识别模式可能难以理解，但是会在卷积神经网络——Convolutional Neural Network中详细解释。 这视频的这一章节有点难以总结，可以看看<a href="https://mooc.study.163.com/learn/2001281002?tid=2001392029&amp;_trace_c_p_k2_=03442699ea78498a873a1dbe2fcfee40#/learn/content?type=detail&amp;id=2001701022" target="_blank" rel="noopener">该视频</a>，总共也就10分钟。</p>
+<p>为什么深度神经网络会很好用？ 1. 深度神经网络到底在计算什么？假设现在在做一个人脸识别系统。那么神经网络的第一层会去找照片里的边缘部分；第二层会去识别人类的特征，比如耳朵，鼻子，嘴巴；第三层会去识别不同的人脸。如下图： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E6%B7%B1%E5%BA%A6%E8%A1%A8%E7%A4%BA%E7%9A%84%E7%9B%B4%E8%A7%82%E6%98%A0%E5%83%8F.jpg" alt="深度表示的直观映像"> 这种识别模式可能难以理解，但是会在卷积神经网络——Convolutional Neural Network中详细解释。 这视频的这一章节有点难以总结，可以看看<a href="https://mooc.study.163.com/learn/2001281002?tid=2001392029&amp;_trace_c_p_k2_=03442699ea78498a873a1dbe2fcfee40#/learn/content?type=detail&amp;id=2001701022" target="_blank" rel="noopener">该视频</a>，总共也就10分钟。</p>
 <h1 id="深层神经网络块">深层神经网络块</h1>
 <p>此视频中画出了深度神经网络的<a href="https://mooc.study.163.com/learn/2001281002?tid=2001392029&amp;_trace_c_p_k2_=03442699ea78498a873a1dbe2fcfee40#/learn/content?type=detail&amp;id=2001701023" target="_blank" rel="noopener">代码流程</a>。</p>
 <h1 id="参数vs超参数">参数VS超参数</h1>
@@ -704,19 +724,19 @@ A^L = \frac{e^{Z^L}}{\sum^n_{i=1}t_i},\quad A^L_i = \frac{t_i}{\sum^n_{i=1}t_i}\
 <p>计算机视觉、其他深度学习领域或者其他学科在早期可能都受过人类大脑的启发，但是近年来人类将神经网络类比为大脑的次数越来越少，也就是说近年来大家都不怎么认为这二者有关联。</p>
 <h1 id="一个simple-nn的例子">一个Simple NN的例子</h1>
 <p><a href="https://github.com/yan624/machine_learning_algorithms/tree/master/simple_neural_network" target="_blank" rel="noopener">Simple Neural Network</a>例子</p>
-<hr />
+<hr>
 <p>本节以下开始利用算法改善深层神经网络 *********************************************************************************************************************************************</p>
 <h1 id="训练开发测试集">训练/开发/测试集</h1>
 <p>训练集——training set 开发集/交叉验证集/验证集——dev set/cross validation set/validation set 测试集——test set</p>
 <p>以前数据量小的时候，比如100个样本、10000个样本。一般将数据按三七分，七份训练集，三份测试集。验证集（以下均称验证集）在训练集中再细分，比如二八分，八份训练集。 但是现在进入大数据时代，验证集和测试集已经没有必要占大量比例了。比如现在有100万的样本，那么验证集和测试集只需要各抽取大约10000的样本即可。也就是98/1/1的比例，甚至验证集和测试集可以再降低占比。</p>
 <h2 id="训练集和验证集测试集分布不匹配">训练集和验证集/测试集分布不匹配</h2>
-<p>如下图，吴恩达老师建议最好让<strong>验证集</strong>和<strong>测试集</strong>匹配，即来自同一源，要都来自网络高清图，要么都来自手机低像素拍摄。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E8%AE%AD%E7%BB%83%E9%9B%86%E5%92%8C%E5%BC%80%E5%8F%91%E9%9B%86%E6%B5%8B%E8%AF%95%E9%9B%86%E5%88%86%E5%B8%83%E4%B8%8D%E5%8C%B9%E9%85%8D.jpg" alt="训练集和验证集测试集分布不匹配" /> 如果直接不设置测试集也是可以的。</p>
+<p>如下图，吴恩达老师建议最好让<strong>验证集</strong>和<strong>测试集</strong>匹配，即来自同一源，要都来自网络高清图，要么都来自手机低像素拍摄。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E8%AE%AD%E7%BB%83%E9%9B%86%E5%92%8C%E5%BC%80%E5%8F%91%E9%9B%86%E6%B5%8B%E8%AF%95%E9%9B%86%E5%88%86%E5%B8%83%E4%B8%8D%E5%8C%B9%E9%85%8D.jpg" alt="训练集和验证集测试集分布不匹配"> 如果直接不设置测试集也是可以的。</p>
 <h1 id="偏差方差">※ 偏差/方差</h1>
 <figure>
-<img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E6%AC%A0%E6%8B%9F%E5%90%88%E5%92%8C%E8%BF%87%E6%8B%9F%E5%90%88%E7%9A%84%E5%86%B3%E7%AD%96%E7%95%8C%E9%99%90.jpg" alt="欠拟合和过拟合的决策界限" /><figcaption>欠拟合和过拟合的决策界限</figcaption>
+<img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E6%AC%A0%E6%8B%9F%E5%90%88%E5%92%8C%E8%BF%87%E6%8B%9F%E5%90%88%E7%9A%84%E5%86%B3%E7%AD%96%E7%95%8C%E9%99%90.jpg" alt="欠拟合和过拟合的决策界限"><figcaption>欠拟合和过拟合的决策界限</figcaption>
 </figure>
-<p>下图讲述了什么是<strong>过拟合</strong>，什么是<strong>欠拟合</strong>，如图所示，该神经网络用于判断一张图片是猫还是狗。 左边。训练样本中的误差为1%，这个值已经很小了，但是在验证集上的误差有11%。这就代表了过拟合，试想一下，在训练集上误差很小是因为你的决策界限划分的很好，在上图中的最后一个例子，整条决策界限画的十分完美，但是我们要知道在验证集中，这样一条完美的线肯定不能再拟合的很好。因为训练集和验证集即使来源于同一份数据，他们之间的分布也是不一样的，你训练出一条完美的曲线，在另一份数据集上肯定是过于完美了。所以导致了下图中验证集上的误差有11%。我们称这种情况为<strong>高方差</strong>——high variance。 中间。训练样本中的误差为15%，这已经不需要再看验证集上的误差了。因为训练集上的误差那么大，肯定是没有拟合好，所以这就是欠拟合，我们称为<strong>高偏差</strong>——high bais。 右边。如果训练集中的误差很高，验证集上的误差更高，那么可以判断为同时具有高方差和高偏差。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/对神经网络整体的理解/欠拟合和过拟合.jpg" alt="欠拟合和过拟合" /></p>
-<p>如果训练集上的误差为0.5%，验证集上的误差为1%。那这就是低方差和低偏差，这是很好结果。 最后一点，以上均建立在人眼判断的误差为0%上以及训练集和验证集来自相同分布。如果人眼判断的误差也高达15%，那么中间的例子也算是可以的结果一般来说<strong>最优误差</strong>也被称为<strong>贝叶斯误差</strong>。（不知道语义解析领域如何定义最优误差？） 关于上图同时高方差和高方差，就如同下图紫色线条的决策界限一般。过渡拟合了数据，但是拟合的数据其实狗屁不通。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E5%90%8C%E6%97%B6%E9%AB%98%E6%96%B9%E5%B7%AE%E5%92%8C%E9%AB%98%E5%81%8F%E5%B7%AE%E6%98%AF%E6%80%8E%E4%B9%88%E6%A0%B7%E7%9A%84.jpg" alt="同时高方差和高偏差是怎么样的" /></p>
+<p>下图讲述了什么是<strong>过拟合</strong>，什么是<strong>欠拟合</strong>，如图所示，该神经网络用于判断一张图片是猫还是狗。 左边。训练样本中的误差为1%，这个值已经很小了，但是在验证集上的误差有11%。这就代表了过拟合，试想一下，在训练集上误差很小是因为你的决策界限划分的很好，在上图中的最后一个例子，整条决策界限画的十分完美，但是我们要知道在验证集中，这样一条完美的线肯定不能再拟合的很好。因为训练集和验证集即使来源于同一份数据，他们之间的分布也是不一样的，你训练出一条完美的曲线，在另一份数据集上肯定是过于完美了。所以导致了下图中验证集上的误差有11%。我们称这种情况为<strong>高方差</strong>——high variance。 中间。训练样本中的误差为15%，这已经不需要再看验证集上的误差了。因为训练集上的误差那么大，肯定是没有拟合好，所以这就是欠拟合，我们称为<strong>高偏差</strong>——high bais。 右边。如果训练集中的误差很高，验证集上的误差更高，那么可以判断为同时具有高方差和高偏差。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/对神经网络整体的理解/欠拟合和过拟合.jpg" alt="欠拟合和过拟合"></p>
+<p>如果训练集上的误差为0.5%，验证集上的误差为1%。那这就是低方差和低偏差，这是很好结果。 最后一点，以上均建立在人眼判断的误差为0%上以及训练集和验证集来自相同分布。如果人眼判断的误差也高达15%，那么中间的例子也算是可以的结果一般来说<strong>最优误差</strong>也被称为<strong>贝叶斯误差</strong>。（不知道语义解析领域如何定义最优误差？） 关于上图同时高方差和高方差，就如同下图紫色线条的决策界限一般。过渡拟合了数据，但是拟合的数据其实狗屁不通。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E5%90%8C%E6%97%B6%E9%AB%98%E6%96%B9%E5%B7%AE%E5%92%8C%E9%AB%98%E5%81%8F%E5%B7%AE%E6%98%AF%E6%80%8E%E4%B9%88%E6%A0%B7%E7%9A%84.jpg" alt="同时高方差和高偏差是怎么样的"></p>
 <h2 id="非理想状态下的偏差方差">非理想状态下的偏差/方差</h2>
 <p>那么当上图的理想状态被打破时（比如一张图片很模糊，连人眼也无法分辨），该如何分辨偏差/方差呢？ 可以通过对比训练集的 error 和 验证集的 error 来确定是否高方差。比如训练集的 error 为 1%，验证集的为 15%，那就是高方差。实际上跟上面的判断方法一样。</p>
 <h2 id="机器学习遇到偏差或方差的解决办法">机器学习遇到偏差或方差的解决办法</h2>
@@ -733,7 +753,7 @@ A^L = \frac{e^{Z^L}}{\sum^n_{i=1}t_i},\quad A^L_i = \frac{t_i}{\sum^n_{i=1}t_i}\
 Q：那么问题又来了，dropout背后的原理是什么？
 A：[深度学习500问笔记#Dropout-系列问题](https://yan624.github.io/·zcy/AI/深度学习500问笔记.html#Dropout-系列问题)（2020.2.21）
 {% endnote %}
-<p>dropout，中文翻译为<strong>随机失活</strong>。 先将神经网络复制一遍，然后dropout会遍历神经网络的每一层，并设置消除神经网络中结点的概率，比如设置0.5。下图的带X的结点就是准备消除的。另外每一层的概率都可以是不同的，如果在某一层不担心会过拟合可以将概率设为1.0，比如输出层。如果觉得某些层比其他层更容易过拟合，可以把那些层的keep-prob设置的更低。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/dropout%E5%BE%85%E5%88%A0%E9%99%A4%E7%BB%93%E7%82%B9.jpg" alt="dropout待删除结点" /> 下图则是消除后的神经网络。将结点的进出的链接全部删除。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E4%BD%BF%E7%94%A8dropout%E5%90%8E%E7%9A%84%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C.jpg" alt="使用dropout后的神经网络" /> dropout使用之后，就让一个样本进入神经网络进行训练。而对于其他样本也如法炮制，需要再进行复制一遍神经网络，并进行dropout。 以上均是逻辑上的做法，接下来讲实际编码该怎么做。</p>
+<p>dropout，中文翻译为<strong>随机失活</strong>。 先将神经网络复制一遍，然后dropout会遍历神经网络的每一层，并设置消除神经网络中结点的概率，比如设置0.5。下图的带X的结点就是准备消除的。另外每一层的概率都可以是不同的，如果在某一层不担心会过拟合可以将概率设为1.0，比如输出层。如果觉得某些层比其他层更容易过拟合，可以把那些层的keep-prob设置的更低。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/dropout%E5%BE%85%E5%88%A0%E9%99%A4%E7%BB%93%E7%82%B9.jpg" alt="dropout待删除结点"> 下图则是消除后的神经网络。将结点的进出的链接全部删除。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E4%BD%BF%E7%94%A8dropout%E5%90%8E%E7%9A%84%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C.jpg" alt="使用dropout后的神经网络"> dropout使用之后，就让一个样本进入神经网络进行训练。而对于其他样本也如法炮制，需要再进行复制一遍神经网络，并进行dropout。 以上均是逻辑上的做法，接下来讲实际编码该怎么做。</p>
 <ol type="1">
 <li>设置一个结点保留的概率——keep-prob，假设为0.8。<span class="math inline">\(d^3 = np.random.randn(a^3.shape[0], a^3.shape[1]) &lt; keep-prob\)</span>，这样会得到一个True和False的数组，但是python中Ture等于1，False等于0。</li>
 <li>让<span class="math inline">\(a^3\)</span>乘上这个向量。<span class="math inline">\(a^3 = np.multiply(a^3, d^3)\)</span>。由于False等于0，所以变相地将<span class="math inline">\(a^3\)</span>中的值失活了。</li>
@@ -756,7 +776,7 @@ A：[深度学习500问笔记#Dropout-系列问题](https://yan624.github.io/·z
 <h2 id="其他正则化方法">其他正则化方法</h2>
 <ol type="1">
 <li>Data augment——数据增强。如果拟合猫咪图片分类器，可以对原图片做一些处理，来增加数据，比如翻转、旋转、随机裁剪等。</li>
-<li>Early stopping。在训练时画出代价的曲线图，x轴为迭代次数，再绘制验证时的误差。然后选择验证误差曲线图中最低点的迭代次数，下次训练时就改用这个迭代次数，或者也可以在程序中写一个条件判断。如下图： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/early%20stopping.jpg" alt="early stopping" /></li>
+<li>Early stopping。在训练时画出代价的曲线图，x轴为迭代次数，再绘制验证时的误差。然后选择验证误差曲线图中最低点的迭代次数，下次训练时就改用这个迭代次数，或者也可以在程序中写一个条件判断。如下图： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/early%20stopping.jpg" alt="early stopping"></li>
 </ol>
 <h1 id="均值归一化输入">均值归一化输入</h1>
 <div class="note info">
@@ -789,7 +809,7 @@ A：[深度学习500问笔记#Dropout-系列问题](https://yan624.github.io/·z
 <h2 id="超参数的取值">超参数的取值</h2>
 <ol type="1">
 <li>随机取值</li>
-<li>从粗糙到精细的策略。首先进行随机取值，发现某个点的效果很好，并且附近的点也很好，然后放大这块区域，进行更密集地取值。下图被圈出来的蓝点就是效果不错的，然后被方框画出一大块区域进行密集地取值或者也可以在这块区域随机取值。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E4%BB%8E%E7%B2%97%E7%B3%99%E5%88%B0%E7%B2%BE%E7%BB%86%E7%9A%84%E5%8F%96%E5%80%BC%E7%AD%96%E7%95%A5.jpg" alt="从粗糙到精细的取值策略" /></li>
+<li>从粗糙到精细的策略。首先进行随机取值，发现某个点的效果很好，并且附近的点也很好，然后放大这块区域，进行更密集地取值。下图被圈出来的蓝点就是效果不错的，然后被方框画出一大块区域进行密集地取值或者也可以在这块区域随机取值。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E4%BB%8E%E7%B2%97%E7%B3%99%E5%88%B0%E7%B2%BE%E7%BB%86%E7%9A%84%E5%8F%96%E5%80%BC%E7%AD%96%E7%95%A5.jpg" alt="从粗糙到精细的取值策略"></li>
 </ol>
 <h2 id="选择合适的范围">选择合适的范围</h2>
 <p><a href="https://mooc.study.163.com/learn/2001281003?tid=2001391036&amp;_trace_c_p_k2_=48e14d97b8284ad0b4e8d32be2605c3d&amp;from=study#/learn/content?type=detail&amp;id=2001701053" target="_blank" rel="noopener">视频1</a> <a href="https://mooc.study.163.com/learn/2001281003?tid=2001391036&amp;_trace_c_p_k2_=48e14d97b8284ad0b4e8d32be2605c3d&amp;from=study#/learn/content?type=detail&amp;id=2001701054" target="_blank" rel="noopener">视频2</a></p>
@@ -804,7 +824,7 @@ A：[深度学习500问笔记#Dropout-系列问题](https://yan624.github.io/·z
 </div>
 <h1 id="选择深度学习框架">选择深度学习框架</h1>
 <figure>
-<img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6%E9%80%89%E6%8B%A9.jpg" alt="深度学习框架选择" /><figcaption>深度学习框架选择</figcaption>
+<img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AF%B9%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%95%B4%E4%BD%93%E7%9A%84%E7%90%86%E8%A7%A3/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6%E9%80%89%E6%8B%A9.jpg" alt="深度学习框架选择"><figcaption>深度学习框架选择</figcaption>
 </figure>
 <h1 id="序列模型rnn">序列模型——RNN</h1>
 <p><a href="https://yan624.github.io/posts/5e27260b.html">传送门</a></p>
@@ -850,9 +870,9 @@ A：[深度学习500问笔记#Dropout-系列问题](https://yan624.github.io/·z
       <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag"># 学习笔记</a>
-              <a href="/tags/simple-NN/" rel="tag"># simple NN</a>
               <a href="/tags/back-propagation/" rel="tag"># back propagation</a>
               <a href="/tags/gradient-descent/" rel="tag"># gradient descent</a>
+              <a href="/tags/simple-NN/" rel="tag"># simple NN</a>
               <a href="/tags/bias/" rel="tag"># bias</a>
               <a href="/tags/variance/" rel="tag"># variance</a>
               <a href="/tags/regularization/" rel="tag"># regularization</a>
@@ -867,8 +887,8 @@ A：[深度学习500问笔记#Dropout-系列问题](https://yan624.github.io/·z
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/posts/617a0ce.html" rel="prev" title="next主题中使用Mathjax">
-      <i class="fa fa-chevron-left"></i> next主题中使用Mathjax
+    <a href="/posts/fe37c4.html" rel="prev" title="《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题">
+      <i class="fa fa-chevron-left"></i> 《神经网络与深度学习》学习笔记：反向传播算法中weight的表示问题
     </a></div>
       <div class="post-nav-item">
     <a href="/posts/f076a4cb.html" rel="next" title="Android开发，使用腾讯云的API请求对象存储中的资源始终失败">
@@ -887,27 +907,7 @@ A：[深度学习500问笔记#Dropout-系列问题](https://yan624.github.io/·z
           </div>
           
 
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
+
 
         </div>
           
@@ -932,14 +932,13 @@ A：[深度学习500问笔记#Dropout-系列问题](https://yan624.github.io/·z
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#大纲"><span class="nav-number">1.</span> <span class="nav-text">大纲</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经网络和深度学习的发展"><span class="nav-number">2.</span> <span class="nav-text">神经网络和深度学习的发展</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经网络和深度学习的关系"><span class="nav-number">3.</span> <span class="nav-text">神经网络和深度学习的关系</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么要深度学习"><span class="nav-number">4.</span> <span class="nav-text">为什么要深度学习</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#从二元分类开始"><span class="nav-number">5.</span> <span class="nav-text">从二元分类开始</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经网络的表示"><span class="nav-number">6.</span> <span class="nav-text">神经网络的表示</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#神经网络中神经元的一些参数的含义特别解释w的含义"><span class="nav-number">6.1.</span> <span class="nav-text">神经网络中神经元的一些参数的含义，特别解释w的含义</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经网络中的输出是怎么计算的"><span class="nav-number">7.</span> <span class="nav-text">神经网络中的输出是怎么计算的</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#以一个样本为例"><span class="nav-number">7.1.</span> <span class="nav-text">以一个样本为例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#向量化计算多个样本"><span class="nav-number">7.2.</span> <span class="nav-text">向量化计算多个样本</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#激活函数"><span class="nav-number">8.</span> <span class="nav-text">※ 激活函数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#sigmoid"><span class="nav-number">8.1.</span> <span class="nav-text">Sigmoid</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#缺陷"><span class="nav-number">8.1.1.</span> <span class="nav-text">缺陷</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#relu"><span class="nav-number">8.2.</span> <span class="nav-text">ReLU</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#softmax回归"><span class="nav-number">8.3.</span> <span class="nav-text">Softmax回归</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么需要非线性激活函数"><span class="nav-number">8.4.</span> <span class="nav-text">为什么需要非线性激活函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#梯度下降反向传播算法backpropagation解析"><span class="nav-number">9.</span> <span class="nav-text">梯度下降，反向传播算法——backpropagation解析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#随机初始化"><span class="nav-number">10.</span> <span class="nav-text">※ 随机初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#初始化补充"><span class="nav-number">10.1.</span> <span class="nav-text">初始化补充</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#核对矩阵维数"><span class="nav-number">11.</span> <span class="nav-text">核对矩阵维数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么使用深度表示why-deep-representations"><span class="nav-number">12.</span> <span class="nav-text">为什么使用深度表示——Why deep representations</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#深层神经网络块"><span class="nav-number">13.</span> <span class="nav-text">深层神经网络块</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参数vs超参数"><span class="nav-number">14.</span> <span class="nav-text">参数VS超参数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经网络和大脑有什么关系"><span class="nav-number">15.</span> <span class="nav-text">神经网络和大脑有什么关系？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一个simple-nn的例子"><span class="nav-number">16.</span> <span class="nav-text">一个Simple NN的例子</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#训练开发测试集"><span class="nav-number">17.</span> <span class="nav-text">训练&#x2F;开发&#x2F;测试集</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#训练集和验证集测试集分布不匹配"><span class="nav-number">17.1.</span> <span class="nav-text">训练集和验证集&#x2F;测试集分布不匹配</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#偏差方差"><span class="nav-number">18.</span> <span class="nav-text">※ 偏差&#x2F;方差</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#非理想状态下的偏差方差"><span class="nav-number">18.1.</span> <span class="nav-text">非理想状态下的偏差&#x2F;方差</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#机器学习遇到偏差或方差的解决办法"><span class="nav-number">18.2.</span> <span class="nav-text">机器学习遇到偏差或方差的解决办法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正则化"><span class="nav-number">19.</span> <span class="nav-text">正则化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么正则化可以防止过拟合"><span class="nav-number">19.1.</span> <span class="nav-text">为什么正则化可以防止过拟合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dropout"><span class="nav-number">19.2.</span> <span class="nav-text">dropout</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#测试"><span class="nav-number">19.2.1.</span> <span class="nav-text">测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#理解dropout"><span class="nav-number">19.2.2.</span> <span class="nav-text">理解dropout</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他正则化方法"><span class="nav-number">19.3.</span> <span class="nav-text">其他正则化方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#均值归一化输入"><span class="nav-number">20.</span> <span class="nav-text">均值归一化输入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#梯度消失和梯度爆炸"><span class="nav-number">21.</span> <span class="nav-text">梯度消失和梯度爆炸</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#解决办法"><span class="nav-number">21.1.</span> <span class="nav-text">解决办法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#梯度检验"><span class="nav-number">22.</span> <span class="nav-text">梯度检验</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#注意事项"><span class="nav-number">22.1.</span> <span class="nav-text">注意事项</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#mini-batch梯度下降"><span class="nav-number">23.</span> <span class="nav-text">Mini-batch梯度下降</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#指数加权平均"><span class="nav-number">24.</span> <span class="nav-text">指数加权平均</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#learning-rate-decay"><span class="nav-number">25.</span> <span class="nav-text">※ Learning rate decay</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#如何为超参数选择范围"><span class="nav-number">26.</span> <span class="nav-text">如何为超参数选择范围</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#超参数的重要程度"><span class="nav-number">26.1.</span> <span class="nav-text">超参数的重要程度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#超参数的取值"><span class="nav-number">26.2.</span> <span class="nav-text">超参数的取值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#选择合适的范围"><span class="nav-number">26.3.</span> <span class="nav-text">选择合适的范围</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#补充用神经网络训练另一个神经网络的超参数"><span class="nav-number">26.4.</span> <span class="nav-text">补充——用神经网络训练另一个神经网络的超参数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#batch-normalization对激活值均值归一化"><span class="nav-number">27.</span> <span class="nav-text">batch normalization——对激活值均值归一化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#代价函数"><span class="nav-number">27.1.</span> <span class="nav-text">代价函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#选择深度学习框架"><span class="nav-number">28.</span> <span class="nav-text">选择深度学习框架</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#序列模型rnn"><span class="nav-number">29.</span> <span class="nav-text">序列模型——RNN</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#大纲"><span class="nav-number">1.</span> <span class="nav-text">大纲</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经网络和深度学习的发展"><span class="nav-number">2.</span> <span class="nav-text">神经网络和深度学习的发展</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经网络和深度学习的关系"><span class="nav-number">3.</span> <span class="nav-text">神经网络和深度学习的关系</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么要深度学习"><span class="nav-number">4.</span> <span class="nav-text">为什么要深度学习</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#从二元分类开始"><span class="nav-number">5.</span> <span class="nav-text">从二元分类开始</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经网络的表示"><span class="nav-number">6.</span> <span class="nav-text">神经网络的表示</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#神经网络中神经元的一些参数的含义特别解释w的含义"><span class="nav-number">6.1.</span> <span class="nav-text">神经网络中神经元的一些参数的含义，特别解释w的含义</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经网络中的输出是怎么计算的"><span class="nav-number">7.</span> <span class="nav-text">神经网络中的输出是怎么计算的</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#以一个样本为例"><span class="nav-number">7.1.</span> <span class="nav-text">以一个样本为例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#向量化计算多个样本"><span class="nav-number">7.2.</span> <span class="nav-text">向量化计算多个样本</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#激活函数"><span class="nav-number">8.</span> <span class="nav-text">※ 激活函数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#sigmoid"><span class="nav-number">8.1.</span> <span class="nav-text">Sigmoid</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#缺陷"><span class="nav-number">8.1.1.</span> <span class="nav-text">缺陷</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#relu"><span class="nav-number">8.2.</span> <span class="nav-text">ReLU</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#softmax回归"><span class="nav-number">8.3.</span> <span class="nav-text">Softmax回归</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么需要非线性激活函数"><span class="nav-number">8.4.</span> <span class="nav-text">为什么需要非线性激活函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#梯度下降反向传播算法backpropagation解析"><span class="nav-number">9.</span> <span class="nav-text">梯度下降，反向传播算法——backpropagation解析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#随机初始化"><span class="nav-number">10.</span> <span class="nav-text">※ 随机初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#初始化补充"><span class="nav-number">10.1.</span> <span class="nav-text">初始化补充</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#核对矩阵维数"><span class="nav-number">11.</span> <span class="nav-text">核对矩阵维数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么使用深度表示why-deep-representations"><span class="nav-number">12.</span> <span class="nav-text">为什么使用深度表示——Why deep representations</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#深层神经网络块"><span class="nav-number">13.</span> <span class="nav-text">深层神经网络块</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参数vs超参数"><span class="nav-number">14.</span> <span class="nav-text">参数VS超参数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#神经网络和大脑有什么关系"><span class="nav-number">15.</span> <span class="nav-text">神经网络和大脑有什么关系？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一个simple-nn的例子"><span class="nav-number">16.</span> <span class="nav-text">一个Simple NN的例子</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#训练开发测试集"><span class="nav-number">17.</span> <span class="nav-text">训练/开发/测试集</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#训练集和验证集测试集分布不匹配"><span class="nav-number">17.1.</span> <span class="nav-text">训练集和验证集/测试集分布不匹配</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#偏差方差"><span class="nav-number">18.</span> <span class="nav-text">※ 偏差/方差</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#非理想状态下的偏差方差"><span class="nav-number">18.1.</span> <span class="nav-text">非理想状态下的偏差/方差</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#机器学习遇到偏差或方差的解决办法"><span class="nav-number">18.2.</span> <span class="nav-text">机器学习遇到偏差或方差的解决办法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正则化"><span class="nav-number">19.</span> <span class="nav-text">正则化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么正则化可以防止过拟合"><span class="nav-number">19.1.</span> <span class="nav-text">为什么正则化可以防止过拟合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dropout"><span class="nav-number">19.2.</span> <span class="nav-text">dropout</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#测试"><span class="nav-number">19.2.1.</span> <span class="nav-text">测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#理解dropout"><span class="nav-number">19.2.2.</span> <span class="nav-text">理解dropout</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他正则化方法"><span class="nav-number">19.3.</span> <span class="nav-text">其他正则化方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#均值归一化输入"><span class="nav-number">20.</span> <span class="nav-text">均值归一化输入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#梯度消失和梯度爆炸"><span class="nav-number">21.</span> <span class="nav-text">梯度消失和梯度爆炸</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#解决办法"><span class="nav-number">21.1.</span> <span class="nav-text">解决办法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#梯度检验"><span class="nav-number">22.</span> <span class="nav-text">梯度检验</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#注意事项"><span class="nav-number">22.1.</span> <span class="nav-text">注意事项</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#mini-batch梯度下降"><span class="nav-number">23.</span> <span class="nav-text">Mini-batch梯度下降</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#指数加权平均"><span class="nav-number">24.</span> <span class="nav-text">指数加权平均</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#learning-rate-decay"><span class="nav-number">25.</span> <span class="nav-text">※ Learning rate decay</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#如何为超参数选择范围"><span class="nav-number">26.</span> <span class="nav-text">如何为超参数选择范围</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#超参数的重要程度"><span class="nav-number">26.1.</span> <span class="nav-text">超参数的重要程度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#超参数的取值"><span class="nav-number">26.2.</span> <span class="nav-text">超参数的取值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#选择合适的范围"><span class="nav-number">26.3.</span> <span class="nav-text">选择合适的范围</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#补充用神经网络训练另一个神经网络的超参数"><span class="nav-number">26.4.</span> <span class="nav-text">补充——用神经网络训练另一个神经网络的超参数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#batch-normalization对激活值均值归一化"><span class="nav-number">27.</span> <span class="nav-text">batch normalization——对激活值均值归一化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#代价函数"><span class="nav-number">27.1.</span> <span class="nav-text">代价函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#选择深度学习框架"><span class="nav-number">28.</span> <span class="nav-text">选择深度学习框架</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#序列模型rnn"><span class="nav-number">29.</span> <span class="nav-text">序列模型——RNN</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="朱冲䶮"
-      src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="朱冲䶮" src="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
   <p class="site-author-name" itemprop="name">朱冲䶮</p>
   <div class="site-description" itemprop="description">记录</div>
 </div>
@@ -948,40 +947,40 @@ A：[深度学习500问笔记#Dropout-系列问题](https://yan624.github.io/·z
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">181</span>
+          <span class="site-state-item-count">182</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-count">32</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">105</span>
+        <span class="site-state-item-count">104</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">247k</span>
+      	<span class="site-state-item-count">250.8k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
 </div>
   <div class="sidebar-button motion-element"><i class="fa fa-comment"></i>
     Chat
-  </a>
+  
   </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
+        <a href="https://www.zhihu.com/people/zhu-yu-er-85" title="zhihu → https://www.zhihu.com/people/zhu-yu-er-85" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://github.com/yan624" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
+        <a href="https://github.com/yan624" title="GitHub → https://github.com/yan624" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i></a>
       </span>
       <span class="links-of-author-item">
         <a href="/noval" title="神奇的按钮 → noval"><i class="fa fa-book fa-fw"></i></a>
@@ -995,10 +994,13 @@ A：[深度学习500问笔记#Dropout-系列问题](https://yan624.github.io/·z
     </div>
     <ul class="links-of-blogroll-list">
         <li class="links-of-blogroll-item">
-          <a href="http://huaguoguo.gitee.io/" title="http:&#x2F;&#x2F;huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少的天下</a>
+          <a href="http://huaguoguo.gitee.io/" title="http://huaguoguo.gitee.io" rel="noopener" target="_blank">葬爱丶华少</a>
         </li>
         <li class="links-of-blogroll-item">
-          <a href="https://lzh0928.gitee.io/" title="https:&#x2F;&#x2F;lzh0928.gitee.io&#x2F;" rel="noopener" target="_blank">Mr.Liu</a>
+          <a href="https://lzh0928.gitee.io/" title="https://lzh0928.gitee.io/" rel="noopener" target="_blank">Mr.Liu</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://smallwhitezzz.gitee.io/blog" title="https://smallwhitezzz.gitee.io/blog" rel="noopener" target="_blank">凯子</a>
         </li>
     </ul>
   </div>
@@ -1025,14 +1027,14 @@ A：[深度学习500问笔记#Dropout-系列问题](https://yan624.github.io/·z
 
 <div class="copyright">
   
-  &copy; 2019 – 
+  © 2019 – 
   <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">朱冲䶮</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> &amp; <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div><!--
 樱花特效 
 最初在某人的博客中看到这个特效，于是在网上搜了一圈，发现还有其他人也用它。它使用起来特别简单，只需要一行代码。
@@ -1041,15 +1043,9 @@ A：[深度学习500问笔记#Dropout-系列问题](https://yan624.github.io/·z
 于是我又搜了一下，貌似发现了源头，好像是一个博主随手写的，并没有发到 github 上。
 原地址为：https://cangshui.net/2372.html
 -->
-<script>
-	var pathname = window.location.pathname;
-	// pathname == '/' || pathname == '/index.html'
-	if(pathname == '/categories/assorted/timeline/'){
-		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
-	}
-</script>
+
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-<script src="/lib/my-utils.js"></script>
+
 <script src="//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <!-- 背景插件 -->
 <script src="https://cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
@@ -1074,7 +1070,7 @@ A：[深度学习500问笔记#Dropout-系列问题](https://yan624.github.io/·z
 
         
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -1106,20 +1102,20 @@ A：[深度学习500问笔记#Dropout-系列问题](https://yan624.github.io/·z
   </div>
 
   
-  <script src="/lib/anime.min.js"></script>
+  
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
+  
+  
 
 
-<script src="/js/next-boot.js"></script>
 
-<script src="/js/bookmark.js"></script>
+
+
+
+
+
+
 
 
   
@@ -1128,7 +1124,7 @@ A：[深度学习500问笔记#Dropout-系列问题](https://yan624.github.io/·z
 
 
   
-<script src="/js/local-search.js"></script>
+
 
 
 
@@ -1148,7 +1144,68 @@ A：[深度学习500问笔记#Dropout-系列问题](https://yan624.github.io/·z
 
   
   <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
-  <script>
+  
+<!-- calendar widget -->
+
+
+
+
+<script src="/bundle.js"></script><script>
+          var templateSentence = '这是条不可能出现的弹窗提示。';
+          if('学习笔记' == '学习笔记')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅为博主的学习笔记。';
+          else if('学习笔记' == '4me')
+            templateSentence = '<h4 class="spop-title">注意</h4>此文仅供个人查阅，对于他人没什么太大的价值。';
+          spop({
+            template: templateSentence,
+            group: 'tips',
+            position  : 'bottom-center',
+            style: 'success',
+            autoclose: 5500,
+            onOpen: function () {
+              //这里设置灰色背景色
+            },
+            onClose: function() {
+              //这里可以取消背景色
+              /*spop({
+                template: 'ε = = (づ′▽`)づ',
+                group: 'tips',
+                position  : 'bottom-center',
+                style: 'success',
+                autoclose: 1500
+              });*/
+            }
+          });
+        ;
+
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+;
+
+	var pathname = window.location.pathname;
+	// pathname == '/' || pathname == '/index.html'
+	if(pathname == '/categories/assorted/timeline/'){
+		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
+	}
+;
+
       window.addEventListener('load', () => {
       quicklink({
         timeout : 3000,
@@ -1156,9 +1213,4 @@ A：[深度学习500问笔记#Dropout-系列问题](https://yan624.github.io/·z
         ignores : [uri => uri.includes('#'),uri => uri === 'https://yan624.github.io/posts/b803ed7e.html',]
       });
       });
-  </script>
-<!-- calendar widget -->
-
-
-</body>
-</html>
+  </script></body></html>
