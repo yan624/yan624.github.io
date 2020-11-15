@@ -23,12 +23,12 @@
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="Transformer位置信息 引用自放弃幻想，全面拥抱Transformer：自然语言处理三大特征抽取器（CNN&#x2F;RNN&#x2F;TF）比较 &gt; NLP 句子中单词之间的相对位置是包含很多信息的，上面提过，RNN 因为结构就是线性序列的，所以天然会将位置信息编码进模型；而CNN的卷积层其实也是保留了位置相对信息的，所以什么也不做问题也不大。但是对于 Transformer 来说，为了能够保留输入">
+  <meta name="description" content="Transformer位置信息 引用自放弃幻想，全面拥抱Transformer：自然语言处理三大特征抽取器（CNN&#x2F;RNN&#x2F;TF）比较  NLP 句子中单词之间的相对位置是包含很多信息的，上面提过，RNN 因为结构就是线性序列的，所以天然会将位置信息编码进模型；而CNN的卷积层其实也是保留了位置相对信息的，所以什么也不做问题也不大。但是对于 Transformer 来说，为了能够保留输入句子">
 <meta property="og:type" content="article">
 <meta property="og:title" content="深度学习算法（四）：Transformer">
 <meta property="og:url" content="https://yan624.github.io/posts/16ad4ed4.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="Transformer位置信息 引用自放弃幻想，全面拥抱Transformer：自然语言处理三大特征抽取器（CNN&#x2F;RNN&#x2F;TF）比较 &gt; NLP 句子中单词之间的相对位置是包含很多信息的，上面提过，RNN 因为结构就是线性序列的，所以天然会将位置信息编码进模型；而CNN的卷积层其实也是保留了位置相对信息的，所以什么也不做问题也不大。但是对于 Transformer 来说，为了能够保留输入">
+<meta property="og:description" content="Transformer位置信息 引用自放弃幻想，全面拥抱Transformer：自然语言处理三大特征抽取器（CNN&#x2F;RNN&#x2F;TF）比较  NLP 句子中单词之间的相对位置是包含很多信息的，上面提过，RNN 因为结构就是线性序列的，所以天然会将位置信息编码进模型；而CNN的卷积层其实也是保留了位置相对信息的，所以什么也不做问题也不大。但是对于 Transformer 来说，为了能够保留输入句子">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E5%9B%9B%EF%BC%89%EF%BC%9ATransformer/transformer_positional_encoding_vectors.png">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E5%9B%9B%EF%BC%89%EF%BC%9ATransformer/transformer_positional_encoding_example.png">
@@ -48,10 +48,10 @@
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E5%9B%9B%EF%BC%89%EF%BC%9ATransformer/transformer_decoding_1.gif">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95%EF%BC%88%E5%9B%9B%EF%BC%89%EF%BC%9ATransformer/transformer_decoding_2.gif">
 <meta property="article:published_time" content="2019-08-07T02:55:15.000Z">
-<meta property="article:modified_time" content="2020-09-05T16:54:48.793Z">
+<meta property="article:modified_time" content="2020-11-04T15:19:18.336Z">
 <meta property="article:author" content="朱冲䶮">
-<meta property="article:tag" content="系列">
 <meta property="article:tag" content="学习笔记">
+<meta property="article:tag" content="系列">
 <meta property="article:tag" content="4me">
 <meta property="article:tag" content="Transformer">
 <meta name="twitter:card" content="summary">
@@ -173,7 +173,7 @@
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">182</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">184</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -235,8 +235,6 @@
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     
     	
-    
-    	
         <!-- 弹窗插件 -->
     		<link rel="stylesheet" type="text/css" href="/lib/spop/spop.min.css">
         <script type="text/javascript" src="/lib/spop/spop.min.js"></script>
@@ -268,6 +266,8 @@
             }
           });
         </script>
+    	
+    
     	
     
     	
@@ -337,7 +337,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-06 00:54:48" itemprop="dateModified" datetime="2020-09-06T00:54:48+08:00">2020-09-06</time>
+                <time title="修改时间：2020-11-04 23:19:18" itemprop="dateModified" datetime="2020-11-04T23:19:18+08:00">2020-11-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -386,15 +386,23 @@
 
       
         <h1 id="transformer位置信息">Transformer位置信息</h1>
-<p>引用自<a href="https://zhuanlan.zhihu.com/p/54743941" target="_blank" rel="noopener">放弃幻想，全面拥抱Transformer：自然语言处理三大特征抽取器（CNN/RNN/TF）比较</a> &gt; NLP 句子中单词之间的相对位置是包含很多信息的，上面提过，RNN 因为结构就是线性序列的，所以天然会将位置信息编码进模型；而CNN的卷积层其实也是保留了位置相对信息的，所以什么也不做问题也不大。但是对于 Transformer 来说，为了能够保留输入句子单词之间的相对位置信息，必须要做点什么。为啥它必须要做点什么呢？因为输入的第一层网络是 Muli-head self attention 层，我们知道，Self attention 会让当前输入单词和句子中任意单词发生关系，然后集成到一个 embedding 向量里，但是当所有信息到了 embedding 后，位置信息并没有被编码进去。所以，Transformer 不像 RNN 或 CNN，必须明确的在输入端将 Positon 信息编码，Transformer 是用<strong>位置函数</strong>来进行位置编码的，而 Bert 等模型则给每个单词一个 <strong>Position embedding</strong>。将单词 embedding 和单词对应的 position embedding 加起来形成单词的输入 embedding，类似上文讲的 ConvS2S 的做法。</p>
+<p>引用自<a href="https://zhuanlan.zhihu.com/p/54743941" target="_blank" rel="noopener">放弃幻想，全面拥抱Transformer：自然语言处理三大特征抽取器（CNN/RNN/TF）比较</a></p>
+<blockquote>
+<p>NLP 句子中单词之间的相对位置是包含很多信息的，上面提过，RNN 因为结构就是线性序列的，所以天然会将位置信息编码进模型；而CNN的卷积层其实也是保留了位置相对信息的，所以什么也不做问题也不大。但是对于 Transformer 来说，为了能够保留输入句子单词之间的相对位置信息，必须要做点什么。为啥它必须要做点什么呢？因为输入的第一层网络是 Muli-head self attention 层，我们知道，Self attention 会让当前输入单词和句子中任意单词发生关系，然后集成到一个 embedding 向量里，但是当所有信息到了 embedding 后，位置信息并没有被编码进去。所以，Transformer 不像 RNN 或 CNN，必须明确的在输入端将 Positon 信息编码，Transformer 是用<strong>位置函数</strong>来进行位置编码的，而 Bert 等模型则给每个单词一个 <strong>Position embedding</strong>。将单词 embedding 和单词对应的 position embedding 加起来形成单词的输入 embedding，类似上文讲的 ConvS2S 的做法。</p>
+</blockquote>
 <h1 id="encoder">encoder</h1>
-<p>从文章<a href="https://zhuanlan.zhihu.com/p/59629215" target="_blank" rel="noopener">《可视化理解Transformer结构》</a>做的总结，此文为另一篇英文文章的翻译版，英文原文地址为 <a href="https://jalammar.github.io/illustrated-transformer/" target="_blank" rel="noopener">The Illustrated Transformer</a>。此外另一篇文章<a href="https://zhuanlan.zhihu.com/p/54356280" target="_blank" rel="noopener">《BERT大火却不懂Transformer？读这一篇就够了》</a>也做了翻译。 Transformer 不同于 RNN，它的输入是独立计算的，输入序列的某个时间步并不依赖其它的时间步。也就是说它可以<strong>并行运算</strong>。 <a id="more"></a></p>
+<p>从文章<a href="https://zhuanlan.zhihu.com/p/59629215" target="_blank" rel="noopener">《可视化理解Transformer结构》</a>做的总结，此文为另一篇英文文章的翻译版，英文原文地址为 <a href="https://jalammar.github.io/illustrated-transformer/" target="_blank" rel="noopener">The Illustrated Transformer</a>。此外另一篇文章<a href="https://zhuanlan.zhihu.com/p/54356280" target="_blank" rel="noopener">《BERT大火却不懂Transformer？读这一篇就够了》</a>也做了翻译。</p>
+<p>Transformer 不同于 RNN，它的输入是独立计算的，输入序列的某个时间步并不依赖其它的时间步。也就是说它可以<strong>并行运算</strong>。 <a id="more"></a></p>
 <h2 id="positional-encoding">Positional Encoding</h2>
-<p>在第一节中讲到，Transformer 天然地不具有句子的<strong>位置</strong>属性，所以我们需要使用一种办法让它拥有句子的位置属性。 为解决这个问题，Transformer 为每个输入的词嵌入增加了一个向量。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_positional_encoding_vectors.png" alt="To give the model a sense of the order of the words, we add positional encoding vectors -- the values of which follow a specific pattern." /></p>
+<p>在第一节中讲到，Transformer 天然地不具有句子的<strong>位置</strong>属性，所以我们需要使用一种办法让它拥有句子的位置属性。</p>
+<p>为解决这个问题，Transformer 为每个输入的词嵌入增加了一个向量。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_positional_encoding_vectors.png" alt="To give the model a sense of the order of the words, we add positional encoding vectors -- the values of which follow a specific pattern." /></p>
 <p>如果假定词嵌入维度为4，那真实的位置编码如下： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_positional_encoding_example.png" alt="A real example of positional encoding with a toy embedding size of 4" /></p>
 <p>位置编码的生成方法在原论文的 section 3.5 中有描述。你可以在 <a href="https://github.com/tensorflow/tensor2tensor/blob/23bd23b9830059fbc349381b70d9429b5c40a139/tensor2tensor/layers/common_attention.py" target="_blank" rel="noopener">get_timing_signal_1d()</a> 函数中看到用于生成位置编码的代码。这并不是生成位置编码的唯一方式。然而，它的优点在于可以扩展到看不见的序列长度（eg. 如果要翻译的句子的长度远长于训练集中最长的句子）。</p>
 <h2 id="self-attention">self-Attention</h2>
-<p>在 <a href="https://www.bilibili.com/video/av46561029?p=60" target="_blank" rel="noopener">此视频</a>（08:30） 中，x 首先要乘一个权重变成 a。但是<strong>实际上是一样的</strong>，视频中的 x 指的是 one hot，而 a 指的是 embedding。然后将 x 分别乘上三个不同的 transformation 来得到<strong>不同</strong>的 q, k, v。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_self_attention_vectors.png" alt="Transformer计算机制" /> &gt; 注意，这些新创建的向量的维度小于词嵌入向量(embedding vector)。它们（新创建的向量）的维度是 <strong>64</strong>，而词嵌入和编码器的输入输出向量的维度是 <strong>512</strong>。它们不必更小，这是一种架构选择，可以使多头注意力(multiheaded attention)计算不变。</p>
+<p>在 <a href="https://www.bilibili.com/video/av46561029?p=60" target="_blank" rel="noopener">此视频</a>（08:30） 中，x 首先要乘一个权重变成 a。但是<strong>实际上是一样的</strong>，视频中的 x 指的是 one hot，而 a 指的是 embedding。然后将 x 分别乘上三个不同的 transformation 来得到<strong>不同</strong>的 q, k, v。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_self_attention_vectors.png" alt="Transformer计算机制" /></p>
+<blockquote>
+<p>注意，这些新创建的向量的维度小于词嵌入向量(embedding vector)。它们（新创建的向量）的维度是 <strong>64</strong>，而词嵌入和编码器的输入输出向量的维度是 <strong>512</strong>。它们不必更小，这是一种架构选择，可以使多头注意力(multiheaded attention)计算不变。</p>
+</blockquote>
 <ol type="1">
 <li>需要从每个编码器的输入向量创建三个向量，即 <strong>Query</strong> 向量，<strong>Key</strong> 向量和 <strong>Value</strong> 向量；
 <ul>
@@ -427,30 +435,49 @@
 <p>在 self_attention 之后要做一次 normalization，此均值归一化步骤的具体算法，详见： - <a href="https://www.cnblogs.com/hellcat/p/9735041.html#_label3_0" target="_blank" rel="noopener">『计算机视觉』各种Normalization层辨析</a> - <a href="https://www.jianshu.com/p/c357c5717a60" target="_blank" rel="noopener">layer normalization 简单总结</a></p>
 <h1 id="decodedr">decodedr</h1>
 <p>在讲解 decoder 之前，看一张动图，了解一下 Transformer 是如何运作的。首先下图中生成了第一个字母 I。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_decoding_1.gif" /></p>
-<p>编码器开始处理输入序列，然后将顶部编码器的输出变换为一组注意力向量 <strong>K_{encdec}</strong> 和 <strong>V_{encdec}</strong>，这些将在每个解码器的“encoder-decoder attention” 层使用，这有助于解码器集中注意力在输入序列的合适位置。 解释一下 <strong><span class="math inline">\(K_{encdec}\)</span></strong> 和 <strong><span class="math inline">\(V_{encdec}\)</span></strong> 的具体用法，<strong>在 encoder 中的 self-attention 会使用到 <span class="math inline">\(Q_{self-attention}\)</span>、<span class="math inline">\(K_{self-attention}\)</span>、<span class="math inline">\(V_{self-attention}\)</span> 三个向量，但是它们实际上是输入值 x 的三份拷贝再乘上各自不同的权重矩阵得来。对于 decoder 的 self-attention 与 encoder 的如出一撤，但是对于 encoder-decoder attention 却有点不一样。<span class="math inline">\(Q_{encoder-decoder \, attention}\)</span> 还是 x 的拷贝乘上一个权重矩阵，但是 <span class="math inline">\(K_{encoder-decoder \, attention}\)</span> 和 <span class="math inline">\(V_{encoder-decoder \, attention}\)</span> 分别是 <span class="math inline">\(K_{encdec}\)</span> 和 <span class="math inline">\(V_{encdec}\)</span> 乘上各自的权重矩阵。</strong>以上所有向量所乘的权重矩阵均可以由你自己随机初始化产生。<strong>博主注</strong>：以上 QKV 的用法均分析自 pytorch 官方实现版本的源码。 接着下面的 gif 完成了余下的步骤。Transformer 将之前输出的 I 当做下一个时间步的输入，又走了一遍 decoder。以此循环往复，直到输出一个结束标记 <code>&lt;EOS&gt;</code> 才结束循环。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_decoding_2.gif" /></p>
-<p>其中 decoder 中的 self-attention 与 encoder 的 self-attenntion 有所区别，一个就是上上段黑体的内容。另外一个是 decoder 的 self-attention 是 <strong>masked multi-head attention</strong>，而 encoder 的仅仅是 <strong>multi-head attention</strong>。详见下面 <strong>padding mask/sequence mask</strong> 一节。 <strong>博主注</strong>：这样一来似乎对于 decoder 来说并不能实现并行运算。<strong>博主注 2</strong>：查找资料后，发现是可以的。即如同 encoder 一样，直接将 target 整个序列输入 decoder 中解码。但是这样一来，在做 self-attention 时，提取某个单词的特征时会关注到之后的单词，所以就用到了 sequence mask，这样一来预测的数据其实也倍增了，具体看下面的例子就懂了。不过在模型是实际工作时，由于没有 target 还是只能一次预测一个。 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">我**</span><br><span class="line">我是*</span><br><span class="line">我是鱼</span><br></pre></td></tr></table></figure> 原本的数据只是“我是鱼”，但是由于避免预测时关注到后面的信息，所以只能将部分掩盖住。这其实相当于一个单词一个单词的预测，传统模型中，在预测玩“我”之后，需要输入“是”再预测“鱼”。而 Transformer 中，直接输入“<code>&lt;SOS&gt;</code>我是”，再预测“鱼”，其实这两种方式一模一样。同时为了做到输入“<code>&lt;SOS&gt;</code>”预测“我”，输入“<code>&lt;SOS&gt;</code>我”预测“是”等操作，所以需要拷贝多份数据。</p>
+<p>编码器开始处理输入序列，然后将顶部编码器的输出变换为一组注意力向量 <strong><span class="math inline">\(K_{encdec}\)</span></strong> 和 <strong><span class="math inline">\(V_{encdec}\)</span></strong>，这些将在每个解码器的“encoder-decoder attention” 层使用，这有助于解码器集中注意力在输入序列的合适位置。</p>
+<p>解释一下 <strong><span class="math inline">\(K_{encdec}\)</span></strong> 和 <strong><span class="math inline">\(V_{encdec}\)</span></strong> 的具体用法，<strong>在 encoder 中的 self-attention 会使用到 <span class="math inline">\(Q_{self-attention}\)</span>、<span class="math inline">\(K_{self-attention}\)</span>、<span class="math inline">\(V_{self-attention}\)</span> 三个向量，但是它们实际上是输入值 x 的三份拷贝再乘上各自不同的权重矩阵得来。对于 decoder 的 self-attention 与 encoder 的如出一撤，但是对于 encoder-decoder attention 却有点不一样。<span class="math inline">\(Q_{encoder-decoder \, attention}\)</span> 还是 x 的拷贝乘上一个权重矩阵，但是 <span class="math inline">\(K_{encoder-decoder \, attention}\)</span> 和 <span class="math inline">\(V_{encoder-decoder \, attention}\)</span> 分别是 <span class="math inline">\(K_{encdec}\)</span> 和 <span class="math inline">\(V_{encdec}\)</span> 乘上各自的权重矩阵。</strong>以上所有向量所乘的权重矩阵均可以由你自己随机初始化产生。<strong>博主注</strong>：以上 QKV 的用法均分析自 pytorch 官方实现版本的源码。</p>
+<p>接着下面的 gif 完成了余下的步骤。Transformer 将之前输出的 I 当做下一个时间步的输入，又走了一遍 decoder。以此循环往复，直到输出一个结束标记 <code>&lt;EOS&gt;</code> 才结束循环。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_decoding_2.gif" /></p>
+<p>其中 decoder 中的 self-attention 与 encoder 的 self-attenntion 有所区别，一个就是上上段黑体的内容。另外一个是 decoder 的 self-attention 是 <strong>masked multi-head attention</strong>，而 encoder 的仅仅是 <strong>multi-head attention</strong>。详见下面 <strong>padding mask/sequence mask</strong> 一节。</p>
+<p><strong>博主注</strong>：这样一来似乎对于 decoder 来说并不能实现并行运算。<strong>博主注 2</strong>：查找资料后，发现是可以的。即如同 encoder 一样，直接将 target 整个序列输入 decoder 中解码。但是这样一来，在做 self-attention 时，提取某个单词的特征时会关注到之后的单词，所以就用到了 sequence mask，这样一来预测的数据其实也倍增了，具体看下面的例子就懂了。不过在模型是实际工作时，由于没有 target 还是只能一次预测一个。 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">我**</span><br><span class="line">我是*</span><br><span class="line">我是鱼</span><br></pre></td></tr></table></figure></p>
+<p>原本的数据只是“我是鱼”，但是由于避免预测时关注到后面的信息，所以只能将部分掩盖住。这其实相当于一个单词一个单词的预测，传统模型中，在预测玩“我”之后，需要输入“是”再预测“鱼”。而 Transformer 中，直接输入“<code>&lt;SOS&gt;</code>我是”，再预测“鱼”，其实这两种方式一模一样。同时为了做到输入“<code>&lt;SOS&gt;</code>”预测“我”，输入“<code>&lt;SOS&gt;</code>我”预测“是”等操作，所以需要拷贝多份数据。</p>
 <h1 id="generatorthe-final-linear-and-softmax-layer">Generator:The Final Linear and Softmax Layer</h1>
-<p>如何将其转换为一个单词？这就是最后 Softmax 层和线性层的工作了。 线性层是一个简单的全连接神经网络，它将解码器堆叠(decoder stack)产生的向量映射到一个巨大的向量（词汇表的大小，原来的向量大小是词嵌入的大小）中去，这个向量称为 logits 向量。 Softmax 层将这些分数转化为概率(全部为正数，加起来为 1.0)。选择具有最高概率的单元，并将与其相关的单词作为本时间步的输出。</p>
+<p>如何将其转换为一个单词？这就是最后 Softmax 层和线性层的工作了。</p>
+<p>线性层是一个简单的全连接神经网络，它将解码器堆叠(decoder stack)产生的向量映射到一个巨大的向量（词汇表的大小，原来的向量大小是词嵌入的大小）中去，这个向量称为 logits 向量。</p>
+<p>Softmax 层将这些分数转化为概率(全部为正数，加起来为 1.0)。选择具有最高概率的单元，并将与其相关的单词作为本时间步的输出。</p>
 <h1 id="mask">mask</h1>
 <p>padding mask 是为了防止填充值 PAD 具有意义。在反向传播时，如果不做 padding mask，框架会对 PAD 求导。但是我们认为其实 PAD 是一个没有意义的填充符，所以最好不要对它求梯度。</p>
 <p>sequence mask 是为了遮住来自未来的信息，使得 decoder 在解码时，不会依赖未来的信息。</p>
 <p><strong>题外话</strong>：对于 Transformer，无论 encoder 还是 decoder 都要做 mask（很多对 Transformer 的总结文章都只提到了 decoder 部分的 Masked Multihead Self-Attention，实际上 encoder 也要做一次）。mask 一共分为两种，Transformer 中 decoder 的 mask 指的是 <strong>sequence mask</strong>，encoder 中的 mask 指的是 <strong>padding mask</strong>，对于其他网络模型也是类似的道理。可以查阅参考资料 1，2。</p>
 <h2 id="padding-mask">padding mask</h2>
-<p>以 Transformer 为例，在 encoder 中的每次执行 scaled dot-product 后都要做一次 padding mask。由于我们要让序列的长度相等以便做向量化操作，所以必不可少地需要对输入序列进行<strong>截断</strong>或<strong>补零</strong>（即填充 PAD，PAD 不一定非要是 0）操作。所以 padding mask 的<strong>主要目的</strong>是使得 self-attention 不要过多的关注向量中的 PAD 符号。 在进行了解 padding mask 的做法之前，首先简单地了解一下 Transformer 的大致流程：sequence id -&gt; embedding -&gt; multi-head attention(<strong>scaled dot-product</strong> -&gt; softmax -&gt; softmax <span class="math inline">\(\times\)</span> value) -&gt; add &amp; norm -&gt; decoder。而 mask 的<strong>具体操作是</strong>：在执行 scaled dot-product <strong>后</strong>，将序列中补零位置所对应的隐藏状态置为 -INF，使得序列经过 softmax 层时，<strong>该对应位置所计算出的概率为 0</strong>。（<em>mask 操作貌似在 Transformer 中是可选的。</em>） 总得来说，padding mask 是为了神经网络忽略 PAD 的信息。例如，虽然模型可以学习到 PAD 这个填充符是没有意义的，但是<strong>在做 attention 时，PAD 所在的这些位置依然有一些 attention score，而我们要的是 0 score</strong>。所以有必要引入一个 <strong>mask 矩阵</strong>，在做 attention 之前，先把 PAD 所在位置的值置为一个极小值，甚至是无穷小（由于 attention 需要经过 softmax，softmax 需要求 e 的次方，要想 e 的某次方为 0，只能使得值为无穷小才可以，这是一个数学问题）。 以下举一些不是 Transformer 的例子： 1. <strong>对于 Embedding 层来说，符号 PAD 的词向量也是无意义的</strong>，所以也可以将它的所在位置的值（即词向量）置为 0，使得它无意义。也就是说我们需要引入一个 mask 矩阵，它的大小与词表一样，所有位置初始化为 1，但是 PAD 所在的位置置为 0。然后每次在使用词向量时，乘上这个 mask。不过这样略微麻烦，所幸的是 Pytorch 为我们提供了实现。只需要简单地填入 <code>padding_idx</code> 即可，值为 PAD 对应的索引，索引取决于你的项目。可以看到这非常简单，但是这只是让 PAD 这个词向量无意义并且不计算它的梯度而已。在经过复杂的计算之后 PAD 所在位置的值依旧会变为非 0，而对于其他层想要做到使得 PAD 无意义就没那么简单了。 <figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nn.<span class="constructor">Embedding(<span class="params">vocab_size</span>, <span class="params">embed_dim</span>, <span class="params">padding_idx</span>=PAD_ID)</span></span><br></pre></td></tr></table></figure> 2. <strong>对于 LSTM 等的时序特征提取层</strong>可以使用 <code>torch.nn.utils.rnn.pack_padded_sequence(input, lengths, batch_first=False, enforce_sorted=True)</code> 函数将 embedding 打包。然后将这个打包后的 embedding 输入 LSTM，之后使用 <code>torch.nn.utils.rnn.pad_packed_sequence(sequence, batch_first=False, padding_value=0.0, total_length=None)</code> 函数，将 LSTM 的输出还原。 以以下代码为例，其中第一行代码的 <code>lengths</code> 必须是 pytorch 的 tensor，它代表着你输入序列的长度，比如你输入 [['你', '好', '.'], ['我', '是', '鱼', '.']]，那么 <code>lengths</code> 就是 <code>torch.Tensor([3, 4])</code>。<code>batch_first</code> 默认是 False，这是因为 LSTM 的输入要求是 (S, N, *)，其中 S 是序列长度，N 是批次大小。<code>batch_first</code> 顾名思义就是输入的序列的第一个维度是否为批次大小，显然为了使得 pytorch 内部兼容，<code>batch_first</code> 默认为 <code>False</code> 是最好的。一般我都懒得对序列进行长度上的排序，所以将 <code>enforce_sorted</code> 设置为 False。 <figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># lstm padding mask</span><br><span class="line">packed_feature = nn.utils.rnn.pack<span class="constructor">_padded_sequence(<span class="params">embed</span>, <span class="params">lengths</span>, <span class="params">enforce_sorted</span>=False)</span></span><br><span class="line">packed_bi_feature, hx = self.lstm(packed_feature)</span><br><span class="line">bi_feature, lengths_unpacked = nn.utils.rnn.pad<span class="constructor">_packed_sequence(<span class="params">packed_bi_feature</span>)</span></span><br></pre></td></tr></table></figure> 3. <strong>如果有些层</strong>不像 LSTM 一样只能按照时间步读取，而是<strong>可以批量处理时序数据</strong>，那么可以使用 mask 矩阵。<strong>目前我就知道一个 Transformer 需要用到 mask 矩阵。</strong>你可以通过句子的长度自行创建。 4. 最后<strong>在计算 loss 时</strong>也需要 padding mask，这可以使用 <code>torch.masked_select(input, mask, out=None)</code> 进行计算。 <!-- more --></p>
+<p>以 Transformer 为例，在 encoder 中的每次执行 scaled dot-product 后都要做一次 padding mask。由于我们要让序列的长度相等以便做向量化操作，所以必不可少地需要对输入序列进行<strong>截断</strong>或<strong>补零</strong>（即填充 PAD，PAD 不一定非要是 0）操作。所以 padding mask 的<strong>主要目的</strong>是使得 self-attention 不要过多的关注向量中的 PAD 符号。</p>
+<p>在进行了解 padding mask 的做法之前，首先简单地了解一下 Transformer 的大致流程：sequence id -&gt; embedding -&gt; multi-head attention(<strong>scaled dot-product</strong> -&gt; softmax -&gt; softmax <span class="math inline">\(\times\)</span> value) -&gt; add &amp; norm -&gt; decoder。而 mask 的<strong>具体操作是</strong>：在执行 scaled dot-product <strong>后</strong>，将序列中补零位置所对应的隐藏状态置为 -INF，使得序列经过 softmax 层时，<strong>该对应位置所计算出的概率为 0</strong>。（<em>mask 操作貌似在 Transformer 中是可选的。</em>）</p>
+<p>总得来说，padding mask 是为了神经网络忽略 PAD 的信息。例如，虽然模型可以学习到 PAD 这个填充符是没有意义的，但是<strong>在做 attention 时，PAD 所在的这些位置依然有一些 attention score，而我们要的是 0 score</strong>。所以有必要引入一个 <strong>mask 矩阵</strong>，在做 attention 之前，先把 PAD 所在位置的值置为一个极小值，甚至是无穷小（由于 attention 需要经过 softmax，softmax 需要求 e 的次方，要想 e 的某次方为 0，只能使得值为无穷小才可以，这是一个数学问题）。</p>
+<p>以下举一些不是 Transformer 的例子：</p>
+<ol type="1">
+<li><strong>对于 Embedding 层来说，符号 PAD 的词向量也是无意义的</strong>，所以也可以将它的所在位置的值（即词向量）置为 0，使得它无意义。也就是说我们需要引入一个 mask 矩阵，它的大小与词表一样，所有位置初始化为 1，但是 PAD 所在的位置置为 0。然后每次在使用词向量时，乘上这个 mask。不过这样略微麻烦，所幸的是 Pytorch 为我们提供了实现。只需要简单地填入 <code>padding_idx</code> 即可，值为 PAD 对应的索引，索引取决于你的项目。可以看到这非常简单，但是这只是让 PAD 这个词向量无意义并且不计算它的梯度而已。在经过复杂的计算之后 PAD 所在位置的值依旧会变为非 0，而对于其他层想要做到使得 PAD 无意义就没那么简单了。 <figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nn.<span class="constructor">Embedding(<span class="params">vocab_size</span>, <span class="params">embed_dim</span>, <span class="params">padding_idx</span>=PAD_ID)</span></span><br></pre></td></tr></table></figure></li>
+<li><strong>对于 LSTM 等的时序特征提取层</strong>可以使用 <code>torch.nn.utils.rnn.pack_padded_sequence(input, lengths, batch_first=False, enforce_sorted=True)</code> 函数将 embedding 打包。然后将这个打包后的 embedding 输入 LSTM，之后使用 <code>torch.nn.utils.rnn.pad_packed_sequence(sequence, batch_first=False, padding_value=0.0, total_length=None)</code> 函数，将 LSTM 的输出还原。 以以下代码为例，其中第一行代码的 <code>lengths</code> 必须是 pytorch 的 tensor，它代表着你输入序列的长度，比如你输入 [['你', '好', '.'], ['我', '是', '鱼', '.']]，那么 <code>lengths</code> 就是 <code>torch.Tensor([3, 4])</code>。<code>batch_first</code> 默认是 False，这是因为 LSTM 的输入要求是 (S, N, *)，其中 S 是序列长度，N 是批次大小。<code>batch_first</code> 顾名思义就是输入的序列的第一个维度是否为批次大小，显然为了使得 pytorch 内部兼容，<code>batch_first</code> 默认为 <code>False</code> 是最好的。一般我都懒得对序列进行长度上的排序，所以将 <code>enforce_sorted</code> 设置为 False。 <figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># lstm padding mask</span><br><span class="line">packed_feature = nn.utils.rnn.pack<span class="constructor">_padded_sequence(<span class="params">embed</span>, <span class="params">lengths</span>, <span class="params">enforce_sorted</span>=False)</span></span><br><span class="line">packed_bi_feature, hx = self.lstm(packed_feature)</span><br><span class="line">bi_feature, lengths_unpacked = nn.utils.rnn.pad<span class="constructor">_packed_sequence(<span class="params">packed_bi_feature</span>)</span></span><br></pre></td></tr></table></figure></li>
+<li><strong>如果有些层</strong>不像 LSTM 一样只能按照时间步读取，而是<strong>可以批量处理时序数据</strong>，那么可以使用 mask 矩阵。<strong>目前我就知道一个 Transformer 需要用到 mask 矩阵。</strong>你可以通过句子的长度自行创建。</li>
+<li>最后<strong>在计算 loss 时</strong>也需要 padding mask，这可以使用 <code>torch.masked_select(input, mask, out=None)</code> 进行计算。</li>
+</ol>
 <h2 id="sequence-mask">sequence mask</h2>
-<p>使得 decoder 无法看见未来的信息，其 attention 只能关注解码单词之前的单词，而不能依赖后面未解码出来的单词。这是因为在解码时，由于传统一次只预测一个单词的工作方式太低下，所以 Transformer 的作者做了改进。一次直接将 target 序列输入 decoder，这是可行的，loss 函数还是像往常一样计算即可。例如： <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">我**</span><br><span class="line">我是*</span><br><span class="line">我是鱼</span><br></pre></td></tr></table></figure> 在传统模型中，在预测玩“我”、“是”之后，需要输入“是”再预测“鱼”。而 Transformer 中，直接输入“<code>&lt;SOS&gt;</code>我是”，再预测“鱼”，其实这两种方式一模一样。同时为了做到输入“<code>&lt;SOS&gt;</code>”预测“我”，输入“<code>&lt;SOS&gt;</code>我”预测“是”等操作，所以需要拷贝多份数据。 说白了这个 sequence mask 矩阵其实就是一个 <span class="math inline">\(L \times L\)</span> 维的矩阵，L 代表一条语句的长度。其内容是，下三角以及对角线全部为 1，代表需要这部分信息。上三角全部为 0，代表这部分信息被掩盖。</p>
+<p>使得 decoder 无法看见未来的信息，其 attention 只能关注解码单词之前的单词，而不能依赖后面未解码出来的单词。这是因为在解码时，由于传统一次只预测一个单词的工作方式太低下，所以 Transformer 的作者做了改进。一次直接将 target 序列输入 decoder，这是可行的，loss 函数还是像往常一样计算即可。例如： <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">我**</span><br><span class="line">我是*</span><br><span class="line">我是鱼</span><br></pre></td></tr></table></figure></p>
+<p>在传统模型中，在预测玩“我”、“是”之后，需要输入“是”再预测“鱼”。而 Transformer 中，直接输入“<code>&lt;SOS&gt;</code>我是”，再预测“鱼”，其实这两种方式一模一样。同时为了做到输入“<code>&lt;SOS&gt;</code>”预测“我”，输入“<code>&lt;SOS&gt;</code>我”预测“是”等操作，所以需要拷贝多份数据。</p>
+<p>说白了这个 sequence mask 矩阵其实就是一个 <span class="math inline">\(L \times L\)</span> 维的矩阵，L 代表一条语句的长度。其内容是，下三角以及对角线全部为 1，代表需要这部分信息。上三角全部为 0，代表这部分信息被掩盖。</p>
 <h2 id="参考资料">参考资料</h2>
 <ol type="1">
 <li><a href="https://luozhouyang.github.io/transformer/" target="_blank" rel="noopener">Transformer模型的PyTorch实现</a></li>
 <li><a href="https://www.jianshu.com/p/405bc8d041e0" target="_blank" rel="noopener">The Transformer</a></li>
 <li><a href="https://www.zhihu.com/question/320615749/answer/1080485410" target="_blank" rel="noopener">深度学习中的 mask 到底是什么意思？</a></li>
 <li><a href="https://www.zhihu.com/question/264501322/answer/433784349" target="_blank" rel="noopener">变长序列怎么使用 mini-batch SGD 训练？</a></li>
-<li><a href="https://www.zhihu.com/question/347366108/answer/832932755" target="_blank" rel="noopener">transformer 在解码的时候，用的 k 和 v 的向量来自于编码器的输出还是来自于之前解码输出的值呢？</a> # Beam Search 在最后的 softmax 层直接输出了概率最大的位置的单词，这叫做<strong>贪婪解码——greedy decoding</strong>。 另一种更合理的解码方式叫做 <strong>Beam Search</strong>。</li>
+<li><a href="https://www.zhihu.com/question/347366108/answer/832932755" target="_blank" rel="noopener">transformer 在解码的时候，用的 k 和 v 的向量来自于编码器的输出还是来自于之前解码输出的值呢？</a> # Beam Search 在最后的 softmax 层直接输出了概率最大的位置的单词，这叫做<strong>贪婪解码——greedy decoding</strong>。另一种更合理的解码方式叫做 <strong>Beam Search</strong>。</li>
 </ol>
 <h1 id="如何实战">如何实战</h1>
 <p>以上就是 Transformer 的原理，但是在实际写代码的过程中，可能还会有各种各样的问题。本节将讨论如何更科（Xuan）学（Xue）地使用 Transformer。</p>
 <h1 id="最后总结">最后总结</h1>
-<p>刚才（2020.1.23）在知乎上看到一篇文章，感觉对 RNN 和 Transformer 的区别总结的不错，所以记录下。 RNN 通过把已经处理过的所有单词的表征与当前正在处理的单词的表征结合起来以此来捕捉整句话的含义，而 Transformer 的 self-attention 机制则是将所有相关单词的含义通过 weighted sum 来充当我们当前正在处理的单词的表征。 参考文章（“从宏观视角看自注意力机制”一节）：</p>
+<p>刚才（2020.1.23）在知乎上看到一篇文章，感觉对 RNN 和 Transformer 的区别总结的不错，所以记录下。</p>
+<p>RNN 通过把已经处理过的所有单词的表征与当前正在处理的单词的表征结合起来以此来捕捉整句话的含义，而 Transformer 的 self-attention 机制则是将所有相关单词的含义通过 weighted sum 来充当我们当前正在处理的单词的表征。</p>
+<p>参考文章（“从宏观视角看自注意力机制”一节）：</p>
 <ul>
 <li><a href="https://zhuanlan.zhihu.com/p/54356280" target="_blank" rel="noopener">BERT大火却不懂Transformer？读这一篇就够了</a></li>
 </ul>
@@ -512,8 +539,8 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E7%B3%BB%E5%88%97/" rel="tag"># 系列</a>
               <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag"># 学习笔记</a>
+              <a href="/tags/%E7%B3%BB%E5%88%97/" rel="tag"># 系列</a>
               <a href="/tags/4me/" rel="tag"># 4me</a>
               <a href="/tags/Transformer/" rel="tag"># Transformer</a>
           </div>
@@ -605,23 +632,23 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">182</span>
+          <span class="site-state-item-count">184</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-count">22</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">104</span>
+        <span class="site-state-item-count">117</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">250.8k</span>
+      	<span class="site-state-item-count">255.6k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>

@@ -150,7 +150,7 @@
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">182</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">184</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -205,6 +205,231 @@
 
           <div class="content index posts-expand">
             
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    
+    	
+    
+    	
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/bbe4416e.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/bbe4416e.html" class="post-title-link" itemprop="url">机器学习中各种优化算法的学习笔记</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-04 12:23:32" itemprop="dateCreated datePublished" datetime="2020-04-04T12:23:32+08:00">2020-04-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-08-12 01:08:00" itemprop="dateModified" datetime="2020-08-12T01:08:00+08:00">2020-08-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/ml/" itemprop="url" rel="index"><span itemprop="name">ml</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>9.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="note info"><p><a href="https://ruder.io/optimizing-gradient-descent/index.html" target="_blank" rel="noopener">各种优化算法比较</a></p>
+</div>
+<h1 id="mini-batch梯度下降">Mini-batch梯度下降</h1>
+<div class="note primary"><p>Q：为什么Mini-batch比普通的梯度下降快？</p>
+</div>
+<p>普通的梯度下降——vanilla gradient descent，是将整个数据集同时做运算，而Mini-batch梯度下降算法是以一组为单位，分别进行梯度下降，所有组执行完毕后再进行下一次迭代。</p>
+<p>假设现在有m个样本。 <span class="math display">\[
+X = \begin{pmatrix}x^1&amp;x^2&amp;x^3&amp;\cdots&amp;x^m\end{pmatrix}\\
+Y = \begin{pmatrix}y^1&amp;y^2&amp;x^3&amp;\cdots&amp;y^m\end{pmatrix}\\
+\]</span> 使用Mini-batch，假设每1000个样本为一组： <span class="math display">\[
+X = \begin{pmatrix}\underbrace{x^1\cdots x^{1000}}_{X^{\{1\}}} &amp; \underbrace{x^{1001}\cdots x^{2000}}_{X^{\{2\}}} &amp; \cdots&amp;\underbrace{\cdots x^m}_{X^{\{t\}}}\end{pmatrix}\\
+Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} &amp; \underbrace{y^{1001}\cdots y^{2000}}_{Y^{\{2\}}} &amp; \cdots&amp;\underbrace{\cdots y^m}_{Y^{\{t\}}}\end{pmatrix}\\
+\]</span> 如果使用代码实现就是类似下面这样的伪代码： <figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> t = <span class="number">1</span>, ..., t</span><br><span class="line">	forwardprop <span class="keyword">on</span> X^&#123;t&#125;</span><br><span class="line">	compute cost</span><br><span class="line">	backprop <span class="keyword">to</span> compute grads</span><br><span class="line">	update weights <span class="keyword">and</span> bais</span><br></pre></td></tr></table></figure> for循环完成之后就完成了神经网络的第一次迭代。
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/bbe4416e.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    
+    	
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/81299a9a.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/81299a9a.html" class="post-title-link" itemprop="url">SLU论文笔记（？-2019）</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-03-30 16:43:30" itemprop="dateCreated datePublished" datetime="2020-03-30T16:43:30+08:00">2020-03-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-10-05 23:07:41" itemprop="dateModified" datetime="2020-10-05T23:07:41+08:00">2020-10-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="a-bi-model-based-rnn-semantic-frame-parsing-model-for-intent-detection-and-slot-filling">A Bi-model based RNN Semantic Frame Parsing Model for Intent Detection and Slot Filling</h1>
+<ul>
+<li><a href="https://yan624.github.io/·论文笔记/dilogue/task-oriented/59.%20A%20Bi-model%20based%20RNN%20Semantic%20Frame%20Parsing%20Model%20for%20Intent%20Detection%20and%20Slot%20Filling.html">论文笔记</a></li>
+<li>对 ID 和 SF 分别使用了一个模型，但是<strong>共享了两个模型的隐藏状态</strong>。论文中描述到，以前的研究经常把 ID 和 SF 当做两个任务来看，这次这篇论文将这两个任务交互起来当做一个任务看待。但是我认为 joint model 这种做法已经是将两个任务当做一个看了，毕竟它们共享了一个模型提取的信息，只是在解码时使用不同的模型。
+<ul>
+<li>对于解码而言，论文分别使用了 encoder-decoder 结构和纯粹的 encoder 结构，最后是 encoder-decoder 性能略高。
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/81299a9a.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   
@@ -380,7 +605,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-17 23:13:04" itemprop="dateModified" datetime="2020-07-17T23:13:04+08:00">2020-07-17</time>
+                <time title="修改时间：2020-11-11 21:54:48" itemprop="dateModified" datetime="2020-11-11T21:54:48+08:00">2020-11-11</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -388,7 +613,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/assorted/" itemprop="url" rel="index"><span itemprop="name">assorted</span></a>
+                  <a href="/categories/coding/" itemprop="url" rel="index"><span itemprop="name">coding</span></a>
                 </span>
             </span>
 
@@ -996,7 +1221,7 @@ OPT(i) =
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-01 20:15:05" itemprop="dateModified" datetime="2020-11-01T20:15:05+08:00">2020-11-01</time>
+                <time title="修改时间：2020-11-11 21:09:32" itemprop="dateModified" datetime="2020-11-11T21:09:32+08:00">2020-11-11</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1025,7 +1250,7 @@ OPT(i) =
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>14 分钟</span>
+              <span>13 分钟</span>
             </span>
 
         </div>
@@ -1037,15 +1262,15 @@ OPT(i) =
     <div class="post-body" itemprop="articleBody">
 
       
-          <div class="note info"><p>由于该领域涉及太多知识点，本文只涉及 task-oriented dialog system 四大组件之二：SLU 和 DST。其余两项组件 DPL 以及 NLG 将在 <a href="#">xxxx</a> 中给出。值得一提的是，这四个组件也可以两两融合，正好可以分成两部分。但是由 DST 和 DPL 组成的对话管理（Dialog Manager，DM）只能拆开来讲了。</p>
-<p>本文是系列文章的第一篇，一开始架构文章的时候没有考虑太多，所以本文到目前为止只是写了一些基础的内容。更多的内容可以移驾<a href="https://yan624.github.io/posts/4ec51203.html">任务完成型对话系统论文调研（二）</a>。</p>
+          <div class="note info"><p>由于该领域涉及太多知识点，本文只涉及 task-oriented dialog system 四大组件之二：SLU 和 DST。其余两项组件 DPL 以及 NLG 将在 <a href="#">xxxx</a> 中给出。</p>
+<p>本文是系列文章的第一篇，一开始架构文章的时候没有考虑太多，所以到目前为止只是写了一些基础的内容，并且逻辑有点乱。更多的内容可以移驾<strong><a href="https://yan624.github.io/posts/4ec51203.html">任务完成型对话系统论文调研（二）</a></strong>。</p>
 </div>
 <h1 id="任务完成型对话系统">任务完成型对话系统</h1>
 <div class="note info"><p>可以点击后面对应的按钮，找到各领域论文的详细对比。<a class="btn" href="#slu论文对比"><i class="fa fa-"></i>SLU 论文对比</a><a class="btn" href="#dst论文对比"><i class="fa fa-"></i>DST 论文对比</a></p>
 </div>
-<p>任务完成型对话系统（Task-oriented Dialog System，<strong>TODS</strong>），业界中也被称为口语对话系统（Spoken Dialogue System，<strong>SDS</strong>），下统称为 SDS。</p>
+<p>任务完成型对话系统（Task-oriented Dialog System，<strong>TODS</strong>），业界中也被称为口语对话系统（Spoken Dialogue System，<strong>TODS</strong>），下统称为 TODS。</p>
 <h2 id="对话状态与对话动作">对话状态与对话动作</h2>
-<p>对话状态（Dialog State，DS）是 SDS 中的一个重要概念，它贯穿了整个系统的运行过程。要理解 SDS，首先需要从对话状态入手。</p>
+<p>对话状态（Dialog State，DS）是 TODS 中的一个重要概念，它贯穿了整个系统的运行过程。要理解 TODS，首先需要从对话状态入手。</p>
 <p>对话状态也被称为信念状态（Belief State），或者对话信念状态（Dialog Belief State）。这是历史问题，一般在以前的模型中称之为对话状态，现在使用深度学习技术的对话系统称之为信念状态<span class="citation" data-cites="zhang2020recent">(Zhang et al. 2020)</span>，不过如今二者混用，下称之为对话状态。<span class="citation" data-cites="zhang2020recent">(Zhang et al. 2020)</span>认为<strong>对话状态由槽值对组成</strong>，以此呈现用户的目的。</p>
 <div class="note danger"><p>需要在此说明很重要的一点。狭义来讲，对话状态指的是槽值对。但是广义来讲，对话状态可以保存任意的对象，因为对话状态的本意是对话的<strong>状态</strong>。例如还可以保存当前对话的轮数、历史的对话动作、是否已经完成用户的任务、是否超时、根据当前轮所拥有的信息从数据库中查到的一系列数据项等。</p>
 </div>
@@ -1054,242 +1279,6 @@ OPT(i) =
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/e0902c9c.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    
-    	
-    
-    	
-    
-
-    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/7f2adc4d.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/7f2adc4d.html" class="post-title-link" itemprop="url">【算法设计题目】回溯法</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-02-25 17:10:04" itemprop="dateCreated datePublished" datetime="2020-02-25T17:10:04+08:00">2020-02-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-24 13:24:47" itemprop="dateModified" datetime="2020-09-24T13:24:47+08:00">2020-09-24</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/algorithm/" itemprop="url" rel="index"><span itemprop="name">algorithm</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.9k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="总结">总结</h1>
-<ol type="1">
-<li>二维搜索
-<ul>
-<li>题 79 和 1219 是在二维上的回溯法，但是做法与普通的回溯法是一样的，只不过搜索路径变成了“上下左右”。</li>
-<li>题 79 和 1219 相对来说比较简单，返回的分别是“是否合法”和“黄金的总量”，二者都不需要做额外的处理。对于后者来说也只需要在递归的同时进行累加即可。</li>
-</ul></li>
-<li>返回所有可能解：递归时返回部分解或者初始化一个全局列表保存所有可能解
-<ul>
-<li>题 131 要求返回“解的所有可能”，那么在递归的时候势必需要返回部分解，最后拼装成全部解。<strong>或者可以初始化一个全局的列表用于保存解，但是我没这么做过。</strong></li>
-</ul></li>
-<li>返回所有可能解中的<strong>最优解</strong>：初始化一个全局列表保存所有可能解
-<ul>
-<li>题 1593 符合。但是并不需要真的保存所有解，尝试完一种情况后，删除即可。这样可以节省空间。</li>
-</ul></li>
-<li>返回所有可能解中的<strong>任意解</strong>：初始化一个<code>exit</code>变量，当找到一个解时立即设置为<code>True</code>，并在其他的代码中加入判断，当且仅当<code>exit==False</code>时，程序才继续进行</li>
-</ol>
-<h1 id="算法思想">算法思想</h1>
-<p>比较全的概念：<a href="https://leetcode-cn.com/tag/backtracking/" target="_blank" rel="noopener">leetcode 回溯法概念</a>。</p>
-<p>大白话：世界上有许多只能执行穷举法的问题，并且事实上，这些问题解决办法中<strong>不存在除穷尽搜索之外的方法</strong>。如果问题满足以下的描述就可以使用回溯法：算法从根节点开始枚举所有的解，深度优先。如果当前节点（可以是叶节点，也可以是非叶节点）的解不满足条件，则“回溯”返回，尝试上一个节点的其他子节点，即其他的可能解。直到找到一个可行解，或者找到所有可行解。可以将回溯法的搜索空间想象成一棵 n 叉树。</p>
-<p><strong>回溯法基本特征</strong>：</p>
-<ol type="1">
-<li>节点是用<strong>深度优先搜索</strong>的方法生成的；</li>
-<li>不需要存储整棵搜索树（事实上，连树都没必要存储，只需要记录路径即可）
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/posts/7f2adc4d.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    
-    	
-    
-    	
-    
-
-    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/5d62ca7e.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/5d62ca7e.html" class="post-title-link" itemprop="url">记录：hexo next主题的改动</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-02-21 13:35:10" itemprop="dateCreated datePublished" datetime="2020-02-21T13:35:10+08:00">2020-02-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-01 20:00:01" itemprop="dateModified" datetime="2020-11-01T20:00:01+08:00">2020-11-01</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/assorted/" itemprop="url" rel="index"><span itemprop="name">assorted</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/assorted/hexo/" itemprop="url" rel="index"><span itemprop="name">hexo</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><a href="https://github.com/theme-next/hexo-theme-next" target="_blank" rel="noopener">hexo-theme-next</a> 主题的 github 页面中提到了如何更新的问题。他们在教程中指出，在更新的过程中可能会遇到 <code>Commit your changes or stash them before you can merge</code> 的问题，其实这就是代表你修改过主题中的源码文件，所以不允许对 next 主题进行更新。这里的源码文件指代比较宽泛，大家最常改的应该是 <code>_config.yml</code> 文件。以下将介绍如何处理：</p>
-<ol type="1">
-<li><strong>前置操作：将自己的博客复制一份，以免修改错。</strong></li>
-<li>使用 <code>git pull</code> 命令，如果出现问题，那就代表你更新成功了。如果出现了上面的 <code>Commit your changes or stash them before you can merge</code> 问题，那就往下看。</li>
-<li>使用 <code>git stash</code>，重置自己的修改，再次使用 <code>git pull</code>，更新完成。</li>
-<li><strong>hexo next 主题更新完成后，就代表你之前所有的自定义配置都没了。</strong>所以接下来的内容是将它们改回来。</li>
-</ol>
-<p>博客的路径如下所示： <figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">D:.</span><br><span class="line">├─blog</span><br><span class="line">│  ├─.deploy_git</span><br><span class="line">│  ├─node_modules</span><br><span class="line">│  ├─...</span><br><span class="line">│  ├─source</span><br><span class="line">│  ├─themes</span><br><span class="line">│  │  ├─next</span><br><span class="line">│  │  │  ├─source</span><br><span class="line">│  │  │  ├─...</span><br><span class="line">│  │  │  ├─_config.yml</span><br><span class="line">│  ├─_config.yml</span><br><span class="line">├─blog_bakup</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/posts/5d62ca7e.html#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1380,23 +1369,23 @@ OPT(i) =
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">182</span>
+          <span class="site-state-item-count">184</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-count">22</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">104</span>
+        <span class="site-state-item-count">117</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">250.8k</span>
+      	<span class="site-state-item-count">255.6k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>

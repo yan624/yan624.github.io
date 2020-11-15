@@ -23,24 +23,25 @@
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="CREDIT: Coarse-to-Fine Sequence Generation for Dialogue State Tracking 提出了 CoaRsE-to-fine DIalogue state Tracking(CREDIT) 模型。以前的方法通常将对话状态定义为独立的三元组 \((domain, slot, value)\)，而本文将 DST 转化为序列生成问题。">
+  <meta name="description" content="Multi-Domain Dialogue State Tracking based on State Graph 总结论文笔记   现有工作的缺陷：1）以往的工作只是简单地将前一轮的对话状态和当前语句拼接起来，然后使用 self-attention 建立它们之间的关联。但是 attention 机制也许会关注到一些不合理（spurious）的连接，导致进行错误的推理。2）CSFN-DST">
 <meta property="og:type" content="article">
 <meta property="og:title" content="DST论文笔记（2020—至今）">
 <meta property="og:url" content="https://yan624.github.io/posts/5286f9c6.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="CREDIT: Coarse-to-Fine Sequence Generation for Dialogue State Tracking 提出了 CoaRsE-to-fine DIalogue state Tracking(CREDIT) 模型。以前的方法通常将对话状态定义为独立的三元组 \((domain, slot, value)\)，而本文将 DST 转化为序列生成问题。">
+<meta property="og:description" content="Multi-Domain Dialogue State Tracking based on State Graph 总结论文笔记   现有工作的缺陷：1）以往的工作只是简单地将前一轮的对话状态和当前语句拼接起来，然后使用 self-attention 建立它们之间的关联。但是 attention 机制也许会关注到一些不合理（spurious）的连接，导致进行错误的推理。2）CSFN-DST">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E8%AE%BA%E6%96%87/%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90%E5%9E%8B%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/CREDIT%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84.png">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E8%AE%BA%E6%96%87/%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90%E5%9E%8B%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/Graph-DST.png">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E8%AE%BA%E6%96%87/%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90%E5%9E%8B%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/DST-SC%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84.png">
+<meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E8%AE%BA%E6%96%87/%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90%E5%9E%8B%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/CREDIT%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84.png">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E8%AE%BA%E6%96%87/%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90%E5%9E%8B%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/CSFN-DST%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84.png">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E8%AE%BA%E6%96%87/%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90%E5%9E%8B%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/CSFN-DST%E5%8D%8F%E8%AE%AE%E5%9B%BE.png">
 <meta property="article:published_time" content="2020-10-11T11:18:16.000Z">
-<meta property="article:modified_time" content="2020-10-30T01:41:51.473Z">
+<meta property="article:modified_time" content="2020-11-11T09:58:57.808Z">
 <meta property="article:author" content="朱冲䶮">
 <meta property="article:tag" content="4me">
 <meta property="article:tag" content="SDT">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E8%AE%BA%E6%96%87/%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90%E5%9E%8B%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/CREDIT%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84.png">
+<meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E8%AE%BA%E6%96%87/%E4%BB%BB%E5%8A%A1%E5%AE%8C%E6%88%90%E5%9E%8B%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/Graph-DST.png">
 
 <link rel="canonical" href="https://yan624.github.io/posts/5286f9c6.html">
 
@@ -158,7 +159,7 @@
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">182</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">184</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -286,7 +287,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-10-30 09:41:51" itemprop="dateModified" datetime="2020-10-30T09:41:51+08:00">2020-10-30</time>
+                <time title="修改时间：2020-11-11 17:58:57" itemprop="dateModified" datetime="2020-11-11T17:58:57+08:00">2020-11-11</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -311,14 +312,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.4k</span>
+              <span>7.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
+              <span>6 分钟</span>
             </span>
 
         </div>
@@ -330,61 +331,163 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="credit-coarse-to-fine-sequence-generation-for-dialogue-state-tracking">CREDIT: Coarse-to-Fine Sequence Generation for Dialogue State Tracking</h1>
-<div class="note info"><p>提出了 CoaRsE-to-fine DIalogue state Tracking(CREDIT) 模型。以前的方法通常将对话状态定义为独立的三元组 <span class="math inline">\((domain, slot, value)\)</span>，而本文将 DST 转化为序列生成问题。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/CREDIT模型架构.png" alt="CREDIT模型架构" /></p>
+        <h1 id="multi-domain-dialogue-state-tracking-based-on-state-graph">Multi-Domain Dialogue State Tracking based on State Graph</h1>
+<div class="tabs" id="graph-dst"><ul class="nav-tabs"><li class="tab active"><a href="#graph-dst-1">总结</a></li><li class="tab"><a href="#graph-dst-2">论文笔记</a></li></ul><div class="tab-content"><div class="tab-pane active" id="graph-dst-1"><div class="note primary">
+<ol type="1">
+<li>
+现有工作的缺陷：1）以往的工作只是简单地将前一轮的对话状态和当前语句拼接起来，然后使用 self-attention 建立它们之间的关联。但是 attention 机制也许会关注到一些不合理（spurious）的连接，导致进行错误的推理。2）CSFN-DST 与该文工作类似，但是它只考虑了一个边（edge）类型以及三个节点类型——领域（domain）、槽位（slot）、域槽对（domain, slot）。
+</li>
+<li>
+研究目的：处理对话状态中元素的共现信息以及人类对话中过渡联系（transition relation）。<em>作者没细说过渡是什么意思，我认为是在对话过程中不同领域之间的切换。</em>
+</li>
+<li>
+研究目标/贡献：1）提出 dialog state graph；2）处理多关系图中有许多相异槽值的问题。
+</li>
+<li>
+研究方法：1）图中领域和槽值相连，边为槽位。此外如果两个领域同时出现在对话状态中，则创建一条共现边（co-occurrence edge）以此连接二者。2）使用 relational-GCN 编码对话状态图。3）图中几乎所有槽值用“placeholder”填充。
+</li>
+<li>
+<strong>总结</strong>：<strong>1）</strong>CSFN-DST 只是构建了普通的边，其代表领域和槽位之间的关联，而 Grapha-DST 的边特指槽位。<strong>2）</strong>经过消融实验验证了，状态图确实可以为基于 self-attention 的隐式图（implicit graph）提供补充信息。<strong>3）</strong>该文的做法比之 CSFN-DST 确实要先进不少，从表面上看二者是在做相同的工作，但是我认为实际上 CSFN-DST 编码的是协议图，而 Graph-DST 编码的是图结构的对话状态。<strong>4）</strong><em>这样构建图，是否做了太多的约束？导致数据处理困难？</em>
+</li>
+</ol>
+<p>
+<strong>模型架构</strong> 将 Transformer 最后几层的 Block 改为 graph-enhanced Transformer（该文实验中为最后一层）。其运算流程为（如图右侧所示）：将前一层的输出作为当前层 multi-head self-attention 的输入进而得到上下文输出，此时使用捕获的 [SLOT] 特征填充槽值，然后使用 relational-GCN 更新节点表征，并且将更新后的表征与 [slot] 融合，最后再继续执行 Transformer block 的其余流程。通过上述算法将 relational-GCN 融入 Transformer 中。<strong>需要注意的是，输入中也包含了对话状态，它们以串联的形式连接，其主要实现对话状态和当前语句的交互，而对话状态图主要捕获模式之间的联系。</strong>二者的作用不同。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/Graph-DST.png" alt="Graph-DST" />
+</p>
+</div></div><div class="tab-pane" id="graph-dst-2"><div class="note info">
+<p>
+经过对 DST 中 open-vocabulary 分类的调研，发现现存的方法通常将前一轮的对话状态和对话历史拼接在一起，然后将其作为 BiTransformer 的输入。模型依靠 Transformer 的 self-attention 机制将对话状态和语句中的符号连接起来。但是 <strong>attention 机制也许会关注到一些不合理的连接，导致后续错误的推理</strong>。
+</p>
+<p>
+<strong>本文提出构造一个对话状态图（dialog state graph）</strong>，其中，来自上一轮对话状态中的领域（domain）、槽位（slot）以及槽值（value）被恰当地连接起来。如图 1 所示。使用 relational-GCN（关系图卷积网络）对其编码，它被融合进 Transformer 中。
+</p>
 </div>
+<p>可以将基于双向 self-attention 的方法视为图神经网络，其输入为每个字符都相连的图，无论它们在对话历史还是对话状态中，都可以通过 attention 被连接。<strong>这种图结构对 DST 很有帮助</strong>。例如，给定酒店“名称”和出租车“出发地”的图，attention 可以建立它们之间的关联，这意味着我们可以推断出出租车的出发地和酒店名称相同。<strong>然而，这些图通常拥有太过庞大的节点，使得 attention 连接两个与对话无关的节点，从而导致进行错误推理</strong>。</p>
+<p>图需要同时表现对话历史中的关键实体和强连接（strong connection）。强连接不仅依赖于对话历史，还需要引导对话。例如，用户预订火车的时候，通常还会预订酒店，前者通常自然地会影响后者（自然过渡，natural transition）。因此应该在图中创建强连接。<strong><font color='red'>这种自然过渡在以往的研究常常被忽略</font></strong>。</p>
+<p>在构建图时，除了必要的节点（node）和边（edge），还创建了一种特殊的边。如果有两个领域同时出现在对话状态中，则创建一种共现边（co-occurrence edge）以此连接二者。</p>
+<p>为了有效地利用该图，需要解决以下两个问题：</p>
+<ol type="1">
+<li>为了聚合多关系图的节点信息，使用了 relational-GCN。</li>
+<li>对于将所有槽值表现在图中，是不切实际的（因为太多且有些没有被预定义）。为此，图中的槽值节点均被定义为一个占位符，并且不为它们创建嵌入，而是使用对应 Transformer 的隐藏状态输出，即 <span class="math inline">\([SLOT]\)</span> 位置。最终，将这种基于图的推理与常用的 Transformer encoder 融合了起来。</li>
+</ol>
+<p><strong>以下将首先定义模型的形式表示，然后介绍对话状态图的结构，最后描述如何将对话状态图融入 Transformer。</strong></p>
+<h2 id="method">Method</h2>
+<p>定义一场 <span class="math inline">\(T\)</span> 轮的对话为 <span class="math inline">\(\{(D_1 S_1), \cdots, (D_T, S_T)\}\)</span>，其中 <span class="math inline">\(D_t\)</span> 代表第 <span class="math inline">\(t\)</span> 轮的系统语句和用户语句，<span class="math inline">\(S_t\)</span> 代表当前轮的对话状态。定义 <span class="math inline">\(S_t\)</span> 为 <span class="math inline">\((d_j, s_j, v_j)|1 \le j \le J\)</span>，其中 <span class="math inline">\(J\)</span> 为域槽对的总量，也就是说 <span class="math inline">\(S_t\)</span> 记录的是所有域槽对。如果域槽对的槽值为空，则 <span class="math inline">\(v_j\)</span> 为 <span class="math inline">\(NULL\)</span>。</p>
+<p>DST 的目标是给定 <span class="math inline">\(\{(D_1 S_1), \cdots, (D_{t-1}, S_{t-1}), (D_t)\}\)</span>，预测 <span class="math inline">\(S_t\)</span>。该文采用 SOM-DST 的思想，只输入 <span class="math inline">\(D_{t-1}, D_T, S_{T-1}\)</span>。由于该文只是关注状态图的利用，所以模型也采用 SOM-DST 的结构。下面先介绍一下 SOM-DST 的框架。</p>
+<h3 id="对话状态图的结构">对话状态图的结构</h3>
+<p><strong>给定 <span class="math inline">\(S_{t-1} = \{(d_j, s_j, v_j)|1 \le j \le J\}\)</span>，对于每个 <span class="math inline">\((d_j, s_j, v_j)\)</span>，使得领域节点 <span class="math inline">\(d_j\)</span> 和槽值节点 <span class="math inline">\(v_j\)</span>（placeholder）以槽位边（slot edge）相连</strong>。其中槽位边是单向的，共现边是双向的。<strong>每个领域节点以及槽位边都有它们对应的嵌入</strong>。</p>
+<p>以往的工作通常假设域槽对之间是无关的。该文则编码 domain-domain，slot-slot，domain-slot 的共现关系，这可能对 DST 有所帮助。此外，由于在 MultiWOZ 中存在过多的槽值（4500），因此该文假定它们没有被预定义，图中每个槽值节点几乎都是“placeholder”占位符。它不属于图节点嵌入，这些位置将会被动态地填入对应的 self-attention 输出，即 <span class="math inline">\([SLOT]\)</span> 位置。</p>
+<h3 id="graph-enhanced-transformer">Graph-enhanced Transformer</h3>
+<ol type="1">
+<li><mark class="label success">multi-head attn</mark> 如图 2 右侧所示，第 <span class="math inline">\(l-1\)</span> 层的输出 <span class="math inline">\(H^{t-1}=[h^{l-1}_{cls}, \cdots, h^{l-1}_{sl_J}, \cdots]\)</span> 被输入进 multi-head self-attention layer，那么上下文表征 <span class="math inline">\(C^l=[c^l_{cls}, \cdots, c^l_{sl_J}, \cdots]\)</span> 可以由以下公式计算得到： <span class="math display">\[
+\begin{align}
+C^l &amp; = Concat(head_1, \cdots, head_h) \\
+head_j &amp; = softmax(\frac{Q_j K^T_j}{\sqrt{d_k}}) V_j
+\end{align}
+\]</span></li>
+<li><mark class="label warning">relational-GCN</mark> 将得到的 <span class="math inline">\([SLOT]\)</span> 表征填充各槽值（而不是原有位置槽值的表征），其余节点用词向量初始化。（<em>个人觉得有点奇怪，直接填入 placeholder 的表征不就行了？</em>）接下来，使用relational-GCN 更新节点表征。例如，对于一个领域节点 <span class="math inline">\(d\)</span>： <span class="math display">\[g^l_d = f(W_S(e_d - e_S) + \sum_{(v, sl) \in N(d)} W_O(c^l_v - e_{sl}) + \sum_{d&#39; \in N(d)} (W_I + W_O)(e_{d&#39;} - e_{co}))
+\]</span></li>
+<li>fusion</li>
+</ol></div></div></div>
 <a id="more"></a>
 <h1 id="dialogue-state-tracking-with-explicit-slot-connection-modeling">Dialogue State Tracking with Explicit Slot Connection Modeling</h1>
-<div class="note info"><p>在多领域场景下，用户经常通过省略（ellipsis）、指代（reference）来表达某些其它领域槽位提到的槽值。为了解决这种现象，我们提出了 DST-SC（Dialogue State Tracking with Slot Connections）模型。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/DST-SC模型架构.png" alt="DST-SC模型架构" /></p>
+<div class="tabs" id="dst-sc"><ul class="nav-tabs"><li class="tab active"><a href="#dst-sc-1">总结</a></li><li class="tab"><a href="#dst-sc-2">论文笔记</a></li></ul><div class="tab-content"><div class="tab-pane active" id="dst-sc-1"><div class="note primary">
+<ol type="1">
+<li>
+现有工作的缺陷：
+</li>
+<li>
+研究目的：
+</li>
+<li>
+研究目标/贡献：-
+</li>
+<li>
+研究方法：
+</li>
+<li>
+<strong>总结</strong>：
+</li>
+</ol>
+<p>
+<strong>模型结构</strong> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/DST-SC模型架构.png" alt="DST-SC模型架构" />
+</p>
+</div></div><div class="tab-pane" id="dst-sc-2"><div class="note info">
+<p>
+在多领域场景下，用户经常通过省略（ellipsis）、指代（reference）来表达某些其它领域槽位提到的槽值。为了解决这种现象，我们提出了 DST-SC（Dialogue State Tracking with Slot Connections）模型。
+</p>
 </div>
-<div class="note "><p>以下为博主的思考，并非翻译、阅读笔记。这是因为这篇论文的思想与 TripPy 类似，而在之前我已经阅读过 TripPy 的论文。</p>
+<div class="note">
+<p>
+以下为博主的思考，并非翻译、阅读笔记。这是因为这篇论文的思想与 TripPy 类似，而在之前我已经阅读过 TripPy 的论文。
+</p>
 </div>
-<p>仔细看了一下之后发现与<span class="citation" data-cites="heck2020trippy">(Heck et al. 2020)</span>所提出机制的一部分很像，都是为了处理省略、共指而生的。区别是 DST-SC 使用的 encoder-decoder 模型，它在生成槽值时，始终使用 soft-gated copy mechanism。</p>
+<p>仔细看了一下之后发现与 TripPy 所提出机制的一部分很像，都是为了处理省略、共指而生的。区别是 DST-SC 使用的 encoder-decoder 模型，它在生成槽值时，始终使用 soft-gated copy mechanism。</p>
 <p>具体来说，在解码时，使用一个门控 <span class="math inline">\(g_1\)</span> 合并了对话历史的概率分布和词表概率分布，得到了 <span class="math inline">\(P_{gen}\)</span> 概率分布。其次使用另一个门控 <span class="math inline">\(g_2\)</span> 合并了 <span class="math inline">\(P_{gen}\)</span> 和 <span class="math inline">\(P_{vc}\)</span>，得到了最终的概率分布 <span class="math inline">\(P\)</span>。使用该概率分布即可解码得到当前时间步的单词。其中概率分布 <span class="math inline">\(P_{vc}\)</span> 是从上一轮的对话状态中计算得到的。</p>
 <p>总的来说，他们延续了 TRADE 的做法，在此基础上，又额外加了一层 soft-gated copy mechanism。</p>
-<p>不过我个人不怎么喜欢这种 encoder-decoder 的做法。在我的实验中，我还是使用了 TripPy 的做法。</p>
+<p>不过我个人不怎么喜欢这种 encoder-decoder 的做法。在我的实验中，我还是使用了 TripPy 的做法。</p></div></div></div>
+<h1 id="credit-coarse-to-fine-sequence-generation-for-dialogue-state-tracking">CREDIT: Coarse-to-Fine Sequence Generation for Dialogue State Tracking</h1>
+<div class="note info"><p>提出了 CoaRsE-to-fine DIalogue state Tracking(CREDIT) 模型。以前的方法通常将对话状态定义为独立的三元组 <span class="math inline">\((domain, slot, value)\)</span>，而本文将 DST 转化为序列生成问题。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/CREDIT模型架构.png" alt="CREDIT模型架构" /></p>
+</div>
 <h1 id="efficient-context-and-schema-fusion-networks-for-multi-domain-dialogue-state-tracking">Efficient Context and Schema Fusion Networks for Multi-Domain Dialogue State Tracking</h1>
-<div class="note info"><p>在多领域 DST 中，由于候选状态数量以及对话长度的增加，数据稀疏性的问题成了一个主要的障碍。为了高效地编码对话上下文，我们使用了前一轮<font style="color:red"><strong>预测出的</strong></font>对话状态以及当前轮的对话语句作为 DST 的输入。</p>
-<p>此外为了考虑不同域槽对之间的关联，还开发了包含先验知识的协议图（schema graph）。</p>
-<p>本文提出了一个新颖的上下文与协议融合的网络（context and schema fusion network），如下图所示。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/CSFN-DST模型架构.png" alt="CSFN-DST模型架构" /></p>
+<div class="tabs" id="csfn-dst"><ul class="nav-tabs"><li class="tab active"><a href="#csfn-dst-1">总结</a></li><li class="tab"><a href="#csfn-dst-2">论文笔记</a></li></ul><div class="tab-content"><div class="tab-pane active" id="csfn-dst-1"><div class="note primary">
+<ol type="1">
+<li>
+现有工作的缺陷：由于<strong>域槽对数量</strong>以及<strong>对话长度</strong>的增加，数据稀疏性（data sparsity）的问题成了多领域 DST 的主要障碍。
+</li>
+<li>
+研究目的：1）缓解数据稀疏性的问题；2）考虑不同域槽对之间的关联（<em>算是对 schema 进行了初步的编码</em>）。
+</li>
+<li>
+研究目标/贡献：1）使用前一轮对话状态表示对话历史；2）提出模式图，并对其编码。
+</li>
+<li>
+研究方法：1）提出了 Schema Graph 并实现了一个基本模型 context and schema fusion networks (CSFN-DST)，其主要修改了 Transformer 的 Multi-head Attention 机制。具体只是使用一个邻接矩阵实现。
+</li>
+<li>
+<strong>总结</strong>：<strong>1）</strong>可以将 CSFN-DST 视为一种全新的域槽对表示方式，不过我觉得这好像没有利用到知识图谱的优势。此外虽然作者列出了 Graph Neural Network 的相关工作，但是并没有使用 GNN 去提取特征。<strong>2）</strong>虽然最后他们讨论了在输入中是否需要更多上下文信息的问题，但是他们在消融实验中只是额外加入上一轮的对话语句。个人认为这个实验不足以证明论文中提到的观点，即只使用当前轮的系统语句、用户语句和上一轮的对话状态是有效的。这是因为上下文信息太少了，起码再多加几轮，然后做一个对比。<strong>3）该文作者与我的想法类似，也认为 dontcare 这个槽位是比较有挑战的子任务。</strong>
+</li>
+</ol>
+<p>
+<strong>模型结构</strong> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/CSFN-DST模型架构.png" alt="CSFN-DST模型架构" />
+</p>
+</div></div><div class="tab-pane" id="csfn-dst-2"><div class="note info">
+<p>
+在多领域 DST 中，由于候选状态数量以及对话长度的增加，数据稀疏性的问题成了一个主要的障碍。为了高效地编码对话上下文，我们使用了前一轮<font style="color:red"><strong>预测出的</strong></font>对话状态以及当前轮的对话语句作为 DST 的输入。（博主注：数据的稀疏性指的是候选状态过多但是大部分是无意义的；对话长度增加但是大部分语句也是无意义的。为了处理这一问题，该文打算使用上一轮的对话状态近似对话上下文）
+</p>
+<p>
+此外为了考虑不同域槽对之间的关联，还开发了包含先验知识的协议图（schema graph）。
+</p>
+<p>
+本文提出了一个新颖的上下文与协议融合的网络（context and schema fusion network）。
+</p>
 </div>
-<p>DST-SC 使用系统回复 <span class="math inline">\(A_t\)</span>，用户语句 <span class="math inline">\(U_t\)</span> 以及前一轮的对话状态 <span class="math inline">\(B_{t-1}\)</span> 作为模型的输入。<strong>在训练阶段，直接使用真实值 <span class="math inline">\(B_{t-1}\)</span>，但是在推理阶段，使用预测出的对话状态。</strong></p>
-<p><strong>Schema Graph</strong>：为了将不同域槽对之间的联系考虑进去，同时利用它们作为一种额外的输入一次引导上下文编码，我们将它们表示为 schema graph（协议图谱） <span class="math inline">\(G=(V, E)\)</span>，<span class="math inline">\(V\)</span> 代表结点（node），<span class="math inline">\(E\)</span> 代表边（edge）。如下图所示。协议图中一共有领域、槽位以及域槽对三种结点，以及在不同结点之间的四种类型无向边。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/CSFN-DST协议图.png" alt="CSFN-DST协议图" /></p>
+<p>CSFN-DST 使用系统回复 <span class="math inline">\(A_t\)</span>，用户语句 <span class="math inline">\(U_t\)</span> 以及前一轮的对话状态 <span class="math inline">\(B_{t-1}\)</span> 作为模型的输入。<strong>在训练阶段，直接使用真实值 <span class="math inline">\(B_{t-1}\)</span>，但是在推理阶段，使用预测出的对话状态。</strong></p>
+<p><strong>Schema Graph</strong>：为了将不同域槽对之间的联系考虑进去，并且将它们作为一种额外的输入以此引导上下文编码，我们将它们表示为 schema graph（协议图谱） <span class="math inline">\(G=(V, E)\)</span>，<span class="math inline">\(V\)</span> 代表结点（node），<span class="math inline">\(E\)</span> 代表边（edge）。如下图所示。协议图中一共有领域、槽位以及域槽对三种结点，以及在不同结点之间的四种类型无向边。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/CSFN-DST协议图.png" alt="CSFN-DST协议图" /></p>
 <h2 id="输入嵌入">输入嵌入</h2>
-<p><strong>Dialogue Utterance</strong>：<span class="math inline">\(X = [CLS] \oplus A_t \oplus ; \oplus U_t \oplus [SEP]\)</span>，输入嵌入由词向量，片段嵌入（segment embedding）以及位置嵌入组成。</p>
-<p><strong>Previous Dialogue State</strong>：用上一轮的对话状态来表示历史对话，表示为 <span class="math inline">\(B_{t-1} = [CLS] \oplus R^1_{t-1} \oplus \cdots \oplus R^K_{t-1}\)</span>，其中 <span class="math inline">\(K\)</span> 为 <span class="math inline">\(B_{t-1}\)</span> 中的三元组数量。每个三元组都被表示为一个序列，即 <span class="math inline">\(R = d \oplus - \oplus s \oplus - \oplus v\)</span>。其中，所有的符号都会被表示为单词，例如 pricereange -&gt; price range，dontcare -&gt; dont care。</p>
-<p><strong>Schema Grapha</strong>：所有的节点按如下形式排列：<span class="math inline">\(G = d_1 \oplus \cdots \oplus d_M \oplus s_1 \oplus \cdots \oplus s_N \oplus o_1 \oplus \cdots \oplus o_J\)</span>。每一个节点嵌入都由对应的 domain/slot/domain-slot 词向量初始化，图谱中的位置编码被省略。图谱中的边被表示为邻接矩阵 <span class="math inline">\(A^G\)</span>，其中要么为 1 要么为 0。为了强调不同类型节点的边在计算时是不一样的，我们利用节点类型得到了片段嵌入。</p>
+<p><strong>Dialogue Utterance</strong> <span class="math inline">\(X = [CLS] \oplus A_t \oplus ; \oplus U_t \oplus [SEP]\)</span>，输入嵌入由词向量，片段嵌入（segment embedding）以及位置嵌入组成。</p>
+<p><strong>Previous Dialogue State</strong> 用上一轮的对话状态来表示历史对话，表示为 <span class="math inline">\(B_{t-1} = [CLS] \oplus R^1_{t-1} \oplus \cdots \oplus R^K_{t-1}\)</span>，其中 <span class="math inline">\(K\)</span> 为 <span class="math inline">\(B_{t-1}\)</span> 中的三元组数量。每个三元组都被表示为一个序列，即 <span class="math inline">\(R = d \oplus - \oplus s \oplus - \oplus v\)</span>。其中，所有的符号都会被表示为单词，例如 pricereange -&gt; price range，dontcare -&gt; dont care。</p>
+<p><strong>Schema Graph</strong> 所有的节点按如下形式排列：<span class="math inline">\(G = d_1 \oplus \cdots \oplus d_M \oplus s_1 \oplus \cdots \oplus s_N \oplus o_1 \oplus \cdots \oplus o_J\)</span>。每一个节点嵌入都由对应的 domain/slot/domain-slot 词向量初始化，图谱中的位置编码被省略。图谱中的边被表示为邻接矩阵 <span class="math inline">\(A^G\)</span>，其中要么为 1 要么为 0。为了强调不同类型节点的边在计算时是不一样的，我们利用节点类型得到了片段嵌入。</p>
 <h2 id="context-and-schema-fusion-network">Context and Schema Fusion Network</h2>
-<p><strong>Graph-based Multi-head Attention</strong>：对 Transformer 进行了改造。在执行 Multi-head Attention 时，额外使用邻接矩阵 <span class="math inline">\(A^G \in \mathbb{R}^{|Y| \times |Z|}\)</span> 作为 mask。</p>
-<p><strong>Context- and Schema-Aware Encoding</strong>：</p>
-<div class="note warning"><p>注意：观察文章开头的网络架构，发现协议图和用户语句看起来像是被拼接起来一起被输入进 CSFN 中的。但是其实并不是，这图画得感觉有点问题。这个特征提取器的真正运行流程是：先使用 <strong>Graph-based Multi-head Attention</strong> 计算前部协议图，再使用 <strong>Multi-head Attention</strong> 计算后部的用户输入，最后使用 <strong>Multi-head Attention</strong> 计算对话状态。</p>
-</div>
-<p>CSFN 与 Transformer 类似，也是由多层的神经网络组成的，每层的输出都是下一层的输入。具体可以公式化为：</p>
+<p><strong>Graph-based Multi-head Attention</strong> 对 Transformer 进行了改造。在执行 Multi-head Attention 时，额外使用邻接矩阵 <span class="math inline">\(A^G \in \mathbb{R}^{|Y| \times |Z|}\)</span> 作为 mask。</p>
+<p><strong>Context- and Schema-Aware Encoding</strong> CSFN 与 Transformer 类似，也是由多层的神经网络组成的，每层的输出都是下一层的输入。具体可以公式化为：</p>
 <p><span class="math display">\[
 \begin{align}
     I_{GG} &amp; = GraphMultiHead_{\Theta_{GG}}(H^G_i, H^G_i, A^G) \\
     E_{GX} &amp; = MultiHead_{\Theta_{GX}}(H^G_i, H^{X_t}_i) \\
     E_{GB} &amp; = MultiHead_{\Theta_{GB}}(H^G_i, H^{B_{t-1}}_i) \\
-    C_G &amp; = LayerNorm(H^G_i + I_{GG} + E_{GZ} + E_{GB}) \\
+    C_G &amp; = LayerNorm(H^G_i + I_{GG} + E_{GX} + E_{GB}) \\
     H^G_{i+1} &amp; = LayerNorm(C_G + FFN(C_G))
 \end{align}
 \]</span></p>
 <p>其中 <span class="math inline">\(FFN\)</span> 代表两层全连接层以及在它们之间的一个 ReLU 激活函数。即 <span class="math inline">\(FFN(x) = max(0, xW_1 + b_1)W_2 + b_2\)</span>。</p>
 <p>类似地，可以计算出 <span class="math inline">\(H^{X_t}_i, H^{B_{t-1}}_i\)</span>。不过有一点需要注意，Graph-based Multi-head Attention 并不是总是会被使用，详见原论文的 Appendix A。</p>
 <h2 id="state-prediction">State Prediction</h2>
-<p>与 TRADE 一样，将槽位类型分类 <span class="math inline">\({none, dontcare, ptr}\)</span>。其中由于协议图中包含了域槽对，所以只需要在 CSFN 中取出所有域槽对的表征即可，进一步预测槽位的类别，即模型架构图中的深蓝色部分。</p>
+<p>与 TRADE 一样，将槽位类型分类 <span class="math inline">\(\{none, dontcare, ptr\}\)</span>。其中由于协议图中包含了域槽对，所以只需要在 CSFN 中取出所有域槽对的表征即可，进一步预测槽位的类别，即模型架构图中的深蓝色部分。</p>
 <p>如果槽位类型为 <span class="math inline">\(ptr\)</span> 则使用 soft-based copy mechanism 生成槽值。</p>
 <h2 id="使用bert">使用BERT</h2>
 <p>如果使用 BERT 初始化词向量以及 CSFN 的所有参数，会提升大约 2 个百分点。</p>
 <h2 id="结果分析">结果分析</h2>
-<p>5.5.1 节中讨论了是否需要更多的上下文，并且做了实验。在额外增加上一轮的语句 <span class="math inline">\(X_{t-1}\)</span> 之后，得到了略差的准确率，所以得出结论：只编码当前的语句以及上一轮的对话状态会更高效。</p>
-<p>但是我寻思，这才多加了一轮的信息，不能说明什么问题吧？把所有的上下文信息加进去再看看啊。</p>
-<h1 id="bibliography" class="unnumbered">参考文献</h1>
-<div id="refs" class="references">
-<div id="ref-heck2020trippy">
-<p>Heck, Michael, Carel van Niekerk, Nurul Lubis, Christian Geishauser, Hsien-Chin Lin, Marco Moresi, and Milica Gašić. 2020. “TripPy: A Triple Copy Strategy for Value Independent Neural Dialog State Tracking.”</p>
-</div>
-</div>
+<p>5.5.1 节中讨论了是否需要更多的上下文，并且做了实验。在额外增加上一轮的语句 <span class="math inline">\(X_{t-1}\)</span> 之后，得到了略差的准确率，所以得出结论：只编码当前的语句以及上一轮的对话状态会更高效。</p></div></div></div>
 
     </div>
 
@@ -501,7 +604,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#credit-coarse-to-fine-sequence-generation-for-dialogue-state-tracking"><span class="nav-number">1.</span> <span class="nav-text">CREDIT: Coarse-to-Fine Sequence Generation for Dialogue State Tracking</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#dialogue-state-tracking-with-explicit-slot-connection-modeling"><span class="nav-number">2.</span> <span class="nav-text">Dialogue State Tracking with Explicit Slot Connection Modeling</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#efficient-context-and-schema-fusion-networks-for-multi-domain-dialogue-state-tracking"><span class="nav-number">3.</span> <span class="nav-text">Efficient Context and Schema Fusion Networks for Multi-Domain Dialogue State Tracking</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#输入嵌入"><span class="nav-number">3.1.</span> <span class="nav-text">输入嵌入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#context-and-schema-fusion-network"><span class="nav-number">3.2.</span> <span class="nav-text">Context and Schema Fusion Network</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#state-prediction"><span class="nav-number">3.3.</span> <span class="nav-text">State Prediction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用bert"><span class="nav-number">3.4.</span> <span class="nav-text">使用BERT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结果分析"><span class="nav-number">3.5.</span> <span class="nav-text">结果分析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bibliography"><span class="nav-number">4.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#multi-domain-dialogue-state-tracking-based-on-state-graph"><span class="nav-number">1.</span> <span class="nav-text">Multi-Domain Dialogue State Tracking based on State Graph</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#method"><span class="nav-number">1.1.</span> <span class="nav-text">Method</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#对话状态图的结构"><span class="nav-number">1.1.1.</span> <span class="nav-text">对话状态图的结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#graph-enhanced-transformer"><span class="nav-number">1.1.2.</span> <span class="nav-text">Graph-enhanced Transformer</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#dialogue-state-tracking-with-explicit-slot-connection-modeling"><span class="nav-number">2.</span> <span class="nav-text">Dialogue State Tracking with Explicit Slot Connection Modeling</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#credit-coarse-to-fine-sequence-generation-for-dialogue-state-tracking"><span class="nav-number">3.</span> <span class="nav-text">CREDIT: Coarse-to-Fine Sequence Generation for Dialogue State Tracking</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#efficient-context-and-schema-fusion-networks-for-multi-domain-dialogue-state-tracking"><span class="nav-number">4.</span> <span class="nav-text">Efficient Context and Schema Fusion Networks for Multi-Domain Dialogue State Tracking</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#输入嵌入"><span class="nav-number">4.1.</span> <span class="nav-text">输入嵌入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#context-and-schema-fusion-network"><span class="nav-number">4.2.</span> <span class="nav-text">Context and Schema Fusion Network</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#state-prediction"><span class="nav-number">4.3.</span> <span class="nav-text">State Prediction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用bert"><span class="nav-number">4.4.</span> <span class="nav-text">使用BERT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结果分析"><span class="nav-number">4.5.</span> <span class="nav-text">结果分析</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -517,23 +620,23 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">182</span>
+          <span class="site-state-item-count">184</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-count">22</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">104</span>
+        <span class="site-state-item-count">117</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">250.8k</span>
+      	<span class="site-state-item-count">255.6k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>

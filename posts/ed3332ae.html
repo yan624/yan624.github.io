@@ -23,12 +23,12 @@
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="什么是迁移学习 现在手上有一些与本实验没有直接关系的数据集，那么能不能使用该数据集来帮助我们做一些事情。 比如说要开发一个图像识别的模型，去识别医学上的图像。这方面的数据集可能很少，但是作为图片本身来说是有很多的。比如猫狗图片也是图片。">
+  <meta name="description" content="什么是迁移学习 现在手上有一些与本实验没有直接关系的数据集，那么能不能使用该数据集来帮助我们做一些事情。 比如说要开发一个图像识别的模型，去识别医学上的图像。这方面的数据集可能很少，但是作为图片本身来说是有很多的。比如猫狗图片也是图片。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="李宏毅迁移学习视频笔记">
 <meta property="og:url" content="https://yan624.github.io/posts/ed3332ae.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="什么是迁移学习 现在手上有一些与本实验没有直接关系的数据集，那么能不能使用该数据集来帮助我们做一些事情。 比如说要开发一个图像识别的模型，去识别医学上的图像。这方面的数据集可能很少，但是作为图片本身来说是有很多的。比如猫狗图片也是图片。">
+<meta property="og:description" content="什么是迁移学习 现在手上有一些与本实验没有直接关系的数据集，那么能不能使用该数据集来帮助我们做一些事情。 比如说要开发一个图像识别的模型，去识别医学上的图像。这方面的数据集可能很少，但是作为图片本身来说是有很多的。比如猫狗图片也是图片。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%9D%8E%E5%AE%8F%E6%AF%85%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E8%A7%86%E9%A2%91%E7%AC%94%E8%AE%B0/Transfer_Learning_Overview.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%9D%8E%E5%AE%8F%E6%AF%85%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E8%A7%86%E9%A2%91%E7%AC%94%E8%AE%B0/Conservative_Training.jpg">
@@ -36,9 +36,10 @@
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%9D%8E%E5%AE%8F%E6%AF%85%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E8%A7%86%E9%A2%91%E7%AC%94%E8%AE%B0/Multitask_Learning.jpg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%9D%8E%E5%AE%8F%E6%AF%85%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E8%A7%86%E9%A2%91%E7%AC%94%E8%AE%B0/Source_data_with_label.jpg">
 <meta property="article:published_time" content="2020-05-24T02:01:43.000Z">
-<meta property="article:modified_time" content="2020-07-17T15:13:04.660Z">
+<meta property="article:modified_time" content="2020-11-11T14:14:56.472Z">
 <meta property="article:author" content="朱冲䶮">
 <meta property="article:tag" content="学习笔记">
+<meta property="article:tag" content="transfer learning">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%9D%8E%E5%AE%8F%E6%AF%85%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E8%A7%86%E9%A2%91%E7%AC%94%E8%AE%B0/Transfer_Learning_Overview.jpg">
 
@@ -158,7 +159,7 @@
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">182</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">184</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -253,6 +254,8 @@
         </script>
     	
     
+    	
+    
 
     <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/ed3332ae.html">
 
@@ -284,7 +287,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-17 23:13:04" itemprop="dateModified" datetime="2020-07-17T23:13:04+08:00">2020-07-17</time>
+                <time title="修改时间：2020-11-11 22:14:56" itemprop="dateModified" datetime="2020-11-11T22:14:56+08:00">2020-11-11</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -292,11 +295,11 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                  <a href="/categories/coding/" itemprop="url" rel="index"><span itemprop="name">coding</span></a>
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/ml-branch/" itemprop="url" rel="index"><span itemprop="name">ml-branch</span></a>
+                  <a href="/categories/coding/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
                 </span>
             </span>
 
@@ -333,7 +336,8 @@
 
       
         <h1 id="什么是迁移学习">什么是迁移学习</h1>
-<p>现在手上有一些与本实验没有直接关系的数据集，那么能不能使用该数据集来帮助我们做一些事情。 比如说要开发一个图像识别的模型，去识别医学上的图像。这方面的数据集可能很少，但是作为图片本身来说是有很多的。比如猫狗图片也是图片。 <a id="more"></a></p>
+<p>现在手上有一些与本实验没有直接关系的数据集，那么能不能使用该数据集来帮助我们做一些事情。</p>
+<p>比如说要开发一个图像识别的模型，去识别医学上的图像。这方面的数据集可能很少，但是作为图片本身来说是有很多的。比如猫狗图片也是图片。 <a id="more"></a></p>
 <h1 id="概要">概要</h1>
 <p>与任务有关的数据被称为 target data，与任务没有直接关系的数据被称为 source data。每种数据都有可能有标签和无标签，所以一共分四种情况。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/学习笔记/李宏毅迁移学习视频笔记/Transfer_Learning_Overview.jpg" alt="Transfer Learning Overview" /></p>
 <h2 id="都有标签">都有标签</h2>
@@ -390,6 +394,7 @@
       <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag"># 学习笔记</a>
+              <a href="/tags/transfer-learning/" rel="tag"># transfer learning</a>
           </div>
 
         
@@ -479,23 +484,23 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">182</span>
+          <span class="site-state-item-count">184</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-count">22</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">104</span>
+        <span class="site-state-item-count">117</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">250.8k</span>
+      	<span class="site-state-item-count">255.6k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>

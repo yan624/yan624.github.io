@@ -23,17 +23,18 @@
     var CONFIG = {"hostname":"yan624.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.3","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"scrollpercent":true,"enable":true,"sidebar":false},"bookmark":{"enable":true,"save":"manual","color":"#222"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="2019.01.24更新，由于发现了mybatis-plus插件已经实现了我要实现的功能，我自己写的肯定没别人研发的框架写得好，所以此方法已经废弃。 **** 环境介绍一下：由于service层的代码重复太多，于是我想直接把一些重复的代码抽出来。 比如说这个方法，它可以实现根据条件查询，框架是mybatis。而注入的mapper是有spring提供的方法获取到的，问题就出在这里了。 1234567">
+  <meta name="description" content="2019.01.24更新，由于发现了mybatis-plus插件已经实现了我要实现的功能，我自己写的肯定没别人研发的框架写得好，所以此方法已经废弃。 **** 环境介绍一下：由于service层的代码重复太多，于是我想直接把一些重复的代码抽出来。 比如说这个方法，它可以实现根据条件查询，框架是mybatis。而注入的mapper是有spring提供的方法获取到的，问题就出在这里了。 12345">
 <meta property="og:type" content="article">
 <meta property="og:title" content="在shiro的realm中注入service引发的惨案">
 <meta property="og:url" content="https://yan624.github.io/posts/fba51c50.html">
 <meta property="og:site_name" content="博客">
-<meta property="og:description" content="2019.01.24更新，由于发现了mybatis-plus插件已经实现了我要实现的功能，我自己写的肯定没别人研发的框架写得好，所以此方法已经废弃。 **** 环境介绍一下：由于service层的代码重复太多，于是我想直接把一些重复的代码抽出来。 比如说这个方法，它可以实现根据条件查询，框架是mybatis。而注入的mapper是有spring提供的方法获取到的，问题就出在这里了。 1234567">
+<meta property="og:description" content="2019.01.24更新，由于发现了mybatis-plus插件已经实现了我要实现的功能，我自己写的肯定没别人研发的框架写得好，所以此方法已经废弃。 **** 环境介绍一下：由于service层的代码重复太多，于是我想直接把一些重复的代码抽出来。 比如说这个方法，它可以实现根据条件查询，框架是mybatis。而注入的mapper是有spring提供的方法获取到的，问题就出在这里了。 12345">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2017-12-02T07:42:58.000Z">
-<meta property="article:modified_time" content="2020-06-09T07:37:56.418Z">
+<meta property="article:modified_time" content="2020-11-11T13:50:24.663Z">
 <meta property="article:author" content="朱冲䶮">
 <meta property="article:tag" content="印象笔记上的博文">
+<meta property="article:tag" content="shiro">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="https://yan624.github.io/posts/fba51c50.html">
@@ -152,7 +153,7 @@
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">182</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">184</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -215,6 +216,8 @@
     
     	
     
+    	
+    
 
     <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/fba51c50.html">
 
@@ -246,7 +249,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-09 15:37:56" itemprop="dateModified" datetime="2020-06-09T15:37:56+08:00">2020-06-09</time>
+                <time title="修改时间：2020-11-11 21:50:24" itemprop="dateModified" datetime="2020-11-11T21:50:24+08:00">2020-11-11</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -254,11 +257,11 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                  <a href="/categories/coding/" itemprop="url" rel="index"><span itemprop="name">coding</span></a>
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/shiro/" itemprop="url" rel="index"><span itemprop="name">shiro</span></a>
+                  <a href="/categories/coding/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
                 </span>
             </span>
 
@@ -294,19 +297,30 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p><strong><em>2019.01.24更新，由于发现了mybatis-plus插件已经实现了我要实现的功能，我自己写的肯定没别人研发的框架写得好，所以此方法已经废弃。</em></strong> **** 环境介绍一下：由于service层的代码重复太多，于是我想直接把一些重复的代码抽出来。 比如说这个方法，它可以实现根据条件查询，框架是mybatis。而注入的mapper是有spring提供的方法获取到的，问题就出在这里了。 <figure class="highlight monkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">@SuppressWarnings(<span class="string">"unchecked"</span>)</span><br><span class="line">@Override</span><br><span class="line"><span class="keyword">public</span> List&lt;Record&gt; selectByExample(Example example) &#123;</span><br><span class="line">    <span class="class"><span class="keyword">Class</span>&lt;? <span class="keyword">extends</span> <span class="title">Object</span>&gt; <span class="title">mapperClazz</span> = <span class="title">mapper</span>.<span class="title">getClass</span>();</span></span><br><span class="line">    List&lt;Record&gt; res = <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="function"><span class="keyword">Method</span> <span class="title">method</span> =</span> mapperClazz.getDeclaredMethod(<span class="string">"selectByExample"</span>, example.getClass());</span><br><span class="line">        res = (List&lt;Record&gt;) <span class="function"><span class="keyword">method</span>.<span class="title">invoke</span>(</span>mapper, example);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalAccessException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalArgumentException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InvocationTargetException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (NoSuchMethodException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (SecurityException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure> <a id="more"></a> 这个方法获取到了mapper的类型，即CLass对象。</p>
+        <p><strong><em>2019.01.24更新，由于发现了mybatis-plus插件已经实现了我要实现的功能，我自己写的肯定没别人研发的框架写得好，所以此方法已经废弃。</em></strong> ****</p>
+<p>环境介绍一下：由于service层的代码重复太多，于是我想直接把一些重复的代码抽出来。</p>
+<p>比如说这个方法，它可以实现根据条件查询，框架是mybatis。而注入的mapper是有spring提供的方法获取到的，问题就出在这里了。 <figure class="highlight monkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">@SuppressWarnings(<span class="string">"unchecked"</span>)</span><br><span class="line">@Override</span><br><span class="line"><span class="keyword">public</span> List&lt;Record&gt; selectByExample(Example example) &#123;</span><br><span class="line">    <span class="class"><span class="keyword">Class</span>&lt;? <span class="keyword">extends</span> <span class="title">Object</span>&gt; <span class="title">mapperClazz</span> = <span class="title">mapper</span>.<span class="title">getClass</span>();</span></span><br><span class="line">    List&lt;Record&gt; res = <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="function"><span class="keyword">Method</span> <span class="title">method</span> =</span> mapperClazz.getDeclaredMethod(<span class="string">"selectByExample"</span>, example.getClass());</span><br><span class="line">        res = (List&lt;Record&gt;) <span class="function"><span class="keyword">method</span>.<span class="title">invoke</span>(</span>mapper, example);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalAccessException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalArgumentException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InvocationTargetException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (NoSuchMethodException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (SecurityException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure> <a id="more"></a> 这个方法获取到了mapper的类型，即CLass对象。</p>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SuppressWarnings(<span class="meta-string">"unchecked"</span>)</span></span><br><span class="line"><span class="keyword">public</span> Class&lt;Mapper&gt; getMapperType() &#123;</span><br><span class="line">    ParameterizedType genericSuperclass = (ParameterizedType) <span class="keyword">this</span>.getClass().getGenericSuperclass();</span><br><span class="line">    <span class="keyword">return</span> (Class&lt;Mapper&gt;) genericSuperclass.getActualTypeArguments()[<span class="number">2</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>在这里使用了我自定义的SpringContextUtil类获取了mapper这个bean。注意我这里使用了构造器初始化，问题就出在这里。</p>
 <figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public <span class="constructor">BaseServiceImpl()</span> &#123;</span><br><span class="line">    Class&lt;Mapper&gt; mapperType = get<span class="constructor">MapperType()</span>;</span><br><span class="line">    this.mapper = (Mapper) <span class="module-access"><span class="module"><span class="identifier">SpringContextUtil</span>.</span></span>get<span class="constructor">Bean(<span class="params">mapperType</span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>getBean()方法就不提供了，可以自行百度。主要是这个类SpringContextUtil。 要想使用spring提供的以java代码方法获取bean有5种方式（大致差不多，我是用了第四种）：实现ApplicationContextAware接口。只需要在实现类中定义private static ApplicationContext applicationContext;变量，再设置set方法，即可使用这个对象获取到bean。 到这里一切都没问题，可以当启动tomcat时，问题出来了。 它报了一个异常，必须初始化applicationContext。我纳闷了，我之前在Controller层注入service对象用的好好的，为什么在shiro的realm中注入就出事了？ 我看了我的applicationContext.xml文件，我是这么写的：</p>
+<p>getBean()方法就不提供了，可以自行百度。主要是这个类SpringContextUtil。</p>
+<p>要想使用spring提供的以java代码方法获取bean有5种方式（大致差不多，我是用了第四种）：实现ApplicationContextAware接口。只需要在实现类中定义private static ApplicationContext applicationContext;变量，再设置set方法，即可使用这个对象获取到bean。</p>
+<p>到这里一切都没问题，可以当启动tomcat时，问题出来了。</p>
+<p>它报了一个异常，必须初始化applicationContext。我纳闷了，我之前在Controller层注入service对象用的好好的，为什么在shiro的realm中注入就出事了？</p>
+<p>我看了我的applicationContext.xml文件，我是这么写的：</p>
 <figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;<span class="keyword">import</span> resource=<span class="string">"classpath:springContextConfig.xml"</span> /&gt;</span><br><span class="line">&lt;<span class="keyword">import</span> resource=<span class="string">"classpath:spring/upms-dao.xml"</span> /&gt;</span><br><span class="line">&lt;<span class="keyword">import</span> resource=<span class="string">"classpath:spring/upms-service.xml"</span> /&gt;</span><br><span class="line">&lt;<span class="keyword">import</span> resource=<span class="string">"classpath:spring/upms-tx.xml"</span> /&gt;</span><br><span class="line">&lt;<span class="keyword">import</span> resource=<span class="string">"classpath:shiro/shiro.xml"</span> /&gt;</span><br></pre></td></tr></table></figure>
 <p>然后看了web.xml文件</p>
 <figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;context-<span class="built_in">param</span>&gt;</span><br><span class="line">	&lt;<span class="built_in">param</span>-name&gt;contextConfigLocation&lt;/<span class="built_in">param</span>-name&gt;</span><br><span class="line">	&lt;<span class="built_in">param</span>-<span class="built_in">value</span>&gt;classpath:applicationContext.xml&lt;/<span class="built_in">param</span>-<span class="built_in">value</span>&gt;</span><br><span class="line">&lt;/context-<span class="built_in">param</span>&gt;</span><br></pre></td></tr></table></figure>
-<p>好像稍微有点头绪了 我在初始化spring上下文的时候，直接初始化了shiro.xml，这没问题。但是在applicationContext.xml中第一行的<code>&lt;import resource=&quot;classpath:springContextConfig.xml&quot; /&gt;</code>里面注册了SPringContextUtil这个工具类。（这个工具类不会一下子注册进去成为bean，它会在spring上下文初始化完毕之后才行）。 所以我需要在realm中注册AdminService-----&gt;AdminService继承了BaseServiceImpl-----&gt;BaseServiceImpl在构造器中使用了applicationContext.getBean()。这个步骤在spring上下文初始化还没完成的时候执行，但是你要想使用applicationContext，spring上下文必须初始化完毕，所以冲突了。 那我就想直接把shiro.xml托到DispatcherServlet里面初始化就完事了。因为在DispatcherServlet加载的配置文件中，我扫描了Controller层，而在Controller层使用是没问题的（我之前还不懂的时候就这么做的，没报异常）。然后我这么做了，但是又报异常了-----&gt;No Bean Named &quot;shiroFilter&quot;。这不坑爹吗？ 我先缕一缕，<code>&lt;context-param&gt;</code>最先执行，其次是<code>&lt;filter&gt;</code>，最后是<code>&lt;servlet&gt;</code>（不一定完全正确，但是可以这么理解）。所以说shiro.xml放在DispatcherServlet中不行！因为filter比servlet先执行，它必须要shiro.xml中的bean。所以怎么办？我必须把shiro.xml放在context-param和filter的中间。这根本不可能（起码我做不到）。 后来我想到了懒加载（我印象中有听说过这个概念），我一百度还真有。那我应该把懒加载放在哪个bean上呢？我决定放在AdminService上。但是没用，因为Realm这个类不能懒加载，因为它马上就被初始化了。而realm中注入了AdminService，所以即使是懒加载也没屌用。 最后终于解决了。 既然你要初始化bean，要用构造器，我就把调用applicationContext的代码不放在构造器里。我写了一个initMapper方法。</p>
+<p>好像稍微有点头绪了。我在初始化spring上下文的时候，直接初始化了shiro.xml，这没问题。但是在applicationContext.xml中第一行的<code>&lt;import resource=&quot;classpath:springContextConfig.xml&quot; /&gt;</code>里面注册了SPringContextUtil这个工具类。（这个工具类不会一下子注册进去成为bean，它会在spring上下文初始化完毕之后才行）。</p>
+<p>所以我需要在realm中注册AdminService-----&gt;AdminService继承了BaseServiceImpl-----&gt;BaseServiceImpl在构造器中使用了applicationContext.getBean()。这个步骤在spring上下文初始化还没完成的时候执行，但是你要想使用applicationContext，spring上下文必须初始化完毕，所以冲突了。</p>
+<p>那我就想直接把shiro.xml托到DispatcherServlet里面初始化就完事了。因为在DispatcherServlet加载的配置文件中，我扫描了Controller层，而在Controller层使用是没问题的（我之前还不懂的时候就这么做的，没报异常）。然后我这么做了，但是又报异常了-----&gt;No Bean Named &quot;shiroFilter&quot;。这不坑爹吗？</p>
+<p>我先缕一缕，<code>&lt;context-param&gt;</code>最先执行，其次是<code>&lt;filter&gt;</code>，最后是<code>&lt;servlet&gt;</code>（不一定完全正确，但是可以这么理解）。所以说shiro.xml放在DispatcherServlet中不行！因为filter比servlet先执行，它必须要shiro.xml中的bean。所以怎么办？我必须把shiro.xml放在context-param和filter的中间。这根本不可能（起码我做不到）。</p>
+<p>后来我想到了懒加载（我印象中有听说过这个概念），我一百度还真有。那我应该把懒加载放在哪个bean上呢？我决定放在AdminService上。但是没用，因为Realm这个类不能懒加载，因为它马上就被初始化了。而realm中注入了AdminService，所以即使是懒加载也没屌用。</p>
+<p>最后终于解决了。</p>
+<p>既然你要初始化bean，要用构造器，我就把调用applicationContext的代码不放在构造器里。我写了一个initMapper方法。</p>
 <figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public void init<span class="constructor">Mapper()</span> &#123;</span><br><span class="line">    Class&lt;Mapper&gt; mapperType = get<span class="constructor">MapperType()</span>;</span><br><span class="line">    this.mapper = (Mapper) <span class="module-access"><span class="module"><span class="identifier">SpringContextUtil</span>.</span></span>get<span class="constructor">Bean(<span class="params">mapperType</span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>注意@Override注解。 那么现在问题就是，怎么调用这个方法。 经过度娘之后，终于解决了。贴上类，我就不解释了。附上链接https://www.cnblogs.com/rollenholt/p/3612440.html</p>
+<p>注意@Override注解。那么现在问题就是，怎么调用这个方法。经过度娘之后，终于解决了。贴上类，我就不解释了。附上链接https://www.cnblogs.com/rollenholt/p/3612440.html</p>
 <figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">public <span class="keyword">class</span> MapperInit implements ApplicationListener&lt;ContextRefreshedEvent&gt; &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void on<span class="constructor">ApplicationEvent(ContextRefreshedEvent <span class="params">event</span>)</span> &#123;</span><br><span class="line">        <span class="comment">//下面的方法执行就行了，这个方法会执行两次，我们不需要这么做</span></span><br><span class="line">    &#125;</span><br><span class="line">       </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 需要执行的逻辑代码，当spring容器初始化完成后就会执行该方法。</span></span><br><span class="line"><span class="comment">     * 由于加了@PostConstruct注解所以这个方法跟上面的onApplicationEvent一样。</span></span><br><span class="line"><span class="comment">     * 但是这个方法只会在root application context环境中执行，不会在 projectName-servlet context中执行</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    @<span class="constructor">SuppressWarnings(<span class="string">"rawtypes"</span>)</span></span><br><span class="line">    @PostConstruct</span><br><span class="line">    <span class="keyword">private</span> void init<span class="constructor">Mapper()</span> &#123;</span><br><span class="line">        Map&lt;String, BaseService&gt; beansOfType = <span class="module-access"><span class="module"><span class="identifier">SpringContextUtil</span>.</span></span>get<span class="constructor">ApplicationContext()</span>.get<span class="constructor">BeansOfType(BaseService.<span class="params">class</span>)</span>;</span><br><span class="line">        for(Map.Entry&lt;String, BaseService&gt; entrySet : beansOfType.entry<span class="constructor">Set()</span>) &#123;</span><br><span class="line">            BaseService service = entrySet.get<span class="constructor">Value()</span>;</span><br><span class="line">            service.init<span class="constructor">Mapper()</span>;</span><br><span class="line">            <span class="module-access"><span class="module"><span class="identifier">System</span>.</span></span>out.println(service);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<!-- more -->
 
     </div>
 
@@ -349,6 +363,7 @@
       <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/%E5%8D%B0%E8%B1%A1%E7%AC%94%E8%AE%B0%E4%B8%8A%E7%9A%84%E5%8D%9A%E6%96%87/" rel="tag"># 印象笔记上的博文</a>
+              <a href="/tags/shiro/" rel="tag"># shiro</a>
           </div>
 
         
@@ -437,23 +452,23 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">182</span>
+          <span class="site-state-item-count">184</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-count">22</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">104</span>
+        <span class="site-state-item-count">117</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">250.8k</span>
+      	<span class="site-state-item-count">255.6k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
