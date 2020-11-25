@@ -150,7 +150,7 @@
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">183</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">175</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -205,912 +205,6 @@
 
           <div class="content index posts-expand">
             
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    
-    	
-    
-    	
-    
-
-    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/976325f9.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/976325f9.html" class="post-title-link" itemprop="url">Question Answering with Subgraph Embeddings</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-07-05 15:58:26" itemprop="dateCreated datePublished" datetime="2019-07-05T15:58:26+08:00">2019-07-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-17 23:13:04" itemprop="dateModified" datetime="2020-07-17T23:13:04+08:00">2020-07-17</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="论文概要">论文概要</h1>
-<p><a href="https://arxiv.org/pdf/1406.3676" target="_blank" rel="noopener">论文地址</a>，发表于 2014 年。 本文的作者在同年发表了另一篇论文，将上一篇论文称为 A，此论文称为 B，对于 A 论文我也做了<a href="https://yan624.github.io/·论文笔记/dilogue/QA/KBQA/20、Open%20Question%20Answering%20with%20Weakly%20supervised%20Embedding%20Models.html">论文笔记</a>，本论文是上一篇论文的改进版。A 只是对简单问题进行研究，B 研究如何改进模型并回答更复杂的问题。 开放域问答中的一流技术大致可以分为两大类：1)基于信息检索；2)基于语义解析。<strong>信息检索</strong>系统首先通过 KBs 的搜索 API（转换方式估计是手写模版，论文中未细说） <strong>将问题转换为有效的查询语句</strong>（比如 neo4j 数据库的 CQL）以此检索到大量的候选答案，然后再仔细地识别准确的答案（<a href="https://www.sciencedirect.com/science/article/pii/S0020025511003860" target="_blank" rel="noopener" title="A survey on question answering technology from an information retrieval perspective">Kolomiyets O 等 2011</a>，<a href="https://www2012.universite-lyon.fr/proceedings/proceedings/p639.pdf" target="_blank" rel="noopener" title="Template-based Question Answering over RDF Data">Unger C 等 2012</a>，<a href="https://www.aclweb.org/anthology/P14-1090" target="_blank" rel="noopener" title="Information Extraction over Structured Data: Question Answering with Freebase">Yao X 等 2014</a>）。<strong>语义解析</strong>旨在通过语义分析系统正确<strong>解释</strong>问题的含义，<strong>解释步骤</strong>的做法是把问题转换为数据库查询语句（这里的查询语句应该是逻辑形式，比如<strong>组合范畴法</strong>），以此查询到正确的答案。尽管这两种方法有能力去处理大规模知识库，但是需要专家手动的创建词汇、语法以及 KB 协议才能有所成效。且<strong>没有通用性</strong>，<strong>无法方便地扩展到</strong>具有其他模式、更广泛词汇或英语以外语言的<strong>新数据库</strong>。 相反，<a href="https://www.aclweb.org/anthology/P13-1158" target="_blank" rel="noopener">Paraphrase-Driven Learning for Open Question Answering</a> 提出了一个几乎不需要人工注释的开放域 QA 框架，虽然这是一种有趣的方法，但是它被其他方法超越了。即第二段提到的论文 A。 相比于论文 A，作者作出了以下几点<strong>改进</strong>：1）对于候选答案，考虑更多更长的路径（之前只考虑了 main entity 周围的节点）；2）对候选答案进行更有意义的表示：答案的表示包含问答路径以及周围的子图。</p>
-<h1 id="任务定义">任务定义</h1>
-<p>假设所有潜在的答案都是 KB 中的实体，当 KB 中不存在该实体时，可以使用一些方法解决（论文中具体没说，只是说了一种极简单的方式：<em>When this entity is not given, plain string matching is used to perform entity resolution</em>）。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/posts/976325f9.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    
-    	
-    
-    	
-    
-
-    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/2cdcf757.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/2cdcf757.html" class="post-title-link" itemprop="url">Open Question Answering with Weakly supervised Embedding Models</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-07-05 10:54:15" itemprop="dateCreated datePublished" datetime="2019-07-05T10:54:15+08:00">2019-07-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-17 23:13:04" itemprop="dateModified" datetime="2020-07-17T23:13:04+08:00">2020-07-17</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="论文概要">论文概要</h1>
-<p><a href="https://arxiv.org/pdf/1404.4326" target="_blank" rel="noopener">论文地址</a>，论文发表于 2014 年。 建立一个能够回答任何问题的计算机是人工智能的一个长期目标。这一领域一个重要的发展时大规模知识库的建立，如 <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.538.7139&amp;rep=rep1&amp;type=pdf" target="_blank" rel="noopener">Freebase</a> 和 <a href="https://content.iospress.com/download/semantic-web/sw134?id=semantic-web%2Fsw134" target="_blank" rel="noopener">DBPedia</a>，它们存储了大量的通用信息。它们由三元组的形式构成一个数据库，通过各种关系和格式连接成实体对。那么回答问题被定义为<strong>给定一个用自然语言表达的查询语句</strong>（一个查询语句的例子：中国的首都在哪？）<strong>从知识库中检索正确的实体或实体集的任务</strong>。 最近，通过将问题映射为<strong>逻辑形式</strong>或者类似<strong>数据库查询</strong>的方法取得了富有希望的进展。虽然这种方法可能有效，但是缺点是要采用大量的人为标记的数据或者需要工作人员定义词汇表和语法。 本文采用一种激进的学习方式，将问题映射为向量（无法人为解释）的特征表示。并且将重点放在回答一些基于比较宽泛的主题的简单事实性问题。这项任务的难点来自词汇的多样性，而不是句法的复杂性。 该方法采用随机梯度下降，然后使用 fine-tuning 进行训练。经验表明该模型能够捕获一些有意义的信号，且这是唯一一种能够在弱标记数据上训练的方法。</p>
-<h1 id="论文内容介绍">论文内容介绍</h1>
-<ol type="1">
-<li>Section 2：讨论了之前的工作；</li>
-<li>Section 3：介绍了开放域问答的问题；</li>
-<li>Section 4：给出了模型；</li>
-<li>Section 5：实验结果。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/posts/2cdcf757.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    
-    	
-    
-    	
-    
-    	
-    
-
-    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/5c4e57cd.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/5c4e57cd.html" class="post-title-link" itemprop="url">Semantic Parsing via Staged Query Graph Generation Question Answering with Knowledge Base</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-07-03 10:11:46" itemprop="dateCreated datePublished" datetime="2019-07-03T10:11:46+08:00">2019-07-03</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-17 23:13:04" itemprop="dateModified" datetime="2020-07-17T23:13:04+08:00">2020-07-17</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/paper/" itemprop="url" rel="index"><span itemprop="name">paper</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>5.1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="写在前面">写在前面</h1>
-<p>此论文为 2015 年的论文。 本文会出现一个名为<strong>谓语序列（predicate sequence）</strong>的名词，论文中没有详细说明。但是估计就是：一个实体至另一个实体的有向路径上的所有谓语的连接形式。如下文第一张图 Family Guy-&gt;cvt1-&gt;Mila Kunis 的谓语序列就是 cast-actor。</p>
-<h1 id="论文概要">论文概要</h1>
-<p><a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/ACL15-STAGG.pdf" target="_blank" rel="noopener">论文地址</a> 节选自摘要部分： &gt; 论文提出了一个基于知识库问答的新的语义解析（semantic parsing）框架。首先定义一个类似于知识库的<strong>子图（subgraph）</strong>的查询图（query graph），可以直接映射到一个语义的逻辑形式（如<span class="math inline">\(\lambda\)</span>-calculus）。所以<strong>语义分析简化为查询图的生成</strong>，并将其表示为一个阶段性搜索问题。然后通过使用先进的实体链接系统（<a href="https://arxiv.org/pdf/1609.08075.pdf" target="_blank" rel="noopener">Yang and Chang, 2015</a>）以及深度卷积网络来实现问题与谓语序列之间的匹配。在 WEBQUESTIONS 的数据集上，F1 指标达到了 52.5% 的水平，高于以前的方法。</p>
-<p>以下大型知识库已经成为支持开放领域问答的重要资源： - DBPedia - Freebase</p>
-<p>最先进的 KB-QA 方法都是基于<strong>语义解析</strong>的，在语义解析中一个问题或者一种表达被映射到它具有一定意义的表示上（如逻辑形式，具体来说可以是 <span class="math inline">\(\lambda\)</span>-calculus），即将自然语言映射为表达式，然后被翻译为一个 <strong>KB 查询</strong>。最后，只需要执行查询就可以检索问题的答案。<strong>但是大多数<u>传统的</u>语义解析方法在很大程度上都<u>脱离</u>知识库</strong>。由于没有前人的贡献累积，因此 QA 问题面临着一系列的挑战。例如： - 当在逻辑形式中使用与知识库中的谓语不同的谓语时，可能需要用到本体匹配（ontology matching）的问题（Kwiatkowski et al., 2013）。 - 即使表示语言与知识库的模式接近，从知识库中的大量词汇表中寻找正确的谓语与语句的描述相关联仍然是一个难题（Berant and Liang, 2014）。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/posts/5c4e57cd.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    
-    	
-    
-    	
-    
-    	
-    
-
-    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/be345b28.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/be345b28.html" class="post-title-link" itemprop="url">机器学习算法（七）：K-NN</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-07-01 15:14:48" itemprop="dateCreated datePublished" datetime="2019-07-01T15:14:48+08:00">2019-07-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-09 15:37:56" itemprop="dateModified" datetime="2020-06-09T15:37:56+08:00">2020-06-09</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/ml/" itemprop="url" rel="index"><span itemprop="name">ml</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="概念">概念</h1>
-<blockquote>
-<p>K-NN 算法采用测量不同特征值之间的距离的方法进行分类。 工作原理： 存在一个<strong>样本数据集</strong>，也称作训练样本集，并且样本集中每个数据都存在标签。输入<strong>没有标签的新数据</strong>后，将<strong>新数据</strong>的每个特征与<strong>样本集</strong>中的数据对应特征进行比较，然后算法提取样本集中特征最相似的数据（最邻近）的分类<strong>标签</strong>。一般来说，只选择样本数据集中前 k 个最相似的数据，这就是 k-NN 算法中 k 的出处，通常 k 是不大于 20 的整数。 最后选择在 k 个最相似的数据中出现次数最多的分类，作为新数据的分类。</p>
-</blockquote>
-<div id="flowchart-0" class="flow-chart">
-
-</div>
-<p>简单来说，K-NN 算法使用了一种计算特征之间的距离的公式，然后选择距离前 k 近的数据，获取这些数据的标签。通过一个简单的统计，获取这 k 项数据中最多的类别。最后我们将新数据看作是这个类别。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/posts/be345b28.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    
-    	
-    
-    	
-    
-    	
-    
-
-    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/ba399034.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/ba399034.html" class="post-title-link" itemprop="url">2019 CCF会议总结</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-06-27 21:33:09" itemprop="dateCreated datePublished" datetime="2019-06-27T21:33:09+08:00">2019-06-27</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-11 21:55:50" itemprop="dateModified" datetime="2020-11-11T21:55:50+08:00">2020-11-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/coding/" itemprop="url" rel="index"><span itemprop="name">coding</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/coding/conference/" itemprop="url" rel="index"><span itemprop="name">conference</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="问答系统">问答系统</h1>
-<h2 id="知识图谱问答系统概述">知识图谱问答系统概述</h2>
-<p>现在的<strong>搜索引擎</strong>工作流程是输入要搜索的内容，搜索引擎返回一大堆内容，供你自己选择。 <strong>问答系统</strong>是下一代的搜索引擎的基本形态。 &gt; 以直接而准确的方式回答用户自然语言提问的自动问答系统将构成下一代搜索引擎的基本形态。</p>
-<p>下图展示问答系统在近几十年的发展历史。 1. 1960 年的问答系统属于专家系统（模版系统） 2. 1990 - 2000 年的问答系统属于基于信息检索的 QA 系统 3. 2000 - 2010 年的问答系统属于社区 QA 系统 4. 2011 年之后的问答系统属于基于知识图谱的 QA 系统</p>
-<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/2019%20CCF会议总结/问答系统的历史.jpg" alt="问答系统的历史" />
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/posts/ba399034.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    
-    	
-    
-    	
-    
-    	
-    
-    	
-    
-    	
-    
-
-    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/d5936d3.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/d5936d3.html" class="post-title-link" itemprop="url">深度学习算法（三）：RNN 各种机制</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-05-23 17:07:17" itemprop="dateCreated datePublished" datetime="2019-05-23T17:07:17+08:00">2019-05-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-10-24 11:51:13" itemprop="dateModified" datetime="2020-10-24T11:51:13+08:00">2020-10-24</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/dl/" itemprop="url" rel="index"><span itemprop="name">dl</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>17k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>15 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="note "><p><mark class="label warning">Exposure Bias</mark> <mark class="label info">主要机制</mark></p>
-</div>
-<h1 id="gru">GRU</h1>
-<h2 id="参考资料">参考资料</h2>
-<ol type="1">
-<li><a href="https://zhuanlan.zhihu.com/p/32481747" target="_blank" rel="noopener">人人都能看懂的GRU</a></li>
-<li><em><a href="https://yan624.github.io/posts/5e27260b.html#GRU单元——Gate-Recurrent-Unit">吴恩达李宏毅综合学习笔记：RNN入门#GRU单元——Gate Recurrent Unit</a></em></li>
-</ol>
-<h1 id="lstm">LSTM</h1>
-<p>该<a href="https://yan624.github.io/posts/5e27260b.html#长短期记忆——Long-Short-term-Memory-LSTM">博客</a>中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。</p>
-<p>下图是吴恩达深度学习第五周作业中的图片，是一个 LSTM 单元。<strong>与李宏毅老师做的图有略微不同，并且在下图中将 input gate 称为了 update gate，并且在李宏毅老师所提供的图片中，g(z) 是由 sigmoid 函数计算出来的，而这里是由 tanh 计算出来的，即下图 update gate 旁边的函数</strong>。另外在李宏毅老师提供的图片中，为了简便，并没有使用上个时间步的激活值。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/LSTM%20cell.jpg" alt="LSTM cell" /></p>
-<ol type="1">
-<li>首先是<strong>输入的问题</strong>。一般来说一个 LSTM 的输入是前一<strong>个</strong> LSTM 的输出值 <span class="math inline">\(a\)</span> 以及输入值 <span class="math inline">\(x\)</span>（此外对于第 2 层的 LSTM 的 输入值就是前一<strong>层</strong>的输出值）。但是众所周知，<strong>LSTM 每个门的输入肯定只有一个向量，<span class="math inline">\(a\)</span> 和 <span class="math inline">\(x\)</span> 是两个向量，那么如何处理呢？</strong>
-<ul>
-<li>在下图中使用了 <span class="math inline">\([a^{&lt;t-1&gt;},x^{&lt;t&gt;}]\)</span> 进行向量拼接。</li>
-<li>在我看的代码中直接使用了加法进行相加，代码<a href="https://github.com/Alex-Fabbri/lang2logic-PyTorch/blob/master/seq2seq/atis/lstm/main.py" target="_blank" rel="noopener">在这</a>，但是代码量太大了，随便看看就行了（<strong>2020.2.25 更新</strong>：该代码使用了加法是基于一种较为特殊的情况，即 lstm 的隐藏状态维度等于词向量维度，所以正好可以使用加法，但是一般情况下，它们的维度不相同，所以<strong>只能使用拼接的方式</strong>）。</li>
-</ul></li>
-<li>之前说过 update gate 就是 input gate，它的输出 <span class="math inline">\(\Gamma^{&lt;t&gt;}_u\)</span> 实际上也是一个向量，而 <span class="math inline">\(\tilde{c^{&lt;t&gt;}}\)</span> 就是输入向量。<span class="math inline">\(\Gamma^{&lt;t&gt;}_u\)</span> 的意思就是限制 <span class="math inline">\(\tilde{c^{&lt;t&gt;}}\)</span> 的信息进入 memory，试想 <span class="math inline">\(\Gamma^{&lt;t&gt;}_u\)</span> 的输出值范围为 (0, 1)，这不就是在说 <span class="math inline">\(\Gamma^{&lt;t&gt;}_u\)</span> 将 <span class="math inline">\(\tilde{c^{&lt;t&gt;}}\)</span> 的每个元素都按其比例进行调整？就类似于将 <span class="math inline">\(\tilde{c^{&lt;t&gt;}}\)</span> 中的信息丢失一部分。如果 <span class="math inline">\(\tilde{c^{&lt;t&gt;}}\)</span> 的输出全是 1，就代表 <span class="math inline">\(\tilde{c^{&lt;t&gt;}}\)</span> 中的信息我全都要。如果 <span class="math inline">\(\tilde{c^{&lt;t&gt;}}\)</span> 的输出全是 0，就代表 <span class="math inline">\(\tilde{c^{&lt;t&gt;}}\)</span> 中的信息我全都不要。</li>
-<li>问：由于第一个 LSTM 不存在前一个LSTM，那么它的输入值怎么处理？答：<strong>暂且使用随机初始化，具体还要补充</strong>。（感觉 0 也可以，婴儿出生的时候不就是一张白纸吗。。。）
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/posts/d5936d3.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    
-    	
-    
-    	
-    
-    	
-    
-
-    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/b2bd11c2.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/b2bd11c2.html" class="post-title-link" itemprop="url">深度学习算法（二）：simple RNN 推导与理解</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-05-23 15:48:00" itemprop="dateCreated datePublished" datetime="2019-05-23T15:48:00+08:00">2019-05-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-17 23:13:04" itemprop="dateModified" datetime="2020-07-17T23:13:04+08:00">2020-07-17</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/dl/" itemprop="url" rel="index"><span itemprop="name">dl</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="代码">代码</h1>
-<p><a href="https://github.com/yan624/machine_learning_algorithms/tree/master/simple_recurrent_neural_network" target="_blank" rel="noopener">github地址</a> simple RNN只实现了正向传播，反向传播没有实现。是因为simple RNN有梯度消失的问题，索性直接不写了。下一节直接写LSTM。</p>
-<h1 id="介绍">介绍</h1>
-<blockquote>
-<p>1982年，美国加州理工学院物理学家John hopfield 发明了一种单层反馈神经网络 <strong>Hopfield network</strong>，用来解决组合优化问题。这是最早的RNN的雏形。86年，michael I. Jordan 定义了 recurrent 的概念，提出 <strong>Jordan network</strong>。1990年, 美国认知科学家 Jeffrey L. Elman 对 jordan network 进行了简化,并采用 BP 算法进行训练，便有了如今最简单的包含单个自连接节点的 RNN 模型。称之为 Elman Network。</p>
-</blockquote>
-<p>虽然 Jordan Network 先出现，但是此处《<a href="https://yan624.github.io/posts/5e27260b.html#Elman-Network-amp-Jordan-Network">吴恩达李宏毅综合学习笔记：RNN入门#Elman Network &amp; Jordan Network</a>》介绍了 <strong>Jordan Network 可能性能会更好</strong>。</p>
-<h1 id="simple-rnn和simple-nn的对比">simple RNN和simple NN的对比</h1>
-<p>本来觉得simple RNN挺简单的，只不过是simple NN的扩展，区别无非是将simple NN的神经元换成一个RNN cell。但是实际上没那么简单，特别是加上将数据向量化后计算。感觉简直和simple NN是两种架构。</p>
-<h2 id="input">input</h2>
-<p>下图是一个simple NN的架构，其中的一层也叫做全连接层。所以也叫做前馈神经网络。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple%20RNN%20推导与理解/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版" /> 网络中输入的x是一个纯数字，而不是向量。如果输入的是向量，就代表一次输入了多条样本。总的来说，一条样本向量化为：
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/posts/b2bd11c2.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    
-    	
-    
-    	
-    
-
-    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/d9a134a.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
-      <meta itemprop="name" content="朱冲䶮">
-      <meta itemprop="description" content="记录">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/d9a134a.html" class="post-title-link" itemprop="url">CS224n学习笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-05-20 10:51:09" itemprop="dateCreated datePublished" datetime="2019-05-20T10:51:09+08:00">2019-05-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-11 22:13:58" itemprop="dateModified" datetime="2020-11-11T22:13:58+08:00">2020-11-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/coding/" itemprop="url" rel="index"><span itemprop="name">coding</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/coding/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>7.7k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>7 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <div class="note info"><p>本笔记记录的内容来源于 <a href="https://www.bilibili.com/video/av41393758" target="_blank" rel="noopener">b站——CS224n 斯坦福深度自然语言处理课</a>。 之后我补充了18 章之后的内容，其来源为<a href="https://www.bilibili.com/video/av46216519" target="_blank" rel="noopener">b站——(2019)斯坦福CS224n深度学习自然语言处理课程 by Chris Manning</a></p>
-</div>
-<h1 id="开场白">开场白</h1>
-<p>略</p>
-<h1 id="词向量表示word2vec">词向量表示：word2vec</h1>
-<p>课程计划如下： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/CS224n学习笔记/课程计划.jpg" alt="课程计划" /></p>
-<p><strong>神经网络词嵌入学习的通用做法</strong>：定义一个模型，根据中心词 <span class="math inline">\(w_t\)</span> 去预测上下文单词。给定 <span class="math inline">\(w_t\)</span> 的条件下 context 的概率。 <span class="math display">\[
-p(context|w_t) = \dots
-\]</span> 然后用损失函数判断预测的准确性，例如： <span class="math display">\[
-J = 1 - p(w_{-t}|w_t), \quad  \text{-t 代表 t 周围的单词}
-\]</span> 如果可以精准地根据 t 预测到这些单词，那么概率就为 1，于是损失就没有了。但通常情况下，做不到这点。<strong>所以我们应该调整词汇表示，从而使损失最小化</strong>。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/posts/d9a134a.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
       
   
   
@@ -1324,10 +418,896 @@ J = 1 - p(w_{-t}|w_t), \quad  \text{-t 代表 t 周围的单词}
   
   
 
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    
+    	
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/c8ddbafb.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/c8ddbafb.html" class="post-title-link" itemprop="url">梯度下降算法的推导</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-05-10 19:55:24" itemprop="dateCreated datePublished" datetime="2019-05-10T19:55:24+08:00">2019-05-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-08 00:57:42" itemprop="dateModified" datetime="2020-09-08T00:57:42+08:00">2020-09-08</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/ml/" itemprop="url" rel="index"><span itemprop="name">ml</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <div class="note info"><p>2020.09.07更新：<a href="https://www.bilibili.com/video/BV13x411v7US?p=6" target="_blank" rel="noopener">42:50</a>，突然发现这个视频又讲梯度下降的底层理论，可以去看看。</p>
+</div>
+<p>梯度下降算法大家都知道，公式是<span class="math inline">\(\theta = \theta - \alpha * J&#39;(\theta)\)</span>，其中J是代价函数。但是这个算法具体是怎么来的，可能不太清楚。 本文参考 <a href="https://mp.weixin.qq.com/s/k26Fm0GL3fdVA9VbQIVAuQ" target="_blank" rel="noopener">微信公众号</a> <a href="https://baike.baidu.com/item/梯度/13014729" target="_blank" rel="noopener">梯度-百度百科</a> 由于没有专业的制图工具，所以只能手画了。。。</p>
+<h1 id="梯度下降问题">梯度下降问题</h1>
+<figure>
+<img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/梯度下降算法的推导/梯度下降草图.jpg" alt="梯度下降草图" /><figcaption>梯度下降草图</figcaption>
+</figure>
+<p>由图中可以观察到，我们将参数初始化到A点，我们的目标是将点移动到最小值点（或者极小值点）。那么问题就是如何移动了。 先给出梯度下降公式：<span class="math inline">\(\theta = \theta - \alpha * J&#39;(\theta)\)</span>，J是代价函数，这个公式应该不陌生。</p>
+<h1 id="一阶泰勒展开式">一阶泰勒展开式</h1>
+<p>如果学过高数，应该知道<strong>一阶泰勒展开式</strong>的公式是：<span class="math inline">\(f(x) = f(x_0) + (x - x_0) * f&#39;(x_0) + R_n(x)\)</span>，其中<span class="math inline">\(R_n(x)\)</span>是泰勒公式的余项，可以理解为一个无穷小量。既然是无穷小量那么便可以省略不写，但是即使是无穷小，其实等式的左右边还是有点差距的，所以将等式修改为<strong>约等于号</strong>。
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/c8ddbafb.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    
+    	
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/ba091254.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/ba091254.html" class="post-title-link" itemprop="url">练习Keras RNN的代码</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-04-27 15:28:20" itemprop="dateCreated datePublished" datetime="2019-04-27T15:28:20+08:00">2019-04-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-11-11 22:15:46" itemprop="dateModified" datetime="2020-11-11T22:15:46+08:00">2020-11-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/coding/" itemprop="url" rel="index"><span itemprop="name">coding</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/coding/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="python深度学习第6章预测imdb的影评">《Python深度学习》第6章预测imdb的影评</h1>
+<p><a href="https://github.com/yan624/deep-learning-notes/tree/master/RNN_learning/imdb_predication" target="_blank" rel="noopener">imdb影评代码</a></p>
+<h1 id="第五课第二周作业emojify">第五课第二周作业：Emojify</h1>
+<p>本文实现吴恩达深度学习第五课第二周的Emojify作业。目的是了解一个小型nlp系统的构建流程。 首先需要导入以下模块。由于在Jupyter中打开的ipynb文件全是英文，所以本文的大部分标题也用英文，方便ctrl F。 Emojifier-V1略。</p>
+<h2 id="代码">代码</h2>
+<p>加了很多注释，但是代码的顺序我做了很大的改动。下面博客里面的代码，是作业里面的代码，基本没改几个字。 <a href="https://github.com/yan624/deep-learning-notes/tree/master/RNN_learning/emojify" target="_blank" rel="noopener">emojify_V2代码</a>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/ba091254.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/99a5ad8a.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/99a5ad8a.html" class="post-title-link" itemprop="url">Jupyter出现gbk codec cant decode byte 0x93 in position 3136：illegal multibyte sequence</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-04-27 14:45:05" itemprop="dateCreated datePublished" datetime="2019-04-27T14:45:05+08:00">2019-04-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-09 15:37:56" itemprop="dateModified" datetime="2020-06-09T15:37:56+08:00">2020-06-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/ml/" itemprop="url" rel="index"><span itemprop="name">ml</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>65</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>一般来说是open()方法没有加encoding='utf-8'，但是没用，试了其他办法没一个能用。 解决办法：重启Jupyter。
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/99a5ad8a.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    
+    	
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/8de7f8fd.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/8de7f8fd.html" class="post-title-link" itemprop="url">吴恩达深度学习学习笔记：自然语言处理与词嵌入</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-04-25 23:58:24" itemprop="dateCreated datePublished" datetime="2019-04-25T23:58:24+08:00">2019-04-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-11-11 22:14:03" itemprop="dateModified" datetime="2020-11-11T22:14:03+08:00">2020-11-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/coding/" itemprop="url" rel="index"><span itemprop="name">coding</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/coding/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="字母表示">字母表示</h1>
+<p>我们一直使用<a href="https://yan624.github.io/·学习笔记/吴恩达深度学习与李宏毅深度学习学习笔记：RNN序列模型.html#one%20hot编码">one hot编码</a>，这在之前已经记过笔记。这种表示方法的最大缺点是将每个词孤立起来，并且泛化能力不强。由于每个向量的内积都是0，所以它们之间的距离都是一样的。比如 1. I want a glass of orange juice. 2. I want a glass of apple ___. 这两个句子是很常见的句子，所以自然而然的想到划线处应该是juice。但是由于one hot编码，程序并不知道orange和apple之间的关系，也就猜不出来。</p>
+<h2 id="featurized-representation-word-embedding">Featurized representation： word embedding</h2>
+<p>既然one hot有问题，那么自然就有人发明了新的算法。 使用特征来表示每个词。如果适应特征化来表示，那么最后发现orange和apple的特征差不多，就可以推测出划线处应该填写什么。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/吴恩达深度学习学习笔记：自然语言处理与词嵌入/Featurized%20representation：%20word%20embedding.jpg" alt="Featurized representation： word embedding" />
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/8de7f8fd.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    
+    	
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/5e27260b.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/5e27260b.html" class="post-title-link" itemprop="url">吴恩达李宏毅综合学习笔记：RNN入门</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-04-23 16:46:12" itemprop="dateCreated datePublished" datetime="2019-04-23T16:46:12+08:00">2019-04-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-11-11 22:15:52" itemprop="dateModified" datetime="2020-11-11T22:15:52+08:00">2020-11-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/coding/" itemprop="url" rel="index"><span itemprop="name">coding</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/coding/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>15k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>13 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="大纲">大纲</h1>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>序号</th>
+<th>课程</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>2~8</td>
+<td>吴恩达深度学习</td>
+<td>one hot编码、RNN包括双向和深层、GRU、LSTM</td>
+</tr>
+<tr class="even">
+<td>9~14</td>
+<td>李宏毅机器学习</td>
+<td>RNN包括双向和深层、LSTM、RNN反向传播、seq2seq</td>
+</tr>
+<tr class="odd">
+<td>15~20</td>
+<td>李宏毅深度学习</td>
+<td>计算图、语言模型中的深度学习、几个有用的网络架构。到原视频的 p12 结束，由于后续部分涉及到了 GAN 等其他模型，所以不在此处做笔记，详见<a href="https://yan624.github.io/posts/b803ed7e.html">对神经网络整体的理解</a>博文中靠后的几节</td>
+</tr>
+<tr class="even">
+<td>21</td>
+<td>李宏毅机器学习/深度学习剩余的一些知识点</td>
+<td>这些知识点记录在其他的博客中，此处只提供链接</td>
+</tr>
+</tbody>
+</table>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/5e27260b.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    
+    	
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/a72e4bb6.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/a72e4bb6.html" class="post-title-link" itemprop="url">git学习记录</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-04-22 23:51:08" itemprop="dateCreated datePublished" datetime="2019-04-22T23:51:08+08:00">2019-04-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-11-11 22:07:08" itemprop="dateModified" datetime="2020-11-11T22:07:08+08:00">2020-11-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/coding/" itemprop="url" rel="index"><span itemprop="name">coding</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>本文是在学习<a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000" target="_blank" rel="noopener">该教程</a>时/后做的笔记。 我现在用git基本都是用<a href="https://desktop.github.com/" target="_blank" rel="noopener">Github Desktop</a>，前面的是下载地址。用起来方便又快捷。事实上我也不会用git的命令o(<em>￣︶￣</em>)o所以今天稍微学一下。</p>
+<h1 id="git-init">git init</h1>
+<p>切换到想要创建仓库的文件夹，执行命令<code>git init</code>就会在该文件夹下创建一个.git的文件夹，这个文件夹是隐藏的。</p>
+<h1 id="git-addgit-commit">git add/git commit</h1>
+<p>使用命令<code>git add whatever.txt</code>将文件添加到仓库。使用命令<code>git commit -m &quot;wrote a file&quot;</code>将文件提交到仓库，-m后面的是描述这份文件你改了什么。其实就是相当于desktop的一个按钮，按一下就把全部有改动文件都提交了。 这样就完成了提交一份文件。这里就会有疑问了，为什么设计成先add再commit？直接commit不就行了？因为commit可以提交多份文件，你可以使用add命令一份一份地添加文件，再使用commit一次性提交到仓库。 该命令指示推送到本地仓库，并非远程仓库。
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/a72e4bb6.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    
+
+    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/e6412665.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/e6412665.html" class="post-title-link" itemprop="url">ViewPager无法刷新数据</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-04-18 22:15:24" itemprop="dateCreated datePublished" datetime="2019-04-18T22:15:24+08:00">2019-04-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-11-11 21:58:28" itemprop="dateModified" datetime="2020-11-11T21:58:28+08:00">2020-11-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/coding/" itemprop="url" rel="index"><span itemprop="name">coding</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/coding/android/" itemprop="url" rel="index"><span itemprop="name">android</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>实现ViewPager刷新数据功能，在网上找了很多资料都已经过时了。 由于本人并不是android开发出身，完全是做app玩的。所以很多术语都不知道，如果看不懂就算了。。。 实现PagerAdapter类，我命名为HomePagerAdapter
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/e6412665.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    
+    	
+    
+
+    <link itemprop="mainEntityOfPage" href="https://yan624.github.io/posts/b6508bb7.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%A6%99%E8%9B%99%E7%A7%8D%E5%AD%90.webp">
+      <meta itemprop="name" content="朱冲䶮">
+      <meta itemprop="description" content="记录">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/b6508bb7.html" class="post-title-link" itemprop="url">在写了大量内容以及大量数学表达式后，mathJax无法渲染数学表达式</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-04-18 16:23:46" itemprop="dateCreated datePublished" datetime="2019-04-18T16:23:46+08:00">2019-04-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-11-11 21:52:44" itemprop="dateModified" datetime="2020-11-11T21:52:44+08:00">2020-11-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/coding/" itemprop="url" rel="index"><span itemprop="name">coding</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/coding/hexo/" itemprop="url" rel="index"><span itemprop="name">hexo</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>124</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>之前写的数学表达式明明可以渲染，但是接下去隔了n行的数学表达式无法渲染。推测是因为单行数学表达式在文字前面换行。 比如说： &gt;文字文字文字文字：·￥￥· 该表达式渲染正常。</p>
+<p>如果， &gt;文字文字文字文字： ·￥￥· 那么下面的数学表达式将全部无法渲染。
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/b6508bb7.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/10/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" href="/page/12/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/10/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/12/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1395,7 +1375,7 @@ J = 1 - p(w_{-t}|w_t), \quad  \text{-t 代表 t 周围的单词}
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">183</span>
+          <span class="site-state-item-count">175</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1406,12 +1386,12 @@ J = 1 - p(w_{-t}|w_t), \quad  \text{-t 代表 t 周围的单词}
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">117</span>
+        <span class="site-state-item-count">105</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">255.6k</span>
+      	<span class="site-state-item-count">230.5k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>

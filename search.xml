@@ -953,231 +953,6 @@ window.onload = function () {
       </tags>
   </entry>
   <entry>
-    <title>深度学习算法（五）：预训练模型</title>
-    <url>/posts/460dff7.html</url>
-    <content><![CDATA[<div class="tabs" id=""><ul class="nav-tabs"><li class="tab active"><a href="#-1">模型对比</a></li><li class="tab"><a href="#-2">名词解释</a></li></ul><div class="tab-content"><div class="tab-pane active" id="-1"><table>
-<thead>
-<tr class="header">
-<th>名称</th>
-<th>特征提取器</th>
-<th>模型种类</th>
-<th>任务</th>
-<th>使用方法</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>EMLo</td>
-<td>LSTM</td>
-<td>AR</td>
-<td>LM</td>
-<td>pt+fb</td>
-</tr>
-<tr class="even">
-<td>BERT</td>
-<td>Transformer</td>
-<td>AE</td>
-<td>MLM, NSP</td>
-<td>pt+ft</td>
-</tr>
-</tbody>
-</table></div><div class="tab-pane" id="-2"><ol type="1">
-<li>缩写
-<ul>
-<li>pre-training = pt</li>
-<li>feature-based = fb</li>
-<li>fine-tuning = ft</li>
-</ul></li>
-<li>模型种类
-<ul>
-<li>AR：自回归模型（Autoregressive Language Model）是典型的语言模型。显然 AR 是更符合 NLP 的做法。但是它的缺点是只能单向，尽管可以近似双向，但是终究不是正道。</li>
-<li>AE：自编码模型（Autoencoding Language Model）不是语言模型。支持双向。</li>
-</ul></li>
-</ol></div></div></div>
-<a id="more"></a>
-<h1 id="word-embedding">Word Embedding</h1>
-<p>18 年末的 BERT 模型无疑是将 NLP 带入了预训练时代。但是在此之前，NLP 领域中，其实早已经有了预训练的概念。它就是 word embedding。</p>
-<p>word embedding 其实是更早以前（2003 年）神经语言模型（NNLM）的副产物，但是当时并没有引起多大的关注，直到 2013 年，深度学习进军 NLP 领域时，才焕发异彩。</p>
-<p>彼时，由谷歌率先打响了第一枪。于 2013 年发布 Word2Vec 工具包，值得注意的是 Word2Vec 只是一个工具包，但是同时它也是该词向量的代称，并且也可以算做一种单词转为向量的算法名称，所以初学者在接触它时可能会感到困惑。接下来我简略地介绍一下 word2vec 与 NNLM 的不同之处。</p>
-<p>word2vec 与 NNLM 有稍许的不同。<strong>1）目的不同</strong>：word2vec 的目的是产生词向量；NNLM 的目的是实现一个神经语言模型，但是它同样具有词向量，只不过这个词向量是副产品。<strong>2）模型算法不同</strong>：为了产生词向量，word2vec 使用了两种算法，即 CBOW 和 skip-gram。其中 CBOW 使用单词 <span class="math inline">\(w_t\)</span> 的上下文来预测其本身；而 skip-gram 与之相反，使用单词 <span class="math inline">\(w_t\)</span> 来预测其上下文。由于 NNLM 的主要目的是构建语言模型，所以它使用的算法是传统的条件概率，即已知前面若干词的情况下，预测下一个单词的概率。<strong>3）模型结构不同</strong>：为了更快地训练词向量，word2vec 舍弃了隐藏层，那么它的模型架构为 input -&gt; output。而 NNLM 还是使用了隐藏层，即 input -&gt; hidden -&gt; output。</p>
-<p>此外，由于 word2vec 出现的时间处于深度学习的早期，彼时，GPU 还未在深度学习领域中大量投入使用。所以它还附带了两种高效的解码算法，即 hierarchical softmax 和 negative sampling。不过由于现在 GPU、TPU 大行其道，hierarchical softmax 已经不常见了，这是因为它主要是为了加速 softmax，从而设计出的一个近似算法，主要思想是使用层次的二元分类逼近多元分类。</p>
-<p>此后还出了不少的词向量算法，例如 2014 年的 GloVe，2016 年的 fasttext。但是无论是哪种算法都存在着一个致命的问题，就是无法处理一词多义，<em>题外话，可能一义多词也无法处理</em>。<strong>那么后起之秀 ELMo、BERT 就是来缓解这一问题的。</strong></p>
-<p>由于本篇的主旨是预训练模型，所以 word embedding 就讲到这了。最后需要补充一点的是，个人认为 CBOW 算法与后来 BERT 使用的 MLM 模型类似，都是使用周围词来预测其中的某一个词。</p>
-<div class="note warning"><p>我为什么之前说 BERT 之类的模型只是起到了<strong>缓解</strong>的作用呢？因为我认为这些预训练模型本质上并没有解决一词多义的问题，它只不过将 word2vec 的静态词向量转化为了动态词向量。它依靠上下文的力量重新构建了一个词向量。我感觉这种做法有种说不出来的奇怪。</p>
-</div>
-<h1 id="elmo">ELMo</h1>
-<div class="note info"><p><a href="https://arxiv.org/pdf/1802.05365.pdf" target="_blank" rel="noopener">论文地址</a>，<a href="https://allennlp.org/elmo" target="_blank" rel="noopener">预训练模型地址</a></p>
-</div>
-<p>与以前的预训练词向量不同，ELMo<span class="citation" data-cites="peters2018deep">(Peters et al. 2018)</span> 的词向量表征是一个基于整条输入语句的函数。这个函数就是一个 biLM。下面将先绍1）什么是 biLM，2）ELMo 词向量是如何产生的，3）如何在下游任务使用，4）biLM 的具体结构。</p>
-<h2 id="bilm">biLM</h2>
-<p>biLM 实际上就是一个双向的语言模型，使用 LSTM 进行构建。给定一个包含 N 个符号的序列 <span class="math inline">\((t_1, t_2, \cdots, t_N)\)</span>，<strong>前向语言模型</strong>计算给定 <span class="math inline">\((t_1, \cdots, t_{k-1})\)</span> 时 <span class="math inline">\(t_k\)</span> 的条件概率：</p>
-<p><span class="math display">\[p(t_1, t_2, \cdots, t_N) = \prod^N_{k=1} p(t_k | t_1, t_2, \cdots, t_{k-1})
-\]</span></p>
-<p>在深度学习领域中，计算该概率的普遍做法是将<strong>上下文<font color='red'>无关</font></strong>的词向量 <span class="math inline">\(x^{LM}_k\)</span>（可以是任意种类的词向量）输入 <span class="math inline">\(L\)</span> 层的前向 LSTM。那么在位置 <span class="math inline">\(k\)</span>，<strong>每层</strong> LSTM 都会输出一个<strong>上下文<font color='red'>相关</font></strong>的表征 <span class="math inline">\(\overrightarrow{h}^{LM}_{k, j}\)</span>，其中 <span class="math inline">\(j = 1, \cdots, L\)</span>。最后，<span class="math inline">\(\overrightarrow{h}^{LM}_{k, j}\)</span> 通过一个 softmax layer 去预测下一个符号 <span class="math inline">\(t_{k+1}\)</span>。</p>
-<p>之前说了 ELMo 使用的是一个双向语言模型，所以自然还有一个<strong>后向语言模型</strong>。它与前向语言模型类似，基于下文预测当前位置的单词：</p>
-<p><span class="math display">\[p(t_1, t_2, \cdots, t_N ) = \prod^N_{k=1} (t_k | t_{k+1}, t_{k+2}, \cdots, t_N)
-\]</span></p>
-<p>可以发现这个双向语言模型其实类似于 word2vec 的 CBOW 算法。那么这个双向语言模型的优化目标就是二者的对数似然损失之和：</p>
-<p><span class="math display">\[\sum^N_{k=1}(log(p(t_k | t_1, t_2, \cdots, t_{k-1}; \theta_x, \overrightarrow{\theta}_{LSTM}, \theta_s)) + log(p(t_k | t_{k+1}, t_{k+2}, \cdots, t_N; \theta_x, \overleftarrow{\theta}_{LSTM}, \theta_s)))
-\]</span></p>
-<p>其中 <span class="math inline">\(\theta_x\)</span> 是词向量，<span class="math inline">\(\theta_{LSTM}\)</span> 是 LSTM 的参数，<span class="math inline">\(\theta_s\)</span> 是 softmax layer 的参数。<strong>注意 ELMo 中，正反向的参数是独立的。</strong>下一节将介绍一个与先前工作不同的新方法：<strong>将 biLM 学到的表征线性组合起来。</strong></p>
-<div class="note danger"><p>需要注意的是这里使用的双向模型与我们平常用的双向模型略微不同，主要在优化对象上。我们平时搭的语言模型，是将两个方向的特征融合（无论是拼接还是相加），然后优化一个目标。而 ELMo 是分别优化正向和反向的目标。</p>
-<p>这应该主要是为了防止模型可以看见“未来”。因为正向的特征融入了反向的特征，就相当于看见了“未来”，反之亦然。</p>
-<p>直观来讲，对于字符 <span class="math inline">\(t_k\)</span>，我们融合两个特征之后，优化目标就只剩一个，那么相当于从损失函数开始在同时优化正反向的单词。然而分开优化的话，虽然也是从损失函数同时优化正反向的单词，但是实际上是分成两路进行优化。</p>
-<p>ELMo 优化对象与传统语言模型不同的重点应该是：<strong>为什么要设计成正反向输入不同，而不是像传统的双向语言模型一样，正反向的唯一区别只是输入的顺序不同？</strong>可能答案是人家只是正好这么设计的。。。</p>
-</div>
-<h2 id="elmo词向量">ELMo词向量</h2>
-<p>对于每一个符号 <span class="math inline">\(t_k\)</span>，<span class="math inline">\(L\)</span> 层的 biLM 可以计算得到 <span class="math inline">\(2L + 1\)</span> 个表征（<strong>ELMo 好像就用了两层，所以应该为 <span class="math inline">\(2L + 1 = 5\)</span>，那么当正反向表征合并之后，就只有三个表征了，即 <span class="math inline">\(x^{LM}, h^{LM}_{k, 1}, h^{LM}_{k, 2}\)</span></strong>）：</p>
-<p><span class="math display">\[
-\begin{align}
-R_k = &amp; \{x^{LM}_k, \overrightarrow{h}^{LM}_{k, j}, \overleftarrow{h}^{LM}_{k, j} | j = 1, \cdots, L\} \\
-= &amp; \{h^{LM}_{k, j} | j = 0, \cdots, L\}
-\end{align}
-\]</span></p>
-<p>其中 <span class="math inline">\(h^{LM}_0\)</span> 是词向量层的表征 <span class="math inline">\(x^{LM}\)</span>，<span class="math inline">\(h^{LM}_{k, j} = [\overrightarrow{h}^{LM}_{k, j}; \overleftarrow{h}^{LM}_{k, j}]\)</span></p>
-<p>在下游任务，ELMo 将多层表征融合进一个向量中，<span class="math inline">\(ELMo_k = E(R_k; \theta_e)\)</span>。最简单的做法，是只取最上层的表征。即 <span class="math inline">\(ELMo_k = h^{LM}_{k, j}\)</span>，这也是比较普遍的做法。更通用的做法是对所有层计算一个特定于任务的加权和：</p>
-<p><span class="math display">\[ELMo^{task} = \gamma^{task} \sum^L_{j = 0} s^{task}_j h^{LM}_{k, j}
-\]</span></p>
-<p>其中 <span class="math inline">\(\gamma^{task}\)</span> 是一个特定于任务的缩放因子，<span class="math inline">\(s^{task}_j\)</span> softmax 标准化权重（注意，这是一个可学习的参数）。其中 <span class="math inline">\(\gamma\)</span> 对优化过程起到非常重要的作用，详见论文中的附加材料。</p>
-<h2 id="如何在下游任务中使用">如何在下游任务中使用</h2>
-<p>一般来说，对于监督 NLP 模型的通用做法是：将上下文无关的词向量（可以是预训练的、字符级的、来自 CNN 的等等类型）输入进一个模型得到一个上下文敏感的表征，通常是 bi-RNN，CNN或者是线性层。</p>
-<p>关于下游任务具体使用哪种模型还是有很多选择的，论文中提到可以使用 RNN、CNN或者线性层。但是由于预训练模型本身就比较大，一些内存小点的服务器可能无法再支撑后面接一个 RNN 之类的大型神经网络了。所以实战的时候可以自行调节。</p>
-<p>那么如何将 ELMo 加入进这个监督模型呢？<strong>首先</strong>冻结 biLM 的权重，<strong>然后</strong>拼接词向量 <span class="math inline">\(x_k\)</span> 和 ELMo 的产生的 <span class="math inline">\(ELMo^{task}_k\)</span>，<strong>最后</strong>将 ELMO 增强的表征 <span class="math inline">\([x_k; ELMo^{task}_k]\)</span> 输入进任务相关的 RNN。对于一些任务，不同的组合可能还有提升。由于模型的其余部分不变，ELMo 还可以用在更复杂的结构中。</p>
-<p><strong>简单来说，就是将 ELMo 的权重冻结，然后使用 ELMo 产生的表征去替换任务中原先使用的词向量（例如 ELMo 替换 Glove）。</strong></p>
-<div class="note info"><p>关于具体使用问题，还需要说明一下：</p>
-<ol type="1">
-<li>论文中提到需要冻结 biLM 的权重参数，那么 ELMo 的输入——词向量是否需要冻结呢？论文中并没有给出答案。</li>
-<li><span class="math inline">\(ELMo^{token}_k\)</span> 本身就包含了 <span class="math inline">\(x_k = ELMo^{token}_0\)</span>，怎么还需要再拼接成 <span class="math inline">\([x_k; ELMo^{task}_k]\)</span>？</li>
-</ol>
-</div>
-<h2 id="bilm的具体结构">biLM的具体结构</h2>
-<p>biLM 的结构与 A、B（由于一个人的名字不是英文，无法复制，我就简称 A、B 了，具体是谁可以去原文看） 的工作一样（大致应该是引入了 char-level 的信息），但是改成了支持双向的联合训练，以及在 LSTM 各层中加入残差连接。</p>
-<p>biLM 使用的是 CNN-BIG-LSTM，考虑到模型的复杂度对下游任务的影响，作者对原模型的参数减了半。最后模型使用 2 层双向的 LSTM（4096 个隐藏单元，512 维）以及一个在一二层之间的残差连接层。输入是 2048 个的 n-gram 级卷积 filter，512 维。</p>
-<p>与之相反，传统的词向量只是提供一个一层的表征。</p>
-<h2 id="elmo的缺点">ELMo的缺点</h2>
-<ol type="1">
-<li>使用的是自回归语言模型（Autoregressive LM），缺点是只能看上文或者下文。尽管 ELMo 使用了两个正反向的自回归来近似捕获上下文，但是这终究只是近似。</li>
-<li>ELMo 官方推荐把它当做冻结的词向量用，那么就无法微调了，这样可能使得词向量无法适应自己的任务。（后续听说不微调确实要好，可以参考<a href="https://arxiv.org/pdf/1903.05987" target="_blank" rel="noopener" title="To Tune or Not to Tune? Adapting Pretrained Representations to Diverse Tasks">论文</a>，我是在知乎上看到这篇论文的）
-<ul>
-<li>那么这种冻结词向量而不去微调的思想，最直观的体现就是在 <span class="math inline">\(\gamma^{task}\)</span> 这个参数上。。。要自己根据任务去调，那还不如直接微调。那么问题又来了，为什么 ELMo 不能微调呢？我认为有以下几点：
-<ol type="1">
-<li>微调的本质是更新预训练模型中所有的参数，而 LSTM 可能对这样的更新不支持。想想是不是平时做实验 LSTM 就一层？现在 ELMo 搞得这么复杂，可能会同时出现梯度爆炸和梯度消失。
-<ul>
-<li>如果定住预训练模型中的参数，但是开放最底层上下文无关的词向量，这也是不可行的。因为预训练模型没有收到词向量更新的反馈，词向量是更新了，但是预训练模型中的参数没有适应。</li>
-</ul></li>
-</ol></li>
-</ul></li>
-<li>无法更改词表的内容</li>
-<li>有人认为还有个缺点是用了 LSTM，没用 Transformer。。。</li>
-</ol>
-<h1 id="bert">BERT</h1>
-<div class="note info"><p><a href="https://arxiv.org/pdf/1810.04805.pdf" target="_blank" rel="noopener">论文地址</a>，<a href="https://github.com/google-research/bert#pre-trained-models" target="_blank" rel="noopener">预训练模型地址</a></p>
-</div>
-<p>BERT 分为两步：预训练和微调，其中预训练是 google 已经做好的，那么我们只需要做微调即可。</p>
-<p>在微调阶段，首先要做的是加载所有预训练好的参数，然后使用下游任务的标签数据更新所有的参数。每种任务都有独立的微调模型，即使它们使用的是相同的预训练参数。这里的微调模型应该指的是架构，比如分类模型就用 <code>[CLS]</code>，序列标注就用语句本身。</p>
-<p><strong>BERT 的一个独特特性就是对于不同的任务，它都有一个统一的结构。</strong>不过在预训练结构与最终的下游任务结构有一点略微的差异。</p>
-<h2 id="模型结构">模型结构</h2>
-<p>几乎与 Transformer encoder 相同，<span class="math inline">\(BERT_{BASE}\)</span>: L=12, H=768, A=12, Total Parameters=110M，<span class="math inline">\(BERT_{LARGE}\)</span>: L=24, H=1024, A=16, Total Parameters=340M。其中 <span class="math inline">\(BERT_{BASE}\)</span> 的参数里与 GPT 一样，是为了做对比。</p>
-<p>为了处理多样的下游任务，模型可以接受一条语句或者一个语句对（问答对）。<strong>在 BERT 中，一个句子可以是一段任意跨度的连续文本，不一定真的是一条语句。</strong></p>
-<p>BERT 使用 wordpiece 词嵌入，其词表大小为 30000。</p>
-<p>每条序列的首个符号总是为 <code>[CLS]</code>，它的隐藏状态输出将用于分类任务。由于语句对将被打包为一个序列，为了区分二条语句，首先用 <code>[SEP]</code> 分隔二者，其次为每一个符号添加一个学习好的嵌入（<strong>位置编码</strong>），以此判断究竟是哪个句子。那么，<strong>对于一个给定的符号，它的输入表征是对应的词嵌入和位置编码之和。</strong></p>
-<p>文章后续将以 <span class="math inline">\(E\)</span> 表示输入的词嵌入，<code>[CLS]</code> 的隐藏向量表示为 <span class="math inline">\(C \in \mathbb{R}^H\)</span>，每个符号的隐藏向量表示为 <span class="math inline">\(T_i \in \mathbb{R}^H\)</span>。</p>
-<h2 id="预训练bert">预训练BERT</h2>
-<p>与 ELMo 和 GPT 不同，BERT 使用的双向语言模型。</p>
-<h3 id="masked-lm">Masked LM</h3>
-<p>直觉上来讲，有理由相信<strong>深层双向模型</strong>比<strong>从左到右</strong>或者<strong>浅层的从左到右以及从右到左的拼接模型</strong>要好。不幸的是，标准的语言模型只能做到捕获一个方向的语言特征。</p>
-<p>为了训练一个深层的双向语言模型，BERT 以一定概率（论文中为 15%）随机地掩盖输入语句中的部分符号（论文中，这里的符号指 wordpiece 符号），然后预测那些符号。这被称为“masked LM”（MLM），在文学领域这被称为完形填空（Cloze）。与 denoising auto-encoders (Vincent et al., 2008) 相比，BERT 只是预测被掩盖的单词，而不是重构整个输入。</p>
-<p>尽管 MLM 实现了双向的预训练模型，但是<strong>它有一个缺点就是引入了预训练和微调阶段的不一致性，因为 <code>[MASK]</code> 没有出现在微调阶段</strong>。为了缓解这一症状，BERT 不是为每条句子都进行替换。80% 替换，10% 替换成一个随机的符号，10% 不做变换。</p>
-<h3 id="nsp">NSP</h3>
-<p>许多重要的下游任务都基于理解两个句子之间的关系，例如 QA 和 NLI，而这并不是语言模型能捕捉到的。为了模型能够理解句子之间的联系，BERT 还额外训练了 NSP 任务。具体来讲，对于句子 A 和 B，50% 的情况，B 就是 A 的下一句；50% 的情况，A 的下一句是一条随机语句。</p>
-<h2 id="微调bert">微调BERT</h2>
-<p>只需要输入语句或者语句对，然后得到表征。输出的符号表征可以用于序列标注或者问答，<code>[CLS]</code> 表征可以输入一个输出层用以分类。</p>
-<h2 id="缺点">缺点</h2>
-<ol type="1">
-<li>输入是 wordpiece，这让基于 span 的任务很难办。对于命名体识别来说，每一个符号都有对应的标签，如果用 wordpiece 算法会打乱标签。BERT 的做法是只使用 sub-word 的第一个部分的隐藏状态，详情可参考<a href="https://github.com/huggingface/transformers/issues/323" target="_blank" rel="noopener">issue1</a>。需要注意，BERT 的论文应该做过修改，issue1 中提到的段落，现在应该在 5.3。原文我放在下面。然而这只能解决命名体识别任务，无法解决基于位置信息的任务，例如基于 index-based Ptr 模型做的任务。
-<ul>
-<li><blockquote>
-<p>We use the representation of the first sub-token as the input to the token-level classifier over the NER label set.</p>
-</blockquote></li>
-</ul></li>
-<li>只能输入两句话</li>
-<li>使用 MLM 语言模型，虽然使用了一定技巧去缓解，但是有点像拆东墙补西墙</li>
-<li>感觉 NSP 任务没什么用</li>
-</ol>
-<h1 id="参考资料">参考资料</h1>
-<ol type="1">
-<li><a href="https://mp.weixin.qq.com/s?__biz=MjM5ODkzMzMwMQ==&amp;mid=2650411744&amp;idx=2&amp;sn=1db39446e4e91299f9ba8c1d4eeb5983&amp;chksm=becd94ba89ba1dac221e2092cb1a12ecb1a5a704b6ae5cebd2649adc1a903355b95567ab484e&amp;mpshare=1&amp;scene=1&amp;srcid=&amp;sharer_sharetime=1572502447054&amp;sharer_shareid=68f8b84d7a46cc216b0afdc45278d6be&amp;key=8a4bbb55c6c79ce6c9104a6cfe5de2a3d1b8fa801c35e22e74b62948f50b6684c3f06195815e8712080977db6cec80fca5adfc95c9bc6fa848b8e68b41df13d8610e8d6c283ee2392b30de5cdae504bb&amp;ascene=1&amp;uin=MTQxMTUzMzk2MA%3D%3D&amp;devicetype=Windows+10&amp;version=62070152&amp;lang=en&amp;pass_ticket=pZijWLQmmCpNBDcjO4cUImTRWv1ZWLG4JENv1zUqjhXnUnShPGofPjjR%2Bkv1cozV" target="_blank" rel="noopener">BERT 的演进和应用</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/145119424" target="_blank" rel="noopener">万字长文带你纵览 BERT 家族</a></li>
-<li><a href="https://arxiv.org/pdf/2003.07278.pdf" target="_blank" rel="noopener">A Survey on Contextual Embeddings</a></li>
-<li><a href="https://arxiv.org/pdf/2003.08271.pdf" target="_blank" rel="noopener">Pre-trained Models for Natural Language Processing: A Survey</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/49271699" target="_blank" rel="noopener">从 Word Embedding 到 Bert 模型 — 自然语言处理中的预训练技术发展史</a></li>
-</ol>
-<h1 id="隐藏章节">隐藏章节</h1>
-<ol type="1">
-<li>创新方面
-<ol type="1">
-<li>将 ELMo 的 LSTM 改为了 Transformer</li>
-<li>将 GPT 的单向改为了双向</li>
-<li>引入了 MLM，但是实际上跟 CBOW 差不多</li>
-<li>引入了 NSP，但是实际上感觉没什么卵用</li>
-</ol></li>
-<li>模型结构方面
-<ol type="1">
-<li>最大长度限制为 512，压根处理不了长文本，即使能处理也是狗尾续貂。有些论文中使用额外的技巧进行处理，但是这样就比较强行。</li>
-<li>其高预测准确率到底来源于预训练？还是数据量大？还是依靠的底层模型？</li>
-<li>只能输入两句话？这是什么奇葩设定？</li>
-<li>由于 Transformer 完全没有语序的概念，自然 BERT 也没有，所以需要用位置编码。而这个位置编码毕竟不是原汁原味的语序位置。</li>
-</ol></li>
-<li>任务方面
-<ol type="1">
-<li>无法完成语言生成任务</li>
-</ol></li>
-<li>对 NLP 的影响
-<ol type="1">
-<li>我最近发现很多人上来就是一个 BERT，后面就接一些任务导向的线性层。这使得很多人对它太过依赖，没有思考如何提取特征才最好。</li>
-</ol></li>
-<li>硬件方面
-<ol type="1">
-<li>模型太大了，如果使用 BERT 提取特征，接下来的分类层只能设计小一点</li>
-</ol></li>
-<li>营销方面
-<ol type="1">
-<li>太会吹了</li>
-</ol></li>
-</ol>
-<h1 id="bibliography" class="unnumbered">参考文献</h1>
-<div id="refs" class="references">
-<div id="ref-peters2018deep">
-<p>Peters, Matthew E, Mark Neumann, Mohit Iyyer, Matt Gardner, Christopher Clark, Kenton Lee, and Luke Zettlemoyer. 2018. “Deep Contextualized Word Representations.” <em>arXiv Preprint arXiv:1802.05365</em>.</p>
-</div>
-</div>
-]]></content>
-      <categories>
-        <category>AI</category>
-        <category>dl</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>nlp 领域的一些有用的模型</title>
-    <url>/posts/4d5445b6.html</url>
-    <content><![CDATA[<h1 id="residual-network">Residual Network</h1>
-<h1 id="highway-network">Highway Network</h1>
-<p><a href="https://www.bilibili.com/video/BV1Ux411S7rk?p=6" target="_blank" rel="noopener">李宏毅深度学习(2017)#P6 Highway Network &amp; Grid LSTM</a></p>
-<h1 id="recursive-network">Recursive Network</h1>
-<p><a href="https://www.bilibili.com/video/BV1Ux411S7rk?p=7" target="_blank" rel="noopener">李宏毅深度学习(2017)#P7 Recursive Network</a></p>
-<a id="more"></a>
-]]></content>
-      <categories>
-        <category>AI</category>
-        <category>nlp</category>
-      </categories>
-      <tags>
-        <tag>Residual Network</tag>
-        <tag>Highway Network</tag>
-        <tag>Recursive Network</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>RuntimeError: CUDA error: n illegal memory access was encountered</title>
     <url>/posts/87554a0.html</url>
     <content><![CDATA[<p>在 GPU 上训练时，报了这个错。目前为止，始终无法解决。看起来像是数据量大小引起的，之前用小数据训练没问题，改用大数据之后就报错了。但是根据查到的资料，别人在其他的情况下也有这问题。 <figure class="highlight groovy"><table><tr><td class="code"><pre><span class="line"><span class="string">RuntimeError:</span> <span class="string">transform:</span> failed to <span class="string">synchronize:</span> <span class="string">cudaErrorIllegalAddress:</span> an illegal memory access was encountered</span><br></pre></td></tr></table></figure></p>
@@ -3309,225 +3084,6 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} &amp; \underbrace
       <tags>
         <tag>NVIDIA</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>NLP中的各种套路（技术）</title>
-    <url>/posts/70160251.html</url>
-    <content><![CDATA[<div class="note warning"><p>本文名词参考 <a href="#名词参考">名词参考</a> 一章。</p>
-<p>本文还在不定时地更新中。。。</p>
-</div>
-<h1 id="梦开始的地方">梦开始的地方</h1>
-<p>one hot 编码，词袋模型（BOW）。</p>
-<p>可以参考文章 <a href="https://yan624.github.io/AI/nlp/【NLP算法】（零）NLP基础算法.html">【NLP算法】（零）NLP基础算法</a> 大致了解其概念。 <a id="more"></a></p>
-<h2 id="词的向量化">词的向量化</h2>
-<p>词的向量化方式其实并不只有词向量一种形式。。。</p>
-<p>one hot 编码，关键词抽取算法，分布式表征。</p>
-<h2 id="参考文献">参考文献</h2>
-<ol type="1">
-<li><a href="https://www.iteye.com/blog/eric-weitm-2388730" target="_blank" rel="noopener">nlp 统计语言模型</a></li>
-<li><a href="https://blog.csdn.net/songbinxu/article/details/80209197" target="_blank" rel="noopener">自然语言处理NLP中的N-gram模型</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/32829048" target="_blank" rel="noopener">自然语言处理中N-Gram模型介绍</a></li>
-<li>《数学之美》</li>
-<li>《自然语言处理综论》</li>
-</ol>
-<h1 id="关键词提取算法">关键词提取算法</h1>
-<h2 id="tf-idf">TF-IDF</h2>
-<h2 id="主题模型算法">主题模型算法</h2>
-<ol type="1">
-<li><a href="http://www.52nlp.cn/lda-math-汇总-lda数学八卦" target="_blank" rel="noopener">LDA 数学八卦</a></li>
-<li><a href="https://arxiv.org/ftp/arxiv/papers/1908/1908.03142.pdf" target="_blank" rel="noopener">LDA 漫游指南</a></li>
-</ol>
-<h2 id="参考文献-1">参考文献</h2>
-<ol type="1">
-<li><a href="http://easyai.tech/ai-definition/tf-idf/" target="_blank" rel="noopener">TF-IDF</a></li>
-<li><a href="http://www.ruanyifeng.com/blog/2013/03/tf-idf.html" target="_blank" rel="noopener">TF-IDF与余弦相似性的应用（一）：自动提取关键词</a></li>
-<li><a href="https://blog.csdn.net/QFire/article/details/81065997" target="_blank" rel="noopener">Python自然语言处理实战（5）：关键词提取算法</a></li>
-</ol>
-<h1 id="语言模型开山鼻祖就是我">语言模型：开山鼻祖就是我</h1>
-<p>语言模型在很久以前（多久以前，待查证）就已经出现了，它的主要目的是计算一个句子的概率。</p>
-<h2 id="统计语言模型">统计语言模型</h2>
-<blockquote>
-<p>统计语言模型最先用于解决语音识别问题。计算机需要知道一个文字序列是否能够成人类可以理解且具有意义的句子。——《数学之美》，第 3 章。</p>
-</blockquote>
-<p>语言模型假设一门语言中所有可能的句子服从一个分布，每个可能存在的句子的概率加起来等于 1。当然，由于在一门语言中有很多句子，所以即使是一个可能存在的句子，它的概率值也是很小的，但是比起一个不太可能存在的句子，它的概率就远远大得多。</p>
-<p>更严格的描述是：假定 <span class="math inline">\(S\)</span> 表示一个有意义的句子，它由一串顺序排列的单词 <span class="math inline">\(w_1, w_2, \cdots, w_n\)</span> 组成，其中 <span class="math inline">\(n\)</span> 是句子的长度，句子 <span class="math inline">\(S\)</span> 在一门语言中存在的概率为 <span class="math inline">\(P(S)\)</span>。那么如何计算它呢？最简单的办法是：统计人类有史以来所有的句子，然后计算句子 <span class="math inline">\(S\)</span> 存在的次数，用它除以所有句子的个数。当然这方法肯定行不通。</p>
-<p>我们可以用数学的方式计算它。已知 <span class="math inline">\(P(S) = P(w_1, w_2, \cdots, w_n)\)</span>，那么利用条件概率的公式，将其展开得到： <span class="math display">\[
-\begin{align}
-P(w_1, w_2, \cdots, w_n)
-    &amp; = P(w_1) \cdot P(w_2 | w_1) \cdots P(w_n | w_1, w_2, \cdots, w_{n-1}) \\
-    &amp; = \prod^n_{i=1} P(w_i | w_1, w_2, \cdots, w_{i-1}) \tag{1}\\
-\end{align}
-\]</span> <div class="note info"><p>上式很容易得到，但是为了照顾不会概率论的童鞋，我还是略微地推导一下。假设我们将 <span class="math inline">\(P(S)\)</span> 简化一下，修改为 <span class="math inline">\(P(ABCD)\)</span>，则根据条件概率公式 <span class="math inline">\(P(X|Y) = \frac{P(XY)}{P(Y)} \implies P(XY) = P(X|Y) \cdot P(Y)\)</span>，同理也可以计算出： <span class="math display">\[P(ABCD) = P(D|ABC) \cdot P(ABC) = P(D|ABC) \cdot \underbrace{P(C|AB) \cdot P(AB)}_{P(ABC)} = \cdots
-\]</span></p>
-<p>这里可能有人会有疑惑，为什么是 <span class="math inline">\(P(ABCD) = P(D|ABC) \cdot P(ABC)\)</span> 呢？而不是 <span class="math inline">\(P(ABCD) = P(A|BCD) \cdot P(BCD)\)</span> 或者 <span class="math inline">\(P(ABCD) = P(ABC|D) \cdot P(D)\)</span> 等其他公式。还记得我们在做自然语言处理吗？例如 <code>S = “我喜欢你” = ABCD</code>，在“我喜欢”（ABC）的条件下，计算“你”（D）的概率是有意义的。但是在“喜欢你”（BCD）的条件下，计算“我”（A），或者在“你”（D）的条件下，计算“我喜欢”（ABC）的概率都是完全没意义的。因为语言是线性的，你说一句话，永远都是按“我喜欢你”的顺序说。而不会先说“你”，再说“我喜欢”。</p>
-</div></p>
-<p>继续。显然这样的方法已经从人肉穷举法，转换为了数学上的公式。但是现在有一个问题，计算 <span class="math inline">\(w_n\)</span> 的概率需要依赖前 <span class="math inline">\(n-1\)</span> 个单词，这其实还是需要用人肉穷举法。那么有没有一个办法，可以使得使用穷举法时，更加方便点呢？</p>
-<p>上上个世纪有一个人叫马尔可夫，他提出了一个方法，说穿了就不值钱了。就是偷个懒，在计算单词 <span class="math inline">\(w_i\)</span> 的条件概率时，不考虑前 <span class="math inline">\(i-1\)</span> 个词，只考虑前<strong>一个</strong>单词 <span class="math inline">\(w_{i-1}\)</span>。那么上式（1）就转换成了： <span class="math display">\[
-\begin{align}
-P(w_1, w_2, \cdots, w_n)
-    &amp; = P(w_1) \cdot P(w_2 | w_1) \cdots P(w_n | w_{n-1}) \\
-    &amp; = \prod^n_{i=1} P(w_i | w_{i-1}) \tag{2} \\
-\end{align}
-\]</span> 这就是 Bigram Model（二元模型）。当然也可以假设与前面的多个词有关，那么就是 N-gram Model（N 元模型）了。<strong>那么如何估算一个 <span class="math inline">\(P(w_i | w_{i-1})\)</span> 呢？</strong></p>
-<p>根据条件概率公式可得： <span class="math display">\[P(w_i | w_{i-1}) = \frac{P(w_{i-1} w_i)}{P(w_{i-1})} \tag{3}
-\]</span></p>
-<p>我们只需要分别计算分子和分母的概率即可获得条件概率的值。按照最早之前的思路，我们只需要统计有史以来的所有句子，再统计 <span class="math inline">\(w_{i-1} w_i\)</span> 词组出现的次数即可获得 <span class="math inline">\(P(w_{i-1} w_i)\)</span>。但是，这在之前说过了，是不可能的。那么我们可以使用一个简化的方法。</p>
-<p>一般来说，在做一个系统之前，我们都会收集一个语料库（corpus），我们拿这个语料库充当有史以来的所有句子。这样就可以统计了。接下来我们以 <span class="math inline">\(Count(X)\)</span> 来表示 <span class="math inline">\(X\)</span> 出现的次数，<span class="math inline">\(Count(\#)\)</span> 表示语料库中的所有可能的词组或词，则出现词组 <span class="math inline">\(w_{i-1} w_i\)</span> 的概率为： <span class="math display">\[f(w_{i-1} w_i) = \frac{Count(w_{i-1} w_i)}{Count(\#)} \tag{4}
-\]</span></p>
-<p>词 <span class="math inline">\(w_{i-1}\)</span> 出现的概率 <span class="math inline">\(f(w_{i-1})\)</span> 类似。根据<strong>大数定理</strong>，当实验接近无穷时，这个比例就会越来越接近实际概率。所以， <span class="math display">\[
-P(w_i | w_{i-1}) = \frac{P(w_{i-1} w_i)}{P(w_{i-1})} \approx \frac{f(w_{i-1} w_i)}{f(w_{i-1})} = \frac{Count(w_{i-1} w_i)}{Count(w_{i-1})} \tag{5}
-\]</span></p>
-<h3 id="n-gram与平滑技术">N-gram与平滑技术</h3>
-<p>上述一个词 <span class="math inline">\(w_i\)</span> 只与前一个词 <span class="math inline">\(w_{i-1}\)</span> 有关，讲得是 Bigram Model，但是这似乎有点太过简化了。如果更复杂一点，一个词 <span class="math inline">\(w_i\)</span> 与前 <span class="math inline">\(N-1\)</span> 个词有关，那么这就是 <strong><span class="math inline">\(N-1\)</span> 阶马尔科夫假设</strong>，即 N-gram 模型。一般 N 的取值都很小，一般最大只取到 4。</p>
-<div class="note warning"><p>为什么只取到 4 呢？可以查阅资料。简单来说就是复杂度呈指数上升。</p>
-</div>
-<p>此外，N-gram 模型依然无法完全覆盖所有的可能。所以后来还出来了一些新的可以捕获长期依赖的方法，将在下一节<strong>《<a href="#神经语言模型">神经语言模型</a>》</strong>中叙述。这些方法在现在已经如雷贯耳了，比如 LSTM。</p>
-<p>现在说平滑技术，说穿了也不值钱了。</p>
-<p>在我们计算 <span class="math inline">\(P(w_i | w_{i-1}) = \frac{Count(w_{i-1} w_i)}{Count(w_{i-1})}\)</span> 时，如果 <span class="math inline">\(Count(w_{i-1}) = 0\)</span> 怎么办？要知道分母是不能为 0 的。此外如果正好一个词出现的次数过少，而导致它无法近似地表示其概率，应该怎么办？</p>
-<p>平滑技术可查阅资料（《数学之美》、《自然语言处理综论》等），此处暂时不讲。</p>
-<h2 id="神经语言模型">神经语言模型</h2>
-<p>什么是神经语言模型？在 21 世纪 20 年代，我想已经不需要解释了。RNN，LSTM，GRU 的大名都如雷贯耳。那么其与统计语言模型有什么区别呢？</p>
-<p>在计算统计语言模型的概率时，我们是使用的人肉穷举法。那么计算 <span class="math inline">\(P(S)\)</span> 是否有更简单的方法呢？并且之前用的是二元模型，能否使用一个方法捕获长期依赖，而不仅仅是单词的前一个依赖？</p>
-<p>深度学习技术将其变成了可能。再计算 <span class="math inline">\(P(S)\)</span> 时，我们可以使用 LSTM 捕获一整个句子的依赖，而不需要使用二元模型，得到一个近似解。其概率也不再需要统计得到，我们直接将单词转换为词向量，经过 LSTM 后，再经过 softmax，直接得到词表中每一个单词的概率。</p>
-<p>那么具体怎么做呢？我记得 b 站上李宏毅机器学习视频里好像讲到过。无非是在每一个时间步都做一次条件概率计算。例如第一个时间步，输入 <code>&lt;SOS&gt;</code>，则计算 <span class="math inline">\(P(A|&lt;SOS&gt;)\)</span> 的条件概率，第二个时间步则计算 <span class="math inline">\(P(B|&lt;SOS&gt;A)\)</span>。以至最后 <span class="math inline">\(P(Z|&lt;SOS&gt;A \cdots Y)\)</span>，那么只需要把每个时间步输出的概率相乘就是整句句子的概率 <span class="math inline">\(P(&lt;SOS&gt;A \cdots Z&lt;EOS&gt;)\)</span>。</p>
-<p>神经语言模型大致就是这么个意思。RNN、LSTM、GRU 等模型将在<strong>《<a href="#特征提取器：双月同天，必有大乱">特征提取器：双月同天，必有大乱</a>》</strong>中描述。</p>
-<div class="note warning"><p>需要注意的是，在早前其实神经语言模型也可以使用感知机（前馈神经网络）进行建模。由于其本身架构的限制，所以依旧需要使用 n-gram 模型，但是优点是抛弃了传统语言模型的统计方法。word2vec 就是用浅层的神经网络建立的语言模型（对于其是否是语言模型貌似还存在着争议，但是不妨碍在这里被拿来举例）。</p>
-</div>
-<h2 id="slm和nnlm异同">SLM和NNLM异同</h2>
-<ul>
-<li>异
-<ul>
-<li>SLM 基于马尔科夫假设，只考虑一个单词前面的 n 个词；NNLM 考虑所有词。</li>
-<li>SLM 使用大数定理估计；NNLM 使用神经网络。</li>
-</ul></li>
-<li>同：都可以计算一个句子的概率。</li>
-</ul>
-<h2 id="参考文献-2">参考文献</h2>
-<ul>
-<li>统计语言模型
-<ol type="1">
-<li>《数学之美》，第三章</li>
-<li><a href="https://www.zhihu.com/question/29456588" target="_blank" rel="noopener">神经语言模型和统计语言模型有啥异同点？</a></li>
-</ol></li>
-</ul>
-<h1 id="词向量横空出世技惊四座">词向量：横空出世，技惊四座</h1>
-<p>2013 年谷歌发布了一个名为 Word2Vec 的工具包，标志着 NLP 领域正式走进了预训练词向量的时代。其实早在 2012 年，CV 领域就已经。。。（待补充）</p>
-<h2 id="word2vec">word2vec</h2>
-<p><a href="https://yan624.github.io/posts/efe82fde.html">【NLP算法】（一）word2vec</a> <div class="note info"><p>我发现网上已经有一篇文章对 word2vec 进行了详尽的讲述，故上方的链接只是那篇文章的一个小型总结。</p>
-</div></p>
-<h2 id="glove">GloVe</h2>
-<h2 id="fasttext">fasttext</h2>
-<h1 id="特征提取器双月同天必有大乱">特征提取器：双月同天，必有大乱</h1>
-<p>目前常用的特征提取器大致分为如下四类：1）RNN；2）CNN；3）Transformer；4）GNN。其中 GNN 是图神经网络，是一个最近刚热门的神经网络（其实很多年前就被人提出了），暂且不谈。</p>
-<p>那么 RNN、CNN 和 Transformer 之间有什么区别和联系呢？下面将从几个角度进行讲解。后来想了想感觉也没什么好说的。。。可以参考<a href="https://www.zhihu.com/question/34681168/answer/84061846" target="_blank" rel="noopener">CNN（卷积神经网络）、RNN（循环神经网络）、DNN（深度神经网络）的内部网络结构有什么区别？</a>。</p>
-<h2 id="rnn时间法则">RNN：时间法则</h2>
-<p><a href="https://yan624.github.io/posts/b2bd11c2.html">深度学习算法（二）：simple RNN 推导与理解</a></p>
-<h3 id="lstm">LSTM</h3>
-<p><a href="https://yan624.github.io/posts/d5936d3.html#lstm">深度学习算法（三）：RNN 各种机制#lstm</a></p>
-<h3 id="gru">GRU</h3>
-<p><a href="https://yan624.github.io/posts/d5936d3.html#gru">深度学习算法（三）：RNN 各种机制#gru</a></p>
-<h2 id="cnn空间法则">CNN：空间法则</h2>
-<h2 id="transformer时空法则">Transformer：时空法则</h2>
-<p>对于 Transformer 早已经写了很多篇笔记，以下的学习笔记记录了 Transformer 的网络架构（注：这些都只是学习笔记，仅供参考）。</p>
-<ol type="1">
-<li><a href="https://yan624.github.io/posts/16ad4ed4.html">深度学习算法（四）：Transformer</a></li>
-</ol>
-<h2 id="gnn">GNN</h2>
-<h2 id="capusle">Capusle</h2>
-<ol type="1">
-<li><a href="https://www.bilibili.com/video/BV1Ux411S7rk?p=12" target="_blank" rel="noopener">李宏毅深度学习(2017)#P12 Capusle</a></li>
-</ol>
-<h1 id="encoder-decoder双生暗影">Encoder-Decoder：双生暗影</h1>
-<p><a href="https://yan624.github.io/posts/d5936d3.html#seq2seq">深度学习算法（三）：RNN 各种机制#seq2seq</a>。</p>
-<h2 id="attention">Attention</h2>
-<p><a href="https://yan624.github.io/posts/d5936d3.html#attention">深度学习算法（三）：RNN 各种机制#attention</a>。</p>
-<h2 id="pointer-networks">Pointer Networks</h2>
-<p><a href="https://yan624.github.io/posts/d5936d3.html#pointer-networks">深度学习算法（三）：RNN 各种机制#pointer-networks</a>。</p>
-<h1 id="预训练模型后浪拍前浪曰基操勿6皆坐">预训练模型：后浪拍前浪，曰，基操勿6皆坐</h1>
-<p><a href="https://yan624.github.io/posts/460dff7.html">深度学习算法（五）：预训练模型</a></p>
-<h1 id="其他的模型出来混口饭吃">其他的模型：出来混口饭吃</h1>
-<p><a href="https://yan624.github.io/posts/4d5445b6.html">nlp 领域的一些有用的模型</a></p>
-<hr />
-<p>以上大致为 NLP 近年模型的发展路线，下面将介绍 NLP 领域中其他比较重要的技术或者 trick。</p>
-<hr />
-<h1 id="概率图模型">概率图模型</h1>
-<h2 id="马尔可夫模型">马尔可夫模型</h2>
-<h3 id="马尔可夫链">马尔可夫链</h3>
-<p>有时也称为<strong>显马尔科夫模型</strong>（observed Markov model）。是一个随机过程模型，它表述了一系列可能的事件，在这个系列当中每一个事件的概率仅依赖于前一个事件。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/NLP中的各种套路（技术）/马尔科夫链.jpg" title="马尔科夫链例图" alt="马尔科夫链例图" /></p>
-<p>类似马尔可夫链的随机现象遵守<strong><font color="red">马尔可夫性</font></strong>（或<strong><font color="red">无后效性</font></strong>），即：过程在时刻 <span class="math inline">\(t_0\)</span> 所处的状态为已知条件的情况下，过程在时刻 <span class="math inline">\(t &gt; t_0\)</span> 所处的状态的条件分布与时刻 <span class="math inline">\(t_0\)</span> 之前所处的状态无关。说白了就是，<strong>在已知“现在”的条件下，“未来”不依赖“过去”</strong>。这里面“状态”的概念可能有点难理解，其实“状态”可以理解为“事件发生的各种可能”。例如预测天气这一事件中，状态为“晴”，“阴”，“雨”。</p>
-<p>这里有一个比较纠结的地方在于，马尔可夫性为什么要这么规定</p>
-<p>用<strong>分布函数</strong>来表述马尔可夫性。设随机过程 <span class="math inline">\(\{X(t), t\in T\}\)</span> 的状态空间为 <span class="math inline">\(I\)</span>。如果对事件 <span class="math inline">\(t\)</span> 的<strong>任意</strong> <span class="math inline">\(n\)</span> 个数值 <span class="math inline">\(t_1 &lt; t_2 &lt; \cdots &lt; t_n, n \ge 3, t_i \in T\)</span>，在条件 <span class="math inline">\(X(t_i) = x_i, x_i \in I, x=1, 2, \cdots, n-1\)</span> 下，<strong>{<span class="math inline">\(X(t_n)\)</span> 的条件分布函数}</strong>恰等于<strong>{在条件 <span class="math inline">\(X(t_{n-1}) = x_{n-1}\)</span> 下 <span class="math inline">\(X(t_n)\)</span> 的条件分布函数}</strong>，即 <span class="math display">\[
-\begin{align}
-    &amp; P\{X(t_n) \le x_n | X(t_1) = x_1, X(t_2) = x_2, \cdots, X(t_{n-1}) = x_{n-1},\} \\
-    = &amp; P\{X(t_n) \le x_n | X(t_{n-1}) = x_{n-1}\}, x_n \in R
-\end{align}
-\]</span> 上一段比较绕，我已经用花括号将句子的读法切割出来了。观察上式可以发现，其实它们之间唯一的区别就是 <span class="math inline">\(X(t_n)\)</span> 的条件部分。等式右边的函数与左边相比，少了 <span class="math inline">\(X(t_1), \cdots, X(t_{n-2})\)</span>，这就表达出了 <span class="math inline">\(X(t_n)\)</span> 只依赖 <span class="math inline">\(X(t_{n-1})\)</span>。上式也可以写成： <span class="math display">\[F_{t_n|t_1 \cdots t_{n-1}}(x_n, t_n | x_1, x_2, \cdots, x_{n-1}; t_1, t_2, \cdots, t_{n-1}) = F_{t_n | t_{n-1}}(x_n, t_n | x_{n-1}, t_{n-1})
-\]</span> 我们还是主要关注第一个式子，注意不要搞混了先后关系，上式不是天然相等的，要拥有马尔可夫性才相等。综上，<strong><u>如果</u>满足上式</strong>，则称过程 <span class="math inline">\(\{X(t), t \in T\}\)</span> 具有马尔可夫性或无后效性，并称此过程为<strong><font color="red">马尔科夫过程</font></strong>。</p>
-<p>马尔可夫链的例子已经有很多人讲过了，我在知乎上搜到不少，就不重复造轮子了。可以查阅下面的参考文献。</p>
-<h3 id="hmm">HMM</h3>
-<h3 id="马尔科夫决策过程">马尔科夫决策过程</h3>
-<h3 id="部分可观测马尔科夫决策过程">部分可观测马尔科夫决策过程</h3>
-<h2 id="crf">CRF</h2>
-<ol type="1">
-<li><a href="https://arxiv.org/abs/1011.4088" target="_blank" rel="noopener">An Introduction to Conditional Random Fields</a></li>
-</ol>
-<h2 id="网络资源">网络资源</h2>
-<ul>
-<li>马尔可夫链
-<ol type="1">
-<li><a href="https://zhuanlan.zhihu.com/p/52376035" target="_blank" rel="noopener">[markov系列1]从马尔可夫链看矩阵的乘法</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/26453269" target="_blank" rel="noopener">马尔可夫链 （Markov Chain）是什么鬼</a></li>
-<li><a href="https://www.zhihu.com/question/26665048/answer/55309482" target="_blank" rel="noopener">马尔可夫链模型是什么？</a></li>
-</ol></li>
-</ul>
-<h1 id="子词技术">子词技术</h1>
-<h2 id="网络资源-1">网络资源</h2>
-<ol type="1">
-<li><a href="https://www.zhihu.com/question/329708785" target="_blank" rel="noopener">word2vec缺少单词怎么办？</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/72312668" target="_blank" rel="noopener">香侬读 | 怎样在小数据集下学习OOV词向量？</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/86965595" target="_blank" rel="noopener">深入理解 NLP Subword 算法：BPE、WordPiece、ULM</a></li>
-</ol>
-<h1 id="应用">应用</h1>
-<p>一堆应用。本人做对话系统。</p>
-<h2 id="任务完成型对话系统">任务完成型对话系统</h2>
-<p><a href="https://yan624.github.io/posts/e0902c9c.html">任务完成型对话系统论文调研</a></p>
-<h1 id="全文网络资源">全文网络资源</h1>
-<ol type="1">
-<li><a href="https://blog.csdn.net/weixin_42137700/article/details/83780172" target="_blank" rel="noopener">史上最强NLP知识集合：知识结构、发展历程、导师名单</a></li>
-<li><a href="https://blog.aylien.com/a-review-of-the-recent-history-of-natural-language-processing/" target="_blank" rel="noopener">A Review of the Neural History of Natural Language Processing</a></li>
-</ol>
-<h1 id="名词参考">名词参考</h1>
-<table style="width:100%;">
-<colgroup>
-<col style="width: 34%" />
-<col style="width: 43%" />
-<col style="width: 21%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>中文名词</th>
-<th>英文名词</th>
-<th>简写</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>独热编码/one hot 编码/one hot 表征</td>
-<td>one hot representation/one hot encoding</td>
-<td>one-hot/one hot</td>
-</tr>
-<tr class="even">
-<td>词袋模型</td>
-<td>bag-of-word</td>
-<td>BOW</td>
-</tr>
-</tbody>
-</table>
-]]></content>
-      <categories>
-        <category>AI</category>
-        <category>nlp</category>
-      </categories>
   </entry>
   <entry>
     <title>【算法设计题目】动态规划</title>
@@ -5846,8 +5402,8 @@ A_{3 \times 1} \odot B_{3 \times 1} = C_{3 \times 1} \\
         <category>AI</category>
       </categories>
       <tags>
-        <tag>学习笔记</tag>
         <tag>系列</tag>
+        <tag>学习笔记</tag>
         <tag>ELMO</tag>
         <tag>BERT</tag>
         <tag>ERNIE</tag>
@@ -6722,174 +6278,6 @@ E_{Q|col} = H_Q w
       </tags>
   </entry>
   <entry>
-    <title>深度学习算法（四）：Transformer</title>
-    <url>/posts/16ad4ed4.html</url>
-    <content><![CDATA[<h1 id="transformer位置信息">Transformer位置信息</h1>
-<p>引用自<a href="https://zhuanlan.zhihu.com/p/54743941" target="_blank" rel="noopener">放弃幻想，全面拥抱Transformer：自然语言处理三大特征抽取器（CNN/RNN/TF）比较</a></p>
-<blockquote>
-<p>NLP 句子中单词之间的相对位置是包含很多信息的，上面提过，RNN 因为结构就是线性序列的，所以天然会将位置信息编码进模型；而CNN的卷积层其实也是保留了位置相对信息的，所以什么也不做问题也不大。但是对于 Transformer 来说，为了能够保留输入句子单词之间的相对位置信息，必须要做点什么。为啥它必须要做点什么呢？因为输入的第一层网络是 Muli-head self attention 层，我们知道，Self attention 会让当前输入单词和句子中任意单词发生关系，然后集成到一个 embedding 向量里，但是当所有信息到了 embedding 后，位置信息并没有被编码进去。所以，Transformer 不像 RNN 或 CNN，必须明确的在输入端将 Positon 信息编码，Transformer 是用<strong>位置函数</strong>来进行位置编码的，而 Bert 等模型则给每个单词一个 <strong>Position embedding</strong>。将单词 embedding 和单词对应的 position embedding 加起来形成单词的输入 embedding，类似上文讲的 ConvS2S 的做法。</p>
-</blockquote>
-<h1 id="encoder">encoder</h1>
-<p>从文章<a href="https://zhuanlan.zhihu.com/p/59629215" target="_blank" rel="noopener">《可视化理解Transformer结构》</a>做的总结，此文为另一篇英文文章的翻译版，英文原文地址为 <a href="https://jalammar.github.io/illustrated-transformer/" target="_blank" rel="noopener">The Illustrated Transformer</a>。此外另一篇文章<a href="https://zhuanlan.zhihu.com/p/54356280" target="_blank" rel="noopener">《BERT大火却不懂Transformer？读这一篇就够了》</a>也做了翻译。</p>
-<p>Transformer 不同于 RNN，它的输入是独立计算的，输入序列的某个时间步并不依赖其它的时间步。也就是说它可以<strong>并行运算</strong>。 <a id="more"></a></p>
-<h2 id="positional-encoding">Positional Encoding</h2>
-<p>在第一节中讲到，Transformer 天然地不具有句子的<strong>位置</strong>属性，所以我们需要使用一种办法让它拥有句子的位置属性。</p>
-<p>为解决这个问题，Transformer 为每个输入的词嵌入增加了一个向量。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_positional_encoding_vectors.png" alt="To give the model a sense of the order of the words, we add positional encoding vectors -- the values of which follow a specific pattern." /></p>
-<p>如果假定词嵌入维度为4，那真实的位置编码如下： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_positional_encoding_example.png" alt="A real example of positional encoding with a toy embedding size of 4" /></p>
-<p>位置编码的生成方法在原论文的 section 3.5 中有描述。你可以在 <a href="https://github.com/tensorflow/tensor2tensor/blob/23bd23b9830059fbc349381b70d9429b5c40a139/tensor2tensor/layers/common_attention.py" target="_blank" rel="noopener">get_timing_signal_1d()</a> 函数中看到用于生成位置编码的代码。这并不是生成位置编码的唯一方式。然而，它的优点在于可以扩展到看不见的序列长度（eg. 如果要翻译的句子的长度远长于训练集中最长的句子）。</p>
-<h2 id="self-attention">self-Attention</h2>
-<p>在 <a href="https://www.bilibili.com/video/av46561029?p=60" target="_blank" rel="noopener">此视频</a>（08:30） 中，x 首先要乘一个权重变成 a。但是<strong>实际上是一样的</strong>，视频中的 x 指的是 one hot，而 a 指的是 embedding。然后将 x 分别乘上三个不同的 transformation 来得到<strong>不同</strong>的 q, k, v。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_self_attention_vectors.png" alt="Transformer计算机制" /></p>
-<blockquote>
-<p>注意，这些新创建的向量的维度小于词嵌入向量(embedding vector)。它们（新创建的向量）的维度是 <strong>64</strong>，而词嵌入和编码器的输入输出向量的维度是 <strong>512</strong>。它们不必更小，这是一种架构选择，可以使多头注意力(multiheaded attention)计算不变。</p>
-</blockquote>
-<ol type="1">
-<li>需要从每个编码器的输入向量创建三个向量，即 <strong>Query</strong> 向量，<strong>Key</strong> 向量和 <strong>Value</strong> 向量；
-<ul>
-<li>那么，究竟什么是“query”，“key”，“value”向量呢？（以下为自己的猜测）
-<ul>
-<li>q 代表当前需要计算 score 的向量，此向量查询 key 中的权重，使得查询到自己需要的 score</li>
-<li>k 代表当前单词的权重</li>
-<li>v 代表单词的词向量</li>
-</ul></li>
-</ul></li>
-<li>计算得分（score 权重）。这里的分数是通过将 query 向量与我们正在评分的单词的 key 向量做点积来得到。所以如果我们计算位置 #1 处的单词的 self-attention，第一个得分就是就是 <span class="math inline">\(q_1\)</span> 和 <span class="math inline">\(k_1\)</span> 的点积。第二个得分是 <span class="math inline">\(q_1\)</span> 和 <span class="math inline">\(k_2\)</span> 的点积。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_self_attention_score.png" alt="计算 score" /></li>
-<li>将分数除以8（论文中使用 Key 向量维数的平方根---64。这可以有更稳定的梯度。实际上还可以有其他可能的值，这里使用默认值） <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/self-attention_softmax.png" alt="self-attention softmax" /></li>
-<li>然后经过一个softmax操作后输出结果。Softmax可以将分数归一化，这样使得结果都是正数并且加起来等于1 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/self-attention-output.png" alt="self-attention output" /></li>
-<li>将每个 value 向量乘以 softmax 得分（准备将他们相加）</li>
-<li>对加权值向量求和，这样就产生了在这个位置的self-attention的输出（对于第一个单词）</li>
-</ol>
-<p>上述为 self-attention 单个单词的计算步骤，其实它可以并行计算。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/self-attention-matrix-calculation.png" alt="并行计算第一步" /></p>
-<figure>
-<img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/self-attention-matrix-calculation-2.png" alt="并行计算第二步" /><figcaption>并行计算第二步</figcaption>
-</figure>
-<h2 id="multi-headed-attention">multi-headed attention</h2>
-<p>看英文名感觉“高大上”，其实很简单。就是将上述的 self-attention 做多次，具体做几次你可以自行选择，Transformer 选择了 8 次。这样就产生了 8 个向量，但是我们训练时其实只要一个向量就够了，所以我们将这 8 个向量<strong>拼接</strong>起来，这样就形成了一个巨长无比的向量。那我们怎么得到我们所需长度的向量呢？很简单，只需要再乘一个权重矩阵就行了。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_attention_heads_qkv.png" /></p>
-<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_attention_heads_z.png" /></p>
-<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_attention_heads_weight_matrix_o.png" /></p>
-<p>全过程： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_multi-headed_self-attention-recap.png" alt="全过程" /></p>
-<h2 id="the-residuals-与-layer-normalization">The Residuals 与 layer-normalization</h2>
-<p>残差连接说白了就是跳过一层，输入到下一层（比较直白，不一定对）。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_resideual_layer_norm.png" /></p>
-<p>layer-normalization，此 <a href="https://www.bilibili.com/video/av56239558" target="_blank" rel="noopener">视频</a> 中（41:00），李宏毅老师说一般情况 layer normalization 会搭配 RNN 使用，而 Transformer 很像 RNN，所以可能是这里使用 layer norm 的理由。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_resideual_layer_norm_2.png" /></p>
-<p>此步骤在解码层中是类似的操作。将内部件画全，就是如下所示一般（图中的 encoder、decoder 各有两个）： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_resideual_layer_norm_3.png" /></p>
-<p>在 self_attention 之后要做一次 normalization，此均值归一化步骤的具体算法，详见： - <a href="https://www.cnblogs.com/hellcat/p/9735041.html#_label3_0" target="_blank" rel="noopener">『计算机视觉』各种Normalization层辨析</a> - <a href="https://www.jianshu.com/p/c357c5717a60" target="_blank" rel="noopener">layer normalization 简单总结</a></p>
-<h1 id="decodedr">decodedr</h1>
-<p>在讲解 decoder 之前，看一张动图，了解一下 Transformer 是如何运作的。首先下图中生成了第一个字母 I。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_decoding_1.gif" /></p>
-<p>编码器开始处理输入序列，然后将顶部编码器的输出变换为一组注意力向量 <strong><span class="math inline">\(K_{encdec}\)</span></strong> 和 <strong><span class="math inline">\(V_{encdec}\)</span></strong>，这些将在每个解码器的“encoder-decoder attention” 层使用，这有助于解码器集中注意力在输入序列的合适位置。</p>
-<p>解释一下 <strong><span class="math inline">\(K_{encdec}\)</span></strong> 和 <strong><span class="math inline">\(V_{encdec}\)</span></strong> 的具体用法，<strong>在 encoder 中的 self-attention 会使用到 <span class="math inline">\(Q_{self-attention}\)</span>、<span class="math inline">\(K_{self-attention}\)</span>、<span class="math inline">\(V_{self-attention}\)</span> 三个向量，但是它们实际上是输入值 x 的三份拷贝再乘上各自不同的权重矩阵得来。对于 decoder 的 self-attention 与 encoder 的如出一撤，但是对于 encoder-decoder attention 却有点不一样。<span class="math inline">\(Q_{encoder-decoder \, attention}\)</span> 还是 x 的拷贝乘上一个权重矩阵，但是 <span class="math inline">\(K_{encoder-decoder \, attention}\)</span> 和 <span class="math inline">\(V_{encoder-decoder \, attention}\)</span> 分别是 <span class="math inline">\(K_{encdec}\)</span> 和 <span class="math inline">\(V_{encdec}\)</span> 乘上各自的权重矩阵。</strong>以上所有向量所乘的权重矩阵均可以由你自己随机初始化产生。<strong>博主注</strong>：以上 QKV 的用法均分析自 pytorch 官方实现版本的源码。</p>
-<p>接着下面的 gif 完成了余下的步骤。Transformer 将之前输出的 I 当做下一个时间步的输入，又走了一遍 decoder。以此循环往复，直到输出一个结束标记 <code>&lt;EOS&gt;</code> 才结束循环。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（四）：Transformer/transformer_decoding_2.gif" /></p>
-<p>其中 decoder 中的 self-attention 与 encoder 的 self-attenntion 有所区别，一个就是上上段黑体的内容。另外一个是 decoder 的 self-attention 是 <strong>masked multi-head attention</strong>，而 encoder 的仅仅是 <strong>multi-head attention</strong>。详见下面 <strong>padding mask/sequence mask</strong> 一节。</p>
-<p><strong>博主注</strong>：这样一来似乎对于 decoder 来说并不能实现并行运算。<strong>博主注 2</strong>：查找资料后，发现是可以的。即如同 encoder 一样，直接将 target 整个序列输入 decoder 中解码。但是这样一来，在做 self-attention 时，提取某个单词的特征时会关注到之后的单词，所以就用到了 sequence mask，这样一来预测的数据其实也倍增了，具体看下面的例子就懂了。不过在模型是实际工作时，由于没有 target 还是只能一次预测一个。 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">我**</span><br><span class="line">我是*</span><br><span class="line">我是鱼</span><br></pre></td></tr></table></figure></p>
-<p>原本的数据只是“我是鱼”，但是由于避免预测时关注到后面的信息，所以只能将部分掩盖住。这其实相当于一个单词一个单词的预测，传统模型中，在预测玩“我”之后，需要输入“是”再预测“鱼”。而 Transformer 中，直接输入“<code>&lt;SOS&gt;</code>我是”，再预测“鱼”，其实这两种方式一模一样。同时为了做到输入“<code>&lt;SOS&gt;</code>”预测“我”，输入“<code>&lt;SOS&gt;</code>我”预测“是”等操作，所以需要拷贝多份数据。</p>
-<h1 id="generatorthe-final-linear-and-softmax-layer">Generator:The Final Linear and Softmax Layer</h1>
-<p>如何将其转换为一个单词？这就是最后 Softmax 层和线性层的工作了。</p>
-<p>线性层是一个简单的全连接神经网络，它将解码器堆叠(decoder stack)产生的向量映射到一个巨大的向量（词汇表的大小，原来的向量大小是词嵌入的大小）中去，这个向量称为 logits 向量。</p>
-<p>Softmax 层将这些分数转化为概率(全部为正数，加起来为 1.0)。选择具有最高概率的单元，并将与其相关的单词作为本时间步的输出。</p>
-<h1 id="mask">mask</h1>
-<p>padding mask 是为了防止填充值 PAD 具有意义。在反向传播时，如果不做 padding mask，框架会对 PAD 求导。但是我们认为其实 PAD 是一个没有意义的填充符，所以最好不要对它求梯度。</p>
-<p>sequence mask 是为了遮住来自未来的信息，使得 decoder 在解码时，不会依赖未来的信息。</p>
-<p><strong>题外话</strong>：对于 Transformer，无论 encoder 还是 decoder 都要做 mask（很多对 Transformer 的总结文章都只提到了 decoder 部分的 Masked Multihead Self-Attention，实际上 encoder 也要做一次）。mask 一共分为两种，Transformer 中 decoder 的 mask 指的是 <strong>sequence mask</strong>，encoder 中的 mask 指的是 <strong>padding mask</strong>，对于其他网络模型也是类似的道理。可以查阅参考资料 1，2。</p>
-<h2 id="padding-mask">padding mask</h2>
-<p>以 Transformer 为例，在 encoder 中的每次执行 scaled dot-product 后都要做一次 padding mask。由于我们要让序列的长度相等以便做向量化操作，所以必不可少地需要对输入序列进行<strong>截断</strong>或<strong>补零</strong>（即填充 PAD，PAD 不一定非要是 0）操作。所以 padding mask 的<strong>主要目的</strong>是使得 self-attention 不要过多的关注向量中的 PAD 符号。</p>
-<p>在进行了解 padding mask 的做法之前，首先简单地了解一下 Transformer 的大致流程：sequence id -&gt; embedding -&gt; multi-head attention(<strong>scaled dot-product</strong> -&gt; softmax -&gt; softmax <span class="math inline">\(\times\)</span> value) -&gt; add &amp; norm -&gt; decoder。而 mask 的<strong>具体操作是</strong>：在执行 scaled dot-product <strong>后</strong>，将序列中补零位置所对应的隐藏状态置为 -INF，使得序列经过 softmax 层时，<strong>该对应位置所计算出的概率为 0</strong>。（<em>mask 操作貌似在 Transformer 中是可选的。</em>）</p>
-<p>总得来说，padding mask 是为了神经网络忽略 PAD 的信息。例如，虽然模型可以学习到 PAD 这个填充符是没有意义的，但是<strong>在做 attention 时，PAD 所在的这些位置依然有一些 attention score，而我们要的是 0 score</strong>。所以有必要引入一个 <strong>mask 矩阵</strong>，在做 attention 之前，先把 PAD 所在位置的值置为一个极小值，甚至是无穷小（由于 attention 需要经过 softmax，softmax 需要求 e 的次方，要想 e 的某次方为 0，只能使得值为无穷小才可以，这是一个数学问题）。</p>
-<p>以下举一些不是 Transformer 的例子：</p>
-<ol type="1">
-<li><strong>对于 Embedding 层来说，符号 PAD 的词向量也是无意义的</strong>，所以也可以将它的所在位置的值（即词向量）置为 0，使得它无意义。也就是说我们需要引入一个 mask 矩阵，它的大小与词表一样，所有位置初始化为 1，但是 PAD 所在的位置置为 0。然后每次在使用词向量时，乘上这个 mask。不过这样略微麻烦，所幸的是 Pytorch 为我们提供了实现。只需要简单地填入 <code>padding_idx</code> 即可，值为 PAD 对应的索引，索引取决于你的项目。可以看到这非常简单，但是这只是让 PAD 这个词向量无意义并且不计算它的梯度而已。在经过复杂的计算之后 PAD 所在位置的值依旧会变为非 0，而对于其他层想要做到使得 PAD 无意义就没那么简单了。 <figure class="highlight reasonml"><table><tr><td class="code"><pre><span class="line">nn.<span class="constructor">Embedding(<span class="params">vocab_size</span>, <span class="params">embed_dim</span>, <span class="params">padding_idx</span>=PAD_ID)</span></span><br></pre></td></tr></table></figure></li>
-<li><strong>对于 LSTM 等的时序特征提取层</strong>可以使用 <code>torch.nn.utils.rnn.pack_padded_sequence(input, lengths, batch_first=False, enforce_sorted=True)</code> 函数将 embedding 打包。然后将这个打包后的 embedding 输入 LSTM，之后使用 <code>torch.nn.utils.rnn.pad_packed_sequence(sequence, batch_first=False, padding_value=0.0, total_length=None)</code> 函数，将 LSTM 的输出还原。 以以下代码为例，其中第一行代码的 <code>lengths</code> 必须是 pytorch 的 tensor，它代表着你输入序列的长度，比如你输入 [['你', '好', '.'], ['我', '是', '鱼', '.']]，那么 <code>lengths</code> 就是 <code>torch.Tensor([3, 4])</code>。<code>batch_first</code> 默认是 False，这是因为 LSTM 的输入要求是 (S, N, *)，其中 S 是序列长度，N 是批次大小。<code>batch_first</code> 顾名思义就是输入的序列的第一个维度是否为批次大小，显然为了使得 pytorch 内部兼容，<code>batch_first</code> 默认为 <code>False</code> 是最好的。一般我都懒得对序列进行长度上的排序，所以将 <code>enforce_sorted</code> 设置为 False。 <figure class="highlight reasonml"><table><tr><td class="code"><pre><span class="line"># lstm padding mask</span><br><span class="line">packed_feature = nn.utils.rnn.pack<span class="constructor">_padded_sequence(<span class="params">embed</span>, <span class="params">lengths</span>, <span class="params">enforce_sorted</span>=False)</span></span><br><span class="line">packed_bi_feature, hx = self.lstm(packed_feature)</span><br><span class="line">bi_feature, lengths_unpacked = nn.utils.rnn.pad<span class="constructor">_packed_sequence(<span class="params">packed_bi_feature</span>)</span></span><br></pre></td></tr></table></figure></li>
-<li><strong>如果有些层</strong>不像 LSTM 一样只能按照时间步读取，而是<strong>可以批量处理时序数据</strong>，那么可以使用 mask 矩阵。<strong>目前我就知道一个 Transformer 需要用到 mask 矩阵。</strong>你可以通过句子的长度自行创建。</li>
-<li>最后<strong>在计算 loss 时</strong>也需要 padding mask，这可以使用 <code>torch.masked_select(input, mask, out=None)</code> 进行计算。</li>
-</ol>
-<h2 id="sequence-mask">sequence mask</h2>
-<p>使得 decoder 无法看见未来的信息，其 attention 只能关注解码单词之前的单词，而不能依赖后面未解码出来的单词。这是因为在解码时，由于传统一次只预测一个单词的工作方式太低下，所以 Transformer 的作者做了改进。一次直接将 target 序列输入 decoder，这是可行的，loss 函数还是像往常一样计算即可。例如： <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">我**</span><br><span class="line">我是*</span><br><span class="line">我是鱼</span><br></pre></td></tr></table></figure></p>
-<p>在传统模型中，在预测玩“我”、“是”之后，需要输入“是”再预测“鱼”。而 Transformer 中，直接输入“<code>&lt;SOS&gt;</code>我是”，再预测“鱼”，其实这两种方式一模一样。同时为了做到输入“<code>&lt;SOS&gt;</code>”预测“我”，输入“<code>&lt;SOS&gt;</code>我”预测“是”等操作，所以需要拷贝多份数据。</p>
-<p>说白了这个 sequence mask 矩阵其实就是一个 <span class="math inline">\(L \times L\)</span> 维的矩阵，L 代表一条语句的长度。其内容是，下三角以及对角线全部为 1，代表需要这部分信息。上三角全部为 0，代表这部分信息被掩盖。</p>
-<h2 id="参考资料">参考资料</h2>
-<ol type="1">
-<li><a href="https://luozhouyang.github.io/transformer/" target="_blank" rel="noopener">Transformer模型的PyTorch实现</a></li>
-<li><a href="https://www.jianshu.com/p/405bc8d041e0" target="_blank" rel="noopener">The Transformer</a></li>
-<li><a href="https://www.zhihu.com/question/320615749/answer/1080485410" target="_blank" rel="noopener">深度学习中的 mask 到底是什么意思？</a></li>
-<li><a href="https://www.zhihu.com/question/264501322/answer/433784349" target="_blank" rel="noopener">变长序列怎么使用 mini-batch SGD 训练？</a></li>
-<li><a href="https://www.zhihu.com/question/347366108/answer/832932755" target="_blank" rel="noopener">transformer 在解码的时候，用的 k 和 v 的向量来自于编码器的输出还是来自于之前解码输出的值呢？</a> # Beam Search 在最后的 softmax 层直接输出了概率最大的位置的单词，这叫做<strong>贪婪解码——greedy decoding</strong>。另一种更合理的解码方式叫做 <strong>Beam Search</strong>。</li>
-</ol>
-<h1 id="如何实战">如何实战</h1>
-<p>以上就是 Transformer 的原理，但是在实际写代码的过程中，可能还会有各种各样的问题。本节将讨论如何更科（Xuan）学（Xue）地使用 Transformer。</p>
-<h1 id="最后总结">最后总结</h1>
-<p>刚才（2020.1.23）在知乎上看到一篇文章，感觉对 RNN 和 Transformer 的区别总结的不错，所以记录下。</p>
-<p>RNN 通过把已经处理过的所有单词的表征与当前正在处理的单词的表征结合起来以此来捕捉整句话的含义，而 Transformer 的 self-attention 机制则是将所有相关单词的含义通过 weighted sum 来充当我们当前正在处理的单词的表征。</p>
-<p>参考文章（“从宏观视角看自注意力机制”一节）：</p>
-<ul>
-<li><a href="https://zhuanlan.zhihu.com/p/54356280" target="_blank" rel="noopener">BERT大火却不懂Transformer？读这一篇就够了</a></li>
-</ul>
-<p>注意，相对于普遍只有一层的 LSTM/RNN 模型来说，Transformer 拥有多层结构。所以上述 Transformer 做的 weighted sum 操作，实际上要在一次处理中做上好几遍。</p>
-<h1 id="transformer-xl">Transformer-XL</h1>
-<h1 id="引用">引用</h1>
-<ol type="1">
-<li><a href="https://zhuanlan.zhihu.com/p/54743941" target="_blank" rel="noopener">放弃幻想，全面拥抱Transformer：自然语言处理三大特征抽取器（CNN/RNN/TF）比较</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/59629215" target="_blank" rel="noopener">可视化理解Transformer结构</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/54356280" target="_blank" rel="noopener">BERT大火却不懂Transformer？读这一篇就够了</a></li>
-<li><a href="https://www.bilibili.com/video/av46561029?p=60" target="_blank" rel="noopener">李宏毅机器学习2019——Transformer</a>
-<ul>
-<li><a href="https://www.bilibili.com/video/av56239558" target="_blank" rel="noopener">李宏毅-Transformer</a></li>
-</ul></li>
-<li><a href="https://www.cnblogs.com/hellcat/p/9735041.html#_label3_0" target="_blank" rel="noopener">『计算机视觉』各种Normalization层辨析</a></li>
-<li><a href="https://www.jianshu.com/p/c357c5717a60" target="_blank" rel="noopener">layer normalization 简单总结</a></li>
-<li><a href="https://luozhouyang.github.io/transformer/" target="_blank" rel="noopener">Transformer模型的PyTorch实现</a></li>
-<li><a href="https://www.jianshu.com/p/405bc8d041e0" target="_blank" rel="noopener">The Transformer</a></li>
-<li><a href="https://www.zhihu.com/question/347366108/answer/832932755" target="_blank" rel="noopener">transformer 在解码的时候，用的 k 和 v 的向量来自于编码器的输出还是来自于之前解码输出的值呢？</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>AI</category>
-        <category>dl</category>
-      </categories>
-      <tags>
-        <tag>学习笔记</tag>
-        <tag>系列</tag>
-        <tag>4me</tag>
-        <tag>Transformer</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【NLP算法】（零）NLP基础算法</title>
-    <url>/posts/36a35085.html</url>
-    <content><![CDATA[<h1 id="one-hot">one hot</h1>
-<h1 id="n-gram-算法">N-gram 算法</h1>
-<ul>
-<li><strong>基本算法</strong><br />
-有句子：老王吃过了吗？<br />
-该句子可表示为 <span class="math inline">\(S = w_1w_2w_3w_4w_5w_6\)</span> 那么该句子的概率为 p(S)=p(w1w2w3w4w5w6) = <span class="math inline">\(\prod\)</span>p(wt|w1w2...wt-1) = p(w1)p(w2|w1)p(w3|w1w2)...<br />
-由于该算法太复杂，所以就产生了其他的算法。马尔科夫模型，该模型认为，一个词的出现仅仅依赖于它前面出现的几个词。可理解为是n-gram。</li>
-<li><strong>n-gram</strong> n-gram只根据前n-1个单词来预测第n个单词的概率。<br />
-比如n=2时，也被称为bi-gram。公式为： p(wt|wt-1) = p(wtwt-1)/p(wt)<br />
-意思就是计算wt-1后面出现wt的概率<br />
-比如t等于1，则就是计算“老”后面出现“王”的概率<br />
-<strong>剩下的问题就是如何计算一个字出现的概率</strong>。</li>
-<li><strong>如何计算概率</strong><br />
-可以做一个统计，将所拥有的数据计算出每个字出现的次数。并且再统计两个字连在一起的次数。比如：p(王|老) = p(老王)/p(王) = 600/10000 = 6%<br />
-在神经网络模型中，计算概率是通过 softmax 函数计算的，即将 one hot 编码的向量经过矩阵运算后传入 softmax 函数中。从而得到一个类似概率的值。</li>
-<li><strong>用途</strong><br />
-<a href="http://blog.sciencenet.cn/blog-713101-797384.html" target="_blank" rel="noopener">参考</a> 20世纪80年代至90年代初,n-gram技术被广泛地用来进行文本压缩,检查拼写错误,加速字符串查找,文献语种识别。90年代,该技术又在自然语言处理自动化领域得到新的应用,如自动分类,自动索引,超链的自动生成,文献检索,无分隔符语言文本的切分等。<br />
-目前N-gram最为有用的就是自然语言的自动分类功能。基于n-gram的自动分类方法有两大类,一类是人工干预的分类(Classification),又称分类;一类是无人工干预的分类(Clustering),又称聚类。 <a id="more"></a></li>
-</ul>
-<h1 id="词袋模型bow">词袋模型——BOW</h1>
-<p>例如，有文档：你好棒棒</p>
-<ol type="1">
-<li>建立字典 {'你':1, '好':2, '棒':3}</li>
-<li>bow模型 (1, 1)(2, 1)(3, 2) 其中第一个元素代表该单词在字典中的id，第二个元素代表该单词在所在文档中出现的次数。</li>
-</ol>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>AI</category>
-      </categories>
-      <tags>
-        <tag>nlp</tag>
-        <tag>系列</tag>
-        <tag>n-gram</tag>
-        <tag>BOW</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>【知识图谱】（一）从概念开始</title>
     <url>/posts/c9c1ae69.html</url>
     <content><![CDATA[<h1 id="知识图谱描述">知识图谱描述</h1>
@@ -7052,8 +6440,8 @@ E_{Q|col} = H_Q w
       </categories>
       <tags>
         <tag>系列</tag>
-        <tag>4me</tag>
         <tag>知识图谱</tag>
+        <tag>4me</tag>
       </tags>
   </entry>
   <entry>
@@ -7464,57 +6852,6 @@ E_{Q|col} = H_Q w
         <tag>学习笔记</tag>
         <tag>机器学习算法</tag>
         <tag>Adaboost</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【NLP算法】（一）word2vec</title>
-    <url>/posts/efe82fde.html</url>
-    <content><![CDATA[<div class="note "><p>以前在训练语言模型的时候使用one-hot编码，现在使用的是word embedding。但是这样理解其实稍微有点问题，因为如果这样理解，就难以解释embedding层是用来干嘛的了。</p>
-<p><strong>其实现在使用的还是one-hot</strong>，在keras框架中输入的就是one-hot编码。我以前一直是上面的那种理解，所以我一直不懂为什么要输入one-hot，而不直接输入word embedding。众所周知，one-hot编码乘上词嵌入矩阵可以得到词向量，这步操作实际上就是<strong>查表</strong>。</p>
-<p>词嵌入矩阵是预先训练好的，其实就是一个权重矩阵，而我们做的就是初始化了<strong>输入层</strong>（即 Embedding layer）的权重矩阵。区别为：以前对参数随机初始化，现在使用了预训练的词向量。所以我们算是使用了预训练的方法，直接获得了embedding层，但是相比于cv领域，目前我们还无法初始化高层的权重。</p>
-<p><strong>总结一下：词嵌入矩阵就是输入值 x 到输入层 Embedding layer 的权重矩阵。</strong></p>
-<ul>
-<li><strong>缺陷</strong>：多义词问题无法解决，所以导致 word embedding 一直效果不好。</li>
-</ul>
-</div>
-<h1 id="算法">算法</h1>
-<p>我认为关于 word2vec 这个算法，<strong><a href="https://www.cnblogs.com/peghoty/p/3857839.html" target="_blank" rel="noopener">这篇</a>博客</strong>已经讲得很清楚了，就不再重复造轮子了。注意，word2vec 发表的时间是 2013 年，该博文发表的时间是 2014 年，所以算是深度学习刚萌芽的时候。博主用了相对现在比较古老的知识来进行讲解，这些知识都是很有用的。因为处于如今的深度学习时代，可能会忽略有些远古知识，这篇文章也算是帮我们复习了一遍。</p>
-<p>其中介绍的背景知识点包括：贝叶斯公式、哈夫曼树；统计语言模型、 n-gram 模型、神经语言模型。然后就是讲解了 word2vec。最后讲了一些源码细节（注：这部分好像也有点用，因为我在知乎上看到，有个外国小哥认为论文中的 word2vec 和实际发布的 word2vec 算法工具包完全就不一样，论文里面简化了太多东西）。</p>
-<p>防止这篇文章挂掉，我把该文章的名字也写下，网上应该有其他人做了备份。博文名称为<strong>《word2vec 中的数学原理详解</strong>》，作者分别发表在了 CSDN 和博客园。</p>
-<p>文章中，第 1、2、3 章都是前置知识，如果已经对自己掌握的知识有自信的话，可以跳过。</p>
-<div class="note warning"><p>word2vec 模型是没有隐藏层的，而 NNLM 是有隐藏层的。</p>
-</div>
-<a id="more"></a>
-<h2 id="cbow">CBOW</h2>
-<p>CBOW 算法的本质是通过周围词来预测中间词。优化的是函数 <span class="math inline">\(p(w | context(w))\)</span>，其中 <span class="math inline">\(context(w)\)</span> 代表 <span class="math inline">\(w\)</span> 周围的词，具体窗口大小取决于自己。</p>
-<h2 id="skip-gram">skip-gram</h2>
-<p>skip-gram 算法的本质是通过中间词来预测周围词。优化的是函数 <span class="math inline">\(p(context(w) | w)\)</span>，其中 <span class="math inline">\(context(w)\)</span> 代表 <span class="math inline">\(w\)</span> 周围的词，具体窗口大小取决于自己。</p>
-<h1 id="训练方法">训练方法</h1>
-<h2 id="hierarchical-softmax">Hierarchical Softmax</h2>
-<p>hierarchical softmax 在输出层会<strong>事先</strong>构建一棵哈夫曼树，这里面涉及到了很多 tricks，具体可以看最后一章《源码细节》。简答来说，就是通过计算词频预先构建一棵哈夫曼树。</p>
-<p>模型在最后的输出层本质上是执行了若干个<strong>二元分类</strong>。一般来说，模型在输出层会计算 <span class="math inline">\(z = a \cdot W\)</span>，其中 <span class="math inline">\(W\)</span> 代表向量维度乘类别大小。但是由于 hierarchical softmax 是执行二元分类，所以 <span class="math inline">\(W \in \mathbb{R}^{h\_dim \times 2}\)</span></p>
-<p>而 hierarchical softmax 优化的对象本质上是一个哈夫曼编码，例如字“猫”的哈夫曼编码为 <code>1001</code>，那么就需要执行 4 次二元分类，每次优化的对象为 1、0、0、1。最后只需要把四次分类的结果相乘就是 <span class="math inline">\(p(猫 | context(猫)) = \prod_i p_i\)</span> 其中 <span class="math inline">\(p_i\)</span> 代表所做的所有二元分类。</p>
-<p>了解了函数之后，就可以对其优化了。与其它的分类任务一样，我们使用交叉熵损失函数。剩下的就是优化部分了，说白了就是求导，可以看上面提到的文章。</p>
-<h2 id="negative-sampling">Negative Sampling</h2>
-<p>这一节还是直接看上面的文章吧，需要的计算太多了，懒得拿过来算一遍了。需要注意的是，初看 negative sampling 感觉很难，因为放眼望去全是公式，但是静下心来看个 5-10 分钟，还是感觉挺简单的。（PS：本人数学学渣）</p>
-<h1 id="参考资料">参考资料</h1>
-<ul>
-<li><a href="https://www.cnblogs.com/peghoty/p/3857839.html" target="_blank" rel="noopener">word2vec 数学原理</a>（<a href="https://blog.csdn.net/itplus/article/details/37969519" target="_blank" rel="noopener">CSDN 版</a>）</li>
-<li><a href="http://www.hankcs.com/nlp/word2vec.html" target="_blank" rel="noopener">word2vec 原理推导与代码分析</a>（这个其实基本上就是上一篇文章的复制版，但是加了一点对各种编程语言实现的评价）</li>
-<li><a href="https://www.zhihu.com/question/40309730/answer/86453469" target="_blank" rel="noopener">词向量，LDA，word2vec 三者的关系是什么？</a></li>
-</ul>
-<h1 id="训练词向量得到的-accuracy">训练词向量得到的 accuracy</h1>
-<p>word2vec 的 accuracy 貌似没卵用。我反正用 keras 搭的 CBOW 模型，accuracy 极低，只有 1%不到。 <a href="https://www.zhihu.com/question/271782463" target="_blank" rel="noopener">参考</a></p>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>AI</category>
-      </categories>
-      <tags>
-        <tag>nlp</tag>
-        <tag>系列</tag>
-        <tag>word2vec</tag>
-        <tag>4me</tag>
       </tags>
   </entry>
   <entry>
@@ -8162,428 +7499,6 @@ c1(no)->e2(left)->st</textarea><textarea id="flowchart-0-options" style="display
       </tags>
   </entry>
   <entry>
-    <title>深度学习算法（三）：RNN 各种机制</title>
-    <url>/posts/d5936d3.html</url>
-    <content><![CDATA[<div class="note "><p><mark class="label warning">Exposure Bias</mark> <mark class="label info">主要机制</mark></p>
-</div>
-<h1 id="gru">GRU</h1>
-<h2 id="参考资料">参考资料</h2>
-<ol type="1">
-<li><a href="https://zhuanlan.zhihu.com/p/32481747" target="_blank" rel="noopener">人人都能看懂的GRU</a></li>
-<li><em><a href="https://yan624.github.io/posts/5e27260b.html#GRU单元——Gate-Recurrent-Unit">吴恩达李宏毅综合学习笔记：RNN入门#GRU单元——Gate Recurrent Unit</a></em></li>
-</ol>
-<h1 id="lstm">LSTM</h1>
-<p>该<a href="https://yan624.github.io/posts/5e27260b.html#长短期记忆——Long-Short-term-Memory-LSTM">博客</a>中描述了一个 LSTM 的例子，已经把大部分的东西概括了。但是今天看了别人的代码，这是第一次见到代码形式的 LSTM，感觉还是有些地方有问题。以下就记录这些问题。</p>
-<p>下图是吴恩达深度学习第五周作业中的图片，是一个 LSTM 单元。<strong>与李宏毅老师做的图有略微不同，并且在下图中将 input gate 称为了 update gate，并且在李宏毅老师所提供的图片中，g(z) 是由 sigmoid 函数计算出来的，而这里是由 tanh 计算出来的，即下图 update gate 旁边的函数</strong>。另外在李宏毅老师提供的图片中，为了简便，并没有使用上个时间步的激活值。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/LSTM%20cell.jpg" alt="LSTM cell" /></p>
-<ol type="1">
-<li>首先是<strong>输入的问题</strong>。一般来说一个 LSTM 的输入是前一<strong>个</strong> LSTM 的输出值 <span class="math inline">\(a\)</span> 以及输入值 <span class="math inline">\(x\)</span>（此外对于第 2 层的 LSTM 的 输入值就是前一<strong>层</strong>的输出值）。但是众所周知，<strong>LSTM 每个门的输入肯定只有一个向量，<span class="math inline">\(a\)</span> 和 <span class="math inline">\(x\)</span> 是两个向量，那么如何处理呢？</strong>
-<ul>
-<li>在下图中使用了 <span class="math inline">\([a^{&lt;t-1&gt;},x^{&lt;t&gt;}]\)</span> 进行向量拼接。</li>
-<li>在我看的代码中直接使用了加法进行相加，代码<a href="https://github.com/Alex-Fabbri/lang2logic-PyTorch/blob/master/seq2seq/atis/lstm/main.py" target="_blank" rel="noopener">在这</a>，但是代码量太大了，随便看看就行了（<strong>2020.2.25 更新</strong>：该代码使用了加法是基于一种较为特殊的情况，即 lstm 的隐藏状态维度等于词向量维度，所以正好可以使用加法，但是一般情况下，它们的维度不相同，所以<strong>只能使用拼接的方式</strong>）。</li>
-</ul></li>
-<li>之前说过 update gate 就是 input gate，它的输出 <span class="math inline">\(\Gamma^{&lt;t&gt;}_u\)</span> 实际上也是一个向量，而 <span class="math inline">\(\tilde{c^{&lt;t&gt;}}\)</span> 就是输入向量。<span class="math inline">\(\Gamma^{&lt;t&gt;}_u\)</span> 的意思就是限制 <span class="math inline">\(\tilde{c^{&lt;t&gt;}}\)</span> 的信息进入 memory，试想 <span class="math inline">\(\Gamma^{&lt;t&gt;}_u\)</span> 的输出值范围为 (0, 1)，这不就是在说 <span class="math inline">\(\Gamma^{&lt;t&gt;}_u\)</span> 将 <span class="math inline">\(\tilde{c^{&lt;t&gt;}}\)</span> 的每个元素都按其比例进行调整？就类似于将 <span class="math inline">\(\tilde{c^{&lt;t&gt;}}\)</span> 中的信息丢失一部分。如果 <span class="math inline">\(\tilde{c^{&lt;t&gt;}}\)</span> 的输出全是 1，就代表 <span class="math inline">\(\tilde{c^{&lt;t&gt;}}\)</span> 中的信息我全都要。如果 <span class="math inline">\(\tilde{c^{&lt;t&gt;}}\)</span> 的输出全是 0，就代表 <span class="math inline">\(\tilde{c^{&lt;t&gt;}}\)</span> 中的信息我全都不要。</li>
-<li>问：由于第一个 LSTM 不存在前一个LSTM，那么它的输入值怎么处理？答：<strong>暂且使用随机初始化，具体还要补充</strong>。（感觉 0 也可以，婴儿出生的时候不就是一张白纸吗。。。） <a id="more"></a></li>
-<li>记忆单元（下图中的 c，也可以称作 memory(m)）中的数据也可以随机初始化或者直接为 0。</li>
-<li>每一层的 LSTM 都权重共享。意思是每一层都有多个 LSTM，里面的权重值其实是同一份。</li>
-</ol>
-<p>下图是多个 LSTM 运行的示意图。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/多个%20LSTM.jpg" alt="多个 LSTM" /></p>
-<p>下图是 LSTM 的反向传播，被称为 BPTT（backpropagation through time）。由于还没遇到过，并且 pytorch 都已经是自动求导，所以目前处于待补充状态。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/LSTM反向传播.jpg" alt="LSTM反向传播" /></p>
-<h1 id="seq2seq">Seq2Seq</h1>
-<p>Seq2Seq 模型于 2014 年由 Bengio 团队<a href="https://arxiv.org/pdf/1406.1078.pdf" target="_blank" rel="noopener" title="Learning Phrase Representations using RNN Encoder–Decoder for Statistical Machine Translation"><span class="citation" data-cites="Cho_2014">(Cho et al. 2014)</span></a>首先提出，同年，大概三个月后，google 团队<a href="https://arxiv.org/pdf/1409.3215.pdf" target="_blank" rel="noopener" title="Sequence to Sequence Learning with Neural Networks"><span class="citation" data-cites="sutskever2014sequence">(Sutskever, Vinyals, and Le 2014)</span></a>对此做出了改进。总得来说，seq2seq 架构中所使用的的神经网络可以是任意的神经网络，例如上面提到的 GRU 和 LSTM，甚至还可以是 CNN。它们的具体架构分别如下二图所示： <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/Cho%20seq2seq.png" title="Cho seq2seq" alt="Cho seq2seq" /></div><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/Sutskever%20seq2seq.png" title="Sutskever seq2seq" alt="Sutskever seq2seq" /></div></div></div></p>
-<p>正如上图所示，它们是 seq2seq 两种不同的架构，<strong>现在我们常用的架构是由 google 团队 Sutskever 等人提出的架构</strong>。实际上，它们在 encoder 部分是一样的，只是在 decoder 部分有所不同。对于第一种架构，decoder 的每一个时间步都需要接收 encoder 最后一个时间步的隐藏状态。对于第二种架构，每一个时间步只是接收上一个时间步的隐藏状态。</p>
-<p>那么这两种做法在直觉上来看有什么区别呢？（os：<em>没办法从理论上看啊！我们在炼丹啊</em>）实际上，有一点光看图就可以看到区别。<strong>首先</strong>，第一个架构中，一个时间步的输入一共有三项，而第二个架构只有两项。多出来的一项是 encoder 最后的输出。<strong>其次</strong>，第一个架构是用 simple RNN 做的，第二个架构是用 LSTM 做的。RNN 的缺点大家都知道，不过我好奇的是这篇论文发表的时候，LSTM 应该是流行的啊，为什么不用 LSTM 呢？</p>
-<p>不过这算是远古时代的论文了，也没兴趣再复现一遍了。<em>貌似目前没看到有人讲解过，加不加那个 c 到底有什么区别。</em></p>
-<p>除了这些，我倒是还有一个看法。将 Cho seq2seq，Sutskever seq2seq 和 attention 三者进行比较，我发现 Sutskever seq2seq 并没有做出多大的改进，顶多就是将 simple RNN 替换成了 4-layer LSTM，并使用了逆序的 trick。仔细观察可以发现，<strong>Cho seq2seq 和 attention 一样除了隐藏状态 h 和输入值 x 之后，都还需要一个上下文向量 c。只不过 Cho seq2seq 的 c 是 encoder 的最后一个隐藏状态，而 attention 的 c 是 encoder 各个时间步输出的加权和平均</strong>。而将它们的模型去掉这个上下文 c 就变成了 Sutskever seq2seq。因此我认为由于以前不用 attention 机制，并且 Cho 的 seq2seq 确实会有一些问题，所以大家默认还是使用 Sutskever seq2seq。</p>
-<h2 id="free-running和teacher-forcing">free-running和teacher-forcing</h2>
-<p>按照国（Ge）际（Ren）惯例，结论写在前面。可以看完下面的文章之后，再回来看图，或者边看文章边看图。如下图所示，左边就是 free-running 形式的 seq2seq，是不是很熟悉？因为这是我们经常使用的结构。右图就是 teacher-forcing seq2seq，实际上二者并没有特别大的区别。 <div class="group-picture"><div class="group-picture-row"><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/free-running-seq2seq.gif" alt="free-running-seq2seq" /></div><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/teacher-forcing-seq2seq.gif" alt="teacher-forcing-seq2seq" /></div></div></div></p>
-<p>大部分教程之中只介绍了如何训练一个 seq2seq 模型，但是并没有讲如何测试。这对于前馈神经网络或者 CNN 来说可能没什么区别，但是对于 seq2seq 来说却有很大区别。</p>
-<p>其实 seq2seq 拥有两种训练方式：<strong>1）</strong>free-running 方法；<strong>2）</strong>teacher-forcing 方法。<strong>其中我们熟知的以及教程上讲的，通常是第一种 free-running</strong>。该方法的思路是，将上一个时间步的预测结果输入进当前时间步的 RNN，以此循环往复，直至预测出结束符 <code>&lt;EOS&gt;</code> 或者循环到一个给定的次数（<em>例如解码 90 次</em>），程序才会结束。而由于第一个时间步的特殊性，所以第一个时间步的输入是起始符 <code>&lt;SOS&gt;</code>。</p>
-<p>但是这其实是比较理想的情况。首先在训练时，target（即 y）是已知的，所以没必要等到预测出 <code>&lt;EOS&gt;</code> 才结束，我们完全可以根据 target 的长度（<em>例如一句话长 20 个字</em>）进行控制。此外由于该方法，RNN 的输入是上一个 RNN 的输出（预测值），所以可以用一句话概括这种情况，即“一步错，步步错”。只要预测错一步，那么后面的部分肯定都是错的。因此使用 <strong>free-running</strong> 训练会产生以下几项问题【<a href="https://machinelearningmastery.com/teacher-forcing-for-recurrent-neural-networks/" target="_blank" rel="noopener">2</a>】：</p>
-<ol type="1">
-<li>收敛缓慢</li>
-<li>模型不稳定</li>
-<li>技能匮乏</li>
-</ol>
-<p><strong>teacher-foring 就是为了解决这一问题而提出的</strong>【<a href="https://blog.csdn.net/qq_30219017/article/details/89090690" target="_blank" rel="noopener">1</a>】。根据字面意思，这种方法就好像“老师在教导学生一样”，每个时间步的输入不再是上一个时间步的输出，而是真实的 target。例如 <span class="math inline">\(t-1\)</span> 步时，预测值为“i”，我们假设真实值为“we”，那么在 <span class="math inline">\(t\)</span> 步时，RNN 的输入不是“i”的词向量，而是直接输入“we”的词向量。这就好像“老师在纠正学生的错误一样”。</p>
-<div class="note warning"><p>但是对于我来说有点不一样。我在学习完基础知识后，正好看了一篇论文并根据源码复现了一下，所以我是知道训练和测试之间的区别的。但是我不知道这两种方法是什么名字，也不知道为什么要使用不同的方法。我当初以为 seq2seq 算法可能就是这样写的，所以没去了解它。</p>
-<p>但是最近的一个实验暴露出了我的一个短板。我发现在训练时使用 teacher-forcing，测试时使用 free-running，会使得模型在测试集上的性能特别差。一般 train bleu = 80%-90%，而 test bleu &lt; 1%。这是由于模型过渡依赖标签，导致模型在测试时太过脆弱【<a href="https://blog.csdn.net/qq_30219017/article/details/89090690" target="_blank" rel="noopener" title="一文弄懂关于循环神经网络 (RNN) 的 Teacher Forcing 训练机制">1</a>】</p>
-</div>
-<p>teacher-forcing 是一个快速且高效的训练方式，但是当生成的序列与模型在训练过程中看到的不同时，这种方法会在实际使用时导致模型特别<strong>脆弱</strong>或者<strong>有所限制</strong>【<a href="https://machinelearningmastery.com/teacher-forcing-for-recurrent-neural-networks/" target="_blank" rel="noopener">2</a>】。目前有一些解决办法：<strong>1）</strong>Beam Search；<strong>2）</strong>Curriculum Learning……详见《<a href="#seq2seq的缺陷">Seq2Seq的缺陷</a>》。</p>
-<h3 id="参考资料-1">参考资料</h3>
-<ol type="1">
-<li><a href="https://blog.csdn.net/qq_30219017/article/details/89090690" target="_blank" rel="noopener">一文弄懂关于循环神经网络 (RNN) 的 Teacher Forcing 训练机制</a>（算是 free-running 以及 teacher-forcing 的一篇综述文章）</li>
-<li><a href="https://machinelearningmastery.com/teacher-forcing-for-recurrent-neural-networks/" target="_blank" rel="noopener">teacher forcing for recurrent neural networks</a>（上一篇综述部分内容的英语原文）</li>
-</ol>
-<h2 id="seq2seq的缺陷">Seq2Seq的缺陷</h2>
-<p>seq2seq 是语言生成任务中的一个重要架构，它可以应用在 NLP 的各种任务之上，例如语义解析、神经机器翻译、对话系统等。虽然 seq2seq 模型取得了显著的效果，但是它却迟迟无法达到人类的水平（<em>此处有待考证</em>）。其中有几个重要因素制约了 seq2seq 的性能：</p>
-<ol type="1">
-<li>seq2seq 模型在训练（training）时的输入和在推理（inference）时的输入是不一样的。详见《<a href="#free-running和teacher-forcing">free-running和teacher-forcing</a>》。而这种问题被称为 <strong>Exposure Bias</strong>。</li>
-<li>由于 seq2seq 模型在训练时，要求模型输出的预测结果必须与参考句一一对应【<a href="https://www.jiqizhixin.com/articles/2019-08-10-2" target="_blank" rel="noopener" title="ACL2019 最佳论文冯洋：Teacher Forcing 亟待解决 ，通用预训练模型并非万能">1</a>】。这显然是不合理的。因为文字具有多样性，一词多义或者一义多词的情况比比皆是，甚至英语还具有时态变化。
-<ul>
-<li><em>对于这点，原文想要表达的意思可能并不是我所说的意思，但是我觉得我所说的也是一个比较重要的问题。此外，原文中的第二个因素我觉得实际上与第一个是类似的</em></li>
-</ul></li>
-<li>矫枉过正（overcorrect）</li>
-<li>无法捕获长句的特征，因为 decoder 的输入是 encoder 最后一个 RNN 的输出，上下文的信息被浓缩进这一个向量，这显然不合理，我们无法将希望寄托于这单独的一个向量上。（<em>此缺陷将在下节《<a href="#attention">Attention</a>》中展开</em>）</li>
-</ol>
-<p>目前 teacher-forcing 是亟待解决的问题。由于模型的训练方法和推理方法不同，因此会导致模型在推理时受到很大的影响。目前有一个不算解决办法的办法，就是 Beam Search，详见《<a href="#Beam-Search">Beam Search</a>》。其次还有 scheduled sampling<a href="https://arxiv.org/abs/1506.03099" target="_blank" rel="noopener" title="Scheduled Sampling for Sequence Prediction with Recurrent Neural Networks"><span class="citation" data-cites="bengio2015scheduled">(Bengio et al. 2015)</span></a>（一种 curriculum learning），Professor Forcing<a href="https://arxiv.org/pdf/1610.09038.pdf" target="_blank" rel="noopener" title="Professor Forcing: A New Algorithm for Training Recurrent Networks"><span class="citation" data-cites="lamb2016professor">(Lamb et al. 2016)</span></a>，curriculum learning<a href="https://dl.acm.org/doi/pdf/10.1145/1553374.1553380" target="_blank" rel="noopener" title="Curriculum Learning"><span class="citation" data-cites="bengio2009curriculum">(Bengio et al. 2009)</span></a>，<a href="https://arxiv.org/pdf/1906.02448.pdf" target="_blank" rel="noopener" title="Bridging the Gap between Training and Inference for Neural Machine Translation"><span class="citation" data-cites="Zhang_2019">(Zhang et al. 2019)</span></a>。</p>
-<h3 id="参考资料-2">参考资料</h3>
-<ol type="1">
-<li><a href="https://www.jiqizhixin.com/articles/2019-08-10-2" target="_blank" rel="noopener">ACL2019 最佳论文冯洋：Teacher Forcing 亟待解决 ，通用预训练模型并非万能</a></li>
-</ol>
-<h2 id="beam-search">Beam Search</h2>
-<p>国内关于 beam search 的资料比较少，我搜寻了一番大都数都在知乎，它上面有些许讲解。据<span class="citation" data-cites="Freitag_2017">(Freitag and Al-Onaizan 2017)</span>论文中所述，beam search 首先由<span class="citation" data-cites="graves2012sequence boulanger2013audio">(Graves 2012; Boulanger-Lewandowski, Bengio, and Vincent 2013)</span>为 seq2seq 模型提出，此后在机器翻译领域由<span class="citation" data-cites="sutskever2014sequence">(Sutskever, Vinyals, and Le 2014)</span>首次提出。下面给出 wikipedia 上的描述，这是<a href="https://en.wikipedia.org/wiki/Beam_search" target="_blank" rel="noopener">原链接</a>（<em>需番蔷</em>）有兴趣可以去网站上看全文。</p>
-<blockquote>
-<p>In computer science, beam search is a heuristic search algorithm that explores a graph by expanding the most promising node in a limited set. Beam search is an optimization of best-first search that reduces its memory requirements. Best-first search is a graph search which orders all partial solutions (states) according to some heuristic. But in beam search, only a predetermined number of best partial solutions are kept as candidates.[1] It is thus a greedy algorithm.</p>
-<p>The term &quot;beam search&quot; was coined by Raj Reddy of Carnegie Mellon University in 1977.[2]</p>
-</blockquote>
-<p>相较于 beam search 算法，还有两类算法，即贪婪搜索（greedy search）和穷举搜索（exhaustive search）。<strong>穷举搜索可以确保生成的结果是全局最优的</strong>，但是它的搜索空间非常大，可能是个天文数字。<em>Q：为什么是全局最优的？A：废话，都穷举每一个可能了，还不是全局最优？</em>而<strong>贪婪搜索只能确保局部最优</strong>，它的思想是，在每一个解码步，只取概率最大的那个字。</p>
-<p>需要注意的是，每次取概率最大的字并不是最优的。举个简单的例子。<strong>1）</strong>使用贪婪搜索，取 A，B 两个字，概率分别为 0.5 和 0.6，则 AB 的概率为 0.3；<strong>2）</strong>现在使用 beam search，取 C，D 两个字，概率分别为 0.4 和 0.9，则 AB 的概率为 0.36。可以看到在使用 beam search 算法时，第一个字并没有选择概率最大的 A，而是选择了第二大的 C，但是最终结果却是 beam search 要好。这是由于第二个字的概率是不同的。<em>注意：AC两字的概率之和小于 1，BD 两字的概率之和大于 1。这是因为 BD 二字不在同一个 beam 上，而 AC 在。</em></p>
-<p>TODO</p>
-<p>之前在知乎上看到一个问题：“怎么解决 beam search 的局部最优问题？”我笑了，这 tm 怎么解决，想解决只能上穷举搜索。</p>
-<h3 id="实战感悟">实战感悟</h3>
-<div class="note "><p>
-<del>
-我个人在实验之中使用 beam search 算法，发现并没有任何效果，甚至结果更差。
-</del>
-</p>
-<p>2020.06.22 更新：上一段写下约半个礼拜之后，我又去想了一下，如果别人大规模应用这个算法，没道理没效果。所以经过一番代码检查后，我发现了问题。原来之前的代码对于隐藏状态的处理有问题，我将 beam size 大小的预测结果视作了线性的，而不是固定它们的隐藏状态。</p>
-<p>具体来说，例如时间步 <span class="math inline">\(t\)</span> 的预测结果为单词 <span class="math inline">\(I\)</span>，并且隐藏状态为 <span class="math inline">\(h_I\)</span>。接下来假设我们已知下一个时间步的预测结果为 <span class="math inline">\(\{love, hate, told\}\)</span>（注：单词预测结果由 Beam Search 产生，并非词表大小只是 3），则它们的隐藏状态输入都应该是 <span class="math inline">\(h_I\)</span> 才是正确的，但是我将它们的隐藏状态输入分别设置为了 <span class="math inline">\(h_I, h_{love}, h_{hate}\)</span>，其中 <span class="math inline">\(h_{love}, h_{hate}\)</span> 是将 love 和 hate 输入 LSTM 后得到的隐藏状态。</p>
-<p>所以简单来说就是代码写错了……在循环遍历的时候写错了……实际上大概可以提升 3 个左右的百分点。</p>
-</div>
-<h3 id="参考资料-3">参考资料</h3>
-<ol type="1">
-<li><a href="https://zhuanlan.zhihu.com/p/28048246" target="_blank" rel="noopener">seq2seq中的beam search算法过程</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/114669778" target="_blank" rel="noopener">十分钟读懂Beam Search 1：基础</a></li>
-</ol>
-<h2 id="scheduled-sampling">Scheduled Sampling</h2>
-<p>Scheduled Sampling 由<a href="https://arxiv.org/abs/1506.03099" target="_blank" rel="noopener" title="Scheduled Sampling for Sequence Prediction with Recurrent Neural Networks"><span class="citation" data-cites="bengio2015scheduled">(Bengio et al. 2015)</span></a>首次提出，这是一种 Curriculum learning 策略。</p>
-<p>序列预测任务的训练和推理之间的主要区别是：当预测一个符号时是使用上一个真实值 <span class="math inline">\(y_{t-1}\)</span>，还是使用模型本身预测出的估计 <span class="math inline">\(\hat{y}_{t-1}\)</span>。<strong>scheduled sampling 机制就是在训练阶段，随机地决定使用 <span class="math inline">\(y_{t-1}\)</span> 还是 <span class="math inline">\(\hat{y}_{t-1}\)</span></strong>。以掷硬币的方法来实现，当概率为 <span class="math inline">\(\epsilon_i\)</span> 则使用真实值 <span class="math inline">\(y_{t-1}\)</span>，当概率为 <span class="math inline">\(1- \epsilon_i\)</span> 则使用模型的估计 <span class="math inline">\(\hat{y}_{t-1}\)</span>。（<em>注意：在实验中，需要对每一个符号都掷一次硬币。论文中提出，为每个序列掷一次硬币的实验他们也测试过，但是结果更差</em>）</p>
-<p>如果 <span class="math inline">\(\epsilon_i\)</span> 等于 1 就代表是 teacher-forcing 方法，反之就是 free-running 方法。此外，直观来说，当模型训练初期，模型会产生一些随机的符号，这是因为模型还训练得不是很好，如果使用 free-running 方法可能会导致收敛过慢，所以可能应该更多地选择 teacher-forcing。反之，当训练的末尾， <span class="math inline">\(\epsilon_i\)</span> 更应该倾向于 free-running。这样更符合模型的推理情况，同时也可以期望模型已经准备好能够处理未知情况以及采样出合理的符号。</p>
-<p>最后一个问题就是，如上一段所述，如何动态地控制抛硬币的概率？其实跟 learning rete decay 是一样的。论文中建议使用一个时间表以此减少 <span class="math inline">\(\epsilon_i\)</span>，时间表就是一个以 <span class="math inline">\(i\)</span> 为自变量的函数，并且提出三种方式：</p>
-<ol type="1">
-<li>Linear decay：<span class="math inline">\(\epsilon_i = max(\epsilon, k - ci)\)</span>，其中 <span class="math inline">\(k\)</span> 和 <span class="math inline">\(c\)</span> 分别代表偏移量和斜率，这取决于观测到的收敛速度；</li>
-<li>Expoential decay：<span class="math inline">\(\epsilon_i = k^i\)</span>，其中 <span class="math inline">\(k &lt; 1\)</span> 是一个常量，这取决于观测到的收敛速度；</li>
-<li>Inverse sigmoid decay：<span class="math inline">\(\epsilon = \frac{k}{k + exp(\frac{i}{k})}\)</span>，其中 <span class="math inline">\(k \ge 1\)</span> 取决于观测到的收敛速度。</li>
-</ol>
-<p>以上的方法就被称为 <strong>Scheduled Sampling</strong>。由于 scheduled sampling 其实就是以某个概率动态地控制 teacher-forcing 和 free-running，所以 gif 就不做了，可以参考上面《<a href="#free-running和teacher-forcing">free-running和teacher-forcing</a>》一节的 gif。</p>
-<h3 id="训练经验">训练经验</h3>
-<p>虽说 Scheduled Sampling 在概念上很简单，但是在实际使用过程中，还是有诸多技巧的。</p>
-<h2 id="参考资料-4">参考资料</h2>
-<ol start="20" type="1">
-<li><em><a href="https://yan624.github.io/posts/5e27260b.html#seq2seq">吴恩达李宏毅综合学习笔记：RNN入门</a></em></li>
-</ol>
-<h1 id="attention">Attention</h1>
-<p>按照国（Ge）际（Ren）惯例，结论写在前面。下面几张图片分别是 Bahdanau attention、Luong attention（global attention + input-feeding） 以及 local attention 的执行步骤。（注：下面两幅图可能画有点问题，2020.08.24 留）</p>
-<div class="group-picture"><div class="group-picture-row"><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/bahdanau-attention.gif" title="bahdanau attention" alt="bahdanau attention" /></div><div class="group-picture-column" style="width: 50%;"><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/global-attention.gif" title="global attention" alt="global attention" /></div></div></div>
-<p>Attention 机制由 Bahdanau 在 2015 年，首次由<a href="https://arxiv.org/pdf/1409.0473.pdf" target="_blank" rel="noopener" title="Neural Machine Translation by Jointly Learning to Align and Translate"><span class="citation" data-cites="bahdanau2014neural">(Bahdanau, Cho, and Bengio 2014)</span></a>提出，它是机器翻译领域第一篇应用 attention 机制的论文，应该也是在 NLP 领域中，所有应用 attention 机制的论文中最有名的（<em>事实上 attention 机制早就有人提出了</em>）。RNN 领域的第一篇文章为《Recurrent Models of Visual Attention》。</p>
-<p>在此论文中 Attention 机制基于 encoder-decoder 模型（<em>现在已经不止于此了，有多种变体</em>）。本人的理解是 encoder-decoder 模型是一种范式，它主要由两个部分组成，即 encoder 和 decoder。encoder 负责提取输入的特征，decoder 负责运用提取出的特征并且生成（v.）任务所需要的目标。而在 NLP 领域之中，由于输入以及输出都是一段序列，所以又可以被称为 Sequence-to-Sequence 模型，简写为 Seq2Seq。所以 encoder-decoder 其实还可以有其他的变体，例如在图像描述（Image Caption）生成领域，encoder 就是一个 CNN，decoder 是一个 RNN。</p>
-<p><span class="citation" data-cites="xu2015show">(Xu et al. 2015)</span>在论文中提出 <strong>soft/hard attention</strong> 的概念。</p>
-<p>后来，<span class="citation" data-cites="luong2015effective">(Luong, Pham, and Manning 2015)</span> 对 attention 进行了深度的探索，告诉人们它还有很多玩法，提出了 <strong>global/local attention</strong> 的概念。其中 global attention 与 soft attention 类似。但是你也可以将 soft attention 视为一个种类，包括 global/local attention。此外，<span class="citation" data-cites="luong2015effective">(Luong, Pham, and Manning 2015)</span> 还提出了 Input-fedding Approach。</p>
-<p>我们所熟知或者刚接触到的 attention 基本上都是 global attention，它主要的做法是对 encoder 每个时间步上的输出都去加权和。而 local attention 就是只取局部的加权和。那么 hard attention 其实就是只关注一个地方（类似 pointer network）。最后<span class="citation" data-cites="luong2015effective">(Luong, Pham, and Manning 2015)</span>指出对比 global/local attention，更常用的还是 global attention，即我们熟知的那个。</p>
-<p>为了区分两种 Attention 机制，后来将<span class="citation" data-cites="bahdanau2014neural">(Bahdanau, Cho, and Bengio 2014)</span>提出的方法和这篇论文方法分别称为 <strong>Bahdanau Attention</strong>（亦称 additive attention）和 <strong>Luong Attention</strong>（亦称 multiplicative attention）。</p>
-<p>此外，关于 Seq2Seq 的内容，已经在上一节讲述完毕。此节不再赘述，接下来将主要描述：<strong>1）</strong>attention 的基本知识；<strong>2）</strong>hard attention；<strong>3）</strong>在机器翻译领域最早提出的 attention 机制——Bahdanau Attention 以及 Luong 提出的几种 attention 变体；<strong>4）</strong>其它的一些 attention 机制变体。</p>
-<h2 id="基础知识">基础知识</h2>
-<p>本章开头基本上已经讲解了很多关于 attention 的知识以及历史，但是有一点没讲，就是以什么方式区分那么多 attention？其实 attention model 的形式多种多样，不过大都是由两个函数进行控制的：<strong>1）</strong>alignment function；<strong>2）</strong>score function。<strong>alignment function 控制 decoder 应该关注 encoder 中的哪些部分；score function 控制应该以怎么样的方式进行关注。</strong>因此 alignment function 区分了 <strong>global/local/soft/hard attention</strong>。<span class="citation" data-cites="luong2015effective">(Luong, Pham, and Manning 2015)</span>提出四种不同的计算方式（最后一种大家可能不常听见）：</p>
-<p><span class="math display">\[
-score(h_t, \bar{h}_s) = 
-\begin{cases}
-h^T_t \bar{h}_s &amp; \text{dot} \\ 
-h^T_t W_a \bar{h}_s &amp; \text{general} \\ 
-v^T_a tanh(W_a [h_t;\bar{h}_s]) &amp; \text{concat} \\
-softmax(W_a h_t) &amp; \text{location} \\
-\end{cases}
-\]</span></p>
-<h2 id="hard-attention">hard attention</h2>
-<h2 id="global-attention">global attention</h2>
-<p>global attention 相较于 Bahdanau attention，虽然在灵感上与其相似，但是细微的不同之处还是反映了其是如何从原模型简化和泛化的。</p>
-<ol type="1">
-<li>global attention 简单地使用了最上一层 LSTM 的隐藏状态。而 Bahdanau attention 使用的是 bi-encoder 正反向隐藏状态和 uni-decoder 隐藏状态的拼接版；</li>
-<li>global attention 的计算路线是 <span class="math inline">\(h_t \to a_t \to c_t \to \tilde{h}_t\)</span>，即在时间步 <span class="math inline">\(t\)</span>，先由 decoder 生成隐藏状态 <span class="math inline">\(h_t\)</span>，然后使用它计算 attention <span class="math inline">\(c_t\)</span>，最后再使用 <span class="math inline">\(c_t\)</span> 与 <span class="math inline">\(h_t\)</span> 拼接获得用于生成单词的 <span class="math inline">\(\tilde{h}_t\)</span>。
-<ul>
-<li>而 Bahdanau attention 的计算路线是 <span class="math inline">\(h_{t-1} \to a_t \to c_t \to h_t\)</span>，它使用的是上一个时间步 <span class="math inline">\(t-1\)</span> 的隐藏状态 <span class="math inline">\(h_{t-1}\)</span>，然后计算 attention <span class="math inline">\(c_t\)</span>，最后将 <span class="math inline">\(c_t\)</span> 输入进 decoder 获得当前时间步 <span class="math inline">\(t\)</span> 的隐藏状态 <span class="math inline">\(h_t\)</span>。</li>
-</ul></li>
-</ol>
-<p>上述 Bahdanau attention 的计算路线取自<span class="citation" data-cites="luong2015effective">(Luong, Pham, and Manning 2015)</span>的论文。但是我认为这样的曲线无法直观的体现出 attention 的计算路线，所以我重画了它：</p>
-<p><span class="math display">\[
-\begin{cases}
-[y_{t-1}; \tilde{h}_{t-1}], h_{t-1} \to h_t \to a_t \to c_t \to tanh([c_t; h_t]) \to \tilde{h}_t \to predict &amp; \text{(global attention)} \\
-h_{t-1} \to a_t \to c_t \to [y_{t-1}; c_t], h_{t-1} \to h_t \to predict &amp; \text{(bahdanau attention)}\\
-\end{cases}
-\]</span></p>
-<p>总的来说，global attention 于 <span class="math inline">\(t\)</span> 时间步，RNN <strong>执行完毕之后</strong>，计算注意力向量 <span class="math inline">\(c_t\)</span>，并用其与隐藏状态 <span class="math inline">\(h_t\)</span> 合并得到 <span class="math inline">\(\tilde{h}_t\)</span> 从而预测结果；而 Bahdanau attention 则是在 <span class="math inline">\(t\)</span> 时间步，RNN <strong>执行之前</strong>，计算注意力向量 <span class="math inline">\(c_t\)</span>，并将其<strong>输入进 RNN</strong>，得到隐藏状态 <span class="math inline">\(h_t\)</span>，最后<strong>直接</strong>预测结果。可以通过观察上面两组公式的对比，或者上文的描述得知，<strong>Luong attention 在计算得到当前的隐藏状态之后又做了一系列的操作才去执行预测，而 Bahdanau attention 则是在获得隐藏状态之后直接执行预测</strong>。</p>
-<p>此外，无论是 Global 还是下节介绍 local 方法，注意决策都是独立执行的，这是一个次优解。鉴于在标准的机器翻译中，在翻译阶段通常需要维护一个 coverage 集，以跟踪哪个源词已被翻译。类似地，在基于注意的 NMT 中，对齐决策应该结合过去的对齐信息。所以该论文提出了 input-feeding 方法，指的是将注意力向量 <span class="math inline">\(\tilde{h}_t\)</span> 与下一个时间步的输入做拼接。这种连接方式有两方面作用：<strong>1）</strong>使模型充分了解到以前的对齐选择；<strong>2）</strong>创建了一个水平和垂直跨度非常深的网络。</p>
-<h2 id="local-attention">local attention</h2>
-<p>文中指出，local attention 与机器视觉领域<span class="citation" data-cites="gregor2015draw">(Gregor et al. 2015)</span>等提出的 selective attention mechanism 类似。</p>
-<p>global attention 的一个缺陷是，它必须关注源句中的所有单词，这种方式代价非常昂贵并且对于翻译较长的序列比较不切实际，例如按段落或者文档翻译。为了解决这种低效问题，<span class="citation" data-cites="luong2015effective">(Luong, Pham, and Manning 2015)</span>提出了 local attention，它仅仅选择源句中的一个子集。</p>
-<p>相比于不可微的 hard attention，local attention 是可微的<span class="citation" data-cites="luong2015effective">(Luong, Pham, and Manning 2015)</span>。在具体细节上，在时间步 <span class="math inline">\(t\)</span>，模型首先生成一个对齐位置 <span class="math inline">\(p_t\)</span>，那么上下文向量 <span class="math inline">\(c_t\)</span> 就是源句窗口 <span class="math inline">\([p_t - D, p_t + D]\)</span> 内的隐藏状态集合的加权平均值，<span class="math inline">\(D\)</span> <strong>根据经验选择</strong>。与 global attention 不同，local attention 的对齐向量 <span class="math inline">\(a_t\)</span> 现在是一个固定的维度，即 <span class="math inline">\(\in \mathbb{R}^{2D + 1}\)</span>。接下来将介绍两类变种。</p>
-<p>Monotonic alignment(<strong>local-m</strong>)：无变化对齐。我们简单地设置 <span class="math inline">\(p_t = t\)</span>，假定了源句和目标句的单词是一一对应的。那么此时的 attention 计算方式其实与 global attention 一致。这种假设在真实环境中是不切实际的，但是可能有部分特殊的任务可以使用，例如序列标注。</p>
-<p>Predictive alignment(<strong>local-p</strong>)：模型预测对齐位置为 <span class="math inline">\(p_t = S \cdot sigmoid(v^T_p tanh(W_p h_t))\)</span></p>
-<h2 id="self-attention">self-attention</h2>
-<p>self-attention 主要应用在 Transformer 中，详见 <a href="https://yan624.github.io/posts/16ad4ed4.html">深度学习算法（四）：Transformer</a>。</p>
-<h2 id="mask">mask</h2>
-<div class="note warning"><p>注意：无论是哪种 attention，它们的本质都是在计算当前词的信息时，去融入其他词的信息。而我们一般都会使用 <code>&lt;PAD&gt;</code> 去补足不等长的序列，并且 <code>&lt;PAD&gt;</code> 符号是没有意义的，所以我们需要在计算 attention score 时，额外地将 <code>&lt;PAD&gt;</code> 位置的 score 置为负无穷。那么该 score 进入 softmax 之后，会被 <span class="math inline">\(e^{-\infty}\)</span> 置为 0。</p>
-<p>在 pytorch 中，一般可以写成像下面的代码一样。其中 context_len 是上下文的长度，一般是 <code>[1, batch_size]</code> 的维度。</p>
-<figure class="highlight reasonml">
-<table>
-<tr>
-<td class="gutter">
-<pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre>
-</td>
-<td class="code">
-<pre><span class="line">def get<span class="constructor">_mask(<span class="params">self</span>, <span class="params">context_len</span>)</span>:</span><br><span class="line">    max_len = torch.max(context_len)</span><br><span class="line">    mask = <span class="literal">[[<span class="number">1</span> <span class="identifier">for</span> <span class="identifier">_</span> <span class="identifier">in</span> <span class="identifier">range</span>(<span class="identifier">max_len</span>)]</span> for _ <span class="keyword">in</span> context_len]</span><br><span class="line">    mask = torch.<span class="constructor">BoolTensor(<span class="params">mask</span>)</span></span><br><span class="line">    for which_batch, seq_len <span class="keyword">in</span> enumerate(context_len):</span><br><span class="line">        mask<span class="literal">[<span class="identifier">which_batch</span>, : <span class="identifier">seq_len</span>]</span> = <span class="number">0</span></span><br><span class="line">    <span class="keyword">if</span> torch.cuda.is<span class="constructor">_available()</span>:</span><br><span class="line">        mask = mask.cuda<span class="literal">()</span></span><br><span class="line">    return mask</span><br><span class="line"></span><br><span class="line">score.masked<span class="constructor">_fill_(<span class="params">mask</span>=<span class="params">self</span>.<span class="params">get_mask</span>(<span class="params">context_len</span>)</span>, value=<span class="built_in">float</span>('-inf'))</span><br><span class="line">softmax_score = <span class="module-access"><span class="module"><span class="identifier">F</span>.</span></span>softmax(score, dim=<span class="number">2</span>)</span><br></pre>
-</td>
-</tr>
-</table>
-</figure>
-<p>如果你想试验一下，可以自己初始化一下 score 和 context_len。</p>
-</div>
-<h2 id="参考资料-5">参考资料</h2>
-<ol type="1">
-<li><a href="https://www.zhihu.com/question/68482809/answer/264632289" target="_blank" rel="noopener">参考文章</a>；</li>
-<li><a href="https://www.cnblogs.com/robert-dlut/p/5952032.html" target="_blank" rel="noopener">Attention历史</a>。实际上九几年的时候在CV领域已经有这概念了；</li>
-<li><a href="https://mp.weixin.qq.com/s/0k71fKKv2SRLv9M6BjDo4w" target="_blank" rel="noopener">真正的完全图解 Seq2Seq Attention 模型</a>；</li>
-<li><em><a href="https://yan624.github.io/posts/5e27260b.html#Attention">吴恩达李宏毅综合学习笔记：RNN 入门#attention</a>；</em></li>
-<li><em><a href="https://yan624.github.io/posts/d9a134a.html#attention">CS224n学习笔记#attention</a></em></li>
-</ol>
-<h1 id="pointer-networks">Pointer Networks</h1>
-<div class="note info"><p>我在 TRADE(Wu et al. 2019) 这篇论文中看到了一些 Ptr 的分类，虽然不知道是不是业界通用的分类方法，但是还是记录一下。</p>
-<ol type="1">
-<li>index-based，即最初的 Ptr；</li>
-<li>hard-gated copy，即《Pointing the Unknown Words》、《Global-to-local memory pointer networks for task-oriented dialogue》</li>
-<li>soft-gated copy，即 Pointer-Generator</li>
-</ol>
-</div>
-<h2 id="index-based">Index-based</h2>
-<p>Ptr-Nets（下简称 <strong><em>Ptr</em></strong>）最早由 <span class="citation" data-cites="vinyals2015pointer">(Vinyals, Fortunato, and Jaitly 2015)</span> 提出。Ptr 的原理与 attention 非常相似，如下所示，其实就只是少了最后一步上下文向量缩放的过程。而它所选用的评分函数为 Luong Attention 提出的 <code>concat</code> 方法，实际上评分函数可以自己选。 <span class="math display">\[
-\begin{align}
-    u^i_j &amp; = v^T tanh(W_1 e_j + W_2 d_i) \quad j \in (1, \cdots, n) \\
-    p(\mathcal{C}_i | \mathcal{C}_1, \cdots, \mathcal{C}_{i-1}, \mathcal{P}) &amp; = softmax(u^i)
-\end{align}
-\]</span></p>
-<p>以上是最初的 Ptr，主要的贡献是提出了 Ptr 机制，但是论文本身并未对 NLP 领域进行相关的实验，例如文本摘要任务或者命名体识别任务。</p>
-<h2 id="hard-gated-copy">Hard-gated Copy</h2>
-<p>随后，<strong><em><span class="citation" data-cites="gulcehre2016pointing">(Gulcehre et al. 2016)</span></em></strong> 进一步完善了 Ptr，并且在文本摘要任务和翻译任务上进行了实践。该论文的思想还是类似于<strong>门控机制</strong>（gated mechanism）。例如在翻译任务中，在生成时，模型自动地选择 attention 机制或者 Ptr 机制去生成单词。选择的方式为 <span class="math inline">\(p_z \times p_l\)</span> 以及 <span class="math inline">\((1 - p_z) \times p_w\)</span>，其中 <span class="math inline">\(p_z\)</span> 代表 <span class="math inline">\(\{0, 1\}\)</span> 。这样就可以动态地选择其中的一个机制去生成。</p>
-<p>但是需要注意的是， <span class="math inline">\(p_z\)</span> 是 sigmoid 函数的输出，所以其为 <span class="math inline">\([0, 1]\)</span>。解决办法是以 0.5 为阈值，基于规则手动调整。这篇论文的思路感觉还是 LSTM 那种路子，毕竟那时还是 2016 年，深度学习涅槃了才 3 年。下面介绍的 Pointer-Generator 虽然也用的是门控机制，但是多了一点花样。它将两个概率分布合并了，而不是两个中挑一个。</p>
-<h2 id="soft-gated-copy">Soft-gated Copy</h2>
-<p>不久之后，<span class="citation" data-cites="gu2016incorporating">(Gu et al. 2016)</span> 提出了 <strong>CopyNet</strong>，其本质上还是 Ptr。这篇论文我没看过，但是我在知乎的<a href="https://zhuanlan.zhihu.com/p/73590690" target="_blank" rel="noopener">某篇专栏</a>里看过对它的介绍，感觉从直觉上看，还是 Pointer-Generator 那篇更合理。专栏的作者也认为这篇论文的算法有点奇怪。不过，这篇论文的模型基本上算是起了一个开头作用，pointer-generator 与这个模型类似。</p>
-<p><span class="citation" data-cites="see2017get">(See, Liu, and Manning 2017)</span> 提出了 <strong><em>Pointer-Generator</em></strong>，该模型是现在比较常见的 Ptr，具体也不用多讲，相信看下面的公式之后，应该就能意会是哪个模型了。</p>
-<p><span class="math display">\[P_{final} = P_{gen} \times P_{vocab} + (1 - P_{gen}) \times P_{history}
-\]</span></p>
-<p>有一点需要说明，上式是目前比较常见的写法，但是原论文中的写法并不是这样的。个人认为还是原论文写得合理些，上式的写法总感觉差点味道。但是原论文的公式可能比这个更难理解点。总而言之，实际上上述公式的思想是将两个概率分布<strong>合并到一起</strong>，更形象的说法是将两个概率分布摞成一摞。对于表外词的话，显然就是单独的放一摞，其他的词汇都是摞在另一个概率分布上。</p>
-<h2 id="参考文献">参考文献</h2>
-<ul>
-<li>Attention
-<ol type="1">
-<li><a href="https://zhuanlan.zhihu.com/p/67909876" target="_blank" rel="noopener">浅谈Attention注意力机制及其实现</a></li>
-</ol></li>
-<li>Pointer Networks
-<ol type="1">
-<li><a href="https://zhuanlan.zhihu.com/p/48959800" target="_blank" rel="noopener">Pointer Networks简介及其应用</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/73590690" target="_blank" rel="noopener">NLP 硬核入门 - PointerNet 和 CopyNet</a></li>
-</ol></li>
-</ul>
-<div class="note info"><p>以下是一些以前关于 Ptr 的笔记：</p>
-<ol type="1">
-<li><a href="https://yan624.github.io/·论文笔记/model/46.%20Pointer%20Networks.html">论文笔记</a></li>
-<li>《<a href="https://yan624.github.io/posts/5e27260b.html#Pointer-Network">李宏毅深度学习学习笔记</a>》记录了一个例子。</li>
-</ol>
-</div>
-<h1 id="memory-network">Memory Network</h1>
-<p><a href="https://papers.nips.cc/paper/5846-end-to-end-memory-networks.pdf" target="_blank" rel="noopener">论文地址</a></p>
-<p><a href="https://yan624.github.io/posts/5e27260b.html#Memory-Network">博客</a>有记一些基础的东西。</p>
-<h1 id="参考文献-1" class="unnumbered">参考文献</h1>
-<div id="refs" class="references">
-<div id="ref-bahdanau2014neural">
-<p>Bahdanau, Dzmitry, Kyunghyun Cho, and Yoshua Bengio. 2014. “Neural Machine Translation by Jointly Learning to Align and Translate.” <em>arXiv Preprint arXiv:1409.0473</em>.</p>
-</div>
-<div id="ref-bengio2015scheduled">
-<p>Bengio, Samy, Oriol Vinyals, Navdeep Jaitly, and Noam Shazeer. 2015. “Scheduled Sampling for Sequence Prediction with Recurrent Neural Networks.”</p>
-</div>
-<div id="ref-bengio2009curriculum">
-<p>Bengio, Yoshua, Jérôme Louradour, Ronan Collobert, and Jason Weston. 2009. “Curriculum Learning.” In <em>Proceedings of the 26th Annual International Conference on Machine Learning</em>, 41–48.</p>
-</div>
-<div id="ref-boulanger2013audio">
-<p>Boulanger-Lewandowski, Nicolas, Yoshua Bengio, and Pascal Vincent. 2013. “Audio Chord Recognition with Recurrent Neural Networks.” In <em>ISMIR</em>, 335–40. Citeseer.</p>
-</div>
-<div id="ref-Cho_2014">
-<p>Cho, Kyunghyun, Bart van Merrienboer, Caglar Gulcehre, Dzmitry Bahdanau, Fethi Bougares, Holger Schwenk, and Yoshua Bengio. 2014. “Learning Phrase Representations Using Rnn Encoder–Decoder for Statistical Machine Translation.” <em>Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing (EMNLP)</em>. Association for Computational Linguistics. <a href="https://doi.org/10.3115/v1/d14-1179" target="_blank" rel="noopener" class="uri">https://doi.org/10.3115/v1/d14-1179</a>.</p>
-</div>
-<div id="ref-Freitag_2017">
-<p>Freitag, Markus, and Yaser Al-Onaizan. 2017. “Beam Search Strategies for Neural Machine Translation.” <em>Proceedings of the First Workshop on Neural Machine Translation</em>. Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/w17-3207" target="_blank" rel="noopener" class="uri">https://doi.org/10.18653/v1/w17-3207</a>.</p>
-</div>
-<div id="ref-graves2012sequence">
-<p>Graves, Alex. 2012. “Sequence Transduction with Recurrent Neural Networks.” <em>arXiv Preprint arXiv:1211.3711</em>.</p>
-</div>
-<div id="ref-gregor2015draw">
-<p>Gregor, Karol, Ivo Danihelka, Alex Graves, Danilo Jimenez Rezende, and Daan Wierstra. 2015. “Draw: A Recurrent Neural Network for Image Generation.” <em>arXiv Preprint arXiv:1502.04623</em>.</p>
-</div>
-<div id="ref-gu2016incorporating">
-<p>Gu, Jiatao, Zhengdong Lu, Hang Li, and Victor OK Li. 2016. “Incorporating Copying Mechanism in Sequence-to-Sequence Learning.” <em>arXiv Preprint arXiv:1603.06393</em>.</p>
-</div>
-<div id="ref-gulcehre2016pointing">
-<p>Gulcehre, Caglar, Sungjin Ahn, Ramesh Nallapati, Bowen Zhou, and Yoshua Bengio. 2016. “Pointing the Unknown Words.” <em>arXiv Preprint arXiv:1603.08148</em>.</p>
-</div>
-<div id="ref-lamb2016professor">
-<p>Lamb, Alex, Anirudh Goyal, Ying Zhang, Saizheng Zhang, Aaron Courville, and Yoshua Bengio. 2016. “Professor Forcing: A New Algorithm for Training Recurrent Networks.”</p>
-</div>
-<div id="ref-luong2015effective">
-<p>Luong, Minh-Thang, Hieu Pham, and Christopher D Manning. 2015. “Effective Approaches to Attention-Based Neural Machine Translation.” <em>arXiv Preprint arXiv:1508.04025</em>.</p>
-</div>
-<div id="ref-see2017get">
-<p>See, Abigail, Peter J Liu, and Christopher D Manning. 2017. “Get to the Point: Summarization with Pointer-Generator Networks.” <em>arXiv Preprint arXiv:1704.04368</em>.</p>
-</div>
-<div id="ref-sutskever2014sequence">
-<p>Sutskever, Ilya, Oriol Vinyals, and Quoc V. Le. 2014. “Sequence to Sequence Learning with Neural Networks.”</p>
-</div>
-<div id="ref-vinyals2015pointer">
-<p>Vinyals, Oriol, Meire Fortunato, and Navdeep Jaitly. 2015. “Pointer Networks.” In <em>Advances in Neural Information Processing Systems</em>, 2692–2700.</p>
-</div>
-<div id="ref-xu2015show">
-<p>Xu, Kelvin, Jimmy Ba, Ryan Kiros, Kyunghyun Cho, Aaron Courville, Ruslan Salakhudinov, Rich Zemel, and Yoshua Bengio. 2015. “Show, Attend and Tell: Neural Image Caption Generation with Visual Attention.” In <em>International Conference on Machine Learning</em>, 2048–57.</p>
-</div>
-<div id="ref-Zhang_2019">
-<p>Zhang, Wen, Yang Feng, Fandong Meng, Di You, and Qun Liu. 2019. “Bridging the Gap Between Training and Inference for Neural Machine Translation.” <em>Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics</em>. Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/p19-1426" target="_blank" rel="noopener" class="uri">https://doi.org/10.18653/v1/p19-1426</a>.</p>
-</div>
-</div>
-]]></content>
-      <categories>
-        <category>AI</category>
-        <category>dl</category>
-      </categories>
-      <tags>
-        <tag>系列</tag>
-        <tag>GRU</tag>
-        <tag>LSTM</tag>
-        <tag>seq2seq</tag>
-        <tag>attention</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>深度学习算法（二）：simple RNN 推导与理解</title>
-    <url>/posts/b2bd11c2.html</url>
-    <content><![CDATA[<h1 id="代码">代码</h1>
-<p><a href="https://github.com/yan624/machine_learning_algorithms/tree/master/simple_recurrent_neural_network" target="_blank" rel="noopener">github地址</a> simple RNN只实现了正向传播，反向传播没有实现。是因为simple RNN有梯度消失的问题，索性直接不写了。下一节直接写LSTM。</p>
-<h1 id="介绍">介绍</h1>
-<blockquote>
-<p>1982年，美国加州理工学院物理学家John hopfield 发明了一种单层反馈神经网络 <strong>Hopfield network</strong>，用来解决组合优化问题。这是最早的RNN的雏形。86年，michael I. Jordan 定义了 recurrent 的概念，提出 <strong>Jordan network</strong>。1990年, 美国认知科学家 Jeffrey L. Elman 对 jordan network 进行了简化,并采用 BP 算法进行训练，便有了如今最简单的包含单个自连接节点的 RNN 模型。称之为 Elman Network。</p>
-</blockquote>
-<p>虽然 Jordan Network 先出现，但是此处《<a href="https://yan624.github.io/posts/5e27260b.html#Elman-Network-amp-Jordan-Network">吴恩达李宏毅综合学习笔记：RNN入门#Elman Network &amp; Jordan Network</a>》介绍了 <strong>Jordan Network 可能性能会更好</strong>。</p>
-<h1 id="simple-rnn和simple-nn的对比">simple RNN和simple NN的对比</h1>
-<p>本来觉得simple RNN挺简单的，只不过是simple NN的扩展，区别无非是将simple NN的神经元换成一个RNN cell。但是实际上没那么简单，特别是加上将数据向量化后计算。感觉简直和simple NN是两种架构。</p>
-<h2 id="input">input</h2>
-<p>下图是一个simple NN的架构，其中的一层也叫做全连接层。所以也叫做前馈神经网络。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple%20RNN%20推导与理解/带参数的前馈神经网络模版.svg" alt="带参数的前馈神经网络模版" /> 网络中输入的x是一个纯数字，而不是向量。如果输入的是向量，就代表一次输入了多条样本。总的来说，一条样本向量化为： <a id="more"></a> <span class="math display">\[
-\begin{pmatrix}
-    x_1\\
-    x_2\\
-    x_3\\
-\end{pmatrix}
-\]</span> 多条样本向量化为： <span class="math display">\[
-\begin{pmatrix}
-    x_1 &amp; x_4\\
-    x_2 &amp; x_5\\
-    x_3 &amp; x_6\\
-\end{pmatrix}
-\]</span> 但是在simple <strong>R</strong>NN中，因为RNN可以用做自然语言处理，在NLP领域一个数据就是一个单词或者一个词组，我们需要先将词组用数字表示，但是一个字只用一个数表示显然是不现实的。我们通常使用词向量（word vector）表示，所以问题就来了。如果我用simple NN来做自然语言处理，我该怎么处理这些数据。 我需要输入这句话——我 是 一名 学生。将其用变量一一对应： <span class="math display">\[
-\begin{pmatrix}
-    x_1 = \text{我}\\
-    x_2 = \text{是}\\
-    x_3 = \text{一名}\\
-    x_4 = \text{学生}\\
-\end{pmatrix}
-\]</span> 如果再输入一句话——今天 天气 好像 不错。将其用变量一一对应： <span class="math display">\[
-\begin{pmatrix}
-    x_1 = \text{我} &amp; x_5 = \text{今天}\\
-    x_2 = \text{是} &amp; x_6 = \text{天气}\\
-    x_3 = \text{一名} &amp; x_7 = \text{好像}\\
-    x_4 = \text{学生} &amp; x_8 = \text{不错}\\
-\end{pmatrix}
-\]</span> 这样会出现<strong>极大的问题</strong>，即文字无法进行数学运算。所以需要将文字转为词向量。但是问题是我如何在一个神经元输入一个向量？我如果输入多条样本，那么我整个输入值x就会变成<strong>3维的矩阵</strong>。simple NN显然是处理不了的。所以有个折中的方法，即将每个词的词向量加起来除以词的个数。即： <span class="math display">\[
-\frac{(v_{\text{我}} + v_{\text{是}} + v_{\text{一名}} + v_{\text{学生}})}{4} =  v_{\text{我是一名学生}}
-\]</span> 其中v代表某个词对应的词向量。这样就将4个向量合并成一个向量了。然后simple NN就可以处理了。 但是这样处理肯定太勉强了，所以就出现了simple RNN，它可以处理上述这种问题。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple%20RNN%20推导与理解/吴恩达深度学习中的RNN示意图.jpg" alt="吴恩达深度学习中的RNN示意图" /> 上图就是一个simple <strong>R</strong>NN架构，看起来跟simple NN不一样。但是其实你只要将图片往右旋转90度，就一样了。还有一点不太一样，就是simple <strong>R</strong>NN中的一个神经元跟simple NN中的一层神经元一样。 <div class="note info"><p>simple <strong>R</strong>NN其实就是simple NN的神经元被替换成了simple <strong>R</strong>NN的神经元。而simple <strong>R</strong>NN的一个神经元本身里面还有多个单元，图上就是一个神经元里有4个单元。 所以simple <strong>R</strong>NN的神经元可以被叫做记忆细胞。 如果重新描述一遍就是simple <strong>R</strong>NN其实就是simple NN的神经元被替换成了simple <strong>R</strong>NN的记忆细胞。 而simple <strong>R</strong>NN的记忆细胞里面有多个神经元用来处理进行向量计算。</p>
-</div></p>
-<h2 id="simple-rnn的另一个输入值a">simple RNN的另一个输入值a</h2>
-<p>下图是simple RNN的一个记忆细胞。由于其概念大都需要数值来演示，但是大量的数值难以书写，并且用语言实在难以描述。所以以下均使用一个矩阵的字母表示来演示。 此处会有几个问题：</p>
-<ol type="1">
-<li>乍一看很简单，但是在实现代码的时候，脑子会转不过来。<strong>因为你碰到的是向量化后的运算</strong>。所以你对各个W，b，A以及X的形状难以确定。不信就自己写一下代码，如果你以前没写过simple RNN的代码，肯定要在确定形状这卡至少一个小时。</li>
-<li>A的形状尤其难确定，会一时之间绕不过来。</li>
-<li>如下图所示，虽然在图里看上去是执行加法，但是在计算时，A 与 X 其实是做向量拼接。 <span class="math display">\[
-W_{ax} x^{&lt;t&gt;} + W_{aa} a^{&lt;t-1&gt;} = 
-\begin{pmatrix} 
- W_{ax} &amp; W_{aa}
-\end{pmatrix} * 
-\begin{pmatrix} 
- x^{&lt;t&gt;} \\
- a^{&lt;t-1&gt;} \\
-\end{pmatrix}
-\]</span></li>
-</ol>
-<figure>
-<img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple%20RNN%20推导与理解/simple%20rnn%20cell.png" alt="simple rnn cell" /><figcaption>simple rnn cell</figcaption>
-</figure>
-<h3 id="以一个记忆细胞为例">以一个记忆细胞为例</h3>
-<p>设词向量的维度为300，一个记忆细胞的units为32——keras代码表示：simpleRNN(32)，并且进行的是18元分类问题。</p>
-<h4 id="以一个样本为例">以一个样本为例</h4>
-<p>，输入样本数为1。 则运算过程为： <span class="math display">\[
-\begin{align}
-    A\_next &amp; = tanh(Wx_{32, 300} * X_{300, 1} + Wa_{32, 32} * A\_prev_{32, 1} + ba_{32, 1})\\
-    y &amp; = softmax(Wy_{18, 32} * A\_next + by_{18, 1})
-\end{align}
-\]</span> (数字, 数字) 的表示形式是在线性代数里表示形式，这样看起来方便点。第一个数字表示行，第二个数字表示列。tanh和softmax就不解释了。 我依次解释：</p>
-<ol type="1">
-<li>权重值Wx比较好理解，由于输入值X是一个 (300, 1) 的矩阵（也可以叫向量）。Wx为 (32, 300) 是因为记忆细胞的一个单元为32，并且词的特征为300。如果将一个记忆细胞看作是一个隐藏层，那么神经元个数就是32，300就代表前一层的输入。</li>
-<li>权重值Wa为什么是 (32, 32) ?由于a实际上就是激活值，激活值我们可以通过w * x计算得到。显然结果是 (32, 1) ，那么权重值Wa的第二个参数就可以确定大小了（矩阵相乘，第一个矩阵的第二维和第二个矩阵的第一维必须一样），权重值Wa的第一个参数实际上跟权重值Wx一样，都是units。</li>
-<li>Wy为什么是 (18, 32) ?18是因为这是一个18元分类问题，32是因为A的第一维是32。</li>
-</ol>
-<p>其中最难确定的就是Wa的形状。经过上面推导就可以知道了，第一维代表units，第二维代表需要与A的第一维，即为A的第一维的大小。</p>
-<h4 id="以128个样本为例">以128个样本为例</h4>
-<p>如果上面没懂可以再看一遍多个样本 <span class="math display">\[
-\begin{align}
-    A\_next &amp; = tanh(Wx_{32, 300} * X_{300, 128} + Wa_{32, 32} * A\_prev_{32, 128} + ba_{32, 1})\\
-    y &amp; = softmax(Wy_{18, 32} * A\_next + by_{18, 1})
-\end{align}
-\]</span> 说白了A其实激活值，看起来比较晕是因为多了一个初始的A0，实际上A0就是激活值，只不过需要初始化一下，它的形状就是激活值的形状。</p>
-<h3 id="以多个记忆细胞为例">以多个记忆细胞为例</h3>
-<p>过程就是上面的过程，唯一有区别的是输入值X。因为有了多个记忆细胞，所以X变成了3维，第3维就是timestep——时间步。 但是其实计算，跟上面一模一样，假设现在有6个时间步。伪代码如下： <figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">rnn_cell</span><span class="params">(A_prev, Xt, parameters)</span></span>:</span><br><span class="line">	<span class="keyword">do</span>上面的操作</span><br><span class="line"></span><br><span class="line">timesteps = <span class="number">6</span></span><br><span class="line">X = rand((<span class="number">300</span>, <span class="number">128</span>, timesteps))</span><br><span class="line">A0 = rand((<span class="number">32</span>, <span class="number">128</span>))</span><br><span class="line">parameters = 初始化所有参数</span><br><span class="line"><span class="keyword">for</span> ts <span class="keyword">in</span> range(timesteps):</span><br><span class="line">	rnn_cell(A0, X[:, :, ts], parameters)</span><br></pre></td></tr></table></figure> 其实就是遍历每一个时间步而已。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/深度学习算法（二）：simple%20RNN%20推导与理解/RNN.png" alt="RNN" /></p>
-<h2 id="反向传播bptt">反向传播（BPTT）</h2>
-<p>以《input》一章的第二张图为例，序列长度设为 3，则公式为如下所示，其中 S 代表 sigmoid 函数，下标用于区分不同复合函数，并且注意 w 和 b 是共享的。 <span class="math display">\[
-\begin{aligned}
-    a^0 &amp; = 0 \\
-    a^1 &amp; = S_1(W_{aa} \cdot a^0 + W_{ax} \cdot x^1 + b) \\
-    a^2 &amp; = S_2(W_{aa} \cdot a^1 + W_{ax} \cdot x^2 + b) \\
-    a^3 &amp; = S_3(W_{aa} \cdot a^2 + W_{ax} \cdot x^3 + b) \\
-\end{aligned}
-\]</span> 则对 <span class="math inline">\(W_{aa}\)</span> 的求导结果 <span class="math inline">\(\Delta W_{aa}\)</span> 如下所示，其中 <span class="math inline">\(\frac{\partial{a^0}}{\partial{W_{aa}}}\)</span> 等于 0，并且 <span class="math inline">\(\frac{\partial{a^1}}{\partial{W_{aa}}}\)</span> 没必要求。因为 <span class="math inline">\(a^0 = 0\)</span>（<em>a 代表 RNN 的记忆，初始时记忆是 0</em>），所以 <span class="math inline">\(S_1\)</span> 的表达式中 <span class="math inline">\(W_{aa}\)</span> 根本不存在，自然就没有 <span class="math inline">\(W_{aa}\)</span> 的导数，但是由于为了具有一般性，我还是都写上了。<em>为了使式子更清晰，<span class="math inline">\(S_k\)</span> 并没有替换成其输出 <span class="math inline">\(a^k\)</span>。</em> <span class="math display">\[
-\frac{\partial{a^3}}{\partial{W_{aa}}} = S_3 \circ (1 - S_3) \circ
-\{
-    \overbrace{a^2}^{\frac{\partial{W_{aa} \cdot a^2}}{\partial{W_{aa}}}} + \overbrace{
-        W_{aa} \cdot \underbrace{
-            S_2 \circ (1 - S_2)[
-                a^1 + W_{aa} \cdot \underbrace{
-                    S_1 \circ (1 - S_1) \circ \frac{\partial{a^0}}{\partial{W_{aa}}}
-                }_{\frac{\partial{a^1}}{\partial{W_{aa}}}}
-            ]
-        }_{\frac{\partial{a^2}}{\partial{W_{aa}}}}
-    }^{\frac{\partial{a^3}}{\partial{a^2}}}
-\}
-\]</span> 实际上上式很容易就可以发现是一个递归形式的表达式，所以可以写为以下的形式，其中 k 代表第几个激活值，也可以理解为第几个时间步。 <strong>注意与 <span class="math inline">\(W_{aa}\)</span> 相乘的其实是一个 diagonal 矩阵，除主对角线其余全为 0。</strong> <span class="math display">\[
-\frac{\partial{a^k}}{\partial{W_{aa}}} = S_k \circ (1 - S_k) \circ (a^{k - 1} + W_{aa} \cdot \frac{\partial{a^{k - 1}}}{W_{aa}})
-\]</span></p>
-<h1 id="参考资料">参考资料</h1>
-<ol type="1">
-<li><a href="https://www.jianshu.com/p/d35a2fd593eb" target="_blank" rel="noopener">RNN的研究发展过程</a></li>
-</ol>
-]]></content>
-      <categories>
-        <category>AI</category>
-        <category>dl</category>
-      </categories>
-      <tags>
-        <tag>学习笔记</tag>
-        <tag>系列</tag>
-        <tag>simple RNN</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>CS224n学习笔记</title>
     <url>/posts/d9a134a.html</url>
     <content><![CDATA[<div class="note info"><p>本笔记记录的内容来源于 <a href="https://www.bilibili.com/video/av41393758" target="_blank" rel="noopener">b站——CS224n 斯坦福深度自然语言处理课</a>。 之后我补充了18 章之后的内容，其来源为<a href="https://www.bilibili.com/video/av46216519" target="_blank" rel="noopener">b站——(2019)斯坦福CS224n深度学习自然语言处理课程 by Chris Manning</a></p>
@@ -9003,8 +7918,8 @@ w^2_{21} &amp; w^2_{22} &amp; w^2_{23}\\
       </categories>
       <tags>
         <tag>系列</tag>
-        <tag>simple NN</tag>
         <tag>深度学习算法</tag>
+        <tag>simple NN</tag>
       </tags>
   </entry>
   <entry>
@@ -10126,9 +9041,9 @@ A：[深度学习500问笔记#Dropout-系列问题](https://yan624.github.io/·z
       </categories>
       <tags>
         <tag>学习笔记</tag>
+        <tag>simple NN</tag>
         <tag>back propagation</tag>
         <tag>gradient descent</tag>
-        <tag>simple NN</tag>
         <tag>bias</tag>
         <tag>variance</tag>
         <tag>regularization</tag>
@@ -10222,8 +9137,8 @@ w^3_{42}\\
         <category>AI</category>
       </categories>
       <tags>
-        <tag>学习笔记</tag>
         <tag>系列</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -10532,8 +9447,8 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
         <category>AI</category>
       </categories>
       <tags>
-        <tag>学习笔记</tag>
         <tag>系列</tag>
+        <tag>学习笔记</tag>
         <tag>hadoop</tag>
         <tag>big data</tag>
       </tags>
@@ -10578,8 +9493,8 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
         <category>python</category>
       </categories>
       <tags>
-        <tag>学习笔记</tag>
         <tag>系列</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -10795,8 +9710,8 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
       </categories>
       <tags>
         <tag>印象笔记上的博文</tag>
-        <tag>学习笔记</tag>
         <tag>系列</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -10816,8 +9731,8 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
       </categories>
       <tags>
         <tag>印象笔记上的博文</tag>
-        <tag>学习笔记</tag>
         <tag>系列</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -10873,8 +9788,8 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
       </categories>
       <tags>
         <tag>印象笔记上的博文</tag>
-        <tag>学习笔记</tag>
         <tag>系列</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -10911,8 +9826,8 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
       </categories>
       <tags>
         <tag>印象笔记上的博文</tag>
-        <tag>学习笔记</tag>
         <tag>系列</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -10930,8 +9845,8 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
       </categories>
       <tags>
         <tag>印象笔记上的博文</tag>
-        <tag>学习笔记</tag>
         <tag>系列</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -10972,8 +9887,8 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
       </categories>
       <tags>
         <tag>印象笔记上的博文</tag>
-        <tag>学习笔记</tag>
         <tag>系列</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -10991,8 +9906,8 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
       </categories>
       <tags>
         <tag>印象笔记上的博文</tag>
-        <tag>学习笔记</tag>
         <tag>系列</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -11009,8 +9924,8 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
       </categories>
       <tags>
         <tag>印象笔记上的博文</tag>
-        <tag>学习笔记</tag>
         <tag>系列</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -11027,8 +9942,8 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
       </categories>
       <tags>
         <tag>印象笔记上的博文</tag>
-        <tag>学习笔记</tag>
         <tag>系列</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -11048,8 +9963,8 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
       </categories>
       <tags>
         <tag>印象笔记上的博文</tag>
-        <tag>学习笔记</tag>
         <tag>系列</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -11071,8 +9986,8 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
       </categories>
       <tags>
         <tag>印象笔记上的博文</tag>
-        <tag>学习笔记</tag>
         <tag>系列</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
