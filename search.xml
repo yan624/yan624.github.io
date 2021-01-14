@@ -7,35 +7,34 @@
 <h1 id="系统架构">系统架构</h1>
 <h1 id="预训练模型">预训练模型</h1>
 <p>预训练模型凭借着海量的训练数据，可以获得优质的单词表征。在众多任务中取得了不错的成绩。</p>
-<p>近几年，在任务导向对话中也有不少研究工作使用预训练模型，实验结果说明其前景广阔<span class="citation" data-cites="zhang2020recent">(Zhang et al. 2020)</span>。<span class="citation" data-cites="mehri2019pretraining">(Mehri et al. 2019)</span>对比四种预训练目标，其中两种为新提出的方法，期望通过这两种方法可以获得更健壮、更通用的对话上下文表征。<span class="citation" data-cites="mehri2019multi">(Mehri and Eskenazi 2019)</span>。。。</p>
-<p>经过调研后，我们打算使用 TOD-BERT<span class="citation" data-cites="wu2020tod">(Wu et al. 2020)</span>，一个专用于提取任务导向对话的预训练模型。有兴趣的可以查阅<a href="https://arxiv.org/abs/2004.06871" target="_blank" rel="noopener">论文</a>或者<a href="https://yan624.github.io/posts/ceeb7bcc.html">论文笔记</a>。简单来说，该模型在训练时，使用两个额外的符号明确地表示人机交互的过程，即 <span class="math inline">\([USR], [SYS]\)</span>。这是因为人机对话与网络上的通用文本有很明显的区别，人机对话的特征是在一轮对话中包括一条用户语句以及一条系统回复。</p>
-<p>DialoGLUE 中有写到两个专用于对话的预训练模型。</p>
-<h2 id="论文笔记">论文笔记</h2>
+<p>近几年，在任务导向对话中也有不少研究工作使用预训练模型，实验结果说明其前景广阔<span class="citation" data-cites="zhang2020recent">(Zhang et al. 2020)</span>。<a href="https://yan624.github.io/posts/1ff148b4.html" title="Pretraining Methods for Dialog Context Representation Learning"><span class="citation" data-cites="mehri2019pretraining">(Mehri et al. 2019)</span></a>对比四种预训练目标，其中两种为新提出的方法，期望通过这两种方法可以获得更健壮、更通用的对话上下文表征。<span class="citation" data-cites="mehri2019multi">(Mehri and Eskenazi 2019)</span>。。。</p>
+<p>经过调研后，我们打算使用 TOD-BERT<a href="https://yan624.github.io/posts/ceeb7bcc.html" title="TOD-BERT: Pre-trained Natural Language Understanding for Task-Oriented Dialogue"><span class="citation" data-cites="wu2020tod">(Wu et al. 2020)</span></a>，一个专用于提取任务导向对话的预训练模型。简单来说，在训练时，该模型使用两个额外符号明确地表示人机交互过程，即 <strong>[usr]</strong> 和 <strong>[sys]</strong>。这是因为人机对话与网络上的通用文本具有明显区别，人机对话的特点是一轮对话包括一条用户语句以及一条系统回复。</p>
 <ul>
-<li><a href="https://yan624.github.io/posts/1ff148b4.html">Pretraining Methods for Dialog Context Representation Learning</a></li>
-<li><a href="https://yan624.github.io/posts/ceeb7bcc.html">TOD-BERT: Pre-trained Natural Language Understanding for Task-Oriented Dialogue</a></li>
-<li>Structbert: Incorporating language structures into pre-training for deep language understanding</li>
-<li>ConveRT: Efficient and accurate conversational representations from transformers（发表于 2020.8，目前并没有发布该预训练模型）</li>
+<li>DialoGLUE 中有写到两个专用于对话的预训练模型</li>
+<li>ConveRT: Efficient and accurate conversational representations from transformers</li>
 <li>Dialogue transformers</li>
 </ul>
 <h1 id="炼丹">炼丹</h1>
-<h2 id="对话上下文表征">对话上下文表征</h2>
-<div class="note info"><p>本节主要讨论使用何种方式表示对话上下文以及如何捕获它的表征，从而获得更优的性能。期望可以带给后续工作一些启发。</p>
-<p>值得注意的是，以往很多工作构建的是 session-level DST，其在每一轮都会重新预测对话状态。此时对话历史就是一件必需品，这是因为其中包含了以往的用户目标。所以如果想要使用一种表示来代替冗长的对话历史，那么可能需要将其更改为 turn-level DST，这是因为对话历史已经不复存在，sesion-level DST 无法提取出历史用户目标。</p>
+<h2 id="对输入序列特性的调研">对输入序列特性的调研</h2>
+<p>近期的工作已经展示了 RNNs 可以捕获和利用层次信息方面，例如语言建模和机器翻译。相比之下，非循环结构的神经网络（CNN、Transformer）也在众多 NLP 任务中受到关注。为了比对两种结构在建模层次结构方面的能力，同时为了找到对于上述目的“循环”是否为关键因素，<span class="citation" data-cites="tran2018importance">(Tran, Bisazza, and Monz 2018)</span> 分别比对了主谓一致以及逻辑推理两项实验的结果。他们观察到在主谓一致实验中，无论难度（词距、一致因子距离）如何 LSTM 均强于 Transformer；在逻辑推理实验中，LSTM 在大部分情况下均强于 Transformer。<strong>他们认为当层次结构对任务很重要时，循环是模型的一种特性，不应该为了运行效率而牺牲它。</strong></p>
+<p><span class="citation" data-cites="tang2018self">(Tang et al. 2018)</span> 却得到了与 <span class="citation" data-cites="tran2018importance">(Tran, Bisazza, and Monz 2018)</span> 不同的结果（Transformer 略优于 LSTM），在分析上述实验之后，他们发现 <span class="citation" data-cites="tran2018importance">(Tran, Bisazza, and Monz 2018)</span> 使用了迷你版的 Transformer。在做以下退化之后，他们得到了与 <span class="citation" data-cites="tran2018importance">(Tran, Bisazza, and Monz 2018)</span> 类似的结果，退化步骤为：layers(8→4)；embedding size(512→128)；head(8→2)；dropout(0.1→0.2)……</p>
+<p>综上所述，在捕获层次结构的信息时，LSTM 与 Transformer 的能力应该相差无几。由于 DST 任务对层次结构信息的要求不是很高，故可以选择拥有大量预训练模型的 Transformer 结构。</p>
+<div class="note warning"><p>注意：下述论文分析的是<strong>模型结构的选择以及注意力机制的运用，是否会影响对话系统使用其可用的信息</strong>。</p>
 </div>
-<p>传统的 DST 模型一般将全部的对话历史作为编码器的输入，其通常只是作为当前对话的一种补充信息。冗长的对话历史可能反而会对模型造成负担（无法捕获优秀的特征；增加计算成本），这种数据稀疏性的问题严重地阻碍了当前多领域 DST 的发展<span class="citation" data-cites="zhu2020efficient">(Zhu et al. 2020)</span>。因此很有必要探索一种全新的方式表示对话历史，其必须拥有简练且富含历史信息的特点。</p>
-<p>除了过长的对话历史能够产生影响之外，在多领域场景下槽位的增加也是一项比较严重的负担。这是因为近期的模型一般采用预训练模型进而对语句编码并且直接将各槽位拼接在对话语句中，当槽位过多时，预训练模型可能无法捕获如此长度序列的特征。</p>
-<p>经过对 DST 任务的深入理解，自然而然地可以想到对话状态就是一个优秀的抽象表征。因此可以将前一轮的对话状态视为对话历史的一个清晰、紧凑以及富含信息的表征<span class="citation" data-cites="zeng2020multi">(Zeng and Nie 2020)</span>，不再需要使用整条对话历史。目前已经有一些工作使用对话状态作为对话历史的表征<span class="citation" data-cites="kim2019efficient zhu2020efficient">(Kim et al. 2019; Zhu et al. 2020)</span>，他们大多将对话状态表示为序列的形式，然后将其加入到当前语句的头部或者末尾。</p>
-<p><span class="citation" data-cites="zeng2020multi">(Zeng and Nie 2020)</span> 认为使用基于 self-attention 的方法建立字符与字符之间的联系，会促成不合理的连接，导致后期的错误推理。为此，他们使用图结构对对话状态进行表示，提出了对话状态图（dialog state graph），并使用 relational-GCN 对其编码，然后将其融入进 Transformer。</p>
-<h2 id="对话状态表征">对话状态表征</h2>
-<h2 id="对话模式表征">对话模式表征</h2>
-<p><span class="citation" data-cites="zhu2020efficient">(Zhu et al. 2020)</span></p>
-<h2 id="section">---</h2>
+<p><span class="citation" data-cites="sankar2019neural">(Sankar et al. 2019)</span>对神经回复生成模型提出疑问：“神经语言模型是否有效地使用了对话历史？”为此他们进行实证研究，其中心假设为：<strong>如果模型对破坏他们的扰动不敏感，那么他们就很少使用某些类型的信息</strong>。令人担忧的是，他们发现：1）基于 rnn 或 Transformer 的 seq2seq 模型均对本工作中使用的扰动不敏感；2）即使做出巨大的扰动，例如随机排序或者逆序单词，二者仍旧极其地不敏感（见表 1）；3）循环模型对对话历史中的语句顺序更敏感，这表明它比 Transformer 更易于捕获对话的多样性（conversation dynamics）。</p>
+<p>通过对比模型困惑度的增衰，他们观察到：1）在大多数例子中，模型困惑度只有微小的变化，这表明他们远没有使用其可用的所有信息；2）Transformers 对单词重排序不敏感，<u>这意味着其可以学习词袋类型的表征</u>？；3）观察 Only Last 一列，seq2seq_lstm_att 和 transformers 比普通 seq2seq 使用更多对话历史的信息；4）虽然 Transformers 收敛更快并能够达到更低的测试集困惑度，但是他们似乎没有捕获对话的多样性。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/构建一个任务完成型对话系统/Do%20Neural%20Dialog%20Systems%20Use%20the%20Conversation%20History%20Effectively-An%20Empirical%20Study-PPL.png" alt="PPL" /></p>
+<h2 id="如何表示对话历史">如何表示对话历史</h2>
+<div class="note warning"><p>值得注意的是，以往很多工作构建的是 session-level DST，此类模型在每一轮都会重新预测完整的对话状态。在这种情况下，对话历史就是一件必需品，这是因为其中包含了以往的用户目标。如果不提供对话历史，模型就无法提取完整的对话状态。而对于 turn-level DST 模型，对话历史则是不必要的。</p>
+</div>
+<p>传统 DST 模型一般将完整的对话历史作为编码器的输入。虽然可以将对话历史视为补充信息，但是其中也夹杂着大量的无用特征，致使其成为模型的负担（例如无法捕获优秀的特征、增加计算成本等），这种数据稀疏性的问题严重地阻碍当前多领域 DST 的发展<span class="citation" data-cites="zhu2020efficient">(Zhu et al. 2020)</span>。因此很有必要探索一种对话历史的全新表示方式，它应该同时拥有简练以及富含历史信息的特点。</p>
+<p>如果对 DST 任务有所了解，自然而然地可以想到对话状态就是一个清晰、紧凑且富含信息的抽象表征<span class="citation" data-cites="zeng2020multi">(Zeng and Nie 2020)</span>。目前已经有一些工作<span class="citation" data-cites="kim2019efficient zhu2020efficient zeng2020multi">(Kim et al. 2019; Zhu et al. 2020; Zeng and Nie 2020)</span>使用前一轮的对话状态表示对话历史，他们大多将对话状态表示为序列的形式，然后将其拼接至序列的头部或者末尾。不过由于对话状态由所有槽值对组成，将其转换成序列之后会得到一段相对较长的字符串，例如 120 个字符。上述的做法无疑会增加输入序列的长度，也会成为模型提取特征的负担。在科研领域，目前对此种弊端没有过多的研究。</p>
+<h2 id="如何使用对话历史">如何使用对话历史</h2>
 <ul>
-<li>Do Neural Dialog Systems Use the Conversation History Effectively? An Empirical Study</li>
 <li>Sharp Nearby, Fuzzy Far Away How Neural Language Models Use Context</li>
-<li>Where is the context?--A critique of recent dialogue datasets</li>
 </ul>
+<h2 id="如何提取对话状态的特征">如何提取对话状态的特征</h2>
+<p><span class="citation" data-cites="zhu2020efficient">(Zhu et al. 2020)</span></p>
+<p><span class="citation" data-cites="zeng2020multi">(Zeng and Nie 2020)</span> 认为使用基于 self-attention 的方法建立字符与字符之间的联系，会促成不合理的连接，导致后期的错误推理。为此，他们使用图结构对对话状态进行表示，提出了对话状态图（dialog state graph），并使用 relational-GCN 对其编码，然后将其融入进 Transformer。</p>
 <h1 id="数据集">数据集</h1>
 <ul>
 <li>STAR: A Schema-Guided Dialog Dataset for Transfer Learning</li>
@@ -92,6 +91,15 @@
 </div>
 <div id="ref-rastogi2019towards">
 <p>Rastogi, Abhinav, Xiaoxue Zang, Srinivas Sunkara, Raghav Gupta, and Pranav Khaitan. 2019. “Towards Scalable Multi-Domain Conversational Agents: The Schema-Guided Dialogue Dataset.” <em>arXiv Preprint arXiv:1909.05855</em>.</p>
+</div>
+<div id="ref-sankar2019neural">
+<p>Sankar, Chinnadhurai, Sandeep Subramanian, Christopher Pal, Sarath Chandar, and Yoshua Bengio. 2019. “Do Neural Dialog Systems Use the Conversation History Effectively? An Empirical Study.” <em>arXiv Preprint arXiv:1906.01603</em>.</p>
+</div>
+<div id="ref-tang2018self">
+<p>Tang, Gongbo, Mathias Müller, Annette Rios, and Rico Sennrich. 2018. “Why Self-Attention? A Targeted Evaluation of Neural Machine Translation Architectures.” <em>arXiv Preprint arXiv:1808.08946</em>.</p>
+</div>
+<div id="ref-tran2018importance">
+<p>Tran, Ke, Arianna Bisazza, and Christof Monz. 2018. “The Importance of Being Recurrent for Modeling Hierarchical Structure.” <em>arXiv Preprint arXiv:1803.03585</em>.</p>
 </div>
 <div id="ref-wu2020tod">
 <p>Wu, Chien-Sheng, Steven Hoi, Richard Socher, and Caiming Xiong. 2020. “Tod-Bert: Pre-Trained Natural Language Understanding for Task-Oriented Dialogues.” <em>arXiv Preprint arXiv:2004.06871</em>.</p>
@@ -484,7 +492,7 @@ S^j_i = Sim(G_j(F(X)), F(v^j_i)) \in \mathbb{R}^1
 <strong>本文提出构造一个对话状态图（dialog state graph）</strong>，其中，来自上一轮对话状态中的领域（domain）、槽位（slot）以及槽值（value）被恰当地连接起来。如图 1 所示。使用 relational-GCN（关系图卷积网络）对其编码，它被融合进 Transformer 中。
 </p>
 </div>
-<p>可以将基于双向 self-attention 的方法视为图神经网络，其输入为每个字符都相连的图，无论它们在对话历史还是对话状态中，都可以通过 attention 被连接。<strong>这种图结构对 DST 很有帮助</strong>。例如，给定酒店“名称”和出租车“出发地”的图，attention 可以建立它们之间的关联，这意味着我们可以推断出出租车的出发地和酒店名称相同。<strong>然而，这些图通常拥有太过庞大的节点，使得 attention 连接两个与对话无关的节点，从而导致进行错误推理</strong>。</p>
+<p>可以将基于双向 self-attention 的方法视为图神经网络，其输入为每个字符都相连的图，无论它们在对话历史还是对话状态中，都可以通过 attention 被连接。<strong>这种图结构对 DST 很有帮助</strong>。例如，给定酒店“名称”和出租车“出发地”的图，attention 可以建立它们之间的关联，这意味着我们可以推断出出租车的出发地和酒店名称相同。<strong>然而 Transformer 所使用的图通常拥有大量节点，attention 可能会连接两个与对话无关的节点，从而导致错误推理</strong>。</p>
 <p>图需要同时表现对话历史中的关键实体和强连接（strong connection）。强连接不仅依赖于对话历史，还需要引导对话。例如，用户预订火车的时候，通常还会预订酒店，前者通常自然地会影响后者（自然过渡，natural transition）。因此应该在图中创建强连接。<strong><font color='red'>这种自然过渡在以往的研究常常被忽略</font></strong>。</p>
 <p>在构建图时，除了必要的节点（node）和边（edge），还创建了一种特殊的边。如果有两个领域同时出现在对话状态中，则创建一种共现边（co-occurrence edge）以此连接二者。</p>
 <p>为了有效地利用该图，需要解决以下两个问题：</p>
@@ -705,19 +713,19 @@ head_j &amp; = softmax(\frac{Q_j K^T_j}{\sqrt{d_k}}) V_j
 </thead>
 <tbody>
 <tr class="odd">
-<td><a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#multi-domain-dialogue-state-tracking-based-on-state-graph" title="Multi-Domain Dialogue State Tracking based on State Graph"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/abs/2010.11137" target="_blank" rel="noopener" title="20.10"><i class="fa fa-"></i>论文</a> <br /> Zeng et al., 2020</td>
+<td><strong><a href="https://arxiv.org/abs/2010.11137" target="_blank" rel="noopener" title="20.10">Graph-DST</a></strong></td>
 <td><mark class="label primary"><strong>Transformer</strong></mark> <mark class="label primary"><strong>relational-GCN</strong></mark><br />
-<mark class="label success"><strong>Graph-DST</strong></mark> <mark class="label primary">dialog state graph</mark> <mark class="label success">graph-enhanced Transformer</mark></td>
+<mark class="label success">Zeng et al., 2020</mark> <mark class="label primary">dialog state graph</mark> <mark class="label success">graph-enhanced Transformer</mark></td>
 </tr>
 <tr class="even">
-<td><a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#dialogue-state-tracking-with-explicit-slot-connection-modeling" title="Dialogue State Tracking with Explicit Slot Connection Modeling"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://www.aclweb.org/anthology/2020.acl-main.5/" target="_blank" rel="noopener" title="20.07"><i class="fa fa-"></i>论文</a> <br /> Ouyang et al., 2020</td>
+<td><strong><a href="https://www.aclweb.org/anthology/2020.acl-main.5/" target="_blank" rel="noopener" title="20.07">DST-SC</a></strong></td>
 <td><mark class="label primary"><strong>BiGRU</strong></mark><br />
-<mark class="label success"><strong>DST-SC</strong></mark> <mark class="label info">slot connection mechanism</mark></td>
+<mark class="label success">Ouyang et al., 2020</mark> <mark class="label info">slot connection mechanism</mark></td>
 </tr>
 <tr class="odd">
-<td><a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#efficient-context-and-schema-fusion-networks-for-multi-domain-dialogue-state-tracking" title="Efficient Context and Schema Fusion Networks for Multi-Domain Dialogue State Tracking"><i class="fa fa-"></i>笔记</a><a class="btn" href="https://arxiv.org/pdf/2004.03386.pdf" target="_blank" rel="noopener" title="20.04"><i class="fa fa-"></i>论文</a> <br /> Zhu et al. 2020</td>
+<td><strong><a href="https://arxiv.org/abs/2004.03386" target="_blank" rel="noopener" title="20.04">CSFN-DST</a></strong></td>
 <td><mark class="label primary"><strong>CSFN</strong></mark> <mark class="label primary"><strong>BERT</strong></mark><br />
-<mark class="label success"><strong>CSFN-DST</strong></mark> <mark class="label primary">Schema Grapha</mark> <mark class="label info">Graph-based Multi-head Attention</mark></td>
+<mark class="label success">Zhu et al., 2020</mark> <mark class="label primary">Schema Grapha</mark> <mark class="label info">Graph-based Multi-head Attention</mark></td>
 </tr>
 </tbody>
 </table></div><div class="tab-pane" id="dst论文对比-2"><table>
@@ -759,7 +767,7 @@ head_j &amp; = softmax(\frac{Q_j K^T_j}{\sqrt{d_k}}) V_j
 <div class="note warning"><p>注意，NBT 是使用<strong>槽值对</strong>去与用户语句判别从而实现二元分类。而 TRADE 是使用<strong>域槽对</strong>去与用户语句做判别，从而实现三元分类得到槽位的类别，然后依靠槽位的类别再进一步去生成槽值。</p>
 </div>
 <p><span class="citation" data-cites="wu2019transferable">(Wu et al. 2019)</span> 提出了 TRADE 模型，沿用了 Ptr 神经网络，此外还使用 zero-shot 的训练方式使模型有能力处理未知领域中的槽位。他们将槽位分为 <span class="math inline">\(\{none, dontcare, ptr\}\)</span> 三种。<code>none</code> 代表当前所判别的槽位不包含槽值，槽值就是 <code>none</code>；<code>dontcare</code> 代表用户不关心当前所判别的槽位的具体槽值是什么，槽值就是 <code>dontcare</code>；<code>ptr</code> 代表模型需要再额外使用一个 ptr 神经网络来从用户语句中直接提取槽值。具体做法是，模型使用域槽对去和用户语句做判别，得到槽位的类别，然后根据槽位的类别进一步得到槽值。<em>博主注：这样的做法实际上会造成误差的层级传播，后面会说到。</em><mark class="label info">slot gate</mark></p>
-<p><span class="citation" data-cites="zhang2019find">(Zhang et al. 2019)</span> 将槽位分为 <span class="math inline">\(\{none, dontcare, picklist-based, span-based\}\)</span>，其中前两个和最后一个与 TRADE 中的定义一一对应。他们认为有些槽位是没必要使用 ptr 从用户语句中提取的，例如对于槽位“hotel-pricerange”，只有三个槽值 <span class="math inline">\(\{cheap, moderate, expensive\}\)</span>。<span class="citation" data-cites="heck2020trippy">(Heck et al. 2020)</span> 将槽位分为 <span class="math inline">\(\{none, dontcare, span-based, bool-based, refer, inform\}\)</span>。</p>
+<p><span class="citation" data-cites="zhang2019find">(Zhang et al. 2019)</span> 将槽位分为 <em>{none, dontcare, picklist-based, span-based}</em>，其中前两个和最后一个与 TRADE 中的定义一一对应。他们认为有些槽位是没必要使用 ptr 从用户语句中提取的，例如对于槽位“hotel-pricerange”，只有三个槽值 <em>{cheap, moderate, expensive}</em>。<span class="citation" data-cites="heck2020trippy">(Heck et al. 2020)</span> 将槽位分为 <em>{none, dontcare, span-based, bool-based, refer, inform}</em>。</p>
 <h2 id="各项难点的处理方式">各项难点的处理方式</h2>
 <ol type="1">
 <li>未知的槽位：任务导向对话模式、zero-shot learning</li>
@@ -774,9 +782,9 @@ head_j &amp; = softmax(\frac{Q_j K^T_j}{\sqrt{d_k}}) V_j
 <h2 id="相关工作">相关工作</h2>
 <p>详见 <a href="https://yan624.github.io/posts/5286f9c6.html">DST论文笔记（2020—至今）</a>。</p>
 <ol type="1">
-<li><span class="citation" data-cites="zhu2020efficient">(Zhu et al. 2020)</span> 提出了 CSFN-DST（Context and Schema Fusion Network）。主要思想是将冗长的上下文改为：当前系统回复 <span class="math inline">\(A_t\)</span>，用户输入 <span class="math inline">\(U_t\)</span> 以及上一轮的对话状态 <span class="math inline">\(B_{t-1}\)</span>。作者将上一轮的对话状态视为对话历史的抽象表征，在训练时使用真实的对话状态，<font color="red"><strong>在推理阶段使用预测出的对话状态</strong></font>。此外，还将领域 <span class="math inline">\(D\)</span>，槽位 <span class="math inline">\(S\)</span> 以及域槽对 <span class="math inline">\(O\)</span> 表示图结构，并称之为协议图（schema graph）或者模式图。使用了 Graph-based Multi-head Attention 编码该协议图，实际上只是比普通的 Multi-head Attn 多了一个 mask 而已。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#csfn-dst-1"><i class="fa fa-"></i>总结</a></li>
-<li><span class="citation" data-cites="ouyang-etal-2020-dialogue">(Ouyang et al. 2020)</span>提出了 slot connection mechanism 用于处理省略、共指的难题，思想与 TripPy 类似，但是做法不同。具体不做阐述了。</li>
-<li><span class="citation" data-cites="zeng2020multi">(Zeng and Nie 2020)</span> 认为以往的工作只是简单地将前一轮的对话状态和当前语句拼接起来，然后使用 self-attention 建立它们之间的关联。但是 attention 机制也许会关注到一些不合理（spurious）的连接，从而导致进行错误的推理。该文提出对话状态图（dialog state graph），以此处理对话状态中元素的共现信息以及过渡联系。使用 relational-GCN 对该图编码，然后将其融入 Transformer。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#graph-dst-1"><i class="fa fa-"></i>总结</a></li>
+<li><span class="citation" data-cites="zhu2020efficient">(Zhu et al. 2020)</span> 提出了 CSFN-DST（Context and Schema Fusion Network）。主要思想是将冗长的上下文改为：当前系统回复 <span class="math inline">\(A_t\)</span>，用户输入 <span class="math inline">\(U_t\)</span> 以及上一轮的对话状态 <span class="math inline">\(B_{t-1}\)</span>。作者将上一轮的对话状态视为对话历史的抽象表征，在训练时使用真实的对话状态，<font color="red"><strong>在推理阶段使用预测出的对话状态</strong></font>。此外，还将领域 <span class="math inline">\(D\)</span>，槽位 <span class="math inline">\(S\)</span> 以及域槽对 <span class="math inline">\(O\)</span> 表示图结构，并称之为协议图（schema graph）或者模式图。使用了 Graph-based Multi-head Attention 编码该协议图，实际上只是比普通的 Multi-head Attn 多了一个 mask 而已。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#efficient-context-and-schema-fusion-networks-for-multi-domain-dialogue-state-tracking" title="Efficient Context and Schema Fusion Networks for Multi-Domain Dialogue State Tracking"><i class="fa fa-"></i>论文笔记</a></li>
+<li><span class="citation" data-cites="ouyang-etal-2020-dialogue">(Ouyang et al. 2020)</span>提出了 slot connection mechanism 用于处理省略、共指的难题，思想与 TripPy 类似，但是做法不同。具体不做阐述了。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#dialogue-state-tracking-with-explicit-slot-connection-modeling" title="Dialogue State Tracking with Explicit Slot Connection Modeling"><i class="fa fa-"></i>论文笔记</a></li>
+<li><span class="citation" data-cites="zeng2020multi">(Zeng and Nie 2020)</span> 认为以往的工作只是简单地将前一轮的对话状态和当前语句拼接起来，然后使用 self-attention 建立它们之间的关联。但是 attention 机制也许会关注到一些不合理（spurious）的连接，从而导致进行错误的推理。该文提出对话状态图（dialog state graph），以此处理对话状态中元素的共现信息以及过渡联系。使用 relational-GCN 对该图编码，然后将其融入 Transformer。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#multi-domain-dialogue-state-tracking-based-on-state-graph" title="Multi-Domain Dialogue State Tracking based on State Graph"><i class="fa fa-"></i>论文笔记</a></li>
 </ol>
 <h1 id="dpl">DPL</h1>
 <p>待续。</p>
@@ -1454,8 +1462,8 @@ LSTM: memory_{new} = a * input + b * memory \\
 <h3 id="zero-shot-learning">Zero-shot learning</h3>
 ]]></content>
       <categories>
-        <category>coding</category>
-        <category>AI</category>
+        <category>notes</category>
+        <category>transfer-learning</category>
       </categories>
       <tags>
         <tag>学习笔记</tag>
@@ -1485,8 +1493,8 @@ LSTM: memory_{new} = a * input + b * memory \\
 </ol>
 ]]></content>
       <categories>
-        <category>coding</category>
-        <category>AI</category>
+        <category>notes</category>
+        <category>multi-task</category>
       </categories>
       <tags>
         <tag>学习笔记</tag>
@@ -2455,8 +2463,8 @@ crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)
         <category>pytorch</category>
       </categories>
       <tags>
-        <tag>4me</tag>
         <tag>pytorch</tag>
+        <tag>4me</tag>
       </tags>
   </entry>
   <entry>
@@ -3257,7 +3265,7 @@ OPT(i) =
 <h1 id="任务完成型对话系统">任务完成型对话系统</h1>
 <div class="note info"><p>可以点击后面对应的按钮，找到各领域论文的详细对比。<a class="btn" href="#slu论文对比"><i class="fa fa-"></i>SLU 论文对比</a><a class="btn" href="#dst论文对比"><i class="fa fa-"></i>DST 论文对比</a></p>
 </div>
-<p>任务完成型对话系统（Task-oriented Dialog System，<strong>TODS</strong>），业界中也被称为口语对话系统（Spoken Dialogue System，<strong>TODS</strong>），下统称为 TODS。</p>
+<p>任务完成型对话系统（Task-oriented Dialog System，<strong>TODS</strong>），也被称为口语对话系统（Spoken Dialogue System，<strong>SDS</strong>），下统称为 TODS。</p>
 <h2 id="对话状态与对话动作">对话状态与对话动作</h2>
 <p>对话状态（Dialog State，DS）是 TODS 中的一个重要概念，它贯穿了整个系统的运行过程。要理解 TODS，首先需要从对话状态入手。</p>
 <p>对话状态也被称为信念状态（Belief State），或者对话信念状态（Dialog Belief State）。这是历史问题，一般在以前的模型中称之为对话状态，现在使用深度学习技术的对话系统称之为信念状态<span class="citation" data-cites="zhang2020recent">(Zhang et al. 2020)</span>，不过如今二者混用，下称之为对话状态。<span class="citation" data-cites="zhang2020recent">(Zhang et al. 2020)</span>认为<strong>对话状态由槽值对组成</strong>，以此呈现用户的目的。</p>
@@ -3414,10 +3422,9 @@ OPT(i) =
 <li><a href="https://github.com/sz128/Natural-language-understanding-papers" target="_blank" rel="noopener">Natural-language-understanding-papers</a></li>
 </ol>
 <h1 id="dst">DST</h1>
-<div class="note primary"><p>由于最初并没有打算写那么多内容，导致以下内容的逻辑很乱。故已将其整理至<a href="https://yan624.github.io/posts/4ec51203.html#前情提要">任务完成型对话系统论文调研（二）</a>。其中，没有将《结果对比》一章进行移动。</p>
+<div class="note primary"><p>由于最初并没有打算写那么多内容，导致以下内容的逻辑很乱。故已将其整理至<a href="https://yan624.github.io/posts/4ec51203.html#前情提要">任务完成型对话系统论文调研（二）</a>。</p>
 </div>
-<div class="note info"><p>注意，目前 DST 的做法多种多样，(Zhang et al. 2019)<!-- @zhang2019find --> 认为主要可以分为：1）picklist-based；2）span-based。但是也有其他论文(Eric et al. 2019)将其分为：1）fixed-vocabulary；2）open-vocabulary。 <!-- @eric2019multiwoz --> 实际上上述两种分类方法是一一对应的。</p>
-<p>以下将 picklist-based 称为 <code>classify</code>，将 span-based 称为 <code>span</code>。</p>
+<div class="note info"><p>目前 DST 的做法多种多样，(Zhang et al. 2019)<!-- @zhang2019find --> 认为主要可以分为：1）picklist-based；2）span-based。但是也有其他论文(Eric et al. 2019)将其分为：1）fixed-vocabulary；2）open-vocabulary。 <!-- @eric2019multiwoz --> 实际上上述两种分类方法是一一对应的。以下将 picklist-based 称为 <code>classify</code>，将 span-based 称为 <code>span</code>。</p>
 </div>
 <table>
 <thead>
@@ -5398,8 +5405,8 @@ A_{3 \times 1} \odot B_{3 \times 1} = C_{3 \times 1} \\
 <p>Generative Pre-Training(GPT)，GPT 是 transformer 的 decoder。GPT 与 BERT 类似。 56:45 讲了第一个位置的 attention token。</p>
 ]]></content>
       <categories>
-        <category>coding</category>
-        <category>AI</category>
+        <category>notes</category>
+        <category>dl</category>
       </categories>
       <tags>
         <tag>系列</tag>
@@ -5453,8 +5460,8 @@ A_{3 \times 1} \odot B_{3 \times 1} = C_{3 \times 1} \\
 <h1 id="q-learning">Q-learning</h1>
 ]]></content>
       <categories>
-        <category>coding</category>
-        <category>AI</category>
+        <category>notes</category>
+        <category>rl</category>
       </categories>
       <tags>
         <tag>学习笔记</tag>
@@ -5736,39 +5743,6 @@ A_{3 \times 1} \odot B_{3 \times 1} = C_{3 \times 1} \\
       </categories>
       <tags>
         <tag>error</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Neural Machine Translation of Rare Words with Subword Units</title>
-    <url>/posts/5fe678d1.html</url>
-    <content><![CDATA[<div class="note info"><p><a href="https://arxiv.org/abs/1508.07909" target="_blank" rel="noopener">论文地址</a>，论文作者 Rico Sennrich 等，发表于 2015 年。 注：本文解决的是机器翻译问题。</p>
-</div>
-<h1 id="论文摘要翻译">论文摘要翻译</h1>
-<p>神经机器翻译（NMT）模型通常使用固定的词表，但是翻译是一个开放词表的问题。以前的工作是 <strong>backing off to a dictionary</strong> 来解决 OOV 词的翻译问题。本文介绍了一种新的方法，即 <strong>BPE</strong>。这是<strong>基于这样一种直觉：不同的<a href="http://www.bing.com/dict/word%20classes" target="_blank" rel="noopener">词类</a>（word classes）可以通过使用比该词更小的单元进行翻译，例如姓名（通过字符复制或音译）、复合词（通过构词翻译）以及同源词和外来词（通过语音和形态转换）。</strong> 本文讨论了不同的分词技巧的实用性，包括简单的 <strong>character n-gram</strong> 模型（fasttext 就是用的这个）和基于 <strong>BPE</strong> 压缩算法模型。最终实验证明在 WMT 15 英-&gt;德和英-&gt;法 翻译任务上， subword 模型（character n-gram 和 BPE）比 back-off dictionary 各自提高了 1.1 和 1.3 BELU 分数。 <div class="note warning"><p>接下来的 <strong>Introduction</strong> 和 <strong>Neural Machine Translation</strong> 章节暂且略过。</p>
-</div></p>
-<a id="more"></a>
-<h1 id="子词翻译">子词翻译</h1>
-<p>很多单词都能够使用单词的 subword 单元进行翻译。</p>
-<h2 id="相关工作">相关工作</h2>
-<ul>
-<li>如果字母表不同，那就音译(Durrani et al., 2014)</li>
-<li>Character-based translation(Vilar et al., 2007; Tiedemann, 2009; Neubig et al., 2012)</li>
-<li>……</li>
-</ul>
-<h2 id="byte-pair-encodingbpe">※ Byte Pair Encoding(BPE)</h2>
-<p>BPE(Gage, 1994) 是一个简单的数据压缩技巧，其迭代地使用单个、未被使用的 byte 替换在一个序列中出现最频繁的 pair of bytes（<strong>博主注：此为 1994 年 Gage 论文中的算法步骤，无法理解就跳过吧，有兴趣的看<a href="https://blog.csdn.net/qq_27590277/article/details/88343988" target="_blank" rel="noopener">这篇</a></strong>）。我们将这种算法引入进子词中。<strong>Instead of merging frequent pairs of bytes, we merge characters or character sequences</strong>. 1. 首先我们使用字符级的词表初始化符号词表，将每个单词表示为一个字符序列（<strong>如 'word' 表示为 'w o r d'</strong>），外加一个特殊的单词结尾符号“·”，这允许我们在翻译后恢复原始的分词。 2. 我们迭代地计算所有符号对，并用新的符号“AB”替换最常出现的符号对('A', 'B')。每次合并操作都产生一个以 character n-gram 表示的新符号。高频的 character n-grams（或整个单词）最终合并为单个符号，因此 BPE 不需要 shorlist（这里的 shortlist 应该指的是 1994 年论文中的 single and unused byte，即单个未被使用过的 byte）。 3. 最终符号词表的大小等于<strong>最初词表的大小加上合并操作的数量</strong>，后者是算法的唯一超参数。</p>
-<p>举个例子，以此辅助理解第一步。如下所示，有一个 vocab 其中包含四个单词 'low', 'lower', 'newest', 'widest'，它们的词频分别为 5 2 6 3。 <figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">vocab</span> = &#123;<span class="string">'l o w &lt;/w&gt;'</span> : <span class="number">5</span>, <span class="string">'l o w e r &lt;/w&gt;'</span> : <span class="number">2</span>,<span class="string">'n e w e s t &lt;/w&gt;'</span>:<span class="number">6</span>, <span class="string">'w i d e s t &lt;/w&gt;'</span>:<span class="number">3</span>&#125;</span><br></pre></td></tr></table></figure> 将单词分割，使得当前单词 <span class="math inline">\(w_i\)</span> 和下一个单词 <span class="math inline">\(w_{i+1}\)</span> 组成一对（pair），并记录 pairs 的词频。其中符号 <code>&lt;/w&gt;</code> 其实就是 <code>·</code>，代表一个单词的结束。 <figure class="highlight clean"><table><tr><td class="code"><pre><span class="line">&#123;(<span class="string">'l'</span>, <span class="string">'o'</span>): <span class="number">7</span>, (<span class="string">'o'</span>, <span class="string">'w'</span>): <span class="number">7</span>, (<span class="string">'w'</span>, <span class="string">'&lt;/w&gt;'</span>): <span class="number">5</span>, ...&#125;</span><br></pre></td></tr></table></figure> <div class="note info"><p>完整的代码在论文中就有，这里就不加赘述了。代码很短。</p>
-</div> 为了提高效率，我们并不考虑跨单词边界（cross word boundaries）的 pairs（博主注：这个 cross word boundaries 可能指一个 pair 中的两个符号来源于不同单词）。实际上，我们通过对所有的 pairs 进行索引操作从而提高了效率。</p>
-<h2 id="joint-bpe">joint BPE</h2>
-<p>我们以两种方式应用 BPE： 1. 学习两个独立的编码，一个对应 source 词表，一个对应 target 词表； 2. 关联两个词表进行学习，称之为 joint BPE。</p>
-<p><strong>实际上 joint BPE 只是简单地将训练集的 source 词表和 target 词表连接起来，以学习 joint BPE。</strong> &gt; The former has the advantage of being more compact in terms of text and vocabulary size, and having stronger guarantees that each subword unit has been seen in the training text of the respective language, whereas the latter improves consistency between the source and the target segmentation. &gt; If we apply BPE independently, the same name may be segmented differently in the two languages, which makes it harder for the neural models to learn a mapping between the subword units. To increase the consistency between English and Russian segmentation despite the differing alphabets, we transliterate the Russian vocabulary into Latin characters with ISO-9 to learn the joint BPE encoding, then transliterate the BPE merge operations back into Cyrillic to apply them to the Russian training text.</p>
-<h1 id="评估">评估</h1>
-]]></content>
-      <categories>
-        <category>paper</category>
-      </categories>
-      <tags>
-        <tag>bpe</tag>
       </tags>
   </entry>
   <entry>
@@ -6439,8 +6413,8 @@ E_{Q|col} = H_Q w
         <category>KG</category>
       </categories>
       <tags>
-        <tag>系列</tag>
         <tag>知识图谱</tag>
+        <tag>系列</tag>
         <tag>4me</tag>
       </tags>
   </entry>
@@ -7624,8 +7598,8 @@ v_a tanh(W_a [h_t;\bar{h}_s])
 <h1 id="应对深度-nlp-的局限性">※ 应对深度 NLP 的局限性</h1>
 ]]></content>
       <categories>
-        <category>coding</category>
-        <category>AI</category>
+        <category>notes</category>
+        <category>nlp</category>
       </categories>
       <tags>
         <tag>学习笔记</tag>
@@ -7918,8 +7892,8 @@ w^2_{21} &amp; w^2_{22} &amp; w^2_{23}\\
       </categories>
       <tags>
         <tag>系列</tag>
-        <tag>深度学习算法</tag>
         <tag>simple NN</tag>
+        <tag>深度学习算法</tag>
       </tags>
   </entry>
   <entry>
@@ -8014,8 +7988,8 @@ v  = -\frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}\\
 <!-- more -->
 ]]></content>
       <categories>
-        <category>coding</category>
-        <category>AI</category>
+        <category>notes</category>
+        <category>dl</category>
       </categories>
       <tags>
         <tag>学习笔记</tag>
@@ -8025,7 +7999,8 @@ v  = -\frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}\\
   <entry>
     <title>Jupyter出现gbk codec cant decode byte 0x93 in position 3136：illegal multibyte sequence</title>
     <url>/posts/99a5ad8a.html</url>
-    <content><![CDATA[<p>一般来说是open()方法没有加encoding='utf-8'，但是没用，试了其他办法没一个能用。 解决办法：重启Jupyter。 <a id="more"></a></p>
+    <content><![CDATA[<p>一般来说是open()方法没有加encoding='utf-8'，但是没用，试了其他办法没一个能用。</p>
+<p>解决办法：重启Jupyter。 <a id="more"></a></p>
 ]]></content>
       <categories>
         <category>AI</category>
@@ -8098,8 +8073,8 @@ v  = -\frac{\nabla f(\theta_0)}{|\nabla f(\theta_0)|}\\
 <p>就是词嵌入中可能带有一些偏见，比如男女偏见、种族偏见等。现在的目的就是除去这种偏见。 暂且不看，其他的算法都还没学。</p>
 ]]></content>
       <categories>
-        <category>coding</category>
-        <category>AI</category>
+        <category>notes</category>
+        <category>dl</category>
       </categories>
       <tags>
         <tag>学习笔记</tag>
@@ -8472,8 +8447,8 @@ window.onload = function () {
 </script>
 ]]></content>
       <categories>
-        <category>coding</category>
-        <category>AI</category>
+        <category>notes</category>
+        <category>dl</category>
       </categories>
       <tags>
         <tag>学习笔记</tag>
@@ -9041,9 +9016,9 @@ A：[深度学习500问笔记#Dropout-系列问题](https://yan624.github.io/·z
       </categories>
       <tags>
         <tag>学习笔记</tag>
-        <tag>simple NN</tag>
         <tag>back propagation</tag>
         <tag>gradient descent</tag>
+        <tag>simple NN</tag>
         <tag>bias</tag>
         <tag>variance</tag>
         <tag>regularization</tag>
@@ -9133,8 +9108,8 @@ w^3_{42}\\
 <!-- more -->
 ]]></content>
       <categories>
-        <category>coding</category>
-        <category>AI</category>
+        <category>notes</category>
+        <category>dl</category>
       </categories>
       <tags>
         <tag>系列</tag>
@@ -9285,7 +9260,7 @@ w^3_{42}\\
 <p>参考了<a href="https://blog.csdn.net/grafx/article/details/78575850" target="_blank" rel="noopener">博客</a>，但是他这篇博客提供命令我也执行不了。如果你也成功不了，可以试试我的步骤。</p>
 ]]></content>
       <categories>
-        <category>AI</category>
+        <category>notes</category>
         <category>ml</category>
       </categories>
       <tags>
@@ -9300,7 +9275,7 @@ w^3_{42}\\
 <p>具体参考该博客：<a href="https://blog.csdn.net/sinat_29957455/article/details/81290356" target="_blank" rel="noopener">windows使用opencc中文简体和繁体互转</a>，我试过里面的教程，没有任何问题。直接将博客往下拉，看<em>3、OpenCC的使用</em>即可。执行命令后，命令行会没有任何反应，这时只是在跑代码而已，我的文件157兆，大概只用了15秒。我把我的命令贴下来： <figure class="highlight taggerscript"><table><tr><td class="code"><pre><span class="line">E:<span class="symbol">\p</span>ython_workspace<span class="symbol">\n</span>lp_learning<span class="symbol">\o</span>pencc-1.0.4<span class="symbol">\b</span>in<span class="symbol">\o</span>pencc -i E:<span class="symbol">\p</span>ython_workspace<span class="symbol">\n</span>lp_learning<span class="symbol">\z</span>hwiki-20190320-pages-articles<span class="symbol">\A</span>A<span class="symbol">\w</span>iki_00 -o E:<span class="symbol">\p</span>ython_workspace<span class="symbol">\n</span>lp_learning<span class="symbol">\z</span>hwiki-20190320-pages-articles<span class="symbol">\o</span>pencc<span class="symbol">\w</span>iki_00 -c E:<span class="symbol">\p</span>ython_workspace<span class="symbol">\n</span>lp_learning<span class="symbol">\o</span>pencc-1.0.4<span class="symbol">\s</span>hare<span class="symbol">\o</span>pencc<span class="symbol">\t</span>2s.json</span><br></pre></td></tr></table></figure></p>
 ]]></content>
       <categories>
-        <category>AI</category>
+        <category>notes</category>
         <category>ml</category>
       </categories>
   </entry>
@@ -9443,8 +9418,8 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
 <p>在执行上面的操作修复namenode之后，发现原来在的datanode居然不见了。还是使用老办法发现日志文件（日志文件名字太长就不写了），异常：<code>All specified directories are failed to load。</code>。经过百度之后发现是datanode和namenode配置文件的VERSION文件中的clusterId不一致。所以只需要将clusterId更改成一致即可。 但是我的出现的问题重点不是这个，我在修改clusterId时发现：我的namenode配置在/data/tmp/hadoop/hdfs/name中。但是检查我的datanode配置是否在/data/tmp/hadoop/hdfs/data中时，发现hadoop根本没有创建这个文件夹。于是又进行排查，发现在/data/tmp/hadoop/tmp/dfs中存在data文件夹。于是使用命令<code>cp /data/tmp/hadoop/tmp/dfs/data /data/tmp/hadoop/hdfs</code>，将这份data文件夹拷贝到/data/tmp/hadoop/hdfs，并更改clusterId。<strong>VERSION文件在/data/tmp/hadoop/hdfs/data/current</strong></p>
 ]]></content>
       <categories>
-        <category>coding</category>
-        <category>AI</category>
+        <category>notes</category>
+        <category>big-data</category>
       </categories>
       <tags>
         <tag>系列</tag>
@@ -9531,8 +9506,8 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
         <category>java</category>
       </categories>
       <tags>
-        <tag>spring注解</tag>
         <tag>spring</tag>
+        <tag>spring注解</tag>
       </tags>
   </entry>
   <entry>
@@ -9570,8 +9545,8 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
 </ol>
 ]]></content>
       <categories>
-        <category>coding</category>
-        <category>AI</category>
+        <category>notes</category>
+        <category>ml</category>
       </categories>
       <tags>
         <tag>学习笔记</tag>
@@ -9585,7 +9560,7 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
 <p>这不是说明安装失败了，而是安装成功了。意思是让你仔细了解一下io包个版本的区别。输入news io查询。 最后输入<code>pkg load io</code>加载io包。（这句代码不是输入一次永久有效，只要关闭了cli界面，就要重新输入一次，就像java中导包一样） 当读取csv文件时，我使用了csv2cell(&quot;文件名&quot;)函数，但是这个函数有问题，它返回的值不是矩阵貌似是字符串。建议使用csvread(&quot;文件名&quot;)函数</p>
 ]]></content>
       <categories>
-        <category>AI</category>
+        <category>notes</category>
         <category>ml</category>
       </categories>
       <tags>
@@ -10256,8 +10231,8 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
       </categories>
       <tags>
         <tag>印象笔记上的博文</tag>
-        <tag>thymeleaf</tag>
         <tag>吐槽</tag>
+        <tag>thymeleaf</tag>
       </tags>
   </entry>
   <entry>
@@ -10320,8 +10295,8 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
       </categories>
       <tags>
         <tag>印象笔记上的博文</tag>
-        <tag>学习笔记</tag>
         <tag>shiro</tag>
+        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
