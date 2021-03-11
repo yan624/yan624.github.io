@@ -3,7 +3,14 @@
   <entry>
     <title>构建一个任务完成型对话系统（零）：调研</title>
     <url>/posts/efcdf06b.html</url>
-    <content><![CDATA[<h1 id="框架">框架</h1>
+    <content><![CDATA[<ol type="1">
+<li><strong>构建一个任务完成型对话系统（零）：调研</strong></li>
+<li>构建一个任务完成型对话系统（一）：SLU</li>
+<li>构建一个任务完成型对话系统（二）：DST</li>
+<li>构建一个任务完成型对话系统（三）：DPL</li>
+<li>构建一个任务完成型对话系统（四）：NLG</li>
+</ol>
+<h1 id="框架">框架</h1>
 <h1 id="系统架构">系统架构</h1>
 <h1 id="预训练模型">预训练模型</h1>
 <p>预训练模型凭借着海量的训练数据，可以获得优质的单词表征。在众多任务中取得了不错的成绩。</p>
@@ -27,7 +34,7 @@
 <div class="note warning"><p>值得注意的是，以往很多工作构建的是 session-level DST，此类模型在每一轮都会重新预测完整的对话状态。在这种情况下，对话历史就是一件必需品，这是因为其中包含了以往的用户目标。如果不提供对话历史，模型就无法提取完整的对话状态。而对于 turn-level DST 模型，对话历史则是不必要的。</p>
 </div>
 <p>传统 DST 模型一般将完整的对话历史作为编码器的输入。虽然可以将对话历史视为补充信息，但是其中也夹杂着大量的无用特征，致使其成为模型的负担（例如无法捕获优秀的特征、增加计算成本等），这种数据稀疏性的问题严重地阻碍当前多领域 DST 的发展<span class="citation" data-cites="zhu2020efficient">(Zhu et al. 2020)</span>。因此很有必要探索一种对话历史的全新表示方式，它应该同时拥有简练以及富含历史信息的特点。</p>
-<p>如果对 DST 任务有所了解，自然而然地可以想到对话状态就是一个清晰、紧凑且富含信息的抽象表征<span class="citation" data-cites="zeng2020multi">(Zeng and Nie 2020)</span>。目前已经有一些工作<span class="citation" data-cites="kim2019efficient zhu2020efficient zeng2020multi">(Kim et al. 2019; Zhu et al. 2020; Zeng and Nie 2020)</span>使用前一轮的对话状态表示对话历史，他们大多将对话状态表示为序列的形式，然后将其拼接至序列的头部或者末尾。不过由于对话状态由所有槽值对组成，将其转换成序列之后会得到一段相对较长的字符串，例如 120 个字符。上述的做法无疑会增加输入序列的长度，也会成为模型提取特征的负担。在科研领域，目前对此种弊端没有过多的研究。</p>
+<p>如果对 DST 任务有所了解，自然而然地可以想到对话状态就是一个清晰、紧凑且富含信息的抽象表征<span class="citation" data-cites="zeng2020multi">(Zeng and Nie 2020)</span>。目前已经有一些工作<span class="citation" data-cites="kim2019efficient zhu2020efficient zeng2020multi">(Kim et al. 2019; Zhu et al. 2020; Zeng and Nie 2020)</span>将前一轮的对话状态视为对话历史，他们大多将对话状态表示为序列的形式，然后将其拼接至序列的头部或者末尾。不过由于对话状态由所有槽值对组成，将其转换成序列之后会得到一段相对较长的字符串，例如 120 个字符。上述的做法无疑会增加输入序列的长度，也会成为模型提取特征的负担。在科研领域，目前对此种弊端没有过多的研究。</p>
 <h2 id="如何使用对话历史">如何使用对话历史</h2>
 <ul>
 <li>Sharp Nearby, Fuzzy Far Away How Neural Language Models Use Context</li>
@@ -66,7 +73,7 @@
 <p>任务导向型对话系统在经过几年的发展（2018-2019）后，由于谷歌团队认为当前对话系统还具有以下的一些挑战，他们在 2019 年又提出模式引导的多领域任务对话数据集（The Schema-Guided Dialogue Dataset，<strong>SGD</strong>）<span class="citation" data-cites="rastogi2019towards">(Rastogi et al. 2019)</span>。<mark class="label primary">SGD</mark> <a id="more"></a></p>
 <blockquote><p>虚拟助理（谷歌助手、Alex、Siri）需要为横跨多个领域的一系列服务或者 api 提供一个对话接口，其所支持的服务可能具有重叠的功能，并且还有部分服务可能没有训练数据。而现有公开的任务导向对话数据集还不足以解决以上的挑战，这主要是因为这些数据集只覆盖了少量的领域，且假定每个领域都有一个静态的本体。</p>
 </blockquote>
-<p>谷歌团队在 2020 年（7 月左右）发布了 MultiWOZ2.2<span class="citation" data-cites="zang2020multiwoz">(Zang et al. 2020)</span>，它是一个改进的版本，<span class="citation" data-cites="zang2020multiwoz">(Zang et al. 2020)</span>在 MultiWOZ2.1 上识别并修正了 17.3% 的对话状态标注错误（四种不同类型的误差以及状态更新的不一致）。同时，他们使用任务导向对话模式<span class="citation" data-cites="rastogi2019towards">(Rastogi et al. 2019)</span>重新定义了本体，将槽位分为可分类以及不可分类两种类别，对于不可分类槽位不再提供候选值，例如酒店名称，火车出发时间。此外，为了使得模型能够处理不可分类槽位，同时为了符合近期模型的规范，还引入跨度（span）标签。以往通常会使用字符串在用户语句中探测它的跨度，然而这种做法会增加数据处理的成本。最后他们还提出了三个基线模型，分别为：TRADE、SGD-baseline 以及 DS-DST。<mark class="label success">MultiWOZ2.2</mark></p>
+<p>谷歌团队在 2020 年（7 月左右）发布了改进的 MultiWOZ2.2<span class="citation" data-cites="zang2020multiwoz">(Zang et al. 2020)</span>，他们在 MultiWOZ2.1 上识别并修正了 17.3% 的对话状态标注错误（四种不同类型的误差以及状态更新的不一致）。同时，他们使用任务导向对话模式<span class="citation" data-cites="rastogi2019towards">(Rastogi et al. 2019)</span>重新定义了本体，将槽位分为可分类以及不可分类两种类别，对于不可分类槽位不再提供候选值，例如酒店名称，火车出发时间。此外，为了使得模型能够处理不可分类槽位，同时为了符合近期模型的规范，还引入跨度（span）标签。以往通常会使用字符串在用户语句中探测它的跨度，然而这种做法会增加数据处理的成本。最后他们还提出了三个基线模型，分别为：TRADE、SGD-baseline 以及 DS-DST。<mark class="label success">MultiWOZ2.2</mark></p>
 <p>在 MultiWOZ 中，5 个领域（hotel，train，restaurant，attraction，taxi）<span class="citation" data-cites="wu2019transferable">(Wu et al. 2019)</span>包含大量对话，其它的领域只具有少量的对话，并且其中有 2 个领域（hospital，police）只出现在训练集中。</p>
 <p>2020 年 10 月 又发布了 MultiWOZ2.3<span class="citation" data-cites="han2020multiwoz">(Han et al. 2020)</span>。</p>
 <h1 id="bibliography" class="unnumbered">参考文献</h1>
@@ -241,19 +248,17 @@
 </table>
 <a id="more"></a>
 <h1 id="开启mathjax插件">开启mathjax插件</h1>
+<div class="note warning"><p>2020.06.14 更新：注意，NexT v8 声明 hexo-renderer-kramed 已经停止维护，所以可以改用 hexo-renderer-pandoc，具体可以参考官方文档。</p>
+</div>
 <p>百度了一圈最后还是没有解决问题，因为其他的博客都说要去<code>/node_modules/hexo-renderer-kramed/lib/renderer.js</code>文件修改源代码，但是我压根没有这个文件，hexo-renderer-kramed这个文件夹不存在。</p>
-<p>最后还是自己试出来了，步骤如下： 1. 安装kramed。hexo 默认的渲染引擎是 marked，但是 marked 不支持 mathjax。所以要卸载它。 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">npm <span class="keyword">uninstall</span> hexo-renderer-marked <span class="comment">--save</span></span><br><span class="line">npm <span class="keyword">install</span> hexo-renderer-kramed <span class="comment">--save</span></span><br></pre></td></tr></table></figure> <!-- more --></p>
-<ol start="2" type="1">
+<p>最后还是自己试出来了，步骤如下：</p>
+<ol type="1">
+<li><p>安装kramed。hexo 默认的渲染引擎是 marked，但是 marked 不支持 mathjax。所以要卸载它。 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">npm <span class="keyword">uninstall</span> hexo-renderer-marked <span class="comment">--save</span></span><br><span class="line">npm <span class="keyword">install</span> hexo-renderer-kramed <span class="comment">--save</span></span><br></pre></td></tr></table></figure> <!-- more --></p></li>
 <li><p>停用hexo-math，然后安装 hexo-renderer-mathjax 包。其实我也不知道怎么判断自己有没有在使用hexo-math。总而言之卸载就行了，管它存不存在。 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">npm <span class="keyword">uninstall</span> hexo-math <span class="comment">--save</span></span><br><span class="line">npm <span class="keyword">install</span> hexo-renderer-mathjax <span class="comment">--save</span></span><br></pre></td></tr></table></figure></p></li>
-<li><p>开启mathjax，在next主题文件夹里，具体路径：/themes/next/_config.yml 你只需要把enable属性改为true即可 <figure class="highlight oxygene"><table><tr><td class="code"><pre><span class="line"># Math Equations Render Support</span><br><span class="line">math:</span><br><span class="line">  enable: <span class="keyword">true</span></span><br><span class="line"></span><br><span class="line">  # <span class="keyword">Default</span>(<span class="keyword">true</span>) will load mathjax/katex script <span class="keyword">on</span> demand</span><br><span class="line">  # That <span class="keyword">is</span> it only render those page who <span class="keyword">has</span> `mathjax: <span class="keyword">true</span>` <span class="keyword">in</span> Front Matter.</span><br><span class="line">  # <span class="keyword">If</span> you <span class="keyword">set</span> it <span class="keyword">to</span> <span class="keyword">false</span>, it will load mathjax/katex srcipt EVERY PAGE.</span><br><span class="line">  per_page: <span class="keyword">true</span></span><br><span class="line"></span><br><span class="line">  engine: mathjax</span><br><span class="line">  #engine: katex</span><br><span class="line"></span><br><span class="line">  # hexo-rendering-pandoc (<span class="keyword">or</span> hexo-renderer-kramed) needed <span class="keyword">to</span> full MathJax support.</span><br><span class="line">  mathjax:</span><br><span class="line">    enable: <span class="keyword">true</span></span><br><span class="line">    # Use <span class="number">2.7</span>.<span class="number">1</span> <span class="keyword">as</span> <span class="keyword">default</span>, jsdelivr <span class="keyword">as</span> <span class="keyword">default</span> CDN, works everywhere even <span class="keyword">in</span> China</span><br><span class="line">    cdn: <span class="comment">//cdn.jsdelivr.net/npm/mathjax@2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML</span></span><br><span class="line">    # <span class="keyword">For</span> direct link <span class="keyword">to</span> MathJax.js <span class="keyword">with</span> CloudFlare CDN (cdnjs.cloudflare.com)</span><br><span class="line">    #cdn: <span class="comment">//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML</span></span><br><span class="line"></span><br><span class="line">    # See: https:<span class="comment">//mhchem.github.io/MathJax-mhchem/</span></span><br><span class="line">    #mhchem: <span class="comment">//cdn.jsdelivr.net/npm/mathjax-mhchem@3</span></span><br><span class="line">    #mhchem: <span class="comment">//cdnjs.cloudflare.com/ajax/libs/mathjax-mhchem/3.3.0</span></span><br><span class="line"></span><br><span class="line">  # hexo-renderer-markdown-it-plus (<span class="keyword">or</span> hexo-renderer-markdown-it <span class="keyword">with</span> markdown-it-katex plugin) needed <span class="keyword">to</span> full Katex support.</span><br><span class="line">  katex:</span><br><span class="line">    # Use <span class="number">0.7</span>.<span class="number">1</span> <span class="keyword">as</span> <span class="keyword">default</span>, jsdelivr <span class="keyword">as</span> <span class="keyword">default</span> CDN, works everywhere even <span class="keyword">in</span> China</span><br><span class="line">    cdn: <span class="comment">//cdn.jsdelivr.net/npm/katex@0.7.1/dist/katex.min.css</span></span><br><span class="line">    # CDNJS, provided <span class="keyword">by</span> cloudflare, maybe the best CDN, but <span class="keyword">not</span> works <span class="keyword">in</span> China</span><br><span class="line">    #cdn: <span class="comment">//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css</span></span><br><span class="line"></span><br><span class="line">    copy_tex:</span><br><span class="line">      # See: https:<span class="comment">//github.com/KaTeX/KaTeX/tree/master/contrib/copy-tex</span></span><br><span class="line">      enable: <span class="keyword">false</span></span><br><span class="line">      copy_tex_js: <span class="comment">//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.js</span></span><br><span class="line">      copy_tex_css: <span class="comment">//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.css</span></span><br></pre></td></tr></table></figure></p></li>
-<li>最后一步，修改/themes/next/layout/_layou.swig文件 将如下代码添加到该文件
-</body>
-<p>标签的上面一行 <figure class="highlight dts"><table><tr><td class="code"><pre><span class="line"><span class="params">&lt;script type="text/x-mathjax-config"&gt;</span></span><br><span class="line">MathJax.Hub.Config(&#123;</span><br><span class="line">	<span class="comment">//下面的HTML-CSS和SVG用于在小屏幕上，数学公式可以自动换行，我测试过后发现无效，但是貌似有人可以。</span></span><br><span class="line">	<span class="string">"HTML-CSS"</span>: &#123; </span><br><span class="line"><span class="symbol">		linebreaks:</span> &#123; </span><br><span class="line"><span class="symbol">			automatic:</span> true </span><br><span class="line">		&#125; </span><br><span class="line">	&#125;,SVG: &#123;</span><br><span class="line"><span class="symbol">		linebreaks:</span> &#123; </span><br><span class="line"><span class="symbol">			automatic:</span> true </span><br><span class="line">		&#125;</span><br><span class="line">	&#125;,menuSettings: &#123;</span><br><span class="line"><span class="symbol">		zoom:</span> <span class="string">"None"</span></span><br><span class="line">	&#125;,</span><br><span class="line"><span class="symbol">	showMathMenu:</span> false,</span><br><span class="line"><span class="symbol">	jax:</span> [<span class="string">"input/TeX"</span>,<span class="string">"output/CommonHTML"</span>],</span><br><span class="line"><span class="symbol">	extensions:</span> [<span class="string">"tex2jax.js"</span>],</span><br><span class="line"><span class="symbol">	TeX:</span> &#123;</span><br><span class="line"><span class="symbol">		extensions:</span> [<span class="string">"AMSmath.js"</span>,<span class="string">"AMSsymbols.js"</span>],</span><br><span class="line"><span class="symbol">		equationNumbers:</span> &#123;</span><br><span class="line"><span class="symbol">			autoNumber:</span> <span class="string">"AMS"</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;,tex2jax: &#123;</span><br><span class="line"><span class="symbol">		inlineMath:</span> [[<span class="string">"\\("</span>, <span class="string">"\\)"</span>]],</span><br><span class="line"><span class="symbol">		displayMath:</span> [[<span class="string">"\\["</span>, <span class="string">"\\]"</span>]]</span><br><span class="line">	&#125;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="params">&lt;/script&gt;</span></span><br><span class="line"><span class="params">&lt;script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/<span class="number">2.7</span><span class="number">.1</span>/MathJax.js?config=TeX-MML-AM_CHTML"&gt;</span><span class="params">&lt;/script&gt;</span></span><br></pre></td></tr></table></figure></p></li>
+<li><p>开启mathjax，在next主题文件夹里，具体路径：/themes/next/_config.yml，你只需要把enable属性改为true即可 <figure class="highlight oxygene"><table><tr><td class="code"><pre><span class="line"># Math Equations Render Support</span><br><span class="line">math:</span><br><span class="line">  enable: <span class="keyword">true</span></span><br><span class="line"></span><br><span class="line">  # <span class="keyword">Default</span>(<span class="keyword">true</span>) will load mathjax/katex script <span class="keyword">on</span> demand</span><br><span class="line">  # That <span class="keyword">is</span> it only render those page who <span class="keyword">has</span> `mathjax: <span class="keyword">true</span>` <span class="keyword">in</span> Front Matter.</span><br><span class="line">  # <span class="keyword">If</span> you <span class="keyword">set</span> it <span class="keyword">to</span> <span class="keyword">false</span>, it will load mathjax/katex srcipt EVERY PAGE.</span><br><span class="line">  per_page: <span class="keyword">true</span></span><br><span class="line"></span><br><span class="line">  engine: mathjax</span><br><span class="line">  #engine: katex</span><br><span class="line"></span><br><span class="line">  # hexo-rendering-pandoc (<span class="keyword">or</span> hexo-renderer-kramed) needed <span class="keyword">to</span> full MathJax support.</span><br><span class="line">  mathjax:</span><br><span class="line">    enable: <span class="keyword">true</span></span><br><span class="line">    # Use <span class="number">2.7</span>.<span class="number">1</span> <span class="keyword">as</span> <span class="keyword">default</span>, jsdelivr <span class="keyword">as</span> <span class="keyword">default</span> CDN, works everywhere even <span class="keyword">in</span> China</span><br><span class="line">    cdn: <span class="comment">//cdn.jsdelivr.net/npm/mathjax@2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML</span></span><br><span class="line">    # <span class="keyword">For</span> direct link <span class="keyword">to</span> MathJax.js <span class="keyword">with</span> CloudFlare CDN (cdnjs.cloudflare.com)</span><br><span class="line">    #cdn: <span class="comment">//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML</span></span><br><span class="line"></span><br><span class="line">    # See: https:<span class="comment">//mhchem.github.io/MathJax-mhchem/</span></span><br><span class="line">    #mhchem: <span class="comment">//cdn.jsdelivr.net/npm/mathjax-mhchem@3</span></span><br><span class="line">    #mhchem: <span class="comment">//cdnjs.cloudflare.com/ajax/libs/mathjax-mhchem/3.3.0</span></span><br><span class="line"></span><br><span class="line">  # hexo-renderer-markdown-it-plus (<span class="keyword">or</span> hexo-renderer-markdown-it <span class="keyword">with</span> markdown-it-katex plugin) needed <span class="keyword">to</span> full Katex support.</span><br><span class="line">  katex:</span><br><span class="line">    # Use <span class="number">0.7</span>.<span class="number">1</span> <span class="keyword">as</span> <span class="keyword">default</span>, jsdelivr <span class="keyword">as</span> <span class="keyword">default</span> CDN, works everywhere even <span class="keyword">in</span> China</span><br><span class="line">    cdn: <span class="comment">//cdn.jsdelivr.net/npm/katex@0.7.1/dist/katex.min.css</span></span><br><span class="line">    # CDNJS, provided <span class="keyword">by</span> cloudflare, maybe the best CDN, but <span class="keyword">not</span> works <span class="keyword">in</span> China</span><br><span class="line">    #cdn: <span class="comment">//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css</span></span><br><span class="line"></span><br><span class="line">    copy_tex:</span><br><span class="line">      # See: https:<span class="comment">//github.com/KaTeX/KaTeX/tree/master/contrib/copy-tex</span></span><br><span class="line">      enable: <span class="keyword">false</span></span><br><span class="line">      copy_tex_js: <span class="comment">//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.js</span></span><br><span class="line">      copy_tex_css: <span class="comment">//cdn.jsdelivr.net/npm/katex@0/dist/contrib/copy-tex.min.css</span></span><br></pre></td></tr></table></figure></p></li>
+<li><p>最后一步，修改/themes/next/layout/_layou.swig文件，将如下代码添加到该文件<code>&lt;/body&gt;</code>标签的上面一行 <figure class="highlight dts"><table><tr><td class="code"><pre><span class="line"><span class="params">&lt;script type="text/x-mathjax-config"&gt;</span></span><br><span class="line">MathJax.Hub.Config(&#123;</span><br><span class="line">	<span class="comment">//下面的HTML-CSS和SVG用于在小屏幕上，数学公式可以自动换行，我测试过后发现无效，但是貌似有人可以。</span></span><br><span class="line">	<span class="string">"HTML-CSS"</span>: &#123; </span><br><span class="line"><span class="symbol">		linebreaks:</span> &#123; </span><br><span class="line"><span class="symbol">			automatic:</span> true </span><br><span class="line">		&#125; </span><br><span class="line">	&#125;,SVG: &#123;</span><br><span class="line"><span class="symbol">		linebreaks:</span> &#123; </span><br><span class="line"><span class="symbol">			automatic:</span> true </span><br><span class="line">		&#125;</span><br><span class="line">	&#125;,menuSettings: &#123;</span><br><span class="line"><span class="symbol">		zoom:</span> <span class="string">"None"</span></span><br><span class="line">	&#125;,</span><br><span class="line"><span class="symbol">	showMathMenu:</span> false,</span><br><span class="line"><span class="symbol">	jax:</span> [<span class="string">"input/TeX"</span>,<span class="string">"output/CommonHTML"</span>],</span><br><span class="line"><span class="symbol">	extensions:</span> [<span class="string">"tex2jax.js"</span>],</span><br><span class="line"><span class="symbol">	TeX:</span> &#123;</span><br><span class="line"><span class="symbol">		extensions:</span> [<span class="string">"AMSmath.js"</span>,<span class="string">"AMSsymbols.js"</span>],</span><br><span class="line"><span class="symbol">		equationNumbers:</span> &#123;</span><br><span class="line"><span class="symbol">			autoNumber:</span> <span class="string">"AMS"</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;,tex2jax: &#123;</span><br><span class="line"><span class="symbol">		inlineMath:</span> [[<span class="string">"\\("</span>, <span class="string">"\\)"</span>]],</span><br><span class="line"><span class="symbol">		displayMath:</span> [[<span class="string">"\\["</span>, <span class="string">"\\]"</span>]]</span><br><span class="line">	&#125;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="params">&lt;/script&gt;</span></span><br><span class="line"><span class="params">&lt;script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/<span class="number">2.7</span><span class="number">.1</span>/MathJax.js?config=TeX-MML-AM_CHTML"&gt;</span><span class="params">&lt;/script&gt;</span></span><br></pre></td></tr></table></figure></p></li>
 </ol>
-<p>1-3步参考<a href="https://www.jianshu.com/p/523e806d6681" target="_blank" rel="noopener">如何在hexo中支持Mathjax</a> 4步参考<a href="http://npm.taobao.org/package/hexo-renderer-kramed" target="_blank" rel="noopener">hexo-renderer-kramed</a></p>
-<ol start="5" type="1">
-<li>2020.06.14 更新：注意，NexT v8 声明 hexo-renderer-kramed 已经停止维护，所以可以改用 hexo-renderer-pandoc，具体可以参考官方文档。</li>
-</ol>
+<p>1-3步参考<a href="https://www.jianshu.com/p/523e806d6681" target="_blank" rel="noopener">如何在hexo中支持Mathjax</a>，4步参考<a href="http://npm.taobao.org/package/hexo-renderer-kramed" target="_blank" rel="noopener">hexo-renderer-kramed</a></p>
 <h1 id="开启流程图插件">开启流程图插件</h1>
 <p>hexo 本身不支持绘制流程图，但是可以使用以下命令安装插件来实现此功能。 <figure class="highlight processing"><table><tr><td class="code"><pre><span class="line">npm install --<span class="built_in">save</span> hexo-<span class="built_in">filter</span>-flowchart</span><br></pre></td></tr></table></figure></p>
 <p><a href="https://github.com/bubkoo/hexo-filter-flowchart" target="_blank" rel="noopener">插件地址</a>，语法可以<a href="https://cloud.tencent.com/developer/article/1142260" target="_blank" rel="noopener">在这</a>找到，一个简单的例子： <figure class="highlight coq"><table><tr><td class="code"><pre><span class="line">(\`乘<span class="number">3</span>)flow</span><br><span class="line">st=&gt;start: Start|<span class="type">past</span>:&gt;http://www.google.com[blank]</span><br><span class="line">e=&gt;<span class="keyword">end</span>: <span class="keyword">End</span>:&gt;http://www.google.com</span><br><span class="line">op1=&gt;operation: My Operation|<span class="type">past</span></span><br><span class="line">op2=&gt;operation: Stuff|<span class="type">current</span></span><br><span class="line">sub1=&gt;subroutine: My Subroutine|<span class="type">invalid</span></span><br><span class="line">cond=&gt;condition: Yes</span><br><span class="line">or No?|<span class="type">approved</span>:&gt;http://www.google.com</span><br><span class="line">c2=&gt;condition: Good idea|<span class="type">rejected</span></span><br><span class="line">io=&gt;inputoutput: catch something...|<span class="type">request</span></span><br><span class="line"></span><br><span class="line">st-&gt;op1(<span class="built_in">right</span>)-&gt;cond</span><br><span class="line">cond(yes, <span class="built_in">right</span>)-&gt;c2</span><br><span class="line">cond(no)-&gt;sub1(<span class="built_in">left</span>)-&gt;op1</span><br><span class="line">c2(yes)-&gt;io-&gt;e</span><br><span class="line">c2(no)-&gt;op2-&gt;e</span><br><span class="line">(\`乘<span class="number">3</span>)</span><br></pre></td></tr></table></figure></p>
@@ -270,16 +275,6 @@
 <p>具体来说，在本地调试时，开启 <code>export NODE_ENV=development</code> 从而设置为开发环境，此时 hexo-optimize 将被禁用。注意该 <code>NODE_ENV</code> 是一个临时变量，如果需要部署到云端，只需要将 git 终端关闭，再重新打开即可取消开发环境的设置。</p>
 <p>可以使用以下代码测试是否开启开发环境。 <figure class="highlight crmsh"><table><tr><td class="code"><pre><span class="line"><span class="number">1</span>. <span class="keyword">node</span> <span class="title"></span></span><br><span class="line"><span class="title">2</span>. console.log(process.env.NODE_ENV)</span><br></pre></td></tr></table></figure></p>
 <p>正常情况应该会输出： <figure class="highlight actionscript"><table><tr><td class="code"><pre><span class="line">development</span><br><span class="line"><span class="literal">undefined</span></span><br></pre></td></tr></table></figure></p>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>hexo</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>hexo博客优化</title>
-    <url>/posts/83186147.html</url>
-    <content><![CDATA[<a id="more"></a>
 ]]></content>
       <categories>
         <category>coding</category>
@@ -460,31 +455,38 @@ S^j_i = Sim(G_j(F(X)), F(v^j_i)) \in \mathbb{R}^1
       </tags>
   </entry>
   <entry>
-    <title>DST论文笔记（2020—至今）</title>
+    <title>DST论文笔记（二）</title>
     <url>/posts/5286f9c6.html</url>
-    <content><![CDATA[<h1 id="multi-domain-dialogue-state-tracking-based-on-state-graph">Multi-Domain Dialogue State Tracking based on State Graph</h1>
-<div class="tabs" id="graph-dst"><ul class="nav-tabs"><li class="tab active"><a href="#graph-dst-1">总结</a></li><li class="tab"><a href="#graph-dst-2">论文笔记</a></li></ul><div class="tab-content"><div class="tab-pane active" id="graph-dst-1"><div class="note primary">
-<ol type="1">
-<li>
-现有工作的缺陷：1）以往的工作只是简单地将前一轮的对话状态和当前语句拼接起来，然后使用 self-attention 建立它们之间的关联。但是 attention 机制也许会关注到一些不合理（spurious）的连接，导致进行错误的推理。2）CSFN-DST 与该文工作类似，但是它只考虑了一个边（edge）类型以及三个节点类型——领域（domain）、槽位（slot）、域槽对（domain, slot）。
-</li>
-<li>
-研究目的：处理对话状态中元素的共现信息以及人类对话中过渡联系（transition relation）。<em>作者没细说过渡是什么意思，我认为是在对话过程中不同领域之间的切换。</em>
-</li>
-<li>
-研究目标/贡献：1）提出 dialog state graph；2）处理多关系图中有许多相异槽值的问题。
-</li>
-<li>
-研究方法：1）图中领域和槽值相连，边为槽位。此外如果两个领域同时出现在对话状态中，则创建一条共现边（co-occurrence edge）以此连接二者。2）使用 relational-GCN 编码对话状态图。3）仅当域槽对有值填充时才被包括在图中。4）图中几乎所有槽值用“placeholder”填充。
-</li>
-<li>
-<strong>总结</strong>：<strong>1）</strong>CSFN-DST 只是构建了普通的边，其代表领域和槽位之间的关联，而 Grapha-DST 的边特指槽位。<strong>2）</strong>经过消融实验验证了，状态图确实可以为基于 self-attention 的隐式图（implicit graph）提供补充信息。<strong>3）</strong>该文的做法比之 CSFN-DST 确实要先进不少，从表面上看二者是在做相同的工作，但是我认为实际上 CSFN-DST 编码的是协议图，而 Graph-DST 编码的是图结构的对话状态。<strong>4）</strong><em>这样构建图，是否做了太多的约束？导致数据处理困难？</em>
-</li>
-</ol>
-<p>
-<strong>模型架构</strong> 将 Transformer 最后几层的 Block 改为 graph-enhanced Transformer（该文实验中为最后一层）。其运算流程为（如图右侧所示）：将前一层的输出作为当前层 multi-head self-attention 的输入进而得到上下文输出，此时使用捕获的 [SLOT] 特征填充槽值，然后使用 relational-GCN 更新节点表征，并且将更新后的表征与 [slot] 融合，最后再继续执行 Transformer block 的其余流程。通过上述算法将 relational-GCN 融入 Transformer 中。<strong>需要注意的是，输入中也包含了对话状态，它们以串联的形式连接，其主要实现对话状态和当前语句的交互，而对话状态图主要捕获模式之间的联系。</strong>二者的作用不同。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/Graph-DST.png" alt="Graph-DST" />
-</p>
-</div></div><div class="tab-pane" id="graph-dst-2"><div class="note info">
+    <content><![CDATA[<div class="note info"><p>本文记录 2020 年开始至今的 DST 论文笔记。</p>
+</div>
+<h1 id="slot-self-attentive-dialogue-state-tracking">Slot Self-Attentive Dialogue State Tracking</h1>
+<p><strong>现有工作的缺陷</strong>：虽然目前有部分模型考虑了槽位之间的关联，但是它们依靠大量的人力以及先验知识（<em>恕我直言，没看出来需要人力</em>）。此外，它们都仅利用了槽位名称的语义，忽略了槽值的共现信息。</p>
+<p><strong>研究目的</strong>：进一步加强槽位之间的关联。</p>
+<p><strong>研究目标/贡献</strong>：使用堆叠槽位自注意力（stacked slot self-attention module）学习槽位之间的相关性。</p>
+<p><strong>研究方法</strong>：1）在分析槽位之间的交互信息之后发现，某些槽位确实包含很强的关联，甚至在不同的领域中也存在，例如“taxi-destination”和“restaurant-food”。这验证了他们的动机，有必要同时考虑槽位名称和其对应槽值。2）slot-token attention 获取槽位表征。3）stacked slot self-attention 获取槽位关联。4）slot value matching 预测槽值。</p>
+<p><strong>模型架构</strong> 将 BERT 作为上下文编码器。虽然原文中描述了一些细节，例如只保留 512 个单词，此外由于这种做法会丢失信息，还在对话历史中加入了 non-none dialog state，但是思想比较简单，因此还是略。</p>
+<p>将 BERT 作为槽位和槽值表征的编码器，可以看出他们应该打算使用槽值匹配的方式填充槽位。由于思想比较简单，因此略。</p>
+<p>使用 slot-token attention 机制获取基于上下文的槽位表征，主要就是借助了 multi-attention 机制。略。</p>
+<h2 id="slot-self-attention">Slot Self-Attention</h2>
+<p>让 <span class="math inline">\(C_t = [c^t_{S_1}, c^t_{S_2}, \cdots, c^t_{S_J}]\)</span> 表示所有槽位的上下文表征，其中 <span class="math inline">\(c^t_{S_j}\)</span> 通过 slot-token attention 计算得到，<span class="math inline">\(t\)</span> 代表轮数。使 <span class="math inline">\(F^1_t = C_t\)</span>，那么</p>
+<p><span class="math display">\[
+\begin{aligned}
+    \tilde{F}^l_t = &amp; LayerNorm(F^l_t) \\
+    G^l_t = &amp; MultiHead(\tilde{F}^l_t, \tilde{F}^l_t, \tilde{F}^l_t) + \tilde{F}^l_t \\
+    \tilde{G}^l_t = &amp; LayerNorm(G^l_t) \\
+    F^{l+1}_t = &amp; FFN(\tilde{G}^l_t) + \tilde{G}^l_t
+\end{aligned}
+\]</span></p>
+<p><span class="math inline">\(F^{l+1}_t = [f^t_{S_1}, f^t_{S_2}, \cdots, f^t_{S_J}]\)</span> 为最终的组合槽位表征。由于 BERT 的输出被 normalized，因此将 <span class="math inline">\(f^t_{S_j}\)</span> 也归一化为 <span class="math inline">\(\mathcal{r}^t_{S_j} = LayerNorm(Linear(f^t_{S_j}))\)</span>。</p>
+<h2 id="slot-value-matching">Slot Value Matching</h2>
+<p>计算槽位表征和槽值表征之间的 L2 距离，在通过 softmax 之后，使用负对数似然函数优化。</p>
+<h1 id="multi-domain-dialogue-state-tracking-based-on-state-graph">Multi-Domain Dialogue State Tracking based on State Graph</h1>
+<div class="tabs" id="graph-dst"><ul class="nav-tabs"><li class="tab active"><a href="#graph-dst-1">总结</a></li><li class="tab"><a href="#graph-dst-2">论文笔记</a></li></ul><div class="tab-content"><div class="tab-pane active" id="graph-dst-1"><p><strong>现有工作的缺陷</strong>：1）以往工作只是简单地将前一轮的对话状态和当前语句拼接起来，然后使用 self-attention 建立它们的关联。但是 attention 机制也许会关注到一些不合理（spurious）的连接，导致进行错误的推理。2）CSFN-DST 与该文工作类似，但是它只考虑了一个边（edge）类型以及三个节点类型——领域（domain）、槽位（slot）、域槽对（domain, slot）。</p>
+<p><strong>研究目的</strong>：处理对话状态中元素的共现信息以及人类对话中过渡联系（transition relation）。<em>作者没细说过渡是什么意思，我认为是在对话过程中不同领域之间的切换。</em></p>
+<p><strong>研究目标/贡献</strong>：1）提出 dialog state graph；2）处理多关系图中有许多相异槽值的问题。</p>
+<p><strong>研究方法</strong>：1）图中领域和槽值相连，边为槽位。此外如果两个领域同时出现在对话状态中，则创建一条共现边（co-occurrence edge）以此连接二者。2）使用 relational-GCN 编码对话状态图。3）仅当域槽对有值填充时才被包括在图中。4）图中几乎所有槽值用“placeholder”填充。</p>
+<p><strong>总结</strong>：<strong>1）</strong>CSFN-DST 只是构建了普通的边，其代表领域和槽位之间的关联，而 Grapha-DST 的边特指槽位。<strong>2）</strong>经过消融实验验证了，状态图确实可以为基于 self-attention 的隐式图（implicit graph）提供补充信息。<strong>3）</strong>该文的做法比之 CSFN-DST 确实要先进不少，从表面上看二者是在做相同的工作，但是我认为实际上 CSFN-DST 编码的是协议图，而 Graph-DST 编码的是图结构的对话状态。<strong>4）</strong><em>这样构建图，是否做了太多的约束？导致数据处理困难？</em></p>
+<p><strong>模型架构</strong> 将 Transformer 最后几层的 Block 改为 graph-enhanced Transformer（该文实验中为最后一层）。其运算流程为（如图右侧所示）：将前一层的输出作为当前层 multi-head self-attention 的输入进而得到上下文输出，此时使用捕获的 [SLOT] 特征填充槽值，然后使用 relational-GCN 更新节点表征，并且将更新后的表征与 [slot] 融合，最后再继续执行 Transformer block 的其余流程。通过上述算法将 relational-GCN 融入 Transformer 中。<strong>需要注意的是，输入中也包含了对话状态，它们以串联的形式连接，其主要实现对话状态和当前语句的交互，而对话状态图主要捕获模式之间的联系。</strong>二者的作用不同。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/Graph-DST.png" alt="Graph-DST" /></p></div><div class="tab-pane" id="graph-dst-2"><div class="note info">
 <p>
 经过对 DST 中 open-vocabulary 分类的调研，发现现存的方法通常将前一轮的对话状态和对话历史拼接在一起，然后将其作为 BiTransformer 的输入。模型依靠 Transformer 的 self-attention 机制将对话状态和语句中的符号连接起来。但是 <strong>attention 机制也许会关注到一些不合理的连接，导致后续错误的推理</strong>。
 </p>
@@ -521,28 +523,14 @@ head_j &amp; = softmax(\frac{Q_j K^T_j}{\sqrt{d_k}}) V_j
 </ol></div></div></div>
 <a id="more"></a>
 <h1 id="dialogue-state-tracking-with-explicit-slot-connection-modeling">Dialogue State Tracking with Explicit Slot Connection Modeling</h1>
-<div class="tabs" id="dst-sc"><ul class="nav-tabs"><li class="tab active"><a href="#dst-sc-1">总结</a></li><li class="tab"><a href="#dst-sc-2">论文笔记</a></li></ul><div class="tab-content"><div class="tab-pane active" id="dst-sc-1"><div class="note primary">
-<ol type="1">
-<li>
-现有工作的缺陷：
-</li>
-<li>
-研究目的：
-</li>
-<li>
-研究目标/贡献：-
-</li>
-<li>
-研究方法：
-</li>
-<li>
-<strong>总结</strong>：
-</li>
+<div class="tabs" id="dst-sc"><ul class="nav-tabs"><li class="tab active"><a href="#dst-sc-1">总结</a></li><li class="tab"><a href="#dst-sc-2">论文笔记</a></li></ul><div class="tab-content"><div class="tab-pane active" id="dst-sc-1"><ol type="1">
+<li>现有工作的缺陷：</li>
+<li>研究目的：</li>
+<li>研究目标/贡献：-</li>
+<li>研究方法：</li>
+<li><strong>总结</strong>：</li>
 </ol>
-<p>
-<strong>模型结构</strong> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/DST-SC模型架构.png" alt="DST-SC模型架构" />
-</p>
-</div></div><div class="tab-pane" id="dst-sc-2"><div class="note info">
+<p><strong>模型结构</strong> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/DST-SC模型架构.png" alt="DST-SC模型架构" /></p></div><div class="tab-pane" id="dst-sc-2"><div class="note info">
 <p>
 在多领域场景下，用户经常通过省略（ellipsis）、指代（reference）来表达某些其它领域槽位提到的槽值。为了解决这种现象，我们提出了 DST-SC（Dialogue State Tracking with Slot Connections）模型。
 </p>
@@ -557,31 +545,37 @@ head_j &amp; = softmax(\frac{Q_j K^T_j}{\sqrt{d_k}}) V_j
 <p>总的来说，他们延续了 TRADE 的做法，在此基础上，又额外加了一层 soft-gated copy mechanism。</p>
 <p>不过我个人不怎么喜欢这种 encoder-decoder 的做法。在我的实验中，我还是使用了 TripPy 的做法。</p></div></div></div>
 <h1 id="credit-coarse-to-fine-sequence-generation-for-dialogue-state-tracking">CREDIT: Coarse-to-Fine Sequence Generation for Dialogue State Tracking</h1>
-<div class="note info"><p>提出了 CoaRsE-to-fine DIalogue state Tracking(CREDIT) 模型。以前的方法通常将对话状态定义为独立的三元组 <span class="math inline">\((domain, slot, value)\)</span>，而本文将 DST 转化为序列生成问题。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/CREDIT模型架构.png" alt="CREDIT模型架构" /></p>
-</div>
+<p>提出了 CoaRsE-to-fine DIalogue state Tracking(CREDIT) 模型。以前的方法通常将对话状态定义为独立的三元组 <span class="math inline">\((domain, slot, value)\)</span>，而本文将 DST 转化为序列生成问题。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/CREDIT模型架构.png" alt="CREDIT模型架构" /></p>
+<h1 id="sas-dialogue-state-tracking-via-slot-attention-and-slot-information-sharing">SAS: Dialogue State Tracking via Slot Attention and Slot Information Sharing</h1>
+<p><strong>现有工作的缺陷</strong>：由于对话历史中包含复杂且过量的信息，现有模型很难处理这些长距离交互上下文。</p>
+<p><strong>研究目的</strong>：1）减少上下文中多余信息的干扰；2）改进长对话上下文追踪。</p>
+<p><strong>研究目标/贡献</strong>：1）提出 Slot Attention 以此从原始对话中学习一组特定槽位的特征；2）提出 Slot Information Sharing 以此整合上述的特征。</p>
+<p><strong>模型架构</strong> 上下文编码器使用的是 BiGRU，没什么好讲的，略。</p>
+<h2 id="slot-attention">Slot Attention</h2>
+<p>在一场对话中，用户可能会请求多项服务，例如订餐、观光、打车。<strong>当用户所提及的信息相似时，模型提取出的信息可能对预测有害，例如餐厅和出租车都提到了时间（time）和预定人数（people）。</strong>为了分离嘈杂的对话历史中的关键特征，构建了 slot attention。（<em>博主注：引起这一问题主要是因为对话历史过长，导致用户表达的信息被模型错误使用。然而，目前有部分模型逐渐舍弃了对话历史，只将当前轮对话输入模型。这避免了上述问题，同时还能取得不错的表现</em>）</p>
+<p>slot attention 能够仅从历史信息中为每个槽位提取出有用的信息。其工作流程主要为：1）首先使用 GRU 获取槽位的表征，主要是简单地将槽位的序列输入 GRU，取最后一个时间步的输出 <span class="math inline">\(sh^{enc}_{j_{|N|}}\)</span> 作为槽位 <span class="math inline">\(s_j\)</span> 的表征，<span class="math inline">\(|N|\)</span> 为槽位序列的长度。2）然后通过槽位信息 <span class="math inline">\(sh^{enc}_{j_{|N|}}\)</span> 和对话历史 <span class="math inline">\(H_t=[h^{enc}_1, \cdots, h^{enc}_{|X_t|}]\)</span> 之间的注意力交互，从而获得上下文向量 <span class="math inline">\(c_j\)</span>：</p>
+<p><span class="math display">\[
+\begin{aligned}
+a^j = &amp; (H_t)^T sh^{enc}_{j_{|N|}} \\
+sc^j_i = &amp; \frac{exp(a^j_i)}{\sum^{|X_t|}_{i=1} exp(a^j_i)} \\
+c_j = &amp; \sum^{|X_t|}_{i=1} sc^j_i h^{enc}_i
+\end{aligned}
+\]</span></p>
+<p>那么上下文向量 <span class="math inline">\(c_j\)</span> 就包含着从对话历史中攫取出来的特定槽位信息。最后可以类似地获得 <span class="math inline">\(J\)</span> 个槽位的上下文向量 <span class="math inline">\(c=[c_1, \cdots, c_J]\)</span>。</p>
+<h2 id="slot-information-sharing">Slot Information Sharing</h2>
+<p>使用槽位相似度矩阵（slot similarity matrix）实现槽位信息共享，其维度为 <span class="math inline">\(J \times J\)</span>。作者探索了两种创建矩阵的方式，分别为 fix combination sharing 和 k-means sharing，前者利用了余弦相似度，后者利用了 k-means 算法。创建思想较为简单，就不赘述了。</p>
+<p>在得到槽位相似度矩阵 <span class="math inline">\(M\)</span> 之后，我们可以通过以下方式得到槽位聚合向量 <span class="math inline">\(int = [int_i, \cdots, int_J]\)</span>：</p>
+<p><span class="math display">\[int_j = \sum^J_{i=1} c_i \cdot M_{ij}, M_{ij} \in {0, 1}
+\]</span></p>
+<p>说白了就是一个矩阵相乘的操作，这个操作聚合了相关槽位的特征。（<em>博主注：感觉思想较为简单，但是有启发意义。</em>）</p>
+<p>解码步骤略，应该与 TRADE 类似。</p>
 <h1 id="efficient-context-and-schema-fusion-networks-for-multi-domain-dialogue-state-tracking">Efficient Context and Schema Fusion Networks for Multi-Domain Dialogue State Tracking</h1>
-<div class="tabs" id="csfn-dst"><ul class="nav-tabs"><li class="tab active"><a href="#csfn-dst-1">总结</a></li><li class="tab"><a href="#csfn-dst-2">论文笔记</a></li></ul><div class="tab-content"><div class="tab-pane active" id="csfn-dst-1"><div class="note primary">
-<ol type="1">
-<li>
-现有工作的缺陷：由于<strong>域槽对数量</strong>以及<strong>对话长度</strong>的增加，数据稀疏性（data sparsity）的问题成了多领域 DST 的主要障碍。
-</li>
-<li>
-研究目的：1）缓解数据稀疏性的问题；2）考虑不同域槽对之间的关联（<em>算是对 schema 进行了初步的编码</em>）。
-</li>
-<li>
-研究目标/贡献：1）使用前一轮对话状态表示对话历史；2）提出模式图，并对其编码。
-</li>
-<li>
-研究方法：1）提出了 Schema Graph 并实现了一个基本模型 context and schema fusion networks (CSFN-DST)，其主要修改了 Transformer 的 Multi-head Attention 机制。具体只是使用一个邻接矩阵实现。
-</li>
-<li>
-<strong>总结</strong>：<strong>1）</strong>可以将 CSFN-DST 视为一种全新的域槽对表示方式，不过我觉得这好像没有利用到知识图谱的优势。此外虽然作者列出了 Graph Neural Network 的相关工作，但是并没有使用 GNN 去提取特征。<strong>2）</strong>虽然最后他们讨论了在输入中是否需要更多上下文信息的问题，但是他们在消融实验中只是额外加入上一轮的对话语句。个人认为这个实验不足以证明论文中提到的观点，即只使用当前轮的系统语句、用户语句和上一轮的对话状态是有效的。这是因为上下文信息太少了，起码再多加几轮，然后做一个对比。<strong>3）该文作者与我的想法类似，也认为 dontcare 这个槽位是比较有挑战的子任务。</strong>
-</li>
-</ol>
-<p>
-<strong>模型结构</strong> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/CSFN-DST模型架构.png" alt="CSFN-DST模型架构" />
-</p>
-</div></div><div class="tab-pane" id="csfn-dst-2"><div class="note info">
+<div class="tabs" id="csfn-dst"><ul class="nav-tabs"><li class="tab active"><a href="#csfn-dst-1">总结</a></li><li class="tab"><a href="#csfn-dst-2">论文笔记</a></li></ul><div class="tab-content"><div class="tab-pane active" id="csfn-dst-1"><p><strong>现有工作的缺陷</strong>：由于<strong>域槽对数量</strong>以及<strong>对话长度</strong>的增加，数据稀疏性（data sparsity）的问题成了多领域 DST 的主要障碍。</p>
+<p><strong>研究目的</strong>：1）缓解数据稀疏性的问题；2）考虑不同域槽对之间的关联（<em>算是对 schema 进行了初步的编码</em>）。</p>
+<p><strong>研究目标/贡献</strong>：1）使用前一轮对话状态表示对话历史；2）提出模式图，并对其编码。</p>
+<p><strong>研究方法</strong>：1）提出了 Schema Graph 并实现了一个基本模型 context and schema fusion networks (CSFN-DST)，其主要修改了 Transformer 的 Multi-head Attention 机制。具体只是使用一个邻接矩阵实现。</p>
+<p><strong>总结</strong>：<strong>1）</strong>可以将 CSFN-DST 视为一种全新的域槽对表示方式，不过我觉得这好像没有利用到知识图谱的优势。此外虽然作者列出了 Graph Neural Network 的相关工作，但是并没有使用 GNN 去提取特征。<strong>2）</strong>虽然最后他们讨论了在输入中是否需要更多上下文信息的问题，但是他们在消融实验中只是额外加入上一轮的对话语句。个人认为这个实验不足以证明论文中提到的观点，即只使用当前轮的系统语句、用户语句和上一轮的对话状态是有效的。这是因为上下文信息太少了，起码再多加几轮，然后做一个对比。<strong>3）该文作者与我的想法类似，也认为 dontcare 这个槽位是比较有挑战的子任务。</strong></p>
+<p><strong>模型结构</strong> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/CSFN-DST模型架构.png" alt="CSFN-DST模型架构" /></p></div><div class="tab-pane" id="csfn-dst-2"><div class="note info">
 <p>
 在多领域 DST 中，由于候选状态数量以及对话长度的增加，数据稀疏性的问题成了一个主要的障碍。为了高效地编码对话上下文，我们使用了前一轮<font style="color:red"><strong>预测出的</strong></font>对话状态以及当前轮的对话语句作为 DST 的输入。（博主注：数据的稀疏性指的是候选状态过多但是大部分是无意义的；对话长度增加但是大部分语句也是无意义的。为了处理这一问题，该文打算使用上一轮的对话状态近似对话上下文）
 </p>
@@ -619,6 +613,28 @@ head_j &amp; = softmax(\frac{Q_j K^T_j}{\sqrt{d_k}}) V_j
 <p>如果使用 BERT 初始化词向量以及 CSFN 的所有参数，会提升大约 2 个百分点。</p>
 <h2 id="结果分析">结果分析</h2>
 <p>5.5.1 节中讨论了是否需要更多的上下文，并且做了实验。在额外增加上一轮的语句 <span class="math inline">\(X_{t-1}\)</span> 之后，得到了略差的准确率，所以得出结论：只编码当前的语句以及上一轮的对话状态会更高效。</p></div></div></div>
+<h1 id="efficient-dialogue-state-tracking-by-selectively-overwriting-memory">Efficient Dialogue State Tracking by Selectively Overwriting Memory</h1>
+<p><strong>现有工作的缺陷</strong>：1）传统 fixed-vocabulary DST 方法需要完整的本体，首先通常很难预先获取本体，其次无法处理未知槽值的问题，最后这种方法无法扩展到大规模的本体上。2）为了解决上述问题，最近有研究专注于 open-vocabulary DST 方法，虽然相对灵活且有能力处理未知槽值问题，但是大多数的方法需要在每一轮从头预测对话状态，这不够高效。</p>
+<p><strong>研究目的</strong>：<em>好像没有说的很明白</em>。</p>
+<p><strong>研究目标/贡献</strong>：1）借助上一轮的对话状态，现在模型只需要预测当前轮的子集槽位即可，不需要从头开始预测对话状态。2）提出了状态操作预测。</p>
+<p><strong>模型结构</strong> 首先，在每轮 <span class="math inline">\(t\)</span>，state operation predictor 都会选择一个状态操作 <span class="math inline">\(r^j_t \in \mathcal{O} = {CARRYOVER, DELETE, DONTCARE, UPDATE}\)</span>，然后为每个 <span class="math inline">\(S^j\)</span> 填充其对应的槽值 <span class="math inline">\(V^j_t\)</span>。当操作执行时，槽值要么保持不变（<em>CARRYOVER</em>），要么做出改变（<em>DELETE, DONTCARE, UPDATE</em>）：</p>
+<p><span class="math display">\[
+V^j_t = \begin{cases}
+V^j_{t-1} &amp; \text{if} \, r^j_t = CARRYOVER \\
+NULL &amp; \text{if} \, r^j_t = DELETE \\
+DONTCARE &amp; \text{if} \, r^j_t = DONTCARE \\
+v &amp; \text{if} \, r^j_t = UPDATE
+\end{cases}
+\]</span></p>
+<h2 id="state-operation-predictor">State Operation Predictor</h2>
+<p>用 BERT 编码可以得到 [CLS] 表征 <span class="math inline">\(h^{[CLS]}_t\)</span> 和第 <span class="math inline">\(j\)</span> 个 [SLOT] 表征 <span class="math inline">\(h^{[SLOT]^j}_t\)</span>。通过带有可学习权重 <span class="math inline">\(W_{pool}\)</span> 的前馈层我们可以得到聚合序列信息的表征 <span class="math inline">\(h^X_t = tanh(W_{pool} h^{[CLS]}_t)\)</span>。</p>
+<p>对于每个槽位表征 <span class="math inline">\(h^{[SLOT]^j}_t\)</span>，状态操作预测是基于其的四元分类：<span class="math inline">\(P^j_{opr,t} = softmax(W_{opr} h^{[SLOT]^j}_t)\)</span>。</p>
+<p>当预测结果为 <strong>UPDATE</strong> 时，将会执行槽值生成。</p>
+<h2 id="slot-value-generator">Slot Value Generator</h2>
+<p>本文提出的 Slot Value Generator 与其他的生成器不同，它为 <span class="math inline">\(J&#39;_t\)</span> 个槽位生成槽值，而不是 <span class="math inline">\(J\)</span>，通常 <span class="math inline">\(J&#39;_t \ll J\)</span>。因此能更有效得计算。</p>
+<p>生成步骤与 TRADE 类似，就不赘述了。</p>
+<h2 id="优化函数">优化函数</h2>
+<p>比较简单，具体就不介绍了。但是有一点需要指出，他们使用了将领域预测作为额外的任务，期望能够使模型学习到槽位操作与领域转换之间的关联。</p>
 ]]></content>
       <categories>
         <category>paper</category>
@@ -677,97 +693,98 @@ head_j &amp; = softmax(\frac{Q_j K^T_j}{\sqrt{d_k}}) V_j
 <table>
 <thead>
 <tr class="header">
-<th>模型</th>
-<th>槽值生成方法</th>
-<th>槽位门控</th>
+<th>Model</th>
+<th>encoder</th>
+<th>method</th>
+<th>history <br/> aux input</th>
+<th>extra</th>
+<th>slot rel</th>
+<th>level</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Graph-DST<span class="citation" data-cites="zeng2020multi">(Zeng and Nie 2020)</span></td>
-<td><mark class="label success">generative</mark></td>
-<td><mark class="label info">soft-gated copy</mark></td>
+<td><strong><a href="https://arxiv.org/pdf/2101.09374.pdf" target="_blank" rel="noopener" title="21.01">STAR</a></strong></td>
+<td>BERT</td>
+<td>L2 distance</td>
+<td>full(512) <br/> non-none ds</td>
+<td>-</td>
+<td>self-attn</td>
+<td>-</td>
 </tr>
 <tr class="even">
-<td>DST-SC<span class="citation" data-cites="ouyang-etal-2020-dialogue">(Ouyang et al. 2020)</span></td>
-<td><mark class="label success">generative</mark></td>
-<td><mark class="label info">soft-gated copy</mark></td>
-</tr>
-<tr class="odd">
-<td>CSFN-DST<span class="citation" data-cites="zhu2020efficient">(Zhu et al. 2020)</span></td>
-<td><mark class="label success">generative</mark></td>
-<td><mark class="label info">soft-gated copy</mark></td>
-</tr>
-</tbody>
-</table>
-<div class="tabs" id="dst论文对比"><ul class="nav-tabs"><li class="tab active"><a href="#dst论文对比-1">论文介绍</a></li><li class="tab"><a href="#dst论文对比-2">论文瑕瑜</a></li></ul><div class="tab-content"><div class="tab-pane active" id="dst论文对比-1"><table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>论文</th>
-<th>标签</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
 <td><strong><a href="https://arxiv.org/abs/2010.11137" target="_blank" rel="noopener" title="20.10">Graph-DST</a></strong></td>
-<td><mark class="label primary"><strong>Transformer</strong></mark> <mark class="label primary"><strong>relational-GCN</strong></mark><br />
-<mark class="label success">Zeng et al., 2020</mark> <mark class="label primary">dialog state graph</mark> <mark class="label success">graph-enhanced Transformer</mark></td>
+<td>Transformer</td>
+<td>gen</td>
+<td>pre turn <br/> ds+graph</td>
+<td>-</td>
+<td>ds graph</td>
+<td>-</td>
+</tr>
+<tr class="odd">
+<td><strong><a href="https://www.aclweb.org/anthology/2020.acl-main.5/" target="_blank" rel="noopener" title="20.07">DST-SC</a></strong></td>
+<td>BiGRU</td>
+<td>gen</td>
+<td>recent <span class="math inline">\(m\)</span> words</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
 </tr>
 <tr class="even">
-<td><strong><a href="https://www.aclweb.org/anthology/2020.acl-main.5/" target="_blank" rel="noopener" title="20.07">DST-SC</a></strong></td>
-<td><mark class="label primary"><strong>BiGRU</strong></mark><br />
-<mark class="label success">Ouyang et al., 2020</mark> <mark class="label info">slot connection mechanism</mark></td>
+<td><strong><a href="https://www.aclweb.org/anthology/2020.acl-main.567.pdf" target="_blank" rel="noopener" title="20.06?">SAS</a></strong></td>
+<td>BiGRU</td>
+<td>gen</td>
+<td>recent <span class="math inline">\(t\)</span> turns</td>
+<td>slot type</td>
+<td>slot sim mat</td>
+<td>-</td>
 </tr>
 <tr class="odd">
 <td><strong><a href="https://arxiv.org/abs/2004.03386" target="_blank" rel="noopener" title="20.04">CSFN-DST</a></strong></td>
-<td><mark class="label primary"><strong>CSFN</strong></mark> <mark class="label primary"><strong>BERT</strong></mark><br />
-<mark class="label success">Zhu et al., 2020</mark> <mark class="label primary">Schema Grapha</mark> <mark class="label info">Graph-based Multi-head Attention</mark></td>
-</tr>
-</tbody>
-</table></div><div class="tab-pane" id="dst论文对比-2"><table>
-<thead>
-<tr class="header">
-<th style="text-align: center;">论文</th>
-<th>优化的方向</th>
-<th>局限性</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center;">Ouyang et al., 2020</td>
-<td>1）共指解析</td>
-<td></td>
+<td>BERT(CSFN)</td>
+<td>gen</td>
+<td>no history <br/> schema graph</td>
+<td>-</td>
+<td>schema graph</td>
+<td>-</td>
 </tr>
 <tr class="even">
-<td style="text-align: center;">Zhu et al. 2020</td>
-<td>1）提出了 Schema Graph；</td>
-<td></td>
+<td><strong><a href="https://arxiv.org/pdf/1911.03906.pdf" target="_blank" rel="noopener" title="19.11">SOM-DST</a></strong></td>
+<td>BERT+GRU</td>
+<td>gen</td>
+<td>prev turn(256) <br/> ds</td>
+<td>-</td>
+<td>-</td>
+<td>turn</td>
 </tr>
 </tbody>
-</table></div></div></div>
+</table>
+<h2 id="相关工作">相关工作</h2>
+<p><span class="citation" data-cites="kim2019efficient">(Kim et al. 2019)</span>将对话状态视为一种可选择性覆盖记忆（<mark class="label primary">Selective Overwritting Memory</mark>）。与以往相同的是，使用 encoder-decoder 架构将 DST 建模为 fixed-vocabulary 方法；与以往不同的是，他们每轮只生成一组数量为 <span class="math inline">\(J&#39;_t\)</span> 的槽位子集的槽值，而不是从头开始生成，通常 <span class="math inline">\(J&#39;_t \ll J\)</span>，其中 <span class="math inline">\(J\)</span> 代表槽位总量。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#efficient-dialogue-state-tracking-by-selectively-overwriting-memory" title="Efficient Dialogue State Tracking by Selectively Overwriting Memory"><i class="fa fa-"></i>论文笔记</a> <mark class="label warning">State Operation Predictor</mark></p>
+<p><span class="citation" data-cites="zhu2020efficient">(Zhu et al. 2020)</span>提出了 CSFN-DST（Context and Schema Fusion Network）。主要思想是将冗长的上下文改为：当前系统回复 <span class="math inline">\(A_t\)</span>，用户输入 <span class="math inline">\(U_t\)</span> 以及上一轮的对话状态 <span class="math inline">\(B_{t-1}\)</span>。作者将上一轮的对话状态视为对话历史的抽象表征，在训练时使用真实的对话状态，<font color="red"><strong>在推理阶段使用预测出的对话状态</strong></font>。此外，还将领域 <span class="math inline">\(D\)</span>，槽位 <span class="math inline">\(S\)</span> 以及域槽对 <span class="math inline">\(O\)</span> 表示图结构，并称之为协议图（<mark class="label primary">Schema Graph</mark>）或者模式图。使用了 <mark class="label info">Graph-based Multi-head Attention</mark> 编码该协议图，实际上只是比普通的 Multi-head Attn 多了一个 mask 而已。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#efficient-context-and-schema-fusion-networks-for-multi-domain-dialogue-state-tracking" title="Efficient Context and Schema Fusion Networks for Multi-Domain Dialogue State Tracking"><i class="fa fa-"></i>论文笔记</a></p>
+<p><span class="citation" data-cites="hu2020sas">(Hu et al. 2020)</span>使用 <mark class="label success">Slot Attention</mark> 获取来自于嘈杂对话历史中的特定槽位特征，使用 <mark class="label info">Slot Information Sharing</mark> 共享槽位信息，这有助于低频槽位的学习。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#sas-dialogue-state-tracking-via-slot-attention-and-slot-information-sharing" title="SAS: Dialogue State Tracking via Slot Attention and Slot Information Sharing"><i class="fa fa-"></i>论文笔记</a> <mark class="label default">k-means</mark></p>
+<p><span class="citation" data-cites="ouyang-etal-2020-dialogue">(Ouyang et al. 2020)</span>提出了 <mark class="label info">slot connection mechanism</mark> 用于处理省略、共指的难题，思想与 TripPy 类似，但是做法不同。具体不做阐述了。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#dialogue-state-tracking-with-explicit-slot-connection-modeling" title="Dialogue State Tracking with Explicit Slot Connection Modeling"><i class="fa fa-"></i>论文笔记</a></p>
+<p><span class="citation" data-cites="zeng2020multi">(Zeng and Nie 2020)</span>认为以往的工作只是简单地将前一轮的对话状态和当前语句拼接起来，然后使用 self-attention 建立它们之间的关联。但是 attention 机制也许会关注到一些不合理（spurious）的连接，从而导致进行错误的推理。该文提出对话状态图（<mark class="label info">dialog state graph</mark> ），以此处理对话状态中元素的共现信息以及过渡联系。使用 <mark class="label primary">relational-GCN</mark> 对该图编码，然后将其融入 Transformer。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#multi-domain-dialogue-state-tracking-based-on-state-graph" title="Multi-Domain Dialogue State Tracking based on State Graph"><i class="fa fa-"></i>论文笔记</a> <mark class="label danger">graph-enhanced Transformer</mark></p>
+<p><span class="citation" data-cites="ye2021slot">(Ye et al. 2021)</span>使用 <mark class="label info">stacked multi-head slot self-attention</mark> 进一步加强了槽位之间的关联，不仅利用了槽位信息还使用了槽值信息。但是他们使用的 fixed-vocabulary 的方法，因此无法扩展到更大规模。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#slot-self-attentive-dialogue-state-tracking" title="Slot Self-Attentive Dialogue State Tracking"><i class="fa fa-"></i>论文笔记</a> <mark class="label default">slot-token attention</mark></p>
 <h2 id="前情提要">前情提要</h2>
-<div class="note "><p>本节回顾一下 2020 年之前 DST 的做法。</p>
-</div>
-<p>我暂时没有阅读过远古时代如何构建 DST 模型的论文，所以对那时的做法不做分析或评价。但是据我所知，在以前都需要一个人工构建的同义词表，以此替换用户语句中的一些同义词。例如“center”和“centre”都是“中心”的意思，但是由于它们是不同单词，所以一般都需要使用同义词表对用户的输入进行预处理。然而这种构建同义词表的做法显然费时费力。</p>
+<p>本节回顾一下 2020 年之前 DST 的做法。我暂时没有阅读过远古时代如何构建 DST 模型的论文，所以对那时的做法不做分析或评价。但是据我所知，在以前都需要一个人工构建的同义词表，以此替换用户语句中的一些同义词。例如“center”和“centre”都是“中心”的意思，但是由于它们是不同单词，所以一般都需要使用同义词表对用户的输入进行预处理。然而这种构建同义词表的做法显然费时费力。</p>
 <h3 id="同义词表以及误差传递的问题">同义词表以及误差传递的问题</h3>
-<p>在描述如何解决标题中的难点之前，首先需要介绍另一个要点。TODS 一般由六部分组成，每一部分的输入分别是其前一部分的输出，这就导致了一个严重的问题——层级误差传递。由于神经网络或者其他的技术都无法做到百分之百的准确率，所以每一个模块的误差会被一次一次地放大。</p>
-<p>为解决这一问题，<span class="citation" data-cites="henderson2014word">(Henderson, Thomson, and Young 2014)</span> <strong>舍弃了 SLU 模块</strong>，直接使用 ASR 识别出的结果作为 RNN 的输入，注意那时他们并没有使用词向量。并且，他们沿用了他们同年发表的论文中的方法——delexicalised features。简单来说就是将“槽”和“值”替换为一种标签，例如“i want chinese food”-&gt;“i want <code>&lt;value&gt;</code> <code>&lt;slot&gt;</code>”。这样做虽然可以提高模型的泛化性，但是还是需要一个人工构建的同义词表。<mark class="label default">联合模型</mark></p>
-<p>2013 年下半年词向量横空出世。此后，DST 领域也开始<strong>借助词向量的优势</strong>。<span class="citation" data-cites="zilka2015incremental">(Zilka and Jurcicek 2015)</span> 额外使用了 ASR 输出的置信度分数，具体来说就是将置信度分数乘上词向量从而得到一个全新的词向量，并将其作为模型的输入（具体做法还可以改进，文中只说了将分数和词向量结合），从而作为 LSTM 的输入。然后在<strong>每一个时间步</strong>上都接 N 个线性分类层，用于在所有候选槽值上进行分类，N 代表槽位的数量。<em>博主注：说实话这中分类方式挺诡异的，因为每个时间步都要执行一次分类。但是不管怎么样，这种方式借助词向量的优势已经不需要同义词表了。</em> <mark class="label info">不再需要使用同义词表</mark></p>
+<p>在描述如何解决标题中的难点之前，首先需要介绍另一个要点。TODS 一般由六大模块组成，每一模块的输入是前一模块的输出，这就导致了一个严重的问题——层级误差传递。由于神经网络或者其他的技术都无法做到百分之百的准确率，所以每一个模块的误差会被一次一次地放大。</p>
+<p>为解决这一问题，<span class="citation" data-cites="henderson2014word">(Henderson, Thomson, and Young 2014)</span> <strong>舍弃了 SLU 模块</strong>，直接使用 ASR 识别出的结果作为 DST 的输入，注意他们并没有使用词向量。此外，他们沿用了他们同年发表的论文中的方法——delexicalised features。简单来说就是将“槽”和“值”替换为一种标签，例如“i want chinese food”-&gt;“i want <code>&lt;value&gt;</code> <code>&lt;slot&gt;</code>”。这样做虽然可以提高模型的泛化性，但是还是需要一个人工构建的同义词表。<mark class="label default">联合模型</mark></p>
+<p>2013 年下半年词向量横空出世。此后，DST 领域也开始<strong>借助词向量的优势</strong>。<span class="citation" data-cites="zilka2015incremental">(Zilka and Jurcicek 2015)</span>额外使用了 ASR 输出的置信度分数，具体来说就是将置信度分数乘上词向量从而得到一个全新的词向量，并将其作为模型的输入（具体做法还可以改进，文中只说了将分数和词向量结合），从而作为 LSTM 的输入。然后在<strong>每一个时间步</strong>上都接 N 个线性分类层，用于在所有候选槽值上进行分类，N 代表槽位的数量。<em>博主注：说实话这中分类方式挺诡异的，因为每个时间步都要执行一次分类。但是不管怎么样，这种方式借助词向量的优势已经不需要同义词表了。</em> <mark class="label info">不再需要使用同义词表</mark></p>
 <h3 id="判别式dst">判别式DST</h3>
-<p>此后，<span class="citation" data-cites="mrkvsic2016neural">(Mrkšić et al. 2016)</span> 提出了 neural belief tracker（NBT），也使用了词向量，不过他们使用的词向量是自己训练的。此外最重要的是他们提出了判别式 DST，即<strong>使用槽值对的表征去与用户语句做判别，以此判断该槽值对是否被用户提及</strong>，如果是则更新对话状态，反之亦反。<strong>但是这显然包含着重大的隐患，就是有些槽值对是不可枚举的，这该如何去匹配？</strong>所以之后的模型大都在围绕两点：1）槽值不可枚举怎么办？2）有未知的槽值怎么办？<mark class="label info">判别式 DST</mark></p>
-<p><span class="citation" data-cites="rastogi2017scalable">(Rastogi, Hakkani-Tür, and Heck 2017)</span> 提出了一个多领域 DST 模型，但是它是一个独立模型，这是因为它需要 SLU 模块帮助其实现 delexicalisation。<strong>他们将槽值候选集加了一项限定，即每一个槽值都会有一项分数，通过分数的排名，将候选集限定在一定的范围内，实验中选择 7 最为最大值。</strong>候选集的生成方式有多种，文中使用了外部的知识源而不是本体（因为本体通常很难构建以及访问。而知识源则很简答，可能还描述了其他方式去构建，但是时间太久了，有点忘了）。<mark class="label warning">有限候选集</mark> <mark class="label success">多领域 DST</mark></p>
-<p><span class="citation" data-cites="zhong2018global">(Zhong, Xiong, and Socher 2018)</span> 使用 global-locally 自注意力机制改进了对低频槽值对的追踪。</p>
-<p>另外有一个插曲是在 2015-2017 年之间，有人提出了 Pointer Network（Ptr-Nets），并且后续有许多研究人员对其进一步完善。<span class="citation" data-cites="xu-hu-2018-end">(Xu and Hu 2018)</span> 首次在 DST 中引入了 index-based Ptr，此后几乎所有的模型都是用了该方式。<mark class="label success">span-based</mark></p>
+<p>此后，<span class="citation" data-cites="mrkvsic2016neural">(Mrkšić et al. 2016)</span>提出了 neural belief tracker（NBT）。与<span class="citation" data-cites="zilka2015incremental">(Zilka and Jurcicek 2015)</span>类似，他们也使用了词向量，不过他们没有使用已有的词向量，而是提出两种方法自行预训练。此外最重要的是他们提出了判别式 DST，即<strong>使用槽值对的表征去与用户语句做判别，以此判断该槽值对是否被用户提及</strong>，如果是则更新对话状态，反之亦反。<strong>但是这显然包含着重大的隐患，就是有些槽值对是不可枚举的，这该如何去匹配？</strong>所以之后的模型大都围绕如何处理未知槽值的问题。<mark class="label info">判别式 DST</mark></p>
+<p><span class="citation" data-cites="rastogi2017scalable">(Rastogi, Hakkani-Tür, and Heck 2017)</span>提出了一个多领域 DST 模型，但是它是一个独立模型，这是因为它需要 SLU 模块帮助其实现 delexicalisation。<strong>他们将槽值候选集加了一项限定，即每一个槽值都会有一项分数，通过分数的排名，将候选集限定在一定的范围内，实验中选择 7 最为最大值。</strong>候选集的生成方式有多种，文中使用了外部的知识源而不是本体（因为本体通常很难构建以及访问。而知识源则很简答，可能还描述了其他方式去构建，但是时间太久了，有点忘了）。<mark class="label warning">有限候选集</mark> <mark class="label success">多领域 DST</mark></p>
+<p><span class="citation" data-cites="zhong2018global">(Zhong, Xiong, and Socher 2018)</span>使用 global-locally 自注意力机制改进了对低频槽值对的追踪。</p>
+<p>另外有一个插曲是在 2015-2017 年之间，有人提出了 Pointer Network（Ptr-Nets），并且后续有许多研究人员对其进一步完善。<span class="citation" data-cites="xu-hu-2018-end">(Xu and Hu 2018)</span> 首次在 DST 中引入了 index-based Ptr，此后有许多模型都使用了这一思想。<mark class="label success">span-based</mark></p>
 <h3 id="slot-gate和多领域dst">Slot Gate和多领域DST</h3>
-<p>在之前其实已经有了多领域 DST，不过他们都是在不同的数据集之间进行实验。直到 <span class="citation" data-cites="budzianowski2018multiwoz">(Budzianowski et al. 2018)</span> 发布了 MultiWOZ 多领域任务完成型对话数据集，才涌现了一大批相对正常的多领域 DST 模型。有一点需要强调，由于已经步入多领域 DST 的时代，所以使用槽值对 <span class="math inline">\(&lt;slot, value&gt;\)</span> 的形式显然已经不具有足够的能力表示对话状态，在此之后大都使用三元组 <span class="math inline">\(&lt;domain, slot, value&gt;\)</span> 的形式来表示，而槽位一般也写作 <code>doamin-slot</code>，可以读作“域槽对”。</p>
+<p>在之前其实已经有了多领域 DST，不过他们都是在不同的数据集之间进行实验。直到 <span class="citation" data-cites="budzianowski2018multiwoz">(Budzianowski et al. 2018)</span> 发布了 MultiWOZ 多领域任务完成型对话数据集，才涌现了一大批相对正常的多领域 DST 模型。有一点需要强调，由于已经步入多领域 DST 的时代，因此槽值对 <em>(slot, value)</em> 的形式显然已经不具有足够的能力表示对话状态，多领域 DST 时代大都使用三元组 <em>(domain, slot, value)</em> 的形式来表示，而槽位一般也写作 <code>doamin-slot</code>，可以读作“域槽对”。</p>
 <div class="note warning"><p>注意，NBT 是使用<strong>槽值对</strong>去与用户语句判别从而实现二元分类。而 TRADE 是使用<strong>域槽对</strong>去与用户语句做判别，从而实现三元分类得到槽位的类别，然后依靠槽位的类别再进一步去生成槽值。</p>
 </div>
-<p><span class="citation" data-cites="wu2019transferable">(Wu et al. 2019)</span> 提出了 TRADE 模型，沿用了 Ptr 神经网络，此外还使用 zero-shot 的训练方式使模型有能力处理未知领域中的槽位。他们将槽位分为 <span class="math inline">\(\{none, dontcare, ptr\}\)</span> 三种。<code>none</code> 代表当前所判别的槽位不包含槽值，槽值就是 <code>none</code>；<code>dontcare</code> 代表用户不关心当前所判别的槽位的具体槽值是什么，槽值就是 <code>dontcare</code>；<code>ptr</code> 代表模型需要再额外使用一个 ptr 神经网络来从用户语句中直接提取槽值。具体做法是，模型使用域槽对去和用户语句做判别，得到槽位的类别，然后根据槽位的类别进一步得到槽值。<em>博主注：这样的做法实际上会造成误差的层级传播，后面会说到。</em><mark class="label info">slot gate</mark></p>
-<p><span class="citation" data-cites="zhang2019find">(Zhang et al. 2019)</span> 将槽位分为 <em>{none, dontcare, picklist-based, span-based}</em>，其中前两个和最后一个与 TRADE 中的定义一一对应。他们认为有些槽位是没必要使用 ptr 从用户语句中提取的，例如对于槽位“hotel-pricerange”，只有三个槽值 <em>{cheap, moderate, expensive}</em>。<span class="citation" data-cites="heck2020trippy">(Heck et al. 2020)</span> 将槽位分为 <em>{none, dontcare, span-based, bool-based, refer, inform}</em>。</p>
+<p><span class="citation" data-cites="wu2019transferable">(Wu et al. 2019)</span>提出了 TRADE 模型，沿用了 Ptr 神经网络，此外还使用 zero-shot 的训练方式使模型有能力处理未知领域中的槽位。他们将槽位分为 <span class="math inline">\(\{none, dontcare, ptr\}\)</span> 三种。<em>none</em> 代表当前所判别的槽位不包含槽值，槽值就是 <em>none</em>；<em>dontcare</em> 代表用户不关心当前所判别的槽位的具体槽值是什么，槽值就是 <em>dontcare</em>；<em>ptr</em> 代表模型需要再额外使用一个 ptr 神经网络来从用户语句中直接提取槽值。具体做法是，模型使用域槽对去和用户语句做判别，得到槽位的类别，然后根据槽位的类别进一步得到槽值。<em>博主注：这样的做法实际上会造成误差的层级传播，后面会说到。</em><mark class="label info">slot gate</mark></p>
+<p><span class="citation" data-cites="zhang2019find">(Zhang et al. 2019)</span>将槽位分为 <em>{none, dontcare, picklist-based, span-based}</em>，其中前两个和最后一个与 TRADE 中的定义一一对应。他们认为有些槽位是没必要使用 ptr 从用户语句中提取的，例如对于槽位“hotel-pricerange”，只有三个槽值 <em>{cheap, moderate, expensive}</em>。<span class="citation" data-cites="heck2020trippy">(Heck et al. 2020)</span> 将槽位分为 <em>{none, dontcare, span-based, refer, inform}, {none, dontcare, true, false}</em>。</p>
+<h3 id="生成式dst">生成式DST</h3>
+<p>TRADE 模型<span class="citation" data-cites="wu2019transferable">(Wu et al. 2019)</span>属于生成式 DST。</p>
 <h2 id="各项难点的处理方式">各项难点的处理方式</h2>
 <ol type="1">
 <li>未知的槽位：任务导向对话模式、zero-shot learning</li>
@@ -779,13 +796,6 @@ head_j &amp; = softmax(\frac{Q_j K^T_j}{\sqrt{d_k}}) V_j
 </ol>
 <h2 id="dstc">DSTC</h2>
 <p>本节介绍 DSTC1-DSTC8 数据集。</p>
-<h2 id="相关工作">相关工作</h2>
-<p>详见 <a href="https://yan624.github.io/posts/5286f9c6.html">DST论文笔记（2020—至今）</a>。</p>
-<ol type="1">
-<li><span class="citation" data-cites="zhu2020efficient">(Zhu et al. 2020)</span> 提出了 CSFN-DST（Context and Schema Fusion Network）。主要思想是将冗长的上下文改为：当前系统回复 <span class="math inline">\(A_t\)</span>，用户输入 <span class="math inline">\(U_t\)</span> 以及上一轮的对话状态 <span class="math inline">\(B_{t-1}\)</span>。作者将上一轮的对话状态视为对话历史的抽象表征，在训练时使用真实的对话状态，<font color="red"><strong>在推理阶段使用预测出的对话状态</strong></font>。此外，还将领域 <span class="math inline">\(D\)</span>，槽位 <span class="math inline">\(S\)</span> 以及域槽对 <span class="math inline">\(O\)</span> 表示图结构，并称之为协议图（schema graph）或者模式图。使用了 Graph-based Multi-head Attention 编码该协议图，实际上只是比普通的 Multi-head Attn 多了一个 mask 而已。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#efficient-context-and-schema-fusion-networks-for-multi-domain-dialogue-state-tracking" title="Efficient Context and Schema Fusion Networks for Multi-Domain Dialogue State Tracking"><i class="fa fa-"></i>论文笔记</a></li>
-<li><span class="citation" data-cites="ouyang-etal-2020-dialogue">(Ouyang et al. 2020)</span>提出了 slot connection mechanism 用于处理省略、共指的难题，思想与 TripPy 类似，但是做法不同。具体不做阐述了。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#dialogue-state-tracking-with-explicit-slot-connection-modeling" title="Dialogue State Tracking with Explicit Slot Connection Modeling"><i class="fa fa-"></i>论文笔记</a></li>
-<li><span class="citation" data-cites="zeng2020multi">(Zeng and Nie 2020)</span> 认为以往的工作只是简单地将前一轮的对话状态和当前语句拼接起来，然后使用 self-attention 建立它们之间的关联。但是 attention 机制也许会关注到一些不合理（spurious）的连接，从而导致进行错误的推理。该文提出对话状态图（dialog state graph），以此处理对话状态中元素的共现信息以及过渡联系。使用 relational-GCN 对该图编码，然后将其融入 Transformer。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#multi-domain-dialogue-state-tracking-based-on-state-graph" title="Multi-Domain Dialogue State Tracking based on State Graph"><i class="fa fa-"></i>论文笔记</a></li>
-</ol>
 <h1 id="dpl">DPL</h1>
 <p>待续。</p>
 <h1 id="结果对比">结果对比</h1>
@@ -800,7 +810,7 @@ head_j &amp; = softmax(\frac{Q_j K^T_j}{\sqrt{d_k}}) V_j
 	tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
 	legend: {
 		type: 'scroll',
-		data: ['CSFN-DST', 'DST-SC', 'Graph-DST'],
+		data: ['CSFN-DST', 'SAS', 'DST-SC', 'Graph-DST', 'STAR', 'SG2DST'],
 		top: 25,
 	},
 	toolbox: {
@@ -822,20 +832,36 @@ head_j &amp; = softmax(\frac{Q_j K^T_j}{\sqrt{d_k}}) V_j
 			if(_min < 0) return 0;
 			else return Math.floor(_min);
 		},
-		max: 100
+		max: 65
 	},
     series: [
-		{name: 'CSFN-DST', type: 'bar', data: [50.81],},
 		{ 
-            name: 'CSFN-DST',
-            type: 'bar',
-            data: [52.88],
+            name: 'CSFN-DST', type: 'bar', data: [52.88],
 			label: {
 				normal: {show: true, textBorderColor: 'black', formatter:'+BERT', offset: [0, 10]}
 			}
 		},
+		{
+			name: 'SAS', type: 'bar', data: [51.03],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'RT', offset: [0, 10]}
+			}
+		},
 		{name: 'DST-SC', type: 'bar', data: [49.58],},
 		{name: 'Graph-DST', type: 'bar', data: [54.85],},
+		{
+			name: 'STAR', type: 'bar', data: [56.36],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'L=6', offset: [0, 10]}
+			}
+		},
+		{name: 'SG2DST', type: 'bar', data: [58.23],},
+		{
+			name: 'SG2DST', type: 'bar', data: [59.22],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'+graph', offset: [0, 10]}
+			}
+		},
 	]
 };
         // 使用刚指定的配置项和数据显示图表。
@@ -852,10 +878,16 @@ window.onload = function () {
 <p>Budzianowski, Pawel, Tsung-Hsien Wen, Bo-Hsiang Tseng, Inigo Casanueva, Stefan Ultes, Osman Ramadan, and Milica Gašić. 2018. “Multiwoz-a Large-Scale Multi-Domain Wizard-of-Oz Dataset for Task-Oriented Dialogue Modelling.” <em>arXiv Preprint arXiv:1810.00278</em>.</p>
 </div>
 <div id="ref-heck2020trippy">
-<p>Heck, Michael, Carel van Niekerk, Nurul Lubis, Christian Geishauser, Hsien-Chin Lin, Marco Moresi, and Milica Gašić. 2020. “TripPy: A Triple Copy Strategy for Value Independent Neural Dialog State Tracking.”</p>
+<p>Heck, Michael, Carel van Niekerk, Nurul Lubis, Christian Geishauser, Hsien-Chin Lin, Marco Moresi, and Milica Gašić. 2020. “Trippy: A Triple Copy Strategy for Value Independent Neural Dialog State Tracking.” <em>arXiv Preprint arXiv:2005.02877</em>.</p>
 </div>
 <div id="ref-henderson2014word">
 <p>Henderson, Matthew, Blaise Thomson, and Steve Young. 2014. “Word-Based Dialog State Tracking with Recurrent Neural Networks.” In <em>Proceedings of the 15th Annual Meeting of the Special Interest Group on Discourse and Dialogue (Sigdial)</em>, 292–99.</p>
+</div>
+<div id="ref-hu2020sas">
+<p>Hu, Jiaying, Yan Yang, Chencai Chen, Zhou Yu, and others. 2020. “Sas: Dialogue State Tracking via Slot Attention and Slot Information Sharing.” In <em>Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics</em>, 6366–75.</p>
+</div>
+<div id="ref-kim2019efficient">
+<p>Kim, Sungdong, Sohee Yang, Gyuwan Kim, and Sang-Woo Lee. 2019. “Efficient Dialogue State Tracking by Selectively Overwriting Memory.” <em>arXiv Preprint arXiv:1911.03906</em>.</p>
 </div>
 <div id="ref-mrkvsic2016neural">
 <p>Mrkšić, Nikola, Diarmuid O Séaghdha, Tsung-Hsien Wen, Blaise Thomson, and Steve Young. 2016. “Neural Belief Tracker: Data-Driven Dialogue State Tracking.” <em>arXiv Preprint arXiv:1606.03777</em>.</p>
@@ -871,6 +903,9 @@ window.onload = function () {
 </div>
 <div id="ref-xu-hu-2018-end">
 <p>Xu, Puyang, and Qi Hu. 2018. “An End-to-End Approach for Handling Unknown Slot Values in Dialogue State Tracking.” In <em>Proceedings of the 56th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)</em>, 1448–57. Melbourne, Australia: Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/P18-1134" target="_blank" rel="noopener" class="uri">https://doi.org/10.18653/v1/P18-1134</a>.</p>
+</div>
+<div id="ref-ye2021slot">
+<p>Ye, Fanghua, Jarana Manotumruksa, Qiang Zhang, Shenghui Li, and Emine Yilmaz. 2021. “Slot Self-Attentive Dialogue State Tracking.” <em>arXiv Preprint arXiv:2101.09374</em>.</p>
 </div>
 <div id="ref-zeng2020multi">
 <p>Zeng, Yan, and Jian-Yun Nie. 2020. “Multi-Domain Dialogue State Tracking Based on State Graph.” <em>arXiv Preprint arXiv:2010.11137</em>.</p>
@@ -2462,8 +2497,8 @@ crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)
         <category>pytorch</category>
       </categories>
       <tags>
-        <tag>pytorch</tag>
         <tag>4me</tag>
+        <tag>pytorch</tag>
       </tags>
   </entry>
   <entry>
@@ -2827,9 +2862,11 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} &amp; \underbrace
       </tags>
   </entry>
   <entry>
-    <title>DST论文笔记（？-2019）</title>
+    <title>DST论文笔记（一）</title>
     <url>/posts/89f2cf08.html</url>
-    <content><![CDATA[<h1 id="trippy-a-triple-copy-strategy-for-value-independent-neural-dialog-state-tracking">TripPy: A Triple Copy Strategy for Value Independent Neural Dialog State Tracking</h1>
+    <content><![CDATA[<div class="note info"><p>本文记录最初至 2019 年的 DST 论文笔记。</p>
+</div>
+<h1 id="trippy-a-triple-copy-strategy-for-value-independent-neural-dialog-state-tracking">TripPy: A Triple Copy Strategy for Value Independent Neural Dialog State Tracking</h1>
 <div class="note primary"><p>模型的计算方法与 DS-DST 几乎完全一致，只不过补充了几点 slot gate 的类型。</p>
 <p>唯一不同的在特征提取这块。DS-DST 将 <code>CLS</code>，一个域槽对和对话上下文拼接起来。由于所有域槽对的词向量是不同的，则可以凭此遍历所有的域槽对，使得每次捕获到的特征都是根据域槽对的变化而变化。所以当使用 <code>CLS</code> 进行 slot gate 分类时，可以确定该 slot gate 是基于某一域槽对的，并且 <code>CLS</code> 表征总是不同的。<strong>但是这样的做法计算起来特别麻烦，因为如果想要向量化，必须复制 N 份上下文（N 为域槽对数量）</strong>。</p>
 <p>TripPy 应该是略微地改进了它，它移除了输入中的域槽对，其他基本不变，顶多是改变了一下上下文的输入顺序，这并无大碍。然后，TripPy 为每一个域槽对都设计了一个线性层用于计算 slot gate。这也能使得 <code>CLS</code> 的表征总是不同，因为线性层中的权重矩阵是不同的。<strong>但是这样貌似更加无法向量化了？</strong>反而，弄巧成拙？</p>
@@ -3499,7 +3536,7 @@ OPT(i) =
 </tr>
 </tbody>
 </table>
-<div class="tabs" id="dst论文对比"><ul class="nav-tabs"><li class="tab active"><a href="#dst论文对比-1">论文介绍</a></li><li class="tab"><a href="#dst论文对比-2">论文瑕瑜</a></li><li class="tab"><a href="#dst论文对比-3">重要思想</a></li><li class="tab"><a href="#dst论文对比-4">数据集评估对比</a></li></ul><div class="tab-content"><div class="tab-pane active" id="dst论文对比-1"><table>
+<div class="tabs" id="dst论文对比"><ul class="nav-tabs"><li class="tab active"><a href="#dst论文对比-1">论文介绍</a></li><li class="tab"><a href="#dst论文对比-2">论文瑕瑜</a></li><li class="tab"><a href="#dst论文对比-3">数据集评估对比</a></li></ul><div class="tab-content"><div class="tab-pane active" id="dst论文对比-1"><table>
 <colgroup>
 <col style="width: 50%" />
 <col style="width: 50%" />
@@ -3621,49 +3658,14 @@ OPT(i) =
 <td>斜体代表在以后的论文中此缺点大致已被解决</td>
 </tr>
 </tbody>
-</table></div><div class="tab-pane" id="dst论文对比-3"><table>
-<colgroup>
-<col style="width: 42%" />
-<col style="width: 31%" />
-<col style="width: 26%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>更新时间</th>
-<th>介绍</th>
-<th>难点</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>2020.3.29</td>
-<td>对当下难点的尝试</td>
-<td><strong>槽值</strong>：<strong>1）</strong>使用 Ptr 直接生成槽值</td>
-</tr>
-<tr class="even">
-<td>2020.3.29</td>
-<td>过渡的技术</td>
-<td>摒弃人工构建的词表：<strong>1）</strong>Zilka and Jurcicek (2015) 对低频槽值抽象化（比如对于低频槽值“jamaican”，可以将其替换为“#food1”），使得可以脱离词表；<strong>2）</strong>此后的技术大都使用<strong>词向量的技术</strong>脱离词表的束缚。</td>
-</tr>
-<tr class="odd">
-<td>2020.3.28</td>
-<td>传统难题的解决</td>
-<td><strong>1）</strong>Henderson et al., 2014d 使用 ASR 的结果作为 DST 的输入，而不是使用 SLU；<strong>2）</strong>Zilka and Jurcicek (2015) 结合了 ASR 的置信度分数；<strong>3）</strong>Henderson et al., 2014d 提出 delexicalisation 技术（这需要词表）。</td>
-</tr>
-<tr class="even">
-<td>--</td>
-<td><span style="display:block; width:5em"></td>
-<td>此处只记录突破性的思想</td>
-</tr>
-</tbody>
-</table></div><div class="tab-pane" id="dst论文对比-4"><p><a class="btn" href="#dst-dstc2"><i class="fa fa-"></i>DSTC2</a> <a class="btn" href="#dst-woz2.0"><i class="fa fa-"></i>WOZ 2.0</a> <a class="btn" href="#dst-multiwoz2.1"><i class="fa fa-"></i>MultiWOZ 2.1</a></p></div></div></div>
+</table></div><div class="tab-pane" id="dst论文对比-3"><p><a class="btn" href="#dst-dstc2"><i class="fa fa-"></i>DSTC2</a> <a class="btn" href="#dst-woz2.0"><i class="fa fa-"></i>WOZ 2.0</a> <a class="btn" href="#dst-multiwoz2.1"><i class="fa fa-"></i>MultiWOZ 2.1</a></p></div></div></div>
 <p>对话状态追踪（Dialogue State Tracking，DST）是 TODS 中一个重要的模块，同时它也是对话管理（Dialog Manager，DM）模块中的一部分，另一部分为对话策略学习（Dialog Policy Learning，DPL）。下面将简单地介绍 DST 的两种实现方式，具体的论文可参考上方提供的各个 Tab，或者参考其他的 task-oriented dialog system 综述。然后对 DST 任务中目前具有的各项挑战做一个总结。最后给出近年（到 2019 年为止）的相关工作。</p>
 <h2 id="独立模型与联合模型">独立模型与联合模型</h2>
-<p>DST 的工作是处理人机对话过程中的各种信息，并将其记录下来，简单来说也是一个 CRUD（增删改查） 的活。</p>
-<p>传统的做法是：接收 SLU 模块的输出，从而生成当前的对话状态。这类模型被称为<strong>独立模型</strong>。但是这种做法会导致信息误差的层级传播，这是因为 ASR 以及 SLU 模块都可能会存在信息误差。这些误差会被携带进 DST 模块，最后再一次地被 DST 扩大。</p>
-<p>2014 年左右开始，有研究工作开始采用<strong>联合模型</strong>，直接将 ASR 识别出的用户语句作为 DST 的输入，不再是 SLU 模块输出的语义表征。该模型同时执行了语音理解以及对话状态跟踪的功能，对于此方法而言，SLU 模块在名义上已经不再存在。</p>
+<p>DST 的目标是提取并监控用户语句中所蕴含的用户目标。根据是否联合训练 SLU 和 DST，可以分为独立模型和联合模型。</p>
+<p><strong>独立模型</strong>首先接收 SLU 模块的输出，然后生成当前的对话状态。由于 TODS 的管道式（pipeline）架构以及 ASR 和 SLU 模块可能会存在信息误差，这种做法会导致信息误差的层级传播。</p>
+<p><strong>联合模型</strong><span class="citation" data-cites="henderson2014word">(Henderson, Thomson, and Young 2014)</span>直接将 ASR 识别出的用户语句作为 DST 的输入，不再是 SLU 模块输出的语义表征。该模型同时执行了语音理解以及对话状态跟踪的功能，对于此方法而言，SLU 模块在名义上已经不再存在。</p>
 <div class="tabs" id="两种dst模型对比"><ul class="nav-tabs"><li class="tab"><a href="#两种dst模型对比-1">独立模型</a></li><li class="tab"><a href="#两种dst模型对比-2">联合模型</a></li></ul><div class="tab-content"><div class="tab-pane" id="两种dst模型对比-1"><ol type="1">
-<li>结合<em>从 SLU 模块提取出的语义</em>去估计当前的对话状态。（论文 07-14）[<a href="https://arxiv.org/pdf/1905.08743.pdf" target="_blank" rel="noopener">3</a>]</li>
+<li>结合<em>从 SLU 模块提取出的语义</em>去估计当前的对话状态。<!-- [@wu2019transferable] -->（论文 07-14）</li>
 </ol>
 <blockquote>
 <p>传统的 TODS pipeline 使用 SLU decoder 来检测在 ASR 输出中所表达的槽值对。然后下游 DST 模型将这些信息与过去的对话上下文结合起来更新 belief state。</p>
@@ -3675,7 +3677,7 @@ OPT(i) =
 </ol>
 <p>这些方法有一个<strong>共同的缺点</strong>：资源需求。要么是因为它们需要为每个槽值对学习独立的参数，要么是因为它们需要在单词级别上进行精细的人工标注。这阻碍了其扩展到更大、更现实的应用程序上 [<a href="https://arxiv.org/abs/1606.03777" target="_blank" rel="noopener" title="Neural Belief Tracker: Data-Driven Dialogue State Tracking">2</a>]。</p>
 </blockquote></div><div class="tab-pane" id="两种dst模型对比-2"><ol start="2" type="1">
-<li>或者与 SLU 模块联合学习（论文 14-17）[<a href="https://arxiv.xilesou.top/pdf/1905.08743.pdf" target="_blank" rel="noopener">3</a>]</li>
+<li>或者与 SLU 模块联合学习<!-- [@wu2019transferable] -->（论文 14-17）</li>
 </ol>
 <blockquote>
 <p>研究发现，以 ASR 预测为输入，以信念状态的产生为输出。联合 SLU 和 DST，有利于两个模型的推理。</p>
@@ -3697,52 +3699,47 @@ OPT(i) =
 <li>计算复杂度高</li>
 </ul>
 <h2 id="相关工作-1">相关工作</h2>
-<p>早年（最初-2014 年左右），由于深度学习以及基于深度学习的自然语言处理技术才刚开始起步，并没有词向量作为支撑，大多数模型都需要采用一个<strong>人工构建的词汇表</strong>，这是一个相当费时费力的工作。由于近几年的工作已经抛弃这一做法，所以可能有部分人都无法理解这个词汇表到底代表什么意思。接下来本文将举例介绍一下它。简单来说，它其实就是一个同义词表。</p>
-<p>例如某人告知系统，心仪的餐厅位置是“the center of town”，直观来说模型可以提取出槽值对“area=center”，但是对于值“center”，它还有其他的变体词汇，如 [center, downtown, central, city centre, midtown, town centre...] [<a href="https://arxiv.org/abs/1606.03777" target="_blank" rel="noopener" title="Neural Belief Tracker: Data-Driven Dialogue State Tracking">2</a>]。这就使得模型很难提取出确切的词汇，因此如上所述，系统需要维护一个人工构建的词汇表，将所有的同义词都替换为同一个单词。</p>
+<p>最初，由于深度学习以及基于深度学习的自然语言处理技术才刚开始起步，并没有词向量作为支撑，大多数模型都需要采用一个<strong>人工构建的词汇表</strong>，这相当费时费力。由于近几年的工作已经抛弃这一做法，所以可能有部分人都无法理解这个词汇表到底代表什么意思。以下本文将举例介绍。</p>
+<p>简单来说，它其实就是一个同义词表。例如某人告知系统，心仪的餐厅位置是“the center of town”，直观来说模型可以提取出槽值对“area=center”，但是对于值“center”，它还有其他的变体词汇，如 {center, downtown, central, city centre, midtown, town centre...}<span class="citation" data-cites="mrkvsic2016neural">(Mrkšić et al. 2016)</span>。这使得模型很难提取出精确的词汇，因此需要维护一个人工构建的词汇表，将所有的同义词都替换为相同词。</p>
 <h3 id="传统模型">传统模型</h3>
-<p>传统 DST 模型的做法大都结合 SLU 模块。一般的做法是：使用从 SLU 模块提取出的语义信息，例如意图以及槽值对，去估计当前的对话状态。 <blockquote class="blockquote-center">
+<p>传统 DST 模型的做法大都结合 SLU 模块，被称为独立模型。通常使用从 SLU 模块提取出的语义信息，例如意图以及槽值对，去估计当前的对话状态。由于时代过于久远，本节不做深度展开。</p>
+<blockquote class="blockquote-center">
 <i class="fa fa-quote-left"></i>
-<p>传统 DST 模型具有如下几项缺点：<strong>1）</strong>依赖人工制作的特征；<strong>2）</strong>需要复杂的特定于领域的词汇表（本体除外）；<strong>3）</strong>很难扩展以及灵活调整到新的领域 [<a href="https://arxiv.xilesou.top/pdf/1905.08743.pdf" target="_blank" rel="noopener" title="Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems">3</a>]；<strong>4）</strong>需要显式语义表征以及在 SLU 阶段可能存在信息误差 [<a href="https://www.aclweb.org/anthology/W14-4340.pdf" target="_blank" rel="noopener" title="Word-Based Dialog State Tracking with Recurrent Neural Networks">5</a>]，这些误差将传播到 DST 模型上，使得误差累积；<strong>5）</strong>并未解决上述 DST 模型所拥有的难点。</p>
+<p>传统 DST 模型具有如下几项缺点：<strong>1）</strong>依赖人工制作的特征；<strong>2）</strong>需要复杂的特定于领域的词汇表（本体除外）；<strong>3）</strong>很难扩展以及灵活调整到新的领域<!-- [@wu2019transferable] -->；<strong>4）</strong>需要显式语义表征以及在 SLU 阶段可能存在信息误差<!-- [@henderson2014word] -->，这些误差将传播到 DST 模型上，使得误差累积；<strong>5）</strong>并未解决上述 DST 模型所拥有的难点。</p>
 
 <i class="fa fa-quote-right"></i>
-</blockquote></p>
-<p>由于时代过于久远，本节不做深度展开。</p>
+</blockquote>
 <h3 id="可扩展性">可扩展性</h3>
-<p>近年（<strong>2014 年左右</strong>起）的工作试图<strong>1）</strong>摒弃复杂、高人力成本且难以维护的词汇表；<strong>2）</strong>直接从用户的语句中提取对话状态而不是从 SLU 的输出中。具体做法是使用词向量去匹配用户语句与槽值对之间的关系，例如对于单词“centre”和“center”都是“中心”的意思，虽然它们在单词的形态上不同，但是在词向量空间中的距离却很接近。这避免了显式语义表征的需要以及在 SLU 阶段可能的信息误差 [<a href="https://www.aclweb.org/anthology/W14-4340.pdf" target="_blank" rel="noopener">5</a>]。不过这些工作大都是在单领域之中。<strong>2018 年开始，渐渐地有人开始考虑多领域 DST 的问题。</strong></p>
-<p>根据《<a href="#难点未来的工作-1">难点/未来的工作</a>》章节提出的几条难点，以下，我们将分析几篇试图解决对应难点的论文。此外，由于槽值受到大家的广泛关注，我们将其分为单领域 DST 以及多领域 DST。由于其余的难题并未受到过多的关注，本文暂不对其进行总结。</p>
-<p><em>文章写毕之后更新（2020.10.05）：以下的绝大多数论文都只在解决“变化的槽值”问题。</em></p>
+<p>近年的工作试图<strong>1）</strong>摒弃复杂、高人力成本且难以维护的词汇表；<strong>2）</strong>直接从用户的语句中提取对话状态而不是从 SLU 的输出中。具体做法是使用词向量去匹配用户语句与槽值对之间的关系，例如对于单词“centre”和“center”都是“中心”的意思，虽然它们在单词的形态上不同，但是在词向量空间中的距离却很接近。这避免了显式语义表征的需要以及在 SLU 阶段可能的信息误差<span class="citation" data-cites="henderson2014word">(Henderson, Thomson, and Young 2014)</span>。不过这些工作大都是在单领域之中。</p>
+<p>2018 年左右，开始有工作考虑多领域 DST 的问题。</p>
+<p>根据《<a href="#难点未来的工作-1">难点/未来的工作</a>》章节提出的几条难点，以下，我们将分析几篇试图解决对应难点的论文。我们将截止 2020 年为止的论文划分为单领域 DST 以及多领域 DST，它们大都在解决“变化的槽值”这一问题。由于其余的难题并未受到过多的关注，本文暂不对其进行总结。</p>
 <h4 id="单领域dst">单领域DST</h4>
-<ol type="1">
-<li><a href="https://www.aclweb.org/anthology/W14-4340.pdf" target="_blank" rel="noopener"><span class="citation" data-cites="henderson2014word">(Henderson, Thomson, and Young 2014)</span></a> 使用 RNN 试图直接使用 ASR 的结果作为 DST 输入，这避免了<strong>显式语义表征的需要</strong>以及在 SLU 阶段<strong>潜在的信息误差</strong>。并且继续沿用作者同年发表的论文中的方法——使用 <strong>delexicalised features</strong>，但是该方法有一个弊端，需要使用一个人工构建的词汇表。比如说对于“i want chinese food”可以被替换为“<code>i want &lt;value&gt; &lt;slot&gt;</code>”，这样可以提升模型的泛化性，使得模型能够<strong>处理未见或低频的对话状态</strong>。但是该模型的<strong>缺点</strong>是需要为每一个槽位都训练一个模型，而后遍历所有槽位的模型，以此确定某槽值是否与用户的语句有关联。此外该论文还从用户语句和对话状态中提取出了 n-grams 特征。<strong>最后由于此论文发表的时间尚早，人工构建词汇表的问题并没有得到解决。</strong></li>
-<li><a href="https://arxiv.org/pdf/1507.03471.pdf" target="_blank" rel="noopener"><span class="citation" data-cites="zilka2015incremental">(Zilka and Jurcicek 2015)</span></a> 在输入用户语句时还结合了 ASR 的置信度分数，并且将生成对话状态中的槽值转为了多分类问题，<strong>不再需要人工构建的词表。</strong></li>
-<li><a href="https://www.aclweb.org/anthology/P17-1163/" target="_blank" rel="noopener"><span class="citation" data-cites="mrkvsic2016neural">(Mrkšić et al. 2016)</span></a> 提出了 Neural Belief Tracker（<strong>NBT</strong>），使用分布式表征表达的语义信息解决<strong>一义多词</strong>的问题。借助词向量的优势，可以使得回答“center”的语句也能匹配槽值对 (area=central)，这得以<strong>摆脱人工构建词表的束缚</strong>。由于该论文的做法是迭代所有预定义好的槽值对去和历史对话做匹配，故有一定缺陷。因为槽值对的组合无穷无尽，即使有穷，也会拥有大量的组合（这也导致<strong>参数在槽位之间无法共享</strong> [<a href="https://arxiv.org/pdf/1905.08743.pdf" target="_blank" rel="noopener" title="Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems">3</a>]），并且这种枚举的做法也无法处理从未见过的槽值。此外它<strong>还缺少一些扩展性</strong>，它的信念状态（belief state）更新机制在其他领域需要进行大量修改，所以无法跨领域<em>（这已经有人在解决了，详见论文 <a href="https://arxiv.xilesou.top/pdf/1805.11350.pdf" target="_blank" rel="noopener">Fully Statistical Neural Belief Tracking</a>）</em>。</li>
-<li><a href="http://aclweb.org/anthology/P18-1135" target="_blank" rel="noopener"><span class="citation" data-cites="zhong2018global">(Zhong, Xiong, and Socher 2018)</span></a> 使用 global-locally 自注意力机制改进了<strong>对低频槽值对的追踪</strong>。具体做法是，每一个槽位拥有一个局部编码器，编码用户的输入。除此之外，所有的槽位还共享同一个全局编码器，这意味着该编码器的参数被所有槽位共享。状态追踪的思想还是与 NBT 类似，将其分解为一个个的二元分类问题，即遍历所有槽值对组合，判断此槽值对是否在用户语句中被提及。它的缺点也与 NBT 类似，需要遍历所有的槽值对。此外它的另一个缺陷是需要每个槽位创建一个局部编码器，这很麻烦。</li>
-<li><em>另一方面，<a href="https://arxiv.org/pdf/1810.09587.pdf" target="_blank" rel="noopener">Ren et al. (2018)</a> 提出了 StateNet，它可以<strong>生成对话历史的表征</strong>并且作者<strong>与候选集中的槽值向量比对了距离</strong>。</em></li>
-<li><a href="https://www.aclweb.org/anthology/P18-1134/" target="_blank" rel="noopener"><span class="citation" data-cites="xu-hu-2018-end">(Xu and Hu 2018)</span></a> 将 <strong>index-based Pointer Network</strong> 用于不同的槽位，展示了<strong>指向未知槽值的能力</strong>。然而，许多模型都需要一个预定义的领域本体，并且模型<strong>只在单领域的设置（DSTC2）上进行评估</strong>。</li>
-<li><em><a href="https://arxiv.org/abs/1812.00899" target="_blank" rel="noopener">Nouri and Hosseini-Asl (2018)</a> 对 GLAD 改进，去除了局部编码器及其 self-attention 机制。</em></li>
-</ol>
+<p><a href="https://www.aclweb.org/anthology/W14-4340.pdf" target="_blank" rel="noopener"><span class="citation" data-cites="henderson2014word">(Henderson, Thomson, and Young 2014)</span></a> 使用 RNN 试图直接使用 ASR 的结果作为 DST 输入，这避免了<strong>显式语义表征的需要</strong>以及在 SLU 阶段<strong>潜在的信息误差</strong>。并且继续沿用作者同年发表的论文中的方法——使用 <strong>delexicalised features</strong>，但是该方法有一个弊端，需要使用一个人工构建的词汇表。比如说对于“i want chinese food”可以被替换为“<code>i want &lt;value&gt; &lt;slot&gt;</code>”，这样可以提升模型的泛化性，使得模型能够<strong>处理未见或低频的对话状态</strong>。但是该模型的<strong>缺点</strong>是需要为每一个槽位都训练一个模型，而后遍历所有槽位的模型，以此确定某槽值是否与用户的语句有关联。此外该论文还从用户语句和对话状态中提取出了 n-grams 特征。<strong>最后由于此论文发表的时间尚早，人工构建词汇表的问题并没有得到解决。</strong></p>
+<p><a href="https://arxiv.org/pdf/1507.03471.pdf" target="_blank" rel="noopener"><span class="citation" data-cites="zilka2015incremental">(Zilka and Jurcicek 2015)</span></a> 在输入用户语句时还结合了 ASR 的置信度分数，并且将生成对话状态中的槽值转为了多分类问题，<strong>不再需要人工构建的词表。</strong></p>
+<p><a href="https://www.aclweb.org/anthology/P17-1163/" target="_blank" rel="noopener"><span class="citation" data-cites="mrkvsic2016neural">(Mrkšić et al. 2016)</span></a> 提出了 Neural Belief Tracker（<strong>NBT</strong>），使用分布式表征表达的语义信息解决<strong>一义多词</strong>的问题。借助词向量的优势，可以使得回答“center”的语句也能匹配槽值对 (area=central)，这得以<strong>摆脱人工构建词表的束缚</strong>。由于该论文的做法是迭代所有预定义好的槽值对去和历史对话做匹配，故有一定缺陷。因为槽值对的组合无穷无尽，即使有穷，也会拥有大量的组合（这也导致<strong>参数在槽位之间无法共享</strong> <span class="citation" data-cites="wu2019transferable">(Wu et al. 2019)</span>），并且这种枚举的做法也无法处理从未见过的槽值。此外它<strong>还缺少一些扩展性</strong>，它的信念状态（belief state）更新机制在其他领域需要进行大量修改，所以无法跨领域<em>（这已经有人在解决了，详见论文 <a href="https://arxiv.xilesou.top/pdf/1805.11350.pdf" target="_blank" rel="noopener">Fully Statistical Neural Belief Tracking</a>）</em>。</p>
+<p><a href="http://aclweb.org/anthology/P18-1135" target="_blank" rel="noopener"><span class="citation" data-cites="zhong2018global">(Zhong, Xiong, and Socher 2018)</span></a> 使用 global-locally 自注意力机制改进了<strong>对低频槽值对的追踪</strong>。具体做法是，每一个槽位拥有一个局部编码器，编码用户的输入。除此之外，所有的槽位还共享同一个全局编码器，这意味着该编码器的参数被所有槽位共享。状态追踪的思想还是与 NBT 类似，将其分解为一个个的二元分类问题，即遍历所有槽值对组合，判断此槽值对是否在用户语句中被提及。它的缺点也与 NBT 类似，需要遍历所有的槽值对。此外它的另一个缺陷是需要每个槽位创建一个局部编码器，这很麻烦。</p>
+<p><em>另一方面，<a href="https://arxiv.org/pdf/1810.09587.pdf" target="_blank" rel="noopener">Ren et al. (2018)</a> 提出了 StateNet，它可以<strong>生成对话历史的表征</strong>并且作者<strong>与候选集中的槽值向量比对了距离</strong>。</em></p>
+<p><a href="https://www.aclweb.org/anthology/P18-1134/" target="_blank" rel="noopener"><span class="citation" data-cites="xu-hu-2018-end">(Xu and Hu 2018)</span></a> 将 <strong>index-based Pointer Network</strong> 用于不同的槽位，展示了<strong>指向未知槽值的能力</strong>。然而，许多模型都需要一个预定义的领域本体，并且模型<strong>只在单领域的设置（DSTC2）上进行评估</strong>。</p>
+<p><em><a href="https://arxiv.org/abs/1812.00899" target="_blank" rel="noopener">Nouri and Hosseini-Asl (2018)</a> 对 GLAD 改进，去除了局部编码器及其 self-attention 机制。</em></p>
 <h4 id="多领域dst">多领域DST</h4>
+<p><a href="https://arxiv.org/pdf/1712.10224.pdf" target="_blank" rel="noopener"><span class="citation" data-cites="rastogi2017scalable">(Rastogi, Hakkani-Tür, and Heck 2017)</span></a> <strong>1）</strong>提出一个多领域模型，它使用两层的 Bi-GRU。虽然该方法不再需要枚举所有的槽值对组合，而是转用一个候选集（因为某些槽位不可能出现在用户语句中，在预测时并不需要它），但它需要依赖 delexicalisation 来提取特征；<strong>2）</strong>由于该方法利用 SLU 模块提取槽值，进而将此槽值替换成一个特殊的符号，因此<strong>它不算是一个联合模型</strong>；<strong>3）</strong>另外它还是不可避免地需要遍历所有的槽位。对于槽值，由于有候选集，所以只需要枚举槽值即可；<strong>4）</strong>最后评分函数中的参数，每个槽位都有特定的一组，但是 GRU 中的参数都是为一整个领域定义的，因此它可以轻松地被迁移到新的领域之中。</p>
+<p>无论是传统模型，还是近年使用的深度学习模型，都不可避免地需要使用本体，其定义了槽值对。<a href="https://arxiv.org/pdf/1905.08743.pdf" target="_blank" rel="noopener" title="Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems"><span class="citation" data-cites="wu2019transferable">(Wu et al. 2019)</span></a> 认为一个完整的本体很难获取，即使存在这么一个本体，槽值对的数量也会极其的庞大。此外，由于 <span class="citation" data-cites="budzianowski2018multiwoz">(Budzianowski et al. 2018)</span> 提出了多领域对话数据集 MultiWOZ，将 DST 迁移到多领域内势在必行。<span class="citation" data-cites="wu2019transferable">(Wu et al. 2019)</span><strong>1）</strong>提出将原先的 (slot, value) 二元组修改为 (domain, slot, value) 的三元组形式，并且槽值不再预定义于本体之中，而是使用 Pointer Network 直接从用户的语句中提取而出；<strong>2）</strong>另外他们强调要共享知识，因为一个槽位可能会出现在多个领域之内；<strong>3）</strong>zero-shot。</p>
+<p><a href="https://arxiv.org/pdf/1910.03544.pdf" target="_blank" rel="noopener"><span class="citation" data-cites="zhang2019find">(Zhang et al. 2019)</span></a> 认为当前基于神经网络的对话系统大致可以分为两类：<strong>1）</strong>picklist-based；<strong>2）</strong>span-based。picklist-based 讲究从预定义的槽值中选取最可能的值，span-based 讲究使用 Ptr 直接从用户语句中生成槽值，它由 <a href="https://www.aclweb.org/anthology/P18-1134/" target="_blank" rel="noopener"><span class="citation" data-cites="xu-hu-2018-end">(Xu and Hu 2018)</span></a> 首次提出。作者认为二者各有优缺点，picklist-based 方法太麻烦，而 span-based 方法中，由于用户语言的多样性，有些槽值并不会出现在上下文中（如，回答有关“是否”的问题，它拥有一个包含两个元素的 picklist 就可以解决，不需要 Ptr 生成）。所以作者将二者结合起来，提出了 DS-DST。由于模型中会出现多个句子或者符号，比如说对于 picklist-based 方法，一个 picklist 中有多个槽值，那么该怎么处理它们？作者直接用了<strong>拼接</strong>的方式。用户的多轮对话语句，域槽对都是使用此方法。</p>
+<p><span class="citation" data-cites="heck2020trippy">(Heck et al. 2020)</span> 提出 TripPy，其包含三种拷贝机制，即<strong>1）</strong>Ptr；<strong>2）</strong>from System Inform Memory（SIM）；<strong>3）</strong>from Dialog State Memory（DSM）。TripPy 主要通过一个 Slot Gate 判断使用哪种拷贝机制，与 TRADE 等模型类似。具体来讲，模型的运行流程为：使用 BERT 对上下文建模，然后将 BERT 的特殊符号 <span class="math inline">\([CLS]\)</span> 输入 Slot Gate 进行五元分类，即 <span class="math inline">\(\{none, dontcare, span, inform, refer\}\)</span>，然后执行对应的拷贝机制。以下将介绍三种机制的具体实现。 <mark class="label danger">但是没说怎么追踪 system inform，猜测是生成自 DPL。</mark></p>
 <ol type="1">
-<li><a href="https://arxiv.org/pdf/1712.10224.pdf" target="_blank" rel="noopener"><span class="citation" data-cites="rastogi2017scalable">(Rastogi, Hakkani-Tür, and Heck 2017)</span></a> <strong>1）</strong>提出一个多领域模型，它使用两层的 Bi-GRU。虽然该方法不再需要枚举所有的槽值对组合，而是转用一个候选集（因为某些槽位不可能出现在用户语句中，在预测时并不需要它），但它需要依赖 delexicalisation 来提取特征；<strong>2）</strong>由于该方法利用 SLU 模块提取槽值，进而将此槽值替换成一个特殊的符号，因此<strong>它不算是一个联合模型</strong>；<strong>3）</strong>另外它还是不可避免地需要遍历所有的槽位。对于槽值，由于有候选集，所以只需要枚举槽值即可；<strong>4）</strong>最后评分函数中的参数，每个槽位都有特定的一组，但是 GRU 中的参数都是为一整个领域定义的，因此它可以轻松地被迁移到新的领域之中。</li>
-<li>无论是传统模型，还是近年使用的深度学习模型，都不可避免地需要使用本体，其定义了槽值对。<a href="https://arxiv.org/pdf/1905.08743.pdf" target="_blank" rel="noopener" title="Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems"><span class="citation" data-cites="wu2019transferable">(Wu et al. 2019)</span></a> 认为一个完整的本体很难获取，即使存在这么一个本体，槽值对的数量也会极其的庞大。此外，由于 <span class="citation" data-cites="budzianowski2018multiwoz">(Budzianowski et al. 2018)</span> 提出了多领域对话数据集 MultiWOZ，将 DST 迁移到多领域内势在必行。<span class="citation" data-cites="wu2019transferable">(Wu et al. 2019)</span><strong>1）</strong>提出将原先的 (slot, value) 二元组修改为 (domain, slot, value) 的三元组形式，并且槽值不再预定义于本体之中，而是使用 Pointer Network 直接从用户的语句中提取而出；<strong>2）</strong>另外他们强调要共享知识，因为一个槽位可能会出现在多个领域之内；<strong>3）</strong>zero-shot。</li>
-<li><a href="https://arxiv.org/pdf/1910.03544.pdf" target="_blank" rel="noopener"><span class="citation" data-cites="zhang2019find">(Zhang et al. 2019)</span></a> 认为当前基于神经网络的对话系统大致可以分为两类：<strong>1）</strong>picklist-based；<strong>2）</strong>span-based。picklist-based 讲究从预定义的槽值中选取最可能的值，span-based 讲究使用 Ptr 直接从用户语句中生成槽值，它由 <a href="https://www.aclweb.org/anthology/P18-1134/" target="_blank" rel="noopener"><span class="citation" data-cites="xu-hu-2018-end">(Xu and Hu 2018)</span></a> 首次提出。作者认为二者各有优缺点，picklist-based 方法太麻烦，而 span-based 方法中，由于用户语言的多样性，有些槽值并不会出现在上下文中（如，回答有关“是否”的问题，它拥有一个包含两个元素的 picklist 就可以解决，不需要 Ptr 生成）。所以作者将二者结合起来，提出了 DS-DST。<br />
-由于模型中会出现多个句子或者符号，比如说对于 picklist-based 方法，一个 picklist 中有多个槽值，那么该怎么处理它们？作者直接用了<strong>拼接</strong>的方式。用户的多轮对话语句，域槽对都是使用此方法。</li>
-<li><span class="citation" data-cites="heck2020trippy">(Heck et al. 2020)</span> 提出 TripPy，其包含三种拷贝机制，即<strong>1）</strong>Ptr；<strong>2）</strong>from System Inform Memory（SIM）；<strong>3）</strong>from Dialog State Memory（DSM）。TripPy 主要通过一个 Slot Gate 判断使用哪种拷贝机制，与 TRADE 等模型类似。具体来讲，模型的运行流程为：使用 BERT 对上下文建模，然后将 BERT 的特殊符号 <span class="math inline">\([CLS]\)</span> 输入 Slot Gate 进行五元分类，即 <span class="math inline">\(\{none, dontcare, span, inform, refer\}\)</span>，然后执行对应的拷贝机制。以下将介绍三种机制的具体实现。 <mark class="label danger">但是没说怎么追踪 system inform，猜测是生成自 DPL。</mark><br />
-<strong>1）</strong>Ptr 为 span-based 方法，即从用户的语句中直接提取槽值，具体公式略，可参考原文。此外，对于特殊的 Boolean Slot，他们的做法与 DS-DST 类似，DS-DST 采用 picklist-based 方法，而 TripPy 将 Slot Gate 改为四元分类，即 <span class="math inline">\(\{none, dontcare, true, false\}\)</span>。<strong>2）</strong>SIM 记录被系统提及到的槽值，如果用户引用了它，则直接从 SIM 中拷贝，而不使用 Ptr（例，“<font color='red'>xx酒店</font>不错”；“那就<font color='red'>它</font>了”）。<strong>3）</strong>DSM 用于共指解析（个人认为，SIM 也算共指解析）。假设槽位 A 的槽值已在上文中被提及，如果槽位 B 在当前轮被触发，且槽值与槽位 A 相同，那么直接引用槽位 A 的槽值，而不使用 Ptr（例，订餐的酒店地址和用餐后打的的乘车地址）。</li>
+<li>Ptr 为 span-based 方法，即从用户的语句中直接提取槽值，具体公式略，可参考原文。此外，对于特殊的 Boolean Slot，他们的做法与 DS-DST 类似，DS-DST 采用 picklist-based 方法，而 TripPy 将 Slot Gate 改为四元分类，即 <span class="math inline">\(\{none, dontcare, true, false\}\)</span>。</li>
+<li>SIM 记录被系统提及到的槽值，如果用户引用了它，则直接从 SIM 中拷贝，而不使用 Ptr（例，“<font color='red'>xx酒店</font>不错”；“那就<font color='red'>它</font>了”）。</li>
+<li>DSM 用于共指解析（个人认为，SIM 也算共指解析）。假设槽位 A 的槽值已在上文中被提及，如果槽位 B 在当前轮被触发，且槽值与槽位 A 相同，那么直接引用槽位 A 的槽值，而不使用 Ptr（例，订餐的酒店地址和用餐后打的的乘车地址）。</li>
 </ol>
 <h3 id="计算复杂度高">计算复杂度高</h3>
-<p><span class="citation" data-cites="Ren_2019">(Ren, Ni, and McAuley 2019)</span> 认为以往的 DST 模型依赖一个预定义的本体，其包含一系列的潜在的槽值对。这些模型在单领域上已经取得了不错的性能，但是它们都一直遭受着计算复杂度的问题。这个问题在多领域中将更为严重，因为多领域中的槽值对是单领域的数倍之多。<span class="citation" data-cites="Ren_2019">(Ren, Ni, and McAuley 2019)</span>提出以往算法的推理时间复杂度（Inference Time Complexity，<strong>ITC</strong>）为 <span class="math inline">\(O(mn)\)</span> 或 <span class="math inline">\(O(n)\)</span>，他们提出的模型则是 <span class="math inline">\(O(1)\)</span>。<strong>为了解决以上的问题</strong>，他们提出了 <strong>COMER</strong> 模型，抛弃了传统的模型架构，即将槽值的识别或者生成视为一个二元分类问题，而是转用了 seqseq 模型。</p>
+<p><span class="citation" data-cites="Ren_2019">(Ren, Ni, and McAuley 2019)</span> 认为以往的 DST 模型依赖一个预定义的本体，其包含一系列的潜在的槽值对。这些模型在单领域上已经取得了不错的性能，但是它们都一直遭受着计算复杂度的问题。由于多领域中的槽值对是单领域的数倍之多，这个问题在多领域中将更为严重。<span class="citation" data-cites="Ren_2019">(Ren, Ni, and McAuley 2019)</span>提出以往算法的推理时间复杂度（Inference Time Complexity，<strong>ITC</strong>）为 <span class="math inline">\(O(mn)\)</span> 或 <span class="math inline">\(O(n)\)</span>，他们提出的模型则是 <span class="math inline">\(O(1)\)</span>。<strong>为了解决以上的问题</strong>，他们提出了 <strong>COMER</strong> 模型，抛弃了传统的模型架构，即将槽值的识别或者生成视为一个二元分类问题，而是转用了 seqseq 模型。</p>
 <h2 id="论文笔记-1">论文笔记</h2>
 <p>详见 <a href="https://yan624.github.io/posts/89f2cf08.html">DST论文笔记（？-2019）</a>。</p>
 <h2 id="引用-1">引用</h2>
 <ol type="1">
 <li><a href="https://zhuanlan.zhihu.com/p/100843827" target="_blank" rel="noopener">任务导向型对话系统——对话管理模型研究最新进展</a></li>
-<li><a href="https://arxiv.org/abs/1606.03777" target="_blank" rel="noopener">Neural Belief Tracker: Data-Driven Dialogue State Tracking</a></li>
-<li><a href="https://arxiv.xilesou.top/pdf/1905.08743.pdf" target="_blank" rel="noopener">Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems</a></li>
 <li><a href="https://www.cnblogs.com/jiangxinyang/p/10794364.html" target="_blank" rel="noopener">任务型对话（二）—— DST（对话状态追踪）</a></li>
-<li><a href="https://www.aclweb.org/anthology/W14-4340.pdf" target="_blank" rel="noopener">Word-Based Dialog State Tracking with Recurrent Neural Networks</a></li>
 <li><a href="https://blog.csdn.net/weixin_44385551/article/details/103180371" target="_blank" rel="noopener">多领域多轮问答调研报告 3</a>：也是一个综述文章。</li>
-<li>文中已给出的论文链接</li>
 </ol>
 <h1 id="结果对比">结果对比</h1>
 <h2 id="slu模块结果对比">SLU模块结果对比</h2>
@@ -3998,7 +3995,7 @@ OPT(i) =
 			if(_min < 0) return 0;
 			else return Math.floor(_min);
 		},
-		max: 100
+		max: 60
 	},
     series: [
 		{name: 'TripPy', type: 'bar', data: [55.29],},
@@ -4063,7 +4060,7 @@ window.onload = function () {
 <p>Budzianowski, Pawel, Tsung-Hsien Wen, Bo-Hsiang Tseng, Inigo Casanueva, Stefan Ultes, Osman Ramadan, and Milica Gašić. 2018. “Multiwoz-a Large-Scale Multi-Domain Wizard-of-Oz Dataset for Task-Oriented Dialogue Modelling.” <em>arXiv Preprint arXiv:1810.00278</em>.</p>
 </div>
 <div id="ref-heck2020trippy">
-<p>Heck, Michael, Carel van Niekerk, Nurul Lubis, Christian Geishauser, Hsien-Chin Lin, Marco Moresi, and Milica Gašić. 2020. “TripPy: A Triple Copy Strategy for Value Independent Neural Dialog State Tracking.”</p>
+<p>Heck, Michael, Carel van Niekerk, Nurul Lubis, Christian Geishauser, Hsien-Chin Lin, Marco Moresi, and Milica Gašić. 2020. “Trippy: A Triple Copy Strategy for Value Independent Neural Dialog State Tracking.” <em>arXiv Preprint arXiv:2005.02877</em>.</p>
 </div>
 <div id="ref-henderson2014word">
 <p>Henderson, Matthew, Blaise Thomson, and Steve Young. 2014. “Word-Based Dialog State Tracking with Recurrent Neural Networks.” In <em>Proceedings of the 15th Annual Meeting of the Special Interest Group on Discourse and Dialogue (Sigdial)</em>, 292–99.</p>
@@ -10339,11 +10336,21 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
     <title>shiro角色和权限的用法</title>
     <url>/posts/9c1e4a2f.html</url>
     <content><![CDATA[<h3 id="shiro通配符的理解">shiro通配符的理解</h3>
-<p>shiro提供通配符，例如<code>*:*:*</code>的形式 意味着：第一部分代表一个域，第二部分代表操作，第三部分代表实例。 举个例子，现在有一个权限管理系统，称为<code>:upms</code>，可以写出权限<code>upms:update:coment</code>,这个权限值代表可以在upms这个域中对coment进行update操作。但是也不要思维定死，“域就是一个系统”。 再比如说一个权限值<code>upms:update:user</code>,代表可以更新一个用户的信息，这里的域的确是upms，但是并不是所有的用户都用这个域（事实上也不能用）。比如普通的用户也有权限更新自己的信息，那么可以再创建一个权限值比如“user:update:15900000000”,意味着一个用户可以更新15900000000这个账号的信息。</p>
+<p>shiro提供通配符，例如，<code>*:*:*</code>的形式意味着：第一部分代表一个域，第二部分代表操作，第三部分代表实例。</p>
+<p>举个例子，现在有一个权限管理系统，称为<code>:upms</code>，可以写出权限<code>upms:update:coment</code>,这个权限值代表可以在upms这个域中对coment进行update操作。但是也不要思维定死，“域就是一个系统”。</p>
+<p>再比如说一个权限值<code>upms:update:user</code>,代表可以更新一个用户的信息，这里的域的确是upms，但是并不是所有的用户都用这个域（事实上也不能用）。比如普通的用户也有权限更新自己的信息，那么可以再创建一个权限值比如“user:update:15900000000”,意味着一个用户可以更新15900000000这个账号的信息。</p>
 <h3 id="shiro角色和权限的理解">shiro角色和权限的理解</h3>
-<p>之前一直想角色和权限的用法差不多，为什么还要分角色和权限？ <a id="more"></a> 然后看了<a href="http://shiro.apache.org/permissions.html" target="_blank" rel="noopener">shiro官网的文档</a>貌似懂了一些。 官网说shiro一共有三种权限粒度，分为：资源级别，实例级别，属性级别（ <a href="http://shiro.apache.org/java-authorization-guide.html#levels-of-permission-granularity" target="_blank" rel="noopener">这三种粒度的描述页面</a>） 角色可以控制对资源的访问，比如对一个页面的访问。如果程序中已经设置了隐式角色，那么直接使用注解的形式可以很快速的控制这个网页的浏览权限。 而权限是对角色更细粒度的划分。比如现在有一个角色名为“admin”，他拥有对系统中所有权限的CRUD操作，现在需要临时给另外一个很普通的用户（比如只是一个user）查看权限的操作（R）。如果没有shiro提供的权限控制，<font color="red">那么只能给这个用户一个临时的“admin”角色，但是这样他的权限就太大了，因为“admin”是可以查看权限，但是他同样可以删除权限。</font></p>
+<p>之前一直想角色和权限的用法差不多，为什么还要分角色和权限？ <a id="more"></a> 然后看了<a href="http://shiro.apache.org/permissions.html" target="_blank" rel="noopener">shiro官网的文档</a>貌似懂了一些。</p>
+<p>官网说shiro一共有三种权限粒度，分为：资源级别，实例级别，属性级别（ <a href="http://shiro.apache.org/java-authorization-guide.html#levels-of-permission-granularity" target="_blank" rel="noopener">这三种粒度的描述页面</a>）</p>
+<p>角色可以控制对资源的访问，比如对一个页面的访问。如果程序中已经设置了隐式角色，那么直接使用注解的形式可以很快速的控制这个网页的浏览权限。</p>
+<p>而权限是对角色更细粒度的划分。比如现在有一个角色名为“admin”，他拥有对系统中所有权限的CRUD操作，现在需要临时给另外一个很普通的用户（比如只是一个user）查看权限的操作（R）。如果没有shiro提供的权限控制，<font color="red">那么只能给这个用户一个临时的“admin”角色，但是这样他的权限就太大了，因为“admin”是可以查看权限，但是他同样可以删除权限。</font></p>
 <p>上述是个人理解。</p>
-<p>又看了一遍才看懂了shiro官网的意思。 1. 资源级别指的是一个人可以干什么 2. 实例级别指的是一个人可以对什么干什么 3. 属性级别指的是一个人可以对什么上的什么干什么</p>
+<p>又看了一遍才看懂了shiro官网的意思。</p>
+<ol type="1">
+<li>资源级别指的是一个人可以干什么</li>
+<li>实例级别指的是一个人可以对什么干什么</li>
+<li>属性级别指的是一个人可以对什么上的什么干什么</li>
+</ol>
 <p>以我的博客网站为例，1代表一个人可以管理整个博客后台，2代表一个人可以对博客类别进行某些操作，3代表一个人可以对博客类别的某一个属性（比如博客类别的状态）进行某些操作</p>
 <p>2018-3-17更新，红色部分有错误，如果只给一个用户赋予权限而部赋予角色，用户还是访问不了该链接，因为shiro会执行角色过滤器和权限过滤器，所以用户必须同时满足角色和权限的需求。 所以给一个用户赋予临时权限的思路是错的。</p>
 <p>2018-3-17再次更新，突然角色这条思路不是全错，因为没有必要为一个链接同时赋予角色和权限，因为一个角色下囊括了多个权限，为何还要多次一举呢？我觉得如果一个链接需要同时赋予角色以及权限，那么肯定是因为该链接非常重要，不允许非该角色的用户操作。 综上，如果一个链接很重要，比如删除整个系统的功能，那么肯定是同时需要角色和权限的，而如果是一个很普通的操作，那么可以只赋予权限，而不赋予角色。</p>
