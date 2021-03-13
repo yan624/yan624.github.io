@@ -1028,7 +1028,7 @@ var _hmt = _hmt || [];
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-11 15:54:02" itemprop="dateModified" datetime="2021-03-11T15:54:02+08:00">2021-03-11</time>
+                <time title="修改时间：2021-03-13 23:44:52" itemprop="dateModified" datetime="2021-03-13T23:44:52+08:00">2021-03-13</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1046,14 +1046,14 @@ var _hmt = _hmt || [];
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>11k</span>
+              <span>13k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>10 分钟</span>
+              <span>12 分钟</span>
             </span>
 
         </div>
@@ -1066,69 +1066,12 @@ var _hmt = _hmt || [];
 
       
           <div class="note info"><p>本文记录 2020 年开始至今的 DST 论文笔记。</p>
-</div>
-<h1 id="slot-self-attentive-dialogue-state-tracking">Slot Self-Attentive Dialogue State Tracking</h1>
-<p><strong>现有工作的缺陷</strong>：虽然目前有部分模型考虑了槽位之间的关联，但是它们依靠大量的人力以及先验知识（<em>恕我直言，没看出来需要人力</em>）。此外，它们都仅利用了槽位名称的语义，忽略了槽值的共现信息。</p>
-<p><strong>研究目的</strong>：进一步加强槽位之间的关联。</p>
-<p><strong>研究目标/贡献</strong>：使用堆叠槽位自注意力（stacked slot self-attention module）学习槽位之间的相关性。</p>
-<p><strong>研究方法</strong>：1）在分析槽位之间的交互信息之后发现，某些槽位确实包含很强的关联，甚至在不同的领域中也存在，例如“taxi-destination”和“restaurant-food”。这验证了他们的动机，有必要同时考虑槽位名称和其对应槽值。2）slot-token attention 获取槽位表征。3）stacked slot self-attention 获取槽位关联。4）slot value matching 预测槽值。</p>
-<p><strong>模型架构</strong> 将 BERT 作为上下文编码器。虽然原文中描述了一些细节，例如只保留 512 个单词，此外由于这种做法会丢失信息，还在对话历史中加入了 non-none dialog state，但是思想比较简单，因此还是略。</p>
-<p>将 BERT 作为槽位和槽值表征的编码器，可以看出他们应该打算使用槽值匹配的方式填充槽位。由于思想比较简单，因此略。</p>
-<p>使用 slot-token attention 机制获取基于上下文的槽位表征，主要就是借助了 multi-attention 机制。略。</p>
-<h2 id="slot-self-attention">Slot Self-Attention</h2>
-<p>让 <span class="math inline">\(C_t = [c^t_{S_1}, c^t_{S_2}, \cdots, c^t_{S_J}]\)</span> 表示所有槽位的上下文表征，其中 <span class="math inline">\(c^t_{S_j}\)</span> 通过 slot-token attention 计算得到，<span class="math inline">\(t\)</span> 代表轮数。使 <span class="math inline">\(F^1_t = C_t\)</span>，那么</p>
-<p><span class="math display">\[
-\begin{aligned}
-    \tilde{F}^l_t = &amp; LayerNorm(F^l_t) \\
-    G^l_t = &amp; MultiHead(\tilde{F}^l_t, \tilde{F}^l_t, \tilde{F}^l_t) + \tilde{F}^l_t \\
-    \tilde{G}^l_t = &amp; LayerNorm(G^l_t) \\
-    F^{l+1}_t = &amp; FFN(\tilde{G}^l_t) + \tilde{G}^l_t
-\end{aligned}
-\]</span></p>
-<p><span class="math inline">\(F^{l+1}_t = [f^t_{S_1}, f^t_{S_2}, \cdots, f^t_{S_J}]\)</span> 为最终的组合槽位表征。由于 BERT 的输出被 normalized，因此将 <span class="math inline">\(f^t_{S_j}\)</span> 也归一化为 <span class="math inline">\(\mathcal{r}^t_{S_j} = LayerNorm(Linear(f^t_{S_j}))\)</span>。</p>
-<h2 id="slot-value-matching">Slot Value Matching</h2>
-<p>计算槽位表征和槽值表征之间的 L2 距离，在通过 softmax 之后，使用负对数似然函数优化。</p>
-<h1 id="multi-domain-dialogue-state-tracking-based-on-state-graph">Multi-Domain Dialogue State Tracking based on State Graph</h1>
-<div class="tabs" id="graph-dst"><ul class="nav-tabs"><li class="tab active"><a href="#graph-dst-1">总结</a></li><li class="tab"><a href="#graph-dst-2">论文笔记</a></li></ul><div class="tab-content"><div class="tab-pane active" id="graph-dst-1"><p><strong>现有工作的缺陷</strong>：1）以往工作只是简单地将前一轮的对话状态和当前语句拼接起来，然后使用 self-attention 建立它们的关联。但是 attention 机制也许会关注到一些不合理（spurious）的连接，导致进行错误的推理。2）CSFN-DST 与该文工作类似，但是它只考虑了一个边（edge）类型以及三个节点类型——领域（domain）、槽位（slot）、域槽对（domain, slot）。</p>
-<p><strong>研究目的</strong>：处理对话状态中元素的共现信息以及人类对话中过渡联系（transition relation）。<em>作者没细说过渡是什么意思，我认为是在对话过程中不同领域之间的切换。</em></p>
-<p><strong>研究目标/贡献</strong>：1）提出 dialog state graph；2）处理多关系图中有许多相异槽值的问题。</p>
-<p><strong>研究方法</strong>：1）图中领域和槽值相连，边为槽位。此外如果两个领域同时出现在对话状态中，则创建一条共现边（co-occurrence edge）以此连接二者。2）使用 relational-GCN 编码对话状态图。3）仅当域槽对有值填充时才被包括在图中。4）图中几乎所有槽值用“placeholder”填充。</p>
-<p><strong>总结</strong>：<strong>1）</strong>CSFN-DST 只是构建了普通的边，其代表领域和槽位之间的关联，而 Grapha-DST 的边特指槽位。<strong>2）</strong>经过消融实验验证了，状态图确实可以为基于 self-attention 的隐式图（implicit graph）提供补充信息。<strong>3）</strong>该文的做法比之 CSFN-DST 确实要先进不少，从表面上看二者是在做相同的工作，但是我认为实际上 CSFN-DST 编码的是协议图，而 Graph-DST 编码的是图结构的对话状态。<strong>4）</strong><em>这样构建图，是否做了太多的约束？导致数据处理困难？</em></p>
-<p><strong>模型架构</strong> 将 Transformer 最后几层的 Block 改为 graph-enhanced Transformer（该文实验中为最后一层）。其运算流程为（如图右侧所示）：将前一层的输出作为当前层 multi-head self-attention 的输入进而得到上下文输出，此时使用捕获的 [SLOT] 特征填充槽值，然后使用 relational-GCN 更新节点表征，并且将更新后的表征与 [slot] 融合，最后再继续执行 Transformer block 的其余流程。通过上述算法将 relational-GCN 融入 Transformer 中。<strong>需要注意的是，输入中也包含了对话状态，它们以串联的形式连接，其主要实现对话状态和当前语句的交互，而对话状态图主要捕获模式之间的联系。</strong>二者的作用不同。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/Graph-DST.png" alt="Graph-DST" /></p></div><div class="tab-pane" id="graph-dst-2"><div class="note info">
-<p>
-经过对 DST 中 open-vocabulary 分类的调研，发现现存的方法通常将前一轮的对话状态和对话历史拼接在一起，然后将其作为 BiTransformer 的输入。模型依靠 Transformer 的 self-attention 机制将对话状态和语句中的符号连接起来。但是 <strong>attention 机制也许会关注到一些不合理的连接，导致后续错误的推理</strong>。
-</p>
-<p>
-<strong>本文提出构造一个对话状态图（dialog state graph）</strong>，其中，来自上一轮对话状态中的领域（domain）、槽位（slot）以及槽值（value）被恰当地连接起来。如图 1 所示。使用 relational-GCN（关系图卷积网络）对其编码，它被融合进 Transformer 中。
-</p>
-</div>
-<p>可以将基于双向 self-attention 的方法视为图神经网络，其输入为每个字符都相连的图，无论它们在对话历史还是对话状态中，都可以通过 attention 被连接。<strong>这种图结构对 DST 很有帮助</strong>。例如，给定酒店“名称”和出租车“出发地”的图，attention 可以建立它们之间的关联，这意味着我们可以推断出出租车的出发地和酒店名称相同。<strong>然而 Transformer 所使用的图通常拥有大量节点，attention 可能会连接两个与对话无关的节点，从而导致错误推理</strong>。</p>
-<p>图需要同时表现对话历史中的关键实体和强连接（strong connection）。强连接不仅依赖于对话历史，还需要引导对话。例如，用户预订火车的时候，通常还会预订酒店，前者通常自然地会影响后者（自然过渡，natural transition）。因此应该在图中创建强连接。<strong><font color='red'>这种自然过渡在以往的研究常常被忽略</font></strong>。</p>
-<p>在构建图时，除了必要的节点（node）和边（edge），还创建了一种特殊的边。如果有两个领域同时出现在对话状态中，则创建一种共现边（co-occurrence edge）以此连接二者。</p>
-<p>为了有效地利用该图，需要解决以下两个问题：</p>
+<p>突然发现这文章有人看，这只是本人的论文笔记，对于任务完成型对话系统论文调研的文章，可以移驾：</p>
 <ol type="1">
-<li>为了聚合多关系图的节点信息，使用了 relational-GCN。</li>
-<li>对于将所有槽值表现在图中，是不切实际的（因为太多且有些没有被预定义）。为此，图中的槽值节点均被定义为一个占位符，并且不为它们创建嵌入，而是使用对应 Transformer 的隐藏状态输出，即 <span class="math inline">\([SLOT]\)</span> 位置。最终，将这种基于图的推理与常用的 Transformer encoder 融合了起来。</li>
+<li><a href="https://yan624.github.io/posts/e0902c9c.html">任务完成型对话系统论文调研（一）</a></li>
+<li><a href="https://yan624.github.io/posts/4ec51203.html">任务完成型对话系统论文调研（二）</a></li>
 </ol>
-<p><strong>以下将首先定义模型的形式表示，然后介绍对话状态图的结构，最后描述如何将对话状态图融入 Transformer。</strong></p>
-<h2 id="method">Method</h2>
-<p>定义一场 <span class="math inline">\(T\)</span> 轮的对话为 <span class="math inline">\(\{(D_1 S_1), \cdots, (D_T, S_T)\}\)</span>，其中 <span class="math inline">\(D_t\)</span> 代表第 <span class="math inline">\(t\)</span> 轮的系统语句和用户语句，<span class="math inline">\(S_t\)</span> 代表当前轮的对话状态。定义 <span class="math inline">\(S_t\)</span> 为 <span class="math inline">\((d_j, s_j, v_j)|1 \le j \le J\)</span>，其中 <span class="math inline">\(J\)</span> 为域槽对的总量，也就是说 <span class="math inline">\(S_t\)</span> 记录的是所有域槽对。如果域槽对的槽值为空，则 <span class="math inline">\(v_j\)</span> 为 <span class="math inline">\(NULL\)</span>。</p>
-<p>DST 的目标是给定 <span class="math inline">\(\{(D_1 S_1), \cdots, (D_{t-1}, S_{t-1}), (D_t)\}\)</span>，预测 <span class="math inline">\(S_t\)</span>。该文采用 SOM-DST 的思想，只输入 <span class="math inline">\(D_{t-1}, D_T, S_{T-1}\)</span>。由于该文只是关注状态图的利用，所以模型也采用 SOM-DST 的结构。下面先介绍一下 SOM-DST 的框架。</p>
-<h3 id="对话状态图的结构">对话状态图的结构</h3>
-<p><strong>给定 <span class="math inline">\(S_{t-1} = \{(d_j, s_j, v_j)|1 \le j \le J\}\)</span>，对于每个 <span class="math inline">\((d_j, s_j, v_j)\)</span>，使得领域节点 <span class="math inline">\(d_j\)</span> 和槽值节点 <span class="math inline">\(v_j\)</span>（placeholder）以槽位边（slot edge）相连</strong>。其中槽位边是单向的，共现边是双向的。<strong>每个领域节点以及槽位边都有它们对应的嵌入</strong>。</p>
-<p>以往的工作通常假设域槽对之间是无关的。该文则编码 domain-domain，slot-slot，domain-slot 的共现关系，这可能对 DST 有所帮助。此外，由于在 MultiWOZ 中存在过多的槽值（4500），因此该文假定它们没有被预定义，图中每个槽值节点几乎都是“placeholder”占位符。它不属于图节点嵌入，这些位置将会被动态地填入对应的 self-attention 输出，即 <span class="math inline">\([SLOT]\)</span> 位置。</p>
-<h3 id="graph-enhanced-transformer">Graph-enhanced Transformer</h3>
-<ol type="1">
-<li><mark class="label success">multi-head attn</mark> 如图 2 右侧所示，第 <span class="math inline">\(l-1\)</span> 层的输出 <span class="math inline">\(H^{t-1}=[h^{l-1}_{cls}, \cdots, h^{l-1}_{sl_J}, \cdots]\)</span> 被输入进 multi-head self-attention layer，那么上下文表征 <span class="math inline">\(C^l=[c^l_{cls}, \cdots, c^l_{sl_J}, \cdots]\)</span> 可以由以下公式计算得到： <span class="math display">\[
-\begin{align}
-C^l &amp; = Concat(head_1, \cdots, head_h) \\
-head_j &amp; = softmax(\frac{Q_j K^T_j}{\sqrt{d_k}}) V_j
-\end{align}
-\]</span></li>
-<li><mark class="label warning">relational-GCN</mark> 将得到的 <span class="math inline">\([SLOT]\)</span> 表征填充各槽值（而不是原有位置槽值的表征），其余节点用词向量初始化。（<em>个人觉得有点奇怪，直接填入 placeholder 的表征不就行了？</em>）接下来，使用relational-GCN 更新节点表征。例如，对于一个领域节点 <span class="math inline">\(d\)</span>： <span class="math display">\[g^l_d = f(W_S(e_d - e_S) + \sum_{(v, sl) \in N(d)} W_O(c^l_v - e_{sl}) + \sum_{d&#39; \in N(d)} (W_I + W_O)(e_{d&#39;} - e_{co}))
-\]</span></li>
-<li>fusion</li>
-</ol></div></div></div>
+</div>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/5286f9c6.html#more" rel="contents">
@@ -1307,7 +1250,7 @@ head_j &amp; = softmax(\frac{Q_j K^T_j}{\sqrt{d_k}}) V_j
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-11 15:52:37" itemprop="dateModified" datetime="2021-03-11T15:52:37+08:00">2021-03-11</time>
+                <time title="修改时间：2021-03-13 23:49:42" itemprop="dateModified" datetime="2021-03-13T23:49:42+08:00">2021-03-13</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1329,14 +1272,14 @@ head_j &amp; = softmax(\frac{Q_j K^T_j}{\sqrt{d_k}}) V_j
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>8.8k</span>
+              <span>9.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>8 分钟</span>
+              <span>9 分钟</span>
             </span>
 
         </div>
@@ -1351,7 +1294,7 @@ head_j &amp; = softmax(\frac{Q_j K^T_j}{\sqrt{d_k}}) V_j
           <div class="note info"><p>本文续<a href="https://yan624.github.io/posts/e0902c9c.html">任务完成型对话系统论文调研（一）</a>。</p>
 </div>
 <h1 id="引言">引言</h1>
-<p>任务完成型对话系统中的挑战比起之前已经有所改变。在 <span class="citation" data-cites="xu-hu-2018-end">(Xu and Hu 2018)</span> 提出使用 Ptr 缓解低频槽值提取的问题之后，两年之内涌现了许多有突破性的论文。<strong>变化的槽值</strong>已经不再是难点。
+<p>任务完成型对话系统中的挑战比起之前已经有所改变。在 <span class="citation" data-cites="xu-hu-2018-end">(Xu and Hu 2018)</span> 提出使用 Ptr 缓解低频槽值提取的问题之后，两年之内涌现了许多有突破性的论文。。。
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/4ec51203.html#more" rel="contents">
@@ -1575,7 +1518,7 @@ head_j &amp; = softmax(\frac{Q_j K^T_j}{\sqrt{d_k}}) V_j
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">232k</span>
+      	<span class="site-state-item-count">233.3k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>

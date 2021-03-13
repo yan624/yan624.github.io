@@ -458,17 +458,30 @@ S^j_i = Sim(G_j(F(X)), F(v^j_i)) \in \mathbb{R}^1
     <title>DST论文笔记（二）</title>
     <url>/posts/5286f9c6.html</url>
     <content><![CDATA[<div class="note info"><p>本文记录 2020 年开始至今的 DST 论文笔记。</p>
+<p>突然发现这文章有人看，这只是本人的论文笔记，对于任务完成型对话系统论文调研的文章，可以移驾：</p>
+<ol type="1">
+<li><a href="https://yan624.github.io/posts/e0902c9c.html">任务完成型对话系统论文调研（一）</a></li>
+<li><a href="https://yan624.github.io/posts/4ec51203.html">任务完成型对话系统论文调研（二）</a></li>
+</ol>
 </div>
+<a id="more"></a>
 <h1 id="slot-self-attentive-dialogue-state-tracking">Slot Self-Attentive Dialogue State Tracking</h1>
 <p><strong>现有工作的缺陷</strong>：虽然目前有部分模型考虑了槽位之间的关联，但是它们依靠大量的人力以及先验知识（<em>恕我直言，没看出来需要人力</em>）。此外，它们都仅利用了槽位名称的语义，忽略了槽值的共现信息。</p>
 <p><strong>研究目的</strong>：进一步加强槽位之间的关联。</p>
 <p><strong>研究目标/贡献</strong>：使用堆叠槽位自注意力（stacked slot self-attention module）学习槽位之间的相关性。</p>
 <p><strong>研究方法</strong>：1）在分析槽位之间的交互信息之后发现，某些槽位确实包含很强的关联，甚至在不同的领域中也存在，例如“taxi-destination”和“restaurant-food”。这验证了他们的动机，有必要同时考虑槽位名称和其对应槽值。2）slot-token attention 获取槽位表征。3）stacked slot self-attention 获取槽位关联。4）slot value matching 预测槽值。</p>
-<p><strong>模型架构</strong> 将 BERT 作为上下文编码器。虽然原文中描述了一些细节，例如只保留 512 个单词，此外由于这种做法会丢失信息，还在对话历史中加入了 non-none dialog state，但是思想比较简单，因此还是略。</p>
-<p>将 BERT 作为槽位和槽值表征的编码器，可以看出他们应该打算使用槽值匹配的方式填充槽位。由于思想比较简单，因此略。</p>
-<p>使用 slot-token attention 机制获取基于上下文的槽位表征，主要就是借助了 multi-attention 机制。略。</p>
+<div class="tabs" id="star"><ul class="nav-tabs"><li class="tab"><a href="#star-1">STAR</a></li></ul><div class="tab-content"><div class="tab-pane" id="star-1"><p><strong>模型架构</strong> 将 BERT 作为上下文编码器，可以得到上下文表征 <span class="math inline">\(H_t\)</span>。虽然原文中描述了一些细节，例如只保留 512 个单词，此外由于这种做法会丢失信息，还在对话历史中加入了 non-none dialog state，但是思想比较简单，因此还是略。</p>
+<p>将 BERT 作为槽位和槽值表征的编码器，分别可以得到槽位表征 <span class="math inline">\(h^{S_j}_{[CLS]}\)</span> 和槽值表征 <span class="math inline">\(h^{V^t_j}_{[CLS]}\)</span>。从中可以看出他们应该打算使用槽值匹配的方式填充槽位。由于思想比较简单，因此略。</p>
+<h2 id="slot-token-attention">Slot-Token Attention</h2>
+<p>使用 slot-token attention 机制获取基于上下文的槽位表征 <span class="math inline">\(c^t_{S_j}\)</span>，主要就是借助了 multi-attention 机制。公式为：</p>
+<p><span class="math display">\[
+\begin{aligned}
+r^t_{S_j} &amp; = MultiHead(h^{S_j}_{[CLS]}, h_t, h_t) \\
+c^t_{S_j} &amp; = W^r_2 ReLU(W^r_1 Concat(h^{S_j}_{[CLS]}, r^t_{S_j}) + b^r_1) + b^r_2
+\end{aligned}
+\]</span></p>
 <h2 id="slot-self-attention">Slot Self-Attention</h2>
-<p>让 <span class="math inline">\(C_t = [c^t_{S_1}, c^t_{S_2}, \cdots, c^t_{S_J}]\)</span> 表示所有槽位的上下文表征，其中 <span class="math inline">\(c^t_{S_j}\)</span> 通过 slot-token attention 计算得到，<span class="math inline">\(t\)</span> 代表轮数。使 <span class="math inline">\(F^1_t = C_t\)</span>，那么</p>
+<p>使 <span class="math inline">\(C_t = [c^t_{S_1}, c^t_{S_2}, \cdots, c^t_{S_J}]\)</span> 表示所有槽位的上下文表征，其中 <span class="math inline">\(c^t_{S_j}\)</span> 通过 slot-token attention 计算得到，<span class="math inline">\(t\)</span> 代表轮数。使 <span class="math inline">\(F^1_t = C_t\)</span>，那么</p>
 <p><span class="math display">\[
 \begin{aligned}
     \tilde{F}^l_t = &amp; LayerNorm(F^l_t) \\
@@ -479,14 +492,18 @@ S^j_i = Sim(G_j(F(X)), F(v^j_i)) \in \mathbb{R}^1
 \]</span></p>
 <p><span class="math inline">\(F^{l+1}_t = [f^t_{S_1}, f^t_{S_2}, \cdots, f^t_{S_J}]\)</span> 为最终的组合槽位表征。由于 BERT 的输出被 normalized，因此将 <span class="math inline">\(f^t_{S_j}\)</span> 也归一化为 <span class="math inline">\(\mathcal{r}^t_{S_j} = LayerNorm(Linear(f^t_{S_j}))\)</span>。</p>
 <h2 id="slot-value-matching">Slot Value Matching</h2>
-<p>计算槽位表征和槽值表征之间的 L2 距离，在通过 softmax 之后，使用负对数似然函数优化。</p>
+<p>计算槽位表征和槽值表征之间的 L2 距离，在通过 softmax 之后，使用负对数似然函数优化。</p></div></div></div>
+<h1 id="slot-attention-with-value-normalization-for-multi-domain-dialogue-state-tracking">Slot Attention with Value Normalization for Multi-domain Dialogue State Tracking</h1>
+<p><strong>现有工作的缺陷</strong>：1）传统 DST 很依赖预定义的本体，为了解决这一缺陷，今年也有人提出生成式方法和 span-baed 方法。2）由于描述的多样性，DST 需要的槽值无法在语句中找到。DS-DST 提出了使用双重策略实现 DST 获得了不错的效果，说明 ontology 的重要性。3）多领域携带大量槽位（MultiWOZ2.0- 有 30 多个槽位），因此 DST 需要更高效地填充槽位。</p>
+<p><strong>研究目的</strong>：1）优化槽位决定的结构（博主注：<em>这个槽位决定，可能指的是槽位填充，或者可以直接理解为 DST</em>）；2）灵活地使用本体，而不是舍弃它。</p>
+<p><strong>研究目标/贡献</strong>：</p>
 <h1 id="multi-domain-dialogue-state-tracking-based-on-state-graph">Multi-Domain Dialogue State Tracking based on State Graph</h1>
-<div class="tabs" id="graph-dst"><ul class="nav-tabs"><li class="tab active"><a href="#graph-dst-1">总结</a></li><li class="tab"><a href="#graph-dst-2">论文笔记</a></li></ul><div class="tab-content"><div class="tab-pane active" id="graph-dst-1"><p><strong>现有工作的缺陷</strong>：1）以往工作只是简单地将前一轮的对话状态和当前语句拼接起来，然后使用 self-attention 建立它们的关联。但是 attention 机制也许会关注到一些不合理（spurious）的连接，导致进行错误的推理。2）CSFN-DST 与该文工作类似，但是它只考虑了一个边（edge）类型以及三个节点类型——领域（domain）、槽位（slot）、域槽对（domain, slot）。</p>
+<p><strong>现有工作的缺陷</strong>：1）以往工作只是简单地将前一轮的对话状态和当前语句拼接起来，然后使用 self-attention 建立它们的关联。但是 attention 机制也许会关注到一些不合理（spurious）的连接，导致进行错误的推理。2）CSFN-DST 与该文工作类似，但是它只考虑了一个边（edge）类型以及三个节点类型——领域（domain）、槽位（slot）、域槽对（domain, slot）。</p>
 <p><strong>研究目的</strong>：处理对话状态中元素的共现信息以及人类对话中过渡联系（transition relation）。<em>作者没细说过渡是什么意思，我认为是在对话过程中不同领域之间的切换。</em></p>
 <p><strong>研究目标/贡献</strong>：1）提出 dialog state graph；2）处理多关系图中有许多相异槽值的问题。</p>
 <p><strong>研究方法</strong>：1）图中领域和槽值相连，边为槽位。此外如果两个领域同时出现在对话状态中，则创建一条共现边（co-occurrence edge）以此连接二者。2）使用 relational-GCN 编码对话状态图。3）仅当域槽对有值填充时才被包括在图中。4）图中几乎所有槽值用“placeholder”填充。</p>
 <p><strong>总结</strong>：<strong>1）</strong>CSFN-DST 只是构建了普通的边，其代表领域和槽位之间的关联，而 Grapha-DST 的边特指槽位。<strong>2）</strong>经过消融实验验证了，状态图确实可以为基于 self-attention 的隐式图（implicit graph）提供补充信息。<strong>3）</strong>该文的做法比之 CSFN-DST 确实要先进不少，从表面上看二者是在做相同的工作，但是我认为实际上 CSFN-DST 编码的是协议图，而 Graph-DST 编码的是图结构的对话状态。<strong>4）</strong><em>这样构建图，是否做了太多的约束？导致数据处理困难？</em></p>
-<p><strong>模型架构</strong> 将 Transformer 最后几层的 Block 改为 graph-enhanced Transformer（该文实验中为最后一层）。其运算流程为（如图右侧所示）：将前一层的输出作为当前层 multi-head self-attention 的输入进而得到上下文输出，此时使用捕获的 [SLOT] 特征填充槽值，然后使用 relational-GCN 更新节点表征，并且将更新后的表征与 [slot] 融合，最后再继续执行 Transformer block 的其余流程。通过上述算法将 relational-GCN 融入 Transformer 中。<strong>需要注意的是，输入中也包含了对话状态，它们以串联的形式连接，其主要实现对话状态和当前语句的交互，而对话状态图主要捕获模式之间的联系。</strong>二者的作用不同。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/Graph-DST.png" alt="Graph-DST" /></p></div><div class="tab-pane" id="graph-dst-2"><div class="note info">
+<div class="tabs" id="graph-dst"><ul class="nav-tabs"><li class="tab"><a href="#graph-dst-1">架构图</a></li><li class="tab"><a href="#graph-dst-2">Graph-DST</a></li></ul><div class="tab-content"><div class="tab-pane" id="graph-dst-1"><p><strong>模型架构</strong> 将 Transformer 最后几层的 Block 改为 graph-enhanced Transformer（该文实验中为最后一层）。其运算流程为（如图右侧所示）：将前一层的输出作为当前层 multi-head self-attention 的输入进而得到上下文输出，此时使用捕获的 [SLOT] 特征填充槽值，然后使用 relational-GCN 更新节点表征，并且将更新后的表征与 [slot] 融合，最后再继续执行 Transformer block 的其余流程。通过上述算法将 relational-GCN 融入 Transformer 中。<strong>需要注意的是，输入中也包含了对话状态，它们以串联的形式连接，其主要实现对话状态和当前语句的交互，而对话状态图主要捕获模式之间的联系。</strong>二者的作用不同。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/Graph-DST.png" alt="Graph-DST" /></p></div><div class="tab-pane" id="graph-dst-2"><div class="note info">
 <p>
 经过对 DST 中 open-vocabulary 分类的调研，发现现存的方法通常将前一轮的对话状态和对话历史拼接在一起，然后将其作为 BiTransformer 的输入。模型依靠 Transformer 的 self-attention 机制将对话状态和语句中的符号连接起来。但是 <strong>attention 机制也许会关注到一些不合理的连接，导致后续错误的推理</strong>。
 </p>
@@ -521,16 +538,15 @@ head_j &amp; = softmax(\frac{Q_j K^T_j}{\sqrt{d_k}}) V_j
 \]</span></li>
 <li>fusion</li>
 </ol></div></div></div>
-<a id="more"></a>
 <h1 id="dialogue-state-tracking-with-explicit-slot-connection-modeling">Dialogue State Tracking with Explicit Slot Connection Modeling</h1>
-<div class="tabs" id="dst-sc"><ul class="nav-tabs"><li class="tab active"><a href="#dst-sc-1">总结</a></li><li class="tab"><a href="#dst-sc-2">论文笔记</a></li></ul><div class="tab-content"><div class="tab-pane active" id="dst-sc-1"><ol type="1">
+<ol type="1">
 <li>现有工作的缺陷：</li>
 <li>研究目的：</li>
 <li>研究目标/贡献：-</li>
 <li>研究方法：</li>
 <li><strong>总结</strong>：</li>
 </ol>
-<p><strong>模型结构</strong> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/DST-SC模型架构.png" alt="DST-SC模型架构" /></p></div><div class="tab-pane" id="dst-sc-2"><div class="note info">
+<div class="tabs" id="dst-sc"><ul class="nav-tabs"><li class="tab"><a href="#dst-sc-1">架构图</a></li><li class="tab"><a href="#dst-sc-2">DST-SC</a></li></ul><div class="tab-content"><div class="tab-pane" id="dst-sc-1"><p><strong>模型结构</strong> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/DST-SC模型架构.png" alt="DST-SC模型架构" /></p></div><div class="tab-pane" id="dst-sc-2"><div class="note info">
 <p>
 在多领域场景下，用户经常通过省略（ellipsis）、指代（reference）来表达某些其它领域槽位提到的槽值。为了解决这种现象，我们提出了 DST-SC（Dialogue State Tracking with Slot Connections）模型。
 </p>
@@ -546,11 +562,27 @@ head_j &amp; = softmax(\frac{Q_j K^T_j}{\sqrt{d_k}}) V_j
 <p>不过我个人不怎么喜欢这种 encoder-decoder 的做法。在我的实验中，我还是使用了 TripPy 的做法。</p></div></div></div>
 <h1 id="credit-coarse-to-fine-sequence-generation-for-dialogue-state-tracking">CREDIT: Coarse-to-Fine Sequence Generation for Dialogue State Tracking</h1>
 <p>提出了 CoaRsE-to-fine DIalogue state Tracking(CREDIT) 模型。以前的方法通常将对话状态定义为独立的三元组 <span class="math inline">\((domain, slot, value)\)</span>，而本文将 DST 转化为序列生成问题。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/CREDIT模型架构.png" alt="CREDIT模型架构" /></p>
+<h1 id="a-contextual-hierarchical-attention-networkwith-adaptive-objective-for-dialogue-state-tracking">A Contextual Hierarchical Attention Networkwith Adaptive Objective for Dialogue State Tracking</h1>
+<p><strong>现有工作的缺陷</strong>：1）传统 DST 模型通常只使用当前轮语句决定对话状态，这忽视了对对话历史的使用（<em>博主注：现在，2020 年中期之后，又有一些工作再一次地想要舍弃对话历史，因为这会导致模型运行速度下降</em>）。2）没有考虑 slot imbalance 的问题。</p>
+<p><strong>研究目的</strong>：1）更全面地捕获对话历史中的信息；2）处理槽位不平衡为题。</p>
+<p><strong>研究目标/贡献</strong>：1）提出 contextual hierarchical attention network 以全面地利用来自对话历史的相关信息。2）使用 state transition prediction task 进一步增强 DST。3）设计一个适应性优化目标通过动态调整每个槽位的权重，以解决 slot imbalance 的问题。</p>
+<div class="tabs" id="chan-dst"><ul class="nav-tabs"><li class="tab"><a href="#chan-dst-1">CHAN-DST</a></li></ul><div class="tab-content"><div class="tab-pane" id="chan-dst-1"><h2 id="contextual-hierarchical-attention-network">Contextual Hierarchical Attention Network</h2>
+<p>为了更好地从对话历史中获得相关上下文，设计了 Slot-Word Attention 和 Slot-Turn Attention 分别查询相关关键字和相关轮对话。</p>
+<p><strong>Sentence Encoder.</strong> 使用可微调 BERT 获得语句表征 <span class="math inline">\(h_t = BERT_{finetue}([R_t; U_t])\)</span>，使用固定 BERT 分别获取槽位 <span class="math inline">\(s\)</span> 表征 <span class="math inline">\(h^s = BERT_{fixed}(s)\)</span> 和槽值 <span class="math inline">\(v_t\)</span> 表征 <span class="math inline">\(v_t = BERT_{fixed}(v_t)\)</span>。值得注意的是，在获取对话历史表征时，他们没有直接拼接所有语句，而是使用 <span class="math inline">\(t\)</span> 个可微调 BERT 以此分别独立地计算 <span class="math inline">\(t\)</span> 轮的语句对。</p>
+<p><strong>Slot-Word Attention.</strong> slot-word attention 是 multi-head attention。对于每个槽位 <span class="math inline">\(s\)</span>，slot-word attention 从每轮 <span class="math inline">\(t\)</span> 中总结 word-level slot-related 信息，并将其转化为 <span class="math inline">\(d\)</span> 维向量 <span class="math inline">\(c^{word}_{s,t} = MultiHead(h^s, h_t, h_t)\)</span>。</p>
+<p><strong>Context Encoder.</strong> context encoder 是单向 transformer encoder，被用于建立 word-level slot-related 信息之间的上下文关系，这些信息分别来自 <span class="math inline">\(\{1, \cdots, t\}\)</span> 轮。context encoder 由 <span class="math inline">\(N\)</span> 个相同层堆叠而成。最终可以得到 <span class="math inline">\(c^{ctx}_{s, \le t}\)</span>。</p>
+<p><strong>Slot-Turn Attention.</strong> 又是一个 multi-head attention，将 <span class="math inline">\(h^s\)</span> 和 <span class="math inline">\(c^{ctx}_{s, \le t}\)</span> 作为输入，略。</p>
+<p><strong>Global-Local Fusion Gate.</strong> 将来自 Slot-Word Attention 和 Slot-Turn Attention 的最后一轮信息动态地组合成 <span class="math inline">\(c^{gate}_{s,t}\)</span>，在归一化后得到 <span class="math inline">\(o_{s,t}\)</span>。</p>
+<p>最后使用 L2 norm 计算 <span class="math inline">\(o_{s,t}\)</span> 和 <span class="math inline">\(h^v_t\)</span> 之间的距离，判断是否将槽值 <span class="math inline">\(v_t\)</span> 填充槽位 <span class="math inline">\(s\)</span>。（<em>博主注：为什么不直接做多元分类呢？</em>）</p>
+<h2 id="state-transition-prediction">State Transition Prediction</h2>
+<p>为了更好地捕获相关上下文，进一步提出了辅助的二元分类任务，与 DST 联合训练，即 State Transition Prediction(STP)，它预测当前槽值相较于前一轮是否被更新。</p>
+<h2 id="adaptive-objective">Adaptive Objective</h2>
+<p>略。</p></div></div></div>
 <h1 id="sas-dialogue-state-tracking-via-slot-attention-and-slot-information-sharing">SAS: Dialogue State Tracking via Slot Attention and Slot Information Sharing</h1>
 <p><strong>现有工作的缺陷</strong>：由于对话历史中包含复杂且过量的信息，现有模型很难处理这些长距离交互上下文。</p>
 <p><strong>研究目的</strong>：1）减少上下文中多余信息的干扰；2）改进长对话上下文追踪。</p>
 <p><strong>研究目标/贡献</strong>：1）提出 Slot Attention 以此从原始对话中学习一组特定槽位的特征；2）提出 Slot Information Sharing 以此整合上述的特征。</p>
-<p><strong>模型架构</strong> 上下文编码器使用的是 BiGRU，没什么好讲的，略。</p>
+<div class="tabs" id="sas"><ul class="nav-tabs"><li class="tab"><a href="#sas-1">SAS</a></li></ul><div class="tab-content"><div class="tab-pane" id="sas-1"><p><strong>模型架构</strong> 上下文编码器使用的是 BiGRU，没什么好讲的，略。</p>
 <h2 id="slot-attention">Slot Attention</h2>
 <p>在一场对话中，用户可能会请求多项服务，例如订餐、观光、打车。<strong>当用户所提及的信息相似时，模型提取出的信息可能对预测有害，例如餐厅和出租车都提到了时间（time）和预定人数（people）。</strong>为了分离嘈杂的对话历史中的关键特征，构建了 slot attention。（<em>博主注：引起这一问题主要是因为对话历史过长，导致用户表达的信息被模型错误使用。然而，目前有部分模型逐渐舍弃了对话历史，只将当前轮对话输入模型。这避免了上述问题，同时还能取得不错的表现</em>）</p>
 <p>slot attention 能够仅从历史信息中为每个槽位提取出有用的信息。其工作流程主要为：1）首先使用 GRU 获取槽位的表征，主要是简单地将槽位的序列输入 GRU，取最后一个时间步的输出 <span class="math inline">\(sh^{enc}_{j_{|N|}}\)</span> 作为槽位 <span class="math inline">\(s_j\)</span> 的表征，<span class="math inline">\(|N|\)</span> 为槽位序列的长度。2）然后通过槽位信息 <span class="math inline">\(sh^{enc}_{j_{|N|}}\)</span> 和对话历史 <span class="math inline">\(H_t=[h^{enc}_1, \cdots, h^{enc}_{|X_t|}]\)</span> 之间的注意力交互，从而获得上下文向量 <span class="math inline">\(c_j\)</span>：</p>
@@ -568,14 +600,14 @@ c_j = &amp; \sum^{|X_t|}_{i=1} sc^j_i h^{enc}_i
 <p><span class="math display">\[int_j = \sum^J_{i=1} c_i \cdot M_{ij}, M_{ij} \in {0, 1}
 \]</span></p>
 <p>说白了就是一个矩阵相乘的操作，这个操作聚合了相关槽位的特征。（<em>博主注：感觉思想较为简单，但是有启发意义。</em>）</p>
-<p>解码步骤略，应该与 TRADE 类似。</p>
+<p>解码步骤略，应该与 TRADE 类似。</p></div></div></div>
 <h1 id="efficient-context-and-schema-fusion-networks-for-multi-domain-dialogue-state-tracking">Efficient Context and Schema Fusion Networks for Multi-Domain Dialogue State Tracking</h1>
-<div class="tabs" id="csfn-dst"><ul class="nav-tabs"><li class="tab active"><a href="#csfn-dst-1">总结</a></li><li class="tab"><a href="#csfn-dst-2">论文笔记</a></li></ul><div class="tab-content"><div class="tab-pane active" id="csfn-dst-1"><p><strong>现有工作的缺陷</strong>：由于<strong>域槽对数量</strong>以及<strong>对话长度</strong>的增加，数据稀疏性（data sparsity）的问题成了多领域 DST 的主要障碍。</p>
+<p><strong>现有工作的缺陷</strong>：由于<strong>域槽对数量</strong>以及<strong>对话长度</strong>的增加，数据稀疏性（data sparsity）的问题成了多领域 DST 的主要障碍。</p>
 <p><strong>研究目的</strong>：1）缓解数据稀疏性的问题；2）考虑不同域槽对之间的关联（<em>算是对 schema 进行了初步的编码</em>）。</p>
 <p><strong>研究目标/贡献</strong>：1）使用前一轮对话状态表示对话历史；2）提出模式图，并对其编码。</p>
 <p><strong>研究方法</strong>：1）提出了 Schema Graph 并实现了一个基本模型 context and schema fusion networks (CSFN-DST)，其主要修改了 Transformer 的 Multi-head Attention 机制。具体只是使用一个邻接矩阵实现。</p>
 <p><strong>总结</strong>：<strong>1）</strong>可以将 CSFN-DST 视为一种全新的域槽对表示方式，不过我觉得这好像没有利用到知识图谱的优势。此外虽然作者列出了 Graph Neural Network 的相关工作，但是并没有使用 GNN 去提取特征。<strong>2）</strong>虽然最后他们讨论了在输入中是否需要更多上下文信息的问题，但是他们在消融实验中只是额外加入上一轮的对话语句。个人认为这个实验不足以证明论文中提到的观点，即只使用当前轮的系统语句、用户语句和上一轮的对话状态是有效的。这是因为上下文信息太少了，起码再多加几轮，然后做一个对比。<strong>3）该文作者与我的想法类似，也认为 dontcare 这个槽位是比较有挑战的子任务。</strong></p>
-<p><strong>模型结构</strong> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/CSFN-DST模型架构.png" alt="CSFN-DST模型架构" /></p></div><div class="tab-pane" id="csfn-dst-2"><div class="note info">
+<div class="tabs" id="csfn-dst"><ul class="nav-tabs"><li class="tab"><a href="#csfn-dst-1">架构图</a></li><li class="tab"><a href="#csfn-dst-2">CSFN-DST</a></li></ul><div class="tab-content"><div class="tab-pane" id="csfn-dst-1"><p><strong>模型结构</strong> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/CSFN-DST模型架构.png" alt="CSFN-DST模型架构" /></p></div><div class="tab-pane" id="csfn-dst-2"><div class="note info">
 <p>
 在多领域 DST 中，由于候选状态数量以及对话长度的增加，数据稀疏性的问题成了一个主要的障碍。为了高效地编码对话上下文，我们使用了前一轮<font style="color:red"><strong>预测出的</strong></font>对话状态以及当前轮的对话语句作为 DST 的输入。（博主注：数据的稀疏性指的是候选状态过多但是大部分是无意义的；对话长度增加但是大部分语句也是无意义的。为了处理这一问题，该文打算使用上一轮的对话状态近似对话上下文）
 </p>
@@ -617,7 +649,7 @@ c_j = &amp; \sum^{|X_t|}_{i=1} sc^j_i h^{enc}_i
 <p><strong>现有工作的缺陷</strong>：1）传统 fixed-vocabulary DST 方法需要完整的本体，首先通常很难预先获取本体，其次无法处理未知槽值的问题，最后这种方法无法扩展到大规模的本体上。2）为了解决上述问题，最近有研究专注于 open-vocabulary DST 方法，虽然相对灵活且有能力处理未知槽值问题，但是大多数的方法需要在每一轮从头预测对话状态，这不够高效。</p>
 <p><strong>研究目的</strong>：<em>好像没有说的很明白</em>。</p>
 <p><strong>研究目标/贡献</strong>：1）借助上一轮的对话状态，现在模型只需要预测当前轮的子集槽位即可，不需要从头开始预测对话状态。2）提出了状态操作预测。</p>
-<p><strong>模型结构</strong> 首先，在每轮 <span class="math inline">\(t\)</span>，state operation predictor 都会选择一个状态操作 <span class="math inline">\(r^j_t \in \mathcal{O} = {CARRYOVER, DELETE, DONTCARE, UPDATE}\)</span>，然后为每个 <span class="math inline">\(S^j\)</span> 填充其对应的槽值 <span class="math inline">\(V^j_t\)</span>。当操作执行时，槽值要么保持不变（<em>CARRYOVER</em>），要么做出改变（<em>DELETE, DONTCARE, UPDATE</em>）：</p>
+<div class="tabs" id="som-dst"><ul class="nav-tabs"><li class="tab"><a href="#som-dst-1">SOM-DST</a></li></ul><div class="tab-content"><div class="tab-pane" id="som-dst-1"><p><strong>模型结构</strong> 首先，在每轮 <span class="math inline">\(t\)</span>，state operation predictor 都会选择一个状态操作 <span class="math inline">\(r^j_t \in \mathcal{O} = {CARRYOVER, DELETE, DONTCARE, UPDATE}\)</span>，然后为每个 <span class="math inline">\(S^j\)</span> 填充其对应的槽值 <span class="math inline">\(V^j_t\)</span>。当操作执行时，槽值要么保持不变（<em>CARRYOVER</em>），要么做出改变（<em>DELETE, DONTCARE, UPDATE</em>）：</p>
 <p><span class="math display">\[
 V^j_t = \begin{cases}
 V^j_{t-1} &amp; \text{if} \, r^j_t = CARRYOVER \\
@@ -634,7 +666,7 @@ v &amp; \text{if} \, r^j_t = UPDATE
 <p>本文提出的 Slot Value Generator 与其他的生成器不同，它为 <span class="math inline">\(J&#39;_t\)</span> 个槽位生成槽值，而不是 <span class="math inline">\(J\)</span>，通常 <span class="math inline">\(J&#39;_t \ll J\)</span>。因此能更有效得计算。</p>
 <p>生成步骤与 TRADE 类似，就不赘述了。</p>
 <h2 id="优化函数">优化函数</h2>
-<p>比较简单，具体就不介绍了。但是有一点需要指出，他们使用了将领域预测作为额外的任务，期望能够使模型学习到槽位操作与领域转换之间的关联。</p>
+<p>比较简单，具体就不介绍了。但是有一点需要指出，他们使用了将领域预测作为额外的任务，期望能够使模型学习到槽位操作与领域转换之间的关联。</p></div></div></div>
 ]]></content>
       <categories>
         <category>paper</category>
@@ -687,7 +719,7 @@ v &amp; \text{if} \, r^j_t = UPDATE
     <content><![CDATA[<div class="note info"><p>本文续<a href="https://yan624.github.io/posts/e0902c9c.html">任务完成型对话系统论文调研（一）</a>。</p>
 </div>
 <h1 id="引言">引言</h1>
-<p>任务完成型对话系统中的挑战比起之前已经有所改变。在 <span class="citation" data-cites="xu-hu-2018-end">(Xu and Hu 2018)</span> 提出使用 Ptr 缓解低频槽值提取的问题之后，两年之内涌现了许多有突破性的论文。<strong>变化的槽值</strong>已经不再是难点。 <a id="more"></a></p>
+<p>任务完成型对话系统中的挑战比起之前已经有所改变。在 <span class="citation" data-cites="xu-hu-2018-end">(Xu and Hu 2018)</span> 提出使用 Ptr 缓解低频槽值提取的问题之后，两年之内涌现了许多有突破性的论文。。。 <a id="more"></a></p>
 <h1 id="dst">DST</h1>
 <p>本文结构与上一篇不同。删除了《独立模型与联合模型》。删除了《难点/未来的工作》一节，这是因为其中大部分难点都或多或少得到了缓解，本文将其替换为了《各项难点的处理方式》。增加了《前情提要》一节，回顾了 2020 年之前 DST 模型的做法。增加了《DSTC》一节，介绍对话状态跟踪挑战（Dialog State Tracking Challenge，DSTC）。其余章节不做变化。</p>
 <table>
@@ -700,26 +732,49 @@ v &amp; \text{if} \, r^j_t = UPDATE
 <th>extra</th>
 <th>slot rel</th>
 <th>level</th>
+<th style="text-align: center;">2-stage</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><strong><a href="https://arxiv.org/pdf/2101.09374.pdf" target="_blank" rel="noopener" title="21.01">STAR</a></strong></td>
-<td>BERT</td>
-<td>L2 distance</td>
-<td>full(512) <br/> non-none ds</td>
+<td><strong><a href="https://arxiv.org/pdf/1911.03906.pdf" target="_blank" rel="noopener" title="19.11">SOM-DST</a></strong></td>
+<td>BERT+GRU</td>
+<td>gen</td>
+<td>prev turn(256) <br/> ds</td>
 <td>-</td>
-<td>self-attn</td>
 <td>-</td>
+<td>turn</td>
+<td style="text-align: center;">Y</td>
 </tr>
 <tr class="even">
-<td><strong><a href="https://arxiv.org/abs/2010.11137" target="_blank" rel="noopener" title="20.10">Graph-DST</a></strong></td>
-<td>Transformer</td>
+<td><strong><a href="https://arxiv.org/abs/2004.03386" target="_blank" rel="noopener" title="20.04">CSFN-DST</a></strong></td>
+<td>BERT(CSFN)</td>
 <td>gen</td>
-<td>pre turn <br/> ds+graph</td>
+<td>no history <br/> schema graph</td>
 <td>-</td>
-<td>ds graph</td>
+<td>schema graph</td>
 <td>-</td>
+<td style="text-align: center;">Y</td>
+</tr>
+<tr class="odd">
+<td><strong><a href="https://www.aclweb.org/anthology/2020.acl-main.567.pdf" target="_blank" rel="noopener" title="20.06?">SAS</a></strong></td>
+<td>BiGRU</td>
+<td>gen</td>
+<td>recent <span class="math inline">\(t\)</span> turns</td>
+<td>slot type</td>
+<td>slot sim mat</td>
+<td>-</td>
+<td style="text-align: center;">Y</td>
+</tr>
+<tr class="even">
+<td><strong><a href="https://www.aclweb.org/anthology/2020.acl-main.563/" target="_blank" rel="noopener" title="20.06">CHAN-DST</a></strong></td>
+<td>BERT</td>
+<td>L2</td>
+<td>all(64 per turn)</td>
+<td>val acc</td>
+<td>-</td>
+<td>session</td>
+<td style="text-align: center;">N</td>
 </tr>
 <tr class="odd">
 <td><strong><a href="https://www.aclweb.org/anthology/2020.acl-main.5/" target="_blank" rel="noopener" title="20.07">DST-SC</a></strong></td>
@@ -729,33 +784,37 @@ v &amp; \text{if} \, r^j_t = UPDATE
 <td>-</td>
 <td>-</td>
 <td>-</td>
+<td style="text-align: center;">Y</td>
 </tr>
 <tr class="even">
-<td><strong><a href="https://www.aclweb.org/anthology/2020.acl-main.567.pdf" target="_blank" rel="noopener" title="20.06?">SAS</a></strong></td>
-<td>BiGRU</td>
+<td><strong><a href="https://arxiv.org/abs/2010.11137" target="_blank" rel="noopener" title="20.10">Graph-DST</a></strong></td>
+<td>BERT</td>
 <td>gen</td>
-<td>recent <span class="math inline">\(t\)</span> turns</td>
-<td>slot type</td>
-<td>slot sim mat</td>
+<td>pre turn <br/> ds+graph</td>
 <td>-</td>
+<td>ds graph</td>
+<td>-</td>
+<td style="text-align: center;">Y</td>
 </tr>
 <tr class="odd">
-<td><strong><a href="https://arxiv.org/abs/2004.03386" target="_blank" rel="noopener" title="20.04">CSFN-DST</a></strong></td>
-<td>BERT(CSFN)</td>
-<td>gen</td>
-<td>no history <br/> schema graph</td>
-<td>-</td>
-<td>schema graph</td>
-<td>-</td>
+<td><strong><a href="https://www.aclweb.org/anthology/2020.emnlp-main.243.pdf," target="_blank" rel="noopener" title="20.11?">SAVN</a></strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td style="text-align: center;"></td>
 </tr>
 <tr class="even">
-<td><strong><a href="https://arxiv.org/pdf/1911.03906.pdf" target="_blank" rel="noopener" title="19.11">SOM-DST</a></strong></td>
-<td>BERT+GRU</td>
-<td>gen</td>
-<td>prev turn(256) <br/> ds</td>
+<td><strong><a href="https://arxiv.org/pdf/2101.09374.pdf" target="_blank" rel="noopener" title="21.01">STAR</a></strong></td>
+<td>BERT</td>
+<td>L2</td>
+<td>full(512) <br/> non-none ds</td>
 <td>-</td>
+<td>self-attn</td>
 <td>-</td>
-<td>turn</td>
+<td style="text-align: center;">Y</td>
 </tr>
 </tbody>
 </table>
@@ -763,6 +822,7 @@ v &amp; \text{if} \, r^j_t = UPDATE
 <p><span class="citation" data-cites="kim2019efficient">(Kim et al. 2019)</span>将对话状态视为一种可选择性覆盖记忆（<mark class="label primary">Selective Overwritting Memory</mark>）。与以往相同的是，使用 encoder-decoder 架构将 DST 建模为 fixed-vocabulary 方法；与以往不同的是，他们每轮只生成一组数量为 <span class="math inline">\(J&#39;_t\)</span> 的槽位子集的槽值，而不是从头开始生成，通常 <span class="math inline">\(J&#39;_t \ll J\)</span>，其中 <span class="math inline">\(J\)</span> 代表槽位总量。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#efficient-dialogue-state-tracking-by-selectively-overwriting-memory" title="Efficient Dialogue State Tracking by Selectively Overwriting Memory"><i class="fa fa-"></i>论文笔记</a> <mark class="label warning">State Operation Predictor</mark></p>
 <p><span class="citation" data-cites="zhu2020efficient">(Zhu et al. 2020)</span>提出了 CSFN-DST（Context and Schema Fusion Network）。主要思想是将冗长的上下文改为：当前系统回复 <span class="math inline">\(A_t\)</span>，用户输入 <span class="math inline">\(U_t\)</span> 以及上一轮的对话状态 <span class="math inline">\(B_{t-1}\)</span>。作者将上一轮的对话状态视为对话历史的抽象表征，在训练时使用真实的对话状态，<font color="red"><strong>在推理阶段使用预测出的对话状态</strong></font>。此外，还将领域 <span class="math inline">\(D\)</span>，槽位 <span class="math inline">\(S\)</span> 以及域槽对 <span class="math inline">\(O\)</span> 表示图结构，并称之为协议图（<mark class="label primary">Schema Graph</mark>）或者模式图。使用了 <mark class="label info">Graph-based Multi-head Attention</mark> 编码该协议图，实际上只是比普通的 Multi-head Attn 多了一个 mask 而已。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#efficient-context-and-schema-fusion-networks-for-multi-domain-dialogue-state-tracking" title="Efficient Context and Schema Fusion Networks for Multi-Domain Dialogue State Tracking"><i class="fa fa-"></i>论文笔记</a></p>
 <p><span class="citation" data-cites="hu2020sas">(Hu et al. 2020)</span>使用 <mark class="label success">Slot Attention</mark> 获取来自于嘈杂对话历史中的特定槽位特征，使用 <mark class="label info">Slot Information Sharing</mark> 共享槽位信息，这有助于低频槽位的学习。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#sas-dialogue-state-tracking-via-slot-attention-and-slot-information-sharing" title="SAS: Dialogue State Tracking via Slot Attention and Slot Information Sharing"><i class="fa fa-"></i>论文笔记</a> <mark class="label default">k-means</mark></p>
+<p><span class="citation" data-cites="shan2020contextual">(Shan et al. 2020)</span>使用 <mark class="label info">Contextual Hierarchical Attention Network</mark> 捕获对话历史信息，其中包含 <mark class="label success">slot-word attention</mark> 和 <mark class="label primary">slot-turn attention</mark>，最后他们还使用了 <mark class="label default">Global-Local Fusion Gate</mark> 融合信息。为了更好地捕获相关上下文，还提出了辅助的二元分类任务，即 <mark class="label default">State Transition Prediction</mark>(STP)，它预测当前槽值相较于前一轮是否被更新。最后为了缓解槽位不平衡（<strong>slot imbalance</strong>）问题，提出了 <mark class="label danger">Adaptive Objective</mark>。（<em>博主注：感觉不如分别叫 <mark class="label success">slot-word attention</mark> 和 <mark class="label primary">slot-history/context attention</mark></em>）<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#a-contextual-hierarchical-attention-networkwith-adaptive-objective-for-dialogue-state-tracking" title="A Contextual Hierarchical Attention Networkwith Adaptive Objective for Dialogue State Tracking"><i class="fa fa-"></i>论文笔记</a></p>
 <p><span class="citation" data-cites="ouyang-etal-2020-dialogue">(Ouyang et al. 2020)</span>提出了 <mark class="label info">slot connection mechanism</mark> 用于处理省略、共指的难题，思想与 TripPy 类似，但是做法不同。具体不做阐述了。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#dialogue-state-tracking-with-explicit-slot-connection-modeling" title="Dialogue State Tracking with Explicit Slot Connection Modeling"><i class="fa fa-"></i>论文笔记</a></p>
 <p><span class="citation" data-cites="zeng2020multi">(Zeng and Nie 2020)</span>认为以往的工作只是简单地将前一轮的对话状态和当前语句拼接起来，然后使用 self-attention 建立它们之间的关联。但是 attention 机制也许会关注到一些不合理（spurious）的连接，从而导致进行错误的推理。该文提出对话状态图（<mark class="label info">dialog state graph</mark> ），以此处理对话状态中元素的共现信息以及过渡联系。使用 <mark class="label primary">relational-GCN</mark> 对该图编码，然后将其融入 Transformer。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#multi-domain-dialogue-state-tracking-based-on-state-graph" title="Multi-Domain Dialogue State Tracking based on State Graph"><i class="fa fa-"></i>论文笔记</a> <mark class="label danger">graph-enhanced Transformer</mark></p>
 <p><span class="citation" data-cites="ye2021slot">(Ye et al. 2021)</span>使用 <mark class="label info">stacked multi-head slot self-attention</mark> 进一步加强了槽位之间的关联，不仅利用了槽位信息还使用了槽值信息。但是他们使用的 fixed-vocabulary 的方法，因此无法扩展到更大规模。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#slot-self-attentive-dialogue-state-tracking" title="Slot Self-Attentive Dialogue State Tracking"><i class="fa fa-"></i>论文笔记</a> <mark class="label default">slot-token attention</mark></p>
@@ -810,7 +870,7 @@ v &amp; \text{if} \, r^j_t = UPDATE
 	tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
 	legend: {
 		type: 'scroll',
-		data: ['CSFN-DST', 'SAS', 'DST-SC', 'Graph-DST', 'STAR', 'SG2DST'],
+		data: ['SOM-DST', 'CSFN-DST', 'SAS', 'CHAN-DST', 'DST-SC', 'Graph-DST', 'STAR', 'SUNS-DST'],
 		top: 25,
 	},
 	toolbox: {
@@ -835,6 +895,12 @@ v &amp; \text{if} \, r^j_t = UPDATE
 		max: 65
 	},
     series: [
+		{
+		    name: 'SOM-DST', type: 'bar', data: [53.01],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'4 opr', offset: [0, 10]}
+			}
+		},
 		{ 
             name: 'CSFN-DST', type: 'bar', data: [52.88],
 			label: {
@@ -844,9 +910,10 @@ v &amp; \text{if} \, r^j_t = UPDATE
 		{
 			name: 'SAS', type: 'bar', data: [51.03],
 			label: {
-				normal: {show: true, textBorderColor: 'black', formatter:'RT', offset: [0, 10]}
+				normal: {show: true, textBorderColor: 'black', formatter:'RT shr', offset: [0, 10]}
 			}
 		},
+		{name: 'CHAN-DST', type: 'bar', data: [53.38],},
 		{name: 'DST-SC', type: 'bar', data: [49.58],},
 		{name: 'Graph-DST', type: 'bar', data: [54.85],},
 		{
@@ -855,9 +922,9 @@ v &amp; \text{if} \, r^j_t = UPDATE
 				normal: {show: true, textBorderColor: 'black', formatter:'L=6', offset: [0, 10]}
 			}
 		},
-		{name: 'SG2DST', type: 'bar', data: [58.23],},
+		{name: 'SUNS-DST', type: 'bar', data: [57.83],},
 		{
-			name: 'SG2DST', type: 'bar', data: [59.22],
+			name: 'SUNS-DST', type: 'bar', data: [59.22],
 			label: {
 				normal: {show: true, textBorderColor: 'black', formatter:'+graph', offset: [0, 10]}
 			}
@@ -897,6 +964,9 @@ window.onload = function () {
 </div>
 <div id="ref-rastogi2017scalable">
 <p>Rastogi, Abhinav, Dilek Hakkani-Tür, and Larry Heck. 2017. “Scalable Multi-Domain Dialogue State Tracking.” In <em>2017 Ieee Automatic Speech Recognition and Understanding Workshop (Asru)</em>, 561–68. IEEE.</p>
+</div>
+<div id="ref-shan2020contextual">
+<p>Shan, Yong, Zekang Li, Jinchao Zhang, Fandong Meng, Yang Feng, Cheng Niu, and Jie Zhou. 2020. “A Contextual Hierarchical Attention Network with Adaptive Objective for Dialogue State Tracking.” <em>arXiv Preprint arXiv:2006.01554</em>.</p>
 </div>
 <div id="ref-wu2019transferable">
 <p>Wu, Chien-Sheng, Andrea Madotto, Ehsan Hosseini-Asl, Caiming Xiong, Richard Socher, and Pascale Fung. 2019. “Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems.” <em>arXiv Preprint arXiv:1905.08743</em>.</p>
@@ -2497,8 +2567,8 @@ crossentropy\_loss = -\sum^n_{i=1} y_i log(pred_i) = -log(pred_m)
         <category>pytorch</category>
       </categories>
       <tags>
-        <tag>4me</tag>
         <tag>pytorch</tag>
+        <tag>4me</tag>
       </tags>
   </entry>
   <entry>
@@ -2864,7 +2934,12 @@ Y = \begin{pmatrix}\underbrace{y^1\cdots y^{1000}}_{Y^{\{1\}}} &amp; \underbrace
   <entry>
     <title>DST论文笔记（一）</title>
     <url>/posts/89f2cf08.html</url>
-    <content><![CDATA[<div class="note info"><p>本文记录最初至 2019 年的 DST 论文笔记。</p>
+    <content><![CDATA[<div class="note info"><p>本文记录最初至 2019 年的 DST 论文笔记。本文已更新，移驾<a href="https://yan624.github.io/posts/5286f9c6.html">DST论文笔记（二）</a>。</p>
+<p>突然发现这文章有人看，这只是本人的论文笔记，对于任务完成型对话系统论文调研的文章，可以移驾：</p>
+<ol type="1">
+<li><a href="https://yan624.github.io/posts/e0902c9c.html">任务完成型对话系统论文调研（一）</a></li>
+<li><a href="https://yan624.github.io/posts/4ec51203.html">任务完成型对话系统论文调研（二）</a></li>
+</ol>
 </div>
 <h1 id="trippy-a-triple-copy-strategy-for-value-independent-neural-dialog-state-tracking">TripPy: A Triple Copy Strategy for Value Independent Neural Dialog State Tracking</h1>
 <div class="note primary"><p>模型的计算方法与 DS-DST 几乎完全一致，只不过补充了几点 slot gate 的类型。</p>
@@ -5572,6 +5647,41 @@ A_{3 \times 1} \odot B_{3 \times 1} = C_{3 \times 1} \\
       </tags>
   </entry>
   <entry>
+    <title>PyDial: A Multi-domain Statistical Dialogue System Toolkit</title>
+    <url>/posts/65623ba8.html</url>
+    <content><![CDATA[<div class="note info"><p><a href="https://www.aclweb.org/anthology/P17-4013/" target="_blank" rel="noopener">论文地址</a>，论文作者 S Ultes 等，发表于 2017 年。 此文中出现了许多专业名词，可参考 <a href="https://yan624.github.io/·论文笔记/dilogue/task-oriented/54.%20A%20Benchmarking%20Environment%20for%20Reinforcement%20Learning%20Based%20Task%20Oriented%20Dialogue%20Management.html">此处</a> 加以理解。</p>
+</div>
+<h1 id="摘要翻译">摘要翻译</h1>
+<p>统计口语对话系统（<em>Statistical Spoken Dialogue Systems, Statistical SDS, 统计 SDS</em>）已经存在多年了。然而，访问这些系统一直很困难，因为仍然没有公开的端到端系统实现。为了缓解这个问题，我们提出了 PyDial，一个开源的端到端统计语音对话系统工具包，它为<strong>所有对话系统模块</strong>提供<strong>统计方法</strong>的实现。此外，它还被扩展为提供多领域会话功能。它提供了各个对话系统模块的简单配置、易扩展性和域无关（<em>domain-independent</em>）的实现。该工具包可在 Apache2.0 许可下下载。</p>
+<h1 id="引言">1 引言</h1>
+<p>针对机器去设计语音接口（凭此人机交互）是多年来的研究热点。这些语音对话系统（SDSs）通常<strong>基于模块化的架构</strong>，包括<strong>语音识别</strong>（<em>speech recognition</em>）和<strong>语义解码</strong>（<em>semantic decoding</em>）的<strong>输入处理模块</strong>（<em>input processing modules</em>）、<strong>信念跟踪</strong>（<em>belief tracking</em>）和<strong>策略</strong>（<em>policy</em>）的<strong>对话管理模块</strong>（<em>dialogue management modules</em>）、<strong>语言生成</strong>（<em>language generation</em>）和<strong>语音合成</strong>（<em>speech synthesis</em>）的<strong>输出处理模块</strong>（<em>output processing modules</em>）（见图 1）。 <div class="note success"><p>以上介绍了 SDS 的架构。下一段介绍了一些 SDS 中不同组件的统计方法示例。</p>
+</div></p>
+<p>统计 SDS 是一个语音接口，其中所有 SDS 模块都基于统计模型（从数据中学习）（与人工规则相比）。对话系统中<strong>不同组件的统计方法</strong>例子可以在以下中找到： - ……（若干论文），详见原论文 Introduction 第二段。 <a id="more"></a></p>
+<p>尽管对统计 SDS 的研究非常丰富，但是仍然没有通用的平台和开放的工具包。其他工具包实现通常集中在单个模块上（例如：<em>略，详见论文</em>）。提供专门针对统计对话系统（<em>statistical dialogue systems</em>）的工具包将使新进入该领域的人员能够更容易地参与进来，结果更容易比较，研究人员能够专注于他们的特定研究问题，而不是重新实现算法（例如，评估（<em>v.</em>）交互功能中的理解或生成组件的性能）。 因此，为了促进研究，以及使人们更容易参与统计口语对话系统的研究，我们提出了一个多领域统计口语对话系统工具包 <strong>PyDial</strong>。PyDial 是用 Python 实现的，剑桥对话系统团队（<em>Cambridge Dialogue Systems Group</em>）正在积极使用它。 <div class="note default"><p>那么什么是 PyDial 呢？</p>
+</div></p>
+<p>PyDial 支持多领域的应用程序，在这些应用程序中，对话可能涉及多个不同的主题。这引入了许多新的研究课题，包括广义信念跟踪（<em>generalised belief tracking</em>）（论文略），<em>rapid policy adaptation and parallel learning</em> 和自然语言生成（<em>natural language generation</em>）。 论文的余下部分安排如下： 1. 第 2 节介绍了 PyDial 的总体架构（并且将 SDS 架构扩展到多个领域）和 PyDial 的主要应用规范； 2. 第 3 节包含各个对话系统模块的实现细节； 3. 第 4 节列出了可用的领域，其中有两个领域用于第5节中的示例交互； 4. 第 6 节总结了该工具包的主要贡献。</p>
+<h1 id="pydial-架构">2 PyDial 架构</h1>
+<p>本节介绍 PyDial 的结构及其与环境的接口方式。随后，描述了在单个领域上功能的扩展，以允许在多个领域上进行对话。最后，我们讨论了 PyDial 设计的三个关键原则。</p>
+<h2 id="总体系统架构">2.1 总体系统架构</h2>
+<p>PyDial 的总体架构如图 2 所示。其中主要组件被称为 <strong>Agent</strong>，它位于系统的核心。它封装了所有对话系统模块，以实现基于文本的交互，即输入和输出。对话系统模块依赖于由一个<strong>本体</strong>（<strong>Ontology</strong>）定义的领域规范。为了与环境交互（<strong>博主注</strong>：这里的“与环境交互”应该指的是机器与外部环境交互，如机器与餐厅环境交互、与旅游环境交互、与服装商场进行交互等），PyDial 提供了三个接口：<strong>Dialogue Server</strong>【允许语音型交互】、<strong>Texthub</strong>【允许输入型交互】和 <strong>User Simulation system</strong>。交互的性能由<strong>评估</strong>（<strong>Evaluation</strong>）组件监视。 - Agent：负责对话交互，因此内部的架构类似于图 1 中的内容。<strong>Agent</strong> 还维护 dialogue sessions，即确保每个输入都<u>发送到</u>（<em>is routed to</em>）正确的对话。因此，<strong>可以通过实例化多个 agents 来支持多个对话</strong>。 1. semantic parser：将文本输入转化为一个语义表征 2. belief tracker：负责维护一个被称为 <strong>belief state</strong> 的对话状态表征（<em>dialogue state representation</em>） 3. policy：将 <strong>belief state</strong> 映射到适合的 <strong>system dialogue act</strong> 4. semantic output：将 <strong>system dialogue act</strong> 转化为文本表示 5. topic tracker：对于多域功能，需要 <strong>topic tracker</strong>，其功能将在第 2.2 节中解释 - User Simulation：支持在语义层面进行对话模拟，即不使用任何语义解析器或语言生成。这是一种广泛应用于训练和评估基于强化学习算法的技术，因为它避免了昂贵的数据收集练习（<em>data collection exercises</em>）和用户试验（<em>user trials</em>）。它当然只提供了一个近似的真实用户行为，所以通过模拟获得的结果应该谨慎看待！ - 与环境交互：为了使 Agent 能够与其环境进行通信，PyDial 提供了两种模式：语音和文本 + Texthub：只需将 Agent 连接到终端 + Dialogue Server：要启用基于语音的对话，<strong>Dialogue Server</strong> 允许连接到外部语音客户端。此客户端负责使用 ASR 将输入语音信号映射到文本，并使用语音合成将输出文本映射到语音（<em>text to speech</em>, <strong>TTS</strong>）。语音客户端通过 HTTP 交换 JSON 消息连接到对话服务器。请注意，语音客户端不是 PyDial 的一部分。基于云的 ASR 和 TTS 服务可以从 <a href="https://cloud.google.com/speech" target="_blank" rel="noopener">Google</a>、<a href="https://www.microsoft.com/cognitive-services/en-us/speech-api" target="_blank" rel="noopener">Microsoft</a>或 <a href="http://www.ibm.com/watson/developercloud/speech-to-text.html" target="_blank" rel="noopener">IBM</a>等提供商处获得。PyDial 目前连接到 DialPort（Zhao等人，2016），其允许基于语音的交互。 - Ontology：除了 <strong>Agent</strong> 和接口组件之外，还有 <strong>Ontology</strong>，Ontology 封装了对话域规范以及对后端数据库（例如，一组餐厅及它们的属性）的访问。它被建模为一个全局对象，大多数对话系统模块和用户模拟器使用它来获取有关用户 <em>actions, slots, slot values, and system actions</em> 的相关信息。 - Evaluation：用于计算对话的评估度量（例如 <strong>Task Success</strong>）。对于基于强化学习的对话模块来说，评估组件还负责提供 <em>reward</em></p>
+<h2 id="多领域对话系统架构">2.2 多领域对话系统架构</h2>
+<p>Agent -&gt; <strong>topic tracker</strong></p>
+<h2 id="主要原则">2.3 主要原则</h2>
+<p>为了使 PyDial 能够轻松地应用于新问题，PyDial 体系结构的设计支持三个关键原则： - Domain Independence - Easy Configurability - Extensibility</p>
+<h1 id="实现">3 实现</h1>
+<p>PyDial 工具包是一个不断开发的研究系统。可从Apache2.0许可下的<a href="http://pydial.org" target="_blank" rel="noopener">网站</a>免费下载。在最初的版本中可以使用以下各种系统模块的实现，不过，到时候会有更多的实现。 - <strong>Semantic Decoder</strong>：为了对输入语句（或n个最佳语句列表，or n-best-list of sentences）进行语义解码，PyDial 提供了一个基于规则（使用正则表达式）的实现，以及一个基于 SVM 的统计模型，即 the Semantic Tuple Classifier（Mairess et al., 2009）。对于后者，只提供了 CamRestaurants 领域的模型。 - <strong>Belief Tracker</strong>：为了跟踪 belief state，可用 <strong>the rule-based focus tracker</strong>（Henderson et al., 2014）。该实现与领域无关。所有特定领域的信息都是从本体中提取的。 - <strong>Policy</strong>：负责 policy 的决定执行模块有两种实现方式：<strong>1）</strong>人工制定的策略（应该适用于所有领域）；<strong>2）</strong>Gaussian process (GP) reinforcement learning policy（Gasic and Young, 2014）。对于多领域对话，策略管理器可以像处理所有其他模块一样处理策略。给定每个用户的输入的领域，然后选择相应的领域策略。 此外，还可以选择 Gasic et al.(2015b) 提出的 Bayesian committee machine(BCM) 处理程序：<strong>当处理一个领域的 belief state 时，参考其他领域的策略来选择最终的系统操作</strong>。为了实现这一点，belief state 被映射到一个抽象表示，然后允许所有策略访问它。在 PyDial 中，经过训练的策略可以在 committee-based handler 和 standard policy manager handler 之间移动。即在 committee 外部（在单域或多域设置中）接受训练的策略可以在 committee 内部使用，反之亦然。 - <strong>Language Generator</strong>：为了将 semantic system action 映射为文本，PyDial 提供了两个实现组件：<strong>1）</strong>对于所有领域来说，提供了一个基于模板（定义规则）的语言生成；<strong>2）</strong>此外 Wen et al. (2015) 提出了基于 LSTM 的语言生成器，里面包含了 CamRestaurants 领域的预训练模型 - <strong>Topic Tracker</strong>：PyDial 提供了一个基于关键字的 Topic Tracker 实现。如果 Topic Tracker 已为某些用户输入标识了领域，那么它将继续使用该领域，直到识别了新的领域。<strong>因此，并非每个用户输入都必须包含相关关键字</strong>。如果 Topic Tracker <strong>无法在开始时识别领域</strong>，那么它将创建与用户的 meta-dialogue，直到确定初始领域或达到最大重试次数。 - <strong>Evaluation</strong>：为了评估对话，目前已经实现了两个 success-based 模块。（下面的话部分看不懂，索性不翻了--） &gt; The objective task success evaluator compares the constraints and requests the system identifies with the true values. The latter may either be derived from the user simulator or, in real dialogues, by specifying a predefined task. For real dialogues, a subjective task success evaluator may also be applied which queries the user about the outcome of the dialogue. - <strong>User Simulation</strong>：模拟用户的实现使用 agenda-based 用户模拟器（Schatzmann et al., 2006）。该模拟器包含 user model 和 error model，从而创建 a n-best-list of user acts 来模拟噪声语音信道。通过使用一组普遍适用的参数，模拟器可以应用于所有领域。领域特定的信息取自本体。</p>
+<h1 id="一些领域">4 一些领域</h1>
+<p><strong>PyDial 的主要关注的是面向任务的对话，即根据一些约束条件用户必定找到其匹配的实体</strong>。找到实体后，用户可以请求其他信息。为应付这些场景，PyDial 预先加载了总共十个不同复杂度的领域： - 略</p>
+<p>如前所述，所有 <strong>policy</strong> 实现以及 <strong>belief tracker</strong> 和 <strong>user simulator</strong> 的实现都独立于领域之外。因此，在<strong>所有领域</strong>都可以进行交互的模拟。此外，<strong>semantic decoder</strong> 和 <strong>language generator</strong> 在某种程度上依赖于特定领域的实现。PyDial 包含用于<strong>所有领域</strong>的基于规则的 <strong>semantic decoder</strong> 和一个用于 <strong>CamRestaurants</strong> 的统计解码器（<em>statistical decoder</em>）。此外，PyDial 还为<strong>大多数领域</strong>提供了基于模板的语言生成，并为 <strong>CamRestaurants</strong> 提供了基于 LSTM 的生成器。因此，在 CamRestaurants 领域，实现统计对话完全有可能。</p>
+]]></content>
+      <categories>
+        <category>paper</category>
+      </categories>
+      <tags>
+        <tag>pydial</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>A Benchmarking Environment for Reinforcement Learning Based Task Oriented Dialogue Management</title>
     <url>/posts/65cbbd31.html</url>
     <content><![CDATA[<div class="note info"><p><a href="https://arxiv.xilesou.top/pdf/1711.11023.pdf" target="_blank" rel="noopener">论文地址</a>，论文作者 Casanueva I 等，发表于 2017 年。 此论文基于 PyDial，所以可能需要先看 <a href="https://yan624.github.io/·论文笔记/55.%20PyDial：A%20Multi-domain%20Statistical%20Dialogue%20System%20Toolkit.html">这篇</a>博文。</p>
@@ -5644,41 +5754,6 @@ A_{3 \times 1} \odot B_{3 \times 1} = C_{3 \times 1} \\
       <tags>
         <tag>pydial</tag>
         <tag>benchmarking environment</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PyDial: A Multi-domain Statistical Dialogue System Toolkit</title>
-    <url>/posts/65623ba8.html</url>
-    <content><![CDATA[<div class="note info"><p><a href="https://www.aclweb.org/anthology/P17-4013/" target="_blank" rel="noopener">论文地址</a>，论文作者 S Ultes 等，发表于 2017 年。 此文中出现了许多专业名词，可参考 <a href="https://yan624.github.io/·论文笔记/dilogue/task-oriented/54.%20A%20Benchmarking%20Environment%20for%20Reinforcement%20Learning%20Based%20Task%20Oriented%20Dialogue%20Management.html">此处</a> 加以理解。</p>
-</div>
-<h1 id="摘要翻译">摘要翻译</h1>
-<p>统计口语对话系统（<em>Statistical Spoken Dialogue Systems, Statistical SDS, 统计 SDS</em>）已经存在多年了。然而，访问这些系统一直很困难，因为仍然没有公开的端到端系统实现。为了缓解这个问题，我们提出了 PyDial，一个开源的端到端统计语音对话系统工具包，它为<strong>所有对话系统模块</strong>提供<strong>统计方法</strong>的实现。此外，它还被扩展为提供多领域会话功能。它提供了各个对话系统模块的简单配置、易扩展性和域无关（<em>domain-independent</em>）的实现。该工具包可在 Apache2.0 许可下下载。</p>
-<h1 id="引言">1 引言</h1>
-<p>针对机器去设计语音接口（凭此人机交互）是多年来的研究热点。这些语音对话系统（SDSs）通常<strong>基于模块化的架构</strong>，包括<strong>语音识别</strong>（<em>speech recognition</em>）和<strong>语义解码</strong>（<em>semantic decoding</em>）的<strong>输入处理模块</strong>（<em>input processing modules</em>）、<strong>信念跟踪</strong>（<em>belief tracking</em>）和<strong>策略</strong>（<em>policy</em>）的<strong>对话管理模块</strong>（<em>dialogue management modules</em>）、<strong>语言生成</strong>（<em>language generation</em>）和<strong>语音合成</strong>（<em>speech synthesis</em>）的<strong>输出处理模块</strong>（<em>output processing modules</em>）（见图 1）。 <div class="note success"><p>以上介绍了 SDS 的架构。下一段介绍了一些 SDS 中不同组件的统计方法示例。</p>
-</div></p>
-<p>统计 SDS 是一个语音接口，其中所有 SDS 模块都基于统计模型（从数据中学习）（与人工规则相比）。对话系统中<strong>不同组件的统计方法</strong>例子可以在以下中找到： - ……（若干论文），详见原论文 Introduction 第二段。 <a id="more"></a></p>
-<p>尽管对统计 SDS 的研究非常丰富，但是仍然没有通用的平台和开放的工具包。其他工具包实现通常集中在单个模块上（例如：<em>略，详见论文</em>）。提供专门针对统计对话系统（<em>statistical dialogue systems</em>）的工具包将使新进入该领域的人员能够更容易地参与进来，结果更容易比较，研究人员能够专注于他们的特定研究问题，而不是重新实现算法（例如，评估（<em>v.</em>）交互功能中的理解或生成组件的性能）。 因此，为了促进研究，以及使人们更容易参与统计口语对话系统的研究，我们提出了一个多领域统计口语对话系统工具包 <strong>PyDial</strong>。PyDial 是用 Python 实现的，剑桥对话系统团队（<em>Cambridge Dialogue Systems Group</em>）正在积极使用它。 <div class="note default"><p>那么什么是 PyDial 呢？</p>
-</div></p>
-<p>PyDial 支持多领域的应用程序，在这些应用程序中，对话可能涉及多个不同的主题。这引入了许多新的研究课题，包括广义信念跟踪（<em>generalised belief tracking</em>）（论文略），<em>rapid policy adaptation and parallel learning</em> 和自然语言生成（<em>natural language generation</em>）。 论文的余下部分安排如下： 1. 第 2 节介绍了 PyDial 的总体架构（并且将 SDS 架构扩展到多个领域）和 PyDial 的主要应用规范； 2. 第 3 节包含各个对话系统模块的实现细节； 3. 第 4 节列出了可用的领域，其中有两个领域用于第5节中的示例交互； 4. 第 6 节总结了该工具包的主要贡献。</p>
-<h1 id="pydial-架构">2 PyDial 架构</h1>
-<p>本节介绍 PyDial 的结构及其与环境的接口方式。随后，描述了在单个领域上功能的扩展，以允许在多个领域上进行对话。最后，我们讨论了 PyDial 设计的三个关键原则。</p>
-<h2 id="总体系统架构">2.1 总体系统架构</h2>
-<p>PyDial 的总体架构如图 2 所示。其中主要组件被称为 <strong>Agent</strong>，它位于系统的核心。它封装了所有对话系统模块，以实现基于文本的交互，即输入和输出。对话系统模块依赖于由一个<strong>本体</strong>（<strong>Ontology</strong>）定义的领域规范。为了与环境交互（<strong>博主注</strong>：这里的“与环境交互”应该指的是机器与外部环境交互，如机器与餐厅环境交互、与旅游环境交互、与服装商场进行交互等），PyDial 提供了三个接口：<strong>Dialogue Server</strong>【允许语音型交互】、<strong>Texthub</strong>【允许输入型交互】和 <strong>User Simulation system</strong>。交互的性能由<strong>评估</strong>（<strong>Evaluation</strong>）组件监视。 - Agent：负责对话交互，因此内部的架构类似于图 1 中的内容。<strong>Agent</strong> 还维护 dialogue sessions，即确保每个输入都<u>发送到</u>（<em>is routed to</em>）正确的对话。因此，<strong>可以通过实例化多个 agents 来支持多个对话</strong>。 1. semantic parser：将文本输入转化为一个语义表征 2. belief tracker：负责维护一个被称为 <strong>belief state</strong> 的对话状态表征（<em>dialogue state representation</em>） 3. policy：将 <strong>belief state</strong> 映射到适合的 <strong>system dialogue act</strong> 4. semantic output：将 <strong>system dialogue act</strong> 转化为文本表示 5. topic tracker：对于多域功能，需要 <strong>topic tracker</strong>，其功能将在第 2.2 节中解释 - User Simulation：支持在语义层面进行对话模拟，即不使用任何语义解析器或语言生成。这是一种广泛应用于训练和评估基于强化学习算法的技术，因为它避免了昂贵的数据收集练习（<em>data collection exercises</em>）和用户试验（<em>user trials</em>）。它当然只提供了一个近似的真实用户行为，所以通过模拟获得的结果应该谨慎看待！ - 与环境交互：为了使 Agent 能够与其环境进行通信，PyDial 提供了两种模式：语音和文本 + Texthub：只需将 Agent 连接到终端 + Dialogue Server：要启用基于语音的对话，<strong>Dialogue Server</strong> 允许连接到外部语音客户端。此客户端负责使用 ASR 将输入语音信号映射到文本，并使用语音合成将输出文本映射到语音（<em>text to speech</em>, <strong>TTS</strong>）。语音客户端通过 HTTP 交换 JSON 消息连接到对话服务器。请注意，语音客户端不是 PyDial 的一部分。基于云的 ASR 和 TTS 服务可以从 <a href="https://cloud.google.com/speech" target="_blank" rel="noopener">Google</a>、<a href="https://www.microsoft.com/cognitive-services/en-us/speech-api" target="_blank" rel="noopener">Microsoft</a>或 <a href="http://www.ibm.com/watson/developercloud/speech-to-text.html" target="_blank" rel="noopener">IBM</a>等提供商处获得。PyDial 目前连接到 DialPort（Zhao等人，2016），其允许基于语音的交互。 - Ontology：除了 <strong>Agent</strong> 和接口组件之外，还有 <strong>Ontology</strong>，Ontology 封装了对话域规范以及对后端数据库（例如，一组餐厅及它们的属性）的访问。它被建模为一个全局对象，大多数对话系统模块和用户模拟器使用它来获取有关用户 <em>actions, slots, slot values, and system actions</em> 的相关信息。 - Evaluation：用于计算对话的评估度量（例如 <strong>Task Success</strong>）。对于基于强化学习的对话模块来说，评估组件还负责提供 <em>reward</em></p>
-<h2 id="多领域对话系统架构">2.2 多领域对话系统架构</h2>
-<p>Agent -&gt; <strong>topic tracker</strong></p>
-<h2 id="主要原则">2.3 主要原则</h2>
-<p>为了使 PyDial 能够轻松地应用于新问题，PyDial 体系结构的设计支持三个关键原则： - Domain Independence - Easy Configurability - Extensibility</p>
-<h1 id="实现">3 实现</h1>
-<p>PyDial 工具包是一个不断开发的研究系统。可从Apache2.0许可下的<a href="http://pydial.org" target="_blank" rel="noopener">网站</a>免费下载。在最初的版本中可以使用以下各种系统模块的实现，不过，到时候会有更多的实现。 - <strong>Semantic Decoder</strong>：为了对输入语句（或n个最佳语句列表，or n-best-list of sentences）进行语义解码，PyDial 提供了一个基于规则（使用正则表达式）的实现，以及一个基于 SVM 的统计模型，即 the Semantic Tuple Classifier（Mairess et al., 2009）。对于后者，只提供了 CamRestaurants 领域的模型。 - <strong>Belief Tracker</strong>：为了跟踪 belief state，可用 <strong>the rule-based focus tracker</strong>（Henderson et al., 2014）。该实现与领域无关。所有特定领域的信息都是从本体中提取的。 - <strong>Policy</strong>：负责 policy 的决定执行模块有两种实现方式：<strong>1）</strong>人工制定的策略（应该适用于所有领域）；<strong>2）</strong>Gaussian process (GP) reinforcement learning policy（Gasic and Young, 2014）。对于多领域对话，策略管理器可以像处理所有其他模块一样处理策略。给定每个用户的输入的领域，然后选择相应的领域策略。 此外，还可以选择 Gasic et al.(2015b) 提出的 Bayesian committee machine(BCM) 处理程序：<strong>当处理一个领域的 belief state 时，参考其他领域的策略来选择最终的系统操作</strong>。为了实现这一点，belief state 被映射到一个抽象表示，然后允许所有策略访问它。在 PyDial 中，经过训练的策略可以在 committee-based handler 和 standard policy manager handler 之间移动。即在 committee 外部（在单域或多域设置中）接受训练的策略可以在 committee 内部使用，反之亦然。 - <strong>Language Generator</strong>：为了将 semantic system action 映射为文本，PyDial 提供了两个实现组件：<strong>1）</strong>对于所有领域来说，提供了一个基于模板（定义规则）的语言生成；<strong>2）</strong>此外 Wen et al. (2015) 提出了基于 LSTM 的语言生成器，里面包含了 CamRestaurants 领域的预训练模型 - <strong>Topic Tracker</strong>：PyDial 提供了一个基于关键字的 Topic Tracker 实现。如果 Topic Tracker 已为某些用户输入标识了领域，那么它将继续使用该领域，直到识别了新的领域。<strong>因此，并非每个用户输入都必须包含相关关键字</strong>。如果 Topic Tracker <strong>无法在开始时识别领域</strong>，那么它将创建与用户的 meta-dialogue，直到确定初始领域或达到最大重试次数。 - <strong>Evaluation</strong>：为了评估对话，目前已经实现了两个 success-based 模块。（下面的话部分看不懂，索性不翻了--） &gt; The objective task success evaluator compares the constraints and requests the system identifies with the true values. The latter may either be derived from the user simulator or, in real dialogues, by specifying a predefined task. For real dialogues, a subjective task success evaluator may also be applied which queries the user about the outcome of the dialogue. - <strong>User Simulation</strong>：模拟用户的实现使用 agenda-based 用户模拟器（Schatzmann et al., 2006）。该模拟器包含 user model 和 error model，从而创建 a n-best-list of user acts 来模拟噪声语音信道。通过使用一组普遍适用的参数，模拟器可以应用于所有领域。领域特定的信息取自本体。</p>
-<h1 id="一些领域">4 一些领域</h1>
-<p><strong>PyDial 的主要关注的是面向任务的对话，即根据一些约束条件用户必定找到其匹配的实体</strong>。找到实体后，用户可以请求其他信息。为应付这些场景，PyDial 预先加载了总共十个不同复杂度的领域： - 略</p>
-<p>如前所述，所有 <strong>policy</strong> 实现以及 <strong>belief tracker</strong> 和 <strong>user simulator</strong> 的实现都独立于领域之外。因此，在<strong>所有领域</strong>都可以进行交互的模拟。此外，<strong>semantic decoder</strong> 和 <strong>language generator</strong> 在某种程度上依赖于特定领域的实现。PyDial 包含用于<strong>所有领域</strong>的基于规则的 <strong>semantic decoder</strong> 和一个用于 <strong>CamRestaurants</strong> 的统计解码器（<em>statistical decoder</em>）。此外，PyDial 还为<strong>大多数领域</strong>提供了基于模板的语言生成，并为 <strong>CamRestaurants</strong> 提供了基于 LSTM 的生成器。因此，在 CamRestaurants 领域，实现统计对话完全有可能。</p>
-]]></content>
-      <categories>
-        <category>paper</category>
-      </categories>
-      <tags>
-        <tag>pydial</tag>
       </tags>
   </entry>
   <entry>
@@ -7924,8 +7999,8 @@ w^2_{21} &amp; w^2_{22} &amp; w^2_{23}\\
       </categories>
       <tags>
         <tag>系列</tag>
-        <tag>深度学习算法</tag>
         <tag>simple NN</tag>
+        <tag>深度学习算法</tag>
       </tags>
   </entry>
   <entry>
@@ -9048,9 +9123,9 @@ A：[深度学习500问笔记#Dropout-系列问题](https://yan624.github.io/·z
       </categories>
       <tags>
         <tag>学习笔记</tag>
-        <tag>simple NN</tag>
         <tag>back propagation</tag>
         <tag>gradient descent</tag>
+        <tag>simple NN</tag>
         <tag>bias</tag>
         <tag>variance</tag>
         <tag>regularization</tag>
@@ -10288,8 +10363,8 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
       </categories>
       <tags>
         <tag>印象笔记上的博文</tag>
-        <tag>吐槽</tag>
         <tag>thymeleaf</tag>
+        <tag>吐槽</tag>
       </tags>
   </entry>
   <entry>
