@@ -136,6 +136,33 @@
       </tags>
   </entry>
   <entry>
+    <title>隐藏hexo部分文章并禁止其部署到云端</title>
+    <url>/posts/919c7ce6.html</url>
+    <content><![CDATA[<p>目前有一些途径可以隐藏指定的hexo文章，但是如何同时禁止其部署到云端呢？我搜了一圈没找到答案。最后我发现 hexo 其实自带这个功能。</p>
+<h1 id="使用场景">使用场景</h1>
+<p>我们可能在“年轻”的时候写了某些文章，过了几年之后发现这些文章太幼稚了，但是又不舍得删。那么就可以使用本文的方法做到，在保留文章的同时，互联网上的其他人永远也访问不到这篇文章。</p>
+<h1 id="使用步骤">使用步骤</h1>
+<p>操作流程如下：</p>
+<ol type="1">
+<li>使用命令 <code>hexo new draft '你的文章标题'</code>，它会在 <code>source/_draft</code> 创建对应的文章。写 draft 的方法和写普通的 post 是一样的。此时我们通过链接去访问这篇文章是访问不到的！</li>
+<li>使用命令 <code>hexo s --draft</code> 或者 <code>hexo g --draft</code> 就可以访问这篇 draft 文章。</li>
+</ol>
+<a id="more"></a>
+<h1 id="注意事项">注意事项</h1>
+<div class="note danger"><p>必看！</p>
+</div>
+<p>我分析一下原理。</p>
+<p>当文章在 <code>_draft</code> 文件夹中时，使用 <code>hexo g</code> 或者 <code>hexo s</code> 将不会生成该文章的 html 文件。而 <code>hexo d</code> 命令会将所有 html 文件部署到云端（例如 github）。因此你只要在使用生成文章命令时不加上 <code>--draft</code> 参数就可以组织其部署。</p>
+<p>需要注意的是，以后在使用 <code>hexo d</code> 部署文章之前，都要先使用 <code>hexo clean</code> 删除所有文章的 html 版本。然后重新生成 html，<strong>注意不要加 <code>--draft</code></strong>。</p>
+<div class="note warning"><p>以上都是推理出来的，试一下太麻烦，但是我觉得应该可行。</p>
+</div>
+]]></content>
+      <categories>
+        <category>coding</category>
+        <category>hexo</category>
+      </categories>
+  </entry>
+  <entry>
     <title>Pretraining Methods for Dialog Context Representation Learning</title>
     <url>/posts/1ff148b4.html</url>
     <content><![CDATA[<div class="note warnnign"><p>2020.11.2：暂时记那么多，以后如果有用到，再继续看这篇论文。</p>
@@ -496,7 +523,17 @@ c^t_{S_j} &amp; = W^r_2 ReLU(W^r_1 Concat(h^{S_j}_{[CLS]}, r^t_{S_j}) + b^r_1) +
 <h1 id="slot-attention-with-value-normalization-for-multi-domain-dialogue-state-tracking">Slot Attention with Value Normalization for Multi-domain Dialogue State Tracking</h1>
 <p><strong>现有工作的缺陷</strong>：1）传统 DST 很依赖预定义的本体，为了解决这一缺陷，今年也有人提出生成式方法和 span-baed 方法。2）由于描述的多样性，DST 需要的槽值无法在语句中找到。DS-DST 提出了使用双重策略实现 DST 获得了不错的效果，说明 ontology 的重要性。3）多领域携带大量槽位（MultiWOZ2.0- 有 30 多个槽位），因此 DST 需要更高效地填充槽位。</p>
 <p><strong>研究目的</strong>：1）优化槽位决定的结构（博主注：<em>这个槽位决定，可能指的是槽位填充，或者可以直接理解为 DST</em>）；2）灵活地使用本体，而不是舍弃它。</p>
-<p><strong>研究目标/贡献</strong>：</p>
+<p><strong>研究目标/贡献</strong>：1）提出了 Slot Attention(SA)，它可以共享槽位和语句之间的知识。2）考虑到在实际场景下本体中可能的槽值数量会很大，提出了 Value Normalization(VN)，其被设计为一个简单、灵活且高效的模型，在 V100 GPU 上只需要训练 8 分钟。3）为 MultiWOZ2.1 补充了 span label。4）使用不完整的本体全面地评估了 VN，结果显示只要本体的完整性大于 80%，VN 就可以获得积极的表现。</p>
+<div class="tabs" id="savn"><ul class="nav-tabs"><li class="tab"><a href="#savn-1">SAVN</a></li></ul><div class="tab-content"><div class="tab-pane" id="savn-1"><h2 id="slot-attention">Slot Attention</h2>
+<p>SA 使用 BERT 编码最近的 <span class="math inline">\(t\)</span> 轮对话，使用 BERT 的 Embedding 编码槽位序列，分别可以得到上下文表征 <span class="math inline">\(H^u_t\)</span> 和槽位表征 <span class="math inline">\(H^s_t\)</span>。值得注意的是，他们在输入序列的最前面拼接了一些固定的候选值，例如 <em>yes, no</em>，这主要是为了使模型能够生成特殊的单词。</p>
+<h3 id="slot-gate-classification">Slot Gate Classification</h3>
+<p>定义 slot gate 为三元分类，预测 <span class="math inline">\(\{none, dontcare, span\}\)</span>。使用了 Transformer 的“Scaled Dot-Product Attention”提取语句与槽位之间的知识。工作流程与大部分论文的 slot gate 类似，就不赘述了。</p>
+<h3 id="span-based-value-prediction">Span-Based Value Prediction</h3>
+<p>span 的预测只是简单地将上下文表征和槽位表征点乘，从而获得起止索引在输入序列上的概率分布。</p>
+<h2 id="value-normalization">Value Normalization</h2>
+<p>首先使用一个 gate，判断到底输出 span 还是 value in ontology。如果输出 value in ontology，就计算 span 和 value in ontology 之间的内积（均使用 <code>[CLS]</code> 的输出），得到 value 的概率分布。</p></div></div></div>
+<h1 id="stn4dst-a-scalable-dialogue-state-tracking-based-on-slot-tagging-navigation">STN4DST: A Scalable Dialogue State Tracking based on Slot Tagging Navigation</h1>
+<p><strong>现有工作的缺陷</strong>：</p>
 <h1 id="multi-domain-dialogue-state-tracking-based-on-state-graph">Multi-Domain Dialogue State Tracking based on State Graph</h1>
 <p><strong>现有工作的缺陷</strong>：1）以往工作只是简单地将前一轮的对话状态和当前语句拼接起来，然后使用 self-attention 建立它们的关联。但是 attention 机制也许会关注到一些不合理（spurious）的连接，导致进行错误的推理。2）CSFN-DST 与该文工作类似，但是它只考虑了一个边（edge）类型以及三个节点类型——领域（domain）、槽位（slot）、域槽对（domain, slot）。</p>
 <p><strong>研究目的</strong>：处理对话状态中元素的共现信息以及人类对话中过渡联系（transition relation）。<em>作者没细说过渡是什么意思，我认为是在对话过程中不同领域之间的切换。</em></p>
@@ -546,7 +583,9 @@ head_j &amp; = softmax(\frac{Q_j K^T_j}{\sqrt{d_k}}) V_j
 <li>研究方法：</li>
 <li><strong>总结</strong>：</li>
 </ol>
-<div class="tabs" id="dst-sc"><ul class="nav-tabs"><li class="tab"><a href="#dst-sc-1">架构图</a></li><li class="tab"><a href="#dst-sc-2">DST-SC</a></li></ul><div class="tab-content"><div class="tab-pane" id="dst-sc-1"><p><strong>模型结构</strong> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/DST-SC模型架构.png" alt="DST-SC模型架构" /></p></div><div class="tab-pane" id="dst-sc-2"><div class="note info">
+<div class="tabs" id="dst-sc"><ul class="nav-tabs"><li class="tab"><a href="#dst-sc-1">架构图</a></li><li class="tab"><a href="#dst-sc-2">DST-SC</a></li></ul><div class="tab-content"><div class="tab-pane" id="dst-sc-1"><figure>
+<img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/论文/任务完成型对话系统论文笔记/DST-SC模型架构.png" alt="DST-SC模型架构" /><figcaption>DST-SC模型架构</figcaption>
+</figure></div><div class="tab-pane" id="dst-sc-2"><div class="note info">
 <p>
 在多领域场景下，用户经常通过省略（ellipsis）、指代（reference）来表达某些其它领域槽位提到的槽值。为了解决这种现象，我们提出了 DST-SC（Dialogue State Tracking with Slot Connections）模型。
 </p>
@@ -649,7 +688,7 @@ c_j = &amp; \sum^{|X_t|}_{i=1} sc^j_i h^{enc}_i
 <p><strong>现有工作的缺陷</strong>：1）传统 fixed-vocabulary DST 方法需要完整的本体，首先通常很难预先获取本体，其次无法处理未知槽值的问题，最后这种方法无法扩展到大规模的本体上。2）为了解决上述问题，最近有研究专注于 open-vocabulary DST 方法，虽然相对灵活且有能力处理未知槽值问题，但是大多数的方法需要在每一轮从头预测对话状态，这不够高效。</p>
 <p><strong>研究目的</strong>：<em>好像没有说的很明白</em>。</p>
 <p><strong>研究目标/贡献</strong>：1）借助上一轮的对话状态，现在模型只需要预测当前轮的子集槽位即可，不需要从头开始预测对话状态。2）提出了状态操作预测。</p>
-<div class="tabs" id="som-dst"><ul class="nav-tabs"><li class="tab"><a href="#som-dst-1">SOM-DST</a></li></ul><div class="tab-content"><div class="tab-pane" id="som-dst-1"><p><strong>模型结构</strong> 首先，在每轮 <span class="math inline">\(t\)</span>，state operation predictor 都会选择一个状态操作 <span class="math inline">\(r^j_t \in \mathcal{O} = {CARRYOVER, DELETE, DONTCARE, UPDATE}\)</span>，然后为每个 <span class="math inline">\(S^j\)</span> 填充其对应的槽值 <span class="math inline">\(V^j_t\)</span>。当操作执行时，槽值要么保持不变（<em>CARRYOVER</em>），要么做出改变（<em>DELETE, DONTCARE, UPDATE</em>）：</p>
+<div class="tabs" id="som-dst"><ul class="nav-tabs"><li class="tab"><a href="#som-dst-1">SOM-DST</a></li></ul><div class="tab-content"><div class="tab-pane" id="som-dst-1"><p><strong>模型结构</strong> 首先，在每轮 <span class="math inline">\(t\)</span>，state operation predictor 都会选择一个状态操作 <span class="math inline">\(r^j_t \in \mathcal{O} = \{CARRYOVER, DELETE, DONTCARE, UPDATE\}\)</span>，然后为每个槽位 <span class="math inline">\(S^j\)</span> 填充其对应的槽值 <span class="math inline">\(V^j_t\)</span>。当以上流程执行时，槽值要么保持不变（<em>CARRYOVER</em>），要么做出改变（<em>DELETE, DONTCARE, UPDATE</em>）：</p>
 <p><span class="math display">\[
 V^j_t = \begin{cases}
 V^j_{t-1} &amp; \text{if} \, r^j_t = CARRYOVER \\
@@ -661,12 +700,12 @@ v &amp; \text{if} \, r^j_t = UPDATE
 <h2 id="state-operation-predictor">State Operation Predictor</h2>
 <p>用 BERT 编码可以得到 [CLS] 表征 <span class="math inline">\(h^{[CLS]}_t\)</span> 和第 <span class="math inline">\(j\)</span> 个 [SLOT] 表征 <span class="math inline">\(h^{[SLOT]^j}_t\)</span>。通过带有可学习权重 <span class="math inline">\(W_{pool}\)</span> 的前馈层我们可以得到聚合序列信息的表征 <span class="math inline">\(h^X_t = tanh(W_{pool} h^{[CLS]}_t)\)</span>。</p>
 <p>对于每个槽位表征 <span class="math inline">\(h^{[SLOT]^j}_t\)</span>，状态操作预测是基于其的四元分类：<span class="math inline">\(P^j_{opr,t} = softmax(W_{opr} h^{[SLOT]^j}_t)\)</span>。</p>
-<p>当预测结果为 <strong>UPDATE</strong> 时，将会执行槽值生成。</p>
+<p>当预测结果为 <em>UPDATE</em> 时，将会执行槽值生成。</p>
 <h2 id="slot-value-generator">Slot Value Generator</h2>
 <p>本文提出的 Slot Value Generator 与其他的生成器不同，它为 <span class="math inline">\(J&#39;_t\)</span> 个槽位生成槽值，而不是 <span class="math inline">\(J\)</span>，通常 <span class="math inline">\(J&#39;_t \ll J\)</span>。因此能更有效得计算。</p>
-<p>生成步骤与 TRADE 类似，就不赘述了。</p>
+<p>生成步骤与 TRADE 类似，就不赘述了。一般来说，这种 generative DST，槽值生成步骤都差不多。</p>
 <h2 id="优化函数">优化函数</h2>
-<p>比较简单，具体就不介绍了。但是有一点需要指出，他们使用了将领域预测作为额外的任务，期望能够使模型学习到槽位操作与领域转换之间的关联。</p></div></div></div>
+<p>比较简单，具体就不介绍了。但是有一点需要指出，他们将领域预测任务作为额外的任务，期望能够使模型学习到槽位操作与领域转换之间的关联。</p></div></div></div>
 ]]></content>
       <categories>
         <category>paper</category>
@@ -720,14 +759,25 @@ v &amp; \text{if} \, r^j_t = UPDATE
 </div>
 <h1 id="引言">引言</h1>
 <p>任务完成型对话系统中的挑战比起之前已经有所改变。在 <span class="citation" data-cites="xu-hu-2018-end">(Xu and Hu 2018)</span> 提出使用 Ptr 缓解低频槽值提取的问题之后，两年之内涌现了许多有突破性的论文。。。 <a id="more"></a></p>
+<p><span class="math inline">\(\arg\max\)</span></p>
 <h1 id="dst">DST</h1>
 <p>本文结构与上一篇不同。删除了《独立模型与联合模型》。删除了《难点/未来的工作》一节，这是因为其中大部分难点都或多或少得到了缓解，本文将其替换为了《各项难点的处理方式》。增加了《前情提要》一节，回顾了 2020 年之前 DST 模型的做法。增加了《DSTC》一节，介绍对话状态跟踪挑战（Dialog State Tracking Challenge，DSTC）。其余章节不做变化。</p>
 <table>
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 11%" />
+<col style="width: 9%" />
+<col style="width: 30%" />
+<col style="width: 8%" />
+<col style="width: 12%" />
+<col style="width: 8%" />
+<col style="width: 11%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th>Model</th>
-<th>encoder</th>
-<th>method</th>
+<th style="text-align: center;">encoder</th>
+<th style="text-align: center;">method</th>
 <th>history <br/> aux input</th>
 <th>extra</th>
 <th>slot rel</th>
@@ -738,8 +788,8 @@ v &amp; \text{if} \, r^j_t = UPDATE
 <tbody>
 <tr class="odd">
 <td><strong><a href="https://arxiv.org/pdf/1911.03906.pdf" target="_blank" rel="noopener" title="19.11">SOM-DST</a></strong></td>
-<td>BERT+GRU</td>
-<td>gen</td>
+<td style="text-align: center;">BERT+GRU</td>
+<td style="text-align: center;">gen</td>
 <td>prev turn(256) <br/> ds</td>
 <td>-</td>
 <td>-</td>
@@ -748,8 +798,8 @@ v &amp; \text{if} \, r^j_t = UPDATE
 </tr>
 <tr class="even">
 <td><strong><a href="https://arxiv.org/abs/2004.03386" target="_blank" rel="noopener" title="20.04">CSFN-DST</a></strong></td>
-<td>BERT(CSFN)</td>
-<td>gen</td>
+<td style="text-align: center;">BERT(CSFN)</td>
+<td style="text-align: center;">gen</td>
 <td>no history <br/> schema graph</td>
 <td>-</td>
 <td>schema graph</td>
@@ -758,8 +808,8 @@ v &amp; \text{if} \, r^j_t = UPDATE
 </tr>
 <tr class="odd">
 <td><strong><a href="https://www.aclweb.org/anthology/2020.acl-main.567.pdf" target="_blank" rel="noopener" title="20.06?">SAS</a></strong></td>
-<td>BiGRU</td>
-<td>gen</td>
+<td style="text-align: center;">BiGRU</td>
+<td style="text-align: center;">gen</td>
 <td>recent <span class="math inline">\(t\)</span> turns</td>
 <td>slot type</td>
 <td>slot sim mat</td>
@@ -768,8 +818,8 @@ v &amp; \text{if} \, r^j_t = UPDATE
 </tr>
 <tr class="even">
 <td><strong><a href="https://www.aclweb.org/anthology/2020.acl-main.563/" target="_blank" rel="noopener" title="20.06">CHAN-DST</a></strong></td>
-<td>BERT</td>
-<td>L2</td>
+<td style="text-align: center;">BERT</td>
+<td style="text-align: center;">L2</td>
 <td>all(64 per turn)</td>
 <td>val acc</td>
 <td>-</td>
@@ -778,8 +828,8 @@ v &amp; \text{if} \, r^j_t = UPDATE
 </tr>
 <tr class="odd">
 <td><strong><a href="https://www.aclweb.org/anthology/2020.acl-main.5/" target="_blank" rel="noopener" title="20.07">DST-SC</a></strong></td>
-<td>BiGRU</td>
-<td>gen</td>
+<td style="text-align: center;">BiGRU</td>
+<td style="text-align: center;">gen</td>
 <td>recent <span class="math inline">\(m\)</span> words</td>
 <td>-</td>
 <td>-</td>
@@ -787,9 +837,9 @@ v &amp; \text{if} \, r^j_t = UPDATE
 <td style="text-align: center;">Y</td>
 </tr>
 <tr class="even">
-<td><strong><a href="https://arxiv.org/abs/2010.11137" target="_blank" rel="noopener" title="20.10">Graph-DST</a></strong></td>
-<td>BERT</td>
-<td>gen</td>
+<td><strong><a href="https://arxiv.org/pdf/2010.11137.pdf" target="_blank" rel="noopener" title="20.10">Graph-DST</a></strong></td>
+<td style="text-align: center;">BERT</td>
+<td style="text-align: center;">gen</td>
 <td>pre turn <br/> ds+graph</td>
 <td>-</td>
 <td>ds graph</td>
@@ -797,9 +847,9 @@ v &amp; \text{if} \, r^j_t = UPDATE
 <td style="text-align: center;">Y</td>
 </tr>
 <tr class="odd">
-<td><strong><a href="https://www.aclweb.org/anthology/2020.emnlp-main.243.pdf," target="_blank" rel="noopener" title="20.11?">SAVN</a></strong></td>
-<td></td>
-<td></td>
+<td><strong><a href="https://arxiv.org/pdf/2010.10811.pdf" target="_blank" rel="noopener">STN4DST</a></strong></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
 <td></td>
 <td></td>
 <td></td>
@@ -807,9 +857,19 @@ v &amp; \text{if} \, r^j_t = UPDATE
 <td style="text-align: center;"></td>
 </tr>
 <tr class="even">
+<td><strong><a href="https://www.aclweb.org/anthology/2020.emnlp-main.243.pdf," target="_blank" rel="noopener" title="20.11?">SAVN</a></strong></td>
+<td style="text-align: center;">BERT</td>
+<td style="text-align: center;">span+VN</td>
+<td>special words <br /> recent <span class="math inline">\(t\)</span> turns</td>
+<td>special words <br /> full ontology</td>
+<td>-</td>
+<td>turn</td>
+<td style="text-align: center;">Y</td>
+</tr>
+<tr class="odd">
 <td><strong><a href="https://arxiv.org/pdf/2101.09374.pdf" target="_blank" rel="noopener" title="21.01">STAR</a></strong></td>
-<td>BERT</td>
-<td>L2</td>
+<td style="text-align: center;">BERT</td>
+<td style="text-align: center;">L2</td>
 <td>full(512) <br/> non-none ds</td>
 <td>-</td>
 <td>self-attn</td>
@@ -821,11 +881,12 @@ v &amp; \text{if} \, r^j_t = UPDATE
 <h2 id="相关工作">相关工作</h2>
 <p><span class="citation" data-cites="kim2019efficient">(Kim et al. 2019)</span>将对话状态视为一种可选择性覆盖记忆（<mark class="label primary">Selective Overwritting Memory</mark>）。与以往相同的是，使用 encoder-decoder 架构将 DST 建模为 fixed-vocabulary 方法；与以往不同的是，他们每轮只生成一组数量为 <span class="math inline">\(J&#39;_t\)</span> 的槽位子集的槽值，而不是从头开始生成，通常 <span class="math inline">\(J&#39;_t \ll J\)</span>，其中 <span class="math inline">\(J\)</span> 代表槽位总量。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#efficient-dialogue-state-tracking-by-selectively-overwriting-memory" title="Efficient Dialogue State Tracking by Selectively Overwriting Memory"><i class="fa fa-"></i>论文笔记</a> <mark class="label warning">State Operation Predictor</mark></p>
 <p><span class="citation" data-cites="zhu2020efficient">(Zhu et al. 2020)</span>提出了 CSFN-DST（Context and Schema Fusion Network）。主要思想是将冗长的上下文改为：当前系统回复 <span class="math inline">\(A_t\)</span>，用户输入 <span class="math inline">\(U_t\)</span> 以及上一轮的对话状态 <span class="math inline">\(B_{t-1}\)</span>。作者将上一轮的对话状态视为对话历史的抽象表征，在训练时使用真实的对话状态，<font color="red"><strong>在推理阶段使用预测出的对话状态</strong></font>。此外，还将领域 <span class="math inline">\(D\)</span>，槽位 <span class="math inline">\(S\)</span> 以及域槽对 <span class="math inline">\(O\)</span> 表示图结构，并称之为协议图（<mark class="label primary">Schema Graph</mark>）或者模式图。使用了 <mark class="label info">Graph-based Multi-head Attention</mark> 编码该协议图，实际上只是比普通的 Multi-head Attn 多了一个 mask 而已。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#efficient-context-and-schema-fusion-networks-for-multi-domain-dialogue-state-tracking" title="Efficient Context and Schema Fusion Networks for Multi-Domain Dialogue State Tracking"><i class="fa fa-"></i>论文笔记</a></p>
-<p><span class="citation" data-cites="hu2020sas">(Hu et al. 2020)</span>使用 <mark class="label success">Slot Attention</mark> 获取来自于嘈杂对话历史中的特定槽位特征，使用 <mark class="label info">Slot Information Sharing</mark> 共享槽位信息，这有助于低频槽位的学习。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#sas-dialogue-state-tracking-via-slot-attention-and-slot-information-sharing" title="SAS: Dialogue State Tracking via Slot Attention and Slot Information Sharing"><i class="fa fa-"></i>论文笔记</a> <mark class="label default">k-means</mark></p>
-<p><span class="citation" data-cites="shan2020contextual">(Shan et al. 2020)</span>使用 <mark class="label info">Contextual Hierarchical Attention Network</mark> 捕获对话历史信息，其中包含 <mark class="label success">slot-word attention</mark> 和 <mark class="label primary">slot-turn attention</mark>，最后他们还使用了 <mark class="label default">Global-Local Fusion Gate</mark> 融合信息。为了更好地捕获相关上下文，还提出了辅助的二元分类任务，即 <mark class="label default">State Transition Prediction</mark>(STP)，它预测当前槽值相较于前一轮是否被更新。最后为了缓解槽位不平衡（<strong>slot imbalance</strong>）问题，提出了 <mark class="label danger">Adaptive Objective</mark>。（<em>博主注：感觉不如分别叫 <mark class="label success">slot-word attention</mark> 和 <mark class="label primary">slot-history/context attention</mark></em>）<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#a-contextual-hierarchical-attention-networkwith-adaptive-objective-for-dialogue-state-tracking" title="A Contextual Hierarchical Attention Networkwith Adaptive Objective for Dialogue State Tracking"><i class="fa fa-"></i>论文笔记</a></p>
+<p><span class="citation" data-cites="hu2020sas">(Hu et al. 2020)</span>使用 <mark class="label success">Slot Attention</mark> 获取来自于嘈杂对话历史中的特定槽位特征，使用 <mark class="label info">Slot Information Sharing</mark> 共享槽位信息，这有助于低频槽位的学习。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#sas-dialogue-state-tracking-via-slot-attention-and-slot-information-sharing" title="SAS: Dialogue State Tracking via Slot Attention and Slot Information Sharing"><i class="fa fa-"></i>论文笔记</a> <mark class="label success">k-means</mark></p>
+<p><span class="citation" data-cites="shan2020contextual">(Shan et al. 2020)</span>使用 <mark class="label info">Contextual Hierarchical Attention Network</mark> 捕获对话历史信息，其中包含 <mark class="label success">slot-word attention</mark> 和 <mark class="label primary">slot-turn attention</mark>，最后他们还使用了 <mark class="label default">Global-Local Fusion Gate</mark> 融合信息。为了更好地捕获相关上下文，还提出了辅助的二元分类任务，即 <mark class="label info">State Transition Prediction</mark>(STP)，它预测当前槽值相较于前一轮是否被更新。最后为了缓解槽位不平衡（<strong>slot imbalance</strong>）问题，提出了 <mark class="label danger">Adaptive Objective</mark>。（<em>博主注：感觉不如分别叫 <mark class="label success">slot-word attention</mark> 和 <mark class="label primary">slot-history/context attention</mark></em>）<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#a-contextual-hierarchical-attention-networkwith-adaptive-objective-for-dialogue-state-tracking" title="A Contextual Hierarchical Attention Networkwith Adaptive Objective for Dialogue State Tracking"><i class="fa fa-"></i>论文笔记</a></p>
 <p><span class="citation" data-cites="ouyang-etal-2020-dialogue">(Ouyang et al. 2020)</span>提出了 <mark class="label info">slot connection mechanism</mark> 用于处理省略、共指的难题，思想与 TripPy 类似，但是做法不同。具体不做阐述了。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#dialogue-state-tracking-with-explicit-slot-connection-modeling" title="Dialogue State Tracking with Explicit Slot Connection Modeling"><i class="fa fa-"></i>论文笔记</a></p>
 <p><span class="citation" data-cites="zeng2020multi">(Zeng and Nie 2020)</span>认为以往的工作只是简单地将前一轮的对话状态和当前语句拼接起来，然后使用 self-attention 建立它们之间的关联。但是 attention 机制也许会关注到一些不合理（spurious）的连接，从而导致进行错误的推理。该文提出对话状态图（<mark class="label info">dialog state graph</mark> ），以此处理对话状态中元素的共现信息以及过渡联系。使用 <mark class="label primary">relational-GCN</mark> 对该图编码，然后将其融入 Transformer。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#multi-domain-dialogue-state-tracking-based-on-state-graph" title="Multi-Domain Dialogue State Tracking based on State Graph"><i class="fa fa-"></i>论文笔记</a> <mark class="label danger">graph-enhanced Transformer</mark></p>
-<p><span class="citation" data-cites="ye2021slot">(Ye et al. 2021)</span>使用 <mark class="label info">stacked multi-head slot self-attention</mark> 进一步加强了槽位之间的关联，不仅利用了槽位信息还使用了槽值信息。但是他们使用的 fixed-vocabulary 的方法，因此无法扩展到更大规模。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#slot-self-attentive-dialogue-state-tracking" title="Slot Self-Attentive Dialogue State Tracking"><i class="fa fa-"></i>论文笔记</a> <mark class="label default">slot-token attention</mark></p>
+<p><span class="citation" data-cites="wang2020slot">(Wang, Guo, and Zhu 2020)</span>认为应该灵活地利用本体而不是舍弃它，为此提出了 <mark class="label info">Value Normalization</mark>，其利用 value gates 决定槽值 from span 还是 from candidates。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#slot-self-attentive-dialogue-state-tracking" title="Slot Attention with Value Normalization for Multi-domain Dialogue State Tracking"><i class="fa fa-"></i>论文笔记</a></p>
+<p><span class="citation" data-cites="ye2021slot">(Ye et al. 2021)</span>使用 <mark class="label info">stacked multi-head slot self-attention</mark> 进一步加强了槽位之间的关联，不仅利用了槽位信息还使用了槽值信息。但是他们使用的 fixed-vocabulary 的方法，因此无法扩展到更大规模。<a class="btn" href="https://yan624.github.io/posts/5286f9c6.html#slot-attention-with-value-normalization-for-multi-domain-dialogue-state-tracking" title="Slot Self-Attentive Dialogue State Tracking"><i class="fa fa-"></i>论文笔记</a> <mark class="label default">slot-token attention</mark></p>
 <h2 id="前情提要">前情提要</h2>
 <p>本节回顾一下 2020 年之前 DST 的做法。我暂时没有阅读过远古时代如何构建 DST 模型的论文，所以对那时的做法不做分析或评价。但是据我所知，在以前都需要一个人工构建的同义词表，以此替换用户语句中的一些同义词。例如“center”和“centre”都是“中心”的意思，但是由于它们是不同单词，所以一般都需要使用同义词表对用户的输入进行预处理。然而这种构建同义词表的做法显然费时费力。</p>
 <h3 id="同义词表以及误差传递的问题">同义词表以及误差传递的问题</h3>
@@ -870,7 +931,7 @@ v &amp; \text{if} \, r^j_t = UPDATE
 	tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
 	legend: {
 		type: 'scroll',
-		data: ['SOM-DST', 'CSFN-DST', 'SAS', 'CHAN-DST', 'DST-SC', 'Graph-DST', 'STAR', 'SUNS-DST'],
+		data: ['SOM-DST', 'CSFN-DST', 'CHAN-DST', 'DST-SC', 'Graph-DST', 'SAVN', 'STAR', 'SUNS-DST'],
 		top: 25,
 	},
 	toolbox: {
@@ -907,12 +968,6 @@ v &amp; \text{if} \, r^j_t = UPDATE
 				normal: {show: true, textBorderColor: 'black', formatter:'+BERT', offset: [0, 10]}
 			}
 		},
-		{
-			name: 'SAS', type: 'bar', data: [51.03],
-			label: {
-				normal: {show: true, textBorderColor: 'black', formatter:'RT shr', offset: [0, 10]}
-			}
-		},
 		{name: 'CHAN-DST', type: 'bar', data: [53.38],},
 		{name: 'DST-SC', type: 'bar', data: [49.58],},
 		{name: 'Graph-DST', type: 'bar', data: [54.85],},
@@ -920,6 +975,12 @@ v &amp; \text{if} \, r^j_t = UPDATE
 			name: 'STAR', type: 'bar', data: [56.36],
 			label: {
 				normal: {show: true, textBorderColor: 'black', formatter:'L=6', offset: [0, 10]}
+			}
+		},
+		{
+			name: 'SVAN', type: 'bar', data: [54.86],
+			label: {
+				normal: {show: true, textBorderColor: 'black', formatter:'VN1\n+\nfull ont', offset: [0, 10]}
 			}
 		},
 		{name: 'SUNS-DST', type: 'bar', data: [57.83],},
@@ -967,6 +1028,9 @@ window.onload = function () {
 </div>
 <div id="ref-shan2020contextual">
 <p>Shan, Yong, Zekang Li, Jinchao Zhang, Fandong Meng, Yang Feng, Cheng Niu, and Jie Zhou. 2020. “A Contextual Hierarchical Attention Network with Adaptive Objective for Dialogue State Tracking.” <em>arXiv Preprint arXiv:2006.01554</em>.</p>
+</div>
+<div id="ref-wang2020slot">
+<p>Wang, Yexiang, Yi Guo, and Siqi Zhu. 2020. “Slot Attention with Value Normalization for Multi-Domain Dialogue State Tracking.” In <em>Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (Emnlp)</em>, 3019–28.</p>
 </div>
 <div id="ref-wu2019transferable">
 <p>Wu, Chien-Sheng, Andrea Madotto, Ehsan Hosseini-Asl, Caiming Xiong, Richard Socher, and Pascale Fung. 2019. “Transferable Multi-Domain State Generator for Task-Oriented Dialogue Systems.” <em>arXiv Preprint arXiv:1905.08743</em>.</p>
@@ -7999,8 +8063,8 @@ w^2_{21} &amp; w^2_{22} &amp; w^2_{23}\\
       </categories>
       <tags>
         <tag>系列</tag>
-        <tag>simple NN</tag>
         <tag>深度学习算法</tag>
+        <tag>simple NN</tag>
       </tags>
   </entry>
   <entry>
@@ -8630,19 +8694,6 @@ window.onload = function () {
       </tags>
   </entry>
   <entry>
-    <title>ViewPager无法刷新数据</title>
-    <url>/posts/e6412665.html</url>
-    <content><![CDATA[<p>实现ViewPager刷新数据功能，在网上找了很多资料都已经过时了。 由于本人并不是android开发出身，完全是做app玩的。所以很多术语都不知道，如果看不懂就算了。。。 实现PagerAdapter类，我命名为HomePagerAdapter <a id="more"></a> <figure class="highlight aspectj"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HomePagerAdapter</span> <span class="keyword">extends</span> <span class="title">PagerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ArrayList&lt;View&gt; pageView;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HomePagerAdapter</span><span class="params">(ArrayList&lt;View&gt; pageView)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.pageView = pageView;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> mChildCount = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">notifyDataSetChanged</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        mChildCount = getCount();</span><br><span class="line">        <span class="keyword">super</span>.notifyDataSetChanged();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">int</span> <span class="title">getItemPosition</span><span class="params">(Object object)</span>   </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> ( mChildCount &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            mChildCount --;</span><br><span class="line">            <span class="keyword">return</span> POSITION_NONE;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">return</span> <span class="keyword">super</span>.<span class="title">getItemPosition</span><span class="params">(object)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="comment">//获取当前窗体界面数</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">int</span> <span class="title">getCount</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">        <span class="function"><span class="keyword">return</span> pageView.<span class="title">size</span><span class="params">()</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="comment">//判断是否由对象生成界面</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">isViewFromObject</span><span class="params">(View arg0, Object arg1)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">        <span class="keyword">return</span> arg0==arg1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">destroyItem</span><span class="params">(ViewGroup container, <span class="keyword">int</span> position, Object object)</span> </span>&#123;</span><br><span class="line">        container.removeView(pageView.get(position));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function">Object <span class="title">instantiateItem</span><span class="params">(ViewGroup container, <span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">        View view = pageView.get(position);</span><br><span class="line">        container.addView(view);</span><br><span class="line">        <span class="keyword">return</span> view;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">finishUpdate</span><span class="params">(ViewGroup container)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(container.getChildCount() == <span class="number">0</span>)&#123;</span><br><span class="line">            pageView.clear();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure> 注意destroyItem、instantiateItem方法，PagerAdapter中还有两个同名的方法，但是已被废弃，注意参数不同。 实现刷新数据主要在destroyItem、instantiateItem、finishUpdate三个方法。其他的方法其实别人的教程也写了，但是我这三个方法是我自己研究的，我没见别人写过。</p>
-<p>解释流程。 第一步，改变数据，我是将数据保存在了<code>private ArrayList&lt;View&gt; pageView;</code>中。 第二步，调用<code>adapter.notifyDataSetChanged();</code>方法，它首先会销毁item，即调用<code>destroyItem(ViewGroup container, int position, Object object)</code>方法。随即调用<code>instantiateItem(ViewGroup container, int position)</code>方法。 一般来说大家都是这么干的，因为将数据改变后，调用<code>adapter.notifyDataSetChanged();</code>方法。直觉认为这么做合乎常理。 但是这里注意一点，假设<code>private ArrayList&lt;View&gt; pageView;</code>中原先保存两个View，改变数据将这个View删除，从新添加三个新的View，那么在<code>destroyItem(ViewGroup container, int position, Object object)</code>方法中，它无法删除，仔细看里面的代码<code>container.removeView(pageView.get(position));</code>，发现它是通过position这个索引获取对象，再在container容器中通过对象查找删除。那么问题来了，你之前已经将两份View删除了，它还怎么通过position获取到呢？所以在这一步出了问题。 当然这一步出了问题后，后面的创建页面步骤更是稀巴烂。</p>
-<p>正确步骤如下： <figure class="highlight reasonml"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 将页面刷新，渲染新的数据集</span></span><br><span class="line">homePagerAdapter.notify<span class="constructor">DataSetChanged()</span>;</span><br><span class="line">change<span class="constructor">Data(<span class="params">inflater</span>, <span class="params">data</span>)</span>;</span><br><span class="line">homePagerAdapter.notify<span class="constructor">DataSetChanged()</span>;</span><br></pre></td></tr></table></figure> 第一步，不要更改数据，直接调用<code>homePagerAdapter.notifyDataSetChanged();</code>，目的是让其删除原先的view。 第二步，更改数据。 第三步，再次调用<code>homePagerAdapter.notifyDataSetChanged();</code>，完成页面的创建。由于container中已经没有view了，所以删除那个步骤做了也等于没做，但是由于数据已经更新页面还是会被创建出来。</p>
-<p>最后强调用一点。在HomePagerAdapter类中一个<code>finishUpdate(ViewGroup container)</code>方法，注意看里面的代码。<strong>以上的所有步骤，全部依赖于这几句代码。</strong> 上面第一步说到直接调用notifyDataSetChanged()方法目的是删除原先的view，但是view删除后，你必须将<code>private ArrayList&lt;View&gt; pageView;</code>中的数据也删除。<strong>这里补充一点，pageView内是我创建的View，而container中是android自己维护的界面</strong>，我也不知道怎么称呼，就将其称为界面吧。 在finishUpdate()方法中判断，如果container中已经没有界面了，那就直接移除pageView中所有的数据，也就是算更新数据了。值得注意的是，这里面逻辑及其复杂，这行清空数据的代码，只有放在<code>finishUpdate(ViewGroup container)</code>中执行，并且必须加上那个if条件判断，app才能正常运行。 <!-- more --></p>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>android</category>
-      </categories>
-  </entry>
-  <entry>
     <title>在写了大量内容以及大量数学表达式后，mathJax无法渲染数学表达式</title>
     <url>/posts/b6508bb7.html</url>
     <content><![CDATA[<p>之前写的数学表达式明明可以渲染，但是接下去隔了n行的数学表达式无法渲染。推测是因为单行数学表达式在文字前面换行。 比如说： &gt;文字文字文字文字：·￥￥· 该表达式渲染正常。</p>
@@ -8654,25 +8705,6 @@ window.onload = function () {
       </categories>
       <tags>
         <tag>hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Android开发，使用腾讯云的API请求对象存储中的资源始终失败</title>
-    <url>/posts/f076a4cb.html</url>
-    <content><![CDATA[<ol type="1">
-<li>腾讯云api内部在调用时，把url转义了。我的链接是http://###.cos.ap-shanghai.myqcloud.com/11111/app_list.txt?abcdefg，它内部给我转义成http://###.cos.ap-shanghai.myqcloud.com/11111/app_list.txt%3Fabcdefg，就是把&quot;?&quot;转义成了&quot;%3F&quot;。总而言之，我使用api一直获取不到资源，然后我在浏览器上试验了一下。发现把%3F改回?就可以访问了，实际上应该不是这样，反正就给我产生了误导。我想尽办法都不能将其转义回来，最后只好放弃。腾讯云api内部肯定自己转义了一下，真的坑爹。</li>
-<li>尝试自己写代码请求资源，结果发现如果url的协议是https就可以访问到资源了。这可能是android的问题，于是我又使用腾讯的api，配置更改如下： <figure class="highlight reasonml"><table><tr><td class="code"><pre><span class="line">CosXmlServiceConfig serviceConfig = <span class="keyword">new</span> <span class="constructor">Builder()</span></span><br><span class="line">				.is<span class="constructor">Https(<span class="params">true</span>)</span></span><br><span class="line">                .set<span class="constructor">Region(<span class="params">region</span>)</span></span><br><span class="line">                .set<span class="constructor">Debuggable(<span class="params">true</span>)</span></span><br><span class="line">                .builder<span class="literal">()</span>;</span><br></pre></td></tr></table></figure> 将isHttps设为ture，协议就改为了https。可是又报了另一个错：The specified key does not exist.它说我密钥不存在。</li>
-<li>如果使用http协议访问就会说无法解析域名，总之用腾讯云的api无法访问到资源就对了。</li>
-<li>放弃腾讯云的api，自己手写代码去请求资源！</li>
-</ol>
-<a id="more"></a>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>android</category>
-      </categories>
-      <tags>
-        <tag>error</tag>
       </tags>
   </entry>
   <entry>
@@ -9123,9 +9155,9 @@ A：[深度学习500问笔记#Dropout-系列问题](https://yan624.github.io/·z
       </categories>
       <tags>
         <tag>学习笔记</tag>
+        <tag>simple NN</tag>
         <tag>back propagation</tag>
         <tag>gradient descent</tag>
-        <tag>simple NN</tag>
         <tag>bias</tag>
         <tag>variance</tag>
         <tag>regularization</tag>
@@ -9626,23 +9658,6 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
       </tags>
   </entry>
   <entry>
-    <title>spring boot中使用@ConfigurationProperties注解</title>
-    <url>/posts/c940f4fc.html</url>
-    <content><![CDATA[<p>在使用@ConfigurationProperties注解前必须引入这个依赖 <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 为了使用@ConfigurationProperties注解，必须加入这个--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-configuration-processor<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">optional</span>&gt;</span>true<span class="tag">&lt;/<span class="name">optional</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>使用方法： <a id="more"></a> <figure class="highlight less"><table><tr><td class="code"><pre><span class="line"><span class="variable">@Component</span></span><br><span class="line"><span class="variable">@ConfigurationProperties</span>(prefix = <span class="string">"io.github.yan624.file"</span>)</span><br><span class="line"><span class="variable">@Data</span></span><br><span class="line">public class PropertiesConfig &#123;</span><br><span class="line">    <span class="selector-tag">private</span> <span class="selector-tag">String</span> <span class="selector-tag">root</span>;</span><br><span class="line">    <span class="selector-tag">private</span> <span class="selector-tag">String</span> <span class="selector-tag">qrPath</span>;</span><br><span class="line">    <span class="selector-tag">private</span> <span class="selector-tag">String</span> <span class="selector-tag">imgPath</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>yml文件： <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">io:</span></span><br><span class="line"><span class="attr">  github:</span></span><br><span class="line"><span class="attr">    yan624:</span></span><br><span class="line"><span class="attr">      file:</span></span><br><span class="line"><span class="attr">        root:</span> <span class="attr">E:/itchat4j/</span></span><br><span class="line"><span class="attr">        qr-path:</span> <span class="string">$&#123;io.github.yan624.file.root&#125;/login</span></span><br><span class="line"><span class="attr">        img-path:</span> <span class="string">$&#123;io.github.yan624.file.root&#125;/img</span></span><br><span class="line"><span class="string">...</span></span><br></pre></td></tr></table></figure></p>
-<p>其中@Data是lombok插件的注解，用于生成get/set方法</p>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>spring注解</tag>
-        <tag>spring</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>李宏毅机器学习2017春学习记录及作业：octave实现</title>
     <url>/posts/a2094cb3.html</url>
     <content><![CDATA[<p>所有代码在<a href="https://github.com/yan624/lihongyi-machine-learning-2017-homework" target="_blank" rel="noopener">lihongyi-machine-learning-2017-homework</a>上 ### 学习情况和做题背景 #### 学习情况 先看了<strong>《深度学习》（花书）</strong>这本书，由于我是零基础学习该方向，感觉这本书除了前几章数学方面略看得懂，其他的一脸懵逼。由于本人在学习某一知识之前会预先搜集资料。于是我打开了在知乎收藏的文章，点进了<strong>吴恩达机器学习</strong>网易云课堂。我看了几个算法：线性回归，逻辑回归，神经网络。并且做了线性回归和逻辑回归的练习题。个人感觉吴恩达的视频很适合入门，但是想要仔细理解太难了。我根据吴恩达老师提供的题目，照葫芦画瓢做了一下，做还是做出来了，但是这都是很简单的例子。大都是只有三四个参数，所以感觉只是入门了。 这时候我再去看<strong>《深度学习》</strong>这本书，发现有些内容我看得懂了。但是有只是有些而已，往后看还是无法理解。至此，在寒假中我彻底放弃继续看<strong>《深度学习》</strong>。这个时候我又继续搜集资料，我发现了另一个教学视频就是<strong>李宏毅机器学习</strong>，经过自己的查询，最终决定看这个。李宏毅老师讲的略微会难一点，因为他面向的是研究生，这个从他的课程介绍上可以看得出。可以对比一下， - <strong>吴恩达机器学习</strong>不会涉及任何数学部分，高数、线代、概率论在吴恩达老师的课堂上只会出现名词和推导过程，他不会解释为什么，他假设看这视频的人都不懂数学。因为他的课程面向的是所有人。而且他的课程当中很多知识都是讲解基础知识，深入的东西他会只介绍名词，甚至不会介绍。所以<strong><em>很</em></strong>适合做入门视频，<strong>最重要的是</strong>他的视频都很短，最长的也只有十几分钟。 - <strong>李宏毅机器学习</strong>讲的比吴恩达的深入许多，他会讲解原理，而且讲的也很清楚，并且数学部分他也不会跳过，而且他都是假设你会这部分的数学知识。另外他讲课是讲例子的，主要的例子是预测神奇宝贝进化后的cp值（大概就是战斗力的意思），还会出现一些游戏如帝国时代、我的世界等。这些都会使得课堂很有意思。在b站有他的视频，不过都很长，一个视频打都有60来分钟，有少数极短。最后他的作业数据量大做起来很有意思。 所以我建议先看吴恩达老师的机器学习视频看到神经网络，先入个门要不然看其他人的教学视频可能跟不上节奏，然后看李宏毅老师视频，注意完成他的作业，会很好的帮助自己理解。 <a id="more"></a></p>
@@ -9787,79 +9802,6 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
       </categories>
   </entry>
   <entry>
-    <title>用idea创建gradle构建的项目</title>
-    <url>/posts/d5a8dffe.html</url>
-    <content><![CDATA[<p>在网上找了找发现没几个人用maven创建kotlin项目，而我以前一直都用maven，没用过gradle，所以只能当学习gradle了。 第一步：选择gradle <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/f9fdef1607a94d4788848429af5af5a6.png" title="选择gradle" alt="选择gradle" /> 第二步填写GroupId和ArrtifactId，这个很简单。略。 第三步，默认是这样的窗口，但是我选择了User auto-import（自动导包功能），其他都是默认值。 <a id="more"></a> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/70cb9fa0d58142f094e14a8c8a9f0a79.png" title="一些配置" alt="一些配置" /> 第四步，看看项目的所在文件夹没问题就可以finish了。 第五步，发现项目的文件夹有问题，只有个.idea。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/fa8abf0e9fa54d658512abb05b9436ae.png" title="项目目录只有.idea文件夹" alt="项目目录只有.idea文件夹" /> 第六步，我是第一次用gradle，只要等gradle下完就行了。如果下完还是没有，那么重启一下idea就行了。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/6acb9a4b777f4c08b60fcce2a8f425eb.png" title="成功构建" alt="成功构建" /> <!-- more --></p>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>android</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>kotlin</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>（十）搭建springcloud：记录项目运行的日志</title>
-    <url>/posts/3d97729c.html</url>
-    <content><![CDATA[<p>项目运行避免不了出现错误，这是日志就帮了大忙。 springboot提供了一个便捷的方法配置日志。在application.yml中加入以下配置，其中com.yan624代表包名，即这个包下的所有类输出的日志都是error以上级别。 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">logging:</span></span><br><span class="line"><span class="attr">  file:</span> <span class="string">upms.log</span></span><br><span class="line"><span class="attr">  level:</span></span><br><span class="line">    <span class="string">com.yan624:</span> <span class="string">error</span></span><br><span class="line"><span class="string">...</span></span><br></pre></td></tr></table></figure></p>
-<p>如果如下配置，就代表项目的所有类输出的日志都是error以上级别 <a id="more"></a> <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">logging:</span></span><br><span class="line"><span class="attr">  file:</span> <span class="string">upms.log</span></span><br><span class="line"><span class="attr">  level:</span></span><br><span class="line"><span class="attr">    root:</span> <span class="string">error</span></span><br><span class="line"><span class="string">...</span></span><br></pre></td></tr></table></figure></p>
-<p>但是这样配置无法做出更灵活的操作，比如将info的日志输出到info.log；将warn的日志输出到warn.log；将error的日志输出到error.log。 所以可以删除上面的配置，在classpath路径中新建logback.xml文件，里面填入： <figure class="highlight dust"><table><tr><td class="code"><pre><span class="line"><span class="xml"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="comment">&lt;!-- 修改一下自己想配置的路径，就一个点代表项目根路径--&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"LOG_PATH"</span> <span class="attr">value</span>=<span class="string">"."</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="comment">&lt;!-- start springboot default configuration of console log pattern --&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="comment">&lt;!-- 彩色日志 --&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="comment">&lt;!-- 彩色日志依赖的渲染类 --&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">conversionRule</span> <span class="attr">conversionWord</span>=<span class="string">"clr"</span> <span class="attr">converterClass</span>=<span class="string">"org.springframework.boot.logging.logback.ColorConverter"</span>/&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">conversionRule</span> <span class="attr">conversionWord</span>=<span class="string">"wex"</span> <span class="attr">converterClass</span>=<span class="string">"org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"</span>/&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">conversionRule</span> <span class="attr">conversionWord</span>=<span class="string">"wEx"</span> <span class="attr">converterClass</span>=<span class="string">"org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"</span>/&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="comment">&lt;!-- 彩色日志格式 --&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"CONSOLE_LOG_PATTERN"</span></span></span></span><br><span class="line"><span class="xml">              value="$</span><span class="template-variable">&#123;CONSOLE_LOG_PATTERN:-%clr(%d&#123;yyyy-MM-dd HH:mm:ss.SSS&#125;</span><span class="xml">)</span><span class="template-variable">&#123;faint&#125;</span><span class="xml"> %clr($</span><span class="template-variable">&#123;LOG_LEVEL_PATTERN:-%5p&#125;</span><span class="xml">) %clr($</span><span class="template-variable">&#123;PID:- &#125;</span><span class="xml">)</span><span class="template-variable">&#123;magenta&#125;</span><span class="xml"> %clr(---)</span><span class="template-variable">&#123;faint&#125;</span><span class="xml"> %clr([%15.15t])</span><span class="template-variable">&#123;faint&#125;</span><span class="xml"> %clr(%-40.40logger</span><span class="template-variable">&#123;39&#125;</span><span class="xml">)</span><span class="template-variable">&#123;cyan&#125;</span><span class="xml"> %clr(:)</span><span class="template-variable">&#123;faint&#125;</span><span class="xml"> %m%n$</span><span class="template-variable">&#123;LOG_EXCEPTION_CONVERSION_WORD:-%wEx&#125;</span><span class="xml">&#125;"/&gt;</span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"FILE_LOG_PATTERN"</span> <span class="attr">value</span>=<span class="string">"%date %-5level [$</span></span></span><span class="template-variable">&#123;HOSTNAME&#125;</span><span class="xml"><span class="tag"><span class="string"> %thread] %caller</span></span></span><span class="template-variable">&#123;1&#125;</span><span class="xml"><span class="tag"><span class="string">%msg%n"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="comment">&lt;!-- 控制台输出 --&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">appender</span> <span class="attr">name</span>=<span class="string">"CONSOLE"</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.ConsoleAppender"</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">encoder</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">Pattern</span>&gt;</span>$</span><span class="template-variable">&#123;CONSOLE_LOG_PATTERN&#125;</span><span class="xml"><span class="tag">&lt;/<span class="name">Pattern</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">charset</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">charset</span>&gt;</span> <span class="comment">&lt;!-- 此处设置字符集 --&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">encoder</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!--此日志appender是为开发使用，只配置最底级别，控制台输出的日志级别是大于或等于此级别的日志信息--&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.classic.filter.ThresholdFilter"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">level</span>&gt;</span>info<span class="tag">&lt;/<span class="name">level</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">filter</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">appender</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="comment">&lt;!-- end springboot default configuration of console log pattern --&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="comment">&lt;!-- 输出自己项目的日志，我比较喜欢将第三方的日志和自己的日志区分开存放，如果没我这样的强迫症可以不配置 --&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">appender</span> <span class="attr">name</span>=<span class="string">"MY_PROJECT_LOG_FILE"</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.RollingFileAppender"</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">file</span>&gt;</span>$</span><span class="template-variable">&#123;LOG_PATH&#125;</span><span class="xml">/my-project.log<span class="tag">&lt;/<span class="name">file</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!--日志文件输出格式--&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">encoder</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>$</span><span class="template-variable">&#123;FILE_LOG_PATTERN&#125;</span><span class="xml"><span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">charset</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">charset</span>&gt;</span> <span class="comment">&lt;!-- 此处设置字符集 --&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">encoder</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">rollingPolicy</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.TimeBasedRollingPolicy"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">fileNamePattern</span>&gt;</span>my-project/my-project-%d</span><span class="template-variable">&#123;yyyy-MM-dd&#125;</span><span class="xml">.%i.log<span class="tag">&lt;/<span class="name">fileNamePattern</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--</span></span></span><br><span class="line"><span class="xml">                除按日志记录之外，还配置了日志文件不能超过20M，若超过20M，日志文件会以索引0开始，</span></span><br><span class="line"><span class="xml">                命名日志文件，例如info/info-2019-01-03.0.log</span></span><br><span class="line"><span class="xml">            --&gt;</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">timeBasedFileNamingAndTriggeringPolicy</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP"</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">maxFileSize</span>&gt;</span>20MB<span class="tag">&lt;/<span class="name">maxFileSize</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">timeBasedFileNamingAndTriggeringPolicy</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--日志文件保留天数--&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--&lt;maxHistory&gt;30&lt;/maxHistory&gt;--&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">rollingPolicy</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!-- 此日志文件只记录info级别的 --&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.classic.filter.LevelFilter"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">level</span>&gt;</span>info<span class="tag">&lt;/<span class="name">level</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">filter</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">appender</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">appender</span> <span class="attr">name</span>=<span class="string">"INFO_FILE"</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.RollingFileAppender"</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">file</span>&gt;</span>$</span><span class="template-variable">&#123;LOG_PATH&#125;</span><span class="xml">/info.log<span class="tag">&lt;/<span class="name">file</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!--日志文件输出格式--&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">encoder</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>$</span><span class="template-variable">&#123;FILE_LOG_PATTERN&#125;</span><span class="xml"><span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">charset</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">charset</span>&gt;</span> <span class="comment">&lt;!-- 此处设置字符集 --&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">encoder</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">rollingPolicy</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.TimeBasedRollingPolicy"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">fileNamePattern</span>&gt;</span>info/info-%d</span><span class="template-variable">&#123;yyyy-MM-dd&#125;</span><span class="xml">.%i.log<span class="tag">&lt;/<span class="name">fileNamePattern</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--</span></span></span><br><span class="line"><span class="xml">                除按日志记录之外，还配置了日志文件不能超过20M，若超过20M，日志文件会以索引0开始，</span></span><br><span class="line"><span class="xml">                命名日志文件，例如info/info-2019-01-03.0.log</span></span><br><span class="line"><span class="xml">            --&gt;</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">timeBasedFileNamingAndTriggeringPolicy</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP"</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">maxFileSize</span>&gt;</span>20MB<span class="tag">&lt;/<span class="name">maxFileSize</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">timeBasedFileNamingAndTriggeringPolicy</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--日志文件保留天数--&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--&lt;maxHistory&gt;30&lt;/maxHistory&gt;--&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">rollingPolicy</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!-- 此日志文件只记录info级别的 --&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.classic.filter.LevelFilter"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">level</span>&gt;</span>info<span class="tag">&lt;/<span class="name">level</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--</span></span></span><br><span class="line"><span class="xml">                以下两个配置代表匹配到日志等级为info则输出，否则拒绝输出。</span></span><br><span class="line"><span class="xml">                如果删除这两行配置，那么这两个配置的默认值为NEUTRAL，意味着从日志等级info开始一层一层向上打印，即info-&gt;warn-&gt;error-&gt;fatal-&gt;off</span></span><br><span class="line"><span class="xml">                再比如上面<span class="tag">&lt;<span class="name">level</span>&gt;</span>配置的是error,那么输出error-&gt;fatal-&gt;off</span></span><br><span class="line"><span class="xml">                如果上面<span class="tag">&lt;<span class="name">level</span>&gt;</span>配置的是off，那么就只输出off等级的日志。</span></span><br><span class="line"><span class="xml">             --&gt;</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">onMatch</span>&gt;</span>ACCEPT<span class="tag">&lt;/<span class="name">onMatch</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">onMismatch</span>&gt;</span>DENY<span class="tag">&lt;/<span class="name">onMismatch</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">filter</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">appender</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">appender</span> <span class="attr">name</span>=<span class="string">"WARN_FILE"</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.RollingFileAppender"</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">file</span>&gt;</span>$</span><span class="template-variable">&#123;LOG_PATH&#125;</span><span class="xml">/warn.log<span class="tag">&lt;/<span class="name">file</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!--日志文件输出格式--&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">encoder</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>$</span><span class="template-variable">&#123;FILE_LOG_PATTERN&#125;</span><span class="xml"><span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">charset</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">charset</span>&gt;</span> <span class="comment">&lt;!-- 此处设置字符集 --&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">encoder</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">rollingPolicy</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.TimeBasedRollingPolicy"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">fileNamePattern</span>&gt;</span>warn/warn-%d</span><span class="template-variable">&#123;yyyy-MM-dd&#125;</span><span class="xml">.%i.log<span class="tag">&lt;/<span class="name">fileNamePattern</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--</span></span></span><br><span class="line"><span class="xml">                除按日志记录之外，还配置了日志文件不能超过20M，若超过20M，日志文件会以索引0开始，</span></span><br><span class="line"><span class="xml">                命名日志文件，例如warn/warn-2019-01-03.0.log</span></span><br><span class="line"><span class="xml">            --&gt;</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">timeBasedFileNamingAndTriggeringPolicy</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP"</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">maxFileSize</span>&gt;</span>20MB<span class="tag">&lt;/<span class="name">maxFileSize</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">timeBasedFileNamingAndTriggeringPolicy</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--日志文件保留天数--&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--&lt;maxHistory&gt;30&lt;/maxHistory&gt;--&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">rollingPolicy</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!-- 此日志文件只记录warn级别的 --&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.classic.filter.LevelFilter"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">level</span>&gt;</span>warn<span class="tag">&lt;/<span class="name">level</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">onMatch</span>&gt;</span>ACCEPT<span class="tag">&lt;/<span class="name">onMatch</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">onMismatch</span>&gt;</span>DENY<span class="tag">&lt;/<span class="name">onMismatch</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">filter</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">appender</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">appender</span> <span class="attr">name</span>=<span class="string">"ERROR_FILE"</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.RollingFileAppender"</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">file</span>&gt;</span>$</span><span class="template-variable">&#123;LOG_PATH&#125;</span><span class="xml">/error.log<span class="tag">&lt;/<span class="name">file</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!--日志文件输出格式--&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">encoder</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">pattern</span>&gt;</span>$</span><span class="template-variable">&#123;FILE_LOG_PATTERN&#125;</span><span class="xml"><span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">charset</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">charset</span>&gt;</span> <span class="comment">&lt;!-- 此处设置字符集 --&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">encoder</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">rollingPolicy</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.TimeBasedRollingPolicy"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">fileNamePattern</span>&gt;</span>error/error-%d</span><span class="template-variable">&#123;yyyy-MM-dd&#125;</span><span class="xml">.%i.log<span class="tag">&lt;/<span class="name">fileNamePattern</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--</span></span></span><br><span class="line"><span class="xml">                除按日志记录之外，还配置了日志文件不能超过20M，若超过20M，日志文件会以索引0开始，</span></span><br><span class="line"><span class="xml">                命名日志文件，例如error/error-2019-01-03.0.log</span></span><br><span class="line"><span class="xml">            --&gt;</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">timeBasedFileNamingAndTriggeringPolicy</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP"</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">maxFileSize</span>&gt;</span>20MB<span class="tag">&lt;/<span class="name">maxFileSize</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">timeBasedFileNamingAndTriggeringPolicy</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--日志文件保留天数--&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="comment">&lt;!--&lt;maxHistory&gt;30&lt;/maxHistory&gt;--&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">rollingPolicy</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!-- 此日志文件只记录error级别的 --&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.classic.filter.LevelFilter"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">level</span>&gt;</span>error<span class="tag">&lt;/<span class="name">level</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">onMatch</span>&gt;</span>ACCEPT<span class="tag">&lt;/<span class="name">onMatch</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">onMismatch</span>&gt;</span>DENY<span class="tag">&lt;/<span class="name">onMismatch</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">filter</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">appender</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">springProfile</span> <span class="attr">name</span>=<span class="string">"test"</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!-- 控制台输出info级别以上的日志 --&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">root</span> <span class="attr">level</span>=<span class="string">"info"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">appender-ref</span> <span class="attr">ref</span>=<span class="string">"CONSOLE"</span> /&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">root</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">springProfile</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">springProfile</span> <span class="attr">name</span>=<span class="string">"prod"</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!--这里的name属性代表所属包的名称是以io.github.yan624.messageporter开头的类，会按照这个logger的配置打印日志--&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">logger</span> <span class="attr">name</span>=<span class="string">"io.github.yan624.messageporter"</span> <span class="attr">additivity</span>=<span class="string">"false"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">appender-ref</span> <span class="attr">ref</span>=<span class="string">"MY_PROJECT_LOG_FILE"</span> /&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">logger</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!-- 打印warn，error级别的日志 --&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">root</span> <span class="attr">level</span>=<span class="string">"warn"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">appender-ref</span> <span class="attr">ref</span>=<span class="string">"WARN_FILE"</span> /&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">appender-ref</span> <span class="attr">ref</span>=<span class="string">"ERROR_FILE"</span> /&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">root</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!-- 控制台输出info级别以上的日志 --&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">root</span> <span class="attr">level</span>=<span class="string">"info"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">appender-ref</span> <span class="attr">ref</span>=<span class="string">"CONSOLE"</span> /&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">root</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">springProfile</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span></span><br></pre></td></tr></table></figure></p>
-<p>并且在application.yml文件中自己配置 <figure class="highlight dts"><table><tr><td class="code"><pre><span class="line"><span class="symbol">spring:</span></span><br><span class="line"><span class="symbol">  profiles:</span></span><br><span class="line"><span class="symbol">    active:</span> prod</span><br></pre></td></tr></table></figure> 这样代表了激活了prod的日志配置。对应于logback.xml文件中的<code>&lt;springProfile name=&quot;prod&quot;&gt;。。。&lt;/springProfile&gt;</code>。 如果希望把自己某个包中的类的日志输出，在appender-&gt;filter标签下不能写onMacth和onMisMatch具体原因不知，反正我是去掉了就可以输出了。参考springProfile-&gt;logger的name=&quot;com.yan624&quot;。其中MY_PROJECT_FILE的appender我并没有配置onMacth和onMisMatch。 名为CONSOLE的appender是springboot的默认输出格式，我在该xml中已经写明注释。 其他的应该都很好理解。 最后效果就是：在warn.log和error.log文件中分别输出warn和error级别的日志。在控制台输出info<strong>以上</strong>级别的日志。在my-project.log文件中输出我自己项目的info级别<strong>以上</strong>的日志。 上面我写了info级别的配置，但是我并没有使用，另外debug级别的配置我没有写，因为我用不上。</p>
-<h3 id="目录">目录</h3>
-<p><a href="https://yan624.github.io/（零）搭建springcloud：创建项目.html">（零）搭建springcloud：创建项目</a> <a href="https://yan624.github.io/（一）搭建springcloud：springboot整合thymeleaf.html">（一）搭建springcloud：springboot整合thymeleaf</a> <a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a> <a href="https://yan624.github.io/（三）搭建springcloud：整合mybatis-plus.html">（三）搭建springcloud：整合mybatis-plus</a> <a href="https://yan624.github.io/（四）搭建springcloud：eclipse迁移到idea的问题（maven%20install命令出错）.html">（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</a> <a href="https://yan624.github.io/（五）搭建springcloud：在idea启动springboot项目.html">（五）搭建springcloud：在idea启动springboot项目</a> <a href="https://yan624.github.io/（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）.html">（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</a> <a href="https://yan624.github.io/（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器.html">（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</a> <a href="https://yan624.github.io/（八）搭建springcloud：修改静态文件，如html，js后立即生效.html">（八）搭建springcloud：修改静态文件，如html，js后立即生效</a> <a href="https://yan624.github.io/（九）搭建springcloud：在linux上运行springboot项目.html">（九）搭建springcloud：在linux上运行springboot项目</a> <a href="https://yan624.github.io/（十）搭建springcloud：记录项目运行的日志.html">（十）搭建springcloud：记录项目运行的日志</a></p>
-<!-- more -->
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>系列</tag>
-        <tag>学习笔记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>（九）搭建springcloud：在linux上运行springboot项目</title>
-    <url>/posts/fce5c969.html</url>
-    <content><![CDATA[<p>具将本地的jar文件拖到服务器上时发现，jar文件只有3kb。果然使用“java -jar 项目名.jar”命令后，显示<strong>no main manifest attribute, in springboot项目名.jar</strong>。 解决办法：在项目中（不是聚合父工程中）添加如下代码</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                <span class="comment">&lt;!-- 指定该Main Class为全局的唯一入口 --&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">mainClass</span>&gt;</span>com.yan624.eureka.Eureka_Server7001<span class="tag">&lt;/<span class="name">mainClass</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">layout</span>&gt;</span>JAR<span class="tag">&lt;/<span class="name">layout</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">executions</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">execution</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">goals</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">goal</span>&gt;</span>repackage<span class="tag">&lt;/<span class="name">goal</span>&gt;</span><span class="comment">&lt;!--可以把依赖的包都打包到生成的Jar包中--&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">goals</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">execution</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">executions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-<p>由于如果直接使用java -jar 项目名.jar启动springboot项目，会造成你启动了这个项目就不用想输入其他命令了，所以使用 “<strong>nohup java -jar springboot项目名.jar &gt;记录日志的文件名.log 2&gt;&amp;1 &amp;</strong>”命令，来让spirngboot项目后台运行，并且记录日志。 如果不想输出日志，可以使用“<strong>nohup java -jar springboot项目名.jar &gt;/dev/null 2&gt;&amp;1 &amp;</strong>”</p>
-<h3 id="目录">目录</h3>
-<p><a href="https://yan624.github.io/（零）搭建springcloud：创建项目.html">（零）搭建springcloud：创建项目</a> <a href="https://yan624.github.io/（一）搭建springcloud：springboot整合thymeleaf.html">（一）搭建springcloud：springboot整合thymeleaf</a> <a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a> <a href="https://yan624.github.io/（三）搭建springcloud：整合mybatis-plus.html">（三）搭建springcloud：整合mybatis-plus</a> <a href="https://yan624.github.io/（四）搭建springcloud：eclipse迁移到idea的问题（maven%20install命令出错）.html">（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</a> <a href="https://yan624.github.io/（五）搭建springcloud：在idea启动springboot项目.html">（五）搭建springcloud：在idea启动springboot项目</a> <a href="https://yan624.github.io/（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）.html">（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</a> <a href="https://yan624.github.io/（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器.html">（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</a> <a href="https://yan624.github.io/（八）搭建springcloud：修改静态文件，如html，js后立即生效.html">（八）搭建springcloud：修改静态文件，如html，js后立即生效</a> <a href="https://yan624.github.io/（九）搭建springcloud：在linux上运行springboot项目.html">（九）搭建springcloud：在linux上运行springboot项目</a> <a href="https://yan624.github.io/（十）搭建springcloud：记录项目运行的日志.html">（十）搭建springcloud：记录项目运行的日志</a></p>
-<!-- more -->
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>系列</tag>
-        <tag>学习笔记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>springboot启动出现Unable to start EmbeddedWebApplicationContext due to missing EmbeddedServlet</title>
-    <url>/posts/c032153f.html</url>
-    <content><![CDATA[<p>网上的解决办法打都相同，但是我这个问题纯属操作失误。</p>
-<p>因为我想要启动我的微服务，但是在idea里配置的时候配置错了。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/abaa4d89631040ac90ccc023a34ac1d3.png" title="idea配置" alt="idea配置" /></p>
-<p>我把主启动类配错了。可以看到下图主启动类是CMS_BLOG8082，但是手滑选择了CmsBlogApiApplication。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/a61afd34f52f46299eca32ab412f668b.png" title="主启动类" alt="主启动类" /> <a id="more"></a></p>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>error</tag>
-        <tag>印象笔记上的博文</tag>
-        <tag>spring</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>idea启动的项目，打开网页出现部分文字乱码</title>
     <url>/posts/e26db4b5.html</url>
     <content><![CDATA[<p>起因： 在文件中右键点击file encoding，打算更改编码，但是出现一个窗口显示Reloead,Convert,Cancel。由于不懂这几个按键按后的效果是什么所以瞎按，导致文件完全乱码，恢复不回去。 之后在打开网页时，发现有部分中文乱码，而且乱码还是出现在前端部分，而且我的文件格式全是utf-8，所以按理说应该没有任何问题。最终也没有解决问题。 解决办法： 重新配置idea。重置方法详见：https://jingyan.baidu.com/article/fa4125ac1c613f28ac7092c1.html <em>更新：这个方法治标不治本，导致了部分页面恢复正常了，但是其他页面还是有问题。</em> <strong>终极解决办法：</strong>找到错误的根源，可能是html，也可能是js。大部分都是js的错误，由于js动态地将中文添加到页面，导致乱码。所以需要将这份js文件，复制出来，用windows的文本文档打开，另存为的时候修改编码为urf-8。再复制回项目即可。</p>
@@ -9872,229 +9814,6 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
         <tag>error</tag>
         <tag>印象笔记上的博文</tag>
         <tag>idea</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>（零）搭建springcloud：创建项目</title>
-    <url>/posts/af54e3b1.html</url>
-    <content><![CDATA[<h3 id="创建springboot项目">创建springboot项目</h3>
-<p>右键父工程选择new-&gt;module，创建一个子项目（packaging为jar）。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/33cb351041724b248d26b86121954e93.png" title="创建module" alt="创建module" /></p>
-<p>点击Module之后会出现如下界面，选择spring Initializr(你如果要创建maven项目的话也选这个)，什么都不要干，点击Next。</p>
-<figure>
-<img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/41f65d0615394aefa53946aa6300d5d2.png" title="创建springboot项目" alt="创建springboot项目" /><figcaption>创建springboot项目</figcaption>
-</figure>
-<p>之后会出现这个界面，填写好信息，注意Packaging是jar，因为springboot是用netty启动的，不需要打成war包，点击Next。 <a id="more"></a> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/4ad4d8919f1341098719e99ceaee285b.png" title="配置" alt="配置" /></p>
-<h3 id="创建聚合工程">创建聚合工程</h3>
-<p>右键父工程选择new-&gt;module，创建一个子项目（jpackaging为pom）。 选择maven即可。</p>
-<h3 id="目录">目录</h3>
-<p><a href="https://yan624.github.io/（零）搭建springcloud：创建项目.html">（零）搭建springcloud：创建项目</a> <a href="https://yan624.github.io/（一）搭建springcloud：springboot整合thymeleaf.html">（一）搭建springcloud：springboot整合thymeleaf</a> <a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a> <a href="https://yan624.github.io/（三）搭建springcloud：整合mybatis-plus.html">（三）搭建springcloud：整合mybatis-plus</a> <a href="https://yan624.github.io/（四）搭建springcloud：eclipse迁移到idea的问题（maven%20install命令出错）.html">（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</a> <a href="https://yan624.github.io/（五）搭建springcloud：在idea启动springboot项目.html">（五）搭建springcloud：在idea启动springboot项目</a> <a href="https://yan624.github.io/（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）.html">（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</a> <a href="https://yan624.github.io/（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器.html">（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</a> <a href="https://yan624.github.io/（八）搭建springcloud：修改静态文件，如html，js后立即生效.html">（八）搭建springcloud：修改静态文件，如html，js后立即生效</a> <a href="https://yan624.github.io/（九）搭建springcloud：在linux上运行springboot项目.html">（九）搭建springcloud：在linux上运行springboot项目</a> <a href="https://yan624.github.io/（十）搭建springcloud：记录项目运行的日志.html">（十）搭建springcloud：记录项目运行的日志</a> <!-- more --></p>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>系列</tag>
-        <tag>学习笔记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ip地址引起的无法单点登录</title>
-    <url>/posts/5bb81bde.html</url>
-    <content><![CDATA[<p>今天碰到一个很奇怪的问题，单点登录明明自认为代码没有任何问题，但是始终登录不进去。</p>
-<p>最后发现，测试配置的cas-service地址是手动输入的localhost，所以当使用单点登录时在sso系统进行验证完毕时会回调这个地址回到原系统。这一切都符合预期运行。但是当原系统调用backUrl时出问题了。因为我点的是eureka的Application表格的Status列中链接，而这个链接我正好配置显示更详细的ip地址，所以由本来的localhost替换成了我的局域网中的ip地址。</p>
-<p>综上：我需要登录的地址是localhost，而我需要回调的ip地址是我局域网的地址，显然两个ip不同那么shiro的subject也会不同，自然造成了每次使用isAuthenticated方法都会出问题。当然这只是特例，因为我的上述的两个地址虽然说不同但是实际上都是我一个人的，而上线之后应该不会遇到这种情况了。</p>
-<p>可以尝试将这几个ip地址映射为一个地址，或者在当用户多次跳转回登录页面时，让它的地址栏强制去除backUrl参数，并给出相应提示。 <a id="more"></a></p>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>shiro</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>（八）搭建springcloud：修改静态文件，如html，js后立即生效</title>
-    <url>/posts/cd648d8e.html</url>
-    <content><![CDATA[<ol type="1">
-<li>setting--&gt;Build,Execution,Deployment--&gt;Compiler 找到 build project automatically <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/0e3e14335ea94258adf2616de29ed82d.PNG" title="idea配置自动构建" alt="idea配置自动构建" /></li>
-<li>按ctrl+shift+alt+/，选择 Registry <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/1ed4835b01e54c82b6d0023db60873ac.jpg" title="更改注册" alt="更改注册" /></li>
-<li>重启 如果还是不行，就用麻烦点的办法，每次修改在idea按ctrl+shift+f9即可 <a id="more"></a></li>
-</ol>
-<h3 id="目录">目录</h3>
-<p><a href="https://yan624.github.io/（零）搭建springcloud：创建项目.html">（零）搭建springcloud：创建项目</a> <a href="https://yan624.github.io/（一）搭建springcloud：springboot整合thymeleaf.html">（一）搭建springcloud：springboot整合thymeleaf</a> <a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a> <a href="https://yan624.github.io/（三）搭建springcloud：整合mybatis-plus.html">（三）搭建springcloud：整合mybatis-plus</a> <a href="https://yan624.github.io/（四）搭建springcloud：eclipse迁移到idea的问题（maven%20install命令出错）.html">（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</a> <a href="https://yan624.github.io/（五）搭建springcloud：在idea启动springboot项目.html">（五）搭建springcloud：在idea启动springboot项目</a> <a href="https://yan624.github.io/（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）.html">（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</a> <a href="https://yan624.github.io/（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器.html">（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</a> <a href="https://yan624.github.io/（八）搭建springcloud：修改静态文件，如html，js后立即生效.html">（八）搭建springcloud：修改静态文件，如html，js后立即生效</a> <a href="https://yan624.github.io/（九）搭建springcloud：在linux上运行springboot项目.html">（九）搭建springcloud：在linux上运行springboot项目</a> <a href="https://yan624.github.io/（十）搭建springcloud：记录项目运行的日志.html">（十）搭建springcloud：记录项目运行的日志</a></p>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>系列</tag>
-        <tag>学习笔记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</title>
-    <url>/posts/4142c9a4.html</url>
-    <content><![CDATA[<figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableEurekaClient</span></span><br><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">Upms8081</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	public <span class="keyword">static</span> <span class="keyword">void</span> main(<span class="built_in">String</span>[] args) &#123;</span><br><span class="line">		<span class="built_in">Object</span>[] objects = <span class="keyword">new</span> <span class="built_in">Object</span>[<span class="number">3</span>];</span><br><span class="line">		objects[<span class="number">0</span>] = Upms8081.<span class="keyword">class</span>;</span><br><span class="line">		objects[<span class="number">1</span>] = UpmsApiAppliction.<span class="keyword">class</span>;</span><br><span class="line">		objects[<span class="number">2</span>] = CommonServiceStarter.<span class="keyword">class</span>;</span><br><span class="line">		SpringApplication.run(objects, args);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>其他的class对象分别是所需要初始化类jar包中的springboot启动类 <a id="more"></a></p>
-<h3 id="目录">目录</h3>
-<p><a href="https://yan624.github.io/（零）搭建springcloud：创建项目.html">（零）搭建springcloud：创建项目</a> <a href="https://yan624.github.io/（一）搭建springcloud：springboot整合thymeleaf.html">（一）搭建springcloud：springboot整合thymeleaf</a> <a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a> <a href="https://yan624.github.io/（三）搭建springcloud：整合mybatis-plus.html">（三）搭建springcloud：整合mybatis-plus</a> <a href="https://yan624.github.io/（四）搭建springcloud：eclipse迁移到idea的问题（maven%20install命令出错）.html">（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</a> <a href="https://yan624.github.io/（五）搭建springcloud：在idea启动springboot项目.html">（五）搭建springcloud：在idea启动springboot项目</a> <a href="https://yan624.github.io/（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）.html">（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</a> <a href="https://yan624.github.io/（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器.html">（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</a> <a href="https://yan624.github.io/（八）搭建springcloud：修改静态文件，如html，js后立即生效.html">（八）搭建springcloud：修改静态文件，如html，js后立即生效</a> <a href="https://yan624.github.io/（九）搭建springcloud：在linux上运行springboot项目.html">（九）搭建springcloud：在linux上运行springboot项目</a> <a href="https://yan624.github.io/（十）搭建springcloud：记录项目运行的日志.html">（十）搭建springcloud：记录项目运行的日志</a></p>
-<!-- more -->
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>系列</tag>
-        <tag>学习笔记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>shiro的filter配置问题，自定义的filter交给spring容器管理会有问题</title>
-    <url>/posts/22fa2838.html</url>
-    <content><![CDATA[<p>此项目基于springboot，放在springmvc中，filter由spring管理不知道为什么就没问题。</p>
-<p>我配置了/api/v1/<strong>----&gt;roles[]，/</strong>------&gt;authc</p>
-<p>/api/v1/<strong>一直无法访问，一直调转到authc这个过滤器去验证，我就怀疑是不是/</strong>也匹配到了/api/v1/**，但是以前做的时候一直没问题，所以绕了一大圈。</p>
-<p>最后发现！！！！！</p>
-<p>重要的事说三遍，不要将自定义的filter交给spring容器管理！不要将自定义的filter交给spring容器管理！不要将自定义的filter交给spring容器管理！ <a id="more"></a> 因为在一个链接的所有配置好的filter执行完毕后，它会接着执行另外一个过滤链，该过滤链由servlet容器提供。也就是说shiro一共会执行两个过滤链，一个是你自己配置好的，第二个是servlet提供的（由于本人没有阅读过spring源码，故不清楚spring注册的bean是怎么进入servlet容器的）。</p>
-<p>所以当你把自定义的过滤器交给spring管理时，这个过滤器无论如何都会至少执行一次。</p>
-<p>具体的代码在org.apache.shiro.web.servlet.doFilter(ServletRequest request, ServletResponse response)，第一行就是判断自定义的过滤链是否执行完毕，如果执行完毕就执行servlet提供的过滤链。（注shiro版本为1.4.0）</p>
-<p>如果出现这个问题只需要将filter的创建由自己完成即可。</p>
-<p>tips:由于可能在filter中需要注入某些对象。这时只能用springContext获取bean了。</p>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>shiro</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</title>
-    <url>/posts/e9ea3cd8.html</url>
-    <content><![CDATA[<p>由于是从eclipse迁移过来，之前的不同ide开发的问题搞了好久终于搞完了，以为终于成功了，然而又出了一大堆问题。 项目无法启动，报了一个奇葩的错： &gt;Could not initialize class org.hibernate.validator.internal.engine.Configuration</p>
-<p>大致意思貌似就是javax.validation和hibernate-validator版本冲突了（详见<a href="https://stackoverflow.com/questions/14730329/jpa-2-0-exception-to-use-javax-validation-package-in-jpa-2-0）" target="_blank" rel="noopener">stackoverflow JPA 2.0 : Exception to use javax.validation.* package in JPA 2.0</a> 在无数次更换版本中，终于找到了一个没有问题的版本。hibernate-validator（5.2.4.Final版），我试过很多版本都有问题，包括4.1.3，5.1.6，5.3.6，5.4.1，6.0.1都是没有用的而其中个别版本居然还不会传递依赖，就是hibernate-validator本身是依赖javax.validation（1.1.0.Final版）的，所幸的是5.2.4.Fianl依赖了javax.validation，也省的我再去试javax.validation的版本。 所以最后应该将hibernate-validator添加到你需要的工程的pom文件中.spring-boot-starter-web这个jar包它本身是依赖hibernate-validator的，所以我把它直接排除了（exclusions标签）。而springboot默认依赖的版本是5.3.6是有问题的，不知道是不是我电脑的原因，反正我是运行不起来。 <a id="more"></a></p>
-<p>总结：以后使用hibernate-validator要用5.2.4.Final版本。其次，我在eclipse里运行我的程序一点问题都没，移植到idea就各种问题，也不知道是不是idea太严格了。 <strong><em>补充：由于我的是聚合工程，我搞了两三个小时，<font color="red">发现我在pom文件中改动jar包的版本，虽然idea旁边的maven dependencies中相应的改变了jar包的版本，但是在实际运行过程中，它还是使用的之前版本的jar包，跟没改一样。</font>由于我是聚合工程，我将几乎所有的jar包版本都统一放在parent工程，所以后来发现只需要clean install一下parent工程即可。</em></strong></p>
-<h3 id="目录">目录</h3>
-<p><a href="https://yan624.github.io/（零）搭建springcloud：创建项目.html">（零）搭建springcloud：创建项目</a> <a href="https://yan624.github.io/（一）搭建springcloud：springboot整合thymeleaf.html">（一）搭建springcloud：springboot整合thymeleaf</a> <a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a> <a href="https://yan624.github.io/（三）搭建springcloud：整合mybatis-plus.html">（三）搭建springcloud：整合mybatis-plus</a> <a href="https://yan624.github.io/（四）搭建springcloud：eclipse迁移到idea的问题（maven%20install命令出错）.html">（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</a> <a href="https://yan624.github.io/（五）搭建springcloud：在idea启动springboot项目.html">（五）搭建springcloud：在idea启动springboot项目</a> <a href="https://yan624.github.io/（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）.html">（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</a> <a href="https://yan624.github.io/（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器.html">（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</a> <a href="https://yan624.github.io/（八）搭建springcloud：修改静态文件，如html，js后立即生效.html">（八）搭建springcloud：修改静态文件，如html，js后立即生效</a> <a href="https://yan624.github.io/（九）搭建springcloud：在linux上运行springboot项目.html">（九）搭建springcloud：在linux上运行springboot项目</a> <a href="https://yan624.github.io/（十）搭建springcloud：记录项目运行的日志.html">（十）搭建springcloud：记录项目运行的日志</a></p>
-<!-- more -->
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>系列</tag>
-        <tag>学习笔记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>（五）搭建springcloud：在idea启动springboot项目</title>
-    <url>/posts/9bfd1ba7.html</url>
-    <content><![CDATA[<p>点击idea右上角 edit configuration <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/4803d077b7534b4fbf2f6f5a915db876.png" title="idea配置启动类" alt="idea配置启动类" /> 点击左上角的<font color="green">绿色“+”</font>然后点击maven就会出现右边窗口，注意要起一个name，然后下面的参数这么配置点击ok <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/e3a99aa12a0b4ad7a5544eaf1510cf4d.png" title="idea配置maven命令" alt="idea配置maven命令" /> 然后再到相同位置就会多了一个你起的名称的一个运行配置。点击即可。 最后还有最<strong>重要</strong>的一点，需要在你启动的项目的pom.xml文件中加上配置如下（主要是spring-boot-maven-plugin）： <a id="more"></a> <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-surefire-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">skip</span>&gt;</span>true<span class="tag">&lt;/<span class="name">skip</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p><strong>更新：此方式启动，无法进行调试，貌似可以通过配置解决。后来我都不用这个方式启动项目，在图二中不选择maven，选择Spring Boot即可运行正常。</strong></p>
-<h3 id="目录">目录</h3>
-<p><a href="https://yan624.github.io/（零）搭建springcloud：创建项目.html">（零）搭建springcloud：创建项目</a> <a href="https://yan624.github.io/（一）搭建springcloud：springboot整合thymeleaf.html">（一）搭建springcloud：springboot整合thymeleaf</a> <a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a> <a href="https://yan624.github.io/（三）搭建springcloud：整合mybatis-plus.html">（三）搭建springcloud：整合mybatis-plus</a> <a href="https://yan624.github.io/（四）搭建springcloud：eclipse迁移到idea的问题（maven%20install命令出错）.html">（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</a> <a href="https://yan624.github.io/（五）搭建springcloud：在idea启动springboot项目.html">（五）搭建springcloud：在idea启动springboot项目</a> <a href="https://yan624.github.io/（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）.html">（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</a> <a href="https://yan624.github.io/（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器.html">（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</a> <a href="https://yan624.github.io/（八）搭建springcloud：修改静态文件，如html，js后立即生效.html">（八）搭建springcloud：修改静态文件，如html，js后立即生效</a> <a href="https://yan624.github.io/（九）搭建springcloud：在linux上运行springboot项目.html">（九）搭建springcloud：在linux上运行springboot项目</a> <a href="https://yan624.github.io/（十）搭建springcloud：记录项目运行的日志.html">（十）搭建springcloud：记录项目运行的日志</a></p>
-<!-- more -->
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>系列</tag>
-        <tag>学习笔记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>（三）搭建springcloud：整合mybatis-plus</title>
-    <url>/posts/9b163bbc.html</url>
-    <content><![CDATA[<p>由于一直使用mybatis的example，无法忍受着过长的代码，所以转向了mybatis-plus，配置过于简单，就不演示了。 参考官网http://mp.baomidou.com/#/install 如果看不懂，可以看mybatis-plus提供的整合springboot例子 网址：https://gitee.com/baomidou/mybatisplus-spring-boot <a id="more"></a> 如果还看不懂，尼玛别整合了。（手动狗头） 提示： Service可以继承mybatis-plus提供的ServiceImpl类 mapper层可以继承BaseMapper，这样如果有些mapper比较简单完全可以省去mapper.xml IService可以继承IService</p>
-<h3 id="目录">目录</h3>
-<p><a href="https://yan624.github.io/（零）搭建springcloud：创建项目.html">（零）搭建springcloud：创建项目</a> <a href="https://yan624.github.io/（一）搭建springcloud：springboot整合thymeleaf.html">（一）搭建springcloud：springboot整合thymeleaf</a> <a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a> <a href="https://yan624.github.io/（三）搭建springcloud：整合mybatis-plus.html">（三）搭建springcloud：整合mybatis-plus</a> <a href="https://yan624.github.io/（四）搭建springcloud：eclipse迁移到idea的问题（maven%20install命令出错）.html">（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</a> <a href="https://yan624.github.io/（五）搭建springcloud：在idea启动springboot项目.html">（五）搭建springcloud：在idea启动springboot项目</a> <a href="https://yan624.github.io/（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）.html">（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</a> <a href="https://yan624.github.io/（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器.html">（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</a> <a href="https://yan624.github.io/（八）搭建springcloud：修改静态文件，如html，js后立即生效.html">（八）搭建springcloud：修改静态文件，如html，js后立即生效</a> <a href="https://yan624.github.io/（九）搭建springcloud：在linux上运行springboot项目.html">（九）搭建springcloud：在linux上运行springboot项目</a> <a href="https://yan624.github.io/（十）搭建springcloud：记录项目运行的日志.html">（十）搭建springcloud：记录项目运行的日志</a></p>
-<!-- more -->
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>系列</tag>
-        <tag>学习笔记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</title>
-    <url>/posts/85f1a013.html</url>
-    <content><![CDATA[<p>在使用maven的install命令时出现java.lang.ArrayIndexOutOfBoundsException: 10640 试了三个小时，一直以为idea有问题，最后没想到是maven版本的问题，我的是3.5.0，只要改成3.5.2以上就可以了（我改成3.5.4） 真的奇怪之前在eclipse上用一直好好地 <a id="more"></a></p>
-<h3 id="目录">目录</h3>
-<p><a href="https://yan624.github.io/（零）搭建springcloud：创建项目.html">（零）搭建springcloud：创建项目</a> <a href="https://yan624.github.io/（一）搭建springcloud：springboot整合thymeleaf.html">（一）搭建springcloud：springboot整合thymeleaf</a> <a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a> <a href="https://yan624.github.io/（三）搭建springcloud：整合mybatis-plus.html">（三）搭建springcloud：整合mybatis-plus</a> <a href="https://yan624.github.io/（四）搭建springcloud：eclipse迁移到idea的问题（maven%20install命令出错）.html">（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</a> <a href="https://yan624.github.io/（五）搭建springcloud：在idea启动springboot项目.html">（五）搭建springcloud：在idea启动springboot项目</a> <a href="https://yan624.github.io/（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）.html">（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</a> <a href="https://yan624.github.io/（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器.html">（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</a> <a href="https://yan624.github.io/（八）搭建springcloud：修改静态文件，如html，js后立即生效.html">（八）搭建springcloud：修改静态文件，如html，js后立即生效</a> <a href="https://yan624.github.io/（九）搭建springcloud：在linux上运行springboot项目.html">（九）搭建springcloud：在linux上运行springboot项目</a> <a href="https://yan624.github.io/（十）搭建springcloud：记录项目运行的日志.html">（十）搭建springcloud：记录项目运行的日志</a></p>
-<!-- more -->
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>系列</tag>
-        <tag>学习笔记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>（一）搭建springcloud：springboot整合thymeleaf</title>
-    <url>/posts/bfb2ab9c.html</url>
-    <content><![CDATA[<p>thymeleaf的配置类如下，要注意的是它的prefix不是以前的&quot;/WEB-INF/&quot;，而是&quot;classpath:/templates/&quot;。templates文件夹位于resources源文件夹下，该文件夹的名称不是我随便写的，是springboot规定的，用于放置动态文件。类似的还有static用于放置静态文件。 其中我分别写了linux（即生产环境）及windows（即开发环境）下的配置，可以根据需要自己删留。（由于一般开发环境为windows，所以我自己偷懒写的加载bean条件，如果开发环境也是linux那么可以直接删掉）其中还可能包含我自己写的工具类，可以直接删去。 注：差点忘了，我的thymeleaf是3.0以上的版本，3.0以上的版本变动有些大，如果不是该版本以上，可能无法使用该配置类。springboot默认依赖的版本是2.1.6（貌似），所以需要手动更改，不会的看<a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a> <a id="more"></a> <figure class="highlight reasonml"><table><tr><td class="code"><pre><span class="line">@Configuration</span><br><span class="line">@ComponentScan</span><br><span class="line">public <span class="keyword">class</span> ThymeleafConfig &#123;</span><br><span class="line">    <span class="keyword">private</span> static final Logger LOGGER = <span class="module-access"><span class="module"><span class="identifier">LoggerFactory</span>.</span></span>get<span class="constructor">Logger(ThymeleafConfig.<span class="params">class</span>)</span>;</span><br><span class="line">    </span><br><span class="line">    @Bean</span><br><span class="line">    public ThymeleafViewResolver view<span class="constructor">Resolver(SpringTemplateEngine <span class="params">templateEngine</span>)</span>&#123;</span><br><span class="line">        ThymeleafViewResolver viewResolver = <span class="keyword">new</span> <span class="constructor">ThymeleafViewResolver()</span>;</span><br><span class="line">        viewResolver.set<span class="constructor">TemplateEngine(<span class="params">templateEngine</span>)</span>;</span><br><span class="line">        viewResolver.set<span class="constructor">Order(1)</span>;</span><br><span class="line">        viewResolver.set<span class="constructor">CharacterEncoding(<span class="string">"utf-8"</span>)</span>;</span><br><span class="line">        <span class="comment">//不知道这个缓存和下面的模板解析器的缓存是什么关系，但是应该不是同一个意思</span></span><br><span class="line">        <span class="comment">//我在模板解析器设置false，在这行代码之上打印了一下还是true</span></span><br><span class="line">        viewResolver.set<span class="constructor">Cache(<span class="params">false</span>)</span>;</span><br><span class="line">        viewResolver.set<span class="constructor">ViewNames(<span class="params">new</span> String[] &#123;<span class="string">"thymeleaf/*"</span>, <span class="string">".html"</span>, <span class="string">".xhtml"</span>&#125;)</span>;</span><br><span class="line">        return viewResolver;</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 模板解析器</span></span><br><span class="line"><span class="comment">     * @return</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    @<span class="constructor">Conditional(WindowsCondition.<span class="params">class</span>)</span></span><br><span class="line">    @Primary<span class="comment">//springboot貌似内置一个模板解析器，所以将这个bean定义为首选</span></span><br><span class="line">    @Bean</span><br><span class="line">    public SpringResourceTemplateResolver windows<span class="constructor">TemplateResolver()</span>&#123;</span><br><span class="line">        SpringResourceTemplateResolver templateResolver = <span class="keyword">new</span> <span class="constructor">SpringResourceTemplateResolver()</span>;</span><br><span class="line">        templateResolver.set<span class="constructor">Prefix(<span class="string">"classpath:/templates/"</span>)</span>;</span><br><span class="line">        templateResolver.set<span class="constructor">Suffix(<span class="string">".html"</span>)</span>;</span><br><span class="line">        templateResolver.set<span class="constructor">Order(1)</span>;</span><br><span class="line">        templateResolver.set<span class="constructor">TemplateMode(TemplateMode.HTML)</span>;</span><br><span class="line">        <span class="comment">//不缓存页面，即服务器开启时修改thymeleaf页面会有变化。</span></span><br><span class="line">        templateResolver.set<span class="constructor">Cacheable(<span class="params">false</span>)</span>;</span><br><span class="line">        <span class="module-access"><span class="module"><span class="identifier">LOGGER</span>.</span></span>info(<span class="keyword">new</span> <span class="constructor">LogPrintingTemplate()</span></span><br><span class="line">                .<span class="keyword">type</span>(<span class="string">"thymeleaf页面缓存禁用(￣▽￣)~*"</span>)</span><br><span class="line">                .print<span class="literal">()</span>);</span><br><span class="line">        templateResolver.set<span class="constructor">CharacterEncoding(<span class="string">"utf-8"</span>)</span>;</span><br><span class="line">        return templateResolver;</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">    @<span class="constructor">Conditional(LinuxCondition.<span class="params">class</span>)</span></span><br><span class="line">    @Primary<span class="comment">//springboot貌似内置一个模板解析器，所以将这个bean定义为首选</span></span><br><span class="line">    @Bean</span><br><span class="line">    public SpringResourceTemplateResolver linux<span class="constructor">TemplateResolver()</span>&#123;</span><br><span class="line">        SpringResourceTemplateResolver templateResolver = <span class="keyword">new</span> <span class="constructor">SpringResourceTemplateResolver()</span>;</span><br><span class="line">        templateResolver.set<span class="constructor">Prefix(<span class="string">"classpath:/WEB-INF/"</span>)</span>;</span><br><span class="line">        templateResolver.set<span class="constructor">Suffix(<span class="string">".html"</span>)</span>;</span><br><span class="line">        templateResolver.set<span class="constructor">Order(1)</span>;</span><br><span class="line">        templateResolver.set<span class="constructor">TemplateMode(TemplateMode.HTML)</span>;</span><br><span class="line">        <span class="comment">//缓存页面</span></span><br><span class="line">        templateResolver.set<span class="constructor">Cacheable(<span class="params">true</span>)</span>;</span><br><span class="line">        <span class="module-access"><span class="module"><span class="identifier">LOGGER</span>.</span></span>info(<span class="keyword">new</span> <span class="constructor">LogPrintingTemplate()</span></span><br><span class="line">                .<span class="keyword">type</span>(<span class="string">"thymeleaf页面缓存开启(￣▽￣)~*"</span>)</span><br><span class="line">                .print<span class="literal">()</span>);</span><br><span class="line">        templateResolver.set<span class="constructor">CharacterEncoding(<span class="string">"utf-8"</span>)</span>;</span><br><span class="line">        return templateResolver;</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 模版引擎</span></span><br><span class="line"><span class="comment">     * @return</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    @Bean</span><br><span class="line">    public SpringTemplateEngine template<span class="constructor">Engine(ITemplateResolver <span class="params">templateResolver</span>)</span>&#123;</span><br><span class="line">        SpringTemplateEngine templateEngine = <span class="keyword">new</span> <span class="constructor">SpringTemplateEngine()</span>;</span><br><span class="line">        templateEngine.set<span class="constructor">TemplateResolver(<span class="params">templateResolver</span>)</span>;</span><br><span class="line">        templateEngine.set<span class="constructor">EnableSpringELCompiler(<span class="params">true</span>)</span>;</span><br><span class="line">        return templateEngine;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>Conditional里的类如下，linux的类似</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WindowsCondition</span> <span class="keyword">implements</span> <span class="title">Condition</span></span>&#123;</span><br><span class="line">       </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">matches</span><span class="params">(ConditionContext context, AnnotatedTypeMetadata metadata)</span> </span>&#123;</span><br><span class="line">        Environment environment = context.getEnvironment();</span><br><span class="line">        String osName = environment.getProperty(<span class="string">"os.name"</span>);</span><br><span class="line">        <span class="keyword">boolean</span> isWindows = <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">if</span>(osName.toLowerCase().contains(<span class="string">"windows"</span>))   isWindows = <span class="keyword">true</span>;</span><br><span class="line">         </span><br><span class="line">        <span class="keyword">return</span> isWindows;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>总结： 1. resources源文件夹下，templates文件夹放置动态文件，static文件夹下放置静态文件，其下的子文件夹可以随意创建。 2. thymeleaf的html文件建议放置在templates/thymeleaf文件夹下（我的习惯） 3. static文件夹下的资源是可以通过浏览器直接访问的，类似于传统web工程的webapp下的文件；而templates文件夹下的文件必须写上映射，即创建controller层，然后跟以前一样写mapping，这样就可以通过浏览器访问，然后springmvc视图解析，将视图返回给浏览器。类似于以前的WEB-INF文件夹。 4.* 更新：由于今天在配置thymeleaf时给我产生了疑惑，所以在此特地重申：templates和static文件夹的名字不是我起的，是springboot的规定。*</p>
-<h3 id="目录">目录</h3>
-<p><a href="https://yan624.github.io/（零）搭建springcloud：创建项目.html">（零）搭建springcloud：创建项目</a> <a href="https://yan624.github.io/（一）搭建springcloud：springboot整合thymeleaf.html">（一）搭建springcloud：springboot整合thymeleaf</a> <a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a> <a href="https://yan624.github.io/（三）搭建springcloud：整合mybatis-plus.html">（三）搭建springcloud：整合mybatis-plus</a> <a href="https://yan624.github.io/（四）搭建springcloud：eclipse迁移到idea的问题（maven%20install命令出错）.html">（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</a> <a href="https://yan624.github.io/（五）搭建springcloud：在idea启动springboot项目.html">（五）搭建springcloud：在idea启动springboot项目</a> <a href="https://yan624.github.io/（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）.html">（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</a> <a href="https://yan624.github.io/（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器.html">（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</a> <a href="https://yan624.github.io/（八）搭建springcloud：修改静态文件，如html，js后立即生效.html">（八）搭建springcloud：修改静态文件，如html，js后立即生效</a> <a href="https://yan624.github.io/（九）搭建springcloud：在linux上运行springboot项目.html">（九）搭建springcloud：在linux上运行springboot项目</a> <a href="https://yan624.github.io/（十）搭建springcloud：记录项目运行的日志.html">（十）搭建springcloud：记录项目运行的日志</a></p>
-<!-- more -->
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>系列</tag>
-        <tag>学习笔记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>（二）搭建springcloud：修改thymeleaf版本</title>
-    <url>/posts/f1d815e2.html</url>
-    <content><![CDATA[<p>起因：springboot整合thymeleaf默认依赖的版本是3.0以下的版本，而我一直是用的3.0以上的版本，而且貌似3.0以上的版本性能更好，所以果断自己做了版本的更改。但是在更改是有一点问题。</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- thymeleaf --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-thymeleaf<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>由于我想排除依赖，所以我在其中排除了thymeleaf-spring4的依赖，但是我发现thymeleaf核心包的版本还是3.0以下，具体解决过程不写了，解决如下： 上面的依赖不要删，在下面再添加依赖，父工程中添加版本，可以选择3.0以上的版本（我的是3.0.9） <a id="more"></a> <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.thymeleaf<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>thymeleaf<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>这样就可以了，但是最好再多做一步，将第一个依赖改为这样：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- thymeleaf --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-thymeleaf<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">exclusions</span>&gt;</span></span><br><span class="line">             <span class="tag">&lt;<span class="name">exclusion</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>nz.net.ultraq.thymeleaf<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>thymeleaf-layout-dialect<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">             <span class="tag">&lt;/<span class="name">exclusion</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;/<span class="name">exclusions</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>nz.net.ultraq.thymeleaf<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>thymeleaf-layout-dialect<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>由于thymeleaf版本变迁，所以上面的这个dialect版本必须也要跟着改变（我使用2.0.0，建议使用2.0.0以上版本）。 最后附上父工程配置</p>
-<figure class="highlight dust"><table><tr><td class="code"><pre><span class="line"><span class="xml"><span class="comment">&lt;!-- 视图层，在springboot工程中二者缺一不可，因为springboot默认依赖thymeleaf2.0 --&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">thymeleaf.version</span>&gt;</span>3.0.9.RELEASE<span class="tag">&lt;/<span class="name">thymeleaf.version</span>&gt;</span><span class="comment">&lt;!-- thymeleaf版本 --&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">thymeleaf-layout-dialect.version</span>&gt;</span>2.0.0<span class="tag">&lt;/<span class="name">thymeleaf-layout-dialect.version</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- https://mvnrepository.com/artifact/org.thymeleaf/thymeleaf-spring4 --&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span></span><br><span class="line"><span class="xml">       <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.thymeleaf<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span></span><br><span class="line"><span class="xml">       <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>thymeleaf-spring4<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span></span><br><span class="line"><span class="xml">       <span class="tag">&lt;<span class="name">version</span>&gt;</span>$</span><span class="template-variable">&#123;thymeleaf.version&#125;</span><span class="xml"><span class="tag">&lt;/<span class="name">version</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span></span><br><span class="line"><span class="xml">       <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>nz.net.ultraq.thymeleaf<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span></span><br><span class="line"><span class="xml">       <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>thymeleaf-layout-dialect<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span></span><br><span class="line"><span class="xml">       <span class="tag">&lt;<span class="name">version</span>&gt;</span>$</span><span class="template-variable">&#123;thymeleaf-layout-dialect.version&#125;</span><span class="xml"><span class="tag">&lt;/<span class="name">version</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
-<h3 id="目录">目录</h3>
-<p><a href="https://yan624.github.io/（零）搭建springcloud：创建项目.html">（零）搭建springcloud：创建项目</a> <a href="https://yan624.github.io/（一）搭建springcloud：springboot整合thymeleaf.html">（一）搭建springcloud：springboot整合thymeleaf</a> <a href="https://yan624.github.io/（二）搭建springcloud：修改thymeleaf版本.html">（二）搭建springcloud：修改thymeleaf版本</a> <a href="https://yan624.github.io/（三）搭建springcloud：整合mybatis-plus.html">（三）搭建springcloud：整合mybatis-plus</a> <a href="https://yan624.github.io/（四）搭建springcloud：eclipse迁移到idea的问题（maven%20install命令出错）.html">（四）搭建springcloud：eclipse迁移到idea的问题（maven install命令出错）</a> <a href="https://yan624.github.io/（五）搭建springcloud：在idea启动springboot项目.html">（五）搭建springcloud：在idea启动springboot项目</a> <a href="https://yan624.github.io/（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）.html">（六）搭建springcloud：在idea启动项目出现的问题（hibernate-validator与javax.validation的兼容性问题）</a> <a href="https://yan624.github.io/（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器.html">（七）搭建springcloud：springboot如何将所依赖的jar包的类放入spring容器</a> <a href="https://yan624.github.io/（八）搭建springcloud：修改静态文件，如html，js后立即生效.html">（八）搭建springcloud：修改静态文件，如html，js后立即生效</a> <a href="https://yan624.github.io/（九）搭建springcloud：在linux上运行springboot项目.html">（九）搭建springcloud：在linux上运行springboot项目</a> <a href="https://yan624.github.io/（十）搭建springcloud：记录项目运行的日志.html">（十）搭建springcloud：记录项目运行的日志</a> <!-- more --></p>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>系列</tag>
-        <tag>学习笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -10143,309 +9862,12 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
       </tags>
   </entry>
   <entry>
-    <title>thymeleaf在@{}中无法使用其他服务器链接的问题</title>
-    <url>/posts/d0ca1b33.html</url>
-    <content><![CDATA[<p>以下是官网原话：</p>
-<ul>
-<li>Absolute URLs: http://www.thymeleaf.org</li>
-<li>Relative URLs, which can be:
-<ul>
-<li>Page-relative: user/login.html</li>
-<li>Context-relative: /itemdetails?id=3 (context name in server will be added automatically)</li>
-<li>Server-relative: ~/billing/processInvoice (allows calling URLs in another context (= application) in the same server.</li>
-<li>Protocol-relative URLs: //code.jquery.com/jquery-2.0.3.min.js</li>
-</ul></li>
-</ul>
-<p>中文版：</p>
-<ul>
-<li>绝对网址： http://www.thymeleaf.org</li>
-<li>相对URL，可以是：
-<ul>
-<li>页面相对： user/login.html</li>
-<li>与上下文相关:( /itemdetails?id=3服务器中的上下文名称将自动添加）</li>
-<li>服务器相对:( ~/billing/processInvoice允许在同一服务器中的另一个上下文（=应用程序）中调用URL。</li>
-<li>与协议相关的网址： //code.jquery.com/jquery-2.0.3.min.js <a id="more"></a></li>
-</ul></li>
-</ul>
-<p>它就提供这几种方式，但是我的服务器比如是baidu.com，使用<code>th:href=&quot;@{http://sina.com/index.css}&quot;</code>这样是可以的，但是<code>th:href=&quot;@{${sina_static}/index.css}&quot;</code>这样却不行，也就是说静态资源无法使用变量直接取出来，那么以后改动这些资源将十分麻烦，因为只能写死了。thymeleaf不让动态的获取。</p>
-<p>thymeleaf提供的几种方式没有一种可以显示不同服务器的地址。后来发现还有另外一种方式，就是投机取巧的使用url参数。</p>
-<p><code>th:href=&quot;@{(由于博客系统原因删除这句话，包括小括号){variable}/index.css(variable=${value})}&quot;</code>这样即可。 <!-- more --></p>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>thymeleaf</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>bootstrap-switch常用操作/属性</title>
-    <url>/posts/ee9ad51.html</url>
-    <content><![CDATA[<h3 id="引入cssjs">引入css、js</h3>
-<p><a href="http://www.bootcss.com/p/bootstrap-switch/" target="_blank" rel="noopener">bootstrap-switch中文官网</a></p>
-<figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line">&lt;link <span class="attribute">rel</span>=<span class="string">"stylesheet"</span> <span class="attribute">href</span>=<span class="string">"<span class="variable">$&#123;CONTEXT &#125;</span>/css/bootstrap-switch.min.css"</span>&gt;</span><br><span class="line">&lt;script <span class="attribute">src</span>=<span class="string">"<span class="variable">$&#123;CONTEXT &#125;</span>/js/bootstrap/bootstrap-switch.min.js"</span>&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
-<p><strong>注：</strong>貌似还有一个叫做bootstrapSwitch.js的插件，不要引入错了。</p>
-<figure class="highlight applescript"><table><tr><td class="code"><pre><span class="line">&lt;<span class="keyword">div</span> <span class="built_in">class</span>=<span class="string">"input-group"</span>&gt;</span><br><span class="line">&lt;label <span class="keyword">for</span>=<span class="string">"open"</span>&gt;操作&amp;nbsp;&lt;/label&gt;</span><br><span class="line">&lt;input <span class="built_in">id</span>=<span class="string">"open"</span> checked type=<span class="string">"checkbox"</span> data-<span class="keyword">on</span>-<span class="built_in">text</span>=<span class="string">"开"</span> data-off-<span class="built_in">text</span>=<span class="string">"关"</span> data-<span class="keyword">on</span>-color=<span class="string">"success"</span> /&gt;</span><br><span class="line">&lt;/<span class="keyword">div</span>&gt;</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-<h3 id="常用属性">常用属性</h3>
-<ul>
-<li>data-on-text=&quot;开&quot; data-off-text=&quot;关&quot;，代表开启/关闭时按钮上的文字。</li>
-<li>checked代表默认选中，不填代表不选中。</li>
-<li>data-on-color=&quot;success&quot;，代表选中时的颜色。</li>
-</ul>
-<h3 id="常用操作">常用操作</h3>
-<ul>
-<li>$('#open').bootstrapSwitch();，开始自动生成一个按钮。注：#open是input的id。</li>
-<li>$('#open').on('switchChange.bootstrapSwitch', function (event,state) { }，switch触发的事件，所以不用自己再写click事件了。注：state代表按钮当前选中状态。</li>
-<li>$('#toggle-state-switch').bootstrapSwitch('toggleState');，来回切换。</li>
-<li>$('#toggle-state-switch').bootstrapSwitch('setState', false);，设置按钮状态，false代表未选中。</li>
-</ul>
-<p>另外不要写官网上的那个格式，官网上的格式是误导人的，它那个写法：把input放在div里，然后div加一个switch的class，这样其实是代表按钮自动生成后的dom节点。所以按照我这个写就行了。</p>
-<!-- more -->
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>front-end</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>bootstrap-switch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>基于shiro的单点退出功能</title>
-    <url>/posts/8e550cc0.html</url>
-    <content><![CDATA[<p><strong>2019.01.24更新：发现其他sso系统的实现思路跟我的不一样，我也不知道这样对不对，但是功能是能实现的。</strong></p>
-<hr />
-<p>由于非单点登录系统在检测用户是否已经单点退出时有点复杂。分两种情况：</p>
-<ol type="1">
-<li>在每次访问链接时，重定向到单点登录系统进行验证，这是可以做到的，但是用户体验差（这样做或许也可以）。</li>
-<li>发送一个http请求，这样可以在用户不知情的情况下进行验证，但是发起http请求，请求的用于不再是当前用户了，即session 不是同一个了。</li>
-</ol>
-<p>而shiro需要获取subject才能退出登录（我找了很久没有找到其他的办法），所以需要做一个折中的方法，在单点退出的过滤器那，设置session过期，session失效，然后在authc过滤器，判断当前session是否失效，如果失效则执行退出。 <a id="more"></a> 2018-5-4更新：</p>
-<p>最终实现：其他系统发出退出登录请求，upms接收到直接将该用户注销，同时全局session从redis中自动删除，并且在删除之前写入一个名为logout的属性，设置为true（由于session瞬间被删除了，但是并没有多余，因为以后可能加入某些机制，使得session过一会才被删除，所以有必要提前做好防患）。</p>
-<p>由于upms系统中退出登录，但是没有办法通知其他子系统，所以只能被迫让其他子系统自己来得到通知。具体实现如下：</p>
-<ol type="1">
-<li>用户在登录时，会在全局session中添加一个属性名为logout，设置为false。</li>
-<li>这样当用户在子系统退出后，当前子系统是知道用户已经退出。</li>
-<li>但是其他子系统并不知情，所以用户再次访问当前子系统是直接跳转到登录页面。</li>
-<li>而当用户访问其他子系统时，子系统需要先跳转到upms系统进行查看，该用户是否退出登录。</li>
-<li>规则很简单，upms只需要判断logout属性是否为空或者是否为false即可。</li>
-</ol>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>shiro</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>solr使用自动建议搜索出现No suggester named default was configured</title>
-    <url>/posts/b7d5457b.html</url>
-    <content><![CDATA[<p>solr的默认配置文件中，有一个路径为/suggest的requestHandler，它里面没有配置suggest.dictionary，这个意思就是建议的字典。而默认值可能就是default，所以出现这个错误，只需要配置一下字典就行了。我碰到的时候我也想不明白，用全文搜索都没搜到default。</p>
-<p><img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/b093167a98b9425ca7318393fb6ed37a.PNG" title="solr配置" alt="solr配置" /> <a id="more"></a></p>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>error</tag>
-        <tag>印象笔记上的博文</tag>
-        <tag>solr</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Solr中文分词以及拼写纠错</title>
-    <url>/posts/cc8c1050.html</url>
-    <content><![CDATA[<p>由于在更改配置文件后，重启tomcat，solr的web页面可以直接看到变化，所以我都懒得使用dataimport了。</p>
-<p>我之前一直配置中文分词以及拼写纠错失败，我把配置中默认查询字段就改了一个名字，把text改为spell，每一处都替换掉，居然会产生不一样的结果。我搞了一个多小时，发现怎么换都是这样，前后结果完全不同。要么可以分词要么可以拼写纠错，二者没有同时出现过。最后要睡觉的时候，dataimport了一下。发现居然可以了。</p>
-<p>我猜测可能在建立索引时把text作为键，于是我更改了text的名字，自然是无法查询到任何东西。</p>
-<a id="more"></a>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>solr</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>二、将mysql的数据导入到solr中</title>
-    <url>/posts/6290f446.html</url>
-    <content><![CDATA[<h3 id="一solr部署于tomcat">一、solr部署于tomcat</h3>
-<p><a href="https://yan624.github.io/一、solr部署于tomcat">上一篇</a></p>
-<h3 id="二将mysql的数据导入到solr中">二、将mysql的数据导入到solr中</h3>
-<p>tomcat同级目录中的solr被称为solr_home，tomcat的webapps文件夹中的solr是solr的web工程</p>
-<p>将从apache上下下来的solr<font color="red">根</font>文件夹中的/contrib和/dist，复制到solr_home的lib文件夹中，如果没有这个文件夹可以自己建一个。如下图: <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/1375f60bca34409d952810bc12beb13c.PNG" title="solr lib" alt="solr lib" /></p>
-<p>这两个文件夹中全是jar包。现在只是复制过来了，solr还不能用它们，所以需要配置一下。solr_home中应该有一个collection1文件夹，这是solr的一个示例，如果不放心可以拷贝一份，改一个名字。注意如果拷贝了一份，需要进入你拷贝的这份文件夹，找到core.properties，将里面的name属性改为你的文件夹名字。</p>
-<p>我复制了一份，取名为order，如下图： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/a193f1c3fea84613b0b048c0791dd1b2.PNG" title="solr官方示例" alt="solr官方示例" /></p>
-<p>进入order文件夹，里面有一个conf文件夹，再进入，找到solrconfig.xml文件，打开编辑。前几十行很多注释，往下大概80行的样子，有几个lib标签，这些标签就是代表导入之前的jar包。但是我们的路径发生了改变，所以这里需要配置一下。 <a id="more"></a> <figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line">&lt;lib <span class="attribute">dir</span>=<span class="string">"../lib/contrib/dataimporthandler/lib"</span> <span class="attribute">regex</span>=<span class="string">".*\.jar"</span> /&gt;</span><br><span class="line">&lt;lib <span class="attribute">dir</span>=<span class="string">"../lib/dist/"</span> <span class="attribute">regex</span>=<span class="string">"solr-dataimporthandler-\d.*\.jar"</span> /&gt;</span><br><span class="line">   </span><br><span class="line">&lt;lib <span class="attribute">dir</span>=<span class="string">"../lib/contrib/extraction/lib"</span> <span class="attribute">regex</span>=<span class="string">".*\.jar"</span> /&gt;</span><br><span class="line">&lt;lib <span class="attribute">dir</span>=<span class="string">"../lib/dist/"</span> <span class="attribute">regex</span>=<span class="string">"solr-cell-\d.*\.jar"</span> /&gt;</span><br><span class="line"></span><br><span class="line">&lt;lib <span class="attribute">dir</span>=<span class="string">"../lib/contrib/clustering/lib/"</span> <span class="attribute">regex</span>=<span class="string">".*\.jar"</span> /&gt;</span><br><span class="line">&lt;lib <span class="attribute">dir</span>=<span class="string">"../lib/dist/"</span> <span class="attribute">regex</span>=<span class="string">"solr-clustering-\d.*\.jar"</span> /&gt;</span><br><span class="line"></span><br><span class="line">&lt;lib <span class="attribute">dir</span>=<span class="string">"../lib/contrib/langid/lib/"</span> <span class="attribute">regex</span>=<span class="string">".*\.jar"</span> /&gt;</span><br><span class="line">&lt;lib <span class="attribute">dir</span>=<span class="string">"../lib/dist/"</span> <span class="attribute">regex</span>=<span class="string">"solr-langid-\d.*\.jar"</span> /&gt;</span><br><span class="line"></span><br><span class="line">&lt;lib <span class="attribute">dir</span>=<span class="string">"../lib/contrib/velocity/lib"</span> <span class="attribute">regex</span>=<span class="string">".*\.jar"</span> /&gt;</span><br><span class="line">&lt;lib <span class="attribute">dir</span>=<span class="string">"../lib/dist/"</span> <span class="attribute">regex</span>=<span class="string">"solr-velocity-\d.*\.jar"</span> /&gt;</span><br></pre></td></tr></table></figure></p>
-<p>lib标签dir属性的根目录位于conf文件夹的同级目录。需要注意的是前两个标签，不出意外的话，这两行你们是没有的，这里需要加上这两行。因为它们关系到导入数据。</p>
-<p>还是在这个文件中，往下拉，大概找到requestHandler标签，其实不找到也行，但是为将相同的标签放在一起便于管理，所以需要找到并在其中一个位置加上下面的代码： <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">requestHandler</span> <span class="attr">name</span>=<span class="string">"/dataimport"</span> <span class="attr">class</span>=<span class="string">"solr.DataImportHandler"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">"defaults"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">"config"</span>&gt;</span>data-config.xml<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">requestHandler</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>这个就是代表了一个请求路径，看英文名代表了数据导入。这里需要注意一点，class是solr.DataImportHandler，而不是其它的，我就是因为懒得自己写，顺手改了一个注释掉的标签，然后忘记改class属性，导致数据一直导入失败。里面的config标签就是代表了数据的配置。接下来需要配置这份文件。</p>
-<p>与solrconfig.xml同级目录中<font color="red">新建</font>一个（如果不存在这个文件的话）data-config.xml。配置如下： <figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line">&lt;dataConfig&gt;</span><br><span class="line">    &lt;dataSource <span class="keyword">type</span>="JdbcDataSource"</span><br><span class="line">        driver="com.mysql.jdbc.Driver" url="jdbc:mysql://localhost:3306/order"</span><br><span class="line">        <span class="keyword">user</span>="root" <span class="keyword">password</span>="password" batchSize="-1" /&gt;</span><br><span class="line">    &lt;document&gt;</span><br><span class="line">        &lt;entity <span class="type">name</span>="tb_businessman" query="select * from tb_businessman"&gt;</span><br><span class="line">            &lt;field column="businessman_id" <span class="type">name</span>="businessman_id" /&gt;</span><br><span class="line">            &lt;field column="businessman_name" nam="businessman_name" /&gt;</span><br><span class="line">            &lt;field column="introduction" <span class="type">name</span>="introduction" /&gt;</span><br><span class="line">            &lt;field column="business_hours" <span class="type">name</span>="business_hours" /&gt;</span><br><span class="line">            &lt;field column="start_price" <span class="type">name</span>="start_price" /&gt;</span><br><span class="line">            &lt;field column="lunch_box_fee" <span class="type">name</span>="lunch_box_fee" /&gt;</span><br><span class="line">            &lt;field column="merchant_store_thumbnail" <span class="type">name</span>="merchant_store_thumbnail" /&gt;</span><br><span class="line">            &lt;field column="monthly_sales" <span class="type">name</span>="monthly_sales" /&gt;</span><br><span class="line">            &lt;field column="average_score" <span class="type">name</span>="average_score" /&gt;</span><br><span class="line">            &lt;field column="is_open" <span class="type">name</span>="is_open" /&gt;</span><br><span class="line">            &lt;field column="QR_code" <span class="type">name</span>="QR_code" /&gt;</span><br><span class="line">        &lt;/entity&gt;</span><br><span class="line">    &lt;/document&gt;</span><br><span class="line">&lt;/dataConfig&gt;</span><br></pre></td></tr></table></figure></p>
-<p>dataSource不做讲解，document中的entity标签的name属性指的是类似于一个id，代表在solr的web应用的网页里面的一个select的一个option（目前我是这么理解的）。query就是查数据。column就是数据库列名，name是接下来配置的。</p>
-<p>接下来配置最后一步，schema.xml文件，也是在conf目录下。里面solr已经配置很多了，所以看起来很麻烦。找到fields标签，这个标签下面就是配置各个字段，就是上面说的name。其中 <figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line">&lt;field <span class="attribute">name</span>=<span class="string">"_version_"</span> <span class="attribute">type</span>=<span class="string">"long"</span> <span class="attribute">indexed</span>=<span class="string">"true"</span> <span class="attribute">stored</span>=<span class="string">"true"</span>/&gt;</span><br><span class="line"></span><br><span class="line">&lt;field <span class="attribute">name</span>=<span class="string">"_root_"</span> <span class="attribute">type</span>=<span class="string">"string"</span> <span class="attribute">indexed</span>=<span class="string">"true"</span> <span class="attribute">stored</span>=<span class="string">"false"</span>/&gt;</span><br></pre></td></tr></table></figure></p>
-<p>这两个不要删，然后把fields下的所有标签全删了，改成如下： <figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line">&lt;field <span class="attribute">name</span>=<span class="string">"businessman_id"</span> <span class="attribute">type</span>=<span class="string">"string"</span> <span class="attribute">indexed</span>=<span class="string">"true"</span> <span class="attribute">stored</span>=<span class="string">"true"</span> <span class="attribute">required</span>=<span class="string">"true"</span> <span class="attribute">multiValued</span>=<span class="string">"false"</span> /&gt;</span><br><span class="line">&lt;field <span class="attribute">name</span>=<span class="string">"businessman_name"</span> <span class="attribute">type</span>=<span class="string">"text_cn"</span> <span class="attribute">indexed</span>=<span class="string">"true"</span> <span class="attribute">stored</span>=<span class="string">"true"</span> <span class="attribute">multiValued</span>=<span class="string">"true"</span>/&gt;</span><br><span class="line">&lt;field <span class="attribute">name</span>=<span class="string">"introduction"</span> <span class="attribute">type</span>=<span class="string">"text_cn"</span> <span class="attribute">indexed</span>=<span class="string">"true"</span> <span class="attribute">stored</span>=<span class="string">"true"</span>/&gt;</span><br><span class="line">&lt;field <span class="attribute">name</span>=<span class="string">"business_hours"</span> <span class="attribute">type</span>=<span class="string">"text_cn"</span> <span class="attribute">indexed</span>=<span class="string">"true"</span> <span class="attribute">stored</span>=<span class="string">"true"</span>/&gt;</span><br><span class="line">&lt;field <span class="attribute">name</span>=<span class="string">"start_price"</span> <span class="attribute">type</span>=<span class="string">"text_cn"</span> <span class="attribute">indexed</span>=<span class="string">"true"</span> <span class="attribute">stored</span>=<span class="string">"true"</span>/&gt;</span><br><span class="line">&lt;field <span class="attribute">name</span>=<span class="string">"lunch_box_fee"</span> <span class="attribute">type</span>=<span class="string">"text_cn"</span> <span class="attribute">indexed</span>=<span class="string">"true"</span> <span class="attribute">stored</span>=<span class="string">"true"</span>/&gt;</span><br><span class="line">&lt;field <span class="attribute">name</span>=<span class="string">"merchant_store_thumbnail"</span> <span class="attribute">type</span>=<span class="string">"text_cn"</span> <span class="attribute">indexed</span>=<span class="string">"true"</span> <span class="attribute">stored</span>=<span class="string">"true"</span>/&gt;</span><br><span class="line">&lt;field <span class="attribute">name</span>=<span class="string">"monthly_sales"</span> <span class="attribute">type</span>=<span class="string">"text_cn"</span> <span class="attribute">indexed</span>=<span class="string">"true"</span> <span class="attribute">stored</span>=<span class="string">"true"</span>/&gt;</span><br><span class="line">&lt;field <span class="attribute">name</span>=<span class="string">"average_score"</span> <span class="attribute">type</span>=<span class="string">"text_cn"</span> <span class="attribute">indexed</span>=<span class="string">"true"</span> <span class="attribute">stored</span>=<span class="string">"true"</span>/&gt;</span><br><span class="line">&lt;field <span class="attribute">name</span>=<span class="string">"is_open"</span> <span class="attribute">type</span>=<span class="string">"text_cn"</span> <span class="attribute">indexed</span>=<span class="string">"true"</span> <span class="attribute">stored</span>=<span class="string">"true"</span>/&gt;</span><br><span class="line">&lt;field <span class="attribute">name</span>=<span class="string">"QR_code"</span> <span class="attribute">type</span>=<span class="string">"string"</span> <span class="attribute">indexed</span>=<span class="string">"true"</span> <span class="attribute">stored</span>=<span class="string">"true"</span> <span class="attribute">multiValued</span>=<span class="string">"true"</span>/&gt;</span><br><span class="line">&lt;field <span class="attribute">name</span>=<span class="string">"text"</span> <span class="attribute">type</span>=<span class="string">"text_cn"</span> <span class="attribute">indexed</span>=<span class="string">"true"</span> <span class="attribute">stored</span>=<span class="string">"true"</span> <span class="attribute">multiValued</span>=<span class="string">"true"</span>/&gt;</span><br></pre></td></tr></table></figure></p>
-<p>篇幅有限，不做太多解释，接下来，在fields标签下一个标签应该是 <code>&lt;uniqueKey&gt;</code>，把里面的值，改为你的id，我的是businessman_id。注意上面的text_cn这是某个solr的域类型，现在是初步测试，就不写这个了，可以缓存solr已经配置好的text_general，这样虽然我们的数据是中文的，但是完全可以进行简单的处理了。</p>
-<p>最后还需要一个mysql的jar包，把它放到WEB-INF的lib目录下，就可以启动tomcat访问了。如下图，进行导入数据，点击菜单栏中Query进行查询。（注：4,5两步中间需要等一会，不要马上点，如果成功了，“显示”那会出现绿色字体。）Query中其他参数可自行学习。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/0820f706eae3497599ffd4d1b6783ab2.PNG" title="步骤" alt="步骤" /> <!-- more --></p>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>solr</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>一、solr部署于tomcat</title>
-    <url>/posts/e82845bf.html</url>
-    <content><![CDATA[<h3 id="一solr部署于tomcat">一、solr部署于tomcat</h3>
-<p>solr版本：solr-4.7.1 操作时间：2018-4-11 tomcat版本：tomcat9</p>
-<p>由于《solr实战》是用solr4.*，所以我就下了一个版本4的。但是其实已经出到版本7了。 下载地址：http://archive.apache.org/dist/lucene/solr/4.7.1/</p>
-<p>我是先照着《solr实战》中基础部分，在jetty中练习了大概一两个小时再移到tomcat中玩的，如果以前没玩过solr建议先知道哪些文档有哪些作用，再移到tomcat。因为移到tomcat和直接在jetty中玩，文件路径有点不一样，而且配置也有点不一样。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/b0e4d6cd5265431fae04c44c4debf8a1.PNG" title="solr文件路径" alt="solr文件路径" /></p>
-<ol type="1">
-<li>将我上图中选中的solr文件夹移动到tomat<font color="red">同级</font>目录下（或者其他目录，这个路径问题是可以自己配置的，下面会说。），该文件夹被称呼为solr_home。 <a id="more"></a> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/22852cec88614c66ad0613cf657d6dda.PNG" title="solr home" alt="solr home" /></li>
-<li>然后将第一个图中<font color="red">webapps文件夹</font>中的一个名为solr.war的war包，移动到<font color="red">tomcat中的webapps文件夹</font>中，就是部署war包。</li>
-<li>启动tomcat，让tomcat解压war包。这时webapps下多了一个名为solr文件夹（与上面的solr_home不一样），它的WEB-INF/lib下有很多jar包，但是还是缺少了一些。还是第一个图，进入lib文件夹，里面会有一个ext文件夹把里面的jar包全部复制到tomcat的solr项目的lib文件夹中。这样就差不多完成了。最后结果如下图。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/0dca7561a59340c2b3b404508487c60e.PNG" title="tomcat中最后结果" alt="tomcat中最后结果" /></li>
-<li>然后之前说solr_home放在了tomcat同级目录下，而solr这个项目并不能自己发现这个solr_home，所以需要配置一下。进入tomcat中的solr项目更改WEB-INF文件夹中的web.xml文件。用ctrl+f的快捷键搜索一下env-entry这个标签。更改为：</li>
-</ol>
-<figure class="highlight fortran"><table><tr><td class="code"><pre><span class="line">&lt;env-<span class="built_in">entry</span>&gt;</span><br><span class="line">    &lt;env-<span class="built_in">entry</span>-<span class="keyword">name</span>&gt;solr/home&lt;/env-<span class="built_in">entry</span>-<span class="keyword">name</span>&gt;</span><br><span class="line">    &lt;env-<span class="built_in">entry</span>-<span class="keyword">value</span>&gt;D:\tomcat\solr&lt;/env-<span class="built_in">entry</span>-<span class="keyword">value</span>&gt;</span><br><span class="line">    &lt;env-<span class="built_in">entry</span>-<span class="keyword">type</span>&gt;java.lang.String&lt;/env-<span class="built_in">entry</span>-<span class="keyword">type</span>&gt;</span><br><span class="line">&lt;/env-<span class="built_in">entry</span>&gt;</span><br></pre></td></tr></table></figure>
-<p>注意其中env-entry-value是我solr_home的绝对路径。这样solr项目就可以找到solr_home了。 这个时候启动tomcat应该就可以访问了。项目地址是<code>http://localhost:8080/solr</code>，到现在只是完成了部署，下篇介绍如何导入mysql中的数据。</p>
-<h3 id="二将mysql的数据导入到solr中">二、将mysql的数据导入到solr中</h3>
-<p><a href="https://yan624.github.io/二、将mysql的数据导入到solr中">下一篇</a> <!-- more --></p>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>安装与部署</tag>
-        <tag>学习笔记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>访问browse页面solr出现lazy loading error</title>
-    <url>/posts/746d3828.html</url>
-    <content><![CDATA[<p>如图 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/4494aa77feea482388e892e7e6793b8a.PNG" title="lazy loading error" alt="lazy loading error" /></p>
-<p>如果你将下载下来的solr自己部署到tomcat下，然后启动无异常，但是访问browse路径下时，出现该异常。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/c84bd8f2e8b1496284c705b515bbc522.PNG" title="solr配置" alt="solr配置" /></p>
-<p>看选中的那行，参数名wt它的值时velocity，意识是让solr返回以velocity模版引擎构建的页面。而velocity实际上也是一个配置。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/b1c20a04a208423ba9a5cb73aef2caf2.PNG" title="solr velocity配置" alt="solr velocity配置" /></p>
-<p>同一份配置文件，往最下面拉，看见这个配置，原因是没有这个类，<code>class=&quot;solr.VelocityResponseWriter&quot;</code>，这里有问题。所以只需要导入该包，或者直接在访问browse时跟一个参数，wt=xml或者wt=json等等。 <a id="more"></a></p>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>solr</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>thymeleaf遍历列表出现的问题</title>
-    <url>/posts/198ecd00.html</url>
-    <content><![CDATA[<p>今天做一个功能，找了好久，也看了thymeleaf的官网好久，发现th遍历集合居然不能根据索引获取对象。还要后台自己整理结构，真的麻烦。 <a id="more"></a></p>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>thymeleaf</tag>
-        <tag>吐槽</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>swagger的初步运用</title>
-    <url>/posts/b982c2af.html</url>
-    <content><![CDATA[<p>网上的介绍很多，我主要描述网上不常见的：<code>@ApiImplicitParam</code>。</p>
-<p>这个注解有一个属性：paramType。它的有效值仅有5中，分别为：path，query，form，body，header。</p>
-<p>但是这几个值，我感觉用起来特别麻烦。</p>
-<h3 id="path配合pathvariable">path（配合@PathVariable）</h3>
-<p>这是最简单的，如/user/{userId}，如果使用这种形式，就可以使用path；</p>
-<h3 id="query配合requestparam">query（配合@RequestParam）</h3>
-<p>这个我认为是有bug的，如果在swagger2的配置中这样写： <a id="more"></a> <figure class="highlight reasonml"><table><tr><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="constructor">Docket(DocumentationType.SWAGGER_2)</span></span><br><span class="line">    .api<span class="constructor">Info(<span class="params">new</span> ApiInfoBuilder()</span></span><br><span class="line">        .title(<span class="string">"订餐系统_接口文档"</span>)</span><br><span class="line">        .description(<span class="string">"描述：用于订餐管理系统其他模块的数据调用"</span>)</span><br><span class="line">        .version(<span class="string">"版本号:1.0"</span>)</span><br><span class="line">        .build<span class="literal">()</span></span><br><span class="line">    )</span><br><span class="line">    .select<span class="literal">()</span></span><br><span class="line">    .apis(<span class="module-access"><span class="module"><span class="identifier">RequestHandlerSelectors</span>.</span></span>any<span class="literal">()</span>)</span><br><span class="line">    .paths(<span class="module-access"><span class="module"><span class="identifier">PathSelectors</span>.</span></span>any<span class="literal">()</span>)</span><br><span class="line">    .build<span class="literal">()</span></span><br><span class="line">    .path<span class="constructor">Mapping(<span class="string">"/"</span>)</span></span><br><span class="line">    .direct<span class="constructor">ModelSubstitute(LocalDate.<span class="params">class</span>, String.<span class="params">class</span>)</span></span><br><span class="line">    .generic<span class="constructor">ModelSubstitutes(ResponseEntity.<span class="params">class</span>)</span></span><br><span class="line">    .use<span class="constructor">DefaultResponseMessages(<span class="params">false</span>)</span></span><br><span class="line">    .enable<span class="constructor">UrlTemplating(<span class="params">true</span>)</span></span><br></pre></td></tr></table></figure></p>
-<p>看最后一个方法，这就代表你的文档最后生成是这样的： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/ee28b7c4e8f84f33938d2d2c1deced0a.PNG" title="swagger post的接口样例截图" alt="swagger post的接口样例截图" /></p>
-<p>我为什么要说有bug？这看起来很美好，但是当你在网站上测试时，如下 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/737c0b56dad0405cb8a5b0e330ee8380.PNG" title="url模板bug" alt="url模板bug" /></p>
-<p>swagger提供了，在网站上直接测试的功能，但是请看黄色部分，/modify-password后面跟了什么，看起来那只是说明用的{?newPassword...}，直接加在了链接上，导致报了404，找不到该url。</p>
-<p>就这玩意搞了我好几个小时，后来还是无意中发现的。但是如果把那个方法删了那么就会变成下面的样子。 <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/e98acd4958754ee5b5876623b758a493.PNG" title="正常的post请求url模板" alt="正常的post请求url模板" /></p>
-<p>这样就是正常的，就是普通的get请求，但是这里注意一点，post请求就不要用query了，因为它是直接在url后跟参数的。说是post其实被它改成了get（ps：仅在网页上测试时很坑爹，如果只是给其他开发者使用，那是无所谓的，顶多不要在线测试这项功能）。</p>
-<h3 id="form">form</h3>
-<p>这个也很坑爹，我也是后来发现的。常见的表单提交，可以f12看到是Query String Parameters，但是这个使用了坑爹的Request Plyload（并没有说它不好）。哪坑爹呢？后台的controller方法里我试了无数个注解，无数个方法接受不到值，要么是null，要么http错误。</p>
-<p>我最会想到了，也是因为前段时间正好用过---》我看到swagger在网页上提示是formData，玩过前端的人应该知道js有一个对象叫做：FormData（感兴趣的自己百度）。坑爹的就在这，FormData是用来提交二进制数据的（我是这么理解的），比如一张图片，一份文件。所以我抱着尝试的心态，在Controller的方法中加入了一个参数MultipartFile对象，尼玛，居然正常接收到了参数。</p>
-<p>综上，如果用了form，想使用在线测试功能，就加个MultipartFile参数。</p>
-<h3 id="body">body</h3>
-<p>这个还行，因为如果使用了这个swagger会提交json数据（但是不知道是字符串还是对象，初步估计应该是对象），所以如果使用body，那么@ApiImplicitParam就不用写很多了，比如说，你想接受用户的账号（account），密码（password），那么不需要这样写： <figure class="highlight less"><table><tr><td class="code"><pre><span class="line"><span class="variable">@ApiImplicitParams</span>(</span><br><span class="line">    &#123;<span class="variable">@ApiImplicitParam</span>(name=<span class="string">"account"</span>,value=<span class="string">"账号"</span>,dataType=<span class="string">"String"</span>, paramType = <span class="string">"body"</span>), </span><br><span class="line">    <span class="variable">@ApiImplicitParam</span>(name=<span class="string">"password"</span>,value=<span class="string">"密码"</span>,dataType=<span class="string">"String"</span>, paramType = <span class="string">"body"</span>)&#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure></p>
-<p>只需要这样：<code>@ApiImplicitParam(name=&quot;user&quot;,value=&quot;用户信息&quot;,dataType=&quot;User&quot;, paramType = &quot;body&quot;)</code></p>
-<p>就可以了，User就是实体类，在网页上显示就是这样： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/327d110778174272982d99f219254f7e.PNG" title="swagger中将参数类型设置body后的结果" alt="swagger中将参数类型设置body后的结果" /></p>
-<p>它会让你提交json数据，只有body会让你提交json数据，很好区分。</p>
-<p>但是我为什么要说它坑爹。因为swagger吧User的所有字段都放进去了，虽然可以一个个删掉，但是每次浏览网页都要做一遍，麻烦死了。所以需要使用如下方法： <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/b9b79737da504931b2a940c1a201330f.PNG" title="用户实体类" alt="用户实体类" /></p>
-<p>设置为只读，这样就不会在网页上显示了，我们可以把除了account（图中的tel）和password的字段全部设置为只读。这里放心我测试过了，只读只是在网页看不见，其他的功能暂时没有受到影响。 <strong>注：</strong>@RequestBody 和 @ModelAttribute不能一起用</p>
-<p><strong>更新：</strong>今天测试的时候发现，如果其他客户端使用代码的方式调用会出现不小的问题。这里把我解决的部分写出：content-type必须设置为“application/json”，传递参数时，不需要写键，只需要传一个json字符串即可，并且json字符串必须使用双引号，而不能是单引号（测试于fastxml jackson）。</p>
-<p>我列出我的代码（使用RestTemplate） <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/ebcbfdb2368e43be85252b69a65dce96.PNG" title="使用body的问题" alt="使用body的问题" /></p>
-<h3 id="header">header</h3>
-<p>没有用过，但是是配合@RequestHeader用的</p>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>swagger</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>shiro角色和权限的用法</title>
-    <url>/posts/9c1e4a2f.html</url>
-    <content><![CDATA[<h3 id="shiro通配符的理解">shiro通配符的理解</h3>
-<p>shiro提供通配符，例如，<code>*:*:*</code>的形式意味着：第一部分代表一个域，第二部分代表操作，第三部分代表实例。</p>
-<p>举个例子，现在有一个权限管理系统，称为<code>:upms</code>，可以写出权限<code>upms:update:coment</code>,这个权限值代表可以在upms这个域中对coment进行update操作。但是也不要思维定死，“域就是一个系统”。</p>
-<p>再比如说一个权限值<code>upms:update:user</code>,代表可以更新一个用户的信息，这里的域的确是upms，但是并不是所有的用户都用这个域（事实上也不能用）。比如普通的用户也有权限更新自己的信息，那么可以再创建一个权限值比如“user:update:15900000000”,意味着一个用户可以更新15900000000这个账号的信息。</p>
-<h3 id="shiro角色和权限的理解">shiro角色和权限的理解</h3>
-<p>之前一直想角色和权限的用法差不多，为什么还要分角色和权限？ <a id="more"></a> 然后看了<a href="http://shiro.apache.org/permissions.html" target="_blank" rel="noopener">shiro官网的文档</a>貌似懂了一些。</p>
-<p>官网说shiro一共有三种权限粒度，分为：资源级别，实例级别，属性级别（ <a href="http://shiro.apache.org/java-authorization-guide.html#levels-of-permission-granularity" target="_blank" rel="noopener">这三种粒度的描述页面</a>）</p>
-<p>角色可以控制对资源的访问，比如对一个页面的访问。如果程序中已经设置了隐式角色，那么直接使用注解的形式可以很快速的控制这个网页的浏览权限。</p>
-<p>而权限是对角色更细粒度的划分。比如现在有一个角色名为“admin”，他拥有对系统中所有权限的CRUD操作，现在需要临时给另外一个很普通的用户（比如只是一个user）查看权限的操作（R）。如果没有shiro提供的权限控制，<font color="red">那么只能给这个用户一个临时的“admin”角色，但是这样他的权限就太大了，因为“admin”是可以查看权限，但是他同样可以删除权限。</font></p>
-<p>上述是个人理解。</p>
-<p>又看了一遍才看懂了shiro官网的意思。</p>
-<ol type="1">
-<li>资源级别指的是一个人可以干什么</li>
-<li>实例级别指的是一个人可以对什么干什么</li>
-<li>属性级别指的是一个人可以对什么上的什么干什么</li>
-</ol>
-<p>以我的博客网站为例，1代表一个人可以管理整个博客后台，2代表一个人可以对博客类别进行某些操作，3代表一个人可以对博客类别的某一个属性（比如博客类别的状态）进行某些操作</p>
-<p>2018-3-17更新，红色部分有错误，如果只给一个用户赋予权限而部赋予角色，用户还是访问不了该链接，因为shiro会执行角色过滤器和权限过滤器，所以用户必须同时满足角色和权限的需求。 所以给一个用户赋予临时权限的思路是错的。</p>
-<p>2018-3-17再次更新，突然角色这条思路不是全错，因为没有必要为一个链接同时赋予角色和权限，因为一个角色下囊括了多个权限，为何还要多次一举呢？我觉得如果一个链接需要同时赋予角色以及权限，那么肯定是因为该链接非常重要，不允许非该角色的用户操作。 综上，如果一个链接很重要，比如删除整个系统的功能，那么肯定是同时需要角色和权限的，而如果是一个很普通的操作，那么可以只赋予权限，而不赋予角色。</p>
-<p>但是权限的细分可以快速的为一个角色增加或删除权限，如给一个角色新增一个权限，那么该角色就可以多访问一个链接。</p>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>shiro</tag>
-        <tag>学习笔记</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>linux安装nginx</title>
     <url>/posts/a5141d63.html</url>
-    <content><![CDATA[<p>参照<a href="https://www.linuxidc.com/Linux/2016-08/134110.htm" target="_blank" rel="noopener">Linux中Nginx安装与配置详解</a> 但是出了点小问题，按照步骤往下直到 配置nginx的时候出现了找不到openssl的错误（我的是阿里云的服务器）。 然后自己去下了一个openssl的包去安装死活不行。 最后执行<code>yum -y install openssl openssl-devel</code>就可以了。。 其次该博文中提示需要在某个文件中加入一句话，并重启防火墙，但是这样做我之前安装的tomcat也访问不了了，所以只要把防火墙关了就可以暂时解决了。</p>
-<p>注：博文中的方法是为了开启防火墙，并且只运行80端口访问。我的服务器的防火墙不是iptables，而是firewall，所以不应该用博文中的方法，应该为firewall添加允许80端口访问 详见<a href="http://blog.csdn.net/codepen/article/details/52738906" target="_blank" rel="noopener">centos7 Firewall防火墙开启80端口</a> <a id="more"></a></p>
+    <content><![CDATA[<p>参考<a href="https://www.linuxidc.com/Linux/2016-08/134110.htm" target="_blank" rel="noopener">Linux中Nginx安装与配置详解</a>。但是出了点小问题，按照步骤往下直到 配置nginx的时候出现了找不到openssl的错误（我的是阿里云的服务器）。然后自己去下了一个openssl的包去安装死活不行。最后执行<code>yum -y install openssl openssl-devel</code>就可以了。。</p>
+<p>其次该博文中提示需要在某个文件中加入一句话，并重启防火墙，但是这样做我之前安装的tomcat也访问不了了，所以只要把防火墙关了就可以暂时解决了。</p>
+<p>注：博文中的方法是为了开启防火墙，并且只运行80端口访问。我的服务器的防火墙不是iptables，而是firewall，所以不应该用博文中的方法，应该为firewall添加允许80端口访问</p>
+<p>详见<a href="http://blog.csdn.net/codepen/article/details/52738906" target="_blank" rel="noopener">centos7 Firewall防火墙开启80端口</a> <a id="more"></a></p>
 ]]></content>
       <categories>
         <category>coding</category>
@@ -10515,243 +9937,6 @@ w(i, i) = exp(\frac{|x^{(i)} - x|}{-2k^2})
       <tags>
         <tag>印象笔记上的博文</tag>
         <tag>安装与部署</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>关于shiro的session总结</title>
-    <url>/posts/33360a81.html</url>
-    <content><![CDATA[<ul>
-<li>关闭浏览器，使用shiro记住我功能时，session失效，即重新打开浏览器需要重新登录。其实并没有失效，而是再次打开浏览器时，shiro又重新创建了一个session，所以导致之前的session与现在的session不一致。所以造成了session失效的假象.</li>
-<li>使用浏览器，在地址栏输入访问的链接但是不按回车时（意思就是只在地址栏输入一个链接不访问网页），系统会产生一个session，但是马上（一秒不到）自动删掉。</li>
-<li>使用RememberMe时，断开会话后会重新生成一个session，并且sessionId以及里面原来保存的值全都没有了，但是不需要重新登录（此适用于user级别的过滤链）。</li>
-<li>使用RememberMe时，断开会话后会重新生成一个session，并且sessionId以及里面原来保存的值全都没有了，需要重新登录，但是由于是重新登录，本质上session中的值是没有的，实质上登陆一次后又在session中存入了所有属性。（此适用于authc级别的过滤链）</li>
-<li>可以看到断开会话后会重新产生一个session，所以之前的session没用了，但是没有自动删掉。而由于user级别的用户不需要重新登录，session中的值全没了（比如用户个人信息：头像等），所以网页中呈现出来肯定很怪。可以创建一个filter将之前会话的值全部复制到当前session中，然后清除之前的session（由于authc级别是不需要复制的，所以只需要清除之前的session即可，但是因为保不准用户在操作时，session中会存入一些其他的值，所以最好也复制一遍）。 <a id="more"></a></li>
-</ul>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>shiro</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>在shiro的realm中注入service引发的惨案</title>
-    <url>/posts/fba51c50.html</url>
-    <content><![CDATA[<p><strong><em>2019.01.24更新，由于发现了mybatis-plus插件已经实现了我要实现的功能，我自己写的肯定没别人研发的框架写得好，所以此方法已经废弃。</em></strong> ****</p>
-<p>环境介绍一下：由于service层的代码重复太多，于是我想直接把一些重复的代码抽出来。</p>
-<p>比如说这个方法，它可以实现根据条件查询，框架是mybatis。而注入的mapper是有spring提供的方法获取到的，问题就出在这里了。 <figure class="highlight monkey"><table><tr><td class="code"><pre><span class="line">@SuppressWarnings(<span class="string">"unchecked"</span>)</span><br><span class="line">@Override</span><br><span class="line"><span class="keyword">public</span> List&lt;Record&gt; selectByExample(Example example) &#123;</span><br><span class="line">    <span class="class"><span class="keyword">Class</span>&lt;? <span class="keyword">extends</span> <span class="title">Object</span>&gt; <span class="title">mapperClazz</span> = <span class="title">mapper</span>.<span class="title">getClass</span>();</span></span><br><span class="line">    List&lt;Record&gt; res = <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="function"><span class="keyword">Method</span> <span class="title">method</span> =</span> mapperClazz.getDeclaredMethod(<span class="string">"selectByExample"</span>, example.getClass());</span><br><span class="line">        res = (List&lt;Record&gt;) <span class="function"><span class="keyword">method</span>.<span class="title">invoke</span>(</span>mapper, example);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalAccessException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalArgumentException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InvocationTargetException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (NoSuchMethodException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (SecurityException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure> <a id="more"></a> 这个方法获取到了mapper的类型，即CLass对象。</p>
-<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SuppressWarnings(<span class="meta-string">"unchecked"</span>)</span></span><br><span class="line"><span class="keyword">public</span> Class&lt;Mapper&gt; getMapperType() &#123;</span><br><span class="line">    ParameterizedType genericSuperclass = (ParameterizedType) <span class="keyword">this</span>.getClass().getGenericSuperclass();</span><br><span class="line">    <span class="keyword">return</span> (Class&lt;Mapper&gt;) genericSuperclass.getActualTypeArguments()[<span class="number">2</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在这里使用了我自定义的SpringContextUtil类获取了mapper这个bean。注意我这里使用了构造器初始化，问题就出在这里。</p>
-<figure class="highlight reasonml"><table><tr><td class="code"><pre><span class="line">public <span class="constructor">BaseServiceImpl()</span> &#123;</span><br><span class="line">    Class&lt;Mapper&gt; mapperType = get<span class="constructor">MapperType()</span>;</span><br><span class="line">    this.mapper = (Mapper) <span class="module-access"><span class="module"><span class="identifier">SpringContextUtil</span>.</span></span>get<span class="constructor">Bean(<span class="params">mapperType</span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>getBean()方法就不提供了，可以自行百度。主要是这个类SpringContextUtil。</p>
-<p>要想使用spring提供的以java代码方法获取bean有5种方式（大致差不多，我是用了第四种）：实现ApplicationContextAware接口。只需要在实现类中定义private static ApplicationContext applicationContext;变量，再设置set方法，即可使用这个对象获取到bean。</p>
-<p>到这里一切都没问题，可以当启动tomcat时，问题出来了。</p>
-<p>它报了一个异常，必须初始化applicationContext。我纳闷了，我之前在Controller层注入service对象用的好好的，为什么在shiro的realm中注入就出事了？</p>
-<p>我看了我的applicationContext.xml文件，我是这么写的：</p>
-<figure class="highlight xl"><table><tr><td class="code"><pre><span class="line">&lt;<span class="keyword">import</span> resource=<span class="string">"classpath:springContextConfig.xml"</span> /&gt;</span><br><span class="line">&lt;<span class="keyword">import</span> resource=<span class="string">"classpath:spring/upms-dao.xml"</span> /&gt;</span><br><span class="line">&lt;<span class="keyword">import</span> resource=<span class="string">"classpath:spring/upms-service.xml"</span> /&gt;</span><br><span class="line">&lt;<span class="keyword">import</span> resource=<span class="string">"classpath:spring/upms-tx.xml"</span> /&gt;</span><br><span class="line">&lt;<span class="keyword">import</span> resource=<span class="string">"classpath:shiro/shiro.xml"</span> /&gt;</span><br></pre></td></tr></table></figure>
-<p>然后看了web.xml文件</p>
-<figure class="highlight livecodeserver"><table><tr><td class="code"><pre><span class="line">&lt;context-<span class="built_in">param</span>&gt;</span><br><span class="line">	&lt;<span class="built_in">param</span>-name&gt;contextConfigLocation&lt;/<span class="built_in">param</span>-name&gt;</span><br><span class="line">	&lt;<span class="built_in">param</span>-<span class="built_in">value</span>&gt;classpath:applicationContext.xml&lt;/<span class="built_in">param</span>-<span class="built_in">value</span>&gt;</span><br><span class="line">&lt;/context-<span class="built_in">param</span>&gt;</span><br></pre></td></tr></table></figure>
-<p>好像稍微有点头绪了。我在初始化spring上下文的时候，直接初始化了shiro.xml，这没问题。但是在applicationContext.xml中第一行的<code>&lt;import resource=&quot;classpath:springContextConfig.xml&quot; /&gt;</code>里面注册了SPringContextUtil这个工具类。（这个工具类不会一下子注册进去成为bean，它会在spring上下文初始化完毕之后才行）。</p>
-<p>所以我需要在realm中注册AdminService-----&gt;AdminService继承了BaseServiceImpl-----&gt;BaseServiceImpl在构造器中使用了applicationContext.getBean()。这个步骤在spring上下文初始化还没完成的时候执行，但是你要想使用applicationContext，spring上下文必须初始化完毕，所以冲突了。</p>
-<p>那我就想直接把shiro.xml托到DispatcherServlet里面初始化就完事了。因为在DispatcherServlet加载的配置文件中，我扫描了Controller层，而在Controller层使用是没问题的（我之前还不懂的时候就这么做的，没报异常）。然后我这么做了，但是又报异常了-----&gt;No Bean Named &quot;shiroFilter&quot;。这不坑爹吗？</p>
-<p>我先缕一缕，<code>&lt;context-param&gt;</code>最先执行，其次是<code>&lt;filter&gt;</code>，最后是<code>&lt;servlet&gt;</code>（不一定完全正确，但是可以这么理解）。所以说shiro.xml放在DispatcherServlet中不行！因为filter比servlet先执行，它必须要shiro.xml中的bean。所以怎么办？我必须把shiro.xml放在context-param和filter的中间。这根本不可能（起码我做不到）。</p>
-<p>后来我想到了懒加载（我印象中有听说过这个概念），我一百度还真有。那我应该把懒加载放在哪个bean上呢？我决定放在AdminService上。但是没用，因为Realm这个类不能懒加载，因为它马上就被初始化了。而realm中注入了AdminService，所以即使是懒加载也没屌用。</p>
-<p>最后终于解决了。</p>
-<p>既然你要初始化bean，要用构造器，我就把调用applicationContext的代码不放在构造器里。我写了一个initMapper方法。</p>
-<figure class="highlight reasonml"><table><tr><td class="code"><pre><span class="line">@Override</span><br><span class="line">public void init<span class="constructor">Mapper()</span> &#123;</span><br><span class="line">    Class&lt;Mapper&gt; mapperType = get<span class="constructor">MapperType()</span>;</span><br><span class="line">    this.mapper = (Mapper) <span class="module-access"><span class="module"><span class="identifier">SpringContextUtil</span>.</span></span>get<span class="constructor">Bean(<span class="params">mapperType</span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>注意@Override注解。那么现在问题就是，怎么调用这个方法。经过度娘之后，终于解决了。贴上类，我就不解释了。附上链接https://www.cnblogs.com/rollenholt/p/3612440.html</p>
-<figure class="highlight reasonml"><table><tr><td class="code"><pre><span class="line">public <span class="keyword">class</span> MapperInit implements ApplicationListener&lt;ContextRefreshedEvent&gt; &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void on<span class="constructor">ApplicationEvent(ContextRefreshedEvent <span class="params">event</span>)</span> &#123;</span><br><span class="line">        <span class="comment">//下面的方法执行就行了，这个方法会执行两次，我们不需要这么做</span></span><br><span class="line">    &#125;</span><br><span class="line">       </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 需要执行的逻辑代码，当spring容器初始化完成后就会执行该方法。</span></span><br><span class="line"><span class="comment">     * 由于加了@PostConstruct注解所以这个方法跟上面的onApplicationEvent一样。</span></span><br><span class="line"><span class="comment">     * 但是这个方法只会在root application context环境中执行，不会在 projectName-servlet context中执行</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    @<span class="constructor">SuppressWarnings(<span class="string">"rawtypes"</span>)</span></span><br><span class="line">    @PostConstruct</span><br><span class="line">    <span class="keyword">private</span> void init<span class="constructor">Mapper()</span> &#123;</span><br><span class="line">        Map&lt;String, BaseService&gt; beansOfType = <span class="module-access"><span class="module"><span class="identifier">SpringContextUtil</span>.</span></span>get<span class="constructor">ApplicationContext()</span>.get<span class="constructor">BeansOfType(BaseService.<span class="params">class</span>)</span>;</span><br><span class="line">        for(Map.Entry&lt;String, BaseService&gt; entrySet : beansOfType.entry<span class="constructor">Set()</span>) &#123;</span><br><span class="line">            BaseService service = entrySet.get<span class="constructor">Value()</span>;</span><br><span class="line">            service.init<span class="constructor">Mapper()</span>;</span><br><span class="line">            <span class="module-access"><span class="module"><span class="identifier">System</span>.</span></span>out.println(service);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-        <tag>shiro</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>vo,dto,do,po的理解</title>
-    <url>/posts/73327597.html</url>
-    <content><![CDATA[<ul>
-<li>po:持久化对象，没啥好说的，数据库里一张表对应一个po。</li>
-<li>vo:视图对象，是指某个指定页面的所有数据，注意是<font color="red">所有数据</font>。</li>
-<li>dto:跟vo差不多，甚至可以代替vo，但是二者理论上是不一样的。vo用于数据显示，dto用于数据传输(展示层与业务层之间)。如性别在数据库里用01表示，在传输时dto直接定义Integer，但是在展示时总不能展示0和1，并且男女也有不同称谓(帅哥美女，先生女士等等)，所以需要另建一个vo用于处理这些逻辑。但是如果没有特殊需求，其实vo就是dto，dto是将业务层数据传输出去，在视图层展示时将以数字表示的性别转换为文字。如果客户端没有要求，那么不传输出数字，直接写上男女也没问题，如果确是有要求，在业务层就不能传出文字，而只能传出数字了。</li>
-<li>do:无法里给 <a id="more"></a> 以上出自:<a href="https://www.cnblogs.com/qixuejia/p/4390086.html" target="_blank" rel="noopener">博客园博主</a> <img src="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/e3592ba9de284f128b9183a2434ae018.jpg" title="领域模型" alt="领域模型" /> <!-- more --></li>
-</ul>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>印象笔记上的博文</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>js一些常用的属性和函数</title>
-    <url>/posts/8abb4fb3.html</url>
-    <content><![CDATA[<p>由于老是忘记js和jq的函数，这里记一下。</p>
-<h3 id="javascript">javascript</h3>
-<ol type="1">
-<li>string.replace(//, &quot;&quot;)：第一个参数是正则，表达式在//两个之间写，第二个参数是需要替换成什么。</li>
-<li>string.substr()：用法和一样</li>
-<li>new Date(date).toLocaleString()：将毫秒数转成本地的时间，如中国：2017/9/4 下午9:42:41</li>
-<li>(a/b).toFixed(2)：相除保留两位小数，如700/100等于7.00。要不然就是只等于7（java里整数相除只得到整数部分） <a id="more"></a></li>
-</ol>
-<h3 id="jquery">Jquery</h3>
-<ol type="1">
-<li>$(&quot;#id&quot;).attr()：为一个节点添加属性，一个属性:attr(&quot;name&quot;, &quot;file&quot;)。多个属性:attr({&quot;name&quot;:&quot;file&quot;, &quot;type&quot;,&quot;button&quot;})</li>
-<li>$(&quot;#id&quot;).remove()：移除节点</li>
-<li>$(&quot;#id&quot;).removeAttr(&quot;&quot;)：移除一个节点的属性</li>
-<li>$(&quot;#id&quot;).children(&quot;:first&quot;)：一个节点的子节点</li>
-<li><span class="math inline">\((&quot;#id&quot;).offset()：一个节点离网页顶部的top值和left值，不是离浏览器的top值和left值（以整个网页的高度做计算）。\)</span>(&quot;#id&quot;).offset().top代表节点的top值，left值同理。</li>
-<li>滚动监听 <figure class="highlight arcade"><table><tr><td class="code"><pre><span class="line">$(<span class="string">"body,html"</span>).animate(&#123;</span><br><span class="line">	scrollTop:scroll_offset.top <span class="comment">//让body的scrollTop等于pos的top，就实现了滚动</span></span><br><span class="line">&#125;,<span class="number">0</span>);</span><br></pre></td></tr></table></figure></li>
-<li>window.location.search：获得当前url，如：http://localhost:8080/contextpath/index.html</li>
-<li><span class="math inline">\(.parseJSON(string)：将一个字符串转为json对象，但是不要在用ajax的时候，data:\)</span>.parseJSON(string)这样用，我搞了2个小时，没查出错，原来是这里错了。 string json = '{&quot;comment&quot;:&quot;abcdrf&quot;,&quot;name&quot;:&quot;xiaowang&quot;}'; 我在用<span class="math inline">\(.ajax()的时候，把data赋值\)</span>.parseJSON(json)，出错了！！！data:json。后台接受的很成功。 但是后台传来一个json字符串，用这个方法转成json对象，可以直接通过.取值挺方便的。</li>
-<li>new FormData().append()：使用 FormData对象获取到form中的数据后，可以继续append自己想要添加的数据。 <!-- more --></li>
-</ol>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>front-end</category>
-      </categories>
-      <tags>
-        <tag>新浪博客上的博文</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>再探String</title>
-    <url>/posts/d0357408.html</url>
-    <content><![CDATA[<p>估计是最终版了。</p>
-<figure class="highlight arduino"><table><tr><td class="code"><pre><span class="line"><span class="keyword">String</span> s1 = <span class="keyword">new</span> <span class="keyword">String</span>(<span class="string">"张三"</span>);</span><br><span class="line"><span class="keyword">String</span> s2 = <span class="keyword">new</span> <span class="keyword">String</span>(<span class="string">"张三"</span>);</span><br><span class="line"><span class="keyword">String</span> s3 = <span class="string">"张三"</span>;</span><br><span class="line"><span class="keyword">String</span> s4 = <span class="string">"张三"</span>;</span><br></pre></td></tr></table></figure>
-<p>我们都知道<code>String s3 = &quot;张三&quot;;</code>这句代码的&quot;张三&quot;字符串位 于常量池中，而s3==s4这种明显就是小儿科，true！ 我们来解析一下<code>String s3 = &quot;张三&quot;;</code>这句代码。 1. 首先s3进入栈中，&quot;张三&quot;进入常量池中，&quot;张三&quot;返回一个地址，s3拿到这个地址，所以我们就可以拿着这个地址做一些事情。这应该都很熟悉了，那么问题来了：“String s1 = new String(&quot;张三&quot;);”这句代码是怎么执行的？ <a id="more"></a> 2. 首先我们要知道一个定义：成员变量和局部变量。 s3是一个局部变量，当然是相对来说，比如说上面的4句代码都位于一个方法中，那么s3是一个局部变量。</p>
-<ol start="3" type="1">
-<li>接下来我们解析<code>String s1 = new String(&quot;张三&quot;);</code>这句代码。 s1还是一个局部变量所以进入栈中，new String会在堆中创建一个String实例对象（OK很简单），那么这个 &quot;张三&quot;怎么办？注意了！String对象是如何存储字符串的？实际上就是一个char数组（同时也解释了一个中文可以用一个char来存储），所以&quot;张三&quot;在String中实际上是这样的：value[0]='张'，value[1]=&quot;三&quot;。 这个value是一个char数组，而它优势String的成员变量也就是说，value这个变量不会进入栈，而是跟着String在堆内存中（实际上不是，我先打个比喻）。 String对象的构造器还没完！它还会初始化一个hash码，这个是String自己初始化的，不用你来控制，所以hash码这个变量也是跟着String进入堆中。</li>
-</ol>
-<p>现在我们来缕一缕-------&gt;String在堆中开辟一个空间，这个空间里有value数组，hash变量（其他的我就不说了，我上面也说过了，实际上value并不在String中）。</p>
-<p>知道上面的一切之后，就可以分析了。</p>
-<p>是不是&quot;张三&quot;这种形式的写法，字符串就进入了常量池？比如：<code>String s1 = &quot;张三&quot;;String s1 = new String(&quot;张三&quot;);StringBuilder s3 = new StringBuilder(&quot;张三&quot;);StringBuffer s4 = new StringBuffer(&quot;张三&quot;);</code></p>
-<p>其实我们有办法做到，观察是否进入了。 但是之前先考虑，<code>String s1 = new String(&quot;张三&quot;);</code>和<code>String s3 = &quot;张三&quot;;</code>这两个&quot;张三&quot;是同一个字符串吗？ 其实看我上面的某些描述，可能也推测出来了，这两个&quot;张三&quot;就是同一个（指同一个地址）。下面讲如何做到观察是否为同一个。</p>
-<figure class="highlight mipsasm"><table><tr><td class="code"><pre><span class="line">String <span class="built_in">s1</span> = new String(<span class="string">"abc"</span>)<span class="comment">;</span></span><br><span class="line">String <span class="built_in">s2</span> = new String(<span class="string">"abc"</span>)<span class="comment">;</span></span><br><span class="line">Class&lt;?&gt; clazz1 = <span class="built_in">s1</span>.getClass()<span class="comment">;</span></span><br><span class="line">Class&lt;?&gt; clazz2 = <span class="built_in">s2</span>.getClass()<span class="comment">;</span></span><br><span class="line">Field declaredField1 = clazz1.getDeclaredField(<span class="string">"value"</span>)<span class="comment">;</span></span><br><span class="line">Field declaredField2 = clazz2.getDeclaredField(<span class="string">"value"</span>)<span class="comment">;</span></span><br><span class="line">declaredField1.setAccessible(true)<span class="comment">;</span></span><br><span class="line">declaredField2.setAccessible(true)<span class="comment">;</span></span><br><span class="line">System.out.println(declaredField1.get(<span class="built_in">s1</span>) == declaredField2.get(<span class="built_in">s2</span>))<span class="comment">;</span></span><br><span class="line">System.out.println(declaredField1.get(<span class="built_in">s1</span>))<span class="comment">;</span></span><br><span class="line">System.out.println(declaredField2.get(<span class="built_in">s2</span>))<span class="comment">;</span></span><br></pre></td></tr></table></figure>
-<p>上面的代码结果如何，显然已经解释的很清楚了。</p>
-<p>解</p>
-<p>首先&quot;张三&quot;实际上是一个char数组，而它是String的成员变量，所以它硬该在堆内存中，但是事实是在常量池。 常量池：看名字就知道是存常量的。 在网络上的熏陶，我们知道String name = &quot;李四&quot;；&quot;李四&quot;在常量池，所以name是一个常量（无语ing，别被带偏了，我在今天之前也是这么认为的）。 被final修饰的才是常量。现在你们大概猜出什么了。去看String的源码吧，看看value这个成员变量的前面是用什么修饰的！！！自己去看才会记忆深刻，我就不贴源码了。</p>
-<p>还没完 是不是&quot;张三&quot;这种形式的写法，字符串就进入了常量池？ 我之前问了这个问题。答：不是。 StringBuilder name1 = new StringBuilder(&quot;张三&quot;); String name2 = &quot;张三&quot;; 这时候又不一样了。 这两个&quot;张三&quot;不是同一个（也就是说地址不一样）。话不多说上代码。</p>
-<figure class="highlight mipsasm"><table><tr><td class="code"><pre><span class="line">String <span class="built_in">s1</span> = new String(<span class="string">"abc"</span>)<span class="comment">;</span></span><br><span class="line">StringBuilder <span class="built_in">s2</span> = new StringBuilder(<span class="string">"abc"</span>)<span class="comment">;</span></span><br><span class="line">Class&lt;?&gt; clazz1 = <span class="built_in">s1</span>.getClass()<span class="comment">;</span></span><br><span class="line">Class&lt;?&gt; clazz2 = <span class="built_in">s2</span>.getClass()<span class="comment">;</span></span><br><span class="line">clazz2 = clazz2.getSuperclass()<span class="comment">;</span></span><br><span class="line">Field declaredField1 = clazz1.getDeclaredField(<span class="string">"value"</span>)<span class="comment">;</span></span><br><span class="line">Field declaredField2 = clazz2.getDeclaredField(<span class="string">"value"</span>)<span class="comment">;</span></span><br><span class="line">declaredField1.setAccessible(true)<span class="comment">;</span></span><br><span class="line">declaredField2.setAccessible(true)<span class="comment">;</span></span><br><span class="line">System.out.println(declaredField1.get(<span class="built_in">s1</span>) == declaredField2.get(<span class="built_in">s2</span>))<span class="comment">;</span></span><br><span class="line">System.out.println(declaredField1.get(<span class="built_in">s1</span>))<span class="comment">;</span></span><br><span class="line">System.out.println(declaredField2.get(<span class="built_in">s2</span>))<span class="comment">;</span></span><br></pre></td></tr></table></figure>
-<p>上面的结果有没有出乎意料？地址打印出来都不一样。你们也猜到了什么吧。 去看StringBuilder的源码吧。StringBuffer同理。 注：StringBuilder中没有value，但是它的父类AbstractStringBuilder有，去看看value前面是什么修饰的。</p>
-<hr />
-<p>2018.9.6更新 java1.7之后貌似有很大变化。上面的理论可能不太适用</p>
-<!-- more -->
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>学习笔记</tag>
-        <tag>新浪博客上的博文</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>解决li标签使用inline-block时产生的4px</title>
-    <url>/posts/9bf9a2db.html</url>
-    <content><![CDATA[<p>完美兼容的方法</p>
-<p>父元素（比如ul）设置font-size:0;</p>
-<p>使用letter-spacing:-Npx;</p>
-<p>li标签重新设置字体大小</p>
-<p>原文出处：解决inline-block出现的间隙 <a id="more"></a></p>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>front-end</category>
-      </categories>
-      <tags>
-        <tag>新浪博客上的博文</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>理解接口和抽象类</title>
-    <url>/posts/4a3c1668.html</url>
-    <content><![CDATA[<p>这篇只是自学java基础时的个人理解而已。</p>
-<p>初学abstract和interface时会感到很疑惑，明明这两个没有具体实现的方法，为什么还要继承或者实现他们呢？明明可以自己在自己编写的类中写一个方法，而不去继承或实现。现在看来大概是因为一种规范，也是为了让别人更好的看懂，如果自己写方法，自己去用，当然不需要多此一举。如果编写一个Run的接口，让别人去用，别人一看就知道这个接口是用来让某种东西跑起来。 - 抽象类 它只有声明，而没有具体的实现。抽象方法必须加上abstract关键字。如果一个类含有抽象方法即这个类是抽象类，但是抽象类也可以不含有抽象方法，不过这样定义一个抽象类就毫无意义。 抽象类中也可以拥有成员变量和普通的成员变量。 抽象类与普通类主要有三种区别： 1. 抽象方法必须为public或者protected，缺省情况下为public 2. 抽象类不能被用来创建对象 3. 如果继承一个抽象类则必须实现它的抽象方法，如果不实现则必须将这个方法也加上abstract。 <a id="more"></a> - 接口 在软件工程中，接口泛指供别人调用的方法或者函数。它是对行为的抽象。 接口可以含有变量和方法，但是它们都会被自动加上public static final关键字，如果没有加上，系统会自动添加。 一个类可以实现多个接口。 接口中不能含有静态代码块以及静态方法，而抽象类可以有静态代码块和静态方法； - 区别 抽象类是“是不是”的关系，定义一个animal类，再定义一个Dog类，animals extends Dog，是一种“是不是”的关系，即狗是不是动物。 接口是“有没有”的关系，定义一个interface Eat，实现它，Dog implements Eat，即Dog类实现Eat接口，狗有没有吃这种功能。 具体内容引自 http://www.cnblogs.com/dolphin0520/p/3811437.html 这篇只是为了帮助自己理解二者的区别。</p>
-<!-- more -->
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>学习笔记</tag>
-        <tag>新浪博客上的博文</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>自动装箱和自动拆箱功能</title>
-    <url>/posts/ae310f85.html</url>
-    <content><![CDATA[<p><code>Integer a = new Integer(1000);</code> 在jdk5.0之后走了自动装箱功能 <code>Integer a = 1000;</code>即与上面的等式相同。 在编译阶段，编译器帮助我们改进代码，将<code>Integer a = new Integer(1000);</code> 自动改为<code>Integer a = 1000;</code></p>
-<p><code>int c = new Integer(1500);</code>进行自动拆箱。 编译器将上述代码自动改为<code>int c = new Integer(1500).intValue();</code></p>
-<p>但是在–128到127之间的数依然会当做基本数据类型处理。 <figure class="highlight mipsasm"><table><tr><td class="code"><pre><span class="line">Integer <span class="built_in">a1</span>=<span class="number">100</span><span class="comment">;</span></span><br><span class="line">Integer <span class="built_in">a2</span>=<span class="number">100</span><span class="comment">;</span></span><br></pre></td></tr></table></figure></p>
-<p>a1==a2返回的照理说应该是false，但是在处理时，它只是基本数据类型，所以返回true。 <a id="more"></a></p>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>学习笔记</tag>
-        <tag>新浪博客上的博文</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>StringBuilder和StringBuffer的区别</title>
-    <url>/posts/e8a4cb6f.html</url>
-    <content><![CDATA[<p>StringBuilder线程不安全，效率高。 DtringBuffer线程安全，效率低。 都是可变字符序列。 <code>StringBuilder s = new StringBuilder()</code>字符数组长度初始化为16 <code>StringBuilder s = new StringBuilder(32)</code>字符数组长度初始化为32 其中的append方法最终返回this，可以实现方法链，<code>s.append(&quot;ab&quot;).append(&quot;cd&quot;)</code></p>
-<figure class="highlight isbl"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="title">StringBuilder</span>(<span class="variable">String</span> <span class="variable">s</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="function"><span class="title">super</span>(<span class="variable">s</span>.length() + <span class="number">16</span>);</span></span><br><span class="line"><span class="function">	<span class="title">append</span>(<span class="variable">s</span>);</span></span><br><span class="line"><span class="function">&#125;</span></span><br></pre></td></tr></table></figure>
-<p>StringBuilder类的其中一个构造器，建立一个初始化内容的长度加上16的数组 如果传入的一个数组比初始化的大，则会进行数组扩容。 新容量 = 旧容量 * 2+2 <a id="more"></a></p>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>学习笔记</tag>
-        <tag>新浪博客上的博文</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>区分“==”和equals</title>
-    <url>/posts/52188101.html</url>
-    <content><![CDATA[<p>比如</p>
-<figure class="highlight arduino"><table><tr><td class="code"><pre><span class="line"><span class="keyword">String</span> s1=<span class="keyword">new</span> <span class="keyword">String</span>(<span class="string">"abc"</span>);</span><br><span class="line"><span class="keyword">String</span> s2=<span class="keyword">new</span> <span class="keyword">String</span>(<span class="string">"abc"</span>);</span><br></pre></td></tr></table></figure>
-<p>s1==s2返回的是faluse，因为s1指向的是String类的value数组，而s2指向的是另一个String类的value数组，对象不同。 而s1.equals(s2)返回true。因为eauals比较的是内容，即value数组。 <a id="more"></a> <figure class="highlight armasm"><table><tr><td class="code"><pre><span class="line"><span class="keyword">String </span><span class="built_in">s3</span>=<span class="string">"abc"</span><span class="comment">;</span></span><br><span class="line"><span class="keyword">String </span><span class="built_in">s4</span>=<span class="string">"abc"</span><span class="comment">;</span></span><br></pre></td></tr></table></figure> 这个初始化的，s3==s4和s3.equals(s4)返回的都是true，因为s3和s4指向的都是方法区的常量池</p>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>学习笔记</tag>
-        <tag>新浪博客上的博文</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>new String(abc)与String s=abc的区别</title>
-    <url>/posts/e9e64e00.html</url>
-    <content><![CDATA[<p>String类是不可变字符序列。 比如<code>String s=&quot;abc&quot;;</code> 原理是将字符串&quot;abc&quot;存入value数组，而value数组是final，所以value数组是不能改变的，但是String产生的s对象，s这个指针是可变的。 局部变量s在栈中产生，指向在堆(方法区的常量池)中的&quot;abc&quot;,然后如果想在字符串后面添加字符，则会诞生一个新的字符串(比如&quot;abcd&quot;)，然后将s指针指向&quot;abcd&quot;。 而<code>String s=new String(&quot;abc&quot;);</code> 同理s产生在栈中，字符串&quot;abc&quot;产生在堆(方法区的常量池)中，但是s不直接指向&quot;abc&quot;。 new String在堆中产生一个对象，由常量池中的&quot;abc&quot;对它进行初始化，而s对象指向的是new String这个对象。 s指向String，String指向&quot;abc&quot;。 <a id="more"></a></p>
-<p>总结:new String()比String多创建了一个对象，浪费内存。 用<code>String s=new String()</code>创建了在栈中的s对象以及String类对象。 用String s仅仅创建了s对象</p>
-]]></content>
-      <categories>
-        <category>coding</category>
-        <category>java</category>
-      </categories>
-      <tags>
-        <tag>学习笔记</tag>
-        <tag>新浪博客上的博文</tag>
       </tags>
   </entry>
 </search>
