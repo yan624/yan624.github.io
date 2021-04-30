@@ -43,7 +43,7 @@
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E8%AE%AD%E7%BB%83%E6%8A%80%E5%B7%A7%EF%BC%88tricks%EF%BC%89/scaled_slumping_loss.svg">
 <meta property="og:image" content="https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E8%AE%AD%E7%BB%83%E6%8A%80%E5%B7%A7%EF%BC%88tricks%EF%BC%89/%E5%A2%9E%E5%8A%A0lr%EF%BC%8Closs%E5%8F%8D%E8%80%8C%E4%B8%8B%E9%99%8D%E6%9B%B4%E6%85%A2.svg">
 <meta property="article:published_time" content="2020-04-26T11:55:20.000Z">
-<meta property="article:modified_time" content="2020-09-24T15:40:44.767Z">
+<meta property="article:modified_time" content="2021-04-08T11:06:02.346Z">
 <meta property="article:author" content="朱冲䶮">
 <meta property="article:tag" content="4me">
 <meta name="twitter:card" content="summary">
@@ -62,7 +62,7 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_dea9txmf0dl.css" />
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_cxilxtjervt.css" />
 <!-- 百度统计 -->
 <script>
 var _hmt = _hmt || [];
@@ -155,7 +155,7 @@ var _hmt = _hmt || [];
   </li>
         <li class="menu-item menu-item-时间线">
 
-    <a href="/categories/coding/timeline/" rel="section"><i class="iconfont icon-timeline fa-fw"></i>时间线</a>
+    <a href="/categories/series/timeline/" rel="section"><i class="iconfont icon-timeline fa-fw"></i>时间线</a>
 
   </li>
         
@@ -170,7 +170,7 @@ var _hmt = _hmt || [];
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">134</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">124</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -296,7 +296,7 @@ var _hmt = _hmt || [];
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-24 23:40:44" itemprop="dateModified" datetime="2020-09-24T23:40:44+08:00">2020-09-24</time>
+                <time title="修改时间：2021-04-08 19:06:02" itemprop="dateModified" datetime="2021-04-08T19:06:02+08:00">2021-04-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -325,14 +325,14 @@ var _hmt = _hmt || [];
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>9.4k</span>
+              <span>9.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>9 分钟</span>
+              <span>8 分钟</span>
             </span>
 
         </div>
@@ -349,17 +349,11 @@ var _hmt = _hmt || [];
 <h1 id="技巧">技巧</h1>
 <p><span class="citation" data-cites="jozefowicz2015empirical">(Jozefowicz, Zaremba, and Sutskever 2015)</span> 发现在 LSTM 的 forget gate 上的 bais 设置为 1，可以缩小 LSTM 和 GRU 之间的差距。（题外话：该论文还很好地解释了梯度消失出现的原因）下面是解释：</p>
 <blockquote><p>许多应用将 SLTM 的遗忘门随机地使用一个很小的值进行初始化，这在大多数应用上都能够正常工作。但是这种初始化实际上将遗忘门（<strong>博主注</strong>：注意是遗忘门，而不是遗忘门偏差）设置成了 0.5。这就在每一个时间步，由于 0.5 这个因素，引入了一个梯度消失的问题。当模型特别需要长期依赖时，就会导致出现问题。<mark class="label warning">为什么会使得遗忘门变成0.5？</mark></p>
-<p>这个问题可以简单地将遗忘门的偏差设置为一个较大的数值，从而得以解决，例如 1 或 2。通常将其设为接近 1 的值，从而启动 gradient flow。这个观点早已经被 Gers et al.(2000) 提出，但是很多从业者都不知道这点，所以我们再次强调。</p>
+<p>这个问题的解决方式比较简单，可以将遗忘门的偏差设置为一个较大的数值，例如 1 或 2。通常将其设为接近 1 的值，从而启动 gradient flow。这个观点早已经被 Gers et al.(2000) 提出，但是很多从业者都不知道这点，所以我们再次强调。</p>
 <p>如果遗忘门的偏差没有正确初始化，我们可能会错误地得出结论：LSTM 无法学习解决具有远程依赖性的问题。然而根据上面的观点，事实并非如此。</p>
 </blockquote>
-<div class="note warning"><p>值得注意得一点是，<span class="citation" data-cites="jozefowicz2015empirical">(Jozefowicz, Zaremba, and Sutskever 2015)</span> 认为 GRU 作为 LSTM 的变种，与 LSTM 一样，仍然难以证明其 cell 是否设计得合理。并且据实验发现，<strong>基于普通的初始化方式</strong>，其几乎在所有任务上胜过 LSTM。但是正如之前所述，只要 LSTM 的 forget get bias 被初始化为 1，它们之间的差距几乎相当。</p>
+<div class="note warning"><p>值得注意得一点是，他们还认为 GRU 作为 LSTM 的变种，与 LSTM 一样，仍然难以证明其 cell 是否设计得合理。并且据实验发现，<strong>基于普通的初始化方式</strong>，其几乎在所有任务上胜过 LSTM。但是正如之前所述，只要 LSTM 的 forget get bias 被初始化为 1，它们之间的差距几乎相当。</p>
 <p>博主注：那么也就是说 GRU 的优点只有比 LSTM 的运行速度快一点</p>
-<h1 id="bibliography" class="unnumbered">参考文献</h1>
-<div id="refs" class="references">
-<div id="ref-jozefowicz2015empirical">
-<p>Jozefowicz, Rafal, Wojciech Zaremba, and Ilya Sutskever. 2015. “An Empirical Exploration of Recurrent Network Architectures.” In <em>International Conference on Machine Learning</em>, 2342–50.</p>
-</div>
-</div>
 </div>
 <h1 id="调参的步骤以及经验">调参的步骤以及经验</h1>
 <div class="note info"><p><a href="https://www.bilibili.com/video/BV1Ux411S7rk?p=13" target="_blank" rel="noopener">李宏毅深度学习</a> 大致地讲解了调参技巧，不过现在都是人尽皆知的方法了。</p>
@@ -646,7 +640,7 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#技巧"><span class="nav-number">1.</span> <span class="nav-text">技巧</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bibliography"><span class="nav-number">2.</span> <span class="nav-text">参考文献</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#调参的步骤以及经验"><span class="nav-number">3.</span> <span class="nav-text">调参的步骤以及经验</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#最初的超参数"><span class="nav-number">3.1.</span> <span class="nav-text">最初的超参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#batch-size的选择"><span class="nav-number">3.2.</span> <span class="nav-text">batch size的选择</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#几个小实验"><span class="nav-number">3.2.1.</span> <span class="nav-text">几个小实验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">3.2.2.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">3.2.3.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何处理过拟合"><span class="nav-number">3.3.</span> <span class="nav-text">如何处理过拟合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#loss-值并不能作为判断模型性能的指标"><span class="nav-number">3.4.</span> <span class="nav-text">loss 值并不能作为判断模型性能的指标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gpu内存不够以及随机采样"><span class="nav-number">3.5.</span> <span class="nav-text">GPU内存不够以及随机采样</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于adam的一个bug"><span class="nav-number">3.6.</span> <span class="nav-text">关于Adam的一个bug</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#对于如何融合两个向量的思考"><span class="nav-number">4.</span> <span class="nav-text">对于如何融合两个向量的思考</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料-1"><span class="nav-number">4.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#过拟合处理"><span class="nav-number">5.</span> <span class="nav-text">过拟合处理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#增加数据集的大小"><span class="nav-number">5.1.</span> <span class="nav-text">增加数据集的大小</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#learning-rate-decay"><span class="nav-number">5.2.</span> <span class="nav-text">learning rate decay</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正则化"><span class="nav-number">5.3.</span> <span class="nav-text">正则化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dropout"><span class="nav-number">5.4.</span> <span class="nav-text">Dropout</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#label-smoothing"><span class="nav-number">5.5.</span> <span class="nav-text">label smoothing</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#集成学习ensemble"><span class="nav-number">6.</span> <span class="nav-text">集成学习Ensemble</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#可视化训练结果"><span class="nav-number">7.</span> <span class="nav-text">可视化训练结果</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其他的调参经验"><span class="nav-number">8.</span> <span class="nav-text">其他的调参经验</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#拟合异常分析"><span class="nav-number">8.1.</span> <span class="nav-text">拟合异常分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#val-loss上升val-acc也上升"><span class="nav-number">8.1.1.</span> <span class="nav-text">val loss上升，val acc也上升</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#参考资料-2"><span class="nav-number">8.1.1.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#训练集和验证集的性能或者loss相差巨大"><span class="nav-number">8.1.2.</span> <span class="nav-text">训练集和验证集的性能或者loss相差巨大</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#train-acc很大gap非常大"><span class="nav-number">8.1.2.1.</span> <span class="nav-text">train acc很大，gap非常大</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#loss与acc之间的关系"><span class="nav-number">8.2.</span> <span class="nav-text">loss与acc之间的关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于epoch"><span class="nav-number">8.3.</span> <span class="nav-text">关于epoch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#加大lrtrain-loss不一定更快收敛"><span class="nav-number">8.4.</span> <span class="nav-text">加大lr，train loss不一定更快收敛</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bibliography"><span class="nav-number">9.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#技巧"><span class="nav-number">1.</span> <span class="nav-text">技巧</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#调参的步骤以及经验"><span class="nav-number">2.</span> <span class="nav-text">调参的步骤以及经验</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#最初的超参数"><span class="nav-number">2.1.</span> <span class="nav-text">最初的超参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#batch-size的选择"><span class="nav-number">2.2.</span> <span class="nav-text">batch size的选择</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#几个小实验"><span class="nav-number">2.2.1.</span> <span class="nav-text">几个小实验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">2.2.2.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">2.2.3.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何处理过拟合"><span class="nav-number">2.3.</span> <span class="nav-text">如何处理过拟合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#loss-值并不能作为判断模型性能的指标"><span class="nav-number">2.4.</span> <span class="nav-text">loss 值并不能作为判断模型性能的指标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gpu内存不够以及随机采样"><span class="nav-number">2.5.</span> <span class="nav-text">GPU内存不够以及随机采样</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于adam的一个bug"><span class="nav-number">2.6.</span> <span class="nav-text">关于Adam的一个bug</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#对于如何融合两个向量的思考"><span class="nav-number">3.</span> <span class="nav-text">对于如何融合两个向量的思考</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料-1"><span class="nav-number">3.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#过拟合处理"><span class="nav-number">4.</span> <span class="nav-text">过拟合处理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#增加数据集的大小"><span class="nav-number">4.1.</span> <span class="nav-text">增加数据集的大小</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#learning-rate-decay"><span class="nav-number">4.2.</span> <span class="nav-text">learning rate decay</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正则化"><span class="nav-number">4.3.</span> <span class="nav-text">正则化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dropout"><span class="nav-number">4.4.</span> <span class="nav-text">Dropout</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#label-smoothing"><span class="nav-number">4.5.</span> <span class="nav-text">label smoothing</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#集成学习ensemble"><span class="nav-number">5.</span> <span class="nav-text">集成学习Ensemble</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#可视化训练结果"><span class="nav-number">6.</span> <span class="nav-text">可视化训练结果</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其他的调参经验"><span class="nav-number">7.</span> <span class="nav-text">其他的调参经验</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#拟合异常分析"><span class="nav-number">7.1.</span> <span class="nav-text">拟合异常分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#val-loss上升val-acc也上升"><span class="nav-number">7.1.1.</span> <span class="nav-text">val loss上升，val acc也上升</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#参考资料-2"><span class="nav-number">7.1.1.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#训练集和验证集的性能或者loss相差巨大"><span class="nav-number">7.1.2.</span> <span class="nav-text">训练集和验证集的性能或者loss相差巨大</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#train-acc很大gap非常大"><span class="nav-number">7.1.2.1.</span> <span class="nav-text">train acc很大，gap非常大</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#loss与acc之间的关系"><span class="nav-number">7.2.</span> <span class="nav-text">loss与acc之间的关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于epoch"><span class="nav-number">7.3.</span> <span class="nav-text">关于epoch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#加大lrtrain-loss不一定更快收敛"><span class="nav-number">7.4.</span> <span class="nav-text">加大lr，train loss不一定更快收敛</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bibliography"><span class="nav-number">8.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -662,23 +656,23 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">134</span>
+          <span class="site-state-item-count">124</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">94</span>
+        <span class="site-state-item-count">85</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">214.7k</span>
+      	<span class="site-state-item-count">200.3k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
@@ -688,9 +682,6 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
   </a>
   </div>
   <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85/posts" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85&#x2F;posts" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
-      </span>
       <span class="links-of-author-item">
         <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
@@ -761,7 +752,7 @@ C = f(\begin{pmatrix}M \\ N\end{pmatrix}) = W_c \cdot \begin{pmatrix}M \\ N\end{
 <script>
 	var pathname = window.location.pathname;
 	// pathname == '/' || pathname == '/index.html'
-	if(pathname == '/categories/coding/timeline/'){
+	if(pathname == '/categories/series/timeline/'){
 		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
 	}
 </script>

@@ -47,7 +47,7 @@
   };
 </script>
 <!--阿里云矢量库样式-->
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_dea9txmf0dl.css" />
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1717154_cxilxtjervt.css" />
 <!-- 百度统计 -->
 <script>
 var _hmt = _hmt || [];
@@ -140,7 +140,7 @@ var _hmt = _hmt || [];
   </li>
         <li class="menu-item menu-item-时间线">
 
-    <a href="/categories/coding/timeline/" rel="section"><i class="iconfont icon-timeline fa-fw"></i>时间线</a>
+    <a href="/categories/series/timeline/" rel="section"><i class="iconfont icon-timeline fa-fw"></i>时间线</a>
 
   </li>
         
@@ -155,7 +155,7 @@ var _hmt = _hmt || [];
       
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">134</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">124</span></a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -356,7 +356,7 @@ var _hmt = _hmt || [];
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-17 23:13:03" itemprop="dateModified" datetime="2020-07-17T23:13:03+08:00">2020-07-17</time>
+                <time title="修改时间：2021-04-16 21:08:12" itemprop="dateModified" datetime="2021-04-16T21:08:12+08:00">2021-04-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -394,13 +394,17 @@ var _hmt = _hmt || [];
 
       
           <h1 id="爬楼梯">70. 爬楼梯</h1>
-<p>这是道简单题，思想是找到递推式。<mark class="label success">简单</mark> 题设你正在爬楼梯，需要 n 阶你才能到楼顶，那么我们反着思考，在此之前我们设 <code>OPT(i)</code> 代表 i 阶楼梯共有几种走法。现在假设现在只需要一步就可以到楼顶，我们只有两种选择：1）一步跨一阶；2）一步跨两阶。它们分别对应于 <code>OPT(i - 1)</code> 和 <code>OPT(i - 2)</code>，显然这两种走法是不同的！所以我们实际上 <code>OPT(i) = OPT(i - 1) + OPT(i - 2)</code>。这是其实已经可以用数组解决了，已知一阶楼梯只有一种走法，二阶楼梯有两种走法，则已知数组 <code>[1, 2]</code>，然后第三项只是前两项的和得到 <code>[1, 2, 3]</code>，以此类推得到 <code>[1, 2, 3, 5]</code>。 然而这需要额外的数组，实际上这个公式就是菲波那切数列，所以在写代码时，没必要用数组存储全部的变量。最后给出递推式的完整版： <span class="math display">\[
+<p>这是道简单题，思想是找到递推式。<mark class="label success">简单</mark></p>
+<p>题设你正在爬楼梯，需要 n 阶你才能到楼顶，那么我们反着思考，在此之前我们设 <code>OPT(i)</code> 代表 i 阶楼梯共有几种走法。现在假设现在只需要一步就可以到楼顶，我们只有两种选择：1）一步跨一阶；2）一步跨两阶。它们分别对应于 <code>OPT(i - 1)</code> 和 <code>OPT(i - 2)</code>，显然这两种走法是不同的！所以我们实际上 <code>OPT(i) = OPT(i - 1) + OPT(i - 2)</code>。这是其实已经可以用数组解决了，已知一阶楼梯只有一种走法，二阶楼梯有两种走法，则已知数组 <code>[1, 2]</code>，然后第三项只是前两项的和得到 <code>[1, 2, 3]</code>，以此类推得到 <code>[1, 2, 3, 5]</code>。</p>
+<p>然而这需要额外的数组，实际上这个公式就是菲波那切数列，所以在写代码时，没必要用数组存储全部的变量。最后给出递推式的完整版：</p>
+<p><span class="math display">\[
 OPT(i) = 
 \begin{cases}
     OPT(i - 1) , &amp; \text{一步一阶} \\
     OPT(i - 2) , &amp; \text{一步两阶} \\
 \end{cases}
-\]</span> <figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">class Solution:</span><br><span class="line">    def climbStairs(self, n: <span class="keyword">int</span>) -&gt; in<span class="variable">t:</span></span><br><span class="line">        <span class="keyword">if</span> n == <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">        <span class="keyword">res</span> = [<span class="number">0</span> <span class="keyword">for</span> _ in <span class="built_in">range</span>(n)]</span><br><span class="line">        <span class="keyword">res</span>[<span class="number">0</span>] = <span class="number">1</span></span><br><span class="line">        <span class="keyword">res</span>[<span class="number">1</span>] = <span class="number">2</span></span><br><span class="line">        <span class="keyword">for</span> i in <span class="built_in">range</span>(<span class="number">2</span>, n):</span><br><span class="line">            <span class="keyword">res</span>[i] = <span class="keyword">res</span>[i - <span class="number">1</span>] + <span class="keyword">res</span>[i - <span class="number">2</span>]</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">res</span>[-<span class="number">1</span>]</span><br></pre></td></tr></table></figure>
+\]</span></p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">class Solution:</span><br><span class="line">    def climbStairs(self, n: <span class="keyword">int</span>) -&gt; in<span class="variable">t:</span></span><br><span class="line">        <span class="keyword">if</span> n == <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">        <span class="keyword">res</span> = [<span class="number">0</span> <span class="keyword">for</span> _ in <span class="built_in">range</span>(n)]</span><br><span class="line">        <span class="keyword">res</span>[<span class="number">0</span>] = <span class="number">1</span></span><br><span class="line">        <span class="keyword">res</span>[<span class="number">1</span>] = <span class="number">2</span></span><br><span class="line">        <span class="keyword">for</span> i in <span class="built_in">range</span>(<span class="number">2</span>, n):</span><br><span class="line">            <span class="keyword">res</span>[i] = <span class="keyword">res</span>[i - <span class="number">1</span>] + <span class="keyword">res</span>[i - <span class="number">2</span>]</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">res</span>[-<span class="number">1</span>]</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/posts/f592f293.html#more" rel="contents">
@@ -765,7 +769,7 @@ OPT(i) =
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-10 20:05:27" itemprop="dateModified" datetime="2021-03-10T20:05:27+08:00">2021-03-10</time>
+                <time title="修改时间：2021-04-30 13:54:53" itemprop="dateModified" datetime="2021-04-30T13:54:53+08:00">2021-04-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -773,11 +777,11 @@ OPT(i) =
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+                  <a href="/categories/series/" itemprop="url" rel="index"><span itemprop="name">series</span></a>
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/AI/nlp/" itemprop="url" rel="index"><span itemprop="name">nlp</span></a>
+                  <a href="/categories/series/nlp/" itemprop="url" rel="index"><span itemprop="name">nlp</span></a>
                 </span>
             </span>
 
@@ -787,14 +791,14 @@ OPT(i) =
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>14k</span>
+              <span>12k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>13 分钟</span>
+              <span>11 分钟</span>
             </span>
 
         </div>
@@ -806,9 +810,14 @@ OPT(i) =
     <div class="post-body" itemprop="articleBody">
 
       
-          <div class="note info"><p>由于该领域涉及太多知识点，本文只涉及 task-oriented dialog system 四大组件之二：SLU 和 DST。其余两项组件 DPL 以及 NLG 将在 <a href="#">xxxx</a> 中给出。</p>
-<p>本文是系列文章的第一篇，一开始架构文章的时候没有考虑太多，所以到目前为止只是写了一些基础的内容，并且逻辑有点乱。更多的内容可以移驾<strong><a href="https://yan624.github.io/posts/4ec51203.html">任务完成型对话系统论文调研（二）</a></strong>。</p>
+          <div class="note info"><ol type="1">
+<li><a href="https://yan624.github.io/posts/e0902c9c.html">任务完成型对话系统论文调研（一）</a>：本文是系列文章的第一篇，一开始架构文章的时候没有考虑太多，所以到目前为止只是写了一些基础的内容，并且逻辑有点乱。</li>
+<li><a href="https://yan624.github.io/posts/4ec51203.html">任务完成型对话系统论文调研（二）</a></li>
+</ol>
 </div>
+<a class="btn" href="#dst-dstc2"><i class="fa fa-"></i>DSTC2</a>
+<a class="btn" href="#dst-woz2.0"><i class="fa fa-"></i>WOZ 2.0</a>
+<a class="btn" href="#dst-multiwoz2.1"><i class="fa fa-"></i>MultiWOZ 2.1</a>
 <h1 id="任务完成型对话系统">任务完成型对话系统</h1>
 <div class="note info"><p>可以点击后面对应的按钮，找到各领域论文的详细对比。<a class="btn" href="#slu论文对比"><i class="fa fa-"></i>SLU 论文对比</a><a class="btn" href="#dst论文对比"><i class="fa fa-"></i>DST 论文对比</a></p>
 </div>
@@ -1007,7 +1016,7 @@ OPT(i) =
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-11 21:52:29" itemprop="dateModified" datetime="2020-11-11T21:52:29+08:00">2020-11-11</time>
+                <time title="修改时间：2021-04-29 21:26:18" itemprop="dateModified" datetime="2021-04-29T21:26:18+08:00">2021-04-29</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1029,7 +1038,7 @@ OPT(i) =
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>4.6k</span>
+              <span>4.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -1048,10 +1057,10 @@ OPT(i) =
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><a href="https://github.com/theme-next/hexo-theme-next" target="_blank" rel="noopener">hexo-theme-next</a> 主题的 github 页面中提到了如何更新的问题。他们在教程中指出，在更新的过程中可能会遇到 <code>Commit your changes or stash them before you can merge</code> 的问题，其实这就是代表你修改过主题中的源码文件，所以不允许对 next 主题进行更新。这里的源码文件指代比较宽泛，大家最常改的应该是 <code>_config.yml</code> 文件。以下将介绍如何处理：</p>
+          <p><a href="https://github.com/theme-next/hexo-theme-next" target="_blank" rel="noopener">hexo-theme-next</a> 主题的 github 页面中提到了如何更新的问题。他们在教程中指出，在更新的过程中可能会遇到“Commit your changes or stash them before you can merge”的问题，其实这就是代表你修改过主题中的源码文件，所以不允许对 next 主题进行更新。这里的源码文件指代比较宽泛，大家最常改的应该是“_config.yml”文件。以下将介绍如何处理：</p>
 <ol type="1">
 <li><strong>前置操作：将自己的博客复制一份，以免修改错。</strong></li>
-<li>使用 <code>git pull</code> 命令，如果出现问题，那就代表你更新成功了。如果出现了上面的 <code>Commit your changes or stash them before you can merge</code> 问题，那就往下看。</li>
+<li>使用 <code>git pull</code> 命令，如果出现问题，那就代表你更新成功了。如果出现了上面的“Commit your changes or stash them before you can merge”问题，那就往下看。</li>
 <li>使用 <code>git stash</code>，重置自己的修改，再次使用 <code>git pull</code>，更新完成。</li>
 <li><strong>hexo next 主题更新完成后，就代表你之前所有的自定义配置都没了。</strong>所以接下来的内容是将它们改回来。</li>
 </ol>
@@ -1295,7 +1304,7 @@ OPT(i) =
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1363,23 +1372,23 @@ OPT(i) =
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">134</span>
+          <span class="site-state-item-count">124</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
-        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">94</span>
+        <span class="site-state-item-count">85</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
       <!-- 不蒜子/busuanzi -->
       <div class="site-state-item site-state-posts">
-      	<span class="site-state-item-count">214.7k</span>
+      	<span class="site-state-item-count">200.3k</span>
       	<span class="site-state-item-name">总字数</span>
       </div>
   </nav>
@@ -1389,9 +1398,6 @@ OPT(i) =
   </a>
   </div>
   <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://www.zhihu.com/people/zhu-yu-er-85/posts" title="zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;zhu-yu-er-85&#x2F;posts" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i></a>
-      </span>
       <span class="links-of-author-item">
         <a href="mailto:897538633@qq.com" title="E-Mail → mailto:897538633@qq.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i></a>
       </span>
@@ -1462,7 +1468,7 @@ OPT(i) =
 <script>
 	var pathname = window.location.pathname;
 	// pathname == '/' || pathname == '/index.html'
-	if(pathname == '/categories/coding/timeline/'){
+	if(pathname == '/categories/series/timeline/'){
 		document.write("<script src='/lib/sakura/sakura-flying.js'><\/script>");
 	}
 </script>
